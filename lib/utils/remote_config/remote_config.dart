@@ -1,12 +1,12 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/widgets.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:pilll/entity/remote_config_parameter.codegen.dart';
-import 'package:pilll/utils/version/version.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shoppinglist/entity/remote_config_parameter.dart';
+import 'package:shoppinglist/utils/config/version.dart';
 import 'package:shoppinglist/utils/logger/error.dart';
 
-part '../../features/remote_config/remote_config.g.dart';
+part './remote_config.g.dart';
 
 final remoteConfig = FirebaseRemoteConfig.instance;
 
@@ -18,20 +18,8 @@ Future<void> setupRemoteConfig() async {
         minimumFetchInterval: const Duration(hours: 1),
       )),
       remoteConfig.setDefaults({
-        RemoteConfigKeys.isPaywallFirst:
-            RemoteConfigParameterDefaultValues.isPaywallFirst,
-        RemoteConfigKeys.skipInitialSetting:
-            RemoteConfigParameterDefaultValues.skipInitialSetting,
-        RemoteConfigKeys.trialDeadlineDateOffsetDay:
-            RemoteConfigParameterDefaultValues.trialDeadlineDateOffsetDay,
-        RemoteConfigKeys.discountEntitlementOffsetDay:
-            RemoteConfigParameterDefaultValues.discountEntitlementOffsetDay,
-        RemoteConfigKeys.discountCountdownBoundaryHour:
-            RemoteConfigParameterDefaultValues.discountCountdownBoundaryHour,
         RemoteConfigKeys.releasedVersion:
             RemoteConfigParameterDefaultValues.releasedVersion,
-        RemoteConfigKeys.premiumIntroductionPattern:
-            RemoteConfigParameterDefaultValues.premiumIntroductionPattern,
       }),
       remoteConfig.fetchAndActivate()
     ).wait;
