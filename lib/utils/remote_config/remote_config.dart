@@ -18,8 +18,7 @@ Future<void> setupRemoteConfig() async {
         minimumFetchInterval: const Duration(hours: 1),
       )),
       remoteConfig.setDefaults({
-        RemoteConfigKeys.releasedVersion:
-            RemoteConfigParameterDefaultValues.releasedVersion,
+        RemoteConfigKeys.releasedVersion: RemoteConfigParameterDefaultValues.releasedVersion,
       }),
       remoteConfig.fetchAndActivate()
     ).wait;
@@ -39,8 +38,7 @@ Future<void> setupRemoteConfig() async {
 
 @Riverpod()
 Future<bool> appIsReleased(AppIsReleasedRef ref) async {
-  final releasedVersion =
-      Version.parse(remoteConfig.getString(RemoteConfigKeys.releasedVersion));
+  final releasedVersion = Version.parse(remoteConfig.getString(RemoteConfigKeys.releasedVersion));
   final packageInfo = await PackageInfo.fromPlatform();
   final appVersion = Version.parse(packageInfo.version);
   return !appVersion.isGreaterThan(releasedVersion);
