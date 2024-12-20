@@ -6,14 +6,16 @@ part of 'remote_config.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appIsReleasedHash() => r'8a68c1d9a915644d386343a73424fda0504492e4';
+String _$appIsReleasedHash() => r'd5a007759fa91638a2744f3939c1941b6dfcd39c';
 
 /// See also [appIsReleased].
 @ProviderFor(appIsReleased)
 final appIsReleasedProvider = AutoDisposeFutureProvider<bool>.internal(
   appIsReleased,
   name: r'appIsReleasedProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$appIsReleasedHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$appIsReleasedHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
