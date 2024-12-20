@@ -1,5 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'remote_config_parameter.codegen.freezed.dart';
+part 'remote_config_parameter.codegen.g.dart';
+
 abstract class RemoteConfigKeys {
   static const releasedVersion = 'releasedVersion';
 }

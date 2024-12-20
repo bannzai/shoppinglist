@@ -6,7 +6,7 @@ import 'package:shoppinglist/entity/remote_config_parameter.dart';
 import 'package:shoppinglist/utils/config/version.dart';
 import 'package:shoppinglist/utils/logger/error.dart';
 
-part './remote_config.g.dart';
+part 'remote_config.g.dart';
 
 final remoteConfig = FirebaseRemoteConfig.instance;
 
