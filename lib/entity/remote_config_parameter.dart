@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'remote_config_parameter.codegen.freezed.dart';
-part 'remote_config_parameter.codegen.g.dart';
+part 'remote_config_parameter.freezed.dart';
+part 'remote_config_parameter.g.dart';
 
 abstract class RemoteConfigKeys {
   static const releasedVersion = 'releasedVersion';
@@ -16,6 +16,7 @@ class RemoteConfigParameter with _$RemoteConfigParameter {
   factory RemoteConfigParameter({
     @Default(RemoteConfigParameterDefaultValues.releasedVersion) String releasedVersion,
   }) = _RemoteConfigParameter;
+
   RemoteConfigParameter._();
   factory RemoteConfigParameter.fromJson(Map<String, dynamic> json) => _$RemoteConfigParameterFromJson(json);
 }
