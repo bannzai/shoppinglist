@@ -22,8 +22,7 @@ MemoRow _$MemoRowFromJson(Map<String, dynamic> json) {
       return LinkMemoRow.fromJson(json);
 
     default:
-      throw CheckedFromJsonException(json, 'runtimeType', 'MemoRow',
-          'Invalid union type "${json['runtimeType']}"!');
+      throw CheckedFromJsonException(json, 'runtimeType', 'MemoRow', 'Invalid union type "${json['runtimeType']}"!');
   }
 }
 
@@ -133,8 +132,7 @@ mixin _$MemoRow {
 
 /// @nodoc
 abstract class $MemoRowCopyWith<$Res> {
-  factory $MemoRowCopyWith(MemoRow value, $Res Function(MemoRow) then) =
-      _$MemoRowCopyWithImpl<$Res, MemoRow>;
+  factory $MemoRowCopyWith(MemoRow value, $Res Function(MemoRow) then) = _$MemoRowCopyWithImpl<$Res, MemoRow>;
   @useResult
   $Res call(
       {String? id,
@@ -146,8 +144,7 @@ abstract class $MemoRowCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$MemoRowCopyWithImpl<$Res, $Val extends MemoRow>
-    implements $MemoRowCopyWith<$Res> {
+class _$MemoRowCopyWithImpl<$Res, $Val extends MemoRow> implements $MemoRowCopyWith<$Res> {
   _$MemoRowCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
@@ -195,11 +192,8 @@ class _$MemoRowCopyWithImpl<$Res, $Val extends MemoRow>
 }
 
 /// @nodoc
-abstract class _$$TextMemoRowImplCopyWith<$Res>
-    implements $MemoRowCopyWith<$Res> {
-  factory _$$TextMemoRowImplCopyWith(
-          _$TextMemoRowImpl value, $Res Function(_$TextMemoRowImpl) then) =
-      __$$TextMemoRowImplCopyWithImpl<$Res>;
+abstract class _$$TextMemoRowImplCopyWith<$Res> implements $MemoRowCopyWith<$Res> {
+  factory _$$TextMemoRowImplCopyWith(_$TextMemoRowImpl value, $Res Function(_$TextMemoRowImpl) then) = __$$TextMemoRowImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -213,12 +207,8 @@ abstract class _$$TextMemoRowImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$TextMemoRowImplCopyWithImpl<$Res>
-    extends _$MemoRowCopyWithImpl<$Res, _$TextMemoRowImpl>
-    implements _$$TextMemoRowImplCopyWith<$Res> {
-  __$$TextMemoRowImplCopyWithImpl(
-      _$TextMemoRowImpl _value, $Res Function(_$TextMemoRowImpl) _then)
-      : super(_value, _then);
+class __$$TextMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, _$TextMemoRowImpl> implements _$$TextMemoRowImplCopyWith<$Res> {
+  __$$TextMemoRowImplCopyWithImpl(_$TextMemoRowImpl _value, $Res Function(_$TextMemoRowImpl) _then) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -278,8 +268,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
       final String? $type})
       : $type = $type ?? 'text';
 
-  factory _$TextMemoRowImpl.fromJson(Map<String, dynamic> json) =>
-      _$$TextMemoRowImplFromJson(json);
+  factory _$TextMemoRowImpl.fromJson(Map<String, dynamic> json) => _$$TextMemoRowImplFromJson(json);
 
   @override
   final String? id;
@@ -316,35 +305,22 @@ class _$TextMemoRowImpl implements TextMemoRow {
             other is _$TextMemoRowImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.message, message) || other.message == message) &&
-            (identical(other.reminderDateTime, reminderDateTime) ||
-                other.reminderDateTime == reminderDateTime) &&
-            (identical(other.createdDateTime, createdDateTime) ||
-                other.createdDateTime == createdDateTime) &&
-            (identical(other.updatedDateTime, updatedDateTime) ||
-                other.updatedDateTime == updatedDateTime) &&
-            (identical(other.serverCreatedDateTime, serverCreatedDateTime) ||
-                other.serverCreatedDateTime == serverCreatedDateTime) &&
-            (identical(other.serverUpdatedDateTime, serverUpdatedDateTime) ||
-                other.serverUpdatedDateTime == serverUpdatedDateTime));
+            (identical(other.reminderDateTime, reminderDateTime) || other.reminderDateTime == reminderDateTime) &&
+            (identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime) &&
+            (identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime) &&
+            (identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime) &&
+            (identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      message,
-      reminderDateTime,
-      createdDateTime,
-      updatedDateTime,
-      serverCreatedDateTime,
-      serverUpdatedDateTime);
+  int get hashCode =>
+      Object.hash(runtimeType, id, message, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$TextMemoRowImplCopyWith<_$TextMemoRowImpl> get copyWith =>
-      __$$TextMemoRowImplCopyWithImpl<_$TextMemoRowImpl>(this, _$identity);
+  _$$TextMemoRowImplCopyWith<_$TextMemoRowImpl> get copyWith => __$$TextMemoRowImplCopyWithImpl<_$TextMemoRowImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -368,8 +344,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)
         link,
   }) {
-    return text(id, message, reminderDateTime, createdDateTime, updatedDateTime,
-        serverCreatedDateTime, serverUpdatedDateTime);
+    return text(id, message, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
   }
 
   @override
@@ -394,8 +369,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)?
         link,
   }) {
-    return text?.call(id, message, reminderDateTime, createdDateTime,
-        updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+    return text?.call(id, message, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
   }
 
   @override
@@ -422,8 +396,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
     required TResult orElse(),
   }) {
     if (text != null) {
-      return text(id, message, reminderDateTime, createdDateTime,
-          updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+      return text(id, message, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
     }
     return orElse();
   }
@@ -469,17 +442,15 @@ class _$TextMemoRowImpl implements TextMemoRow {
 
 abstract class TextMemoRow implements MemoRow {
   const factory TextMemoRow(
-          {final String? id,
-          required final String message,
-          @NullableTimestampConverter() final DateTime? reminderDateTime,
-          @ClientCreatedTimestamp() final DateTime? createdDateTime,
-          @ClientUpdatedTimestamp() final DateTime? updatedDateTime,
-          @ServerCreatedTimestamp() final DateTime? serverCreatedDateTime,
-          @ServerUpdatedTimestamp() final DateTime? serverUpdatedDateTime}) =
-      _$TextMemoRowImpl;
+      {final String? id,
+      required final String message,
+      @NullableTimestampConverter() final DateTime? reminderDateTime,
+      @ClientCreatedTimestamp() final DateTime? createdDateTime,
+      @ClientUpdatedTimestamp() final DateTime? updatedDateTime,
+      @ServerCreatedTimestamp() final DateTime? serverCreatedDateTime,
+      @ServerUpdatedTimestamp() final DateTime? serverUpdatedDateTime}) = _$TextMemoRowImpl;
 
-  factory TextMemoRow.fromJson(Map<String, dynamic> json) =
-      _$TextMemoRowImpl.fromJson;
+  factory TextMemoRow.fromJson(Map<String, dynamic> json) = _$TextMemoRowImpl.fromJson;
 
   @override
   String? get id;
@@ -501,16 +472,12 @@ abstract class TextMemoRow implements MemoRow {
   DateTime? get serverUpdatedDateTime;
   @override
   @JsonKey(ignore: true)
-  _$$TextMemoRowImplCopyWith<_$TextMemoRowImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$TextMemoRowImplCopyWith<_$TextMemoRowImpl> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$LinkMemoRowImplCopyWith<$Res>
-    implements $MemoRowCopyWith<$Res> {
-  factory _$$LinkMemoRowImplCopyWith(
-          _$LinkMemoRowImpl value, $Res Function(_$LinkMemoRowImpl) then) =
-      __$$LinkMemoRowImplCopyWithImpl<$Res>;
+abstract class _$$LinkMemoRowImplCopyWith<$Res> implements $MemoRowCopyWith<$Res> {
+  factory _$$LinkMemoRowImplCopyWith(_$LinkMemoRowImpl value, $Res Function(_$LinkMemoRowImpl) then) = __$$LinkMemoRowImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -524,12 +491,8 @@ abstract class _$$LinkMemoRowImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$LinkMemoRowImplCopyWithImpl<$Res>
-    extends _$MemoRowCopyWithImpl<$Res, _$LinkMemoRowImpl>
-    implements _$$LinkMemoRowImplCopyWith<$Res> {
-  __$$LinkMemoRowImplCopyWithImpl(
-      _$LinkMemoRowImpl _value, $Res Function(_$LinkMemoRowImpl) _then)
-      : super(_value, _then);
+class __$$LinkMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, _$LinkMemoRowImpl> implements _$$LinkMemoRowImplCopyWith<$Res> {
+  __$$LinkMemoRowImplCopyWithImpl(_$LinkMemoRowImpl _value, $Res Function(_$LinkMemoRowImpl) _then) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -589,8 +552,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
       final String? $type})
       : $type = $type ?? 'link';
 
-  factory _$LinkMemoRowImpl.fromJson(Map<String, dynamic> json) =>
-      _$$LinkMemoRowImplFromJson(json);
+  factory _$LinkMemoRowImpl.fromJson(Map<String, dynamic> json) => _$$LinkMemoRowImplFromJson(json);
 
   @override
   final String? id;
@@ -627,35 +589,22 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
             other is _$LinkMemoRowImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.url, url) || other.url == url) &&
-            (identical(other.reminderDateTime, reminderDateTime) ||
-                other.reminderDateTime == reminderDateTime) &&
-            (identical(other.createdDateTime, createdDateTime) ||
-                other.createdDateTime == createdDateTime) &&
-            (identical(other.updatedDateTime, updatedDateTime) ||
-                other.updatedDateTime == updatedDateTime) &&
-            (identical(other.serverCreatedDateTime, serverCreatedDateTime) ||
-                other.serverCreatedDateTime == serverCreatedDateTime) &&
-            (identical(other.serverUpdatedDateTime, serverUpdatedDateTime) ||
-                other.serverUpdatedDateTime == serverUpdatedDateTime));
+            (identical(other.reminderDateTime, reminderDateTime) || other.reminderDateTime == reminderDateTime) &&
+            (identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime) &&
+            (identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime) &&
+            (identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime) &&
+            (identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      url,
-      reminderDateTime,
-      createdDateTime,
-      updatedDateTime,
-      serverCreatedDateTime,
-      serverUpdatedDateTime);
+  int get hashCode =>
+      Object.hash(runtimeType, id, url, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$LinkMemoRowImplCopyWith<_$LinkMemoRowImpl> get copyWith =>
-      __$$LinkMemoRowImplCopyWithImpl<_$LinkMemoRowImpl>(this, _$identity);
+  _$$LinkMemoRowImplCopyWith<_$LinkMemoRowImpl> get copyWith => __$$LinkMemoRowImplCopyWithImpl<_$LinkMemoRowImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -679,8 +628,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)
         link,
   }) {
-    return link(id, url, reminderDateTime, createdDateTime, updatedDateTime,
-        serverCreatedDateTime, serverUpdatedDateTime);
+    return link(id, url, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
   }
 
   @override
@@ -705,8 +653,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)?
         link,
   }) {
-    return link?.call(id, url, reminderDateTime, createdDateTime,
-        updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+    return link?.call(id, url, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
   }
 
   @override
@@ -733,8 +680,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
     required TResult orElse(),
   }) {
     if (link != null) {
-      return link(id, url, reminderDateTime, createdDateTime, updatedDateTime,
-          serverCreatedDateTime, serverUpdatedDateTime);
+      return link(id, url, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
     }
     return orElse();
   }
@@ -780,17 +726,15 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
 
 abstract class LinkMemoRow implements MemoRow {
   const factory LinkMemoRow(
-          {final String? id,
-          required final String url,
-          @NullableTimestampConverter() final DateTime? reminderDateTime,
-          @ClientCreatedTimestamp() final DateTime? createdDateTime,
-          @ClientUpdatedTimestamp() final DateTime? updatedDateTime,
-          @ServerCreatedTimestamp() final DateTime? serverCreatedDateTime,
-          @ServerUpdatedTimestamp() final DateTime? serverUpdatedDateTime}) =
-      _$LinkMemoRowImpl;
+      {final String? id,
+      required final String url,
+      @NullableTimestampConverter() final DateTime? reminderDateTime,
+      @ClientCreatedTimestamp() final DateTime? createdDateTime,
+      @ClientUpdatedTimestamp() final DateTime? updatedDateTime,
+      @ServerCreatedTimestamp() final DateTime? serverCreatedDateTime,
+      @ServerUpdatedTimestamp() final DateTime? serverUpdatedDateTime}) = _$LinkMemoRowImpl;
 
-  factory LinkMemoRow.fromJson(Map<String, dynamic> json) =
-      _$LinkMemoRowImpl.fromJson;
+  factory LinkMemoRow.fromJson(Map<String, dynamic> json) = _$LinkMemoRowImpl.fromJson;
 
   @override
   String? get id;
@@ -812,6 +756,5 @@ abstract class LinkMemoRow implements MemoRow {
   DateTime? get serverUpdatedDateTime;
   @override
   @JsonKey(ignore: true)
-  _$$LinkMemoRowImplCopyWith<_$LinkMemoRowImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$LinkMemoRowImplCopyWith<_$LinkMemoRowImpl> get copyWith => throw _privateConstructorUsedError;
 }

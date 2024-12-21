@@ -38,8 +38,7 @@ mixin _$AppUser {
 
 /// @nodoc
 abstract class $AppUserCopyWith<$Res> {
-  factory $AppUserCopyWith(AppUser value, $Res Function(AppUser) then) =
-      _$AppUserCopyWithImpl<$Res, AppUser>;
+  factory $AppUserCopyWith(AppUser value, $Res Function(AppUser) then) = _$AppUserCopyWithImpl<$Res, AppUser>;
   @useResult
   $Res call(
       {String? id,
@@ -51,8 +50,7 @@ abstract class $AppUserCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$AppUserCopyWithImpl<$Res, $Val extends AppUser>
-    implements $AppUserCopyWith<$Res> {
+class _$AppUserCopyWithImpl<$Res, $Val extends AppUser> implements $AppUserCopyWith<$Res> {
   _$AppUserCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
@@ -101,9 +99,7 @@ class _$AppUserCopyWithImpl<$Res, $Val extends AppUser>
 
 /// @nodoc
 abstract class _$$AppUserImplCopyWith<$Res> implements $AppUserCopyWith<$Res> {
-  factory _$$AppUserImplCopyWith(
-          _$AppUserImpl value, $Res Function(_$AppUserImpl) then) =
-      __$$AppUserImplCopyWithImpl<$Res>;
+  factory _$$AppUserImplCopyWith(_$AppUserImpl value, $Res Function(_$AppUserImpl) then) = __$$AppUserImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -116,12 +112,8 @@ abstract class _$$AppUserImplCopyWith<$Res> implements $AppUserCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$AppUserImplCopyWithImpl<$Res>
-    extends _$AppUserCopyWithImpl<$Res, _$AppUserImpl>
-    implements _$$AppUserImplCopyWith<$Res> {
-  __$$AppUserImplCopyWithImpl(
-      _$AppUserImpl _value, $Res Function(_$AppUserImpl) _then)
-      : super(_value, _then);
+class __$$AppUserImplCopyWithImpl<$Res> extends _$AppUserCopyWithImpl<$Res, _$AppUserImpl> implements _$$AppUserImplCopyWith<$Res> {
+  __$$AppUserImplCopyWithImpl(_$AppUserImpl _value, $Res Function(_$AppUserImpl) _then) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -174,8 +166,7 @@ class _$AppUserImpl extends _AppUser {
       @ServerUpdatedTimestamp() this.serverUpdatedDateTime})
       : super._();
 
-  factory _$AppUserImpl.fromJson(Map<String, dynamic> json) =>
-      _$$AppUserImplFromJson(json);
+  factory _$AppUserImpl.fromJson(Map<String, dynamic> json) => _$$AppUserImplFromJson(json);
 
   @override
   final String? id;
@@ -206,35 +197,22 @@ class _$AppUserImpl extends _AppUser {
         (other.runtimeType == runtimeType &&
             other is _$AppUserImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(
-                    other.remainingFreeAIFunction, remainingFreeAIFunction) ||
-                other.remainingFreeAIFunction == remainingFreeAIFunction) &&
-            (identical(other.createdDateTime, createdDateTime) ||
-                other.createdDateTime == createdDateTime) &&
-            (identical(other.updatedDateTime, updatedDateTime) ||
-                other.updatedDateTime == updatedDateTime) &&
-            (identical(other.serverCreatedDateTime, serverCreatedDateTime) ||
-                other.serverCreatedDateTime == serverCreatedDateTime) &&
-            (identical(other.serverUpdatedDateTime, serverUpdatedDateTime) ||
-                other.serverUpdatedDateTime == serverUpdatedDateTime));
+            (identical(other.remainingFreeAIFunction, remainingFreeAIFunction) || other.remainingFreeAIFunction == remainingFreeAIFunction) &&
+            (identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime) &&
+            (identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime) &&
+            (identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime) &&
+            (identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      remainingFreeAIFunction,
-      createdDateTime,
-      updatedDateTime,
-      serverCreatedDateTime,
-      serverUpdatedDateTime);
+  int get hashCode =>
+      Object.hash(runtimeType, id, remainingFreeAIFunction, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$AppUserImplCopyWith<_$AppUserImpl> get copyWith =>
-      __$$AppUserImplCopyWithImpl<_$AppUserImpl>(this, _$identity);
+  _$$AppUserImplCopyWith<_$AppUserImpl> get copyWith => __$$AppUserImplCopyWithImpl<_$AppUserImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -246,13 +224,12 @@ class _$AppUserImpl extends _AppUser {
 
 abstract class _AppUser extends AppUser {
   const factory _AppUser(
-          {final String? id,
-          final int remainingFreeAIFunction,
-          @ClientCreatedTimestamp() final DateTime? createdDateTime,
-          @ClientUpdatedTimestamp() final DateTime? updatedDateTime,
-          @ServerCreatedTimestamp() final DateTime? serverCreatedDateTime,
-          @ServerUpdatedTimestamp() final DateTime? serverUpdatedDateTime}) =
-      _$AppUserImpl;
+      {final String? id,
+      final int remainingFreeAIFunction,
+      @ClientCreatedTimestamp() final DateTime? createdDateTime,
+      @ClientUpdatedTimestamp() final DateTime? updatedDateTime,
+      @ServerCreatedTimestamp() final DateTime? serverCreatedDateTime,
+      @ServerUpdatedTimestamp() final DateTime? serverUpdatedDateTime}) = _$AppUserImpl;
   const _AppUser._() : super._();
 
   factory _AppUser.fromJson(Map<String, dynamic> json) = _$AppUserImpl.fromJson;
@@ -275,6 +252,5 @@ abstract class _AppUser extends AppUser {
   DateTime? get serverUpdatedDateTime;
   @override
   @JsonKey(ignore: true)
-  _$$AppUserImplCopyWith<_$AppUserImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$AppUserImplCopyWith<_$AppUserImpl> get copyWith => throw _privateConstructorUsedError;
 }
