@@ -24,9 +24,7 @@ class AuthResolver extends HookConsumerWidget {
 
     useEffect(() {
       final user = firebaseUserChanges.asData?.valueOrNull;
-      if (user != null) {
-        
-      }
+      if (user != null) {}
       return null;
     }, [firebaseUserChanges.asData?.valueOrNull]);
 

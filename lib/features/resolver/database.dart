@@ -11,8 +11,6 @@ import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/resolver/auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../entity/chat_message.dart';
-
 part 'database.g.dart';
 
 abstract class _CollectionPath {
