@@ -11,8 +11,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'purchase.g.dart';
 
-const promotionProductIdentifierPrefix = "rc_promo_Premium";
-const premiumEntitlementIdentifier = "Premium";
+const promotionProductIdentifierPrefix = 'rc_promo_Premium';
+const premiumEntitlementIdentifier = 'Premium';
 
 enum OfferingType { discounted, premium }
 
@@ -20,10 +20,10 @@ extension OfferingTypeFunction on OfferingType {
   String get identifier {
     switch (this) {
       case OfferingType.discounted:
-        return "discounted";
+        return 'discounted';
 
       case OfferingType.premium:
-        return "default";
+        return 'default';
     }
   }
 }
@@ -161,16 +161,16 @@ class Purchase {
       final purchaserInfo = await Purchases.purchasePackage(package);
       final premiumEntitlement = purchaserInfo.entitlements.all[premiumEntitlementIdentifier];
       if (premiumEntitlement == null) {
-        throw AssertionError("unexpected premium entitlements is not exists");
+        throw AssertionError('unexpected premium entitlements is not exists');
       }
       if (!premiumEntitlement.isActive) {
-        throw const FormatException("課金の有効化が完了しておりません。しばらく時間をおいてからご確認ください");
+        throw const FormatException('課金の有効化が完了しておりません。しばらく時間をおいてからご確認ください');
       }
       return Future.value(true);
     } on PlatformException catch (exception, stack) {
       analytics.logEvent(
-          name: "catched_purchase_exception",
-          parameters: {"code": exception.code, "details": exception.details.toString(), "message": exception.message});
+          name: 'catched_purchase_exception',
+          parameters: {'code': exception.code, 'details': exception.details.toString(), 'message': exception.message});
       final newException = mapToDisplayedException(exception);
       if (newException == null) {
         return Future.value(false);
@@ -178,8 +178,8 @@ class Purchase {
       errorLogger.recordError(exception, stack);
       throw newException;
     } catch (exception, stack) {
-      analytics.logEvent(name: "catched_purchase_anonymous", parameters: {
-        "exception_type": exception.runtimeType.toString(),
+      analytics.logEvent(name: 'catched_purchase_anonymous', parameters: {
+        'exception_type': exception.runtimeType.toString(),
       });
       errorLogger.recordError(exception, stack);
       rethrow;

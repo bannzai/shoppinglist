@@ -28,14 +28,14 @@ class UserDatabase {
   final String userID;
   UserDatabase({required this.userID});
 
-  final FromFirestore<AppUser> _userFromFirestore = (snapshot, options) => AppUser.fromJson(snapshot.data()!..["id"] = snapshot.id);
+  final FromFirestore<AppUser> _userFromFirestore = (snapshot, options) => AppUser.fromJson(snapshot.data()!..['id'] = snapshot.id);
   final ToFirestore<AppUser> _userToFirestore = (user, options) => user.toJson();
   DocumentReference<AppUser> userReference() => FirebaseFirestore.instance.collection(_CollectionPath.users).doc(userID).withConverter(
         fromFirestore: _userFromFirestore,
         toFirestore: _userToFirestore,
       );
 
-  final FromFirestore<Memo> _memoFromFirestore = (snapshot, options) => Memo.fromJson(snapshot.data()!..["id"] = snapshot.id);
+  final FromFirestore<Memo> _memoFromFirestore = (snapshot, options) => Memo.fromJson(snapshot.data()!..['id'] = snapshot.id);
   final ToFirestore<Memo> _memoToFirestore = (memo, options) => memo.toJson();
   CollectionReference<Memo> memosReference() => FirebaseFirestore.instance.collection(_CollectionPath.memos(userID: userID)).withConverter(
         fromFirestore: _memoFromFirestore,
@@ -49,7 +49,7 @@ class UserDatabase {
             toFirestore: _memoToFirestore,
           );
 
-  final FromFirestore<MemoRow> _memoRowFromFirestore = (snapshot, options) => MemoRow.fromJson(snapshot.data()!..["id"] = snapshot.id);
+  final FromFirestore<MemoRow> _memoRowFromFirestore = (snapshot, options) => MemoRow.fromJson(snapshot.data()!..['id'] = snapshot.id);
   final ToFirestore<MemoRow> _memoRowToFirestore = (memoRow, options) => memoRow.toJson();
   CollectionReference<MemoRow> memoRowsReference({required String memoID}) => FirebaseFirestore.instance
       .collection(
