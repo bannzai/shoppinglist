@@ -40,6 +40,8 @@ dependencies:
   firebase_crashlytics: 
   google_mobile_ads: ^5.0.0
   
+  purchases_flutter: ^8.3.2
+  
   riverpod: ^2.6.1
   hooks_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
