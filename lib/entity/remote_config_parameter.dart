@@ -10,6 +10,7 @@ abstract class RemoteConfigKeys {
 
 abstract class RemoteConfigParameterDefaultValues {
   static const releasedVersion = '1.0.0';
+  static const minimumAppVersion = '1.0.0';
 }
 
 @freezed

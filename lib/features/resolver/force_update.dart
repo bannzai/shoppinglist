@@ -4,8 +4,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/alert/ok.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/provider/force_update.dart';
-import 'package:shoppinglist/utils/analytics/error.dart';
-import 'package:shoppinglist/utils/platform/platform.dart';
+import 'package:shoppinglist/utils/logger/error.dart';
+import 'package:shoppinglist/utils/config/platform.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ForceUpdateResolver extends HookConsumerWidget {
