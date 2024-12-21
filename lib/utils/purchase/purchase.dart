@@ -170,7 +170,7 @@ class Purchase {
     } on PlatformException catch (exception, stack) {
       analytics.logEvent(
           name: 'catched_purchase_exception',
-          parameters: {'code': exception.code, 'details': exception.details.toString(), 'message': exception.message});
+          parameters: {'code': exception.code, 'details': exception.details.toString(), 'message': exception.message ?? 'empty message'});
       final newException = mapToDisplayedException(exception);
       if (newException == null) {
         return Future.value(false);
