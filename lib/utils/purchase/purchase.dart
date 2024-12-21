@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:shoppinglist/utils/platform/environment.dart';
+import 'package:shoppinglist/utils/config/environment.dart';
 import 'package:shoppinglist/secret/secret.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/logger/error.dart';

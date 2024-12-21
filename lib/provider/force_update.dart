@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/remote_config_parameter.dart';
 import 'package:shoppinglist/provider/remote_config_parameter.dart';
-import 'package:shoppinglist/utils/analytics/analytics.dart';
-import 'package:shoppinglist/utils/version.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:shoppinglist/utils/config/version.dart';
 
 final checkForceUpdateProvider = Provider.autoDispose(
   (ref) => CheckForceUpdate(
@@ -28,10 +28,10 @@ class CheckForceUpdate {
     final forceUpdate = packageVersion.isLessThan(Version.parse(config.minimumAppVersion));
     if (forceUpdate) {
       analytics.logEvent(
-        name: "screen_type_force_update",
+        name: 'screen_type_force_update',
         parameters: {
-          "package_version": packageVersion.toString(),
-          "minimum_app_version": config.minimumAppVersion,
+          'package_version': packageVersion.toString(),
+          'minimum_app_version': config.minimumAppVersion,
         },
       );
     }
