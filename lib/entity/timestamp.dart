@@ -41,7 +41,7 @@ class ClientCreatedTimestamp implements JsonConverter<DateTime?, Timestamp?> {
   }
 
   @override
-  Timestamp toJson(DateTime? dateTime) {
+  Timestamp? toJson(DateTime? dateTime) {
     if (dateTime == null) return Timestamp.fromDate(DateTime.now());
     return Timestamp.fromDate(dateTime);
   }
