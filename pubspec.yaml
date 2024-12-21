@@ -46,7 +46,7 @@ dependencies:
   flutter_hooks: ^0.20.5
   
   freezed_annotation: ^2.4.4
-  json_annotation: ^4.9.0
+  json_annotation: ^4.8.0
 
   shared_preferences: ^2.3.0
   package_info_plus: ^8.0.2
@@ -67,7 +67,7 @@ dev_dependencies:
   flutter_lints: ^4.0.0
 
   build_runner: 2.4.11
-  json_serializable: 6.8.0
+  json_serializable:
   freezed: ^2.5.2
   custom_lint: ^0.6.4
   riverpod_lint: 2.3.10
