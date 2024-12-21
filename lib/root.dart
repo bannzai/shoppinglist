@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/features/home/page.dart';
 import 'package:shoppinglist/features/resolver/app.dart';
 import 'package:shoppinglist/features/resolver/app_user_create.dart';
+import 'package:shoppinglist/features/resolver/force_update.dart';
+import 'package:shoppinglist/features/resolver/purchase_setup.dart';
 
 class RootPage extends HookConsumerWidget {
   final String title;
