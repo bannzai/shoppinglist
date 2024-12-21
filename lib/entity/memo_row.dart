@@ -17,6 +17,7 @@ abstract class MemoRowFirestoreKeys {
 
 @freezed
 sealed class MemoRow with _$MemoRow {
+  @JsonSerializable(explicitToJson: true)
   const factory MemoRow.text({
     String? id,
     required String message,
@@ -27,6 +28,7 @@ sealed class MemoRow with _$MemoRow {
     @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
   }) = TextMemoRow;
 
+  @JsonSerializable(explicitToJson: true)
   const factory MemoRow.link({
     String? id,
     required String url,
