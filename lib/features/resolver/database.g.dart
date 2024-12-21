@@ -13,8 +13,7 @@ String _$userDatabaseHash() => r'35709f65ca4a0feec61e6242b2bff4a5defb5e56';
 final userDatabaseProvider = Provider<UserDatabase>.internal(
   userDatabase,
   name: r'userDatabaseProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$userDatabaseHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$userDatabaseHash,
   dependencies: const <ProviderOrFamily>[],
   allTransitiveDependencies: const <ProviderOrFamily>{},
 );
