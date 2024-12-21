@@ -83,7 +83,6 @@ class ServerUpdatedTimestamp implements JsonConverter<DateTime?, dynamic> {
 
   @override
   DateTime? fromJson(dynamic timestamp) {
-    timestamp as Timestamp?;
     return timestamp?.toDate();
   }
 
