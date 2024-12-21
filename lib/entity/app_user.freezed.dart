@@ -22,6 +22,14 @@ AppUser _$AppUserFromJson(Map<String, dynamic> json) {
 mixin _$AppUser {
   String? get id => throw _privateConstructorUsedError;
   int get remainingFreeAIFunction => throw _privateConstructorUsedError;
+  @ClientCreatedTimestamp()
+  DateTime? get createdDateTime => throw _privateConstructorUsedError;
+  @ClientUpdatedTimestamp()
+  DateTime? get updatedDateTime => throw _privateConstructorUsedError;
+  @ServerCreatedTimestamp()
+  DateTime? get serverCreatedDateTime => throw _privateConstructorUsedError;
+  @ServerUpdatedTimestamp()
+  DateTime? get serverUpdatedDateTime => throw _privateConstructorUsedError;
 
   /// Serializes this AppUser to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -36,7 +44,13 @@ mixin _$AppUser {
 abstract class $AppUserCopyWith<$Res> {
   factory $AppUserCopyWith(AppUser value, $Res Function(AppUser) then) = _$AppUserCopyWithImpl<$Res, AppUser>;
   @useResult
-  $Res call({String? id, int remainingFreeAIFunction});
+  $Res call(
+      {String? id,
+      int remainingFreeAIFunction,
+      @ClientCreatedTimestamp() DateTime? createdDateTime,
+      @ClientUpdatedTimestamp() DateTime? updatedDateTime,
+      @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
+      @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime});
 }
 
 /// @nodoc
@@ -55,6 +69,10 @@ class _$AppUserCopyWithImpl<$Res, $Val extends AppUser> implements $AppUserCopyW
   $Res call({
     Object? id = freezed,
     Object? remainingFreeAIFunction = null,
+    Object? createdDateTime = freezed,
+    Object? updatedDateTime = freezed,
+    Object? serverCreatedDateTime = freezed,
+    Object? serverUpdatedDateTime = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -65,6 +83,22 @@ class _$AppUserCopyWithImpl<$Res, $Val extends AppUser> implements $AppUserCopyW
           ? _value.remainingFreeAIFunction
           : remainingFreeAIFunction // ignore: cast_nullable_to_non_nullable
               as int,
+      createdDateTime: freezed == createdDateTime
+          ? _value.createdDateTime
+          : createdDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedDateTime: freezed == updatedDateTime
+          ? _value.updatedDateTime
+          : updatedDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      serverCreatedDateTime: freezed == serverCreatedDateTime
+          ? _value.serverCreatedDateTime
+          : serverCreatedDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      serverUpdatedDateTime: freezed == serverUpdatedDateTime
+          ? _value.serverUpdatedDateTime
+          : serverUpdatedDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ) as $Val);
   }
 }
@@ -74,7 +108,13 @@ abstract class _$$AppUserImplCopyWith<$Res> implements $AppUserCopyWith<$Res> {
   factory _$$AppUserImplCopyWith(_$AppUserImpl value, $Res Function(_$AppUserImpl) then) = __$$AppUserImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? id, int remainingFreeAIFunction});
+  $Res call(
+      {String? id,
+      int remainingFreeAIFunction,
+      @ClientCreatedTimestamp() DateTime? createdDateTime,
+      @ClientUpdatedTimestamp() DateTime? updatedDateTime,
+      @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
+      @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime});
 }
 
 /// @nodoc
@@ -88,6 +128,10 @@ class __$$AppUserImplCopyWithImpl<$Res> extends _$AppUserCopyWithImpl<$Res, _$Ap
   $Res call({
     Object? id = freezed,
     Object? remainingFreeAIFunction = null,
+    Object? createdDateTime = freezed,
+    Object? updatedDateTime = freezed,
+    Object? serverCreatedDateTime = freezed,
+    Object? serverUpdatedDateTime = freezed,
   }) {
     return _then(_$AppUserImpl(
       id: freezed == id
@@ -98,6 +142,22 @@ class __$$AppUserImplCopyWithImpl<$Res> extends _$AppUserCopyWithImpl<$Res, _$Ap
           ? _value.remainingFreeAIFunction
           : remainingFreeAIFunction // ignore: cast_nullable_to_non_nullable
               as int,
+      createdDateTime: freezed == createdDateTime
+          ? _value.createdDateTime
+          : createdDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedDateTime: freezed == updatedDateTime
+          ? _value.updatedDateTime
+          : updatedDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      serverCreatedDateTime: freezed == serverCreatedDateTime
+          ? _value.serverCreatedDateTime
+          : serverCreatedDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      serverUpdatedDateTime: freezed == serverUpdatedDateTime
+          ? _value.serverUpdatedDateTime
+          : serverUpdatedDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 }
@@ -106,7 +166,14 @@ class __$$AppUserImplCopyWithImpl<$Res> extends _$AppUserCopyWithImpl<$Res, _$Ap
 
 @JsonSerializable(explicitToJson: true)
 class _$AppUserImpl extends _AppUser {
-  const _$AppUserImpl({this.id, this.remainingFreeAIFunction = 10}) : super._();
+  const _$AppUserImpl(
+      {this.id,
+      this.remainingFreeAIFunction = 10,
+      @ClientCreatedTimestamp() this.createdDateTime,
+      @ClientUpdatedTimestamp() this.updatedDateTime,
+      @ServerCreatedTimestamp() this.serverCreatedDateTime,
+      @ServerUpdatedTimestamp() this.serverUpdatedDateTime})
+      : super._();
 
   factory _$AppUserImpl.fromJson(Map<String, dynamic> json) => _$$AppUserImplFromJson(json);
 
@@ -115,10 +182,22 @@ class _$AppUserImpl extends _AppUser {
   @override
   @JsonKey()
   final int remainingFreeAIFunction;
+  @override
+  @ClientCreatedTimestamp()
+  final DateTime? createdDateTime;
+  @override
+  @ClientUpdatedTimestamp()
+  final DateTime? updatedDateTime;
+  @override
+  @ServerCreatedTimestamp()
+  final DateTime? serverCreatedDateTime;
+  @override
+  @ServerUpdatedTimestamp()
+  final DateTime? serverUpdatedDateTime;
 
   @override
   String toString() {
-    return 'AppUser(id: $id, remainingFreeAIFunction: $remainingFreeAIFunction)';
+    return 'AppUser(id: $id, remainingFreeAIFunction: $remainingFreeAIFunction, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 
   @override
@@ -127,12 +206,17 @@ class _$AppUserImpl extends _AppUser {
         (other.runtimeType == runtimeType &&
             other is _$AppUserImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.remainingFreeAIFunction, remainingFreeAIFunction) || other.remainingFreeAIFunction == remainingFreeAIFunction));
+            (identical(other.remainingFreeAIFunction, remainingFreeAIFunction) || other.remainingFreeAIFunction == remainingFreeAIFunction) &&
+            (identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime) &&
+            (identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime) &&
+            (identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime) &&
+            (identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, remainingFreeAIFunction);
+  int get hashCode =>
+      Object.hash(runtimeType, id, remainingFreeAIFunction, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
 
   /// Create a copy of AppUser
   /// with the given fields replaced by the non-null parameter values.
@@ -150,7 +234,13 @@ class _$AppUserImpl extends _AppUser {
 }
 
 abstract class _AppUser extends AppUser {
-  const factory _AppUser({final String? id, final int remainingFreeAIFunction}) = _$AppUserImpl;
+  const factory _AppUser(
+      {final String? id,
+      final int remainingFreeAIFunction,
+      @ClientCreatedTimestamp() final DateTime? createdDateTime,
+      @ClientUpdatedTimestamp() final DateTime? updatedDateTime,
+      @ServerCreatedTimestamp() final DateTime? serverCreatedDateTime,
+      @ServerUpdatedTimestamp() final DateTime? serverUpdatedDateTime}) = _$AppUserImpl;
   const _AppUser._() : super._();
 
   factory _AppUser.fromJson(Map<String, dynamic> json) = _$AppUserImpl.fromJson;
@@ -159,6 +249,18 @@ abstract class _AppUser extends AppUser {
   String? get id;
   @override
   int get remainingFreeAIFunction;
+  @override
+  @ClientCreatedTimestamp()
+  DateTime? get createdDateTime;
+  @override
+  @ClientUpdatedTimestamp()
+  DateTime? get updatedDateTime;
+  @override
+  @ServerCreatedTimestamp()
+  DateTime? get serverCreatedDateTime;
+  @override
+  @ServerUpdatedTimestamp()
+  DateTime? get serverUpdatedDateTime;
 
   /// Create a copy of AppUser
   /// with the given fields replaced by the non-null parameter values.

@@ -13,10 +13,10 @@ class AppUser with _$AppUser {
   const factory AppUser({
     String? id,
     @Default(10) int remainingFreeAIFunction,
-    // @ClientCreatedTimestamp() DateTime? createdDateTime,
-    // @ClientUpdatedTimestamp() DateTime? updatedDateTime,
-    // @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
-    // @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
+    @ClientCreatedTimestamp() DateTime? createdDateTime,
+    @ClientUpdatedTimestamp() DateTime? updatedDateTime,
+    @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
+    @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
   }) = _AppUser;
 
   factory AppUser.fromJson(Map<String, dynamic> json) => _$AppUserFromJson(json);

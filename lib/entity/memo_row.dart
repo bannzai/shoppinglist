@@ -21,22 +21,22 @@ sealed class MemoRow with _$MemoRow {
   const factory MemoRow.text({
     String? id,
     required String message,
-    // @NullableTimestampConverter() DateTime? reminderDateTime,
-    // @ClientCreatedTimestamp() DateTime? createdDateTime,
-    // @ClientUpdatedTimestamp() DateTime? updatedDateTime,
-    // @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
-    // @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
+    @NullableTimestampConverter() DateTime? reminderDateTime,
+    @ClientCreatedTimestamp() DateTime? createdDateTime,
+    @ClientUpdatedTimestamp() DateTime? updatedDateTime,
+    @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
+    @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
   }) = TextMemoRow;
 
   @JsonSerializable(explicitToJson: true)
   const factory MemoRow.link({
     String? id,
     required String url,
-    // @NullableTimestampConverter() DateTime? reminderDateTime,
-    // @ClientCreatedTimestamp() DateTime? createdDateTime,
-    // @ClientUpdatedTimestamp() DateTime? updatedDateTime,
-    // @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
-    // @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
+    @NullableTimestampConverter() DateTime? reminderDateTime,
+    @ClientCreatedTimestamp() DateTime? createdDateTime,
+    @ClientUpdatedTimestamp() DateTime? updatedDateTime,
+    @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
+    @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
   }) = LinkMemoRow;
 
   factory MemoRow.fromJson(Map<String, dynamic> json) => _$MemoRowFromJson(json);
