@@ -24,8 +24,12 @@ mixin _$Memo {
   String get name => throw _privateConstructorUsedError;
   MemoStatus get status => throw _privateConstructorUsedError;
 
+  /// Serializes this Memo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of Memo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $MemoCopyWith<Memo> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -45,6 +49,8 @@ class _$MemoCopyWithImpl<$Res, $Val extends Memo> implements $MemoCopyWith<$Res>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of Memo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -81,6 +87,8 @@ abstract class _$$MemoImplCopyWith<$Res> implements $MemoCopyWith<$Res> {
 class __$$MemoImplCopyWithImpl<$Res> extends _$MemoCopyWithImpl<$Res, _$MemoImpl> implements _$$MemoImplCopyWith<$Res> {
   __$$MemoImplCopyWithImpl(_$MemoImpl _value, $Res Function(_$MemoImpl) _then) : super(_value, _then);
 
+  /// Create a copy of Memo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -137,11 +145,13 @@ class _$MemoImpl extends _Memo {
             (identical(other.status, status) || other.status == status));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, status);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Memo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$MemoImplCopyWith<_$MemoImpl> get copyWith => __$$MemoImplCopyWithImpl<_$MemoImpl>(this, _$identity);
@@ -166,7 +176,10 @@ abstract class _Memo extends Memo {
   String get name;
   @override
   MemoStatus get status;
+
+  /// Create a copy of Memo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MemoImplCopyWith<_$MemoImpl> get copyWith => throw _privateConstructorUsedError;
 }

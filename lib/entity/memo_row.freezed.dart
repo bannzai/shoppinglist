@@ -67,8 +67,13 @@ mixin _$MemoRow {
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
+
+  /// Serializes this MemoRow to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of MemoRow
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $MemoRowCopyWith<MemoRow> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -88,6 +93,8 @@ class _$MemoRowCopyWithImpl<$Res, $Val extends MemoRow> implements $MemoRowCopyW
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of MemoRow
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -114,6 +121,8 @@ abstract class _$$TextMemoRowImplCopyWith<$Res> implements $MemoRowCopyWith<$Res
 class __$$TextMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, _$TextMemoRowImpl> implements _$$TextMemoRowImplCopyWith<$Res> {
   __$$TextMemoRowImplCopyWithImpl(_$TextMemoRowImpl _value, $Res Function(_$TextMemoRowImpl) _then) : super(_value, _then);
 
+  /// Create a copy of MemoRow
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -163,11 +172,13 @@ class _$TextMemoRowImpl implements TextMemoRow {
             (identical(other.message, message) || other.message == message));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of MemoRow
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$TextMemoRowImplCopyWith<_$TextMemoRowImpl> get copyWith => __$$TextMemoRowImplCopyWithImpl<_$TextMemoRowImpl>(this, _$identity);
@@ -250,8 +261,11 @@ abstract class TextMemoRow implements MemoRow {
   @override
   String? get id;
   String get message;
+
+  /// Create a copy of MemoRow
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$TextMemoRowImplCopyWith<_$TextMemoRowImpl> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -267,6 +281,8 @@ abstract class _$$LinkMemoRowImplCopyWith<$Res> implements $MemoRowCopyWith<$Res
 class __$$LinkMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, _$LinkMemoRowImpl> implements _$$LinkMemoRowImplCopyWith<$Res> {
   __$$LinkMemoRowImplCopyWithImpl(_$LinkMemoRowImpl _value, $Res Function(_$LinkMemoRowImpl) _then) : super(_value, _then);
 
+  /// Create a copy of MemoRow
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -316,11 +332,13 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
             (identical(other.url, url) || other.url == url));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, url);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of MemoRow
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$LinkMemoRowImplCopyWith<_$LinkMemoRowImpl> get copyWith => __$$LinkMemoRowImplCopyWithImpl<_$LinkMemoRowImpl>(this, _$identity);
@@ -403,7 +421,10 @@ abstract class LinkMemoRow implements MemoRow {
   @override
   String? get id;
   String get url;
+
+  /// Create a copy of MemoRow
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LinkMemoRowImplCopyWith<_$LinkMemoRowImpl> get copyWith => throw _privateConstructorUsedError;
 }
