@@ -8,7 +8,7 @@ part 'memo.freezed.dart';
 @freezed
 class Memo with _$Memo {
   const Memo._();
-  @JsonSerializable(explicitToJson: true)
+
   const factory Memo({
     String? id,
     @Default('') String name,

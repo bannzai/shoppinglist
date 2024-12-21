@@ -39,7 +39,8 @@ mixin _$Memo {
 
 /// @nodoc
 abstract class $MemoCopyWith<$Res> {
-  factory $MemoCopyWith(Memo value, $Res Function(Memo) then) = _$MemoCopyWithImpl<$Res, Memo>;
+  factory $MemoCopyWith(Memo value, $Res Function(Memo) then) =
+      _$MemoCopyWithImpl<$Res, Memo>;
   @useResult
   $Res call(
       {String? id,
@@ -52,7 +53,8 @@ abstract class $MemoCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$MemoCopyWithImpl<$Res, $Val extends Memo> implements $MemoCopyWith<$Res> {
+class _$MemoCopyWithImpl<$Res, $Val extends Memo>
+    implements $MemoCopyWith<$Res> {
   _$MemoCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
@@ -106,7 +108,9 @@ class _$MemoCopyWithImpl<$Res, $Val extends Memo> implements $MemoCopyWith<$Res>
 
 /// @nodoc
 abstract class _$$MemoImplCopyWith<$Res> implements $MemoCopyWith<$Res> {
-  factory _$$MemoImplCopyWith(_$MemoImpl value, $Res Function(_$MemoImpl) then) = __$$MemoImplCopyWithImpl<$Res>;
+  factory _$$MemoImplCopyWith(
+          _$MemoImpl value, $Res Function(_$MemoImpl) then) =
+      __$$MemoImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -120,8 +124,11 @@ abstract class _$$MemoImplCopyWith<$Res> implements $MemoCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$MemoImplCopyWithImpl<$Res> extends _$MemoCopyWithImpl<$Res, _$MemoImpl> implements _$$MemoImplCopyWith<$Res> {
-  __$$MemoImplCopyWithImpl(_$MemoImpl _value, $Res Function(_$MemoImpl) _then) : super(_value, _then);
+class __$$MemoImplCopyWithImpl<$Res>
+    extends _$MemoCopyWithImpl<$Res, _$MemoImpl>
+    implements _$$MemoImplCopyWith<$Res> {
+  __$$MemoImplCopyWithImpl(_$MemoImpl _value, $Res Function(_$MemoImpl) _then)
+      : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -168,8 +175,7 @@ class __$$MemoImplCopyWithImpl<$Res> extends _$MemoCopyWithImpl<$Res, _$MemoImpl
 }
 
 /// @nodoc
-
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable()
 class _$MemoImpl extends _Memo {
   const _$MemoImpl(
       {this.id,
@@ -181,7 +187,8 @@ class _$MemoImpl extends _Memo {
       @ServerUpdatedTimestamp() this.serverUpdatedDateTime})
       : super._();
 
-  factory _$MemoImpl.fromJson(Map<String, dynamic> json) => _$$MemoImplFromJson(json);
+  factory _$MemoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MemoImplFromJson(json);
 
   @override
   final String? id;
@@ -217,20 +224,33 @@ class _$MemoImpl extends _Memo {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.status, status) || other.status == status) &&
-            (identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime) &&
-            (identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime) &&
-            (identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime) &&
-            (identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+            (identical(other.createdDateTime, createdDateTime) ||
+                other.createdDateTime == createdDateTime) &&
+            (identical(other.updatedDateTime, updatedDateTime) ||
+                other.updatedDateTime == updatedDateTime) &&
+            (identical(other.serverCreatedDateTime, serverCreatedDateTime) ||
+                other.serverCreatedDateTime == serverCreatedDateTime) &&
+            (identical(other.serverUpdatedDateTime, serverUpdatedDateTime) ||
+                other.serverUpdatedDateTime == serverUpdatedDateTime));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, status, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      name,
+      status,
+      createdDateTime,
+      updatedDateTime,
+      serverCreatedDateTime,
+      serverUpdatedDateTime);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$MemoImplCopyWith<_$MemoImpl> get copyWith => __$$MemoImplCopyWithImpl<_$MemoImpl>(this, _$identity);
+  _$$MemoImplCopyWith<_$MemoImpl> get copyWith =>
+      __$$MemoImplCopyWithImpl<_$MemoImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -242,13 +262,14 @@ class _$MemoImpl extends _Memo {
 
 abstract class _Memo extends Memo {
   const factory _Memo(
-      {final String? id,
-      final String name,
-      final MemoStatus status,
-      @ClientCreatedTimestamp() final DateTime? createdDateTime,
-      @ClientUpdatedTimestamp() final DateTime? updatedDateTime,
-      @ServerCreatedTimestamp() final DateTime? serverCreatedDateTime,
-      @ServerUpdatedTimestamp() final DateTime? serverUpdatedDateTime}) = _$MemoImpl;
+          {final String? id,
+          final String name,
+          final MemoStatus status,
+          @ClientCreatedTimestamp() final DateTime? createdDateTime,
+          @ClientUpdatedTimestamp() final DateTime? updatedDateTime,
+          @ServerCreatedTimestamp() final DateTime? serverCreatedDateTime,
+          @ServerUpdatedTimestamp() final DateTime? serverUpdatedDateTime}) =
+      _$MemoImpl;
   const _Memo._() : super._();
 
   factory _Memo.fromJson(Map<String, dynamic> json) = _$MemoImpl.fromJson;
@@ -273,5 +294,6 @@ abstract class _Memo extends Memo {
   DateTime? get serverUpdatedDateTime;
   @override
   @JsonKey(ignore: true)
-  _$$MemoImplCopyWith<_$MemoImpl> get copyWith => throw _privateConstructorUsedError;
+  _$$MemoImplCopyWith<_$MemoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
