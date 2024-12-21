@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppinglist/app.dart';
-// import 'package:google_mobile_ads/google_mobile_ads.dart';
-// import 'package:firebase_core/firebase_core.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -25,7 +25,7 @@ void main() async {
 
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
-    // await (MobileAds.instance.initialize(), Firebase.initializeApp()).wait;
+    await (MobileAds.instance.initialize(), Firebase.initializeApp()).wait;
 
     if (kDebugMode) {
       overrideDebugPrint();
