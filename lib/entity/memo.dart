@@ -14,10 +14,10 @@ class Memo with _$Memo {
     String? id,
     @Default('') String name,
     @Default(MemoStatus.active) MemoStatus status,
-    @ClientCreatedTimestamp() DateTime? createdDateTime,
-    @ClientUpdatedTimestamp() DateTime? updatedDateTime,
-    @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
-    @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
+    // @ClientCreatedTimestamp() DateTime? createdDateTime,
+    // @ClientUpdatedTimestamp() DateTime? updatedDateTime,
+    // @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
+    // @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
   }) = _Memo;
 
   factory Memo.fromJson(Map<String, dynamic> json) => _$MemoFromJson(json);

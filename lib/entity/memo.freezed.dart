@@ -23,14 +23,6 @@ mixin _$Memo {
   String? get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   MemoStatus get status => throw _privateConstructorUsedError;
-  @ClientCreatedTimestamp()
-  DateTime? get createdDateTime => throw _privateConstructorUsedError;
-  @ClientUpdatedTimestamp()
-  DateTime? get updatedDateTime => throw _privateConstructorUsedError;
-  @ServerCreatedTimestamp()
-  DateTime? get serverCreatedDateTime => throw _privateConstructorUsedError;
-  @ServerUpdatedTimestamp()
-  DateTime? get serverUpdatedDateTime => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -41,14 +33,7 @@ mixin _$Memo {
 abstract class $MemoCopyWith<$Res> {
   factory $MemoCopyWith(Memo value, $Res Function(Memo) then) = _$MemoCopyWithImpl<$Res, Memo>;
   @useResult
-  $Res call(
-      {String? id,
-      String name,
-      MemoStatus status,
-      @ClientCreatedTimestamp() DateTime? createdDateTime,
-      @ClientUpdatedTimestamp() DateTime? updatedDateTime,
-      @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
-      @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime});
+  $Res call({String? id, String name, MemoStatus status});
 }
 
 /// @nodoc
@@ -66,10 +51,6 @@ class _$MemoCopyWithImpl<$Res, $Val extends Memo> implements $MemoCopyWith<$Res>
     Object? id = freezed,
     Object? name = null,
     Object? status = null,
-    Object? createdDateTime = freezed,
-    Object? updatedDateTime = freezed,
-    Object? serverCreatedDateTime = freezed,
-    Object? serverUpdatedDateTime = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -84,22 +65,6 @@ class _$MemoCopyWithImpl<$Res, $Val extends Memo> implements $MemoCopyWith<$Res>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as MemoStatus,
-      createdDateTime: freezed == createdDateTime
-          ? _value.createdDateTime
-          : createdDateTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedDateTime: freezed == updatedDateTime
-          ? _value.updatedDateTime
-          : updatedDateTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      serverCreatedDateTime: freezed == serverCreatedDateTime
-          ? _value.serverCreatedDateTime
-          : serverCreatedDateTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      serverUpdatedDateTime: freezed == serverUpdatedDateTime
-          ? _value.serverUpdatedDateTime
-          : serverUpdatedDateTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
     ) as $Val);
   }
 }
@@ -109,14 +74,7 @@ abstract class _$$MemoImplCopyWith<$Res> implements $MemoCopyWith<$Res> {
   factory _$$MemoImplCopyWith(_$MemoImpl value, $Res Function(_$MemoImpl) then) = __$$MemoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String? id,
-      String name,
-      MemoStatus status,
-      @ClientCreatedTimestamp() DateTime? createdDateTime,
-      @ClientUpdatedTimestamp() DateTime? updatedDateTime,
-      @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
-      @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime});
+  $Res call({String? id, String name, MemoStatus status});
 }
 
 /// @nodoc
@@ -129,10 +87,6 @@ class __$$MemoImplCopyWithImpl<$Res> extends _$MemoCopyWithImpl<$Res, _$MemoImpl
     Object? id = freezed,
     Object? name = null,
     Object? status = null,
-    Object? createdDateTime = freezed,
-    Object? updatedDateTime = freezed,
-    Object? serverCreatedDateTime = freezed,
-    Object? serverUpdatedDateTime = freezed,
   }) {
     return _then(_$MemoImpl(
       id: freezed == id
@@ -147,38 +101,15 @@ class __$$MemoImplCopyWithImpl<$Res> extends _$MemoCopyWithImpl<$Res, _$MemoImpl
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as MemoStatus,
-      createdDateTime: freezed == createdDateTime
-          ? _value.createdDateTime
-          : createdDateTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedDateTime: freezed == updatedDateTime
-          ? _value.updatedDateTime
-          : updatedDateTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      serverCreatedDateTime: freezed == serverCreatedDateTime
-          ? _value.serverCreatedDateTime
-          : serverCreatedDateTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      serverUpdatedDateTime: freezed == serverUpdatedDateTime
-          ? _value.serverUpdatedDateTime
-          : serverUpdatedDateTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
     ));
   }
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@JsonSerializable(explicitToJson: true)
 class _$MemoImpl extends _Memo {
-  const _$MemoImpl(
-      {this.id,
-      this.name = '',
-      this.status = MemoStatus.active,
-      @ClientCreatedTimestamp() this.createdDateTime,
-      @ClientUpdatedTimestamp() this.updatedDateTime,
-      @ServerCreatedTimestamp() this.serverCreatedDateTime,
-      @ServerUpdatedTimestamp() this.serverUpdatedDateTime})
-      : super._();
+  const _$MemoImpl({this.id, this.name = '', this.status = MemoStatus.active}) : super._();
 
   factory _$MemoImpl.fromJson(Map<String, dynamic> json) => _$$MemoImplFromJson(json);
 
@@ -190,22 +121,10 @@ class _$MemoImpl extends _Memo {
   @override
   @JsonKey()
   final MemoStatus status;
-  @override
-  @ClientCreatedTimestamp()
-  final DateTime? createdDateTime;
-  @override
-  @ClientUpdatedTimestamp()
-  final DateTime? updatedDateTime;
-  @override
-  @ServerCreatedTimestamp()
-  final DateTime? serverCreatedDateTime;
-  @override
-  @ServerUpdatedTimestamp()
-  final DateTime? serverUpdatedDateTime;
 
   @override
   String toString() {
-    return 'Memo(id: $id, name: $name, status: $status, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'Memo(id: $id, name: $name, status: $status)';
   }
 
   @override
@@ -215,16 +134,12 @@ class _$MemoImpl extends _Memo {
             other is _$MemoImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.status, status) || other.status == status) &&
-            (identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime) &&
-            (identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime) &&
-            (identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime) &&
-            (identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+            (identical(other.status, status) || other.status == status));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, status, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+  int get hashCode => Object.hash(runtimeType, id, name, status);
 
   @JsonKey(ignore: true)
   @override
@@ -240,14 +155,7 @@ class _$MemoImpl extends _Memo {
 }
 
 abstract class _Memo extends Memo {
-  const factory _Memo(
-      {final String? id,
-      final String name,
-      final MemoStatus status,
-      @ClientCreatedTimestamp() final DateTime? createdDateTime,
-      @ClientUpdatedTimestamp() final DateTime? updatedDateTime,
-      @ServerCreatedTimestamp() final DateTime? serverCreatedDateTime,
-      @ServerUpdatedTimestamp() final DateTime? serverUpdatedDateTime}) = _$MemoImpl;
+  const factory _Memo({final String? id, final String name, final MemoStatus status}) = _$MemoImpl;
   const _Memo._() : super._();
 
   factory _Memo.fromJson(Map<String, dynamic> json) = _$MemoImpl.fromJson;
@@ -258,18 +166,6 @@ abstract class _Memo extends Memo {
   String get name;
   @override
   MemoStatus get status;
-  @override
-  @ClientCreatedTimestamp()
-  DateTime? get createdDateTime;
-  @override
-  @ClientUpdatedTimestamp()
-  DateTime? get updatedDateTime;
-  @override
-  @ServerCreatedTimestamp()
-  DateTime? get serverCreatedDateTime;
-  @override
-  @ServerUpdatedTimestamp()
-  DateTime? get serverUpdatedDateTime;
   @override
   @JsonKey(ignore: true)
   _$$MemoImplCopyWith<_$MemoImpl> get copyWith => throw _privateConstructorUsedError;
