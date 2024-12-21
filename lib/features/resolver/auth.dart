@@ -22,12 +22,20 @@ class AuthResolver extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final firebaseUserChanges = ref.watch(firebaseUserChangesProvider);
 
+    useEffect(() {
+      final user = firebaseUserChanges.asData?.valueOrNull;
+      if (user != null) {
+        
+      }
+      return null;
+    }, [firebaseUserChanges.asData?.valueOrNull]);
+
     return Retry(
       retry: () => ref.invalidate(firebaseUserChangesProvider),
       child: () {
         return firebaseUserChanges.when(
           data: (user) {
-            debugPrint("user.uid: ${user?.uid}");
+            debugPrint('user.uid: ${user?.uid}');
             if (user == null) {
               return SignInResolver(
                 builder: (context, user) => builder(context, user),
