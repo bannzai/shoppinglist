@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:replai/utils/platform/environment.dart';
-import 'package:replai/secret/secret.dart';
-import 'package:replai/utils/analytics/analytics.dart';
-import 'package:replai/utils/analytics/error.dart';
-import 'package:replai/utils/purchase/error.dart';
+import 'package:shoppinglist/utils/platform/environment.dart';
+import 'package:shoppinglist/secret/secret.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:shoppinglist/utils/logger/error.dart';
+import 'package:shoppinglist/utils/purchase/error.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'purchase.g.dart';
