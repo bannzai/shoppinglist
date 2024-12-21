@@ -26,7 +26,9 @@ mixin _$Memo {
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime => throw _privateConstructorUsedError;
   @ClientUpdatedTimestamp()
-  DateTime? get updatedDateTime => throw _privateConstructorUsedError; // @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
+  DateTime? get updatedDateTime => throw _privateConstructorUsedError;
+  @ServerCreatedTimestamp()
+  DateTime? get serverCreatedDateTime => throw _privateConstructorUsedError;
   @ServerUpdatedTimestamp()
   DateTime? get serverUpdatedDateTime => throw _privateConstructorUsedError;
 
@@ -49,6 +51,7 @@ abstract class $MemoCopyWith<$Res> {
       MemoStatus status,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
+      @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
       @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime});
 }
 
@@ -71,6 +74,7 @@ class _$MemoCopyWithImpl<$Res, $Val extends Memo> implements $MemoCopyWith<$Res>
     Object? status = null,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
+    Object? serverCreatedDateTime = freezed,
     Object? serverUpdatedDateTime = freezed,
   }) {
     return _then(_value.copyWith(
@@ -94,6 +98,10 @@ class _$MemoCopyWithImpl<$Res, $Val extends Memo> implements $MemoCopyWith<$Res>
           ? _value.updatedDateTime
           : updatedDateTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      serverCreatedDateTime: freezed == serverCreatedDateTime
+          ? _value.serverCreatedDateTime
+          : serverCreatedDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       serverUpdatedDateTime: freezed == serverUpdatedDateTime
           ? _value.serverUpdatedDateTime
           : serverUpdatedDateTime // ignore: cast_nullable_to_non_nullable
@@ -113,6 +121,7 @@ abstract class _$$MemoImplCopyWith<$Res> implements $MemoCopyWith<$Res> {
       MemoStatus status,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
+      @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
       @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime});
 }
 
@@ -130,6 +139,7 @@ class __$$MemoImplCopyWithImpl<$Res> extends _$MemoCopyWithImpl<$Res, _$MemoImpl
     Object? status = null,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
+    Object? serverCreatedDateTime = freezed,
     Object? serverUpdatedDateTime = freezed,
   }) {
     return _then(_$MemoImpl(
@@ -153,6 +163,10 @@ class __$$MemoImplCopyWithImpl<$Res> extends _$MemoCopyWithImpl<$Res, _$MemoImpl
           ? _value.updatedDateTime
           : updatedDateTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      serverCreatedDateTime: freezed == serverCreatedDateTime
+          ? _value.serverCreatedDateTime
+          : serverCreatedDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       serverUpdatedDateTime: freezed == serverUpdatedDateTime
           ? _value.serverUpdatedDateTime
           : serverUpdatedDateTime // ignore: cast_nullable_to_non_nullable
@@ -171,6 +185,7 @@ class _$MemoImpl extends _Memo {
       this.status = MemoStatus.active,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
+      @ServerCreatedTimestamp() this.serverCreatedDateTime,
       @ServerUpdatedTimestamp() this.serverUpdatedDateTime})
       : super._();
 
@@ -190,14 +205,16 @@ class _$MemoImpl extends _Memo {
   @override
   @ClientUpdatedTimestamp()
   final DateTime? updatedDateTime;
-// @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
+  @override
+  @ServerCreatedTimestamp()
+  final DateTime? serverCreatedDateTime;
   @override
   @ServerUpdatedTimestamp()
   final DateTime? serverUpdatedDateTime;
 
   @override
   String toString() {
-    return 'Memo(id: $id, name: $name, status: $status, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'Memo(id: $id, name: $name, status: $status, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 
   @override
@@ -210,12 +227,13 @@ class _$MemoImpl extends _Memo {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime) &&
+            (identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime) &&
             (identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, status, createdDateTime, updatedDateTime, serverUpdatedDateTime);
+  int get hashCode => Object.hash(runtimeType, id, name, status, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
 
   /// Create a copy of Memo
   /// with the given fields replaced by the non-null parameter values.
@@ -239,6 +257,7 @@ abstract class _Memo extends Memo {
       final MemoStatus status,
       @ClientCreatedTimestamp() final DateTime? createdDateTime,
       @ClientUpdatedTimestamp() final DateTime? updatedDateTime,
+      @ServerCreatedTimestamp() final DateTime? serverCreatedDateTime,
       @ServerUpdatedTimestamp() final DateTime? serverUpdatedDateTime}) = _$MemoImpl;
   const _Memo._() : super._();
 
@@ -255,7 +274,10 @@ abstract class _Memo extends Memo {
   DateTime? get createdDateTime;
   @override
   @ClientUpdatedTimestamp()
-  DateTime? get updatedDateTime; // @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
+  DateTime? get updatedDateTime;
+  @override
+  @ServerCreatedTimestamp()
+  DateTime? get serverCreatedDateTime;
   @override
   @ServerUpdatedTimestamp()
   DateTime? get serverUpdatedDateTime;
