@@ -31,6 +31,17 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text('メモ行');
+    return ListView.builder(
+      itemCount: memoRows.length,
+      itemBuilder: (context, index) {
+        final memoRow = memoRows[index];
+        switch (memoRow) {
+          case TextMemoRow textMemoRow:
+            return Text(textMemoRow.message);
+          case LinkMemoRow linkMemoRow:
+            return Text(linkMemoRow.url);
+        }
+      },
+    );
   }
 }
