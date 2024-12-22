@@ -20,7 +20,6 @@ class ColorButton extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final isProcessing = useState(false);
-    final isMounted = useIsMounted();
 
     return ElevatedButton(
       style: ButtonStyle(
@@ -45,7 +44,7 @@ class ColorButton extends HookWidget {
               } catch (error) {
                 rethrow;
               } finally {
-                if (isMounted()) isProcessing.value = false;
+                if (context.mounted) isProcessing.value = false;
               }
             },
       child: Stack(
@@ -72,7 +71,6 @@ class AlertButton extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final isProcessing = useState(false);
-    final isMounted = useIsMounted();
 
     return TextButton(
       onPressed: onPressed == null
@@ -87,7 +85,7 @@ class AlertButton extends HookWidget {
               } catch (error) {
                 rethrow;
               } finally {
-                if (isMounted()) isProcessing.value = false;
+                if (context.mounted) isProcessing.value = false;
               }
             },
       child: Stack(
