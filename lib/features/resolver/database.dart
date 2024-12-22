@@ -16,7 +16,7 @@ part 'database.g.dart';
 abstract class _CollectionPath {
   static const String users = '/users';
   static String memos({required String userID}) => '/users/$userID/memos';
-  static String memoRows({required String userID, required String memoID}) => '/users/$userID/memos/$memoID/rows';
+  static String memoRows({required String userID, required String memoID}) => '/users/$userID/memos/$memoID/memoRows';
 }
 
 @Riverpod(keepAlive: true, dependencies: [])
