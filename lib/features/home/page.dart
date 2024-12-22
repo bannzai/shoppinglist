@@ -40,33 +40,28 @@ class HomePage extends HookConsumerWidget {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: null,
-        bottomNavigationBar: Container(
-          decoration: const BoxDecoration(
-            border: Border(top: BorderSide(width: 1)),
-          ),
-          child: Ink(
-            child: SafeArea(
-              child: TabBar(
-                controller: tabController,
-                labelColor: AppColors.primary,
-                labelStyle: const TextStyle(fontSize: 12),
-                indicatorColor: Colors.transparent,
-                unselectedLabelColor: TextColor.gray,
-                tabs: const <Tab>[
-                  Tab(
-                    text: 'メモ',
-                    icon: Icon(Icons.note_alt_outlined),
-                  ),
-                  Tab(
-                    text: 'ウィッシュリスト',
-                    icon: Icon(Icons.list_alt_outlined),
-                  ),
-                  Tab(
-                    text: '設定',
-                    icon: Icon(Icons.settings_outlined),
-                  ),
-                ],
-              ),
+        bottomNavigationBar: Ink(
+          child: SafeArea(
+            child: TabBar(
+              controller: tabController,
+              labelColor: AppColors.primary,
+              labelStyle: const TextStyle(fontSize: 12),
+              indicatorColor: Colors.transparent,
+              unselectedLabelColor: TextColor.gray,
+              tabs: const <Tab>[
+                Tab(
+                  text: 'メモ',
+                  icon: Icon(Icons.note_alt_outlined),
+                ),
+                Tab(
+                  text: 'ウィッシュリスト',
+                  icon: Icon(Icons.list_alt_outlined),
+                ),
+                Tab(
+                  text: '設定',
+                  icon: Icon(Icons.settings_outlined),
+                ),
+              ],
             ),
           ),
         ),
