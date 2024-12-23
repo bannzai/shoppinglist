@@ -6,11 +6,11 @@ part of 'memo.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$memosHash() => r'01948d83c6718db2aee22fed29b3d04303f4ed7d';
+String _$memosHash() => r'6aa73abb6f8ee9bcca2e81831d86a2f484d02639';
 
 /// See also [memos].
 @ProviderFor(memos)
-final memosProvider = AutoDisposeStreamProvider<Memo?>.internal(
+final memosProvider = AutoDisposeStreamProvider<List<Memo>>.internal(
   memos,
   name: r'memosProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$memosHash,
@@ -18,7 +18,7 @@ final memosProvider = AutoDisposeStreamProvider<Memo?>.internal(
   allTransitiveDependencies: <ProviderOrFamily>{userDatabaseProvider, ...?userDatabaseProvider.allTransitiveDependencies},
 );
 
-typedef MemosRef = AutoDisposeStreamProviderRef<Memo?>;
+typedef MemosRef = AutoDisposeStreamProviderRef<List<Memo>>;
 String _$shoppingListMemoHash() => r'e1a6b7b1a445f32ddf8bf4cf49eeab832c9f5f6a';
 
 /// See also [shoppingListMemo].

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
+import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/provider/memo.dart';
 import 'package:shoppinglist/style/button.dart';
@@ -14,13 +15,13 @@ class MemosPage extends HookConsumerWidget {
     final memos = ref.watch(memosProvider);
 
     return Retry(
-      retry: () => ref.invalidate(shoppingListMemoProvider),
+      retry: () => ref.invalidate(memosProvider),
       child: memos.when(
         data: (memos) {
           if (memos.isEmpty) {
             return const EmptyShoppingList();
           } else {
-            return _Body(shoppingListMemoRows: memos);
+            return _Body(memos: memos);
           }
         },
         error: (e, st) => RetryPage(exception: e),
@@ -31,9 +32,9 @@ class MemosPage extends HookConsumerWidget {
 }
 
 class _Body extends StatelessWidget {
-  final List<MemoRow> shoppingListMemoRows;
+  final List<Memo> memos;
 
-  const _Body({required this.shoppingListMemoRows});
+  const _Body({required this.memos});
 
   @override
   Widget build(BuildContext context) {
