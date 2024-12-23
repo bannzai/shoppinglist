@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/button/buttons.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/provider/memo.dart';
+import 'package:shoppinglist/style/button.dart';
 
 class ShoppingListPage extends HookConsumerWidget {
   const ShoppingListPage({super.key});
@@ -49,8 +51,29 @@ class EmptyShoppingList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Shopping list is empty'),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('買い物メモ'),
+      ),
+      body: Column(
+        children: [
+          const Spacer(),
+          Column(
+            children: [
+              const Center(
+                child: Text('買い物メモが空です'),
+              ),
+              const SizedBox(height: 10),
+              OutlinedButton(
+                style: outlinedButtonStyle,
+                child: const Text('最初の買い物メモを作成しましょう！'),
+                onPressed: () {},
+              ),
+            ],
+          ),
+          const Spacer(),
+        ],
+      ),
     );
   }
 }
