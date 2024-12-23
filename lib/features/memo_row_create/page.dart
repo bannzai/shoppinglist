@@ -9,7 +9,7 @@ class MemoRowCreatePage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: Text('メモを作成')),
+      appBar: AppBar(title: const Text('メモを作成')),
     );
   }
 }
