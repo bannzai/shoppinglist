@@ -17,7 +17,7 @@ class ShoppingListPage extends HookConsumerWidget {
       child: shoppingList.when(
         data: (shoppingList) {
           if (shoppingList == null) {
-            throw Exception('Shopping list not found');
+            return const EmptyShoppingList();
           } else {
             return _Body(shoppingList: shoppingList);
           }
@@ -40,6 +40,17 @@ class _Body extends StatelessWidget {
       appBar: AppBar(
         title: Text(shoppingList.name),
       ),
+    );
+  }
+}
+
+class EmptyShoppingList extends StatelessWidget {
+  const EmptyShoppingList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text('Shopping list is empty'),
     );
   }
 }
