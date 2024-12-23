@@ -37,6 +37,25 @@ class TextMemo extends HookConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          IconButton(
+            onPressed: () {
+              ref
+                  .read(userDatabaseProvider)
+                  .memoRowsReference(
+                    memoID: textMemoRow.memoID,
+                  )
+                  .doc(textMemoRow.id)
+                  .set(
+                    textMemoRow.copyWith(
+                      status: textMemoRow.status == MemoRowStatus.checked ? MemoRowStatus.unchecked : MemoRowStatus.checked,
+                    ),
+                    SetOptions(merge: true),
+                  );
+            },
+            icon: Icon(
+              textMemoRow.status == MemoRowStatus.checked ? Icons.check : Icons.check_box_outline_blank,
+            ),
+          ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

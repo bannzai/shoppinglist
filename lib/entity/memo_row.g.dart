@@ -10,6 +10,7 @@ _$TextMemoRowImpl _$$TextMemoRowImplFromJson(Map<String, dynamic> json) => _$Tex
       id: json['id'] as String?,
       memoID: json['memoID'] as String,
       message: json['message'] as String,
+      status: $enumDecodeNullable(_$MemoRowStatusEnumMap, json['status']) ?? MemoRowStatus.unchecked,
       reminderDateTime: const NullableTimestampConverter().fromJson(json['reminderDateTime'] as Timestamp?),
       createdDateTime: const ClientCreatedTimestamp().fromJson(json['createdDateTime'] as Timestamp?),
       updatedDateTime: const ClientUpdatedTimestamp().fromJson(json['updatedDateTime'] as Timestamp?),
@@ -22,6 +23,7 @@ Map<String, dynamic> _$$TextMemoRowImplToJson(_$TextMemoRowImpl instance) => <St
       'id': instance.id,
       'memoID': instance.memoID,
       'message': instance.message,
+      'status': _$MemoRowStatusEnumMap[instance.status]!,
       'reminderDateTime': const NullableTimestampConverter().toJson(instance.reminderDateTime),
       'createdDateTime': const ClientCreatedTimestamp().toJson(instance.createdDateTime),
       'updatedDateTime': const ClientUpdatedTimestamp().toJson(instance.updatedDateTime),
@@ -30,10 +32,16 @@ Map<String, dynamic> _$$TextMemoRowImplToJson(_$TextMemoRowImpl instance) => <St
       'type': instance.$type,
     };
 
+const _$MemoRowStatusEnumMap = {
+  MemoRowStatus.checked: 'checked',
+  MemoRowStatus.unchecked: 'unchecked',
+};
+
 _$LinkMemoRowImpl _$$LinkMemoRowImplFromJson(Map<String, dynamic> json) => _$LinkMemoRowImpl(
       id: json['id'] as String?,
       memoID: json['memoID'] as String,
       url: json['url'] as String,
+      status: $enumDecodeNullable(_$MemoRowStatusEnumMap, json['status']) ?? MemoRowStatus.unchecked,
       reminderDateTime: const NullableTimestampConverter().fromJson(json['reminderDateTime'] as Timestamp?),
       createdDateTime: const ClientCreatedTimestamp().fromJson(json['createdDateTime'] as Timestamp?),
       updatedDateTime: const ClientUpdatedTimestamp().fromJson(json['updatedDateTime'] as Timestamp?),
@@ -46,6 +54,7 @@ Map<String, dynamic> _$$LinkMemoRowImplToJson(_$LinkMemoRowImpl instance) => <St
       'id': instance.id,
       'memoID': instance.memoID,
       'url': instance.url,
+      'status': _$MemoRowStatusEnumMap[instance.status]!,
       'reminderDateTime': const NullableTimestampConverter().toJson(instance.reminderDateTime),
       'createdDateTime': const ClientCreatedTimestamp().toJson(instance.createdDateTime),
       'updatedDateTime': const ClientUpdatedTimestamp().toJson(instance.updatedDateTime),

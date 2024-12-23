@@ -22,6 +22,7 @@ sealed class MemoRow with _$MemoRow {
     String? id,
     required String memoID,
     required String message,
+    @Default(MemoRowStatus.unchecked) MemoRowStatus status,
     @NullableTimestampConverter() DateTime? reminderDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -35,6 +36,7 @@ sealed class MemoRow with _$MemoRow {
     String? id,
     required String memoID,
     required String url,
+    @Default(MemoRowStatus.unchecked) MemoRowStatus status,
     @NullableTimestampConverter() DateTime? reminderDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -43,4 +45,11 @@ sealed class MemoRow with _$MemoRow {
   }) = LinkMemoRow;
 
   factory MemoRow.fromJson(Map<String, dynamic> json) => _$MemoRowFromJson(json);
+}
+
+enum MemoRowStatus {
+  @JsonValue('checked')
+  checked,
+  @JsonValue('unchecked')
+  unchecked,
 }
