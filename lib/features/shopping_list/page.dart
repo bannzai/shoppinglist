@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/memo.dart';
+import 'package:shoppinglist/features/memo_rows/components/empty_text_memo.dart';
 import 'package:shoppinglist/features/memo_rows/page.dart';
 import 'package:shoppinglist/provider/memo.dart';
 import 'package:shoppinglist/provider/memo_row.dart';
@@ -45,7 +46,7 @@ class _Body extends HookConsumerWidget {
       child: memoRows.when(
         data: (memoRows) {
           if (memoRows.isEmpty) {
-            return EmptyMemoRows(memoID: memoID.value);
+            return EmptyTextMemoRows(memoID: memoID.value);
           } else {
             return MemoRowsPageBody(memoRows: memoRows);
           }
