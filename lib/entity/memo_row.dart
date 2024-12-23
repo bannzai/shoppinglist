@@ -7,8 +7,7 @@ part 'memo_row.g.dart';
 
 abstract class MemoRowFirestoreKeys {
   static const id = 'id';
-  static const chatPartnerID = 'chatPartnerID';
-  static const message = 'message';
+  static const type = 'type';
   static const createdDateTime = 'createdDateTime';
   static const updatedDateTime = 'updatedDateTime';
   static const serverCreatedDateTime = 'serverCreatedDateTime';

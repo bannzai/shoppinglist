@@ -6,7 +6,7 @@ part of 'memo_row.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$memoRowsHash() => r'c9eda0189e393d79c87b28caff0a5a27484b3ce1';
+String _$textMemoRowsHash() => r'6b33810169f498f03d89ddba733143d4880e80cb';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,27 +29,27 @@ class _SystemHash {
   }
 }
 
-/// See also [memoRows].
-@ProviderFor(memoRows)
-const memoRowsProvider = MemoRowsFamily();
+/// See also [textMemoRows].
+@ProviderFor(textMemoRows)
+const textMemoRowsProvider = TextMemoRowsFamily();
 
-/// See also [memoRows].
-class MemoRowsFamily extends Family<AsyncValue<List<MemoRow>>> {
-  /// See also [memoRows].
-  const MemoRowsFamily();
+/// See also [textMemoRows].
+class TextMemoRowsFamily extends Family<AsyncValue<List<MemoRow>>> {
+  /// See also [textMemoRows].
+  const TextMemoRowsFamily();
 
-  /// See also [memoRows].
-  MemoRowsProvider call({
+  /// See also [textMemoRows].
+  TextMemoRowsProvider call({
     required String memoID,
   }) {
-    return MemoRowsProvider(
+    return TextMemoRowsProvider(
       memoID: memoID,
     );
   }
 
   @override
-  MemoRowsProvider getProviderOverride(
-    covariant MemoRowsProvider provider,
+  TextMemoRowsProvider getProviderOverride(
+    covariant TextMemoRowsProvider provider,
   ) {
     return call(
       memoID: provider.memoID,
@@ -70,28 +70,28 @@ class MemoRowsFamily extends Family<AsyncValue<List<MemoRow>>> {
   Iterable<ProviderOrFamily>? get allTransitiveDependencies => _allTransitiveDependencies;
 
   @override
-  String? get name => r'memoRowsProvider';
+  String? get name => r'textMemoRowsProvider';
 }
 
-/// See also [memoRows].
-class MemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
-  /// See also [memoRows].
-  MemoRowsProvider({
+/// See also [textMemoRows].
+class TextMemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
+  /// See also [textMemoRows].
+  TextMemoRowsProvider({
     required String memoID,
   }) : this._internal(
-          (ref) => memoRows(
-            ref as MemoRowsRef,
+          (ref) => textMemoRows(
+            ref as TextMemoRowsRef,
             memoID: memoID,
           ),
-          from: memoRowsProvider,
-          name: r'memoRowsProvider',
-          debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$memoRowsHash,
-          dependencies: MemoRowsFamily._dependencies,
-          allTransitiveDependencies: MemoRowsFamily._allTransitiveDependencies,
+          from: textMemoRowsProvider,
+          name: r'textMemoRowsProvider',
+          debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$textMemoRowsHash,
+          dependencies: TextMemoRowsFamily._dependencies,
+          allTransitiveDependencies: TextMemoRowsFamily._allTransitiveDependencies,
           memoID: memoID,
         );
 
-  MemoRowsProvider._internal(
+  TextMemoRowsProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -105,12 +105,12 @@ class MemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
 
   @override
   Override overrideWith(
-    Stream<List<MemoRow>> Function(MemoRowsRef provider) create,
+    Stream<List<MemoRow>> Function(TextMemoRowsRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: MemoRowsProvider._internal(
-        (ref) => create(ref as MemoRowsRef),
+      override: TextMemoRowsProvider._internal(
+        (ref) => create(ref as TextMemoRowsRef),
         from: from,
         name: null,
         dependencies: null,
@@ -123,12 +123,12 @@ class MemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
 
   @override
   AutoDisposeStreamProviderElement<List<MemoRow>> createElement() {
-    return _MemoRowsProviderElement(this);
+    return _TextMemoRowsProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is MemoRowsProvider && other.memoID == memoID;
+    return other is TextMemoRowsProvider && other.memoID == memoID;
   }
 
   @override
@@ -140,16 +140,141 @@ class MemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
   }
 }
 
-mixin MemoRowsRef on AutoDisposeStreamProviderRef<List<MemoRow>> {
+mixin TextMemoRowsRef on AutoDisposeStreamProviderRef<List<MemoRow>> {
   /// The parameter `memoID` of this provider.
   String get memoID;
 }
 
-class _MemoRowsProviderElement extends AutoDisposeStreamProviderElement<List<MemoRow>> with MemoRowsRef {
-  _MemoRowsProviderElement(super.provider);
+class _TextMemoRowsProviderElement extends AutoDisposeStreamProviderElement<List<MemoRow>> with TextMemoRowsRef {
+  _TextMemoRowsProviderElement(super.provider);
 
   @override
-  String get memoID => (origin as MemoRowsProvider).memoID;
+  String get memoID => (origin as TextMemoRowsProvider).memoID;
+}
+
+String _$linkMemoRowsHash() => r'd826393f7e0eb89f47ecb3a0c6922073c606f829';
+
+/// See also [linkMemoRows].
+@ProviderFor(linkMemoRows)
+const linkMemoRowsProvider = LinkMemoRowsFamily();
+
+/// See also [linkMemoRows].
+class LinkMemoRowsFamily extends Family<AsyncValue<List<MemoRow>>> {
+  /// See also [linkMemoRows].
+  const LinkMemoRowsFamily();
+
+  /// See also [linkMemoRows].
+  LinkMemoRowsProvider call({
+    required String memoID,
+  }) {
+    return LinkMemoRowsProvider(
+      memoID: memoID,
+    );
+  }
+
+  @override
+  LinkMemoRowsProvider getProviderOverride(
+    covariant LinkMemoRowsProvider provider,
+  ) {
+    return call(
+      memoID: provider.memoID,
+    );
+  }
+
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[userDatabaseProvider];
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies = <ProviderOrFamily>{
+    userDatabaseProvider,
+    ...?userDatabaseProvider.allTransitiveDependencies
+  };
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies => _allTransitiveDependencies;
+
+  @override
+  String? get name => r'linkMemoRowsProvider';
+}
+
+/// See also [linkMemoRows].
+class LinkMemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
+  /// See also [linkMemoRows].
+  LinkMemoRowsProvider({
+    required String memoID,
+  }) : this._internal(
+          (ref) => linkMemoRows(
+            ref as LinkMemoRowsRef,
+            memoID: memoID,
+          ),
+          from: linkMemoRowsProvider,
+          name: r'linkMemoRowsProvider',
+          debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$linkMemoRowsHash,
+          dependencies: LinkMemoRowsFamily._dependencies,
+          allTransitiveDependencies: LinkMemoRowsFamily._allTransitiveDependencies,
+          memoID: memoID,
+        );
+
+  LinkMemoRowsProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.memoID,
+  }) : super.internal();
+
+  final String memoID;
+
+  @override
+  Override overrideWith(
+    Stream<List<MemoRow>> Function(LinkMemoRowsRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: LinkMemoRowsProvider._internal(
+        (ref) => create(ref as LinkMemoRowsRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        memoID: memoID,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<List<MemoRow>> createElement() {
+    return _LinkMemoRowsProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is LinkMemoRowsProvider && other.memoID == memoID;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, memoID.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin LinkMemoRowsRef on AutoDisposeStreamProviderRef<List<MemoRow>> {
+  /// The parameter `memoID` of this provider.
+  String get memoID;
+}
+
+class _LinkMemoRowsProviderElement extends AutoDisposeStreamProviderElement<List<MemoRow>> with LinkMemoRowsRef {
+  _LinkMemoRowsProviderElement(super.provider);
+
+  @override
+  String get memoID => (origin as LinkMemoRowsProvider).memoID;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
