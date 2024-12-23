@@ -4,6 +4,7 @@ import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/memo.dart';
 import 'package:shoppinglist/provider/memo_row.dart';
 import 'package:shoppinglist/style/button.dart';
@@ -47,11 +48,11 @@ class _Body extends StatelessWidget {
   }
 }
 
-class EmptyShoppingList extends StatelessWidget {
+class EmptyShoppingList extends HookConsumerWidget {
   const EmptyShoppingList({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('買い物メモ'),
@@ -68,7 +69,9 @@ class EmptyShoppingList extends StatelessWidget {
               OutlinedButton(
                 style: outlinedButtonStyle,
                 child: const Text('最初の買い物メモを作成しましょう！'),
-                onPressed: () {},
+                onPressed: () {
+                  ref.read(userDatabaseProvider).shoppingMemoRowsReference().add(MemoRow.text(message: message)
+                },
               ),
             ],
           ),
