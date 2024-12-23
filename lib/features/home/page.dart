@@ -50,12 +50,12 @@ class HomePage extends HookConsumerWidget {
               unselectedLabelColor: TextColor.gray,
               tabs: const <Tab>[
                 Tab(
-                  text: 'メモ',
-                  icon: Icon(Icons.note_alt_outlined),
+                  text: '買い物リスト',
+                  icon: Icon(Icons.shopping_cart_outlined),
                 ),
                 Tab(
-                  text: 'ウィッシュリスト',
-                  icon: Icon(Icons.list_alt_outlined),
+                  text: '買いたいものリスト',
+                  icon: Icon(Icons.favorite),
                 ),
                 Tab(
                   text: '設定',
