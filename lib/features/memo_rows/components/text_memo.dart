@@ -37,8 +37,9 @@ class TextMemo extends HookConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          IconButton(
-            onPressed: () {
+          Checkbox(
+            value: textMemoRow.status == MemoRowStatus.checked,
+            onChanged: (value) {
               ref
                   .read(userDatabaseProvider)
                   .memoRowsReference(
@@ -52,9 +53,6 @@ class TextMemo extends HookConsumerWidget {
                     SetOptions(merge: true),
                   );
             },
-            icon: Icon(
-              textMemoRow.status == MemoRowStatus.checked ? Icons.check : Icons.check_box_outline_blank,
-            ),
           ),
           Expanded(
             child: Column(
