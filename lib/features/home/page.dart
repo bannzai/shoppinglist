@@ -51,11 +51,11 @@ class HomePage extends HookConsumerWidget {
               tabs: const <Tab>[
                 Tab(
                   text: '買い物リスト',
-                  icon: Icon(Icons.shopping_cart_outlined),
+                  icon: Icon(Icons.list_alt_outlined),
                 ),
                 Tab(
                   text: 'EC商品メモ',
-                  icon: Icon(Icons.alarm_rounded),
+                  icon: Icon(Icons.shopping_cart_outlined),
                 ),
                 Tab(
                   text: '設定',
