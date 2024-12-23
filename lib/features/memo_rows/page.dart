@@ -4,6 +4,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
+import 'package:shoppinglist/features/memo_rows/components/link_memo.dart';
+import 'package:shoppinglist/features/memo_rows/components/text_memo.dart';
 import 'package:shoppinglist/provider/memo_rows.dart';
 
 class MemoRowsPage extends HookConsumerWidget {
@@ -37,9 +39,9 @@ class _Body extends StatelessWidget {
         final memoRow = memoRows[index];
         switch (memoRow) {
           case TextMemoRow textMemoRow:
-            return Text(textMemoRow.message);
+            return TextMemo(textMemoRow: textMemoRow);
           case LinkMemoRow linkMemoRow:
-            return Text(linkMemoRow.url);
+            return LinkMemo(linkMemoRow: linkMemoRow);
         }
       },
     );
