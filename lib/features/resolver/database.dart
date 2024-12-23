@@ -17,6 +17,7 @@ abstract class _CollectionPath {
   static const String users = '/users';
   static String memos({required String userID}) => '/users/$userID/memos';
   static String memoRows({required String userID, required String memoID}) => '/users/$userID/memos/$memoID/memoRows';
+  static String shoppingListMemo({required String userID}) => '/users/$userID/memos/shoppingList';
 }
 
 @Riverpod(keepAlive: true, dependencies: [])
@@ -45,6 +46,11 @@ class UserDatabase {
     required String memoID,
   }) =>
       FirebaseFirestore.instance.collection(_CollectionPath.memos(userID: userID)).doc(memoID).withConverter(
+            fromFirestore: _memoFromFirestore,
+            toFirestore: _memoToFirestore,
+          );
+  DocumentReference<Memo> shoppingMemoReference() =>
+      FirebaseFirestore.instance.collection(_CollectionPath.memos(userID: userID)).doc('shoppingList').withConverter(
             fromFirestore: _memoFromFirestore,
             toFirestore: _memoToFirestore,
           );
