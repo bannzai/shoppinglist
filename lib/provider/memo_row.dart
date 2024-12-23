@@ -9,9 +9,3 @@ Stream<List<MemoRow>> memoRows(MemoRowsRef ref, {required String memoID}) {
   final database = ref.watch(userDatabaseProvider);
   return database.memoRowsReference(memoID: memoID).snapshots().map((event) => event.docs.map((doc) => doc.data()).toList());
 }
-
-@Riverpod(dependencies: [userDatabase])
-Stream<List<MemoRow>> shoppingListMemoRows(ShoppingListMemoRowsRef ref) {
-  final database = ref.watch(userDatabaseProvider);
-  return database.shoppingMemoRowsReference().snapshots().map((event) => event.docs.map((doc) => doc.data()).toList());
-}

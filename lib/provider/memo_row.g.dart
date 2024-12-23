@@ -151,19 +151,5 @@ class _MemoRowsProviderElement extends AutoDisposeStreamProviderElement<List<Mem
   @override
   String get memoID => (origin as MemoRowsProvider).memoID;
 }
-
-String _$shoppingListMemoRowsHash() => r'7826b53de73581ca3b4d70eb97112e8e4c363397';
-
-/// See also [shoppingListMemoRows].
-@ProviderFor(shoppingListMemoRows)
-final shoppingListMemoRowsProvider = AutoDisposeStreamProvider<List<MemoRow>>.internal(
-  shoppingListMemoRows,
-  name: r'shoppingListMemoRowsProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$shoppingListMemoRowsHash,
-  dependencies: <ProviderOrFamily>[userDatabaseProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{userDatabaseProvider, ...?userDatabaseProvider.allTransitiveDependencies},
-);
-
-typedef ShoppingListMemoRowsRef = AutoDisposeStreamProviderRef<List<MemoRow>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
