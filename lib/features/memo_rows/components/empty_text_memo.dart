@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
-import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/style/button.dart';
 
 class EmptyTextMemoRows extends HookConsumerWidget {
