@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
+import 'package:shoppinglist/features/memo_rows/page.dart';
 import 'package:shoppinglist/provider/memo.dart';
+import 'package:shoppinglist/provider/memo_row.dart';
 import 'package:shoppinglist/style/button.dart';
 
 class MemosPage extends HookConsumerWidget {
@@ -31,16 +34,26 @@ class MemosPage extends HookConsumerWidget {
   }
 }
 
-class _Body extends StatelessWidget {
+class _Body extends HookConsumerWidget {
   final List<Memo> memos;
 
   const _Body({required this.memos});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('買い物メモ'),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final memoID = useState(memos.first.id!);
+    final retry = Retry.of(context).retry;
+    final memoRows = ref.watch(memoRowsProvider(memoID: memoID.value));
+
+    return Retry(
+      retry: () {
+        retry();
+        ref.invalidate(memosProvider);
+      },
+      child: memoRows.when(
+        data: (memoRows) => MemoRowsPageBody(memoRows: memoRows),
+        error: (e, st) => RetryPage(exception: e),
+        loading: () => const Loading(),
       ),
     );
   }
