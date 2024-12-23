@@ -59,6 +59,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   
   async_value_group: ^1.0.1
+  intl: any
 
 dev_dependencies:
   flutter_test:
