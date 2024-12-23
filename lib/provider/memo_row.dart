@@ -2,7 +2,7 @@ import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'memo_rows.g.dart';
+part 'memo_row.g.dart';
 
 @Riverpod(dependencies: [userDatabase])
 Stream<List<MemoRow>> memoRows(MemoRowsRef ref, {required String memoID}) {
