@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/components/button/buttons.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/memo.dart';
@@ -19,7 +18,7 @@ class ShoppingListPage extends HookConsumerWidget {
       child: shoppingList.when(
         data: (shoppingList) {
           if (shoppingList == null) {
-            return const EmptyShoppingList();
+            throw Exception('shoppingList is null. This is a bug. See AppEntityPrepareResolver');
           } else {
             return _Body(shoppingList: shoppingList);
           }
