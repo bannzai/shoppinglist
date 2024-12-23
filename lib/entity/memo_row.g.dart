@@ -8,6 +8,7 @@ part of 'memo_row.dart';
 
 _$TextMemoRowImpl _$$TextMemoRowImplFromJson(Map<String, dynamic> json) => _$TextMemoRowImpl(
       id: json['id'] as String?,
+      memoID: json['memoID'] as String,
       message: json['message'] as String,
       reminderDateTime: const NullableTimestampConverter().fromJson(json['reminderDateTime'] as Timestamp?),
       createdDateTime: const ClientCreatedTimestamp().fromJson(json['createdDateTime'] as Timestamp?),
@@ -19,6 +20,7 @@ _$TextMemoRowImpl _$$TextMemoRowImplFromJson(Map<String, dynamic> json) => _$Tex
 
 Map<String, dynamic> _$$TextMemoRowImplToJson(_$TextMemoRowImpl instance) => <String, dynamic>{
       'id': instance.id,
+      'memoID': instance.memoID,
       'message': instance.message,
       'reminderDateTime': const NullableTimestampConverter().toJson(instance.reminderDateTime),
       'createdDateTime': const ClientCreatedTimestamp().toJson(instance.createdDateTime),
@@ -30,6 +32,7 @@ Map<String, dynamic> _$$TextMemoRowImplToJson(_$TextMemoRowImpl instance) => <St
 
 _$LinkMemoRowImpl _$$LinkMemoRowImplFromJson(Map<String, dynamic> json) => _$LinkMemoRowImpl(
       id: json['id'] as String?,
+      memoID: json['memoID'] as String,
       url: json['url'] as String,
       reminderDateTime: const NullableTimestampConverter().fromJson(json['reminderDateTime'] as Timestamp?),
       createdDateTime: const ClientCreatedTimestamp().fromJson(json['createdDateTime'] as Timestamp?),
@@ -41,6 +44,7 @@ _$LinkMemoRowImpl _$$LinkMemoRowImplFromJson(Map<String, dynamic> json) => _$Lin
 
 Map<String, dynamic> _$$LinkMemoRowImplToJson(_$LinkMemoRowImpl instance) => <String, dynamic>{
       'id': instance.id,
+      'memoID': instance.memoID,
       'url': instance.url,
       'reminderDateTime': const NullableTimestampConverter().toJson(instance.reminderDateTime),
       'createdDateTime': const ClientCreatedTimestamp().toJson(instance.createdDateTime),

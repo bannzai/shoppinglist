@@ -29,6 +29,7 @@ MemoRow _$MemoRowFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$MemoRow {
   String? get id => throw _privateConstructorUsedError;
+  String get memoID => throw _privateConstructorUsedError;
   @NullableTimestampConverter()
   DateTime? get reminderDateTime => throw _privateConstructorUsedError;
   @ClientCreatedTimestamp()
@@ -43,6 +44,7 @@ mixin _$MemoRow {
   TResult when<TResult extends Object?>({
     required TResult Function(
             String? id,
+            String memoID,
             String message,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -52,6 +54,7 @@ mixin _$MemoRow {
         text,
     required TResult Function(
             String? id,
+            String memoID,
             String url,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -65,6 +68,7 @@ mixin _$MemoRow {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(
             String? id,
+            String memoID,
             String message,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -74,6 +78,7 @@ mixin _$MemoRow {
         text,
     TResult? Function(
             String? id,
+            String memoID,
             String url,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -87,6 +92,7 @@ mixin _$MemoRow {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(
             String? id,
+            String memoID,
             String message,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -96,6 +102,7 @@ mixin _$MemoRow {
         text,
     TResult Function(
             String? id,
+            String memoID,
             String url,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -141,6 +148,7 @@ abstract class $MemoRowCopyWith<$Res> {
   @useResult
   $Res call(
       {String? id,
+      String memoID,
       @NullableTimestampConverter() DateTime? reminderDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -163,6 +171,7 @@ class _$MemoRowCopyWithImpl<$Res, $Val extends MemoRow> implements $MemoRowCopyW
   @override
   $Res call({
     Object? id = freezed,
+    Object? memoID = null,
     Object? reminderDateTime = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
@@ -174,6 +183,10 @@ class _$MemoRowCopyWithImpl<$Res, $Val extends MemoRow> implements $MemoRowCopyW
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
+      memoID: null == memoID
+          ? _value.memoID
+          : memoID // ignore: cast_nullable_to_non_nullable
+              as String,
       reminderDateTime: freezed == reminderDateTime
           ? _value.reminderDateTime
           : reminderDateTime // ignore: cast_nullable_to_non_nullable
@@ -205,6 +218,7 @@ abstract class _$$TextMemoRowImplCopyWith<$Res> implements $MemoRowCopyWith<$Res
   @useResult
   $Res call(
       {String? id,
+      String memoID,
       String message,
       @NullableTimestampConverter() DateTime? reminderDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -223,6 +237,7 @@ class __$$TextMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, 
   @override
   $Res call({
     Object? id = freezed,
+    Object? memoID = null,
     Object? message = null,
     Object? reminderDateTime = freezed,
     Object? createdDateTime = freezed,
@@ -235,6 +250,10 @@ class __$$TextMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, 
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
+      memoID: null == memoID
+          ? _value.memoID
+          : memoID // ignore: cast_nullable_to_non_nullable
+              as String,
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -269,6 +288,7 @@ class __$$TextMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, 
 class _$TextMemoRowImpl implements TextMemoRow {
   const _$TextMemoRowImpl(
       {this.id,
+      required this.memoID,
       required this.message,
       @NullableTimestampConverter() this.reminderDateTime,
       @ClientCreatedTimestamp() this.createdDateTime,
@@ -282,6 +302,8 @@ class _$TextMemoRowImpl implements TextMemoRow {
 
   @override
   final String? id;
+  @override
+  final String memoID;
   @override
   final String message;
   @override
@@ -305,7 +327,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
 
   @override
   String toString() {
-    return 'MemoRow.text(id: $id, message: $message, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'MemoRow.text(id: $id, memoID: $memoID, message: $message, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 
   @override
@@ -314,6 +336,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
         (other.runtimeType == runtimeType &&
             other is _$TextMemoRowImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.memoID, memoID) || other.memoID == memoID) &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.reminderDateTime, reminderDateTime) || other.reminderDateTime == reminderDateTime) &&
             (identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime) &&
@@ -325,7 +348,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, message, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+      Object.hash(runtimeType, id, memoID, message, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
 
   /// Create a copy of MemoRow
   /// with the given fields replaced by the non-null parameter values.
@@ -339,6 +362,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
   TResult when<TResult extends Object?>({
     required TResult Function(
             String? id,
+            String memoID,
             String message,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -348,6 +372,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
         text,
     required TResult Function(
             String? id,
+            String memoID,
             String url,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -356,7 +381,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)
         link,
   }) {
-    return text(id, message, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+    return text(id, memoID, message, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
   }
 
   @override
@@ -364,6 +389,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(
             String? id,
+            String memoID,
             String message,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -373,6 +399,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
         text,
     TResult? Function(
             String? id,
+            String memoID,
             String url,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -381,7 +408,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)?
         link,
   }) {
-    return text?.call(id, message, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+    return text?.call(id, memoID, message, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
   }
 
   @override
@@ -389,6 +416,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(
             String? id,
+            String memoID,
             String message,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -398,6 +426,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
         text,
     TResult Function(
             String? id,
+            String memoID,
             String url,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -408,7 +437,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
     required TResult orElse(),
   }) {
     if (text != null) {
-      return text(id, message, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+      return text(id, memoID, message, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
     }
     return orElse();
   }
@@ -455,6 +484,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
 abstract class TextMemoRow implements MemoRow {
   const factory TextMemoRow(
       {final String? id,
+      required final String memoID,
       required final String message,
       @NullableTimestampConverter() final DateTime? reminderDateTime,
       @ClientCreatedTimestamp() final DateTime? createdDateTime,
@@ -466,6 +496,8 @@ abstract class TextMemoRow implements MemoRow {
 
   @override
   String? get id;
+  @override
+  String get memoID;
   String get message;
   @override
   @NullableTimestampConverter()
@@ -497,6 +529,7 @@ abstract class _$$LinkMemoRowImplCopyWith<$Res> implements $MemoRowCopyWith<$Res
   @useResult
   $Res call(
       {String? id,
+      String memoID,
       String url,
       @NullableTimestampConverter() DateTime? reminderDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -515,6 +548,7 @@ class __$$LinkMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, 
   @override
   $Res call({
     Object? id = freezed,
+    Object? memoID = null,
     Object? url = null,
     Object? reminderDateTime = freezed,
     Object? createdDateTime = freezed,
@@ -527,6 +561,10 @@ class __$$LinkMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, 
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
+      memoID: null == memoID
+          ? _value.memoID
+          : memoID // ignore: cast_nullable_to_non_nullable
+              as String,
       url: null == url
           ? _value.url
           : url // ignore: cast_nullable_to_non_nullable
@@ -561,6 +599,7 @@ class __$$LinkMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, 
 class _$LinkMemoRowImpl implements LinkMemoRow {
   const _$LinkMemoRowImpl(
       {this.id,
+      required this.memoID,
       required this.url,
       @NullableTimestampConverter() this.reminderDateTime,
       @ClientCreatedTimestamp() this.createdDateTime,
@@ -574,6 +613,8 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
 
   @override
   final String? id;
+  @override
+  final String memoID;
   @override
   final String url;
   @override
@@ -597,7 +638,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
 
   @override
   String toString() {
-    return 'MemoRow.link(id: $id, url: $url, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'MemoRow.link(id: $id, memoID: $memoID, url: $url, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 
   @override
@@ -606,6 +647,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
         (other.runtimeType == runtimeType &&
             other is _$LinkMemoRowImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.memoID, memoID) || other.memoID == memoID) &&
             (identical(other.url, url) || other.url == url) &&
             (identical(other.reminderDateTime, reminderDateTime) || other.reminderDateTime == reminderDateTime) &&
             (identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime) &&
@@ -617,7 +659,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, url, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+      Object.hash(runtimeType, id, memoID, url, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
 
   /// Create a copy of MemoRow
   /// with the given fields replaced by the non-null parameter values.
@@ -631,6 +673,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
   TResult when<TResult extends Object?>({
     required TResult Function(
             String? id,
+            String memoID,
             String message,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -640,6 +683,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
         text,
     required TResult Function(
             String? id,
+            String memoID,
             String url,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -648,7 +692,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)
         link,
   }) {
-    return link(id, url, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+    return link(id, memoID, url, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
   }
 
   @override
@@ -656,6 +700,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(
             String? id,
+            String memoID,
             String message,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -665,6 +710,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
         text,
     TResult? Function(
             String? id,
+            String memoID,
             String url,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -673,7 +719,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)?
         link,
   }) {
-    return link?.call(id, url, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+    return link?.call(id, memoID, url, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
   }
 
   @override
@@ -681,6 +727,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(
             String? id,
+            String memoID,
             String message,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -690,6 +737,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
         text,
     TResult Function(
             String? id,
+            String memoID,
             String url,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -700,7 +748,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
     required TResult orElse(),
   }) {
     if (link != null) {
-      return link(id, url, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+      return link(id, memoID, url, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
     }
     return orElse();
   }
@@ -747,6 +795,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
 abstract class LinkMemoRow implements MemoRow {
   const factory LinkMemoRow(
       {final String? id,
+      required final String memoID,
       required final String url,
       @NullableTimestampConverter() final DateTime? reminderDateTime,
       @ClientCreatedTimestamp() final DateTime? createdDateTime,
@@ -758,6 +807,8 @@ abstract class LinkMemoRow implements MemoRow {
 
   @override
   String? get id;
+  @override
+  String get memoID;
   String get url;
   @override
   @NullableTimestampConverter()

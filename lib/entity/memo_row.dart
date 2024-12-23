@@ -20,6 +20,7 @@ sealed class MemoRow with _$MemoRow {
   @JsonSerializable(explicitToJson: true)
   const factory MemoRow.text({
     String? id,
+    required String memoID,
     required String message,
     @NullableTimestampConverter() DateTime? reminderDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -32,6 +33,7 @@ sealed class MemoRow with _$MemoRow {
   @JsonSerializable(explicitToJson: true)
   const factory MemoRow.link({
     String? id,
+    required String memoID,
     required String url,
     @NullableTimestampConverter() DateTime? reminderDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
