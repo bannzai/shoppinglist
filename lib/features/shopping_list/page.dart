@@ -47,7 +47,7 @@ class _Body extends HookConsumerWidget {
     return Retry(
       retry: () {
         retry();
-        ref.invalidate(memosProvider);
+        ref.invalidate(textMemoRowsProvider(memoID: memoID.value));
       },
       child: memoRowsAsync.when(
         data: (data) {
