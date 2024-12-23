@@ -15,8 +15,9 @@ abstract class MemoRowFirestoreKeys {
   static const serverUpdatedDateTime = 'serverUpdatedDateTime';
 }
 
-@freezed
+@Freezed(unionKey: 'type')
 sealed class MemoRow with _$MemoRow {
+  @FreezedUnionValue('text')
   @JsonSerializable(explicitToJson: true)
   const factory MemoRow.text({
     String? id,
@@ -28,6 +29,7 @@ sealed class MemoRow with _$MemoRow {
     @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
   }) = TextMemoRow;
 
+  @FreezedUnionValue('link')
   @JsonSerializable(explicitToJson: true)
   const factory MemoRow.link({
     String? id,

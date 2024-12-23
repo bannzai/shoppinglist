@@ -14,7 +14,7 @@ _$TextMemoRowImpl _$$TextMemoRowImplFromJson(Map<String, dynamic> json) => _$Tex
       updatedDateTime: const ClientUpdatedTimestamp().fromJson(json['updatedDateTime'] as Timestamp?),
       serverCreatedDateTime: const ServerCreatedTimestamp().fromJson(json['serverCreatedDateTime']),
       serverUpdatedDateTime: const ServerUpdatedTimestamp().fromJson(json['serverUpdatedDateTime']),
-      $type: json['runtimeType'] as String?,
+      $type: json['type'] as String?,
     );
 
 Map<String, dynamic> _$$TextMemoRowImplToJson(_$TextMemoRowImpl instance) => <String, dynamic>{
@@ -25,7 +25,7 @@ Map<String, dynamic> _$$TextMemoRowImplToJson(_$TextMemoRowImpl instance) => <St
       'updatedDateTime': const ClientUpdatedTimestamp().toJson(instance.updatedDateTime),
       'serverCreatedDateTime': const ServerCreatedTimestamp().toJson(instance.serverCreatedDateTime),
       'serverUpdatedDateTime': const ServerUpdatedTimestamp().toJson(instance.serverUpdatedDateTime),
-      'runtimeType': instance.$type,
+      'type': instance.$type,
     };
 
 _$LinkMemoRowImpl _$$LinkMemoRowImplFromJson(Map<String, dynamic> json) => _$LinkMemoRowImpl(
@@ -36,7 +36,7 @@ _$LinkMemoRowImpl _$$LinkMemoRowImplFromJson(Map<String, dynamic> json) => _$Lin
       updatedDateTime: const ClientUpdatedTimestamp().fromJson(json['updatedDateTime'] as Timestamp?),
       serverCreatedDateTime: const ServerCreatedTimestamp().fromJson(json['serverCreatedDateTime']),
       serverUpdatedDateTime: const ServerUpdatedTimestamp().fromJson(json['serverUpdatedDateTime']),
-      $type: json['runtimeType'] as String?,
+      $type: json['type'] as String?,
     );
 
 Map<String, dynamic> _$$LinkMemoRowImplToJson(_$LinkMemoRowImpl instance) => <String, dynamic>{
@@ -47,5 +47,5 @@ Map<String, dynamic> _$$LinkMemoRowImplToJson(_$LinkMemoRowImpl instance) => <St
       'updatedDateTime': const ClientUpdatedTimestamp().toJson(instance.updatedDateTime),
       'serverCreatedDateTime': const ServerCreatedTimestamp().toJson(instance.serverCreatedDateTime),
       'serverUpdatedDateTime': const ServerUpdatedTimestamp().toJson(instance.serverUpdatedDateTime),
-      'runtimeType': instance.$type,
+      'type': instance.$type,
     };

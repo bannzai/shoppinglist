@@ -15,14 +15,14 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 MemoRow _$MemoRowFromJson(Map<String, dynamic> json) {
-  switch (json['runtimeType']) {
+  switch (json['type']) {
     case 'text':
       return TextMemoRow.fromJson(json);
     case 'link':
       return LinkMemoRow.fromJson(json);
 
     default:
-      throw CheckedFromJsonException(json, 'runtimeType', 'MemoRow', 'Invalid union type "${json['runtimeType']}"!');
+      throw CheckedFromJsonException(json, 'type', 'MemoRow', 'Invalid union type "${json['type']}"!');
   }
 }
 
@@ -300,7 +300,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
   @ServerUpdatedTimestamp()
   final DateTime? serverUpdatedDateTime;
 
-  @JsonKey(name: 'runtimeType')
+  @JsonKey(name: 'type')
   final String $type;
 
   @override
@@ -592,7 +592,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
   @ServerUpdatedTimestamp()
   final DateTime? serverUpdatedDateTime;
 
-  @JsonKey(name: 'runtimeType')
+  @JsonKey(name: 'type')
   final String $type;
 
   @override
