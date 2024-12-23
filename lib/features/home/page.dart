@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/features/memos/page.dart';
+import 'package:shoppinglist/features/shopping_list/page.dart';
 import 'package:shoppinglist/features/settings/page.dart';
 import 'package:shoppinglist/features/wishlist/page.dart';
 import 'package:shoppinglist/style/color.dart';
@@ -69,7 +69,7 @@ class HomePage extends HookConsumerWidget {
           physics: const NeverScrollableScrollPhysics(),
           controller: tabController,
           children: const [
-            MemosPage(),
+            ShoppingListPage(),
             WishlistPage(),
             SettingPage(),
           ],

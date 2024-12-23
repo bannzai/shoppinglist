@@ -8,8 +8,8 @@ import 'package:shoppinglist/features/memo_rows/page.dart';
 import 'package:shoppinglist/provider/memo.dart';
 import 'package:shoppinglist/provider/memo_row.dart';
 
-class MemosPage extends HookConsumerWidget {
-  const MemosPage({super.key});
+class ShoppingListPage extends HookConsumerWidget {
+  const ShoppingListPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -45,7 +45,7 @@ class _Body extends HookConsumerWidget {
       child: memoRows.when(
         data: (memoRows) {
           if (memoRows.isEmpty) {
-            return const EmptyMemoRows();
+            return EmptyMemoRows(memoID: memoID.value);
           } else {
             return MemoRowsPageBody(memoRows: memoRows);
           }
