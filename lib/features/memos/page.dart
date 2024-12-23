@@ -2,28 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
-import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
-import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/memo.dart';
-import 'package:shoppinglist/provider/memo_row.dart';
 import 'package:shoppinglist/style/button.dart';
 
-class ShoppingListPage extends HookConsumerWidget {
-  const ShoppingListPage({super.key});
+class MemosPage extends HookConsumerWidget {
+  const MemosPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shoppingListMemoRows = ref.watch(shoppingListMemoRowsProvider);
+    final memos = ref.watch(memosProvider);
 
     return Retry(
       retry: () => ref.invalidate(shoppingListMemoProvider),
-      child: shoppingListMemoRows.when(
-        data: (shoppingListMemoRows) {
-          if (shoppingListMemoRows.isEmpty) {
+      child: memos.when(
+        data: (memos) {
+          if (memos.isEmpty) {
             return const EmptyShoppingList();
           } else {
-            return _Body(shoppingListMemoRows: shoppingListMemoRows);
+            return _Body(shoppingListMemoRows: memos);
           }
         },
         error: (e, st) => RetryPage(exception: e),
@@ -70,7 +67,7 @@ class EmptyShoppingList extends HookConsumerWidget {
                 style: outlinedButtonStyle,
                 child: const Text('最初の買い物メモを作成しましょう！'),
                 onPressed: () {
-                  ref.read(userDatabaseProvider).shoppingMemoRowsReference().add(MemoRow.text(message: message)
+                  // ref.read(userDatabaseProvider).shoppingMemoRowsReference().add(MemoRow.text(message: message)
                 },
               ),
             ],
