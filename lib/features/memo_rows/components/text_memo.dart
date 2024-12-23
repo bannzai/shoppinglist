@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/memo_row.dart';
 import 'package:shoppinglist/style/color.dart';
 
 class TextMemo extends HookConsumerWidget {
@@ -66,6 +69,18 @@ class TextMemo extends HookConsumerWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
+                    onSubmitted: (String v) {
+                      ref
+                          .read(userDatabaseProvider)
+                          .memoRowsReference(
+                            memoID: textMemoRow.memoID,
+                          )
+                          .doc(textMemoRow.id)
+                          .set(
+                            textMemoRow.copyWith(message: v),
+                            SetOptions(merge: true),
+                          );
+                    },
                   ),
                 ),
                 if (createdDateTime != null) ...[

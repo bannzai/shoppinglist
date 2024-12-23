@@ -24,7 +24,7 @@ class EmptyTextMemoRows extends HookConsumerWidget {
                 style: outlinedButtonStyle,
                 child: const Text('最初の買い物メモを作成しましょう！'),
                 onPressed: () {
-                  memoRows.value = [...memoRows.value, MemoRow.text(message: '', createdDateTime: DateTime.now())];
+                  memoRows.value = [...memoRows.value, MemoRow.text(memoID: memoID, message: '', createdDateTime: DateTime.now())];
                   // ref.read(userDatabaseProvider).memoRowsReference(memoID: memoID).add(const MemoRow.text(message: ''));
                 },
               ),
