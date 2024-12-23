@@ -31,6 +31,7 @@ class TextMemo extends HookConsumerWidget {
       return null;
     }, []);
 
+    // TODO: Replace to use CheckboxListTile
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
