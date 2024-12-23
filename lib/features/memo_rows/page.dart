@@ -6,7 +6,7 @@ import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/memo_rows/components/link_memo.dart';
 import 'package:shoppinglist/features/memo_rows/components/text_memo.dart';
-import 'package:shoppinglist/provider/memo_rows.dart';
+import 'package:shoppinglist/provider/memo_row.dart';
 
 class MemoRowsPage extends HookConsumerWidget {
   final String memoID;
