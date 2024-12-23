@@ -10,6 +10,7 @@ import 'package:shoppinglist/provider/memo_row.dart';
 
 class MemoRowsPage extends HookConsumerWidget {
   final String memoID;
+
   const MemoRowsPage({super.key, required this.memoID});
 
   @override
@@ -19,7 +20,7 @@ class MemoRowsPage extends HookConsumerWidget {
     return Retry(
       retry: () => ref.invalidate(memoRowsProvider(memoID: memoID)),
       child: memoRows.when(
-        data: (memoRows) => _Body(memoRows: memoRows),
+        data: (memoRows) => MemoRowsPageBody(memoRows: memoRows),
         error: (e, st) => RetryPage(exception: e),
         loading: () => const Loading(),
       ),
@@ -27,9 +28,9 @@ class MemoRowsPage extends HookConsumerWidget {
   }
 }
 
-class _Body extends StatelessWidget {
+class MemoRowsPageBody extends StatelessWidget {
   final List<MemoRow> memoRows;
-  const _Body({required this.memoRows});
+  const MemoRowsPageBody({super.key, required this.memoRows});
 
   @override
   Widget build(BuildContext context) {
