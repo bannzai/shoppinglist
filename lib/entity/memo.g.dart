@@ -7,7 +7,7 @@ part of 'memo.dart';
 // **************************************************************************
 
 _$MemoImpl _$$MemoImplFromJson(Map<String, dynamic> json) => _$MemoImpl(
-      id: json['id'] as String?,
+      id: json['id'] as String,
       name: json['name'] as String? ?? '',
       status: $enumDecodeNullable(_$MemoStatusEnumMap, json['status']) ?? MemoStatus.active,
       createdDateTime: const ClientCreatedTimestamp().fromJson(json['createdDateTime'] as Timestamp?),

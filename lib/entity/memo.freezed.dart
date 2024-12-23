@@ -20,7 +20,7 @@ Memo _$MemoFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Memo {
-  String? get id => throw _privateConstructorUsedError;
+  String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   MemoStatus get status => throw _privateConstructorUsedError;
   @ClientCreatedTimestamp()
@@ -46,7 +46,7 @@ abstract class $MemoCopyWith<$Res> {
   factory $MemoCopyWith(Memo value, $Res Function(Memo) then) = _$MemoCopyWithImpl<$Res, Memo>;
   @useResult
   $Res call(
-      {String? id,
+      {String id,
       String name,
       MemoStatus status,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -69,7 +69,7 @@ class _$MemoCopyWithImpl<$Res, $Val extends Memo> implements $MemoCopyWith<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = freezed,
+    Object? id = null,
     Object? name = null,
     Object? status = null,
     Object? createdDateTime = freezed,
@@ -78,10 +78,10 @@ class _$MemoCopyWithImpl<$Res, $Val extends Memo> implements $MemoCopyWith<$Res>
     Object? serverUpdatedDateTime = freezed,
   }) {
     return _then(_value.copyWith(
-      id: freezed == id
+      id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -116,7 +116,7 @@ abstract class _$$MemoImplCopyWith<$Res> implements $MemoCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {String? id,
+      {String id,
       String name,
       MemoStatus status,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -134,7 +134,7 @@ class __$$MemoImplCopyWithImpl<$Res> extends _$MemoCopyWithImpl<$Res, _$MemoImpl
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = freezed,
+    Object? id = null,
     Object? name = null,
     Object? status = null,
     Object? createdDateTime = freezed,
@@ -143,10 +143,10 @@ class __$$MemoImplCopyWithImpl<$Res> extends _$MemoCopyWithImpl<$Res, _$MemoImpl
     Object? serverUpdatedDateTime = freezed,
   }) {
     return _then(_$MemoImpl(
-      id: freezed == id
+      id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -180,7 +180,7 @@ class __$$MemoImplCopyWithImpl<$Res> extends _$MemoCopyWithImpl<$Res, _$MemoImpl
 @JsonSerializable(explicitToJson: true)
 class _$MemoImpl extends _Memo {
   const _$MemoImpl(
-      {this.id,
+      {required this.id,
       this.name = '',
       this.status = MemoStatus.active,
       @ClientCreatedTimestamp() this.createdDateTime,
@@ -192,7 +192,7 @@ class _$MemoImpl extends _Memo {
   factory _$MemoImpl.fromJson(Map<String, dynamic> json) => _$$MemoImplFromJson(json);
 
   @override
-  final String? id;
+  final String id;
   @override
   @JsonKey()
   final String name;
@@ -252,7 +252,7 @@ class _$MemoImpl extends _Memo {
 
 abstract class _Memo extends Memo {
   const factory _Memo(
-      {final String? id,
+      {required final String id,
       final String name,
       final MemoStatus status,
       @ClientCreatedTimestamp() final DateTime? createdDateTime,
@@ -264,7 +264,7 @@ abstract class _Memo extends Memo {
   factory _Memo.fromJson(Map<String, dynamic> json) = _$MemoImpl.fromJson;
 
   @override
-  String? get id;
+  String get id;
   @override
   String get name;
   @override
