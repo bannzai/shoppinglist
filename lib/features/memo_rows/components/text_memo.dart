@@ -36,23 +36,27 @@ class TextMemo extends HookConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Checkbox(
-            value: textMemoRow.status == MemoRowStatus.checked,
-            onChanged: (value) {
-              ref
-                  .read(userDatabaseProvider)
-                  .memoRowsReference(
-                    memoID: textMemoRow.memoID,
-                  )
-                  .doc(textMemoRow.id)
-                  .set(
-                    textMemoRow.copyWith(
-                      status: textMemoRow.status == MemoRowStatus.checked ? MemoRowStatus.unchecked : MemoRowStatus.checked,
-                    ),
-                    SetOptions(merge: true),
-                  );
-            },
+          Transform.scale(
+            scale: 1.5,
+            child: Checkbox(
+              value: textMemoRow.status == MemoRowStatus.checked,
+              onChanged: (value) {
+                ref
+                    .read(userDatabaseProvider)
+                    .memoRowsReference(
+                      memoID: textMemoRow.memoID,
+                    )
+                    .doc(textMemoRow.id)
+                    .set(
+                      textMemoRow.copyWith(
+                        status: textMemoRow.status == MemoRowStatus.checked ? MemoRowStatus.unchecked : MemoRowStatus.checked,
+                      ),
+                      SetOptions(merge: true),
+                    );
+              },
+            ),
           ),
           Expanded(
             child: Column(
