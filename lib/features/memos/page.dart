@@ -19,7 +19,7 @@ class MemosPage extends HookConsumerWidget {
       child: memos.when(
         data: (memos) {
           if (memos.isEmpty) {
-            return const EmptyShoppingList();
+            return const EmptyMemos();
           } else {
             return _Body(memos: memos);
           }
@@ -46,8 +46,8 @@ class _Body extends StatelessWidget {
   }
 }
 
-class EmptyShoppingList extends HookConsumerWidget {
-  const EmptyShoppingList({super.key});
+class EmptyMemos extends HookConsumerWidget {
+  const EmptyMemos({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
