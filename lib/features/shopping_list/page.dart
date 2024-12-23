@@ -3,7 +3,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/memo.dart';
+import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/provider/memo.dart';
+import 'package:shoppinglist/provider/memo_row.dart';
 import 'package:shoppinglist/style/button.dart';
 
 class ShoppingListPage extends HookConsumerWidget {
@@ -11,16 +13,16 @@ class ShoppingListPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shoppingList = ref.watch(shoppingListMemoProvider);
+    final shoppingListMemoRows = ref.watch(shoppingListMemoRowsProvider);
 
     return Retry(
       retry: () => ref.invalidate(shoppingListMemoProvider),
-      child: shoppingList.when(
-        data: (shoppingList) {
-          if (shoppingList == null) {
-            throw Exception('shoppingList is null. This is a bug. See AppEntityPrepareResolver');
+      child: shoppingListMemoRows.when(
+        data: (shoppingListMemoRows) {
+          if (shoppingListMemoRows.isEmpty) {
+            return const EmptyShoppingList();
           } else {
-            return _Body(shoppingList: shoppingList);
+            return _Body(shoppingListMemoRows: shoppingListMemoRows);
           }
         },
         error: (e, st) => RetryPage(exception: e),
@@ -31,15 +33,15 @@ class ShoppingListPage extends HookConsumerWidget {
 }
 
 class _Body extends StatelessWidget {
-  final Memo shoppingList;
+  final List<MemoRow> shoppingListMemoRows;
 
-  const _Body({required this.shoppingList});
+  const _Body({required this.shoppingListMemoRows});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(shoppingList.name),
+        title: const Text('買い物メモ'),
       ),
     );
   }
