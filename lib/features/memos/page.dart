@@ -7,7 +7,6 @@ import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/features/memo_rows/page.dart';
 import 'package:shoppinglist/provider/memo.dart';
 import 'package:shoppinglist/provider/memo_row.dart';
-import 'package:shoppinglist/style/button.dart';
 
 class MemosPage extends HookConsumerWidget {
   const MemosPage({super.key});
