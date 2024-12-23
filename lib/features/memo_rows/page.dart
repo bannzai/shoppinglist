@@ -39,6 +39,7 @@ class MemoRowsPageBody extends StatelessWidget {
         itemCount: memoRows.length,
         itemBuilder: (context, index) {
           final memoRow = memoRows[index];
+
           switch (memoRow) {
             case TextMemoRow textMemoRow:
               return TextMemo(textMemoRow: textMemoRow);
