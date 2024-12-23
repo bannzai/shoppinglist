@@ -7,6 +7,7 @@ import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/memo_rows/components/link_memo.dart';
 import 'package:shoppinglist/features/memo_rows/components/text_memo.dart';
 import 'package:shoppinglist/provider/memo_row.dart';
+import 'package:shoppinglist/style/button.dart';
 
 class MemoRowsPage extends HookConsumerWidget {
   final String memoID;
@@ -45,6 +46,40 @@ class MemoRowsPageBody extends StatelessWidget {
             return LinkMemo(linkMemoRow: linkMemoRow);
         }
       },
+    );
+  }
+}
+
+class EmptyMemoRows extends HookConsumerWidget {
+  const EmptyMemoRows({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('買い物メモ'),
+      ),
+      body: Column(
+        children: [
+          const Spacer(),
+          Column(
+            children: [
+              const Center(
+                child: Text('買い物メモが空です'),
+              ),
+              const SizedBox(height: 10),
+              OutlinedButton(
+                style: outlinedButtonStyle,
+                child: const Text('最初の買い物メモを作成しましょう！'),
+                onPressed: () {
+                  // ref.read(userDatabaseProvider).shoppingMemoRowsReference().add(MemoRow.text(message: message)
+                },
+              ),
+            ],
+          ),
+          const Spacer(),
+        ],
+      ),
     );
   }
 }

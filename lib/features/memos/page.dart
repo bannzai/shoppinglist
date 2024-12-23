@@ -19,13 +19,7 @@ class MemosPage extends HookConsumerWidget {
     return Retry(
       retry: () => ref.invalidate(memosProvider),
       child: memos.when(
-        data: (memos) {
-          if (memos.isEmpty) {
-            return const EmptyMemos();
-          } else {
-            return _Body(memos: memos);
-          }
-        },
+        data: (memos) => _Body(memos: memos),
         error: (e, st) => RetryPage(exception: e),
         loading: () => const Loading(),
       ),
@@ -50,43 +44,15 @@ class _Body extends HookConsumerWidget {
         ref.invalidate(memosProvider);
       },
       child: memoRows.when(
-        data: (memoRows) => MemoRowsPageBody(memoRows: memoRows),
+        data: (memoRows) {
+          if (memoRows.isEmpty) {
+            return const EmptyMemoRows();
+          } else {
+            return MemoRowsPageBody(memoRows: memoRows);
+          }
+        },
         error: (e, st) => RetryPage(exception: e),
         loading: () => const Loading(),
-      ),
-    );
-  }
-}
-
-class EmptyMemos extends HookConsumerWidget {
-  const EmptyMemos({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('買い物メモ'),
-      ),
-      body: Column(
-        children: [
-          const Spacer(),
-          Column(
-            children: [
-              const Center(
-                child: Text('買い物メモが空です'),
-              ),
-              const SizedBox(height: 10),
-              OutlinedButton(
-                style: outlinedButtonStyle,
-                child: const Text('最初の買い物メモを作成しましょう！'),
-                onPressed: () {
-                  // ref.read(userDatabaseProvider).shoppingMemoRowsReference().add(MemoRow.text(message: message)
-                },
-              ),
-            ],
-          ),
-          const Spacer(),
-        ],
       ),
     );
   }
