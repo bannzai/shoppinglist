@@ -54,7 +54,7 @@ class HomePage extends HookConsumerWidget {
                   icon: Icon(Icons.shopping_cart_outlined),
                 ),
                 Tab(
-                  text: '買いたいものリスト',
+                  text: '買いたいもの',
                   icon: Icon(Icons.favorite),
                 ),
                 Tab(
