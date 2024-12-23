@@ -37,20 +37,22 @@ class TextMemo extends HookConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Row(
-                //   children: [
-                SizedBox(
-                  height: 44,
-                  width: double.infinity,
-                  child: TextMemoTextField(
-                    textEditingController: textEditingController,
-                    focusNode: focusNode,
-                    textMemoRow: textMemoRow,
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 44,
+                        width: double.infinity,
+                        child: TextMemoTextField(
+                          textEditingController: textEditingController,
+                          focusNode: focusNode,
+                          textMemoRow: textMemoRow,
+                        ),
+                      ),
+                    ),
+                    IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
+                  ],
                 ),
-                // IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
-                //   ],
-                // ),
                 if (createdDateTime != null) ...[
                   const SizedBox(height: 4),
                   Text(
