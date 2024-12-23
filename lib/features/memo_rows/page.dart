@@ -34,17 +34,19 @@ class MemoRowsPageBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: memoRows.length,
-      itemBuilder: (context, index) {
-        final memoRow = memoRows[index];
-        switch (memoRow) {
-          case TextMemoRow textMemoRow:
-            return TextMemo(textMemoRow: textMemoRow);
-          case LinkMemoRow linkMemoRow:
-            return LinkMemo(linkMemoRow: linkMemoRow);
-        }
-      },
+    return Scaffold(
+      body: ListView.builder(
+        itemCount: memoRows.length,
+        itemBuilder: (context, index) {
+          final memoRow = memoRows[index];
+          switch (memoRow) {
+            case TextMemoRow textMemoRow:
+              return TextMemo(textMemoRow: textMemoRow);
+            case LinkMemoRow linkMemoRow:
+              return LinkMemo(linkMemoRow: linkMemoRow);
+          }
+        },
+      ),
     );
   }
 }
