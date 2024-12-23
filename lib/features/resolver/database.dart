@@ -14,11 +14,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'database.g.dart';
 
 abstract class _CollectionPath {
-  static const String shoppingListMemoID = 'shoppingList';
   static const String users = '/users';
   static String memos({required String userID}) => '/users/$userID/memos';
   static String memoRows({required String userID, required String memoID}) => '/users/$userID/memos/$memoID/memoRows';
-  static String shoppingListMemo({required String userID}) => '/users/$userID/memos/$shoppingListMemoID';
 }
 
 @Riverpod(keepAlive: true, dependencies: [])
@@ -50,11 +48,10 @@ class UserDatabase {
             fromFirestore: _memoFromFirestore,
             toFirestore: _memoToFirestore,
           );
-  DocumentReference<Memo> shoppingMemoReference() =>
-      FirebaseFirestore.instance.collection(_CollectionPath.memos(userID: userID)).doc(_CollectionPath.shoppingListMemoID).withConverter(
-            fromFirestore: _memoFromFirestore,
-            toFirestore: _memoToFirestore,
-          );
+  DocumentReference<Memo> newMemoReference() => FirebaseFirestore.instance.collection(_CollectionPath.memos(userID: userID)).doc().withConverter(
+        fromFirestore: _memoFromFirestore,
+        toFirestore: _memoToFirestore,
+      );
 
   final FromFirestore<MemoRow> _memoRowFromFirestore = (snapshot, options) => MemoRow.fromJson(snapshot.data()!..['id'] = snapshot.id);
   final ToFirestore<MemoRow> _memoRowToFirestore = (memoRow, options) => memoRow.toJson();
@@ -63,17 +60,6 @@ class UserDatabase {
         _CollectionPath.memoRows(
           userID: userID,
           memoID: memoID,
-        ),
-      )
-      .withConverter(
-        fromFirestore: _memoRowFromFirestore,
-        toFirestore: _memoRowToFirestore,
-      );
-  CollectionReference<MemoRow> shoppingMemoRowsReference() => FirebaseFirestore.instance
-      .collection(
-        _CollectionPath.memoRows(
-          userID: userID,
-          memoID: _CollectionPath.shoppingListMemoID,
         ),
       )
       .withConverter(
