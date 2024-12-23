@@ -18,12 +18,16 @@ class TextMemo extends HookConsumerWidget {
     final createdDateTime = textMemoRow.createdDateTime;
     final focusNode = useFocusNode();
     final textEditingController = useTextEditingController(text: textMemoRow.message);
+    final isEditing = useState(false);
 
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (textMemoRow.message.isEmpty) {
           focusNode.requestFocus();
         }
+      });
+      focusNode.addListener(() {
+        isEditing.value = focusNode.hasFocus;
       });
       return null;
     }, []);
@@ -50,7 +54,14 @@ class TextMemo extends HookConsumerWidget {
                         ),
                       ),
                     ),
-                    IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
+                    if (!isEditing.value) ...[
+                      IconButton(
+                        onPressed: () {
+                          focusNode.requestFocus();
+                        },
+                        icon: const Icon(Icons.edit),
+                      ),
+                    ],
                   ],
                 ),
                 if (createdDateTime != null) ...[
@@ -110,16 +121,18 @@ class TextMemoTextField extends HookConsumerWidget {
         ),
       ),
       onSubmitted: (String v) {
-        ref
-            .read(userDatabaseProvider)
-            .memoRowsReference(
-              memoID: textMemoRow.memoID,
-            )
-            .doc(textMemoRow.id)
-            .set(
-              textMemoRow.copyWith(message: v),
-              SetOptions(merge: true),
-            );
+        if (v.trim().isNotEmpty) {
+          ref
+              .read(userDatabaseProvider)
+              .memoRowsReference(
+                memoID: textMemoRow.memoID,
+              )
+              .doc(textMemoRow.id)
+              .set(
+                textMemoRow.copyWith(message: v),
+                SetOptions(merge: true),
+              );
+        }
       },
     );
   }
