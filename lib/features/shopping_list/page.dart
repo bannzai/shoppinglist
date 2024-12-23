@@ -37,6 +37,12 @@ class _Body extends HookConsumerWidget {
     final memoID = useState(memos.first.id);
     final retry = Retry.of(context).retry;
     final memoRowsAsync = ref.watch(textMemoRowsProvider(memoID: memoID.value));
+    final memoRows = useState(memoRowsAsync.asData?.valueOrNull ?? []);
+
+    useEffect(() {
+      memoRows.value = memoRowsAsync.asData?.valueOrNull ?? [];
+      return null;
+    }, [memoRowsAsync]);
 
     return Retry(
       retry: () {
@@ -46,7 +52,6 @@ class _Body extends HookConsumerWidget {
       child: memoRowsAsync.when(
         data: (data) {
           return HookBuilder(builder: (context) {
-            final memoRows = useState(data);
             if (memoRows.value.isEmpty) {
               return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
             } else {
