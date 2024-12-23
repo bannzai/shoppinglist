@@ -61,6 +61,18 @@ class TextMemo extends HookConsumerWidget {
                         },
                         icon: const Icon(Icons.edit),
                       ),
+                      IconButton(
+                        onPressed: () {
+                          ref
+                              .read(userDatabaseProvider)
+                              .memoRowsReference(
+                                memoID: textMemoRow.memoID,
+                              )
+                              .doc(textMemoRow.id)
+                              .delete();
+                        },
+                        icon: const Icon(Icons.delete),
+                      ),
                     ],
                   ],
                 ),
