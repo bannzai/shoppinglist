@@ -36,20 +36,23 @@ class _Body extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final memoID = useState(memos.first.id);
     final retry = Retry.of(context).retry;
-    final memoRows = ref.watch(textMemoRowsProvider(memoID: memoID.value));
+    final memoRowsAsync = ref.watch(textMemoRowsProvider(memoID: memoID.value));
 
     return Retry(
       retry: () {
         retry();
         ref.invalidate(memosProvider);
       },
-      child: memoRows.when(
-        data: (memoRows) {
-          if (memoRows.isEmpty) {
-            return EmptyTextMemoRows(memoID: memoID.value);
-          } else {
-            return MemoRowsPageBody(memoRows: memoRows);
-          }
+      child: memoRowsAsync.when(
+        data: (data) {
+          return HookBuilder(builder: (context) {
+            final memoRows = useState(data);
+            if (memoRows.value.isEmpty) {
+              return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
+            } else {
+              return MemoRowsPageBody(memoRows: memoRows.value);
+            }
+          });
         },
         error: (e, st) => RetryPage(exception: e),
         loading: () => const Loading(),

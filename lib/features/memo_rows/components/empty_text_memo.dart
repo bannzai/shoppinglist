@@ -6,7 +6,8 @@ import 'package:shoppinglist/style/button.dart';
 
 class EmptyTextMemoRows extends HookConsumerWidget {
   final String memoID;
-  const EmptyTextMemoRows({super.key, required this.memoID});
+  final ValueNotifier<List<MemoRow>> memoRows;
+  const EmptyTextMemoRows({super.key, required this.memoID, required this.memoRows});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,7 +25,8 @@ class EmptyTextMemoRows extends HookConsumerWidget {
                 style: outlinedButtonStyle,
                 child: const Text('最初の買い物メモを作成しましょう！'),
                 onPressed: () {
-                  ref.read(userDatabaseProvider).memoRowsReference(memoID: memoID).add(const MemoRow.text(message: ''));
+                  memoRows.value.add(const MemoRow.text(message: ''));
+                  // ref.read(userDatabaseProvider).memoRowsReference(memoID: memoID).add(const MemoRow.text(message: ''));
                 },
               ),
             ],
