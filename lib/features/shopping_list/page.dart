@@ -35,7 +35,7 @@ class _Body extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final memoID = useState(memos.first.id);
     final retry = Retry.of(context).retry;
-    final memoRows = ref.watch(memoRowsProvider(memoID: memoID.value));
+    final memoRows = ref.watch(textMemoRowsProvider(memoID: memoID.value));
 
     return Retry(
       retry: () {

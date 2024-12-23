@@ -17,10 +17,10 @@ class MemoRowsPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final memoRows = ref.watch(memoRowsProvider(memoID: memoID));
+    final memoRows = ref.watch(textMemoRowsProvider(memoID: memoID));
 
     return Retry(
-      retry: () => ref.invalidate(memoRowsProvider(memoID: memoID)),
+      retry: () => ref.invalidate(textMemoRowsProvider(memoID: memoID)),
       child: memoRows.when(
         data: (memoRows) => MemoRowsPageBody(memoRows: memoRows),
         error: (e, st) => RetryPage(exception: e),

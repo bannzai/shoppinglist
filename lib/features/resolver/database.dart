@@ -66,6 +66,7 @@ class UserDatabase {
         fromFirestore: _memoRowFromFirestore,
         toFirestore: _memoRowToFirestore,
       );
+
   DocumentReference<MemoRow> memoRowReference({
     required String memoID,
     required String memoRowID,
