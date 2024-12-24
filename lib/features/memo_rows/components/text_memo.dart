@@ -121,7 +121,24 @@ class TextMemoTextField extends HookConsumerWidget {
       ),
       onSubmitted: (String v) async {
         final value = v.trim();
-        if (value.isNotEmpty) {
+        if (value.isEmpty) {
+          if (textMemoRow.isDraft) {
+            if (memoRows.value.length > 1) {
+              memoRows.value = [...memoRows.value]..removeLast();
+            }
+          } else {
+            final textMemoRowID = textMemoRow.id;
+            if (textMemoRowID != null) {
+              ref
+                  .read(userDatabaseProvider)
+                  .memoRowReference(
+                    memoID: textMemoRow.memoID,
+                    memoRowID: textMemoRowID,
+                  )
+                  .delete();
+            }
+          }
+        } else {
           ref
               .read(userDatabaseProvider)
               .memoRowsReference(
