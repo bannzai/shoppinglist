@@ -100,16 +100,17 @@ class TextMemo extends HookConsumerWidget {
 }
 
 class TextMemoTextField extends HookConsumerWidget {
+  final TextEditingController textEditingController;
+  final FocusNode focusNode;
+  final TextMemoRow textMemoRow;
+  final ValueNotifier<List<MemoRow>> memoRows;
   const TextMemoTextField({
     super.key,
     required this.textEditingController,
     required this.focusNode,
     required this.textMemoRow,
+    required this.memoRows,
   });
-
-  final TextEditingController textEditingController;
-  final FocusNode focusNode;
-  final TextMemoRow textMemoRow;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -136,6 +137,8 @@ class TextMemoTextField extends HookConsumerWidget {
                 textMemoRow.copyWith(message: value),
                 SetOptions(merge: true),
               );
+
+          memoRows.value = [...memoRows.value, textMemoRow.copyWith(message: '')];
         }
       },
     );
