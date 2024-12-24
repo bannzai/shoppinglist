@@ -45,10 +45,14 @@ sealed class MemoRow with _$MemoRow {
   }) = LinkMemoRow;
 
   factory MemoRow.fromJson(Map<String, dynamic> json) => _$MemoRowFromJson(json);
+}
 
-  bool isDraft() {
-    return id == null;
-  }
+extension TextMemoRowExtension on TextMemoRow {
+  bool get isDraft => id == null;
+}
+
+extension LinkMemoRowExtension on LinkMemoRow {
+  bool get isDraft => id == null;
 }
 
 enum MemoRowStatus {
