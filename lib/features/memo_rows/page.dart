@@ -1,35 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/components/error/retry_page.dart';
-import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/memo_rows/components/link_memo.dart';
 import 'package:shoppinglist/features/memo_rows/components/text_memo.dart';
-import 'package:shoppinglist/provider/memo_row.dart';
-
-class MemoRowsPage extends HookConsumerWidget {
-  final String memoID;
-
-  const MemoRowsPage({super.key, required this.memoID});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final memoRows = ref.watch(textMemoRowsProvider(memoID: memoID));
-
-    return Retry(
-      retry: () => ref.invalidate(textMemoRowsProvider(memoID: memoID)),
-      child: memoRows.when(
-        data: (memoRows) => MemoRowsPageBody(memoRows: memoRows),
-        error: (e, st) => RetryPage(exception: e),
-        loading: () => const Loading(),
-      ),
-    );
-  }
-}
 
 class MemoRowsPageBody extends StatelessWidget {
-  final List<MemoRow> memoRows;
+  final ValueNotifier<List<MemoRow>> memoRows;
   const MemoRowsPageBody({super.key, required this.memoRows});
 
   @override
@@ -39,15 +15,15 @@ class MemoRowsPageBody extends StatelessWidget {
         title: const Text('買い物リスト'),
       ),
       body: ListView.builder(
-        itemCount: memoRows.length,
+        itemCount: memoRows.value.length,
         itemBuilder: (context, index) {
-          final memoRow = memoRows[index];
+          final memoRow = memoRows.value[index];
 
           return Column(
             children: [
               switch (memoRow) {
-                TextMemoRow textMemoRow => TextMemo(textMemoRow: textMemoRow),
-                LinkMemoRow linkMemoRow => LinkMemo(linkMemoRow: linkMemoRow),
+                TextMemoRow textMemoRow => TextMemo(textMemoRow: textMemoRow, memoRows: memoRows),
+                LinkMemoRow linkMemoRow => LinkMemo(linkMemoRow: linkMemoRow, memoRows: memoRows),
               },
             ],
           );

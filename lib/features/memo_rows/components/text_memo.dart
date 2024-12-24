@@ -8,8 +8,9 @@ import 'package:shoppinglist/style/color.dart';
 
 class TextMemo extends HookConsumerWidget {
   final TextMemoRow textMemoRow;
+  final ValueNotifier<List<MemoRow>> memoRows;
 
-  const TextMemo({super.key, required this.textMemoRow});
+  const TextMemo({super.key, required this.textMemoRow, required this.memoRows});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

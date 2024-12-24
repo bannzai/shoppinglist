@@ -55,7 +55,7 @@ class _Body extends HookConsumerWidget {
             if (memoRows.value.isEmpty) {
               return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
             } else {
-              return MemoRowsPageBody(memoRows: memoRows.value);
+              return MemoRowsPageBody(memoRows: memoRows);
             }
           });
         },
