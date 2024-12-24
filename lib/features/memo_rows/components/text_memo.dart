@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -5,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/memo_row.dart';
 import 'package:shoppinglist/style/color.dart';
 
 class TextMemo extends HookConsumerWidget {
@@ -14,7 +17,6 @@ class TextMemo extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final createdDateTime = textMemoRow.createdDateTime;
     final focusNode = useFocusNode();
     final textEditingController = useTextEditingController(text: textMemoRow.message);
     final isEditing = useState(false);
@@ -31,7 +33,6 @@ class TextMemo extends HookConsumerWidget {
       return null;
     }, []);
 
-    // TODO: Replace to use CheckboxListTile
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
@@ -59,49 +60,37 @@ class TextMemo extends HookConsumerWidget {
             ),
           ),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 44,
-                        width: double.infinity,
-                        child: TextMemoTextField(
-                          textEditingController: textEditingController,
-                          focusNode: focusNode,
-                          textMemoRow: textMemoRow,
-                        ),
-                      ),
+                Expanded(
+                  child: SizedBox(
+                    height: 44,
+                    width: double.infinity,
+                    child: TextMemoTextField(
+                      textEditingController: textEditingController,
+                      focusNode: focusNode,
+                      textMemoRow: textMemoRow,
                     ),
-                    if (!isEditing.value) ...[
-                      IconButton(
-                        onPressed: () {
-                          focusNode.requestFocus();
-                        },
-                        icon: const Icon(Icons.edit),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          ref
-                              .read(userDatabaseProvider)
-                              .memoRowsReference(
-                                memoID: textMemoRow.memoID,
-                              )
-                              .doc(textMemoRow.id)
-                              .delete();
-                        },
-                        icon: const Icon(Icons.delete),
-                      ),
-                    ],
-                  ],
+                  ),
                 ),
-                if (createdDateTime != null) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    '作成日: ${DateFormat('yyyy/MM/dd HH:mm').format(createdDateTime)}',
-                    style: const TextStyle(color: Colors.black54, fontSize: 10),
+                if (!isEditing.value) ...[
+                  IconButton(
+                    onPressed: () {
+                      focusNode.requestFocus();
+                    },
+                    icon: const Icon(Icons.edit),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      ref
+                          .read(userDatabaseProvider)
+                          .memoRowsReference(
+                            memoID: textMemoRow.memoID,
+                          )
+                          .doc(textMemoRow.id)
+                          .delete();
+                    },
+                    icon: const Icon(Icons.delete),
                   ),
                 ],
               ],
@@ -133,25 +122,9 @@ class TextMemoTextField extends HookConsumerWidget {
       minLines: 1,
       maxLines: 7,
       textInputAction: TextInputAction.done,
-      style: const TextStyle(
+      style: TextStyle(
         color: TextColor.black,
-      ),
-      decoration: InputDecoration(
-        fillColor: Colors.white,
-        filled: true,
-        hintStyle: TextStyle(
-          color: TextColor.black.withOpacity(.5),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 10,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        decoration: textMemoRow.status == MemoRowStatus.checked ? TextDecoration.lineThrough : TextDecoration.none,
       ),
       onSubmitted: (String v) {
         if (v.trim().isNotEmpty) {
