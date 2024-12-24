@@ -121,13 +121,14 @@ class TextMemoTextField extends HookConsumerWidget {
       focusNode: focusNode,
       minLines: 1,
       maxLines: 7,
-      textInputAction: TextInputAction.done,
+      textInputAction: TextInputAction.next,
       style: TextStyle(
         color: TextColor.black,
         decoration: textMemoRow.status == MemoRowStatus.checked ? TextDecoration.lineThrough : TextDecoration.none,
       ),
       onSubmitted: (String v) {
-        if (v.trim().isNotEmpty) {
+        final value = v.trim();
+        if (value.isNotEmpty) {
           ref
               .read(userDatabaseProvider)
               .memoRowsReference(
@@ -135,7 +136,7 @@ class TextMemoTextField extends HookConsumerWidget {
               )
               .doc(textMemoRow.id)
               .set(
-                textMemoRow.copyWith(message: v),
+                textMemoRow.copyWith(message: value),
                 SetOptions(merge: true),
               );
         }
