@@ -67,16 +67,11 @@ class TextMemo extends HookConsumerWidget {
                       textEditingController: textEditingController,
                       focusNode: focusNode,
                       textMemoRow: textMemoRow,
+                      memoRows: memoRows,
                     ),
                   ),
                 ),
                 if (!isEditing.value) ...[
-                  IconButton(
-                    onPressed: () {
-                      focusNode.requestFocus();
-                    },
-                    icon: const Icon(Icons.edit),
-                  ),
                   IconButton(
                     onPressed: () {
                       ref
