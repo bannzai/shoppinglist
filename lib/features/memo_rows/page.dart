@@ -19,8 +19,6 @@ class MemoRowsPageBody extends StatelessWidget {
         itemBuilder: (context, index) {
           final memoRow = memoRows.value[index];
 
-          print('memoRow: $memoRow, length: ${memoRows.value.length}');
-
           return Column(
             children: [
               switch (memoRow) {
