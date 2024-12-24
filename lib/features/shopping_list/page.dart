@@ -37,7 +37,6 @@ class _Body extends HookConsumerWidget {
     final memoID = useState(memos.first.id);
     final retry = Retry.of(context).retry;
     final memoRowsAsync = ref.watch(textMemoRowsProvider(memoID: memoID.value));
-    final memoRows = useState(memoRowsAsync.asData?.valueOrNull ?? []);
 
     return Retry(
       retry: () {
@@ -47,6 +46,8 @@ class _Body extends HookConsumerWidget {
       child: memoRowsAsync.when(
         data: (data) {
           return HookBuilder(builder: (context) {
+            final memoRows = useState(data);
+
             // EmptyTextMemoRowsから登録された時は Databaseは空でmemoRows.value.isNotEmptyとなっている。そのため、条件を追加
             if (data.isEmpty && memoRows.value.isEmpty) {
               return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
