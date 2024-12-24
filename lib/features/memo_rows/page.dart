@@ -19,11 +19,13 @@ class MemoRowsPageBody extends StatelessWidget {
         itemBuilder: (context, index) {
           final memoRow = memoRows.value[index];
 
+          print('memoRow: $memoRow, length: ${memoRows.value.length}');
+
           return Column(
             children: [
               switch (memoRow) {
-                TextMemoRow textMemoRow => TextMemo(textMemoRow: textMemoRow, memoRows: memoRows),
-                LinkMemoRow linkMemoRow => LinkMemo(linkMemoRow: linkMemoRow, memoRows: memoRows),
+                TextMemoRow textMemoRow => TextMemo(key: ValueKey(memoRow.id), textMemoRow: textMemoRow, memoRows: memoRows),
+                LinkMemoRow linkMemoRow => LinkMemo(key: ValueKey(memoRow.id), linkMemoRow: linkMemoRow, memoRows: memoRows),
               },
             ],
           );

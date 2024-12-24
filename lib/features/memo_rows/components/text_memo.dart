@@ -122,7 +122,7 @@ class TextMemoTextField extends HookConsumerWidget {
       onSubmitted: (String v) async {
         final value = v.trim();
         if (value.isNotEmpty) {
-          await ref
+          ref
               .read(userDatabaseProvider)
               .memoRowsReference(
                 memoID: textMemoRow.memoID,
@@ -133,7 +133,7 @@ class TextMemoTextField extends HookConsumerWidget {
                 SetOptions(merge: true),
               );
 
-          memoRows.value = [...memoRows.value, textMemoRow.copyWith(message: '')];
+          memoRows.value = [...memoRows.value, MemoRow.text(memoID: textMemoRow.memoID, message: '')];
         }
       },
     );
