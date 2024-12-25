@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
-import 'package:shoppinglist/features/link_memo_row_create/page.dart';
+import 'package:shoppinglist/features/link_memo_row_add/page.dart';
 import 'package:shoppinglist/style/button.dart';
 
 class EmptyLinkMemoRows extends HookConsumerWidget {
@@ -27,7 +27,7 @@ class EmptyLinkMemoRows extends HookConsumerWidget {
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
-                    builder: (context) => LinkMemoRowCreatePage(memoID: memoID, linkMemoRow: LinkMemoRow(url: '', memoID: memoID)),
+                    builder: (context) => LinkMemoRowAddPage(memoID: memoID, linkMemoRow: LinkMemoRow(url: '', memoID: memoID)),
                   );
                   // ref.read(userDatabaseProvider).memoRowsReference(memoID: memoID).add(const MemoRow.text(message: ''));
                 },

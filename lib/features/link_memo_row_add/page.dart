@@ -6,10 +6,10 @@ import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/style/color.dart';
 
-class LinkMemoRowCreatePage extends HookConsumerWidget {
+class LinkMemoRowAddPage extends HookConsumerWidget {
   final String memoID;
   final LinkMemoRow linkMemoRow;
-  const LinkMemoRowCreatePage({
+  const LinkMemoRowAddPage({
     super.key,
     required this.memoID,
     required this.linkMemoRow,
