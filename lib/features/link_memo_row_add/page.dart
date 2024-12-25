@@ -3,9 +3,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/alert.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
-import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/memo_row.dart';
 import 'package:shoppinglist/style/color.dart';
+import 'package:metadata_fetch/metadata_fetch.dart';
 
 class LinkMemoRowAddPage extends HookConsumerWidget {
   final String memoID;
@@ -20,7 +20,6 @@ class LinkMemoRowAddPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final textEditingController = useTextEditingController();
     final focusNode = useFocusNode();
-    final url = useState(linkMemoRow.url);
     final addLinkMemoRow = ref.watch(addLinkMemoRowProvider);
 
     useEffect(() {
@@ -51,19 +50,27 @@ class LinkMemoRowAddPage extends HookConsumerWidget {
                       hintText: 'https://www.example.com',
                       hintStyle: TextStyle(color: TextColor.lightGray),
                     ),
-                    onChanged: (value) {
-                      url.value = value;
-                    },
                     onSubmitted: (v) async {
-                      final value = v.trim();
-                      if (value.isEmpty) {
+                      final url = v.trim();
+                      if (url.isEmpty) {
                         return;
                       }
-                      if (!value.startsWith('https://') && !value.startsWith('http://')) {
+                      if (!url.startsWith('https://') && !url.startsWith('http://')) {
                         return;
                       }
                       try {
-                        await addLinkMemoRow(memoID: memoID, url: value);
+                        final metadata = await MetadataFetch.extract(url);
+                        final title = metadata?.title;
+                        final description = metadata?.description;
+                        final imageURL = metadata?.image;
+
+                        await addLinkMemoRow(
+                          memoID: memoID,
+                          url: url,
+                          metadataTitle: title,
+                          metadataDescription: description,
+                          metadataImageURL: imageURL,
+                        );
                         if (context.mounted) {
                           Navigator.pop(context);
                         }
