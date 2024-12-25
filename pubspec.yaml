@@ -60,6 +60,7 @@ dependencies:
   
   async_value_group: ^1.0.1
   intl: any
+  metadata_fetch: ^0.4.2
 
 dev_dependencies:
   flutter_test:
