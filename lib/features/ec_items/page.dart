@@ -5,7 +5,6 @@ import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/features/memo_rows/components/empty_link_memo.dart';
-import 'package:shoppinglist/features/memo_rows/components/empty_text_memo.dart';
 import 'package:shoppinglist/features/memo_rows/page.dart';
 import 'package:shoppinglist/provider/memo.dart';
 import 'package:shoppinglist/provider/memo_row.dart';
