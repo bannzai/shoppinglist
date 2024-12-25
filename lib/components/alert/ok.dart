@@ -61,7 +61,7 @@ class OKDialog extends StatelessWidget {
 }
 
 Future<void> showOKDialog(
-  BuildContext context, {
+  BuildContext context, String s, {
   required IconData icon,
   required String title,
   required String message,

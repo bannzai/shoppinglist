@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/error/alert.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
-import 'package:shoppinglist/style/button.dart';
 import 'package:shoppinglist/style/color.dart';
 
 class LinkMemoRowCreatePage extends HookConsumerWidget {
@@ -56,7 +56,7 @@ class LinkMemoRowCreatePage extends HookConsumerWidget {
                     onChanged: (value) {
                       url.value = value;
                     },
-                    onSubmitted: (v) {
+                    onSubmitted: (v) async {
                       final value = v.trim();
                       if (value.isEmpty) {
                         return;
@@ -64,9 +64,16 @@ class LinkMemoRowCreatePage extends HookConsumerWidget {
                       if (!value.startsWith('https://') && !value.startsWith('http://')) {
                         return;
                       }
-                      ref.read(userDatabaseProvider).memoRowsReference(memoID: memoID).add(linkMemoRow.copyWith(url: value));
-
-                      Navigator.pop(context);
+                      try {
+                        await ref.read(userDatabaseProvider).memoRowsReference(memoID: memoID).add(linkMemoRow.copyWith(url: value));
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          showErrorAlert(context, e);
+                        }
+                      }
                     },
                   ),
                 ),
