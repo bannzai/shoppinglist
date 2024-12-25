@@ -24,8 +24,17 @@ Stream<List<MemoRow>> linkMemoRows(LinkMemoRowsRef ref, {required String memoID}
       .map((event) => event.docs.map((doc) => doc.data()).toList());
 }
 
+class AddLinkMemoRow {
+  final UserDatabase database;
+
+  AddLinkMemoRow({required this.database});
+
+  Future<void> call({required String memoID, required String url}) async {
+    await database.memoRowsReference(memoID: memoID).add(LinkMemoRow(memoID: memoID, url: url));
+  }
+}
+
 @Riverpod(dependencies: [userDatabase])
-Future<void> addLinkMemoRow(AddLinkMemoRowRef ref, {required String memoID, required String url}) async {
-  final database = ref.watch(userDatabaseProvider);
-  await database.memoRowsReference(memoID: memoID).add(LinkMemoRow(memoID: memoID, url: url));
+AddLinkMemoRow addLinkMemoRow(AddLinkMemoRowRef ref) {
+  return AddLinkMemoRow(database: ref.watch(userDatabaseProvider));
 }

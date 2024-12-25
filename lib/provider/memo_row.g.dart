@@ -277,144 +277,18 @@ class _LinkMemoRowsProviderElement extends AutoDisposeStreamProviderElement<List
   String get memoID => (origin as LinkMemoRowsProvider).memoID;
 }
 
-String _$addLinkMemoRowHash() => r'e060747d52030baf4fbe077c1ad28d0db6ff515a';
+String _$addLinkMemoRowHash() => r'bef1d96ed3a5a0de82ff40d29ca906fb11097af1';
 
 /// See also [addLinkMemoRow].
 @ProviderFor(addLinkMemoRow)
-const addLinkMemoRowProvider = AddLinkMemoRowFamily();
+final addLinkMemoRowProvider = AutoDisposeProvider<AddLinkMemoRow>.internal(
+  addLinkMemoRow,
+  name: r'addLinkMemoRowProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$addLinkMemoRowHash,
+  dependencies: <ProviderOrFamily>[userDatabaseProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{userDatabaseProvider, ...?userDatabaseProvider.allTransitiveDependencies},
+);
 
-/// See also [addLinkMemoRow].
-class AddLinkMemoRowFamily extends Family<AsyncValue<void>> {
-  /// See also [addLinkMemoRow].
-  const AddLinkMemoRowFamily();
-
-  /// See also [addLinkMemoRow].
-  AddLinkMemoRowProvider call({
-    required String memoID,
-    required String url,
-  }) {
-    return AddLinkMemoRowProvider(
-      memoID: memoID,
-      url: url,
-    );
-  }
-
-  @override
-  AddLinkMemoRowProvider getProviderOverride(
-    covariant AddLinkMemoRowProvider provider,
-  ) {
-    return call(
-      memoID: provider.memoID,
-      url: provider.url,
-    );
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[userDatabaseProvider];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies = <ProviderOrFamily>{
-    userDatabaseProvider,
-    ...?userDatabaseProvider.allTransitiveDependencies
-  };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies => _allTransitiveDependencies;
-
-  @override
-  String? get name => r'addLinkMemoRowProvider';
-}
-
-/// See also [addLinkMemoRow].
-class AddLinkMemoRowProvider extends AutoDisposeFutureProvider<void> {
-  /// See also [addLinkMemoRow].
-  AddLinkMemoRowProvider({
-    required String memoID,
-    required String url,
-  }) : this._internal(
-          (ref) => addLinkMemoRow(
-            ref as AddLinkMemoRowRef,
-            memoID: memoID,
-            url: url,
-          ),
-          from: addLinkMemoRowProvider,
-          name: r'addLinkMemoRowProvider',
-          debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$addLinkMemoRowHash,
-          dependencies: AddLinkMemoRowFamily._dependencies,
-          allTransitiveDependencies: AddLinkMemoRowFamily._allTransitiveDependencies,
-          memoID: memoID,
-          url: url,
-        );
-
-  AddLinkMemoRowProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.memoID,
-    required this.url,
-  }) : super.internal();
-
-  final String memoID;
-  final String url;
-
-  @override
-  Override overrideWith(
-    FutureOr<void> Function(AddLinkMemoRowRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: AddLinkMemoRowProvider._internal(
-        (ref) => create(ref as AddLinkMemoRowRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        memoID: memoID,
-        url: url,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<void> createElement() {
-    return _AddLinkMemoRowProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is AddLinkMemoRowProvider && other.memoID == memoID && other.url == url;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, memoID.hashCode);
-    hash = _SystemHash.combine(hash, url.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-mixin AddLinkMemoRowRef on AutoDisposeFutureProviderRef<void> {
-  /// The parameter `memoID` of this provider.
-  String get memoID;
-
-  /// The parameter `url` of this provider.
-  String get url;
-}
-
-class _AddLinkMemoRowProviderElement extends AutoDisposeFutureProviderElement<void> with AddLinkMemoRowRef {
-  _AddLinkMemoRowProviderElement(super.provider);
-
-  @override
-  String get memoID => (origin as AddLinkMemoRowProvider).memoID;
-  @override
-  String get url => (origin as AddLinkMemoRowProvider).url;
-}
+typedef AddLinkMemoRowRef = AutoDisposeProviderRef<AddLinkMemoRow>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

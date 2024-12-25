@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/alert.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/memo_row.dart';
 import 'package:shoppinglist/style/color.dart';
 
 class LinkMemoRowAddPage extends HookConsumerWidget {
@@ -20,16 +21,13 @@ class LinkMemoRowAddPage extends HookConsumerWidget {
     final textEditingController = useTextEditingController();
     final focusNode = useFocusNode();
     final url = useState(linkMemoRow.url);
-    final isEditing = useState(false);
+    final addLinkMemoRow = ref.watch(addLinkMemoRowProvider);
 
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (linkMemoRow.url.isEmpty) {
           focusNode.requestFocus();
         }
-      });
-      focusNode.addListener(() {
-        isEditing.value = focusNode.hasFocus;
       });
       return null;
     }, []);
@@ -65,7 +63,7 @@ class LinkMemoRowAddPage extends HookConsumerWidget {
                         return;
                       }
                       try {
-                        await ref.read(userDatabaseProvider).memoRowsReference(memoID: memoID).add(linkMemoRow.copyWith(url: value));
+                        await addLinkMemoRow(memoID: memoID, url: value);
                         if (context.mounted) {
                           Navigator.pop(context);
                         }
