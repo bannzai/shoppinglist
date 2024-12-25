@@ -58,6 +58,9 @@ mixin _$MemoRow {
             String? id,
             String memoID,
             String url,
+            String? metadataTitle,
+            String? metadataDescription,
+            String? metadataImageURL,
             MemoRowStatus status,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -84,6 +87,9 @@ mixin _$MemoRow {
             String? id,
             String memoID,
             String url,
+            String? metadataTitle,
+            String? metadataDescription,
+            String? metadataImageURL,
             MemoRowStatus status,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -110,6 +116,9 @@ mixin _$MemoRow {
             String? id,
             String memoID,
             String url,
+            String? metadataTitle,
+            String? metadataDescription,
+            String? metadataImageURL,
             MemoRowStatus status,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -399,6 +408,9 @@ class _$TextMemoRowImpl implements TextMemoRow {
             String? id,
             String memoID,
             String url,
+            String? metadataTitle,
+            String? metadataDescription,
+            String? metadataImageURL,
             MemoRowStatus status,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -428,6 +440,9 @@ class _$TextMemoRowImpl implements TextMemoRow {
             String? id,
             String memoID,
             String url,
+            String? metadataTitle,
+            String? metadataDescription,
+            String? metadataImageURL,
             MemoRowStatus status,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -457,6 +472,9 @@ class _$TextMemoRowImpl implements TextMemoRow {
             String? id,
             String memoID,
             String url,
+            String? metadataTitle,
+            String? metadataDescription,
+            String? metadataImageURL,
             MemoRowStatus status,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -564,6 +582,9 @@ abstract class _$$LinkMemoRowImplCopyWith<$Res> implements $MemoRowCopyWith<$Res
       {String? id,
       String memoID,
       String url,
+      String? metadataTitle,
+      String? metadataDescription,
+      String? metadataImageURL,
       MemoRowStatus status,
       @NullableTimestampConverter() DateTime? reminderDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -584,6 +605,9 @@ class __$$LinkMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, 
     Object? id = freezed,
     Object? memoID = null,
     Object? url = null,
+    Object? metadataTitle = freezed,
+    Object? metadataDescription = freezed,
+    Object? metadataImageURL = freezed,
     Object? status = null,
     Object? reminderDateTime = freezed,
     Object? createdDateTime = freezed,
@@ -604,6 +628,18 @@ class __$$LinkMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, 
           ? _value.url
           : url // ignore: cast_nullable_to_non_nullable
               as String,
+      metadataTitle: freezed == metadataTitle
+          ? _value.metadataTitle
+          : metadataTitle // ignore: cast_nullable_to_non_nullable
+              as String?,
+      metadataDescription: freezed == metadataDescription
+          ? _value.metadataDescription
+          : metadataDescription // ignore: cast_nullable_to_non_nullable
+              as String?,
+      metadataImageURL: freezed == metadataImageURL
+          ? _value.metadataImageURL
+          : metadataImageURL // ignore: cast_nullable_to_non_nullable
+              as String?,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -640,6 +676,9 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
       {this.id,
       required this.memoID,
       required this.url,
+      this.metadataTitle,
+      this.metadataDescription,
+      this.metadataImageURL,
       this.status = MemoRowStatus.unchecked,
       @NullableTimestampConverter() this.reminderDateTime,
       @ClientCreatedTimestamp() this.createdDateTime,
@@ -657,6 +696,12 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
   final String memoID;
   @override
   final String url;
+  @override
+  final String? metadataTitle;
+  @override
+  final String? metadataDescription;
+  @override
+  final String? metadataImageURL;
   @override
   @JsonKey()
   final MemoRowStatus status;
@@ -681,7 +726,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
 
   @override
   String toString() {
-    return 'MemoRow.link(id: $id, memoID: $memoID, url: $url, status: $status, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'MemoRow.link(id: $id, memoID: $memoID, url: $url, metadataTitle: $metadataTitle, metadataDescription: $metadataDescription, metadataImageURL: $metadataImageURL, status: $status, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 
   @override
@@ -692,6 +737,9 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.memoID, memoID) || other.memoID == memoID) &&
             (identical(other.url, url) || other.url == url) &&
+            (identical(other.metadataTitle, metadataTitle) || other.metadataTitle == metadataTitle) &&
+            (identical(other.metadataDescription, metadataDescription) || other.metadataDescription == metadataDescription) &&
+            (identical(other.metadataImageURL, metadataImageURL) || other.metadataImageURL == metadataImageURL) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.reminderDateTime, reminderDateTime) || other.reminderDateTime == reminderDateTime) &&
             (identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime) &&
@@ -702,8 +750,8 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, memoID, url, status, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+  int get hashCode => Object.hash(runtimeType, id, memoID, url, metadataTitle, metadataDescription, metadataImageURL, status, reminderDateTime,
+      createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
 
   /// Create a copy of MemoRow
   /// with the given fields replaced by the non-null parameter values.
@@ -730,6 +778,9 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
             String? id,
             String memoID,
             String url,
+            String? metadataTitle,
+            String? metadataDescription,
+            String? metadataImageURL,
             MemoRowStatus status,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -738,7 +789,8 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)
         link,
   }) {
-    return link(id, memoID, url, status, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+    return link(id, memoID, url, metadataTitle, metadataDescription, metadataImageURL, status, reminderDateTime, createdDateTime, updatedDateTime,
+        serverCreatedDateTime, serverUpdatedDateTime);
   }
 
   @override
@@ -759,6 +811,9 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
             String? id,
             String memoID,
             String url,
+            String? metadataTitle,
+            String? metadataDescription,
+            String? metadataImageURL,
             MemoRowStatus status,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -767,7 +822,8 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)?
         link,
   }) {
-    return link?.call(id, memoID, url, status, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+    return link?.call(id, memoID, url, metadataTitle, metadataDescription, metadataImageURL, status, reminderDateTime, createdDateTime,
+        updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
   }
 
   @override
@@ -788,6 +844,9 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
             String? id,
             String memoID,
             String url,
+            String? metadataTitle,
+            String? metadataDescription,
+            String? metadataImageURL,
             MemoRowStatus status,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -798,7 +857,8 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
     required TResult orElse(),
   }) {
     if (link != null) {
-      return link(id, memoID, url, status, reminderDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+      return link(id, memoID, url, metadataTitle, metadataDescription, metadataImageURL, status, reminderDateTime, createdDateTime, updatedDateTime,
+          serverCreatedDateTime, serverUpdatedDateTime);
     }
     return orElse();
   }
@@ -847,6 +907,9 @@ abstract class LinkMemoRow implements MemoRow {
       {final String? id,
       required final String memoID,
       required final String url,
+      final String? metadataTitle,
+      final String? metadataDescription,
+      final String? metadataImageURL,
       final MemoRowStatus status,
       @NullableTimestampConverter() final DateTime? reminderDateTime,
       @ClientCreatedTimestamp() final DateTime? createdDateTime,
@@ -861,6 +924,9 @@ abstract class LinkMemoRow implements MemoRow {
   @override
   String get memoID;
   String get url;
+  String? get metadataTitle;
+  String? get metadataDescription;
+  String? get metadataImageURL;
   @override
   MemoRowStatus get status;
   @override
