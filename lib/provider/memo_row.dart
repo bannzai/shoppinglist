@@ -5,13 +5,18 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'memo_row.g.dart';
 
 @Riverpod(dependencies: [userDatabase])
-Stream<List<MemoRow>> textMemoRows(TextMemoRowsRef ref, {required String memoID}) {
+Stream<List<MemoRow>> textMemoRows(TextMemoRowsRef ref, {required String memoID, required bool showChecked, required bool showDeleted}) {
   final database = ref.watch(userDatabaseProvider);
-  return database
+  var query = database
       .memoRowsReference(memoID: memoID)
       .where(MemoRowFirestoreKeys.type, isEqualTo: 'text')
-      .snapshots()
-      .map((event) => event.docs.map((doc) => doc.data()).toList());
+      .where(MemoRowFirestoreKeys.status, isEqualTo: showChecked ? MemoRowStatus.checked : MemoRowStatus.unchecked);
+  if (showDeleted) {
+    query = query.where(MemoRowFirestoreKeys.deletedDateTime, isNotEqualTo: null);
+  } else {
+    query = query.where(MemoRowFirestoreKeys.deletedDateTime, isEqualTo: null);
+  }
+  return query.snapshots().map((event) => event.docs.map((doc) => doc.data()).toList());
 }
 
 @Riverpod(dependencies: [userDatabase])
