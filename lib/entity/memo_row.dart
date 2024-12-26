@@ -8,6 +8,9 @@ part 'memo_row.g.dart';
 abstract class MemoRowFirestoreKeys {
   static const id = 'id';
   static const type = 'type';
+  static const status = 'status';
+  static const ttlExpiredDateTime = 'ttlExpiredDateTime';
+  static const deletedDateTime = 'deletedDateTime';
   static const createdDateTime = 'createdDateTime';
   static const updatedDateTime = 'updatedDateTime';
   static const serverCreatedDateTime = 'serverCreatedDateTime';
@@ -24,6 +27,8 @@ sealed class MemoRow with _$MemoRow {
     required String message,
     @Default(MemoRowStatus.unchecked) MemoRowStatus status,
     @NullableTimestampConverter() DateTime? reminderDateTime,
+    @NullableTimestampConverter() DateTime? ttlExpiredDateTime,
+    @NullableTimestampConverter() DateTime? deletedDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -41,6 +46,8 @@ sealed class MemoRow with _$MemoRow {
     String? metadataImageURL,
     @Default(MemoRowStatus.unchecked) MemoRowStatus status,
     @NullableTimestampConverter() DateTime? reminderDateTime,
+    @NullableTimestampConverter() DateTime? ttlExpiredDateTime,
+    @NullableTimestampConverter() DateTime? deletedDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
