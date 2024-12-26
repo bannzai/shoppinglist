@@ -15,12 +15,17 @@ class RootPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AppResolvers(builder: (context, user) {
+      debugPrint('Resolved AppResolvers user: ${user.uid}');
       return AppUserCreateResolver(builder: (context) {
+        debugPrint('Resolved AppUserCreateResolver user: ${user.uid}');
         return ForceUpdateResolver(builder: (context) {
+          debugPrint('Resolved ForceUpdateResolver user: ${user.uid}');
           return PurchaseSetupResolver(
             userID: user.uid,
             builder: (context) {
+              debugPrint('Resolved PurchaseSetupResolver user: ${user.uid}');
               return AppEntityPrepareResolver(builder: (context) {
+                debugPrint('Resolved AppEntityPrepareResolver user: ${user.uid}');
                 return const HomePage();
               });
             },
