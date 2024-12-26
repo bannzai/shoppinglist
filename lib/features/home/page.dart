@@ -3,19 +3,23 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/features/shopping_list/page.dart';
 import 'package:shoppinglist/features/settings/page.dart';
-import 'package:shoppinglist/features/ec_items/page.dart';
+// import 'package:shoppinglist/features/ec_items/page.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
-enum HomePageTabType { shoppingList, ecItems, settings }
+enum HomePageTabType {
+  shoppingList,
+  // ecItems,
+  settings
+}
 
 extension HomePageTabFunctions on HomePageTabType {
   String get screenName {
     switch (this) {
       case HomePageTabType.shoppingList:
         return 'ShoppingListPage';
-      case HomePageTabType.ecItems:
-        return 'ECItemsPage';
+      // case HomePageTabType.ecItems:
+      //   return 'ECItemsPage';
       case HomePageTabType.settings:
         return 'SettingsPage';
     }
@@ -70,7 +74,7 @@ class HomePage extends HookConsumerWidget {
           controller: tabController,
           children: const [
             ShoppingListPage(),
-            ECItemsPage(),
+            // ECItemsPage(),
             SettingPage(),
           ],
         ),
