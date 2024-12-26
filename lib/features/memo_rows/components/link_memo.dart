@@ -9,6 +9,11 @@ class LinkMemo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(linkMemoRow.url);
+    return Row(
+      children: [
+        SizedBox(width: 100, height: 100, child: Image.network(linkMemoRow.metadataImageURL ?? '', fit: BoxFit.cover)),
+        Text(linkMemoRow.metadataTitle ?? ''),
+      ],
+    );
   }
 }

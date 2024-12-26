@@ -48,8 +48,8 @@ class _Body extends HookConsumerWidget {
           return HookBuilder(builder: (context) {
             final memoRows = useState(data);
 
-            // EmptyLinkMemoRowsから登録された時は Databaseは空でmemoRows.value.isNotEmptyとなっている。そのため、条件を追加
-            if (data.isEmpty && memoRows.value.isEmpty) {
+            print('memoRows.value.length: ${memoRows.value.length}, data.length: ${data.length}');
+            if (memoRows.value.isEmpty) {
               return EmptyLinkMemoRows(memoID: memoID.value, memoRows: memoRows);
             } else {
               return MemoRowsPageBody(memoRows: memoRows);

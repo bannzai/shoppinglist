@@ -13,6 +13,14 @@ class MemoRowsPageBody extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('買い物リスト'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const LinkMemoRowAddPage()));
+            },
+            icon: const Icon(Icons.filter_1_outlined),
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: memoRows.value.length,
