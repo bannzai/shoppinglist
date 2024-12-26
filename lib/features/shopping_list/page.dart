@@ -47,7 +47,14 @@ class _Body extends HookConsumerWidget {
     }, [memoID.value, showChecked.value, showDeleted.value]);
 
     useEffect(() {
-      memoRows.value = memoRowsAsync.valueOrNull ?? [];
+      // 改行等でデータが追加された場合はasyncのデータで更新した後に末日にmemoRowsの内容を追加する
+      if (memoRows.value.length > (memoRowsAsync.valueOrNull?.length ?? 0)) {
+        final copied = [...memoRows.value];
+        memoRows.value = memoRowsAsync.valueOrNull ?? [];
+        memoRows.value.add(copied.last);
+      } else {
+        memoRows.value = memoRowsAsync.valueOrNull ?? [];
+      }
       return null;
     }, [memoRowsAsync]);
 
