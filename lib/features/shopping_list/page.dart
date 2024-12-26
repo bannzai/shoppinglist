@@ -36,7 +36,7 @@ class _Body extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final memoID = useState(memos.first.id);
     final retry = Retry.of(context).retry;
-    final showChecked = useState(false);
+    final showChecked = useState(true);
     final showDeleted = useState(false);
     final memoRowsAsync = ref.watch(textMemoRowsProvider(memoID: memoID.value, showChecked: showChecked.value, showDeleted: showDeleted.value));
     final memoRows = useState(memoRowsAsync.valueOrNull ?? []);
