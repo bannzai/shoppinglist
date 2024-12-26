@@ -83,7 +83,13 @@ class TextMemo extends HookConsumerWidget {
                             memoID: textMemoRow.memoID,
                           )
                           .doc(textMemoRow.id)
-                          .delete();
+                          .set(
+                            textMemoRow.copyWith(
+                              deletedDateTime: DateTime.now(),
+                              ttlExpiresDateTime: DateTime.now().add(const Duration(days: 30)),
+                            ),
+                            SetOptions(merge: true),
+                          );
                     },
                     icon: const Icon(Icons.delete),
                   ),
@@ -119,7 +125,13 @@ class TextMemoTextField extends HookConsumerWidget {
       onKey: (event) {
         if (event.logicalKey == LogicalKeyboardKey.backspace) {
           if (text.value.isEmpty) {
-            ref.read(userDatabaseProvider).memoRowsReference(memoID: textMemoRow.memoID).doc(textMemoRow.id).delete();
+            ref.read(userDatabaseProvider).memoRowsReference(memoID: textMemoRow.memoID).doc(textMemoRow.id).set(
+                  textMemoRow.copyWith(
+                    deletedDateTime: DateTime.now(),
+                    ttlExpiresDateTime: DateTime.now().add(const Duration(days: 30)),
+                  ),
+                  SetOptions(merge: true),
+                );
           }
         }
       },
@@ -152,7 +164,13 @@ class TextMemoTextField extends HookConsumerWidget {
                       memoID: textMemoRow.memoID,
                       memoRowID: textMemoRowID,
                     )
-                    .delete();
+                    .set(
+                      textMemoRow.copyWith(
+                        deletedDateTime: DateTime.now(),
+                        ttlExpiresDateTime: DateTime.now().add(const Duration(days: 30)),
+                      ),
+                      SetOptions(merge: true),
+                    );
               }
             }
           } else {
