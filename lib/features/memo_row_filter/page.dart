@@ -17,38 +17,44 @@ class MemoRowFilterPage extends HookConsumerWidget {
       appBar: AppBar(
         title: const Text('メモフィルター'),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              children: [
-                SwitchListTile(
-                  title: const Text('チェック済みを表示する'),
-                  value: showChecked.value,
-                  onChanged: (value) {
-                    showChecked.value = value;
-                  },
-                ),
-                SwitchListTile(
-                  title: const Text('削除済みを表示する'),
-                  subtitle: const Text('削除済みの内容も30日間保存されます'),
-                  value: showDeleted.value,
-                  onChanged: (value) {
-                    showDeleted.value = value;
-                  },
-                ),
-              ],
+      body: Padding(
+        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 32.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                children: [
+                  SwitchListTile(
+                    title: const Text('チェック済みを表示する'),
+                    value: showChecked.value,
+                    onChanged: (value) {
+                      showChecked.value = value;
+                    },
+                  ),
+                  SwitchListTile(
+                    title: const Text('削除済みを表示する'),
+                    subtitle: const Text('削除済みの内容も30日間保存されます'),
+                    value: showDeleted.value,
+                    onChanged: (value) {
+                      showDeleted.value = value;
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-          OutlinedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              this.showChecked.value = showChecked.value;
-              this.showDeleted.value = showDeleted.value;
-            },
-            child: const Text('適用'),
-          ),
-        ],
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  this.showChecked.value = showChecked.value;
+                  this.showDeleted.value = showDeleted.value;
+                },
+                child: const Text('適用'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

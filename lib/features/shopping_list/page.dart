@@ -59,7 +59,7 @@ class _Body extends HookConsumerWidget {
       child: memoRowsAsync.when(
         data: (data) {
           // EmptyTextMemoRowsから登録された時は Databaseは空でmemoRows.value.isNotEmptyとなっている。そのため、条件を追加
-          if (!showChecked.value && !showDeleted.value && data.isEmpty && memoRows.value.isEmpty) {
+          if (showChecked.value && !showDeleted.value && data.isEmpty && memoRows.value.isEmpty) {
             return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
           } else {
             return MemoRowsPageBody(memoID: memoID.value, memoRows: memoRows, showChecked: showChecked, showDeleted: showDeleted);
