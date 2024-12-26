@@ -39,11 +39,17 @@ class _Body extends HookConsumerWidget {
     final showChecked = useState(false);
     final showDeleted = useState(false);
     final memoRowsAsync = ref.watch(textMemoRowsProvider(memoID: memoID.value, showChecked: showChecked.value, showDeleted: showDeleted.value));
+    final memoRows = useState(memoRowsAsync.valueOrNull ?? []);
 
     useEffect(() {
       ref.invalidate(textMemoRowsProvider(memoID: memoID.value, showChecked: showChecked.value, showDeleted: showDeleted.value));
       return null;
     }, [memoID.value, showChecked.value, showDeleted.value]);
+
+    useEffect(() {
+      memoRows.value = memoRowsAsync.valueOrNull ?? [];
+      return null;
+    }, [memoRowsAsync]);
 
     return Retry(
       retry: () {
@@ -52,16 +58,12 @@ class _Body extends HookConsumerWidget {
       },
       child: memoRowsAsync.when(
         data: (data) {
-          return HookBuilder(builder: (context) {
-            final memoRows = useState(data);
-
-            // EmptyTextMemoRowsから登録された時は Databaseは空でmemoRows.value.isNotEmptyとなっている。そのため、条件を追加
-            if (!showChecked.value && !showDeleted.value && data.isEmpty && memoRows.value.isEmpty) {
-              return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
-            } else {
-              return MemoRowsPageBody(memoID: memoID.value, memoRows: memoRows, showChecked: showChecked, showDeleted: showDeleted);
-            }
-          });
+          // EmptyTextMemoRowsから登録された時は Databaseは空でmemoRows.value.isNotEmptyとなっている。そのため、条件を追加
+          if (!showChecked.value && !showDeleted.value && data.isEmpty && memoRows.value.isEmpty) {
+            return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
+          } else {
+            return MemoRowsPageBody(memoID: memoID.value, memoRows: memoRows, showChecked: showChecked, showDeleted: showDeleted);
+          }
         },
         error: (e, st) => RetryPage(exception: e),
         loading: () => const Loading(),
