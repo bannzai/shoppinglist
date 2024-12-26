@@ -41,20 +41,22 @@ class TextMemo extends HookConsumerWidget {
             scale: 1.5,
             child: Checkbox(
               value: textMemoRow.status == MemoRowStatus.checked,
-              onChanged: (value) {
-                ref
-                    .read(userDatabaseProvider)
-                    .memoRowsReference(
-                      memoID: textMemoRow.memoID,
-                    )
-                    .doc(textMemoRow.id)
-                    .set(
-                      textMemoRow.copyWith(
-                        status: textMemoRow.status == MemoRowStatus.checked ? MemoRowStatus.unchecked : MemoRowStatus.checked,
-                      ),
-                      SetOptions(merge: true),
-                    );
-              },
+              onChanged: textMemoRow.isDraft
+                  ? null
+                  : (value) {
+                      ref
+                          .read(userDatabaseProvider)
+                          .memoRowsReference(
+                            memoID: textMemoRow.memoID,
+                          )
+                          .doc(textMemoRow.id)
+                          .set(
+                            textMemoRow.copyWith(
+                              status: textMemoRow.status == MemoRowStatus.checked ? MemoRowStatus.unchecked : MemoRowStatus.checked,
+                            ),
+                            SetOptions(merge: true),
+                          );
+                    },
             ),
           ),
           Expanded(
