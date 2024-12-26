@@ -114,6 +114,7 @@ class TextMemoTextField extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final text = useState(textMemoRow.message);
 
+    // ignore: deprecated_member_use KeyboardListenerだとSimulatorでMacのハードウェアキーボードにしか反応しない
     return RawKeyboardListener(
       focusNode: FocusNode(),
       onKey: (event) {
