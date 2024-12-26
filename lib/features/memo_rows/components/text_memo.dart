@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
@@ -109,50 +110,65 @@ class TextMemoTextField extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return TextField(
-      controller: textEditingController,
-      focusNode: focusNode,
-      minLines: 1,
-      maxLines: 7,
-      textInputAction: TextInputAction.next,
-      style: TextStyle(
-        color: TextColor.black,
-        decoration: textMemoRow.status == MemoRowStatus.checked ? TextDecoration.lineThrough : TextDecoration.none,
-      ),
-      onSubmitted: (String v) async {
-        final value = v.trim();
-        if (value.isEmpty) {
-          if (textMemoRow.isDraft) {
-            if (memoRows.value.length > 1) {
-              memoRows.value = [...memoRows.value]..removeLast();
-            }
-          } else {
-            final textMemoRowID = textMemoRow.id;
-            if (textMemoRowID != null) {
-              ref
-                  .read(userDatabaseProvider)
-                  .memoRowReference(
-                    memoID: textMemoRow.memoID,
-                    memoRowID: textMemoRowID,
-                  )
-                  .delete();
-            }
-          }
-        } else {
-          ref
-              .read(userDatabaseProvider)
-              .memoRowsReference(
-                memoID: textMemoRow.memoID,
-              )
-              .doc(textMemoRow.id)
-              .set(
-                textMemoRow.copyWith(message: value),
-                SetOptions(merge: true),
-              );
+    final text = useState(textMemoRow.message);
 
-          memoRows.value = [...memoRows.value, MemoRow.text(memoID: textMemoRow.memoID, message: '')];
+    return RawKeyboardListener(
+      focusNode: FocusNode(),
+      onKey: (event) {
+        if (event.logicalKey == LogicalKeyboardKey.backspace) {
+          if (text.value.isEmpty) {
+            ref.read(userDatabaseProvider).memoRowsReference(memoID: textMemoRow.memoID).doc(textMemoRow.id).delete();
+          }
         }
       },
+      child: TextField(
+        controller: textEditingController,
+        focusNode: focusNode,
+        minLines: 1,
+        maxLines: 7,
+        textInputAction: TextInputAction.next,
+        style: TextStyle(
+          color: TextColor.black,
+          decoration: textMemoRow.status == MemoRowStatus.checked ? TextDecoration.lineThrough : TextDecoration.none,
+        ),
+        onChanged: (value) {
+          text.value = value;
+        },
+        onSubmitted: (String v) async {
+          final value = v.trim();
+          if (value.isEmpty) {
+            if (textMemoRow.isDraft) {
+              if (memoRows.value.length > 1) {
+                memoRows.value = [...memoRows.value]..removeLast();
+              }
+            } else {
+              final textMemoRowID = textMemoRow.id;
+              if (textMemoRowID != null) {
+                ref
+                    .read(userDatabaseProvider)
+                    .memoRowReference(
+                      memoID: textMemoRow.memoID,
+                      memoRowID: textMemoRowID,
+                    )
+                    .delete();
+              }
+            }
+          } else {
+            ref
+                .read(userDatabaseProvider)
+                .memoRowsReference(
+                  memoID: textMemoRow.memoID,
+                )
+                .doc(textMemoRow.id)
+                .set(
+                  textMemoRow.copyWith(message: value),
+                  SetOptions(merge: true),
+                );
+
+            memoRows.value = [...memoRows.value, MemoRow.text(memoID: textMemoRow.memoID, message: '')];
+          }
+        },
+      ),
     );
   }
 }
