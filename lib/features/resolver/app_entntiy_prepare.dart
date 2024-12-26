@@ -19,7 +19,7 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
 
     useEffect(() {
       void f() async {
-        if (memos is AsyncData && memos.valueOrNull?.isEmpty == true) {
+        if (memos is AsyncData && memos.value?.isEmpty == true) {
           final docRef = ref.read(userDatabaseProvider).newMemoReference();
           final shoppingListMemo = Memo(
             id: docRef.id,
@@ -32,7 +32,7 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
 
       f();
       return null;
-    }, []);
+    }, [memos]);
 
     if (memos.valueOrNull?.isEmpty == true) {
       return const Loading();
