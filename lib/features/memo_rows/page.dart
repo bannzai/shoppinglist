@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 
 import 'package:shoppinglist/entity/memo_row.dart';
+import 'package:shoppinglist/features/memo_row_filter/page.dart';
 import 'package:shoppinglist/features/memo_rows/components/link_memo.dart';
 import 'package:shoppinglist/features/memo_rows/components/text_memo.dart';
 
 class MemoRowsPageBody extends StatelessWidget {
+  final String memoID;
+  final ValueNotifier<bool> showChecked;
+  final ValueNotifier<bool> showDeleted;
   final ValueNotifier<List<MemoRow>> memoRows;
-  const MemoRowsPageBody({super.key, required this.memoRows});
+  const MemoRowsPageBody({
+    super.key,
+    required this.memoID,
+    required this.showChecked,
+    required this.showDeleted,
+    required this.memoRows,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +26,10 @@ class MemoRowsPageBody extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const LinkMemoRowAddPage()));
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => MemoRowFilterPage(memoID: memoID, showChecked: showChecked, showDeleted: showDeleted),
+              );
             },
             icon: const Icon(Icons.filter_1_outlined),
           ),
