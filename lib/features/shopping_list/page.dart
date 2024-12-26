@@ -36,12 +36,19 @@ class _Body extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final memoID = useState(memos.first.id);
     final retry = Retry.of(context).retry;
-    final memoRowsAsync = ref.watch(textMemoRowsProvider(memoID: memoID.value));
+    final showChecked = useState(false);
+    final showDeleted = useState(false);
+    final memoRowsAsync = ref.watch(textMemoRowsProvider(memoID: memoID.value, showChecked: showChecked.value, showDeleted: showDeleted.value));
+
+    useEffect(() {
+      ref.invalidate(textMemoRowsProvider(memoID: memoID.value, showChecked: showChecked.value, showDeleted: showDeleted.value));
+      return null;
+    }, [memoID.value, showChecked.value, showDeleted.value]);
 
     return Retry(
       retry: () {
         retry();
-        ref.invalidate(textMemoRowsProvider(memoID: memoID.value));
+        ref.invalidate(textMemoRowsProvider(memoID: memoID.value, showChecked: showChecked.value, showDeleted: showDeleted.value));
       },
       child: memoRowsAsync.when(
         data: (data) {
@@ -52,7 +59,7 @@ class _Body extends HookConsumerWidget {
             if (data.isEmpty && memoRows.value.isEmpty) {
               return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
             } else {
-              return MemoRowsPageBody(memoRows: memoRows);
+              return MemoRowsPageBody(memoID: memoID.value, memoRows: memoRows);
             }
           });
         },
