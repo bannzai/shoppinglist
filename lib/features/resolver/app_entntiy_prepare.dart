@@ -15,12 +15,11 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final memosAsyncValue = ref.watch(memosProvider);
-    final memos = memosAsyncValue.valueOrNull ?? [];
+    final memos = ref.watch(memosProvider);
 
     useEffect(() {
       void f() async {
-        if (memosAsyncValue is AsyncData && memosAsyncValue.valueOrNull?.isEmpty == true) {
+        if (memos is AsyncData && memos.valueOrNull?.isEmpty == true) {
           final docRef = ref.read(userDatabaseProvider).newMemoReference();
           final shoppingListMemo = Memo(
             id: docRef.id,
@@ -35,7 +34,7 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
       return null;
     }, []);
 
-    if (memos.isEmpty) {
+    if (memos.valueOrNull?.isEmpty == true) {
       return const Loading();
     }
     return builder(context);
