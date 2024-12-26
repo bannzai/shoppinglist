@@ -6,7 +6,7 @@ part of 'memo_row.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$textMemoRowsHash() => r'9996c52eef2538041f54d58045834abd8e69803e';
+String _$textMemoRowsHash() => r'ad901912d7f5eff0c481a1b97ee28957aa7eed51';
 
 /// Copied from Dart SDK
 class _SystemHash {

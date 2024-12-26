@@ -10,7 +10,7 @@ Stream<List<MemoRow>> textMemoRows(TextMemoRowsRef ref, {required String memoID,
   var query = database
       .memoRowsReference(memoID: memoID)
       .where(MemoRowFirestoreKeys.type, isEqualTo: 'text')
-      .where(MemoRowFirestoreKeys.status, isEqualTo: showChecked ? MemoRowStatus.checked : MemoRowStatus.unchecked);
+      .where(MemoRowFirestoreKeys.status, isEqualTo: showChecked ? MemoRowStatus.checked.name : MemoRowStatus.unchecked.name);
   if (showDeleted) {
     query = query.where(MemoRowFirestoreKeys.deletedDateTime, isNotEqualTo: null);
   } else {
