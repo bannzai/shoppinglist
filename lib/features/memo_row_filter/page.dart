@@ -5,14 +5,16 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class MemoRowFilterPage extends HookConsumerWidget {
   final String memoID;
   final ValueNotifier<bool> showChecked;
-  final ValueNotifier<bool> showDeleted;
 
-  const MemoRowFilterPage({super.key, required this.memoID, required this.showChecked, required this.showDeleted});
+  const MemoRowFilterPage({
+    super.key,
+    required this.memoID,
+    required this.showChecked,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final showChecked = useState(this.showChecked.value);
-    final showDeleted = useState(this.showDeleted.value);
     return Scaffold(
       appBar: AppBar(
         title: const Text('メモフィルター'),
@@ -31,14 +33,6 @@ class MemoRowFilterPage extends HookConsumerWidget {
                       showChecked.value = value;
                     },
                   ),
-                  SwitchListTile(
-                    title: const Text('削除済みを表示する'),
-                    subtitle: const Text('削除済みの内容も30日間保存されます'),
-                    value: showDeleted.value,
-                    onChanged: (value) {
-                      showDeleted.value = value;
-                    },
-                  ),
                 ],
               ),
             ),
@@ -48,7 +42,6 @@ class MemoRowFilterPage extends HookConsumerWidget {
                 onPressed: () {
                   Navigator.pop(context);
                   this.showChecked.value = showChecked.value;
-                  this.showDeleted.value = showDeleted.value;
                 },
                 child: const Text('適用'),
               ),

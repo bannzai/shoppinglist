@@ -6,7 +6,7 @@ part of 'memo_row.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$textMemoRowsHash() => r'67a71fc93c946f761f175e19382b3473afcc99b4';
+String _$textMemoRowsHash() => r'694c42adf251c92a69249b34ede6306956e23ac4';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -42,12 +42,10 @@ class TextMemoRowsFamily extends Family<AsyncValue<List<MemoRow>>> {
   TextMemoRowsProvider call({
     required String memoID,
     required bool showChecked,
-    required bool showDeleted,
   }) {
     return TextMemoRowsProvider(
       memoID: memoID,
       showChecked: showChecked,
-      showDeleted: showDeleted,
     );
   }
 
@@ -58,7 +56,6 @@ class TextMemoRowsFamily extends Family<AsyncValue<List<MemoRow>>> {
     return call(
       memoID: provider.memoID,
       showChecked: provider.showChecked,
-      showDeleted: provider.showDeleted,
     );
   }
 
@@ -85,13 +82,11 @@ class TextMemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
   TextMemoRowsProvider({
     required String memoID,
     required bool showChecked,
-    required bool showDeleted,
   }) : this._internal(
           (ref) => textMemoRows(
             ref as TextMemoRowsRef,
             memoID: memoID,
             showChecked: showChecked,
-            showDeleted: showDeleted,
           ),
           from: textMemoRowsProvider,
           name: r'textMemoRowsProvider',
@@ -100,7 +95,6 @@ class TextMemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
           allTransitiveDependencies: TextMemoRowsFamily._allTransitiveDependencies,
           memoID: memoID,
           showChecked: showChecked,
-          showDeleted: showDeleted,
         );
 
   TextMemoRowsProvider._internal(
@@ -112,12 +106,10 @@ class TextMemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
     required super.from,
     required this.memoID,
     required this.showChecked,
-    required this.showDeleted,
   }) : super.internal();
 
   final String memoID;
   final bool showChecked;
-  final bool showDeleted;
 
   @override
   Override overrideWith(
@@ -134,7 +126,6 @@ class TextMemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
         debugGetCreateSourceHash: null,
         memoID: memoID,
         showChecked: showChecked,
-        showDeleted: showDeleted,
       ),
     );
   }
@@ -146,7 +137,7 @@ class TextMemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
 
   @override
   bool operator ==(Object other) {
-    return other is TextMemoRowsProvider && other.memoID == memoID && other.showChecked == showChecked && other.showDeleted == showDeleted;
+    return other is TextMemoRowsProvider && other.memoID == memoID && other.showChecked == showChecked;
   }
 
   @override
@@ -154,7 +145,6 @@ class TextMemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, memoID.hashCode);
     hash = _SystemHash.combine(hash, showChecked.hashCode);
-    hash = _SystemHash.combine(hash, showDeleted.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -166,9 +156,6 @@ mixin TextMemoRowsRef on AutoDisposeStreamProviderRef<List<MemoRow>> {
 
   /// The parameter `showChecked` of this provider.
   bool get showChecked;
-
-  /// The parameter `showDeleted` of this provider.
-  bool get showDeleted;
 }
 
 class _TextMemoRowsProviderElement extends AutoDisposeStreamProviderElement<List<MemoRow>> with TextMemoRowsRef {
@@ -178,8 +165,6 @@ class _TextMemoRowsProviderElement extends AutoDisposeStreamProviderElement<List
   String get memoID => (origin as TextMemoRowsProvider).memoID;
   @override
   bool get showChecked => (origin as TextMemoRowsProvider).showChecked;
-  @override
-  bool get showDeleted => (origin as TextMemoRowsProvider).showDeleted;
 }
 
 String _$linkMemoRowsHash() => r'd826393f7e0eb89f47ecb3a0c6922073c606f829';

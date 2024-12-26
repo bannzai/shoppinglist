@@ -37,14 +37,16 @@ class _Body extends HookConsumerWidget {
     final memoID = useState(memos.first.id);
     final retry = Retry.of(context).retry;
     final showChecked = useState(true);
-    final showDeleted = useState(false);
-    final memoRowsAsync = ref.watch(textMemoRowsProvider(memoID: memoID.value, showChecked: showChecked.value, showDeleted: showDeleted.value));
+    final memoRowsAsync = ref.watch(textMemoRowsProvider(
+      memoID: memoID.value,
+      showChecked: showChecked.value,
+    ));
     final memoRows = useState(memoRowsAsync.valueOrNull ?? []);
 
     useEffect(() {
-      ref.invalidate(textMemoRowsProvider(memoID: memoID.value, showChecked: showChecked.value, showDeleted: showDeleted.value));
+      ref.invalidate(textMemoRowsProvider(memoID: memoID.value, showChecked: showChecked.value));
       return null;
-    }, [memoID.value, showChecked.value, showDeleted.value]);
+    }, [memoID.value, showChecked.value]);
 
     useEffect(() {
       // 改行等でデータが追加された場合はasyncのデータで更新した後に末日にmemoRowsの内容を追加する
@@ -61,15 +63,15 @@ class _Body extends HookConsumerWidget {
     return Retry(
       retry: () {
         retry();
-        ref.invalidate(textMemoRowsProvider(memoID: memoID.value, showChecked: showChecked.value, showDeleted: showDeleted.value));
+        ref.invalidate(textMemoRowsProvider(memoID: memoID.value, showChecked: showChecked.value));
       },
       child: memoRowsAsync.when(
         data: (data) {
           // EmptyTextMemoRowsから登録された時は Databaseは空でmemoRows.value.isNotEmptyとなっている。そのため、条件を追加
-          if (showChecked.value && !showDeleted.value && data.isEmpty && memoRows.value.isEmpty) {
+          if (showChecked.value && data.isEmpty && memoRows.value.isEmpty) {
             return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
           } else {
-            return MemoRowsPageBody(memoID: memoID.value, memoRows: memoRows, showChecked: showChecked, showDeleted: showDeleted);
+            return MemoRowsPageBody(memoID: memoID.value, memoRows: memoRows, showChecked: showChecked);
           }
         },
         error: (e, st) => RetryPage(exception: e),

@@ -8,13 +8,11 @@ import 'package:shoppinglist/features/memo_rows/components/text_memo.dart';
 class MemoRowsPageBody extends StatelessWidget {
   final String memoID;
   final ValueNotifier<bool> showChecked;
-  final ValueNotifier<bool> showDeleted;
   final ValueNotifier<List<MemoRow>> memoRows;
   const MemoRowsPageBody({
     super.key,
     required this.memoID,
     required this.showChecked,
-    required this.showDeleted,
     required this.memoRows,
   });
 
@@ -31,7 +29,6 @@ class MemoRowsPageBody extends StatelessWidget {
                 builder: (context) => MemoRowFilterPage(
                   memoID: memoID,
                   showChecked: showChecked,
-                  showDeleted: showDeleted,
                 ),
               );
             },
