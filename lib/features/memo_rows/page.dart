@@ -28,7 +28,11 @@ class MemoRowsPageBody extends StatelessWidget {
             onPressed: () {
               showModalBottomSheet(
                 context: context,
-                builder: (context) => MemoRowFilterPage(memoID: memoID, showChecked: showChecked, showDeleted: showDeleted),
+                builder: (context) => MemoRowFilterPage(
+                  memoID: memoID,
+                  showChecked: showChecked,
+                  showDeleted: showDeleted,
+                ),
               );
             },
             icon: const Icon(Icons.filter_1_outlined),

@@ -56,7 +56,7 @@ class _Body extends HookConsumerWidget {
             final memoRows = useState(data);
 
             // EmptyTextMemoRowsから登録された時は Databaseは空でmemoRows.value.isNotEmptyとなっている。そのため、条件を追加
-            if (data.isEmpty && memoRows.value.isEmpty) {
+            if (!showChecked.value && !showDeleted.value && data.isEmpty && memoRows.value.isEmpty) {
               return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
             } else {
               return MemoRowsPageBody(memoID: memoID.value, memoRows: memoRows, showChecked: showChecked, showDeleted: showDeleted);
