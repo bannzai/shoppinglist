@@ -57,10 +57,10 @@ class HomePage extends HookConsumerWidget {
                   text: '買い物リスト',
                   icon: Icon(Icons.list_alt_outlined),
                 ),
-                Tab(
-                  text: 'EC商品メモ',
-                  icon: Icon(Icons.shopping_cart_outlined),
-                ),
+                // Tab(
+                //   text: 'EC商品メモ',
+                //   icon: Icon(Icons.shopping_cart_outlined),
+                // ),
                 Tab(
                   text: '設定',
                   icon: Icon(Icons.settings_outlined),
