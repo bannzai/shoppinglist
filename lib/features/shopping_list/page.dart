@@ -6,9 +6,9 @@ import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/memo_row_filter/page.dart';
-import 'package:shoppinglist/features/shopping_list/components/empty_text_memo.dart';
-import 'package:shoppinglist/features/shopping_list/components/link_memo.dart';
-import 'package:shoppinglist/features/shopping_list/components/text_memo.dart';
+import 'package:shoppinglist/features/shopping_list/components/memo_rows/empty_text_memo.dart';
+import 'package:shoppinglist/features/shopping_list/components/memo_rows/link_memo.dart';
+import 'package:shoppinglist/features/shopping_list/components/memo_rows/text_memo.dart';
 import 'package:shoppinglist/provider/memo.dart';
 import 'package:shoppinglist/provider/memo_row.dart';
 
