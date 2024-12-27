@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/memo_row_filter/page.dart';
-import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/link_memo.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/text_memo.dart';
+import 'package:shoppinglist/provider/memo.dart';
 
 class MemoRows extends HookConsumerWidget {
   final String memoID;
@@ -21,18 +19,14 @@ class MemoRows extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final memoAdd = ref.watch(memoAddProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('買い物リスト'),
         actions: [
           IconButton(
-            onPressed: () {
-              final docRef = ref.read(userDatabaseProvider).newMemoReference();
-              docRef.set(Memo(
-                id: docRef.id,
-                name: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-                status: MemoStatus.active,
-              ));
+            onPressed: () async {
+              await memoAdd.call();
             },
             icon: const Icon(Icons.add),
           ),
