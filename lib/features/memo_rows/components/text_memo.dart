@@ -120,7 +120,10 @@ class TextMemoTextField extends HookConsumerWidget {
       onKey: (event) {
         if (event.logicalKey == LogicalKeyboardKey.backspace) {
           if (text.value.isEmpty) {
-            ref.read(userDatabaseProvider).memoRowsReference(memoID: textMemoRow.memoID).doc(textMemoRow.id).delete();
+            if (!textMemoRow.isDraft) {
+              ref.read(userDatabaseProvider).memoRowsReference(memoID: textMemoRow.memoID).doc(textMemoRow.id).delete();
+            }
+            memoRows.value = [...memoRows.value]..removeLast();
           }
         }
       },
