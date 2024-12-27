@@ -89,7 +89,6 @@ class __Body extends StatelessWidget {
   final ValueNotifier<bool> showChecked;
   final ValueNotifier<List<MemoRow>> memoRows;
   const __Body({
-    super.key,
     required this.memoID,
     required this.showChecked,
     required this.memoRows,
