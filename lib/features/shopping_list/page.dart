@@ -4,11 +4,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/memo.dart';
-import 'package:shoppinglist/entity/memo_row.dart';
-import 'package:shoppinglist/features/memo_row_filter/page.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/empty_text_memo.dart';
-import 'package:shoppinglist/features/shopping_list/components/memo_rows/link_memo.dart';
-import 'package:shoppinglist/features/shopping_list/components/memo_rows/text_memo.dart';
+import 'package:shoppinglist/features/shopping_list/components/memo_rows/memo_rows.dart';
 import 'package:shoppinglist/provider/memo.dart';
 import 'package:shoppinglist/provider/memo_row.dart';
 
@@ -74,60 +71,11 @@ class _Body extends HookConsumerWidget {
           if (showChecked.value && data.isEmpty && memoRows.value.isEmpty) {
             return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
           } else {
-            return __Body(memoID: memoID.value, memoRows: memoRows, showChecked: showChecked);
+            return MemoRows(memoID: memoID.value, memoRows: memoRows, showChecked: showChecked);
           }
         },
         error: (e, st) => RetryPage(exception: e),
         loading: () => const Loading(),
-      ),
-    );
-  }
-}
-
-class __Body extends StatelessWidget {
-  final String memoID;
-  final ValueNotifier<bool> showChecked;
-  final ValueNotifier<List<MemoRow>> memoRows;
-  const __Body({
-    required this.memoID,
-    required this.showChecked,
-    required this.memoRows,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('買い物リスト'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (context) => MemoRowFilterPage(
-                  memoID: memoID,
-                  showChecked: showChecked,
-                ),
-              );
-            },
-            icon: const Icon(Icons.filter_1_outlined),
-          ),
-        ],
-      ),
-      body: ListView.builder(
-        itemCount: memoRows.value.length,
-        itemBuilder: (context, index) {
-          final memoRow = memoRows.value[index];
-
-          return Column(
-            children: [
-              switch (memoRow) {
-                TextMemoRow textMemoRow => TextMemo(key: ValueKey(memoRow.id), textMemoRow: textMemoRow, memoRows: memoRows),
-                LinkMemoRow linkMemoRow => LinkMemo(key: ValueKey(memoRow.id), linkMemoRow: linkMemoRow, memoRows: memoRows),
-              },
-            ],
-          );
-        },
       ),
     );
   }
