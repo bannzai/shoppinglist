@@ -9,23 +9,24 @@ import 'package:shoppinglist/provider/memo.dart';
 
 class MemoRows extends HookConsumerWidget {
   final ValueNotifier<String> memoID;
-  final Memo memo;
+  final List<Memo> memos;
   final ValueNotifier<bool> showChecked;
   final ValueNotifier<List<MemoRow>> memoRows;
   const MemoRows({
     super.key,
     required this.memoID,
-    required this.memo,
+    required this.memos,
     required this.showChecked,
     required this.memoRows,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final memo = memos.firstWhere((memo) => memo.id == memoID.value);
     final memoAdd = ref.watch(memoAddProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('買い物リスト'),
+        title: Text(memo.name),
         actions: [
           IconButton(
             onPressed: () async {
