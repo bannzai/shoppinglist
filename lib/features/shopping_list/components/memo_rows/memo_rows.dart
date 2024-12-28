@@ -7,7 +7,7 @@ import 'package:shoppinglist/features/shopping_list/components/memo_rows/text_me
 import 'package:shoppinglist/provider/memo.dart';
 
 class MemoRows extends HookConsumerWidget {
-  final String memoID;
+  final ValueNotifier<String> memoID;
   final ValueNotifier<bool> showChecked;
   final ValueNotifier<List<MemoRow>> memoRows;
   const MemoRows({
@@ -26,7 +26,8 @@ class MemoRows extends HookConsumerWidget {
         actions: [
           IconButton(
             onPressed: () async {
-              await memoAdd();
+              final memo = await memoAdd();
+              memoID.value = memo.id;
             },
             icon: const Icon(Icons.add),
           ),
@@ -35,7 +36,7 @@ class MemoRows extends HookConsumerWidget {
               showModalBottomSheet(
                 context: context,
                 builder: (context) => MemoRowFilterPage(
-                  memoID: memoID,
+                  memoID: memoID.value,
                   showChecked: showChecked,
                 ),
               );
