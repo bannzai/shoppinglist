@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/memo_row_filter/page.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/link_memo.dart';
@@ -8,11 +9,13 @@ import 'package:shoppinglist/provider/memo.dart';
 
 class MemoRows extends HookConsumerWidget {
   final ValueNotifier<String> memoID;
+  final Memo memo;
   final ValueNotifier<bool> showChecked;
   final ValueNotifier<List<MemoRow>> memoRows;
   const MemoRows({
     super.key,
     required this.memoID,
+    required this.memo,
     required this.showChecked,
     required this.memoRows,
   });
