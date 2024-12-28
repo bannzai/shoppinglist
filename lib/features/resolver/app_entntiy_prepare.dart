@@ -17,7 +17,7 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
     useEffect(() {
       void f() async {
         if (memos is AsyncData && memos.value?.isEmpty == true) {
-          await memoAdd.call();
+          await memoAdd();
         }
       }
 

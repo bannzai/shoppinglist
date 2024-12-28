@@ -26,7 +26,7 @@ class MemoRows extends HookConsumerWidget {
         actions: [
           IconButton(
             onPressed: () async {
-              await memoAdd.call();
+              await memoAdd();
             },
             icon: const Icon(Icons.add),
           ),
