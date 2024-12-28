@@ -16,13 +16,15 @@ class MemoAdd {
 
   MemoAdd({required this.database});
 
-  Future<void> call() async {
+  Future<Memo> call() async {
     final docRef = database.newMemoReference();
-    await docRef.set(Memo(
+    final memo = Memo(
       id: docRef.id,
       name: DateFormat('yyyy-MM-dd').format(DateTime.now()),
       status: MemoStatus.active,
-    ));
+    );
+    await docRef.set(memo);
+    return memo;
   }
 }
 
