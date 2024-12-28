@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/memo.dart';
@@ -24,9 +25,20 @@ class MemoRows extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final memo = memos.firstWhere((memo) => memo.id == memoID.value);
     final memoAdd = ref.watch(memoAddProvider);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(memo.name),
+        title: GestureDetector(
+          onTap: () {
+            _showPicker(context);
+          },
+          child: Row(
+            children: [
+              Text(memo.name),
+              const Icon(Icons.arrow_drop_down),
+            ],
+          ),
+        ),
         actions: [
           IconButton(
             onPressed: () async {
@@ -64,6 +76,35 @@ class MemoRows extends HookConsumerWidget {
           );
         },
       ),
+    );
+  }
+
+  void _showPicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            SizedBox(
+              height: 200,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: CupertinoPicker(
+                  itemExtent: 40,
+                  children: memos.map((memo) => Text(memo.name)).toList(),
+                  onSelectedItemChanged: (int value) {
+                    memoID.value = memos[value].id;
+                  },
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
