@@ -32,5 +32,31 @@ final memoAddProvider = AutoDisposeProvider<MemoAdd>.internal(
 );
 
 typedef MemoAddRef = AutoDisposeProviderRef<MemoAdd>;
+String _$memoDeleteHash() => r'10fb70215dc3ef830d406325c83737dd2be046d4';
+
+/// See also [memoDelete].
+@ProviderFor(memoDelete)
+final memoDeleteProvider = AutoDisposeProvider<MemoDelete>.internal(
+  memoDelete,
+  name: r'memoDeleteProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$memoDeleteHash,
+  dependencies: <ProviderOrFamily>[userDatabaseProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{userDatabaseProvider, ...?userDatabaseProvider.allTransitiveDependencies},
+);
+
+typedef MemoDeleteRef = AutoDisposeProviderRef<MemoDelete>;
+String _$memoUpdateHash() => r'ae056b44b145f7fd9e49c721211db590ea1fe709';
+
+/// See also [memoUpdate].
+@ProviderFor(memoUpdate)
+final memoUpdateProvider = AutoDisposeProvider<MemoUpdate>.internal(
+  memoUpdate,
+  name: r'memoUpdateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$memoUpdateHash,
+  dependencies: <ProviderOrFamily>[userDatabaseProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{userDatabaseProvider, ...?userDatabaseProvider.allTransitiveDependencies},
+);
+
+typedef MemoUpdateRef = AutoDisposeProviderRef<MemoUpdate>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

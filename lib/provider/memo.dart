@@ -33,3 +33,37 @@ MemoAdd memoAdd(MemoAddRef ref) {
   final database = ref.watch(userDatabaseProvider);
   return MemoAdd(database: database);
 }
+
+class MemoDelete {
+  final UserDatabase database;
+
+  MemoDelete({required this.database});
+
+  Future<void> call({required String memoID}) async {
+    final docRef = database.memoReference(memoID: memoID);
+    await docRef.delete();
+  }
+}
+
+@Riverpod(dependencies: [userDatabase])
+MemoDelete memoDelete(MemoDeleteRef ref) {
+  final database = ref.watch(userDatabaseProvider);
+  return MemoDelete(database: database);
+}
+
+class MemoUpdate {
+  final UserDatabase database;
+
+  MemoUpdate({required this.database});
+
+  Future<void> call({required String memoID, required Memo memo}) async {
+    final docRef = database.memoReference(memoID: memoID);
+    await docRef.set(memo);
+  }
+}
+
+@Riverpod(dependencies: [userDatabase])
+MemoUpdate memoUpdate(MemoUpdateRef ref) {
+  final database = ref.watch(userDatabaseProvider);
+  return MemoUpdate(database: database);
+}
