@@ -9,6 +9,7 @@ import 'package:shoppinglist/features/resolver/app.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/link_memo.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/text_memo.dart';
 import 'package:shoppinglist/provider/memo.dart';
+import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
 class MemoRows extends HookConsumerWidget {
   final ValueNotifier<String> memoID;
@@ -44,14 +45,17 @@ class MemoRows extends HookConsumerWidget {
         actions: [
           IconButton(
             onPressed: () {
-              showModalBottomSheet(
+              appShowModalBottomSheet(
                 context: context,
-                builder: (context) => AppResolvers(builder: (context, user) {
-                  return MemoSettingPage(
-                    memoID: memoID.value,
-                    memo: memo,
+                builder: (context) {
+                  return SizedBox(
+                    height: 800,
+                    child: MemoSettingPage(
+                      memoID: memoID.value,
+                      memo: memo,
+                    ),
                   );
-                }),
+                },
               );
             },
             icon: const Icon(Icons.settings),
@@ -65,14 +69,14 @@ class MemoRows extends HookConsumerWidget {
           ),
           IconButton(
             onPressed: () {
-              showModalBottomSheet(
+              appShowModalBottomSheet(
                 context: context,
-                builder: (context) => AppResolvers(builder: (context, user) {
+                builder: (context) {
                   return MemoRowFilterPage(
                     memoID: memoID.value,
                     showChecked: showChecked,
                   );
-                }),
+                },
               );
             },
             icon: const Icon(Icons.filter_1_outlined),
