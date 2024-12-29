@@ -5,6 +5,7 @@ import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/memo_row_filter/page.dart';
 import 'package:shoppinglist/features/memo_setting/page.dart';
+import 'package:shoppinglist/features/resolver/app.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/link_memo.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/text_memo.dart';
 import 'package:shoppinglist/provider/memo.dart';
@@ -45,10 +46,12 @@ class MemoRows extends HookConsumerWidget {
             onPressed: () {
               showModalBottomSheet(
                 context: context,
-                builder: (context) => MemoSettingPage(
-                  memoID: memoID.value,
-                  memo: memo,
-                ),
+                builder: (context) => AppResolvers(builder: (context, user) {
+                  return MemoSettingPage(
+                    memoID: memoID.value,
+                    memo: memo,
+                  );
+                }),
               );
             },
             icon: const Icon(Icons.settings),
@@ -64,10 +67,12 @@ class MemoRows extends HookConsumerWidget {
             onPressed: () {
               showModalBottomSheet(
                 context: context,
-                builder: (context) => MemoRowFilterPage(
-                  memoID: memoID.value,
-                  showChecked: showChecked,
-                ),
+                builder: (context) => AppResolvers(builder: (context, user) {
+                  return MemoRowFilterPage(
+                    memoID: memoID.value,
+                    showChecked: showChecked,
+                  );
+                }),
               );
             },
             icon: const Icon(Icons.filter_1_outlined),

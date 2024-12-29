@@ -8,9 +8,7 @@ import 'package:shoppinglist/features/resolver/force_update.dart';
 import 'package:shoppinglist/features/resolver/purchase_setup.dart';
 
 class RootPage extends HookConsumerWidget {
-  final String title;
-
-  const RootPage({super.key, required this.title});
+  const RootPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
