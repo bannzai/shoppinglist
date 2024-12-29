@@ -48,12 +48,9 @@ class MemoRows extends HookConsumerWidget {
               appShowModalBottomSheet(
                 context: context,
                 builder: (context) {
-                  return SizedBox(
-                    height: 800,
-                    child: MemoSettingPage(
-                      memoID: memoID.value,
-                      memo: memo,
-                    ),
+                  return MemoSettingPage(
+                    memoID: memoID.value,
+                    memo: memo,
                   );
                 },
               );
