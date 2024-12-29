@@ -54,28 +54,31 @@ class MemoSettingPage extends HookConsumerWidget {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Column(
-            children: [
-              const Text('メモ名', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 88,
-                width: double.infinity,
-                child: TextField(
-                  controller: textEditingController,
-                  onChanged: (value) {
-                    memo.value = memo.value.copyWith(name: value);
-                  },
-                  onSubmitted: (value) {
-                    memo.value = memo.value.copyWith(name: value);
-                  },
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('メモ名', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                SizedBox(
+                  height: 88,
+                  width: double.infinity,
+                  child: TextField(
+                    controller: textEditingController,
+                    onChanged: (value) {
+                      memo.value = memo.value.copyWith(name: value);
+                    },
+                    onSubmitted: (value) {
+                      memo.value = memo.value.copyWith(name: value);
+                    },
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
