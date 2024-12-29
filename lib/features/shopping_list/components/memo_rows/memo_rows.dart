@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/memo_row_filter/page.dart';
+import 'package:shoppinglist/features/memo_setting/page.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/link_memo.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/text_memo.dart';
 import 'package:shoppinglist/provider/memo.dart';
@@ -40,6 +41,18 @@ class MemoRows extends HookConsumerWidget {
           ),
         ),
         actions: [
+          IconButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => MemoSettingPage(
+                  memoID: memoID.value,
+                  memo: memo,
+                ),
+              );
+            },
+            icon: const Icon(Icons.settings),
+          ),
           IconButton(
             onPressed: () async {
               final memo = await memoAdd();
