@@ -292,6 +292,19 @@ class _LinkMemoRowsProviderElement extends AutoDisposeStreamProviderElement<List
   String get memoID => (origin as LinkMemoRowsProvider).memoID;
 }
 
+String _$addTextMemoRowHash() => r'42a508c196eb0512f8108d80d0f3704e869ec007';
+
+/// See also [addTextMemoRow].
+@ProviderFor(addTextMemoRow)
+final addTextMemoRowProvider = AutoDisposeProvider<AddTextMemoRow>.internal(
+  addTextMemoRow,
+  name: r'addTextMemoRowProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$addTextMemoRowHash,
+  dependencies: <ProviderOrFamily>[userDatabaseProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{userDatabaseProvider, ...?userDatabaseProvider.allTransitiveDependencies},
+);
+
+typedef AddTextMemoRowRef = AutoDisposeProviderRef<AddTextMemoRow>;
 String _$addLinkMemoRowHash() => r'bef1d96ed3a5a0de82ff40d29ca906fb11097af1';
 
 /// See also [addLinkMemoRow].

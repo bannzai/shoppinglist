@@ -26,12 +26,30 @@ Stream<List<MemoRow>> linkMemoRows(LinkMemoRowsRef ref, {required String memoID}
       .map((event) => event.docs.map((doc) => doc.data()).toList());
 }
 
+class AddTextMemoRow {
+  final UserDatabase database;
+
+  AddTextMemoRow({required this.database});
+
+  Future<TextMemoRow> call({required String memoID, required String message, required int order}) async {
+    final docRef = database.memoRowsReference(memoID: memoID).doc();
+    final textMemoRow = TextMemoRow(id: docRef.id, memoID: memoID, message: message, order: order);
+    await database.memoRowsReference(memoID: memoID).add(textMemoRow);
+    return textMemoRow;
+  }
+}
+
+@Riverpod(dependencies: [userDatabase])
+AddTextMemoRow addTextMemoRow(AddTextMemoRowRef ref) {
+  return AddTextMemoRow(database: ref.watch(userDatabaseProvider));
+}
+
 class AddLinkMemoRow {
   final UserDatabase database;
 
   AddLinkMemoRow({required this.database});
 
-  Future<void> call({
+  Future<LinkMemoRow> call({
     required String memoID,
     required String url,
     required String? metadataTitle,
@@ -39,14 +57,18 @@ class AddLinkMemoRow {
     required String? metadataImageURL,
     required int order,
   }) async {
-    await database.memoRowsReference(memoID: memoID).add(LinkMemoRow(
-          memoID: memoID,
-          url: url,
-          metadataTitle: metadataTitle,
-          metadataDescription: metadataDescription,
-          metadataImageURL: metadataImageURL,
-          order: order,
-        ));
+    final docRef = database.memoRowsReference(memoID: memoID).doc();
+    final linkMemoRow = LinkMemoRow(
+      id: docRef.id,
+      memoID: memoID,
+      url: url,
+      metadataTitle: metadataTitle,
+      metadataDescription: metadataDescription,
+      metadataImageURL: metadataImageURL,
+      order: order,
+    );
+    await database.memoRowsReference(memoID: memoID).add(linkMemoRow);
+    return linkMemoRow;
   }
 }
 
