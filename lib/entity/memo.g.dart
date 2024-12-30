@@ -8,6 +8,7 @@ part of 'memo.dart';
 
 _$MemoImpl _$$MemoImplFromJson(Map<String, dynamic> json) => _$MemoImpl(
       id: json['id'] as String,
+      userID: json['userID'] as String,
       name: json['name'] as String? ?? '',
       status: $enumDecodeNullable(_$MemoStatusEnumMap, json['status']) ?? MemoStatus.active,
       createdDateTime: const ClientCreatedTimestamp().fromJson(json['createdDateTime'] as Timestamp?),
@@ -18,6 +19,7 @@ _$MemoImpl _$$MemoImplFromJson(Map<String, dynamic> json) => _$MemoImpl(
 
 Map<String, dynamic> _$$MemoImplToJson(_$MemoImpl instance) => <String, dynamic>{
       'id': instance.id,
+      'userID': instance.userID,
       'name': instance.name,
       'status': _$MemoStatusEnumMap[instance.status]!,
       'createdDateTime': const ClientCreatedTimestamp().toJson(instance.createdDateTime),

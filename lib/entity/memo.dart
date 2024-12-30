@@ -16,6 +16,7 @@ class Memo with _$Memo {
   @JsonSerializable(explicitToJson: true)
   const factory Memo({
     required String id,
+    required String userID,
     @Default('') String name,
     @Default(MemoStatus.active) MemoStatus status,
     @ClientCreatedTimestamp() DateTime? createdDateTime,

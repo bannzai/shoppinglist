@@ -21,6 +21,7 @@ Memo _$MemoFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Memo {
   String get id => throw _privateConstructorUsedError;
+  String get userID => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   MemoStatus get status => throw _privateConstructorUsedError;
   @ClientCreatedTimestamp()
@@ -47,6 +48,7 @@ abstract class $MemoCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
+      String userID,
       String name,
       MemoStatus status,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -70,6 +72,7 @@ class _$MemoCopyWithImpl<$Res, $Val extends Memo> implements $MemoCopyWith<$Res>
   @override
   $Res call({
     Object? id = null,
+    Object? userID = null,
     Object? name = null,
     Object? status = null,
     Object? createdDateTime = freezed,
@@ -81,6 +84,10 @@ class _$MemoCopyWithImpl<$Res, $Val extends Memo> implements $MemoCopyWith<$Res>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      userID: null == userID
+          ? _value.userID
+          : userID // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _value.name
@@ -117,6 +124,7 @@ abstract class _$$MemoImplCopyWith<$Res> implements $MemoCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
+      String userID,
       String name,
       MemoStatus status,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -135,6 +143,7 @@ class __$$MemoImplCopyWithImpl<$Res> extends _$MemoCopyWithImpl<$Res, _$MemoImpl
   @override
   $Res call({
     Object? id = null,
+    Object? userID = null,
     Object? name = null,
     Object? status = null,
     Object? createdDateTime = freezed,
@@ -146,6 +155,10 @@ class __$$MemoImplCopyWithImpl<$Res> extends _$MemoCopyWithImpl<$Res, _$MemoImpl
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      userID: null == userID
+          ? _value.userID
+          : userID // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _value.name
@@ -181,6 +194,7 @@ class __$$MemoImplCopyWithImpl<$Res> extends _$MemoCopyWithImpl<$Res, _$MemoImpl
 class _$MemoImpl extends _Memo {
   const _$MemoImpl(
       {required this.id,
+      required this.userID,
       this.name = '',
       this.status = MemoStatus.active,
       @ClientCreatedTimestamp() this.createdDateTime,
@@ -193,6 +207,8 @@ class _$MemoImpl extends _Memo {
 
   @override
   final String id;
+  @override
+  final String userID;
   @override
   @JsonKey()
   final String name;
@@ -214,7 +230,7 @@ class _$MemoImpl extends _Memo {
 
   @override
   String toString() {
-    return 'Memo(id: $id, name: $name, status: $status, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'Memo(id: $id, userID: $userID, name: $name, status: $status, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 
   @override
@@ -223,6 +239,7 @@ class _$MemoImpl extends _Memo {
         (other.runtimeType == runtimeType &&
             other is _$MemoImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime) &&
@@ -233,7 +250,8 @@ class _$MemoImpl extends _Memo {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, status, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+  int get hashCode =>
+      Object.hash(runtimeType, id, userID, name, status, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
 
   /// Create a copy of Memo
   /// with the given fields replaced by the non-null parameter values.
@@ -253,6 +271,7 @@ class _$MemoImpl extends _Memo {
 abstract class _Memo extends Memo {
   const factory _Memo(
       {required final String id,
+      required final String userID,
       final String name,
       final MemoStatus status,
       @ClientCreatedTimestamp() final DateTime? createdDateTime,
@@ -265,6 +284,8 @@ abstract class _Memo extends Memo {
 
   @override
   String get id;
+  @override
+  String get userID;
   @override
   String get name;
   @override

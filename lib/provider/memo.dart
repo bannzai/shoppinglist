@@ -1,7 +1,9 @@
 import 'package:intl/intl.dart';
+import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shoppinglist/provider/app_user.dart';
 
 part 'memo.g.dart';
 
@@ -16,15 +18,21 @@ Stream<List<Memo>> memos(MemosRef ref) {
 }
 
 class MemoAdd {
+  final AppUser? appUser;
   final UserDatabase database;
 
-  MemoAdd({required this.database});
+  MemoAdd({required this.appUser, required this.database});
 
   Future<Memo> call() async {
+    final userID = appUser?.id;
+    if (userID == null) {
+      throw Exception('User ID is null');
+    }
     final docRef = database.newMemoReference();
     final count = await database.countOfMemos();
     final memo = Memo(
       id: docRef.id,
+      userID: userID,
       name: count == 0 ? DateFormat('yyyy-MM-dd').format(DateTime.now()) : '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ($count)',
       status: MemoStatus.active,
     );
@@ -36,7 +44,8 @@ class MemoAdd {
 @Riverpod(dependencies: [userDatabase])
 MemoAdd memoAdd(MemoAddRef ref) {
   final database = ref.watch(userDatabaseProvider);
-  return MemoAdd(database: database);
+  final appUser = ref.watch(appUserProvider).valueOrNull;
+  return MemoAdd(database: database, appUser: appUser);
 }
 
 class MemoDelete {
