@@ -11,7 +11,7 @@ Stream<List<MemoRow>> textMemoRows(TextMemoRowsRef ref, {required String memoID,
   if (!showChecked) {
     query = query.where(MemoRowFirestoreKeys.status, isEqualTo: MemoRowStatus.unchecked.name);
   }
-  return query.orderBy(MemoRowFirestoreKeys.order, descending: true).snapshots().map((event) => event.docs.map((doc) => doc.data()).toList());
+  return query.orderBy(MemoRowFirestoreKeys.order, descending: false).snapshots().map((event) => event.docs.map((doc) => doc.data()).toList());
 }
 
 @Riverpod(dependencies: [userDatabase])
@@ -20,7 +20,7 @@ Stream<List<MemoRow>> linkMemoRows(LinkMemoRowsRef ref, {required String memoID}
   return database
       .memoRowsReference(memoID: memoID)
       .where(MemoRowFirestoreKeys.type, isEqualTo: 'link')
-      .orderBy(MemoRowFirestoreKeys.order, descending: true)
+      .orderBy(MemoRowFirestoreKeys.order, descending: false)
       .snapshots()
       .map((event) => event.docs.map((doc) => doc.data()).toList());
 }
