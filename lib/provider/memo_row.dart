@@ -29,18 +29,21 @@ class AddLinkMemoRow {
 
   AddLinkMemoRow({required this.database});
 
-  Future<void> call(
-      {required String memoID,
-      required String url,
-      required String? metadataTitle,
-      required String? metadataDescription,
-      required String? metadataImageURL}) async {
+  Future<void> call({
+    required String memoID,
+    required String url,
+    required String? metadataTitle,
+    required String? metadataDescription,
+    required String? metadataImageURL,
+    required int order,
+  }) async {
     await database.memoRowsReference(memoID: memoID).add(LinkMemoRow(
           memoID: memoID,
           url: url,
           metadataTitle: metadataTitle,
           metadataDescription: metadataDescription,
           metadataImageURL: metadataImageURL,
+          order: order,
         ));
   }
 }

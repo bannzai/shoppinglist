@@ -171,7 +171,15 @@ class TextMemoTextField extends HookConsumerWidget {
                   SetOptions(merge: true),
                 );
 
-            memoRows.value = [...memoRows.value, MemoRow.text(memoID: textMemoRow.memoID, message: '')];
+            memoRows.value = [
+              ...memoRows.value,
+              MemoRow.text(
+                memoID: textMemoRow.memoID,
+                message: '',
+                order: memoRows.value.length,
+                createdDateTime: DateTime.now(),
+              )
+            ];
           }
         },
       ),

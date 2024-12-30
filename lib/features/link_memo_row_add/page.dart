@@ -10,10 +10,12 @@ import 'package:metadata_fetch/metadata_fetch.dart';
 class LinkMemoRowAddPage extends HookConsumerWidget {
   final String memoID;
   final LinkMemoRow linkMemoRow;
+  final List<MemoRow> memoRows;
   const LinkMemoRowAddPage({
     super.key,
     required this.memoID,
     required this.linkMemoRow,
+    required this.memoRows,
   });
 
   @override
@@ -70,6 +72,7 @@ class LinkMemoRowAddPage extends HookConsumerWidget {
                           metadataTitle: title,
                           metadataDescription: description,
                           metadataImageURL: imageURL,
+                          order: memoRows.length,
                         );
                         if (context.mounted) {
                           Navigator.pop(context);
