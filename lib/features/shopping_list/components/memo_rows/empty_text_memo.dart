@@ -33,7 +33,6 @@ class EmptyTextMemoRows extends HookConsumerWidget {
                       createdDateTime: DateTime.now(),
                     )
                   ];
-                  // ref.read(userDatabaseProvider).memoRowsReference(memoID: memoID).add(const MemoRow.text(message: ''));
                 },
               ),
             ],

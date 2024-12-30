@@ -29,10 +29,12 @@ class EmptyLinkMemoRows extends HookConsumerWidget {
                   showModalBottomSheet(
                     context: context,
                     builder: (context) => AppResolvers(
-                        builder: (context, user) => LinkMemoRowAddPage(
-                            memoID: memoID,
-                            memoRows: memoRows.value,
-                            linkMemoRow: LinkMemoRow(url: '', memoID: memoID, order: memoRows.value.length))),
+                      builder: (context, user) => LinkMemoRowAddPage(
+                        memoID: memoID,
+                        memoRows: memoRows.value,
+                        linkMemoRow: LinkMemoRow(url: '', memoID: memoID, order: memoRows.value.length),
+                      ),
+                    ),
                   );
                 },
               ),
