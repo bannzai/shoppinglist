@@ -42,14 +42,10 @@ class MemoRows extends HookConsumerWidget {
       itemBuilder: (context, index) {
         final memoRow = memoRows[index];
 
-        return Column(
-          children: [
-            switch (memoRow) {
-              TextMemoRow textMemoRow => TextMemo(key: ValueKey(memoRow.id), textMemoRow: textMemoRow, memoRows: memoRows),
-              LinkMemoRow linkMemoRow => LinkMemo(key: ValueKey(memoRow.id), linkMemoRow: linkMemoRow, memoRows: memoRows),
-            },
-          ],
-        );
+        return switch (memoRow) {
+          TextMemoRow textMemoRow => TextMemo(key: ValueKey(memoRow.id), textMemoRow: textMemoRow, memoRows: memoRows),
+          LinkMemoRow linkMemoRow => LinkMemo(key: ValueKey(memoRow.id), linkMemoRow: linkMemoRow, memoRows: memoRows),
+        };
       },
     );
   }
