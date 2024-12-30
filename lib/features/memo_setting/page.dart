@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/provider/memo.dart';
+import 'package:shoppinglist/style/button.dart';
 
 class MemoSettingPage extends HookConsumerWidget {
   final String memoID;
@@ -19,65 +20,98 @@ class MemoSettingPage extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('メモ設定'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('メモを削除しますか？'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        memoDelete(memoID: memoID);
-                        Navigator.pop(context);
-                      },
-                      child: const Text('削除'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('キャンセル'),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('メモ名', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    SizedBox(
+                      height: 88,
+                      width: double.infinity,
+                      child: TextField(
+                        controller: textEditingController,
+                        onChanged: (value) {
+                          memo.value = memo.value.copyWith(name: value);
+                        },
+                        onSubmitted: (value) {
+                          memo.value = memo.value.copyWith(name: value);
+                        },
+                      ),
                     ),
                   ],
                 ),
-              );
-            },
-            icon: const Icon(Icons.delete),
-          ),
-          IconButton(
-            onPressed: () {
-              memoUpdate(memoID: memoID, memo: memo.value);
-            },
-            icon: const Icon(Icons.save),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('メモ名', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                SizedBox(
-                  height: 88,
-                  width: double.infinity,
-                  child: TextField(
-                    controller: textEditingController,
-                    onChanged: (value) {
-                      memo.value = memo.value.copyWith(name: value);
-                    },
-                    onSubmitted: (value) {
-                      memo.value = memo.value.copyWith(name: value);
-                    },
+              ),
+              const Spacer(),
+              Column(
+                children: [
+                  SizedBox(
+                    height: 48,
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        memoUpdate(memoID: memoID, memo: memo.value);
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.save),
+                          SizedBox(width: 8),
+                          Text('メモを保存'),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    height: 48,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: elevatedButtonStyle.merge(
+                        const ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.red)),
+                      ),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('メモを削除しますか？'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  memoDelete(memoID: memoID);
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('削除'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('キャンセル'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.delete),
+                          SizedBox(width: 8),
+                          Text('メモを削除'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

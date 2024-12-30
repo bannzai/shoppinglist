@@ -6,3 +6,9 @@ final outlinedButtonStyle = OutlinedButton.styleFrom(
   ),
   side: const BorderSide(),
 );
+
+final elevatedButtonStyle = ElevatedButton.styleFrom(
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(10),
+  ),
+);
