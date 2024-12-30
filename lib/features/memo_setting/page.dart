@@ -56,6 +56,7 @@ class MemoSettingPage extends HookConsumerWidget {
                     child: OutlinedButton(
                       onPressed: () {
                         memoUpdate(memoID: memoID, memo: memo.value);
+                        Navigator.pop(context);
                       },
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
