@@ -305,5 +305,18 @@ final addLinkMemoRowProvider = AutoDisposeProvider<AddLinkMemoRow>.internal(
 );
 
 typedef AddLinkMemoRowRef = AutoDisposeProviderRef<AddLinkMemoRow>;
+String _$memoRowBatchUpdateHash() => r'3e408fd1248e0f71e92551f87a33d3ade5b0b8cc';
+
+/// See also [memoRowBatchUpdate].
+@ProviderFor(memoRowBatchUpdate)
+final memoRowBatchUpdateProvider = AutoDisposeProvider<MemoRowBatchUpdate>.internal(
+  memoRowBatchUpdate,
+  name: r'memoRowBatchUpdateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$memoRowBatchUpdateHash,
+  dependencies: <ProviderOrFamily>[userDatabaseProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{userDatabaseProvider, ...?userDatabaseProvider.allTransitiveDependencies},
+);
+
+typedef MemoRowBatchUpdateRef = AutoDisposeProviderRef<MemoRowBatchUpdate>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

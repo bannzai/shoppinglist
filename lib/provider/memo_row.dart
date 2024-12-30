@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -52,4 +53,29 @@ class AddLinkMemoRow {
 @Riverpod(dependencies: [userDatabase])
 AddLinkMemoRow addLinkMemoRow(AddLinkMemoRowRef ref) {
   return AddLinkMemoRow(database: ref.watch(userDatabaseProvider));
+}
+
+class MemoRowBatchUpdate {
+  final UserDatabase database;
+
+  MemoRowBatchUpdate({required this.database});
+
+  Future<void> call({
+    required String memoID,
+    required List<MemoRow> memoRows,
+  }) async {
+    final batch = FirebaseFirestore.instance.batch();
+
+    for (final memoRow in memoRows) {
+      final docRef = database.memoRowsReference(memoID: memoID).doc(memoRow.id);
+      batch.set(docRef, memoRow, SetOptions(merge: true));
+    }
+
+    await batch.commit();
+  }
+}
+
+@Riverpod(dependencies: [userDatabase])
+MemoRowBatchUpdate memoRowBatchUpdate(MemoRowBatchUpdateRef ref) {
+  return MemoRowBatchUpdate(database: ref.watch(userDatabaseProvider));
 }
