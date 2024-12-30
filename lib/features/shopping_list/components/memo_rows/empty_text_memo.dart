@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
-import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/memo_row.dart';
 import 'package:shoppinglist/style/button.dart';
 
 class EmptyTextMemoRows extends HookConsumerWidget {
@@ -25,12 +25,11 @@ class EmptyTextMemoRows extends HookConsumerWidget {
                 style: outlinedButtonStyle,
                 child: const Text('最初の買い物メモを作成しましょう！'),
                 onPressed: () {
-                  ref.read(userDatabaseProvider).memoRowsReference(memoID: memoID).add(MemoRow.text(
+                  ref.read(addTextMemoRowProvider).call(
                         memoID: memoID,
                         message: '',
                         order: memoRows.length,
-                        createdDateTime: DateTime.now(),
-                      ));
+                      );
                 },
               ),
             ],

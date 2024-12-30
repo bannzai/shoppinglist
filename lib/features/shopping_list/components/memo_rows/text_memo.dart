@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/memo_row.dart';
 import 'package:shoppinglist/style/color.dart';
 
 class TextMemo extends HookConsumerWidget {
@@ -41,22 +42,20 @@ class TextMemo extends HookConsumerWidget {
             scale: 1.5,
             child: Checkbox(
               value: textMemoRow.status == MemoRowStatus.checked,
-              onChanged: textMemoRow.isDraft
-                  ? null
-                  : (value) {
-                      ref
-                          .read(userDatabaseProvider)
-                          .memoRowsReference(
-                            memoID: textMemoRow.memoID,
-                          )
-                          .doc(textMemoRow.id)
-                          .set(
-                            textMemoRow.copyWith(
-                              status: textMemoRow.status == MemoRowStatus.checked ? MemoRowStatus.unchecked : MemoRowStatus.checked,
-                            ),
-                            SetOptions(merge: true),
-                          );
-                    },
+              onChanged: (value) {
+                ref
+                    .read(userDatabaseProvider)
+                    .memoRowsReference(
+                      memoID: textMemoRow.memoID,
+                    )
+                    .doc(textMemoRow.id)
+                    .set(
+                      textMemoRow.copyWith(
+                        status: textMemoRow.status == MemoRowStatus.checked ? MemoRowStatus.unchecked : MemoRowStatus.checked,
+                      ),
+                      SetOptions(merge: true),
+                    );
+              },
             ),
           ),
           Expanded(
@@ -141,28 +140,22 @@ class TextMemoTextField extends HookConsumerWidget {
           final value = v.trim();
           final textMemoRowID = textMemoRow.id;
           if (value.isEmpty) {
-            if (textMemoRow.isDraft) {
-              if (memoRows.length > 1) {
-                if (textMemoRowID != null) {
-                  ref
-                      .read(userDatabaseProvider)
-                      .memoRowReference(
-                        memoID: textMemoRow.memoID,
-                        memoRowID: textMemoRowID,
-                      )
-                      .delete();
-                }
-              }
+            if (memoRows.length > 1) {
+              ref
+                  .read(userDatabaseProvider)
+                  .memoRowReference(
+                    memoID: textMemoRow.memoID,
+                    memoRowID: textMemoRowID,
+                  )
+                  .delete();
             } else {
-              if (textMemoRowID != null) {
-                ref
-                    .read(userDatabaseProvider)
-                    .memoRowReference(
-                      memoID: textMemoRow.memoID,
-                      memoRowID: textMemoRowID,
-                    )
-                    .delete();
-              }
+              ref
+                  .read(userDatabaseProvider)
+                  .memoRowReference(
+                    memoID: textMemoRow.memoID,
+                    memoRowID: textMemoRowID,
+                  )
+                  .delete();
             }
           } else {
             ref
@@ -176,13 +169,10 @@ class TextMemoTextField extends HookConsumerWidget {
                   SetOptions(merge: true),
                 );
 
-            ref.read(userDatabaseProvider).memoRowsReference(memoID: textMemoRow.memoID).add(
-                  MemoRow.text(
-                    memoID: textMemoRow.memoID,
-                    message: '',
-                    order: memoRows.length,
-                    createdDateTime: DateTime.now(),
-                  ),
+            ref.read(addTextMemoRowProvider).call(
+                  memoID: textMemoRow.memoID,
+                  message: '',
+                  order: memoRows.length,
                 );
           }
         },

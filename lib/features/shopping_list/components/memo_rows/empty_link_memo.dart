@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
-import 'package:shoppinglist/features/link_memo_row_add/page.dart';
-import 'package:shoppinglist/features/resolver/app.dart';
 import 'package:shoppinglist/style/button.dart';
 
 class EmptyLinkMemoRows extends HookConsumerWidget {
@@ -26,16 +24,16 @@ class EmptyLinkMemoRows extends HookConsumerWidget {
                 style: outlinedButtonStyle,
                 child: const Text('最初のECサイトメモを作成しましょう！'),
                 onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) => AppResolvers(
-                      builder: (context, user) => LinkMemoRowAddPage(
-                        memoID: memoID,
-                        memoRows: memoRows.value,
-                        linkMemoRow: LinkMemoRow(url: '', memoID: memoID, order: memoRows.value.length),
-                      ),
-                    ),
-                  );
+                  // showModalBottomSheet(
+                  //   context: context,
+                  //   builder: (context) => AppResolvers(
+                  //     builder: (context, user) => LinkMemoRowAddPage(
+                  //       memoID: memoID,
+                  //       memoRows: memoRows.value,
+                  //       linkMemoRow: LinkMemoRow(url: '', memoID: memoID, order: memoRows.value.length),
+                  //     ),
+                  //   ),
+                  // );
                 },
               ),
             ],
