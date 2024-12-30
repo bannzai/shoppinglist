@@ -62,6 +62,13 @@ class _Body extends HookConsumerWidget {
       return null;
     }, [memoRowsAsync]);
 
+    useEffect(() {
+      if (!memos.map((e) => e.id).contains(memoID.value)) {
+        memoID.value = memos.first.id;
+      }
+      return null;
+    }, [memos.length]);
+
     return Retry(
       retry: () {
         retry();

@@ -84,6 +84,7 @@ class TextMemo extends HookConsumerWidget {
                           )
                           .doc(textMemoRow.id)
                           .delete();
+                      memoRows.value = [...memoRows.value]..removeLast();
                     },
                     icon: const Icon(Icons.delete),
                   ),
