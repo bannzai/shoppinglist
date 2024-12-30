@@ -56,6 +56,7 @@ class _Body extends HookConsumerWidget {
       return null;
     }, [memos.length]);
 
+    // memoIDが変わったらmemosProviderから更新してWidgetツリーを更新
     useEffect(() {
       ref.invalidate(memosProvider);
       return null;
