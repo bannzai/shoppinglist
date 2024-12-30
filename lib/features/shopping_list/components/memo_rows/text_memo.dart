@@ -73,20 +73,22 @@ class TextMemo extends HookConsumerWidget {
                     ),
                   ),
                 ),
-                if (!isEditing.value) ...[
-                  IconButton(
-                    onPressed: () {
-                      ref
-                          .read(userDatabaseProvider)
-                          .memoRowsReference(
-                            memoID: textMemoRow.memoID,
-                          )
-                          .doc(textMemoRow.id)
-                          .delete();
-                    },
-                    icon: const Icon(Icons.delete),
-                  ),
-                ],
+                IconButton(
+                  onPressed: () {
+                    ref
+                        .read(userDatabaseProvider)
+                        .memoRowsReference(
+                          memoID: textMemoRow.memoID,
+                        )
+                        .doc(textMemoRow.id)
+                        .delete();
+                  },
+                  icon: const Icon(Icons.delete),
+                ),
+                ReorderableDragStartListener(
+                  index: textMemoRow.order,
+                  child: const Icon(Icons.drag_handle),
+                ),
               ],
             ),
           ),
@@ -172,7 +174,7 @@ class TextMemoTextField extends HookConsumerWidget {
             ref.read(addTextMemoRowProvider).call(
                   memoID: textMemoRow.memoID,
                   message: '',
-                  order: memoRows.length,
+                  order: memoRows.nextOrder,
                 );
           }
         },

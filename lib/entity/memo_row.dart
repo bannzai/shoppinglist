@@ -54,6 +54,10 @@ sealed class MemoRow with _$MemoRow {
   factory MemoRow.fromJson(Map<String, dynamic> json) => _$MemoRowFromJson(json);
 }
 
+extension MemoRows on List<MemoRow> {
+  int get nextOrder => (lastOrNull?.order ?? -1) + 1;
+}
+
 enum MemoRowStatus {
   @JsonValue('checked')
   checked,

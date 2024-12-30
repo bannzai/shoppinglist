@@ -28,7 +28,7 @@ class EmptyTextMemoRows extends HookConsumerWidget {
                   ref.read(addTextMemoRowProvider).call(
                         memoID: memoID,
                         message: '',
-                        order: memoRows.length,
+                        order: memoRows.nextOrder,
                       );
                 },
               ),

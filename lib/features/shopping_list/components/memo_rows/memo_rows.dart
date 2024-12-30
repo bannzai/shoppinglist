@@ -19,6 +19,7 @@ class MemoRows extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ReorderableList(
       onReorder: (oldIndex, newIndex) async {
+        debugPrint('oldIndex: $oldIndex, newIndex: $newIndex');
         final changedMemoRows = [...memoRows];
         if (oldIndex < newIndex) {
           for (var i = oldIndex; i < newIndex; i++) {
