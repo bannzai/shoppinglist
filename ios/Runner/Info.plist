@@ -248,5 +248,9 @@
       <string>3qcr597p9d.skadnetwork</string>
     </dict>
   </array>
+  <key>NSCameraUsageDescription</key>
+  <string>買い物リストを作成するためにカメラのアクセスを許可してください</string>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>買い物リストを作成するためにアクセスを許可してください</string>
 </dict>
 </plist>

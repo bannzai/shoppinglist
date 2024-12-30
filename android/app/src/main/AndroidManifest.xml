@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- https://qiita.com/kirinukkii/items/5c6bd1da2b38138ad821#android%E3%81%A8ios%E3%81%AE%E8%A8%AD%E5%AE%9A -->
+  <uses-permission android:name="android.permission.CAMERA"/>
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
     <application
         android:label="shoppinglist"
         android:name="${applicationName}"
