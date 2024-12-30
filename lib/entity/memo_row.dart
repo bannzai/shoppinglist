@@ -9,6 +9,7 @@ abstract class MemoRowFirestoreKeys {
   static const id = 'id';
   static const type = 'type';
   static const status = 'status';
+  static const order = 'order';
   static const createdDateTime = 'createdDateTime';
   static const updatedDateTime = 'updatedDateTime';
   static const serverCreatedDateTime = 'serverCreatedDateTime';
@@ -23,6 +24,7 @@ sealed class MemoRow with _$MemoRow {
     String? id,
     required String memoID,
     required String message,
+    required int order,
     @Default(MemoRowStatus.unchecked) MemoRowStatus status,
     @NullableTimestampConverter() DateTime? reminderDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -37,6 +39,7 @@ sealed class MemoRow with _$MemoRow {
     String? id,
     required String memoID,
     required String url,
+    required int order,
     String? metadataTitle,
     String? metadataDescription,
     String? metadataImageURL,
