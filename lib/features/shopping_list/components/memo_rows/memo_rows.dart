@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/link_memo.dart';
@@ -17,10 +18,12 @@ class MemoRows extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final memoRows = useState(this.memoRows);
+
     return ReorderableList(
-      onReorder: (oldIndex, newIndex) async {
+      onReorder: (oldIndex, newIndex) {
         debugPrint('oldIndex: $oldIndex, newIndex: $newIndex');
-        final changedMemoRows = [...memoRows];
+        final changedMemoRows = [...memoRows.value];
         if (oldIndex < newIndex) {
           for (var i = oldIndex; i < newIndex; i++) {
             final memoRow = changedMemoRows[i];
@@ -34,18 +37,22 @@ class MemoRows extends HookConsumerWidget {
         }
         changedMemoRows[oldIndex] = changedMemoRows[oldIndex].copyWith(order: newIndex);
 
-        await ref.read(memoRowBatchUpdateProvider).call(
+        final orderedMemoRows = changedMemoRows..sort((a, b) => a.order.compareTo(b.order));
+
+        memoRows.value = [...orderedMemoRows];
+
+        ref.read(memoRowBatchUpdateProvider).call(
               memoID: memoID,
-              memoRows: changedMemoRows,
+              memoRows: orderedMemoRows,
             );
       },
-      itemCount: memoRows.length,
+      itemCount: memoRows.value.length,
       itemBuilder: (context, index) {
-        final memoRow = memoRows[index];
+        final memoRow = memoRows.value[index];
 
         return switch (memoRow) {
-          TextMemoRow textMemoRow => TextMemo(key: ValueKey(memoRow.id), textMemoRow: textMemoRow, memoRows: memoRows),
-          LinkMemoRow linkMemoRow => LinkMemo(key: ValueKey(memoRow.id), linkMemoRow: linkMemoRow, memoRows: memoRows),
+          TextMemoRow textMemoRow => TextMemo(key: ValueKey(memoRow.id), textMemoRow: textMemoRow, memoRows: memoRows.value),
+          LinkMemoRow linkMemoRow => LinkMemo(key: ValueKey(memoRow.id), linkMemoRow: linkMemoRow, memoRows: memoRows.value),
         };
       },
     );
