@@ -69,7 +69,7 @@ class MemoSettingPage extends HookConsumerWidget {
                         children: [
                           Icon(Icons.save),
                           SizedBox(width: 8),
-                          Text('メモを保存'),
+                          Text('変更を保存'),
                         ],
                       ),
                     ),
