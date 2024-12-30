@@ -22,10 +22,12 @@ class RootPage extends HookConsumerWidget {
             userID: user.uid,
             builder: (context) {
               debugPrint('Resolved PurchaseSetupResolver user: ${user.uid}');
-              return AppEntityPrepareResolver(builder: (context) {
-                debugPrint('Resolved AppEntityPrepareResolver user: ${user.uid}');
-                return const HomePage();
-              });
+              return AppEntityPrepareResolver(
+                  userID: user.uid,
+                  builder: (context) {
+                    debugPrint('Resolved AppEntityPrepareResolver user: ${user.uid}');
+                    return const HomePage();
+                  });
             },
           );
         });

@@ -50,7 +50,7 @@ class ShoppingListAppBar extends HookConsumerWidget implements PreferredSizeWidg
         },
       ),
       actions: [
-        if (memo != null)
+        if (memo != null) ...[
           IconButton(
             onPressed: () {
               appShowModalBottomSheet(
@@ -70,13 +70,14 @@ class ShoppingListAppBar extends HookConsumerWidget implements PreferredSizeWidg
             },
             icon: const Icon(Icons.settings),
           ),
-        IconButton(
-          onPressed: () async {
-            final memo = await memoAdd();
-            memoID.value = memo.id;
-          },
-          icon: const Icon(Icons.add),
-        ),
+          IconButton(
+            onPressed: () async {
+              final newMemo = await memoAdd(userID: memo.userID);
+              memoID.value = newMemo.id;
+            },
+            icon: const Icon(Icons.add),
+          ),
+        ],
         IconButton(
           onPressed: () {
             appShowModalBottomSheet(

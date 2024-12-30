@@ -5,10 +5,14 @@ import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/provider/memo.dart';
 
 class AppEntityPrepareResolver extends HookConsumerWidget {
+  final String userID;
   final Widget Function(BuildContext context) builder;
 
-  const AppEntityPrepareResolver({super.key, required this.builder});
-
+  const AppEntityPrepareResolver({
+    super.key,
+    required this.userID,
+    required this.builder,
+  });
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final memoAdd = ref.watch(memoAddProvider);
@@ -17,7 +21,7 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
     useEffect(() {
       void f() async {
         if (memos is AsyncData && memos.value?.isEmpty == true) {
-          await memoAdd();
+          await memoAdd(userID: userID);
         }
       }
 

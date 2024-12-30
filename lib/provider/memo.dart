@@ -1,9 +1,7 @@
 import 'package:intl/intl.dart';
-import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:shoppinglist/provider/app_user.dart';
 
 part 'memo.g.dart';
 
@@ -18,16 +16,11 @@ Stream<List<Memo>> memos(MemosRef ref) {
 }
 
 class MemoAdd {
-  final AppUser? appUser;
   final UserDatabase database;
 
-  MemoAdd({required this.appUser, required this.database});
+  MemoAdd({required this.database});
 
-  Future<Memo> call() async {
-    final userID = appUser?.id;
-    if (userID == null) {
-      throw Exception('User ID is null');
-    }
+  Future<Memo> call({required String userID}) async {
     final docRef = database.newMemoReference();
     final count = await database.countOfMemos();
     final memo = Memo(
@@ -44,8 +37,7 @@ class MemoAdd {
 @Riverpod(dependencies: [userDatabase])
 MemoAdd memoAdd(MemoAddRef ref) {
   final database = ref.watch(userDatabaseProvider);
-  final appUser = ref.watch(appUserProvider).valueOrNull;
-  return MemoAdd(database: database, appUser: appUser);
+  return MemoAdd(database: database);
 }
 
 class MemoDelete {
