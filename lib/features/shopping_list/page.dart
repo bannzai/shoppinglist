@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/memo.dart';
+import 'package:shoppinglist/features/shopping_list/components/app_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/empty_text_memo.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/memo_rows.dart';
 import 'package:shoppinglist/provider/memo.dart';
@@ -66,17 +67,25 @@ class _Body extends HookConsumerWidget {
         retry();
         ref.invalidate(textMemoRowsProvider(memoID: memoID.value, showChecked: showChecked.value));
       },
-      child: memoRowsAsync.when(
-        data: (data) {
-          // EmptyTextMemoRowsから登録された時は Databaseは空でmemoRows.value.isNotEmptyとなっている。そのため、条件を追加
-          if (showChecked.value && data.isEmpty && memoRows.value.isEmpty) {
-            return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
-          } else {
-            return MemoRows(memoID: memoID, memos: memos, memoRows: memoRows, showChecked: showChecked);
-          }
-        },
-        error: (e, st) => RetryPage(exception: e),
-        loading: () => const Loading(),
+      child: Scaffold(
+        appBar: ShoppingListAppBar(
+          memoID: memoID,
+          memos: memos,
+          showChecked: showChecked,
+          memoRows: memoRows,
+        ),
+        body: memoRowsAsync.when(
+          data: (data) {
+            // EmptyTextMemoRowsから登録された時は Databaseは空でmemoRows.value.isNotEmptyとなっている。そのため、条件を追加
+            if (showChecked.value && data.isEmpty && memoRows.value.isEmpty) {
+              return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
+            } else {
+              return MemoRows(memoRows: memoRows);
+            }
+          },
+          error: (e, st) => RetryPage(exception: e),
+          loading: () => const Loading(),
+        ),
       ),
     );
   }
