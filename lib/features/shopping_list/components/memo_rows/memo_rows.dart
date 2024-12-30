@@ -6,7 +6,7 @@ import 'package:shoppinglist/features/shopping_list/components/memo_rows/link_me
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/text_memo.dart';
 
 class MemoRows extends HookConsumerWidget {
-  final ValueNotifier<List<MemoRow>> memoRows;
+  final List<MemoRow> memoRows;
   const MemoRows({
     super.key,
     required this.memoRows,
@@ -15,9 +15,9 @@ class MemoRows extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ListView.builder(
-      itemCount: memoRows.value.length,
+      itemCount: memoRows.length,
       itemBuilder: (context, index) {
-        final memoRow = memoRows.value[index];
+        final memoRow = memoRows[index];
 
         return Column(
           children: [

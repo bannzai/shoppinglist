@@ -14,7 +14,7 @@ class ShoppingListAppBar extends HookConsumerWidget implements PreferredSizeWidg
   final ValueNotifier<String> memoID;
   final List<Memo> memos;
   final ValueNotifier<bool> showChecked;
-  final ValueNotifier<List<MemoRow>> memoRows;
+  final List<MemoRow> memoRows;
   const ShoppingListAppBar({
     super.key,
     required this.memoID,

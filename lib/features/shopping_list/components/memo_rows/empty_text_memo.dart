@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/style/button.dart';
 
 class EmptyTextMemoRows extends HookConsumerWidget {
   final String memoID;
-  final ValueNotifier<List<MemoRow>> memoRows;
+  final List<MemoRow> memoRows;
   const EmptyTextMemoRows({super.key, required this.memoID, required this.memoRows});
 
   @override
@@ -24,15 +25,12 @@ class EmptyTextMemoRows extends HookConsumerWidget {
                 style: outlinedButtonStyle,
                 child: const Text('最初の買い物メモを作成しましょう！'),
                 onPressed: () {
-                  memoRows.value = [
-                    ...memoRows.value,
-                    MemoRow.text(
-                      memoID: memoID,
-                      message: '',
-                      order: memoRows.value.length,
-                      createdDateTime: DateTime.now(),
-                    )
-                  ];
+                  ref.read(userDatabaseProvider).memoRowsReference(memoID: memoID).add(MemoRow.text(
+                        memoID: memoID,
+                        message: '',
+                        order: memoRows.length,
+                        createdDateTime: DateTime.now(),
+                      ));
                 },
               ),
             ],

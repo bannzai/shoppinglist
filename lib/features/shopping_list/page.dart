@@ -38,36 +38,10 @@ class _Body extends HookConsumerWidget {
     final memoID = useState(memos.first.id);
     final retry = Retry.of(context).retry;
     final showChecked = useState(true);
-    final memoRowsAsync = ref.watch(textMemoRowsProvider(
+    final memoRows = ref.watch(textMemoRowsProvider(
       memoID: memoID.value,
       showChecked: showChecked.value,
     ));
-    final memoRows = useState(memoRowsAsync.valueOrNull ?? []);
-
-    useEffect(() {
-      ref.invalidate(textMemoRowsProvider(memoID: memoID.value, showChecked: showChecked.value));
-      memoRows.value = [];
-      return null;
-    }, [memoID.value, showChecked.value]);
-
-    useEffect(() {
-      // 改行等でデータが追加された場合はasyncのデータで更新した後に末日にmemoRowsの内容を追加する
-      if (memoRows.value.length > (memoRowsAsync.valueOrNull?.length ?? 0)) {
-        final copied = [...memoRows.value];
-        memoRows.value = memoRowsAsync.valueOrNull ?? [];
-        memoRows.value.add(copied.last);
-      } else {
-        memoRows.value = memoRowsAsync.valueOrNull ?? [];
-      }
-      return null;
-    }, [memoRowsAsync]);
-
-    useEffect(() {
-      if (!memos.map((e) => e.id).contains(memoID.value)) {
-        memoID.value = memos.first.id;
-      }
-      return null;
-    }, [memos.length]);
 
     return Retry(
       retry: () {
@@ -79,12 +53,11 @@ class _Body extends HookConsumerWidget {
           memoID: memoID,
           memos: memos,
           showChecked: showChecked,
-          memoRows: memoRows,
+          memoRows: memoRows.asData?.value ?? [],
         ),
-        body: memoRowsAsync.when(
-          data: (data) {
-            // EmptyTextMemoRowsから登録された時は Databaseは空でmemoRows.value.isNotEmptyとなっている。そのため、条件を追加
-            if (showChecked.value && data.isEmpty && memoRows.value.isEmpty) {
+        body: memoRows.when(
+          data: (memoRows) {
+            if (showChecked.value && memoRows.isEmpty) {
               return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
             } else {
               return MemoRows(memoRows: memoRows);

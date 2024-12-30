@@ -9,7 +9,7 @@ import 'package:shoppinglist/style/color.dart';
 
 class TextMemo extends HookConsumerWidget {
   final TextMemoRow textMemoRow;
-  final ValueNotifier<List<MemoRow>> memoRows;
+  final List<MemoRow> memoRows;
 
   const TextMemo({super.key, required this.textMemoRow, required this.memoRows});
 
@@ -84,7 +84,6 @@ class TextMemo extends HookConsumerWidget {
                           )
                           .doc(textMemoRow.id)
                           .delete();
-                      memoRows.value = [...memoRows.value]..removeLast();
                     },
                     icon: const Icon(Icons.delete),
                   ),
@@ -102,7 +101,7 @@ class TextMemoTextField extends HookConsumerWidget {
   final TextEditingController textEditingController;
   final FocusNode focusNode;
   final TextMemoRow textMemoRow;
-  final ValueNotifier<List<MemoRow>> memoRows;
+  final List<MemoRow> memoRows;
   const TextMemoTextField({
     super.key,
     required this.textEditingController,
@@ -121,10 +120,7 @@ class TextMemoTextField extends HookConsumerWidget {
       onKey: (event) {
         if (event.logicalKey == LogicalKeyboardKey.backspace) {
           if (text.value.isEmpty) {
-            if (!textMemoRow.isDraft) {
-              ref.read(userDatabaseProvider).memoRowsReference(memoID: textMemoRow.memoID).doc(textMemoRow.id).delete();
-            }
-            memoRows.value = [...memoRows.value]..removeLast();
+            ref.read(userDatabaseProvider).memoRowsReference(memoID: textMemoRow.memoID).doc(textMemoRow.id).delete();
           }
         }
       },
@@ -143,13 +139,21 @@ class TextMemoTextField extends HookConsumerWidget {
         },
         onSubmitted: (String v) async {
           final value = v.trim();
+          final textMemoRowID = textMemoRow.id;
           if (value.isEmpty) {
             if (textMemoRow.isDraft) {
-              if (memoRows.value.length > 1) {
-                memoRows.value = [...memoRows.value]..removeLast();
+              if (memoRows.length > 1) {
+                if (textMemoRowID != null) {
+                  ref
+                      .read(userDatabaseProvider)
+                      .memoRowReference(
+                        memoID: textMemoRow.memoID,
+                        memoRowID: textMemoRowID,
+                      )
+                      .delete();
+                }
               }
             } else {
-              final textMemoRowID = textMemoRow.id;
               if (textMemoRowID != null) {
                 ref
                     .read(userDatabaseProvider)
@@ -172,15 +176,14 @@ class TextMemoTextField extends HookConsumerWidget {
                   SetOptions(merge: true),
                 );
 
-            memoRows.value = [
-              ...memoRows.value,
-              MemoRow.text(
-                memoID: textMemoRow.memoID,
-                message: '',
-                order: memoRows.value.length,
-                createdDateTime: DateTime.now(),
-              )
-            ];
+            ref.read(userDatabaseProvider).memoRowsReference(memoID: textMemoRow.memoID).add(
+                  MemoRow.text(
+                    memoID: textMemoRow.memoID,
+                    message: '',
+                    order: memoRows.length,
+                    createdDateTime: DateTime.now(),
+                  ),
+                );
           }
         },
       ),
