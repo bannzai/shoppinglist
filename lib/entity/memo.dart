@@ -5,6 +5,10 @@ import 'package:shoppinglist/entity/timestamp.dart';
 part 'memo.g.dart';
 part 'memo.freezed.dart';
 
+abstract class MemoFirestoreKeys {
+  static const createdDateTime = 'createdDateTime';
+}
+
 @freezed
 class Memo with _$Memo {
   const Memo._();
