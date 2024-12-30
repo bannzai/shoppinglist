@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -13,21 +15,25 @@ import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 class ShoppingListAppBar extends HookConsumerWidget implements PreferredSizeWidget {
   final ValueNotifier<String> memoID;
   final List<Memo> memos;
+  final Memo? memo;
   final ValueNotifier<bool> showChecked;
   final List<MemoRow> memoRows;
   const ShoppingListAppBar({
     super.key,
     required this.memoID,
     required this.memos,
+    required this.memo,
     required this.showChecked,
     required this.memoRows,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final memo = this.memo;
     final selectedMemoID = useState(memoID.value);
-    final memo = memos.firstWhere((memo) => memo.id == selectedMemoID.value);
     final memoAdd = ref.watch(memoAddProvider);
+    final memoDelete = ref.watch(memoDeleteProvider);
+
     return AppBar(
       title: GestureDetector(
         onTap: () {
@@ -35,26 +41,32 @@ class ShoppingListAppBar extends HookConsumerWidget implements PreferredSizeWidg
         },
         child: Row(
           children: [
-            Text(memo.name),
+            Text(memo?.name ?? ''),
             const Icon(Icons.arrow_drop_down),
           ],
         ),
       ),
       actions: [
-        IconButton(
-          onPressed: () {
-            appShowModalBottomSheet(
-              context: context,
-              builder: (context) {
-                return MemoSettingPage(
-                  memoID: memoID.value,
-                  memo: memo,
-                );
-              },
-            );
-          },
-          icon: const Icon(Icons.settings),
-        ),
+        if (memo != null)
+          IconButton(
+            onPressed: () {
+              appShowModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return MemoSettingPage(
+                    memoID: memoID.value,
+                    memo: memo,
+                    onDelete: () {
+                      memoDelete(memoID: memoID.value);
+                      // pop alert
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    },
+                  );
+                },
+              );
+            },
+            icon: const Icon(Icons.settings),
+          ),
         IconButton(
           onPressed: () async {
             final memo = await memoAdd();

@@ -4,17 +4,23 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/provider/memo.dart';
 import 'package:shoppinglist/style/button.dart';
+import 'package:shoppinglist/style/color.dart';
 
 class MemoSettingPage extends HookConsumerWidget {
   final String memoID;
   final Memo memo;
-  const MemoSettingPage({super.key, required this.memoID, required this.memo});
+  final VoidCallback onDelete;
+  const MemoSettingPage({
+    super.key,
+    required this.memoID,
+    required this.memo,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final memo = useState(this.memo);
     final textEditingController = useTextEditingController(text: memo.value.name);
-    final memoDelete = ref.watch(memoDeleteProvider);
     final memoUpdate = ref.watch(memoUpdateProvider);
 
     return Scaffold(
@@ -84,10 +90,14 @@ class MemoSettingPage extends HookConsumerWidget {
                             actions: [
                               TextButton(
                                 onPressed: () {
-                                  memoDelete(memoID: memoID);
-                                  Navigator.pop(context);
+                                  onDelete();
                                 },
-                                child: const Text('削除'),
+                                child: const Text(
+                                  '削除',
+                                  style: TextStyle(
+                                    color: TextColor.danger,
+                                  ),
+                                ),
                               ),
                               TextButton(
                                 onPressed: () {
