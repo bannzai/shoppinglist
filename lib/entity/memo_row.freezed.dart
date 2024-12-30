@@ -28,7 +28,7 @@ MemoRow _$MemoRowFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$MemoRow {
-  String? get id => throw _privateConstructorUsedError;
+  String get id => throw _privateConstructorUsedError;
   String get memoID => throw _privateConstructorUsedError;
   int get order => throw _privateConstructorUsedError;
   MemoRowStatus get status => throw _privateConstructorUsedError;
@@ -45,7 +45,7 @@ mixin _$MemoRow {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(
-            String? id,
+            String id,
             String memoID,
             String message,
             int order,
@@ -57,7 +57,7 @@ mixin _$MemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)
         text,
     required TResult Function(
-            String? id,
+            String id,
             String memoID,
             String url,
             int order,
@@ -76,7 +76,7 @@ mixin _$MemoRow {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(
-            String? id,
+            String id,
             String memoID,
             String message,
             int order,
@@ -88,7 +88,7 @@ mixin _$MemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)?
         text,
     TResult? Function(
-            String? id,
+            String id,
             String memoID,
             String url,
             int order,
@@ -107,7 +107,7 @@ mixin _$MemoRow {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(
-            String? id,
+            String id,
             String memoID,
             String message,
             int order,
@@ -119,7 +119,7 @@ mixin _$MemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)?
         text,
     TResult Function(
-            String? id,
+            String id,
             String memoID,
             String url,
             int order,
@@ -170,7 +170,7 @@ abstract class $MemoRowCopyWith<$Res> {
   factory $MemoRowCopyWith(MemoRow value, $Res Function(MemoRow) then) = _$MemoRowCopyWithImpl<$Res, MemoRow>;
   @useResult
   $Res call(
-      {String? id,
+      {String id,
       String memoID,
       int order,
       MemoRowStatus status,
@@ -195,7 +195,7 @@ class _$MemoRowCopyWithImpl<$Res, $Val extends MemoRow> implements $MemoRowCopyW
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = freezed,
+    Object? id = null,
     Object? memoID = null,
     Object? order = null,
     Object? status = null,
@@ -206,10 +206,10 @@ class _$MemoRowCopyWithImpl<$Res, $Val extends MemoRow> implements $MemoRowCopyW
     Object? serverUpdatedDateTime = freezed,
   }) {
     return _then(_value.copyWith(
-      id: freezed == id
+      id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       memoID: null == memoID
           ? _value.memoID
           : memoID // ignore: cast_nullable_to_non_nullable
@@ -252,7 +252,7 @@ abstract class _$$TextMemoRowImplCopyWith<$Res> implements $MemoRowCopyWith<$Res
   @override
   @useResult
   $Res call(
-      {String? id,
+      {String id,
       String memoID,
       String message,
       int order,
@@ -273,7 +273,7 @@ class __$$TextMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = freezed,
+    Object? id = null,
     Object? memoID = null,
     Object? message = null,
     Object? order = null,
@@ -285,10 +285,10 @@ class __$$TextMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, 
     Object? serverUpdatedDateTime = freezed,
   }) {
     return _then(_$TextMemoRowImpl(
-      id: freezed == id
+      id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       memoID: null == memoID
           ? _value.memoID
           : memoID // ignore: cast_nullable_to_non_nullable
@@ -334,7 +334,7 @@ class __$$TextMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, 
 @JsonSerializable(explicitToJson: true)
 class _$TextMemoRowImpl implements TextMemoRow {
   const _$TextMemoRowImpl(
-      {this.id,
+      {required this.id,
       required this.memoID,
       required this.message,
       required this.order,
@@ -350,7 +350,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
   factory _$TextMemoRowImpl.fromJson(Map<String, dynamic> json) => _$$TextMemoRowImplFromJson(json);
 
   @override
-  final String? id;
+  final String id;
   @override
   final String memoID;
   @override
@@ -417,7 +417,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(
-            String? id,
+            String id,
             String memoID,
             String message,
             int order,
@@ -429,7 +429,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)
         text,
     required TResult Function(
-            String? id,
+            String id,
             String memoID,
             String url,
             int order,
@@ -451,7 +451,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(
-            String? id,
+            String id,
             String memoID,
             String message,
             int order,
@@ -463,7 +463,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)?
         text,
     TResult? Function(
-            String? id,
+            String id,
             String memoID,
             String url,
             int order,
@@ -486,7 +486,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(
-            String? id,
+            String id,
             String memoID,
             String message,
             int order,
@@ -498,7 +498,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)?
         text,
     TResult Function(
-            String? id,
+            String id,
             String memoID,
             String url,
             int order,
@@ -562,7 +562,7 @@ class _$TextMemoRowImpl implements TextMemoRow {
 
 abstract class TextMemoRow implements MemoRow {
   const factory TextMemoRow(
-      {final String? id,
+      {required final String id,
       required final String memoID,
       required final String message,
       required final int order,
@@ -576,7 +576,7 @@ abstract class TextMemoRow implements MemoRow {
   factory TextMemoRow.fromJson(Map<String, dynamic> json) = _$TextMemoRowImpl.fromJson;
 
   @override
-  String? get id;
+  String get id;
   @override
   String get memoID;
   String get message;
@@ -613,7 +613,7 @@ abstract class _$$LinkMemoRowImplCopyWith<$Res> implements $MemoRowCopyWith<$Res
   @override
   @useResult
   $Res call(
-      {String? id,
+      {String id,
       String memoID,
       String url,
       int order,
@@ -637,7 +637,7 @@ class __$$LinkMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = freezed,
+    Object? id = null,
     Object? memoID = null,
     Object? url = null,
     Object? order = null,
@@ -652,10 +652,10 @@ class __$$LinkMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, 
     Object? serverUpdatedDateTime = freezed,
   }) {
     return _then(_$LinkMemoRowImpl(
-      id: freezed == id
+      id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       memoID: null == memoID
           ? _value.memoID
           : memoID // ignore: cast_nullable_to_non_nullable
@@ -713,7 +713,7 @@ class __$$LinkMemoRowImplCopyWithImpl<$Res> extends _$MemoRowCopyWithImpl<$Res, 
 @JsonSerializable(explicitToJson: true)
 class _$LinkMemoRowImpl implements LinkMemoRow {
   const _$LinkMemoRowImpl(
-      {this.id,
+      {required this.id,
       required this.memoID,
       required this.url,
       required this.order,
@@ -732,7 +732,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
   factory _$LinkMemoRowImpl.fromJson(Map<String, dynamic> json) => _$$LinkMemoRowImplFromJson(json);
 
   @override
-  final String? id;
+  final String id;
   @override
   final String memoID;
   @override
@@ -808,7 +808,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(
-            String? id,
+            String id,
             String memoID,
             String message,
             int order,
@@ -820,7 +820,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)
         text,
     required TResult Function(
-            String? id,
+            String id,
             String memoID,
             String url,
             int order,
@@ -843,7 +843,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(
-            String? id,
+            String id,
             String memoID,
             String message,
             int order,
@@ -855,7 +855,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)?
         text,
     TResult? Function(
-            String? id,
+            String id,
             String memoID,
             String url,
             int order,
@@ -878,7 +878,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(
-            String? id,
+            String id,
             String memoID,
             String message,
             int order,
@@ -890,7 +890,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)?
         text,
     TResult Function(
-            String? id,
+            String id,
             String memoID,
             String url,
             int order,
@@ -954,7 +954,7 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
 
 abstract class LinkMemoRow implements MemoRow {
   const factory LinkMemoRow(
-      {final String? id,
+      {required final String id,
       required final String memoID,
       required final String url,
       required final int order,
@@ -971,7 +971,7 @@ abstract class LinkMemoRow implements MemoRow {
   factory LinkMemoRow.fromJson(Map<String, dynamic> json) = _$LinkMemoRowImpl.fromJson;
 
   @override
-  String? get id;
+  String get id;
   @override
   String get memoID;
   String get url;

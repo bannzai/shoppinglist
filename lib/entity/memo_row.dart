@@ -21,7 +21,7 @@ sealed class MemoRow with _$MemoRow {
   @FreezedUnionValue('text')
   @JsonSerializable(explicitToJson: true)
   const factory MemoRow.text({
-    String? id,
+    required String id,
     required String memoID,
     required String message,
     required int order,
@@ -36,7 +36,7 @@ sealed class MemoRow with _$MemoRow {
   @FreezedUnionValue('link')
   @JsonSerializable(explicitToJson: true)
   const factory MemoRow.link({
-    String? id,
+    required String id,
     required String memoID,
     required String url,
     required int order,
@@ -52,14 +52,6 @@ sealed class MemoRow with _$MemoRow {
   }) = LinkMemoRow;
 
   factory MemoRow.fromJson(Map<String, dynamic> json) => _$MemoRowFromJson(json);
-}
-
-extension TextMemoRowExtension on TextMemoRow {
-  bool get isDraft => id == null;
-}
-
-extension LinkMemoRowExtension on LinkMemoRow {
-  bool get isDraft => id == null;
 }
 
 enum MemoRowStatus {

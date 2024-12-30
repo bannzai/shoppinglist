@@ -7,7 +7,7 @@ part of 'memo_row.dart';
 // **************************************************************************
 
 _$TextMemoRowImpl _$$TextMemoRowImplFromJson(Map<String, dynamic> json) => _$TextMemoRowImpl(
-      id: json['id'] as String?,
+      id: json['id'] as String,
       memoID: json['memoID'] as String,
       message: json['message'] as String,
       order: (json['order'] as num).toInt(),
@@ -40,7 +40,7 @@ const _$MemoRowStatusEnumMap = {
 };
 
 _$LinkMemoRowImpl _$$LinkMemoRowImplFromJson(Map<String, dynamic> json) => _$LinkMemoRowImpl(
-      id: json['id'] as String?,
+      id: json['id'] as String,
       memoID: json['memoID'] as String,
       url: json['url'] as String,
       order: (json['order'] as num).toInt(),
