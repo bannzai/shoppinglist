@@ -24,6 +24,8 @@ sealed class MemoRow with _$MemoRow {
     required String id,
     required String memoID,
     required String message,
+    // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
+    // NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
     required int order,
     @Default(MemoRowStatus.unchecked) MemoRowStatus status,
     @NullableTimestampConverter() DateTime? reminderDateTime,
@@ -39,6 +41,8 @@ sealed class MemoRow with _$MemoRow {
     required String id,
     required String memoID,
     required String url,
+    // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
+    // NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
     required int order,
     String? metadataTitle,
     String? metadataDescription,
