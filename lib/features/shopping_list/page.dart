@@ -56,6 +56,11 @@ class _Body extends HookConsumerWidget {
       return null;
     }, [memos.length]);
 
+    useEffect(() {
+      ref.invalidate(memosProvider);
+      return null;
+    }, [memoID.value]);
+
     return Retry(
       retry: () {
         retry();
