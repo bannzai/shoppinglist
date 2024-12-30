@@ -28,21 +28,26 @@ class ShoppingListAppBar extends HookConsumerWidget implements PreferredSizeWidg
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final memo = this.memo;
-    final selectedMemoID = useState(memoID.value);
     final memoAdd = ref.watch(memoAddProvider);
     final memoDelete = ref.watch(memoDeleteProvider);
 
     return AppBar(
-      title: GestureDetector(
-        onTap: () {
-          _showPicker(context, selectedMemoID);
+      title: HookBuilder(
+        builder: (context) {
+          final selectedMemoID = useState<String>(memoID.value);
+          return GestureDetector(
+            onTap: () {
+              selectedMemoID.value = memos.first.id;
+              _showPicker(context, selectedMemoID);
+            },
+            child: Row(
+              children: [
+                Text(memo?.name ?? ''),
+                const Icon(Icons.arrow_drop_down),
+              ],
+            ),
+          );
         },
-        child: Row(
-          children: [
-            Text(memo?.name ?? ''),
-            const Icon(Icons.arrow_drop_down),
-          ],
-        ),
       ),
       actions: [
         if (memo != null)
