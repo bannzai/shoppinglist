@@ -45,6 +45,7 @@ class _Body extends HookConsumerWidget {
 
     useEffect(() {
       ref.invalidate(textMemoRowsProvider(memoID: memoID.value, showChecked: showChecked.value));
+      memoRows.value = [];
       return null;
     }, [memoID.value, showChecked.value]);
 

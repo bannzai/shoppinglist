@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/toolbar/picker.dart';
 import 'package:shoppinglist/entity/memo.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/memo_row_filter/page.dart';
@@ -25,14 +27,15 @@ class MemoRows extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final memo = memos.firstWhere((memo) => memo.id == memoID.value);
+    final selectedMemoID = useState(memoID.value);
+    final memo = memos.firstWhere((memo) => memo.id == selectedMemoID.value);
     final memoAdd = ref.watch(memoAddProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
           onTap: () {
-            _showPicker(context);
+            _showPicker(context, selectedMemoID);
           },
           child: Row(
             children: [
@@ -97,14 +100,23 @@ class MemoRows extends HookConsumerWidget {
     );
   }
 
-  void _showPicker(BuildContext context) {
+  void _showPicker(BuildContext context, ValueNotifier<String> selectedMemoID) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
+          children: [
+            PickerToolbar(
+              done: () {
+                Navigator.pop(context);
+                memoID.value = selectedMemoID.value;
+              },
+              cancel: () {
+                Navigator.pop(context);
+              },
+            ),
             SizedBox(
               height: 200,
               child: GestureDetector(
@@ -115,7 +127,7 @@ class MemoRows extends HookConsumerWidget {
                   itemExtent: 40,
                   children: memos.map((memo) => Text(memo.name)).toList(),
                   onSelectedItemChanged: (int value) {
-                    memoID.value = memos[value].id;
+                    selectedMemoID.value = memos[value].id;
                   },
                 ),
               ),

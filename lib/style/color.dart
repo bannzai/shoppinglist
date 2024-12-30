@@ -7,7 +7,7 @@ abstract class AppColors {
 }
 
 abstract class TextColor {
-  static const Color primary = Color(0xFF03DAC6);
+  static const Color primary = Colors.purple;
   static const Color black = Colors.black;
   static const Color white = Colors.white;
   static const Color darkGray = Color(0xFF49454F);
