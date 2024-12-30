@@ -39,7 +39,7 @@ class _Body extends HookConsumerWidget {
     final memoID = useState(memos.first.id);
     final retry = Retry.of(context).retry;
     final showChecked = useState(true);
-    final memoRows = ref.watch(textMemoRowsProvider(
+    final memoRowsAsync = ref.watch(textMemoRowsProvider(
       memoID: memoID.value,
       showChecked: showChecked.value,
     ));
@@ -73,14 +73,14 @@ class _Body extends HookConsumerWidget {
           memos: memos,
           memo: memo,
           showChecked: showChecked,
-          memoRows: memoRows.asData?.value ?? [],
+          memoRows: memoRowsAsync.asData?.value ?? [],
         ),
-        body: memoRows.when(
+        body: memoRowsAsync.when(
           data: (memoRows) {
             if (showChecked.value && memoRows.isEmpty) {
               return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
             } else {
-              return MemoRows(memoID: memoID.value, memoRows: memoRows);
+              return MemoRows(memoID: memoID.value, memoRows: memoRows, memoRowsAsync: memoRowsAsync);
             }
           },
           error: (e, st) => RetryPage(exception: e),

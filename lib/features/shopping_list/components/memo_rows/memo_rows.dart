@@ -10,15 +10,23 @@ import 'package:shoppinglist/provider/memo_row.dart';
 class MemoRows extends HookConsumerWidget {
   final String memoID;
   final List<MemoRow> memoRows;
+  final AsyncValue<List<MemoRow>> memoRowsAsync;
+
   const MemoRows({
     super.key,
     required this.memoID,
     required this.memoRows,
+    required this.memoRowsAsync,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final memoRows = useState(this.memoRows);
+
+    useEffect(() {
+      memoRows.value = memoRowsAsync.asData?.value ?? [];
+      return null;
+    }, [memoRowsAsync]);
 
     return ReorderableList(
       onReorder: (oldIndex, newIndex) {
