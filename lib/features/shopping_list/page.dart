@@ -75,16 +75,18 @@ class _Body extends HookConsumerWidget {
           showChecked: showChecked,
           memoRows: memoRowsAsync.asData?.value ?? [],
         ),
-        body: memoRowsAsync.when(
-          data: (memoRows) {
-            if (showChecked.value && memoRows.isEmpty) {
-              return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
-            } else {
-              return MemoRows(memoID: memoID.value, memoRows: memoRows, memoRowsAsync: memoRowsAsync);
-            }
-          },
-          error: (e, st) => RetryPage(exception: e),
-          loading: () => const Loading(),
+        body: SafeArea(
+          child: memoRowsAsync.when(
+            data: (memoRows) {
+              if (showChecked.value && memoRows.isEmpty) {
+                return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
+              } else {
+                return MemoRows(memoID: memoID.value, memoRows: memoRows, memoRowsAsync: memoRowsAsync);
+              }
+            },
+            error: (e, st) => RetryPage(exception: e),
+            loading: () => const Loading(),
+          ),
         ),
       ),
     );
