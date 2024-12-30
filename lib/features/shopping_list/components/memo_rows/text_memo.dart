@@ -32,67 +32,71 @@ class TextMemo extends HookConsumerWidget {
       return null;
     }, []);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Transform.scale(
-            scale: 1.5,
-            child: Checkbox(
-              value: textMemoRow.status == MemoRowStatus.checked,
-              onChanged: (value) {
-                ref
-                    .read(userDatabaseProvider)
-                    .memoRowsReference(
-                      memoID: textMemoRow.memoID,
-                    )
-                    .doc(textMemoRow.id)
-                    .set(
-                      textMemoRow.copyWith(
-                        status: textMemoRow.status == MemoRowStatus.checked ? MemoRowStatus.unchecked : MemoRowStatus.checked,
-                      ),
-                      SetOptions(merge: true),
-                    );
-              },
+    // NOTE: ReorderableListViewのDrag移動中に `No Material widget found` というエラーが出るので、Materialでラップする
+    return Material(
+      color: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Transform.scale(
+              scale: 1.5,
+              child: Checkbox(
+                value: textMemoRow.status == MemoRowStatus.checked,
+                onChanged: (value) {
+                  ref
+                      .read(userDatabaseProvider)
+                      .memoRowsReference(
+                        memoID: textMemoRow.memoID,
+                      )
+                      .doc(textMemoRow.id)
+                      .set(
+                        textMemoRow.copyWith(
+                          status: textMemoRow.status == MemoRowStatus.checked ? MemoRowStatus.unchecked : MemoRowStatus.checked,
+                        ),
+                        SetOptions(merge: true),
+                      );
+                },
+              ),
             ),
-          ),
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 44,
-                    width: double.infinity,
-                    child: TextMemoTextField(
-                      textEditingController: textEditingController,
-                      focusNode: focusNode,
-                      textMemoRow: textMemoRow,
-                      memoRows: memoRows,
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 44,
+                      width: double.infinity,
+                      child: TextMemoTextField(
+                        textEditingController: textEditingController,
+                        focusNode: focusNode,
+                        textMemoRow: textMemoRow,
+                        memoRows: memoRows,
+                      ),
                     ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    ref
-                        .read(userDatabaseProvider)
-                        .memoRowsReference(
-                          memoID: textMemoRow.memoID,
-                        )
-                        .doc(textMemoRow.id)
-                        .delete();
-                  },
-                  icon: const Icon(Icons.delete),
-                ),
-                ReorderableDragStartListener(
-                  index: textMemoRow.order,
-                  child: const Icon(Icons.drag_handle),
-                ),
-              ],
+                  IconButton(
+                    onPressed: () {
+                      ref
+                          .read(userDatabaseProvider)
+                          .memoRowsReference(
+                            memoID: textMemoRow.memoID,
+                          )
+                          .doc(textMemoRow.id)
+                          .delete();
+                    },
+                    icon: const Icon(Icons.delete),
+                  ),
+                  ReorderableDragStartListener(
+                    index: textMemoRow.order,
+                    child: const Icon(Icons.drag_handle),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
