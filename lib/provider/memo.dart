@@ -18,9 +18,10 @@ class MemoAdd {
 
   Future<Memo> call() async {
     final docRef = database.newMemoReference();
+    final count = await database.countOfMemos();
     final memo = Memo(
       id: docRef.id,
-      name: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      name: count == 0 ? DateFormat('yyyy-MM-dd').format(DateTime.now()) : '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ($count)',
       status: MemoStatus.active,
     );
     await docRef.set(memo);

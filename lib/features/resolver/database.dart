@@ -41,6 +41,11 @@ class UserDatabase {
         fromFirestore: _memoFromFirestore,
         toFirestore: _memoToFirestore,
       );
+  Future<int> countOfMemos() async {
+    final aggregated = await FirebaseFirestore.instance.collection(_CollectionPath.memos(userID: userID)).count().get();
+    return aggregated.count ?? 0;
+  }
+
   DocumentReference<Memo> memoReference({
     required String memoID,
   }) =>
