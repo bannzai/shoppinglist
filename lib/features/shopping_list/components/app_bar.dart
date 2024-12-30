@@ -75,7 +75,7 @@ class ShoppingListAppBar extends HookConsumerWidget implements PreferredSizeWidg
               final newMemo = await memoAdd(userID: memo.userID);
               memoID.value = newMemo.id;
             },
-            icon: const Icon(Icons.add),
+            icon: const Icon(Icons.copy),
           ),
         ],
         IconButton(

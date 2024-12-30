@@ -30,22 +30,18 @@ class MemoRows extends HookConsumerWidget {
 
     return ReorderableList(
       onReorder: (oldIndex, newIndex) {
-        debugPrint('oldIndex: $oldIndex, newIndex: $newIndex');
-        final changedMemoRows = [...memoRows.value];
+        // NOTE: ドラッグ時にリストから要素を一時的に削除するため、newIndex が1つずれるのを調整。
         if (oldIndex < newIndex) {
-          for (var i = oldIndex; i < newIndex; i++) {
-            final memoRow = changedMemoRows[i];
-            changedMemoRows[i] = memoRow.copyWith(order: i - 1);
-          }
-        } else {
-          for (var i = oldIndex; i > newIndex; i--) {
-            final memoRow = changedMemoRows[i];
-            changedMemoRows[i] = memoRow.copyWith(order: i + 1);
-          }
+          newIndex -= 1;
         }
-        changedMemoRows[oldIndex] = changedMemoRows[oldIndex].copyWith(order: newIndex);
+        debugPrint('oldIndex: $oldIndex, newIndex: $newIndex');
 
-        final orderedMemoRows = changedMemoRows..sort((a, b) => a.order.compareTo(b.order));
+        final changedMemoRows = [...memoRows.value];
+        final movedItem = changedMemoRows.removeAt(oldIndex);
+        changedMemoRows.insert(newIndex, movedItem);
+
+        // 更新したリストに基づき order を再計算
+        final orderedMemoRows = changedMemoRows.asMap().entries.map((entry) => entry.value.copyWith(order: entry.key)).toList();
 
         memoRows.value = [...orderedMemoRows];
 
