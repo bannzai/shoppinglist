@@ -81,8 +81,8 @@ class MemoRows extends HookConsumerWidget {
                         );
                   },
                   child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    child: Text('+'),
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Icon(Icons.add),
                   ),
                 ),
               ),
