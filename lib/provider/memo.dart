@@ -28,6 +28,7 @@ class MemoAdd {
       userID: userID,
       name: count == 0 ? DateFormat('yyyy-MM-dd').format(DateTime.now()) : '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ($count)',
       status: MemoStatus.active,
+      ttlExpiresDateTime: DateTime.now().add(const Duration(days: 30)),
     );
     await docRef.set(memo);
     return memo;
