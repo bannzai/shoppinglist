@@ -24,6 +24,8 @@ mixin _$Memo {
   String get userID => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   MemoStatus get status => throw _privateConstructorUsedError;
+  @TimestampConverter()
+  DateTime? get ttlExpiresDateTime => throw _privateConstructorUsedError;
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime => throw _privateConstructorUsedError;
   @ClientUpdatedTimestamp()
@@ -51,6 +53,7 @@ abstract class $MemoCopyWith<$Res> {
       String userID,
       String name,
       MemoStatus status,
+      @TimestampConverter() DateTime? ttlExpiresDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -75,6 +78,7 @@ class _$MemoCopyWithImpl<$Res, $Val extends Memo> implements $MemoCopyWith<$Res>
     Object? userID = null,
     Object? name = null,
     Object? status = null,
+    Object? ttlExpiresDateTime = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -97,6 +101,10 @@ class _$MemoCopyWithImpl<$Res, $Val extends Memo> implements $MemoCopyWith<$Res>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as MemoStatus,
+      ttlExpiresDateTime: freezed == ttlExpiresDateTime
+          ? _value.ttlExpiresDateTime
+          : ttlExpiresDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       createdDateTime: freezed == createdDateTime
           ? _value.createdDateTime
           : createdDateTime // ignore: cast_nullable_to_non_nullable
@@ -127,6 +135,7 @@ abstract class _$$MemoImplCopyWith<$Res> implements $MemoCopyWith<$Res> {
       String userID,
       String name,
       MemoStatus status,
+      @TimestampConverter() DateTime? ttlExpiresDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -146,6 +155,7 @@ class __$$MemoImplCopyWithImpl<$Res> extends _$MemoCopyWithImpl<$Res, _$MemoImpl
     Object? userID = null,
     Object? name = null,
     Object? status = null,
+    Object? ttlExpiresDateTime = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -168,6 +178,10 @@ class __$$MemoImplCopyWithImpl<$Res> extends _$MemoCopyWithImpl<$Res, _$MemoImpl
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as MemoStatus,
+      ttlExpiresDateTime: freezed == ttlExpiresDateTime
+          ? _value.ttlExpiresDateTime
+          : ttlExpiresDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       createdDateTime: freezed == createdDateTime
           ? _value.createdDateTime
           : createdDateTime // ignore: cast_nullable_to_non_nullable
@@ -197,6 +211,7 @@ class _$MemoImpl extends _Memo {
       required this.userID,
       this.name = '',
       this.status = MemoStatus.active,
+      @TimestampConverter() required this.ttlExpiresDateTime,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
@@ -216,6 +231,9 @@ class _$MemoImpl extends _Memo {
   @JsonKey()
   final MemoStatus status;
   @override
+  @TimestampConverter()
+  final DateTime? ttlExpiresDateTime;
+  @override
   @ClientCreatedTimestamp()
   final DateTime? createdDateTime;
   @override
@@ -230,7 +248,7 @@ class _$MemoImpl extends _Memo {
 
   @override
   String toString() {
-    return 'Memo(id: $id, userID: $userID, name: $name, status: $status, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'Memo(id: $id, userID: $userID, name: $name, status: $status, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 
   @override
@@ -242,6 +260,7 @@ class _$MemoImpl extends _Memo {
             (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.status, status) || other.status == status) &&
+            (identical(other.ttlExpiresDateTime, ttlExpiresDateTime) || other.ttlExpiresDateTime == ttlExpiresDateTime) &&
             (identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime) &&
             (identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime) &&
@@ -250,8 +269,8 @@ class _$MemoImpl extends _Memo {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, userID, name, status, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+  int get hashCode => Object.hash(
+      runtimeType, id, userID, name, status, ttlExpiresDateTime, createdDateTime, updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
 
   /// Create a copy of Memo
   /// with the given fields replaced by the non-null parameter values.
@@ -274,6 +293,7 @@ abstract class _Memo extends Memo {
       required final String userID,
       final String name,
       final MemoStatus status,
+      @TimestampConverter() required final DateTime? ttlExpiresDateTime,
       @ClientCreatedTimestamp() final DateTime? createdDateTime,
       @ClientUpdatedTimestamp() final DateTime? updatedDateTime,
       @ServerCreatedTimestamp() final DateTime? serverCreatedDateTime,
@@ -290,6 +310,9 @@ abstract class _Memo extends Memo {
   String get name;
   @override
   MemoStatus get status;
+  @override
+  @TimestampConverter()
+  DateTime? get ttlExpiresDateTime;
   @override
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime;

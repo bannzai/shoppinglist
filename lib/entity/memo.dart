@@ -19,6 +19,7 @@ class Memo with _$Memo {
     required String userID,
     @Default('') String name,
     @Default(MemoStatus.active) MemoStatus status,
+    @TimestampConverter() required DateTime? ttlExpiresDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,

@@ -29,7 +29,8 @@ MemoRow _$MemoRowFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$MemoRow {
   String get id => throw _privateConstructorUsedError;
-  String get memoID => throw _privateConstructorUsedError;
+  String get memoID => throw _privateConstructorUsedError; // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
+// NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
   int get order => throw _privateConstructorUsedError;
   MemoRowStatus get status => throw _privateConstructorUsedError;
   @NullableTimestampConverter()
@@ -355,6 +356,8 @@ class _$TextMemoRowImpl implements TextMemoRow {
   final String memoID;
   @override
   final String message;
+// NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
+// NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
   @override
   final int order;
   @override
@@ -579,7 +582,8 @@ abstract class TextMemoRow implements MemoRow {
   String get id;
   @override
   String get memoID;
-  String get message;
+  String get message; // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
+// NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
   @override
   int get order;
   @override
@@ -737,6 +741,8 @@ class _$LinkMemoRowImpl implements LinkMemoRow {
   final String memoID;
   @override
   final String url;
+// NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
+// NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
   @override
   final int order;
   @override
@@ -974,7 +980,8 @@ abstract class LinkMemoRow implements MemoRow {
   String get id;
   @override
   String get memoID;
-  String get url;
+  String get url; // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
+// NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
   @override
   int get order;
   String? get metadataTitle;
