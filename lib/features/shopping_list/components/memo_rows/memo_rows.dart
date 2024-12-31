@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/link_memo.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/text_memo.dart';
@@ -64,27 +65,73 @@ class MemoRows extends HookConsumerWidget {
           ),
         ),
         Padding(
-          // NOTE: ReorderableListの性質上何かしら必要
-          key: const ValueKey('Dummy-AddButton'),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Column(
             children: [
               const SizedBox(height: 10),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () {
-                    ref.read(addTextMemoRowProvider).call(
-                          memoID: memoID,
-                          message: '',
-                          order: memoRows.value.nextOrder,
-                        );
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Icon(Icons.add),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        ref.read(addTextMemoRowProvider).call(
+                              memoID: memoID,
+                              message: '',
+                              order: memoRows.value.nextOrder,
+                            );
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Icon(Icons.add),
+                      ),
+                    ),
                   ),
-                ),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () async {
+                        final imagePicker = ImagePicker();
+
+                        await showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                content: SingleChildScrollView(
+                                  child: ListBody(
+                                    children: [
+                                      ListTile(
+                                        title: const Text('カメラ'),
+                                        leading: const Icon(Icons.camera),
+                                        onTap: () async {
+                                          final XFile? photo = await imagePicker.pickImage(source: ImageSource.camera);
+                                          if (photo != null) {
+                                            debugPrint('photo: ${photo.path}');
+                                          }
+                                        },
+                                      ),
+                                      ListTile(
+                                        title: const Text('フォトライブラリ'),
+                                        leading: const Icon(Icons.photo),
+                                        onTap: () async {
+                                          final XFile? photo = await imagePicker.pickImage(source: ImageSource.gallery);
+                                          if (photo != null) {
+                                            debugPrint('photo: ${photo.path}');
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            });
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Icon(Icons.photo),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
