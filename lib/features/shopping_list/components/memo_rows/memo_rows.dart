@@ -101,7 +101,7 @@ class MemoRows extends HookConsumerWidget {
                                     children: [
                                       ListTile(
                                         title: const Text('カメラ'),
-                                        leading: const Icon(Icons.camera),
+                                        leading: const Icon(Icons.photo_camera),
                                         onTap: () async {
                                           final XFile? photo = await imagePicker.pickImage(source: ImageSource.camera);
                                           if (photo != null) {
@@ -111,7 +111,7 @@ class MemoRows extends HookConsumerWidget {
                                       ),
                                       ListTile(
                                         title: const Text('フォトライブラリ'),
-                                        leading: const Icon(Icons.photo),
+                                        leading: const Icon(Icons.photo_album),
                                         onTap: () async {
                                           final XFile? photo = await imagePicker.pickImage(source: ImageSource.gallery);
                                           if (photo != null) {
