@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -6,6 +9,7 @@ import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/link_memo.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/text_memo.dart';
 import 'package:shoppinglist/provider/memo_row.dart';
+import 'package:shoppinglist/utils/functions/firebase_function.dart';
 
 class MemoRows extends HookConsumerWidget {
   final String memoID;
@@ -104,8 +108,12 @@ class MemoRows extends HookConsumerWidget {
                                         leading: const Icon(Icons.photo_camera),
                                         onTap: () async {
                                           final XFile? photo = await imagePicker.pickImage(source: ImageSource.camera);
+
                                           if (photo != null) {
-                                            debugPrint('photo: ${photo.path}');
+                                            final file = File(photo.path);
+                                            final imageBase64 = base64Encode(file.readAsBytesSync());
+                                            final memoRows = await functions.generateMemoRowsFromImage(imageBase64: imageBase64);
+                                            debugPrint('memoRows: $memoRows');
                                           }
                                         },
                                       ),
@@ -115,7 +123,11 @@ class MemoRows extends HookConsumerWidget {
                                         onTap: () async {
                                           final XFile? photo = await imagePicker.pickImage(source: ImageSource.gallery);
                                           if (photo != null) {
-                                            debugPrint('photo: ${photo.path}');
+                                            final file = File(photo.path);
+                                            final imageBase64 = base64Encode(file.readAsBytesSync());
+                                            final memoRows = await functions.generateMemoRowsFromImage(imageBase64: imageBase64);
+
+                                            debugPrint('memoRows: $memoRows');
                                           }
                                         },
                                       ),
