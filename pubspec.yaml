@@ -38,6 +38,7 @@ dependencies:
   firebase_messaging: 
   firebase_remote_config: 
   cloud_firestore:
+  cloud_functions:
   firebase_crashlytics: 
   google_mobile_ads: ^5.0.0
   
