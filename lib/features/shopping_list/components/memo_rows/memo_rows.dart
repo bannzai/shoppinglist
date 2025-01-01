@@ -100,40 +100,47 @@ class MemoRows extends HookConsumerWidget {
                             context: context,
                             builder: (context) {
                               return AlertDialog(
-                                content: SingleChildScrollView(
-                                  child: ListBody(
-                                    children: [
-                                      ListTile(
-                                        title: const Text('カメラ'),
-                                        leading: const Icon(Icons.photo_camera),
-                                        onTap: () async {
-                                          final XFile? photo = await imagePicker.pickImage(source: ImageSource.camera);
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ListTile(
+                                      title: const Text('カメラ'),
+                                      leading: const Icon(Icons.photo_camera),
+                                      onTap: () async {
+                                        final XFile? photo = await imagePicker.pickImage(source: ImageSource.camera);
 
-                                          if (photo != null) {
-                                            final file = File(photo.path);
-                                            final imageBase64 = base64Encode(file.readAsBytesSync());
-                                            final memoRows = await functions.generateMemoRowsFromImage(imageBase64: imageBase64);
-                                            debugPrint('memoRows: $memoRows');
-                                          }
-                                        },
-                                      ),
-                                      ListTile(
-                                        title: const Text('フォトライブラリ'),
-                                        leading: const Icon(Icons.photo_album),
-                                        onTap: () async {
-                                          final XFile? photo = await imagePicker.pickImage(source: ImageSource.gallery);
-                                          if (photo != null) {
-                                            final file = File(photo.path);
-                                            final imageBase64 = base64Encode(file.readAsBytesSync());
-                                            final memoRows = await functions.generateMemoRowsFromImage(imageBase64: imageBase64);
+                                        if (photo != null) {
+                                          final file = File(photo.path);
+                                          final imageBase64 = base64Encode(file.readAsBytesSync());
+                                          final memoRows = await functions.generateMemoRowsFromImage(imageBase64: imageBase64);
+                                          debugPrint('memoRows: $memoRows');
+                                        }
+                                      },
+                                    ),
+                                    ListTile(
+                                      title: const Text('フォトライブラリ'),
+                                      leading: const Icon(Icons.photo_album),
+                                      onTap: () async {
+                                        final XFile? photo = await imagePicker.pickImage(source: ImageSource.gallery);
+                                        if (photo != null) {
+                                          final file = File(photo.path);
+                                          final imageBase64 = base64Encode(file.readAsBytesSync());
+                                          final memoRows = await functions.generateMemoRowsFromImage(imageBase64: imageBase64);
 
-                                            debugPrint('memoRows: $memoRows');
-                                          }
-                                        },
-                                      ),
-                                    ],
-                                  ),
+                                          debugPrint('memoRows: $memoRows');
+                                        }
+                                      },
+                                    ),
+                                  ],
                                 ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('閉じる'),
+                                  ),
+                                ],
                               );
                             });
                       },
