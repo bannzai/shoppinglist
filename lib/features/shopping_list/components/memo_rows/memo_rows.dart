@@ -10,6 +10,7 @@ import 'package:shoppinglist/features/shopping_list/components/memo_rows/link_me
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/text_memo.dart';
 import 'package:shoppinglist/provider/memo_row.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
+import 'package:shoppinglist/utils/image/image.dart';
 
 class MemoRows extends HookConsumerWidget {
   final String memoID;
@@ -111,10 +112,10 @@ class MemoRows extends HookConsumerWidget {
 
                                         if (photo != null) {
                                           final file = File(photo.path);
-                                          final imageBase64 = base64Encode(file.readAsBytesSync());
+                                          final base64Image = await base64CompressImage(file);
                                           final memoRows = await functions.generateMemoRowsFromImage(
-                                            mimeType: _getMimeType(file),
-                                            imageBase64: imageBase64,
+                                            mimeType: mimeType(file),
+                                            base64Image: base64Image,
                                           );
                                           debugPrint('memoRows: $memoRows');
                                         }
@@ -127,10 +128,10 @@ class MemoRows extends HookConsumerWidget {
                                         final XFile? photo = await imagePicker.pickImage(source: ImageSource.gallery);
                                         if (photo != null) {
                                           final file = File(photo.path);
-                                          final imageBase64 = base64Encode(file.readAsBytesSync());
+                                          final base64Image = await base64CompressImage(file);
                                           final memoRows = await functions.generateMemoRowsFromImage(
-                                            mimeType: _getMimeType(file),
-                                            imageBase64: imageBase64,
+                                            mimeType: mimeType(file),
+                                            base64Image: base64Image,
                                           );
 
                                           debugPrint('memoRows: $memoRows');
@@ -163,18 +164,5 @@ class MemoRows extends HookConsumerWidget {
         ),
       ],
     );
-  }
-
-  String _getMimeType(File file) {
-    final extension = file.path.split('.').lastOrNull;
-    switch (extension) {
-      case 'jpg':
-      case 'jpeg':
-        return 'image/jpeg';
-      case 'png':
-        return 'image/png';
-      default:
-        return 'image/jpeg'; // デフォルト
-    }
   }
 }

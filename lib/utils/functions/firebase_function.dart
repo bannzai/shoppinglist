@@ -7,12 +7,12 @@ final functions = FirebaseFunctions.instanceFor(region: 'us-central1');
 extension FirebaseFunctionsExt on FirebaseFunctions {
   Future<List<String>> generateMemoRowsFromImage({
     required String mimeType,
-    required String imageBase64,
+    required String base64Image,
   }) async {
     final result = await httpsCallable('generateMemoRowsFromImage').call(
       {
         'mimeType': mimeType,
-        'imageBase64': imageBase64,
+        'base64Image': base64Image,
       },
     );
     debugPrint('generateMemoRowsFromImage.result: ${result.data}');
@@ -21,7 +21,8 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
       throw Exception(response['error']['message']);
     }
 
-    return response['data']['memoRows'] as List<String>;
+    final list = response['data']['memoRows'] as List<dynamic>;
+    return list.map((e) => e.toString()).toList();
   }
 }
 

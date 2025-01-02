@@ -15,7 +15,7 @@ Future<String> base64CompressImage(File file) async {
 
     // 2. Resize the image (adjust dimensions as needed)
     // Get image dimensions
-    const maxSize = 10;
+    const maxSize = 1000;
     final width = image.width;
     final height = image.height;
 
