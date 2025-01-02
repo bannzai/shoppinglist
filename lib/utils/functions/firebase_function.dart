@@ -21,6 +21,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
       throw Exception(response['error']['message']);
     }
 
+    // as List<String> に直接変換するとExceptionが発生するため、一旦List<dynamic>に変換してからStringに変換する
     final list = response['data']['memoRows'] as List<dynamic>;
     return list.map((e) => e.toString()).toList();
   }
