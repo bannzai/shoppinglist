@@ -111,27 +111,9 @@ class MemoRows extends HookConsumerWidget {
                                         final XFile? photo = await imagePicker.pickImage(source: ImageSource.camera);
 
                                         if (photo != null) {
-                                          final file = File(photo.path);
-                                          final base64Image = await base64CompressImage(file);
-                                          final memoRawRows = await functions.generateMemoRowsFromImage(
-                                            mimeType: mimeType(file),
-                                            base64Image: base64Image,
-                                          );
-                                          debugPrint('memoRawRows: $memoRawRows');
-
-                                          for (var (i, e) in memoRawRows.indexed) {
-                                            try {
-                                              await ref.read(addTextMemoRowProvider).call(
-                                                    memoID: memoID,
-                                                    message: e,
-                                                    order: memoRows.value.nextOrder + i,
-                                                  );
-                                            } catch (e) {
-                                              // エラーが発生しても次の凍レーションを継続する
-                                              debugPrint('Error: $e');
-                                            }
+                                          if (context.mounted) {
+                                            await _addMemoRows(context, ref, photo, memoRows.value);
                                           }
-
                                           if (context.mounted) {
                                             Navigator.of(context).pop();
                                           }
@@ -144,27 +126,9 @@ class MemoRows extends HookConsumerWidget {
                                       onTap: () async {
                                         final XFile? photo = await imagePicker.pickImage(source: ImageSource.gallery);
                                         if (photo != null) {
-                                          final file = File(photo.path);
-                                          final base64Image = await base64CompressImage(file);
-                                          final memoRawRows = await functions.generateMemoRowsFromImage(
-                                            mimeType: mimeType(file),
-                                            base64Image: base64Image,
-                                          );
-                                          debugPrint('memoRawRows: $memoRawRows');
-
-                                          for (var (i, e) in memoRawRows.indexed) {
-                                            try {
-                                              await ref.read(addTextMemoRowProvider).call(
-                                                    memoID: memoID,
-                                                    message: e,
-                                                    order: memoRows.value.nextOrder + i,
-                                                  );
-                                            } catch (e) {
-                                              // エラーが発生しても次の凍レーションを継続する
-                                              debugPrint('Error: $e');
-                                            }
+                                          if (context.mounted) {
+                                            await _addMemoRows(context, ref, photo, memoRows.value);
                                           }
-
                                           if (context.mounted) {
                                             Navigator.of(context).pop();
                                           }
@@ -197,5 +161,28 @@ class MemoRows extends HookConsumerWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _addMemoRows(BuildContext context, WidgetRef ref, XFile photo, List<MemoRow> memoRows) async {
+    final file = File(photo.path);
+    final base64Image = await base64CompressImage(file);
+    final memoRawRows = await functions.generateMemoRowsFromImage(
+      mimeType: mimeType(file),
+      base64Image: base64Image,
+    );
+    debugPrint('memoRawRows: $memoRawRows');
+
+    for (var (i, e) in memoRawRows.indexed) {
+      try {
+        await ref.read(addTextMemoRowProvider).call(
+              memoID: memoID,
+              message: e,
+              order: memoRows.nextOrder + i,
+            );
+      } catch (e) {
+        // エラーが発生しても次の凍レーションを継続する
+        debugPrint('Error: $e');
+      }
+    }
   }
 }
