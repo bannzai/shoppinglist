@@ -1,12 +1,17 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 
-final functions = FirebaseFunctions.instanceFor(region: 'asia-northeast1');
+// Genkitはus-central1にしか対応していない
+final functions = FirebaseFunctions.instanceFor(region: 'us-central1');
 
 extension FirebaseFunctionsExt on FirebaseFunctions {
-  Future<List<String>> generateMemoRowsFromImage({required String imageBase64}) async {
+  Future<List<String>> generateMemoRowsFromImage({
+    required String mimeType,
+    required String imageBase64,
+  }) async {
     final result = await httpsCallable('generateMemoRowsFromImage').call(
       {
+        'mimeType': mimeType,
         'imageBase64': imageBase64,
       },
     );

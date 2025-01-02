@@ -112,7 +112,10 @@ class MemoRows extends HookConsumerWidget {
                                         if (photo != null) {
                                           final file = File(photo.path);
                                           final imageBase64 = base64Encode(file.readAsBytesSync());
-                                          final memoRows = await functions.generateMemoRowsFromImage(imageBase64: imageBase64);
+                                          final memoRows = await functions.generateMemoRowsFromImage(
+                                            mimeType: _getMimeType(file),
+                                            imageBase64: imageBase64,
+                                          );
                                           debugPrint('memoRows: $memoRows');
                                         }
                                       },
@@ -125,7 +128,10 @@ class MemoRows extends HookConsumerWidget {
                                         if (photo != null) {
                                           final file = File(photo.path);
                                           final imageBase64 = base64Encode(file.readAsBytesSync());
-                                          final memoRows = await functions.generateMemoRowsFromImage(imageBase64: imageBase64);
+                                          final memoRows = await functions.generateMemoRowsFromImage(
+                                            mimeType: _getMimeType(file),
+                                            imageBase64: imageBase64,
+                                          );
 
                                           debugPrint('memoRows: $memoRows');
                                         }
@@ -157,5 +163,18 @@ class MemoRows extends HookConsumerWidget {
         ),
       ],
     );
+  }
+
+  String _getMimeType(File file) {
+    final extension = file.path.split('.').lastOrNull;
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      default:
+        return 'image/jpeg'; // デフォルト
+    }
   }
 }
