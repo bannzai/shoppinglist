@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
+import 'package:shoppinglist/features/shopping_list/components/buttons/copy_multiline_text_button.dart';
 import 'package:shoppinglist/features/shopping_list/components/buttons/image_picker_button.dart';
+import 'package:shoppinglist/features/shopping_list/components/buttons/memo_row_add_button.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/link_memo.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/text_memo.dart';
 import 'package:shoppinglist/provider/memo_row.dart';
@@ -73,22 +75,15 @@ class MemoRows extends HookConsumerWidget {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Expanded(
-                    child: OutlinedButton(
-                      onPressed: () {
-                        ref.read(addTextMemoRowProvider).call(
-                              memoID: memoID,
-                              message: '',
-                              order: memoRows.value.nextOrder,
-                            );
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child: Icon(Icons.add),
-                      ),
-                    ),
+                    child: MemoRowAddButton(memoID: memoID, memoRows: memoRows.value),
                   ),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: ImagePickerButton(memoID: memoID, memoRows: memoRows.value),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: CopyMultilineTextButton(memoID: memoID, memoRows: memoRows.value),
                   ),
                 ],
               ),
