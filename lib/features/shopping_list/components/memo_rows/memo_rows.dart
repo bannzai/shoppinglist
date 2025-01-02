@@ -172,7 +172,13 @@ class MemoRows extends HookConsumerWidget {
     );
     debugPrint('memoRawRows: $memoRawRows');
 
-    for (var (i, e) in memoRawRows.indexed) {
+    final distincted = memoRawRows.toSet().toList();
+
+    for (var (i, e) in distincted.indexed) {
+      if (memoRows.any((memoRow) => memoRow is TextMemoRow && memoRow.message == e)) {
+        continue;
+      }
+
       try {
         await ref.read(addTextMemoRowProvider).call(
               memoID: memoID,
