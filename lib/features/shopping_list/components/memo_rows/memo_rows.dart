@@ -113,11 +113,28 @@ class MemoRows extends HookConsumerWidget {
                                         if (photo != null) {
                                           final file = File(photo.path);
                                           final base64Image = await base64CompressImage(file);
-                                          final memoRows = await functions.generateMemoRowsFromImage(
+                                          final memoRawRows = await functions.generateMemoRowsFromImage(
                                             mimeType: mimeType(file),
                                             base64Image: base64Image,
                                           );
-                                          debugPrint('memoRows: $memoRows');
+                                          debugPrint('memoRawRows: $memoRawRows');
+
+                                          for (var (i, e) in memoRawRows.indexed) {
+                                            try {
+                                              await ref.read(addTextMemoRowProvider).call(
+                                                    memoID: memoID,
+                                                    message: e,
+                                                    order: memoRows.value.nextOrder + i,
+                                                  );
+                                            } catch (e) {
+                                              // エラーが発生しても次の凍レーションを継続する
+                                              debugPrint('Error: $e');
+                                            }
+                                          }
+
+                                          if (context.mounted) {
+                                            Navigator.of(context).pop();
+                                          }
                                         }
                                       },
                                     ),
@@ -129,12 +146,28 @@ class MemoRows extends HookConsumerWidget {
                                         if (photo != null) {
                                           final file = File(photo.path);
                                           final base64Image = await base64CompressImage(file);
-                                          final memoRows = await functions.generateMemoRowsFromImage(
+                                          final memoRawRows = await functions.generateMemoRowsFromImage(
                                             mimeType: mimeType(file),
                                             base64Image: base64Image,
                                           );
+                                          debugPrint('memoRawRows: $memoRawRows');
 
-                                          debugPrint('memoRows: $memoRows');
+                                          for (var (i, e) in memoRawRows.indexed) {
+                                            try {
+                                              await ref.read(addTextMemoRowProvider).call(
+                                                    memoID: memoID,
+                                                    message: e,
+                                                    order: memoRows.value.nextOrder + i,
+                                                  );
+                                            } catch (e) {
+                                              // エラーが発生しても次の凍レーションを継続する
+                                              debugPrint('Error: $e');
+                                            }
+                                          }
+
+                                          if (context.mounted) {
+                                            Navigator.of(context).pop();
+                                          }
                                         }
                                       },
                                     ),
