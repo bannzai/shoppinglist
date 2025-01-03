@@ -35,7 +35,7 @@ class _SectionTitle extends StatelessWidget {
         style: const TextStyle(
           fontWeight: FontWeight.w300,
           fontSize: 14,
-          color: TextColor.primary,
+          color: TextColor.main,
         ),
       ),
     );

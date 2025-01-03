@@ -26,7 +26,11 @@ class DiscardDialog extends StatelessWidget {
           if (title.isNotEmpty) ...[
             Text(
               title,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: TextColor.primary),
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                color: TextColor.main,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(
@@ -51,12 +55,14 @@ void showDiscardDialog(
     context: context,
     builder: (context) => DiscardDialog(
       title: title,
-      message: Text(message,
-          style: const TextStyle(
-            fontWeight: FontWeight.w300,
-            fontSize: 14,
-            color: TextColor.primary,
-          )),
+      message: Text(
+        message,
+        style: const TextStyle(
+          fontWeight: FontWeight.w300,
+          fontSize: 14,
+          color: TextColor.main,
+        ),
+      ),
       actions: actions,
     ),
   );

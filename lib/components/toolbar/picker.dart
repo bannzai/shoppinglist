@@ -26,7 +26,7 @@ class PickerToolbar extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w300,
                 fontSize: 14,
-                color: TextColor.primary,
+                color: TextColor.main,
               ),
             ),
           ),
@@ -43,7 +43,7 @@ class PickerToolbar extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
-                color: TextColor.primary,
+                color: TextColor.main,
               ),
             ),
           )

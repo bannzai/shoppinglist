@@ -29,14 +29,19 @@ class DeleteUserButton extends HookConsumerWidget {
               title: 'ユーザー情報を削除します',
               message: 'アカウントを削除すると、ユーザー情報がすべて削除されます。',
               actions: [
-                AlertButton(
-                  text: 'キャンセル',
+                TextButton(
                   onPressed: () async {
                     Navigator.of(context).pop();
                   },
+                  child: const Text(
+                    'キャンセル',
+                    style: TextStyle(
+                      color: TextColor.darkGray,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-                AlertButton(
-                  text: '削除する',
+                TextButton(
                   onPressed: () async {
                     if (!isLoading.value) {
                       isLoading.value = true;
@@ -44,6 +49,7 @@ class DeleteUserButton extends HookConsumerWidget {
                       isLoading.value = false;
                     }
                   },
+                  child: const Text('削除する', style: TextStyle(color: TextColor.danger, fontWeight: FontWeight.w600)),
                 ),
               ],
             );
@@ -90,7 +96,7 @@ class _CompletedDialog extends StatelessWidget {
           const Text(
             'アカウントを削除しました',
             style: TextStyle(
-              color: TextColor.primary,
+              color: TextColor.main,
               fontWeight: FontWeight.w700,
               fontSize: 16,
             ),
@@ -100,7 +106,7 @@ class _CompletedDialog extends StatelessWidget {
           const Text(
             'アプリを終了しますか？',
             style: TextStyle(
-              color: TextColor.primary,
+              color: TextColor.main,
               fontWeight: FontWeight.w400,
               fontSize: 14,
             ),
