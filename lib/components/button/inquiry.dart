@@ -1,11 +1,15 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/config/environment.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -52,4 +56,30 @@ Future<String> debugInfo(String separator) async {
     // 'isTrial: ${user?.isTrial}',
   ];
   return contents.join(separator);
+}
+
+class InquiryButton extends HookConsumerWidget {
+  const InquiryButton({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return TextButton.icon(
+      icon: const Icon(
+        Icons.mail,
+        size: 20,
+      ),
+      label: const Text(
+        'お問い合わせ',
+        style: TextStyle(
+          fontWeight: FontWeight.w300,
+          fontSize: 14,
+          color: TextColor.black,
+        ),
+      ),
+      onPressed: () {
+        analytics.logEvent(name: 'problem_unresolved_button_pressed');
+        inquiry();
+      },
+    );
+  }
 }
