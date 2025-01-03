@@ -37,21 +37,24 @@ class AppSignInWithAppleButton extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoading = useState(false);
 
-    return Stack(
-      children: [
-        SignInWithAppleButton(
-          onPressed: () async {
-            if (isLoading.value) return;
-            isLoading.value = true;
-            await signInWithApple();
-            isLoading.value = false;
-          },
-        ),
-        if (isLoading.value)
-          const Center(
-            child: Loading(),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Stack(
+        children: [
+          SignInWithAppleButton(
+            onPressed: () async {
+              if (isLoading.value) return;
+              isLoading.value = true;
+              await signInWithApple();
+              isLoading.value = false;
+            },
           ),
-      ],
+          if (isLoading.value)
+            const Center(
+              child: Loading(),
+            ),
+        ],
+      ),
     );
   }
 }

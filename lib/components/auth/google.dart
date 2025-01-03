@@ -35,52 +35,54 @@ class AppSignInWithGoogleButton extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoading = useState(false);
 
-    return Stack(
-      children: [
-        OutlinedButton(
-          style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(Colors.white),
-            shape: WidgetStateProperty.all(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Stack(
+        children: [
+          OutlinedButton(
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.all(Colors.white),
+              shape: WidgetStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40),
+                ),
+              ),
+            ),
+            onPressed: () async {
+              if (isLoading.value) return;
+              isLoading.value = true;
+              await signInWithGoogle();
+              isLoading.value = false;
+            },
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SvgPicture.asset(
+                    'images/google_icon.svg',
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Text(
+                      'Googleでサインイン',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black54,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
           ),
-          onPressed: () async {
-            if (isLoading.value) return;
-            isLoading.value = true;
-            await signInWithGoogle();
-            isLoading.value = false;
-          },
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SvgPicture.asset(
-                  'images/google_icon.svg',
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Text(
-                    'Googleでサインイン',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                )
-              ],
+          if (isLoading.value)
+            const Center(
+              child: Loading(),
             ),
-          ),
-        ),
-        if (isLoading.value)
-          const Center(
-            child: Loading(),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
