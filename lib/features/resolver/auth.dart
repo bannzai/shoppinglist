@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shoppinglist/features/auth/page.dart';
 import 'package:shoppinglist/provider/shared_preferences.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 
@@ -28,7 +29,7 @@ class AuthResolver extends HookConsumerWidget {
     useEffect(() {
       final user = firebaseUserChanges.asData?.valueOrNull;
       if (user != null) {
-        sharedPreferences.setString(StringKey.lastSignInAnonymousUID, user.uid);
+        sharedPreferences.setString(StringKey.lastSignInFirebaseAuthUserID, user.uid);
       }
       return null;
     }, [firebaseUserChanges.asData?.valueOrNull]);
@@ -39,10 +40,9 @@ class AuthResolver extends HookConsumerWidget {
         return firebaseUserChanges.when(
           data: (user) {
             debugPrint('user.uid: ${user?.uid}');
-            if (user == null) {
-              return SignInResolver(
-                builder: (context, user) => builder(context, user),
-              );
+
+            if (user == null || user.isAnonymous) {
+              return const AuthPage();
             } else {
               return builder(context, user);
             }
@@ -52,34 +52,5 @@ class AuthResolver extends HookConsumerWidget {
         );
       }(),
     );
-  }
-}
-
-class SignInResolver extends HookConsumerWidget {
-  final Widget Function(BuildContext, User) builder;
-
-  const SignInResolver({super.key, required this.builder});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final user = useState(FirebaseAuth.instance.currentUser);
-    final userValue = user.value;
-
-    useEffect(() {
-      void f() async {
-        if (userValue == null) {
-          await FirebaseAuth.instance.signInAnonymously();
-        }
-      }
-
-      f();
-      return null;
-    }, [user.value]);
-
-    if (userValue == null) {
-      return const Loading();
-    } else {
-      return builder(context, userValue);
-    }
   }
 }
