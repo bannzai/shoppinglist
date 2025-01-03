@@ -58,5 +58,25 @@ final memoUpdateProvider = AutoDisposeProvider<MemoUpdate>.internal(
 );
 
 typedef MemoUpdateRef = AutoDisposeProviderRef<MemoUpdate>;
+String _$memoDuplicateHash() => r'a8c093726a4373efc9ae049d4c91149f95bc8c0f';
+
+/// See also [memoDuplicate].
+@ProviderFor(memoDuplicate)
+final memoDuplicateProvider = AutoDisposeProvider<MemoDuplicate>.internal(
+  memoDuplicate,
+  name: r'memoDuplicateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$memoDuplicateHash,
+  dependencies: <ProviderOrFamily>[memoAddProvider, addTextMemoRowProvider, userDatabaseProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{
+    memoAddProvider,
+    ...?memoAddProvider.allTransitiveDependencies,
+    addTextMemoRowProvider,
+    ...?addTextMemoRowProvider.allTransitiveDependencies,
+    userDatabaseProvider,
+    ...?userDatabaseProvider.allTransitiveDependencies
+  },
+);
+
+typedef MemoDuplicateRef = AutoDisposeProviderRef<MemoDuplicate>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

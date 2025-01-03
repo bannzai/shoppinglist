@@ -1,7 +1,9 @@
 import 'package:intl/intl.dart';
 import 'package:shoppinglist/entity/memo.dart';
+import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shoppinglist/provider/memo_row.dart';
 
 part 'memo.g.dart';
 
@@ -73,4 +75,35 @@ class MemoUpdate {
 MemoUpdate memoUpdate(MemoUpdateRef ref) {
   final database = ref.watch(userDatabaseProvider);
   return MemoUpdate(database: database);
+}
+
+class MemoDuplicate {
+  final MemoAdd memoAdd;
+  final AddTextMemoRow addTextMemoRow;
+  final UserDatabase database;
+
+  MemoDuplicate({required this.memoAdd, required this.addTextMemoRow, required this.database});
+
+  Future<Memo> call({required String userID, required List<MemoRow> memoRows}) async {
+    final memo = await memoAdd(userID: userID);
+    for (var memoRow in memoRows) {
+      if (memoRow is TextMemoRow) {
+        await addTextMemoRow(
+          memoID: memo.id,
+          message: memoRow.message,
+          order: memoRow.order,
+        );
+      }
+    }
+
+    return memo;
+  }
+}
+
+@Riverpod(dependencies: [memoAdd, addTextMemoRow, userDatabase])
+MemoDuplicate memoDuplicate(MemoDuplicateRef ref) {
+  final memoAdd = ref.watch(memoAddProvider);
+  final addTextMemoRow = ref.watch(addTextMemoRowProvider);
+  final database = ref.watch(userDatabaseProvider);
+  return MemoDuplicate(memoAdd: memoAdd, addTextMemoRow: addTextMemoRow, database: database);
 }
