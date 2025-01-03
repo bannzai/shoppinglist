@@ -58,54 +58,6 @@ class ColorButton extends HookWidget {
   }
 }
 
-class AlertButton extends HookWidget {
-  final String text;
-  final Future<void> Function()? onPressed;
-
-  const AlertButton({
-    super.key,
-    required this.onPressed,
-    required this.text,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isProcessing = useState(false);
-
-    return TextButton(
-      onPressed: onPressed == null
-          ? null
-          : () async {
-              if (isProcessing.value) {
-                return;
-              }
-              isProcessing.value = true;
-              try {
-                await onPressed?.call();
-              } catch (error) {
-                rethrow;
-              } finally {
-                if (context.mounted) isProcessing.value = false;
-              }
-            },
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Text(
-            text,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-              color: (isProcessing.value || onPressed == null) ? Colors.grey : Colors.purple,
-            ),
-          ),
-          if (isProcessing.value) _Loading(),
-        ],
-      ),
-    );
-  }
-}
-
 class _Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

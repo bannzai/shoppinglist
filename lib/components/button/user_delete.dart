@@ -115,11 +115,17 @@ class _CompletedDialog extends StatelessWidget {
           const SizedBox(height: 24),
           SizedBox(
             width: 180,
-            child: AlertButton(
+            child: TextButton(
               onPressed: () async {
                 exit(0);
               },
-              text: '終了する',
+              child: const Text(
+                '終了する',
+                style: TextStyle(
+                  color: TextColor.main,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
         ],

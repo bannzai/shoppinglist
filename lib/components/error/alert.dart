@@ -29,17 +29,29 @@ class ErrorAlert extends StatelessWidget {
           )),
       actions: <Widget>[
         if (faq != null)
-          AlertButton(
-            text: 'FAQを見る',
+          TextButton(
             onPressed: () async {
               launchUrl(Uri.parse(faq));
             },
+            child: const Text(
+              'FAQを見る',
+              style: TextStyle(
+                color: TextColor.link,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
-        AlertButton(
-          text: '閉じる',
+        TextButton(
           onPressed: () async {
             Navigator.of(context).pop();
           },
+          child: const Text(
+            '閉じる',
+            style: TextStyle(
+              color: TextColor.main,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ],
     );

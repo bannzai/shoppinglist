@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/components/button/buttons.dart';
+import 'package:shoppinglist/style/color.dart';
 
 class OKDialog extends StatelessWidget {
   final IconData icon;
@@ -44,8 +45,7 @@ class OKDialog extends StatelessWidget {
         ],
       ),
       actions: <Widget>[
-        AlertButton(
-          text: 'OK',
+        TextButton(
           onPressed: () async {
             final ok = this.ok;
             if (ok != null) {
@@ -54,6 +54,13 @@ class OKDialog extends StatelessWidget {
               Navigator.of(context).pop();
             }
           },
+          child: const Text(
+            'OK',
+            style: TextStyle(
+              color: TextColor.main,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ],
     );
