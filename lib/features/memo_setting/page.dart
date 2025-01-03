@@ -23,8 +23,7 @@ class MemoSettingPage extends HookConsumerWidget {
     final memo = useState(this.memo);
     final textEditingController = useTextEditingController(text: memo.value.name);
     final memoUpdate = ref.watch(memoUpdateProvider);
-    final ttlExpiresDateTime = useState(memo.value.ttlExpiresDateTime);
-    final ttlExpiresDateTimeValue = ttlExpiresDateTime.value;
+    final ttlExpiresDateTimeValue = memo.value.ttlExpiresDateTime;
 
     return Scaffold(
       appBar: AppBar(
@@ -70,8 +69,12 @@ class MemoSettingPage extends HookConsumerWidget {
                           const Text('メモの保存期間', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 8),
                           TextButton.icon(
-                            onPressed: () {
-                              showDatePicker(context: context, firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 30)));
+                            onPressed: () async {
+                              final date = await showDatePicker(
+                                  context: context, firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 30)));
+                              if (date != null) {
+                                memo.value = memo.value.copyWith(ttlExpiresDateTime: date);
+                              }
                             },
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.zero,
