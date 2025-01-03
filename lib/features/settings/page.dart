@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/components/button/inquiry.dart';
+import 'package:shoppinglist/components/button/user_delete.dart';
 import 'package:shoppinglist/features/settings/components/section.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -66,6 +67,7 @@ class SettingPage extends StatelessWidget {
                 },
               ),
             ]),
+            const DeleteUserButton(),
           ],
         ),
       ),
