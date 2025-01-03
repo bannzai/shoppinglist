@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/components/admob/banner.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
-import 'package:shoppinglist/features/shopping_list/components/buttons/copy_multiline_text_button.dart';
-import 'package:shoppinglist/features/shopping_list/components/buttons/image_picker_button.dart';
-import 'package:shoppinglist/features/shopping_list/components/buttons/memo_row_add_button.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/link_memo.dart';
 import 'package:shoppinglist/features/shopping_list/components/memo_rows/text_memo.dart';
 import 'package:shoppinglist/provider/memo_row.dart';
@@ -31,68 +27,37 @@ class MemoRows extends HookConsumerWidget {
       return null;
     }, [memoRowsAsync]);
 
-    return Column(
-      children: [
-        Expanded(
-          child: ReorderableList(
-            onReorder: (oldIndex, newIndex) {
-              // NOTE: ドラッグ時にリストから要素を一時的に削除するため、newIndex が1つずれるのを調整。
-              if (oldIndex < newIndex) {
-                newIndex -= 1;
-              }
-              debugPrint('oldIndex: $oldIndex, newIndex: $newIndex');
+    return ReorderableList(
+      onReorder: (oldIndex, newIndex) {
+        // NOTE: ドラッグ時にリストから要素を一時的に削除するため、newIndex が1つずれるのを調整。
+        if (oldIndex < newIndex) {
+          newIndex -= 1;
+        }
+        debugPrint('oldIndex: $oldIndex, newIndex: $newIndex');
 
-              final changedMemoRows = [...memoRows.value];
-              final movedItem = changedMemoRows.removeAt(oldIndex);
-              changedMemoRows.insert(newIndex, movedItem);
+        final changedMemoRows = [...memoRows.value];
+        final movedItem = changedMemoRows.removeAt(oldIndex);
+        changedMemoRows.insert(newIndex, movedItem);
 
-              // 更新したリストに基づき order を再計算
-              final orderedMemoRows = changedMemoRows.asMap().entries.map((entry) => entry.value.copyWith(order: entry.key)).toList();
+        // 更新したリストに基づき order を再計算
+        final orderedMemoRows = changedMemoRows.asMap().entries.map((entry) => entry.value.copyWith(order: entry.key)).toList();
 
-              memoRows.value = [...orderedMemoRows];
+        memoRows.value = [...orderedMemoRows];
 
-              ref.read(memoRowBatchUpdateProvider).call(
-                    memoID: memoID,
-                    memoRows: orderedMemoRows,
-                  );
-            },
-            itemCount: memoRows.value.length,
-            itemBuilder: (context, index) {
-              final memoRow = memoRows.value[index];
+        ref.read(memoRowBatchUpdateProvider).call(
+              memoID: memoID,
+              memoRows: orderedMemoRows,
+            );
+      },
+      itemCount: memoRows.value.length,
+      itemBuilder: (context, index) {
+        final memoRow = memoRows.value[index];
 
-              return switch (memoRow) {
-                TextMemoRow textMemoRow => TextMemo(key: ValueKey(memoRow.id), textMemoRow: textMemoRow, memoRows: memoRows.value),
-                LinkMemoRow linkMemoRow => LinkMemo(key: ValueKey(memoRow.id), linkMemoRow: linkMemoRow, memoRows: memoRows.value),
-              };
-            },
-          ),
-        ),
-        const AdMobBanner(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: MemoRowAddButton(memoID: memoID, memoRows: memoRows.value),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: ImagePickerButton(memoID: memoID, memoRows: memoRows.value),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: CopyMultilineTextButton(memoID: memoID, memoRows: memoRows.value),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
+        return switch (memoRow) {
+          TextMemoRow textMemoRow => TextMemo(key: ValueKey(memoRow.id), textMemoRow: textMemoRow, memoRows: memoRows.value),
+          LinkMemoRow linkMemoRow => LinkMemo(key: ValueKey(memoRow.id), linkMemoRow: linkMemoRow, memoRows: memoRows.value),
+        };
+      },
     );
   }
 }
