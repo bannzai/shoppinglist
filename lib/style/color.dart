@@ -14,7 +14,7 @@ abstract class TextColor {
   static const Color darkGray = Color(0xFF49454F);
   static const Color gray = Color(0xFF7E7E7E);
   static const Color lightGray = Color(0xFFB1B1B1);
-  static const Color link = primary;
+  static const Color link = Colors.blueAccent;
   static const Color danger = Color(0xFFB00020);
   static const Color discount = Color(0xFFB00020);
 
