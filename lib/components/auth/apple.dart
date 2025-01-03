@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 Future<UserCredential> signInWithApple() async {
@@ -24,4 +26,15 @@ Future<UserCredential> signInWithApple() async {
     ),
   );
   return await FirebaseAuth.instance.signInWithCredential(credential);
+}
+
+class AppSignInWithAppleButton extends HookConsumerWidget {
+  const AppSignInWithAppleButton({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SignInWithAppleButton(
+      onPressed: () => signInWithApple(),
+    );
+  }
 }
