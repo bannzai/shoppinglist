@@ -30,6 +30,7 @@ class ShoppingListAppBar extends HookConsumerWidget implements PreferredSizeWidg
     final memo = this.memo;
     final memoAdd = ref.watch(memoAddProvider);
     final memoDelete = ref.watch(memoDeleteProvider);
+    final memoDuplicate = ref.watch(memoDuplicateProvider);
 
     return AppBar(
       title: HookBuilder(
@@ -72,10 +73,44 @@ class ShoppingListAppBar extends HookConsumerWidget implements PreferredSizeWidg
           ),
           IconButton(
             onPressed: () async {
-              final newMemo = await memoAdd(userID: memo.userID);
-              memoID.value = newMemo.id;
+              showModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.only(bottom: 30),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          title: const Text('メモを追加'),
+                          onTap: () async {
+                            final newMemo = await memoAdd(userID: memo.userID);
+                            memoID.value = newMemo.id;
+
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                            }
+                          },
+                        ),
+                        ListTile(
+                          title: const Text('現在のメモを複製'),
+                          onTap: () async {
+                            final newMemo = await memoDuplicate(userID: memo.userID, memoRows: memoRows);
+                            memoID.value = newMemo.id;
+
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
             },
-            icon: const Icon(Icons.copy),
+            icon: const Icon(Icons.add),
           ),
         ],
         IconButton(
