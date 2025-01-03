@@ -1,11 +1,27 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 Future<UserCredential> signInWithApple() async {
-  final appleProvider = AppleAuthProvider();
-  if (kIsWeb) {
-    return await FirebaseAuth.instance.signInWithPopup(appleProvider);
-  } else {
-    return await FirebaseAuth.instance.signInWithProvider(appleProvider);
+  final appleCredential = await SignInWithApple.getAppleIDCredential(
+    scopes: [
+      AppleIDAuthorizationScopes.email,
+      AppleIDAuthorizationScopes.fullName,
+    ],
+  );
+
+  final idToken = appleCredential.identityToken;
+  if (idToken == null) {
+    throw Exception('No identity token');
   }
+
+  final rawNonce = generateNonce();
+  final credential = AppleAuthProvider.credentialWithIDToken(
+    idToken,
+    rawNonce,
+    AppleFullPersonName(
+      givenName: appleCredential.givenName,
+      familyName: appleCredential.familyName,
+    ),
+  );
+  return await FirebaseAuth.instance.signInWithCredential(credential);
 }
