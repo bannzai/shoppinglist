@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/admob/banner.dart';
 import 'package:shoppinglist/entity/memo_row.dart';
 import 'package:shoppinglist/features/shopping_list/components/buttons/copy_multiline_text_button.dart';
 import 'package:shoppinglist/features/shopping_list/components/buttons/image_picker_button.dart';
@@ -66,6 +67,7 @@ class MemoRows extends HookConsumerWidget {
             },
           ),
         ),
+        const AdMobBanner(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Column(
