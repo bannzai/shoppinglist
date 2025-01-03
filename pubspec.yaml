@@ -65,6 +65,7 @@ dependencies:
   metadata_fetch: ^0.4.2
   image_picker: ^1.1.2
   image: ^4.5.2
+  google_sign_in: ^6.2.2
 
 dev_dependencies:
   flutter_test:
