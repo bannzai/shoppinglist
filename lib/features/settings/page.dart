@@ -74,7 +74,7 @@ class SettingPage extends StatelessWidget {
 }
 
 class _Divider extends StatelessWidget {
-  const _Divider({super.key});
+  const _Divider();
 
   @override
   Widget build(BuildContext context) {

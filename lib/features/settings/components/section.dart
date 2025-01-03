@@ -24,7 +24,7 @@ class SettingSectionTitle extends StatelessWidget {
 
 class _SectionTitle extends StatelessWidget {
   final String text;
-  const _SectionTitle({super.key, required this.text});
+  const _SectionTitle({required this.text});
 
   @override
   Widget build(BuildContext context) {
