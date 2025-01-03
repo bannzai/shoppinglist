@@ -21,47 +21,50 @@ class DeleteUserButton extends HookConsumerWidget {
     final isGoogleLinked = ref.watch(isGoogleLinkedProvider);
     return Stack(
       children: [
-        OutlinedButton(
-          onPressed: () async {
-            if (isLoading.value) {
-              return;
-            }
+        Align(
+          alignment: Alignment.center,
+          child: OutlinedButton(
+            onPressed: () async {
+              if (isLoading.value) {
+                return;
+              }
 
-            showDiscardDialog(
-              context,
-              title: 'ユーザー情報を削除します',
-              message: 'アカウントを削除すると、ユーザー情報がすべて削除されます。',
-              actions: [
-                TextButton(
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text(
-                    'キャンセル',
-                    style: TextStyle(
-                      color: TextColor.darkGray,
-                      fontWeight: FontWeight.w600,
+              showDiscardDialog(
+                context,
+                title: 'ユーザー情報を削除します',
+                message: 'アカウントを削除すると、ユーザー情報がすべて削除されます。',
+                actions: [
+                  TextButton(
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      'キャンセル',
+                      style: TextStyle(
+                        color: TextColor.darkGray,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    if (!isLoading.value) {
-                      isLoading.value = true;
-                      await _delete(
-                        context,
-                        isAppleLinked: isAppleLinked,
-                        isGoogleLinked: isGoogleLinked,
-                      );
-                      isLoading.value = false;
-                    }
-                  },
-                  child: const Text('削除する', style: TextStyle(color: TextColor.danger, fontWeight: FontWeight.w600)),
-                ),
-              ],
-            );
-          },
-          child: const Text('アカウントを削除する'),
+                  TextButton(
+                    onPressed: () async {
+                      if (!isLoading.value) {
+                        isLoading.value = true;
+                        await _delete(
+                          context,
+                          isAppleLinked: isAppleLinked,
+                          isGoogleLinked: isGoogleLinked,
+                        );
+                        isLoading.value = false;
+                      }
+                    },
+                    child: const Text('削除する', style: TextStyle(color: TextColor.danger, fontWeight: FontWeight.w600)),
+                  ),
+                ],
+              );
+            },
+            child: const Text('アカウントを削除する'),
+          ),
         ),
         if (isLoading.value)
           const Center(
