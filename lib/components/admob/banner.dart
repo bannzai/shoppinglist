@@ -62,6 +62,7 @@ class AdMobBannerState extends State<AdMobBanner> {
         onAdOpened: (Ad ad) {},
         // Called when an ad removes an overlay that covers the screen.
         onAdClosed: (Ad ad) {},
+        
         // Called when an impression occurs on the ad.
         onAdImpression: (Ad ad) {},
       ),
