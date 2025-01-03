@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shoppinglist/components/button/buttons.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:url_launcher/url_launcher.dart';
 
