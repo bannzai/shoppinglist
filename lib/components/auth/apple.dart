@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 Future<UserCredential> signInWithApple() async {
@@ -33,8 +35,23 @@ class AppSignInWithAppleButton extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SignInWithAppleButton(
-      onPressed: () => signInWithApple(),
+    final isLoading = useState(false);
+
+    return Stack(
+      children: [
+        SignInWithAppleButton(
+          onPressed: () async {
+            if (isLoading.value) return;
+            isLoading.value = true;
+            await signInWithApple();
+            isLoading.value = false;
+          },
+        ),
+        if (isLoading.value)
+          const Center(
+            child: Loading(),
+          ),
+      ],
     );
   }
 }
