@@ -5,6 +5,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
+import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 
 part 'auth.g.dart';
 
@@ -21,10 +23,13 @@ class AuthResolver extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final firebaseUserChanges = ref.watch(firebaseUserChangesProvider);
+    final sharedPreferences = ref.watch(sharedPreferencesProvider);
 
     useEffect(() {
       final user = firebaseUserChanges.asData?.valueOrNull;
-      if (user != null) {}
+      if (user != null) {
+        sharedPreferences.setString(StringKey.lastSignInAnonymousUID, user.uid);
+      }
       return null;
     }, [firebaseUserChanges.asData?.valueOrNull]);
 
