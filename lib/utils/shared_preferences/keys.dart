@@ -1,7 +1,7 @@
 extension BoolKey on String {}
 
 extension StringKey on String {
-  static const String lastSignInAnonymousUID = 'lastSigninAnonymousUID';
+  static const String lastSignInFirebaseAuthUserID = 'lastSignInFirebaseAuthUserID';
 }
 
 extension ReleaseNoteKey on String {}
