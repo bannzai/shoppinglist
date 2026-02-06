@@ -11,8 +11,7 @@ class AppUser with _$AppUser {
 
   @JsonSerializable(explicitToJson: true)
   const factory AppUser({
-    String? id,
-    @Default(10) int remainingFreeAIFunction,
+    required String id,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,

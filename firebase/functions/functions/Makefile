@@ -1,0 +1,8 @@
+
+.PHONY: secret
+secret:
+	echo $(FILE_GOOGLE_APPLICATION_CREDENTIALS) | base64 -D > secret/GOOGLE_APPLICATION_CREDENTIALS.json
+
+
+
+
