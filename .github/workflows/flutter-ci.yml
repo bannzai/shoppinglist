@@ -16,15 +16,15 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: macos-26
+    if: ${{ !contains(github.event.pull_request.title, '[Skip CI]') }}
     steps:
-    - uses: actions/checkout@v4
-    - uses: kuhnroyal/flutter-fvm-config-action@v3
-      id: fvm-config-action
+    - uses: actions/checkout@v1
+    - run: make secret
     - uses: subosito/flutter-action@v2
       with:
-        flutter-version: ${{ steps.fvm-config-action.outputs.FLUTTER_VERSION }}
-        channel: ${{ steps.fvm-config-action.outputs.FLUTTER_CHANNEL }}
+        channel: stable
+        flutter-version: '3.35.7'
     - run: flutter pub get
     - run: flutter analyze --no-pub --no-fatal-infos --fatal-warnings
     - run: dart format --set-exit-if-changed ./
