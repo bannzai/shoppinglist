@@ -115,5 +115,26 @@ Exception? mapToDisplayedException(PlatformException exception) {
           '原因不明のエラーです。最新版にアップデートして再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。コード: $errorCode 詳細: ${exception.message}:${exception.details}');
     case PurchasesErrorCode.offlineConnectionError:
       return FormatException('通信不良です。通信環境をお確かめの上再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。詳細: ${exception.message}:${exception.details}');
+    case PurchasesErrorCode.featureNotAvailableInCustomEntitlementsComputationMode:
+      return FormatException(
+          'この機能は現在の設定ではご利用いただけません。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。コード: $errorCode 詳細: ${exception.message}:${exception.details}');
+    case PurchasesErrorCode.signatureVerificationFailed:
+      return FormatException(
+          '署名の検証に失敗しました。時間をおいて再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。コード: $errorCode 詳細: ${exception.message}:${exception.details}');
+    case PurchasesErrorCode.featureNotSupportedWithStoreKit1:
+      return FormatException(
+          'この機能はお使いのデバイスではサポートされていません。最新版にアップデートして再度お試しください。コード: $errorCode 詳細: ${exception.message}:${exception.details}');
+    case PurchasesErrorCode.invalidWebPurchaseToken:
+      return FormatException(
+          '無効な購入トークンです。再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。コード: $errorCode 詳細: ${exception.message}:${exception.details}');
+    case PurchasesErrorCode.purchaseBelongsToOtherUser:
+      return FormatException(
+          'この購入は別のユーザーに紐づいています。アカウントを確認してください。コード: $errorCode 詳細: ${exception.message}:${exception.details}');
+    case PurchasesErrorCode.expiredWebPurchaseToken:
+      return FormatException(
+          '購入トークンの有効期限が切れています。再度お試しください。コード: $errorCode 詳細: ${exception.message}:${exception.details}');
+    case PurchasesErrorCode.testStoreSimulatedPurchaseError:
+      return FormatException(
+          'テスト購入でエラーが発生しました。コード: $errorCode 詳細: ${exception.message}:${exception.details}');
   }
 }

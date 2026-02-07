@@ -158,8 +158,8 @@ class Purchase {
   /// Return value is used to display the completion page
   Future<bool> call(Package package) async {
     try {
-      final purchaserInfo = await Purchases.purchasePackage(package);
-      final premiumEntitlement = purchaserInfo.entitlements.all[premiumEntitlementIdentifier];
+      final purchaseResult = await Purchases.purchase(PurchaseParams.package(package));
+      final premiumEntitlement = purchaseResult.customerInfo.entitlements.all[premiumEntitlementIdentifier];
       if (premiumEntitlement == null) {
         throw AssertionError('unexpected premium entitlements is not exists');
       }
