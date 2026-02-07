@@ -71,7 +71,10 @@ class _Note extends StatelessWidget {
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                    launchUrl(Uri.parse('https://bannzai.github.io/shoppinglist/PrivacyPolicy'), mode: LaunchMode.externalApplication);
+                    launchUrl(
+                        Uri.parse(
+                            'https://bannzai.github.io/shoppinglist/PrivacyPolicy'),
+                        mode: LaunchMode.externalApplication);
                   },
               ),
               const TextSpan(
@@ -91,7 +94,10 @@ class _Note extends StatelessWidget {
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                    launchUrl(Uri.parse('https://bannzai.github.io/shoppinglist/Terms'), mode: LaunchMode.externalApplication);
+                    launchUrl(
+                        Uri.parse(
+                            'https://bannzai.github.io/shoppinglist/Terms'),
+                        mode: LaunchMode.externalApplication);
                   },
               ),
               const TextSpan(

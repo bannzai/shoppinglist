@@ -12,7 +12,8 @@ class ImagePickerButton extends HookConsumerWidget {
   final String memoID;
   final List<MemoRow> memoRows;
 
-  const ImagePickerButton({super.key, required this.memoID, required this.memoRows});
+  const ImagePickerButton(
+      {super.key, required this.memoID, required this.memoRows});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -31,7 +32,8 @@ class ImagePickerButton extends HookConsumerWidget {
                       title: const Text('カメラ'),
                       leading: const Icon(Icons.photo_camera),
                       onTap: () async {
-                        final XFile? photo = await imagePicker.pickImage(source: ImageSource.camera);
+                        final XFile? photo = await imagePicker.pickImage(
+                            source: ImageSource.camera);
 
                         if (photo != null) {
                           if (context.mounted) {
@@ -47,7 +49,8 @@ class ImagePickerButton extends HookConsumerWidget {
                       title: const Text('フォトライブラリ'),
                       leading: const Icon(Icons.photo_album),
                       onTap: () async {
-                        final XFile? photo = await imagePicker.pickImage(source: ImageSource.gallery);
+                        final XFile? photo = await imagePicker.pickImage(
+                            source: ImageSource.gallery);
                         if (photo != null) {
                           if (context.mounted) {
                             await _addMemoRows(context, ref, photo, memoRows);
@@ -78,7 +81,8 @@ class ImagePickerButton extends HookConsumerWidget {
     );
   }
 
-  Future<void> _addMemoRows(BuildContext context, WidgetRef ref, XFile photo, List<MemoRow> memoRows) async {
+  Future<void> _addMemoRows(BuildContext context, WidgetRef ref, XFile photo,
+      List<MemoRow> memoRows) async {
     final file = File(photo.path);
     final base64Image = await base64CompressImage(file);
     final memoRawRows = await functions.generateMemoRowsFromImage(
@@ -90,7 +94,8 @@ class ImagePickerButton extends HookConsumerWidget {
     final distincted = memoRawRows.toSet().toList();
 
     for (var (i, e) in distincted.indexed) {
-      if (memoRows.any((memoRow) => memoRow is TextMemoRow && memoRow.message == e)) {
+      if (memoRows
+          .any((memoRow) => memoRow is TextMemoRow && memoRow.message == e)) {
         continue;
       }
 

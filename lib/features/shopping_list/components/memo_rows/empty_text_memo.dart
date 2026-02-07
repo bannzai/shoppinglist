@@ -7,7 +7,8 @@ import 'package:shoppinglist/style/button.dart';
 class EmptyTextMemoRows extends HookConsumerWidget {
   final String memoID;
   final List<MemoRow> memoRows;
-  const EmptyTextMemoRows({super.key, required this.memoID, required this.memoRows});
+  const EmptyTextMemoRows(
+      {super.key, required this.memoID, required this.memoRows});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

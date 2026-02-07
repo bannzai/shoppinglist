@@ -42,7 +42,11 @@ class ForceUpdateResolver extends HookConsumerWidget {
         if (!context.mounted) return;
 
         await showOKDialog(context,
-            icon: Icons.error, title: 'アプリをアップデートしてください', message: 'お使いのアプリのバージョンのアップデートをお願いしております。$storeNameから最新バージョンにアップデートしてください', ok: () async {
+            icon: Icons.error,
+            title: 'アプリをアップデートしてください',
+            message:
+                'お使いのアプリのバージョンのアップデートをお願いしております。$storeNameから最新バージョンにアップデートしてください',
+            ok: () async {
           await launchUrl(
             Uri.parse(forceUpdateStoreURL),
             mode: LaunchMode.externalApplication,

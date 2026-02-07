@@ -35,7 +35,8 @@ Future<String> base64CompressImage(File file) async {
     );
 
     // 3. Encode the resized image to base64
-    final resizedImageBytes = encodeJpg(resizedImage, quality: 100); //or img.encodeJpg(resizedImage, quality: 85);
+    final resizedImageBytes = encodeJpg(resizedImage,
+        quality: 100); //or img.encodeJpg(resizedImage, quality: 85);
     final base64Image = base64Encode(resizedImageBytes);
 
     return base64Image;
