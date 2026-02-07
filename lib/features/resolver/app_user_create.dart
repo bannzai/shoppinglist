@@ -20,7 +20,7 @@ class AppUserCreate {
       return;
     }
     await userDatabase.userReference().set(
-          const AppUser(),
+          AppUser(id: userDatabase.userID),
           SetOptions(merge: true),
         );
   }
