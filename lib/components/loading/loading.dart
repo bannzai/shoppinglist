@@ -19,7 +19,8 @@ class Loading extends StatelessWidget {
       );
     }
     return const Center(
-      child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(AppColors.secondary)),
+      child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation(AppColors.secondary)),
     );
   }
 }

@@ -40,7 +40,11 @@ class MemoRows extends HookConsumerWidget {
         changedMemoRows.insert(newIndex, movedItem);
 
         // 更新したリストに基づき order を再計算
-        final orderedMemoRows = changedMemoRows.asMap().entries.map((entry) => entry.value.copyWith(order: entry.key)).toList();
+        final orderedMemoRows = changedMemoRows
+            .asMap()
+            .entries
+            .map((entry) => entry.value.copyWith(order: entry.key))
+            .toList();
 
         memoRows.value = [...orderedMemoRows];
 
@@ -54,8 +58,14 @@ class MemoRows extends HookConsumerWidget {
         final memoRow = memoRows.value[index];
 
         return switch (memoRow) {
-          TextMemoRow textMemoRow => TextMemo(key: ValueKey(memoRow.id), textMemoRow: textMemoRow, memoRows: memoRows.value),
-          LinkMemoRow linkMemoRow => LinkMemo(key: ValueKey(memoRow.id), linkMemoRow: linkMemoRow, memoRows: memoRows.value),
+          TextMemoRow textMemoRow => TextMemo(
+              key: ValueKey(memoRow.id),
+              textMemoRow: textMemoRow,
+              memoRows: memoRows.value),
+          LinkMemoRow linkMemoRow => LinkMemo(
+              key: ValueKey(memoRow.id),
+              linkMemoRow: linkMemoRow,
+              memoRows: memoRows.value),
         };
       },
     );

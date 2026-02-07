@@ -21,7 +21,8 @@ class MemoSettingPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final memo = useState(this.memo);
-    final textEditingController = useTextEditingController(text: memo.value.name);
+    final textEditingController =
+        useTextEditingController(text: memo.value.name);
     final memoUpdate = ref.watch(memoUpdateProvider);
     final ttlExpiresDateTimeValue = memo.value.ttlExpiresDateTime;
 
@@ -43,7 +44,9 @@ class MemoSettingPage extends HookConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('メモ名', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          const Text('メモ名',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
                           SizedBox(
                             width: double.infinity,
                             child: TextField(
@@ -61,19 +64,26 @@ class MemoSettingPage extends HookConsumerWidget {
                     ),
                     const Divider(),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 10),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('メモの保存期間', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          const Text('メモの保存期間',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 8),
                           TextButton.icon(
                             onPressed: () async {
                               final date = await showDatePicker(
-                                  context: context, firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 30)));
+                                  context: context,
+                                  firstDate: DateTime.now(),
+                                  lastDate: DateTime.now()
+                                      .add(const Duration(days: 30)));
                               if (date != null) {
-                                memo.value = memo.value.copyWith(ttlExpiresDateTime: date);
+                                memo.value = memo.value
+                                    .copyWith(ttlExpiresDateTime: date);
                               }
                             },
                             style: TextButton.styleFrom(
@@ -126,7 +136,9 @@ class MemoSettingPage extends HookConsumerWidget {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: elevatedButtonStyle.merge(
-                        const ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.red)),
+                        const ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(Colors.red)),
                       ),
                       onPressed: () {
                         showDialog(

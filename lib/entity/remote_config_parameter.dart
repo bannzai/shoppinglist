@@ -14,12 +14,15 @@ abstract class RemoteConfigParameterDefaultValues {
 }
 
 @freezed
-class RemoteConfigParameter with _$RemoteConfigParameter {
+abstract class RemoteConfigParameter with _$RemoteConfigParameter {
   factory RemoteConfigParameter({
-    @Default(RemoteConfigParameterDefaultValues.releasedVersion) String releasedVersion,
-    @Default(RemoteConfigParameterDefaultValues.minimumAppVersion) String minimumAppVersion,
+    @Default(RemoteConfigParameterDefaultValues.releasedVersion)
+    String releasedVersion,
+    @Default(RemoteConfigParameterDefaultValues.minimumAppVersion)
+    String minimumAppVersion,
   }) = _RemoteConfigParameter;
 
   RemoteConfigParameter._();
-  factory RemoteConfigParameter.fromJson(Map<String, dynamic> json) => _$RemoteConfigParameterFromJson(json);
+  factory RemoteConfigParameter.fromJson(Map<String, dynamic> json) =>
+      _$RemoteConfigParameterFromJson(json);
 }

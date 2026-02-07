@@ -7,7 +7,8 @@ class MemoRowAddButton extends HookConsumerWidget {
   final String memoID;
   final List<MemoRow> memoRows;
 
-  const MemoRowAddButton({super.key, required this.memoID, required this.memoRows});
+  const MemoRowAddButton(
+      {super.key, required this.memoID, required this.memoRows});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return OutlinedButton(

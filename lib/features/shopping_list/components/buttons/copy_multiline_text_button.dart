@@ -8,7 +8,8 @@ class CopyMultilineTextButton extends HookConsumerWidget {
   final String memoID;
   final List<MemoRow> memoRows;
 
-  const CopyMultilineTextButton({super.key, required this.memoID, required this.memoRows});
+  const CopyMultilineTextButton(
+      {super.key, required this.memoID, required this.memoRows});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,7 +20,8 @@ class CopyMultilineTextButton extends HookConsumerWidget {
         if (text != null) {
           final lines = text.split('\n').toSet();
           for (final (index, line) in lines.indexed) {
-            if (memoRows.any((memoRow) => memoRow is TextMemoRow && memoRow.message == line)) {
+            if (memoRows.any((memoRow) =>
+                memoRow is TextMemoRow && memoRow.message == line)) {
               continue;
             }
             await ref.read(addTextMemoRowProvider).call(

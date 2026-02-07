@@ -6,17 +6,25 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'memo_row.g.dart';
 
 @Riverpod(dependencies: [userDatabase])
-Stream<List<MemoRow>> textMemoRows(TextMemoRowsRef ref, {required String memoID, required bool showChecked}) {
+Stream<List<MemoRow>> textMemoRows(TextMemoRowsRef ref,
+    {required String memoID, required bool showChecked}) {
   final database = ref.watch(userDatabaseProvider);
-  var query = database.memoRowsReference(memoID: memoID).where(MemoRowFirestoreKeys.type, isEqualTo: 'text');
+  var query = database
+      .memoRowsReference(memoID: memoID)
+      .where(MemoRowFirestoreKeys.type, isEqualTo: 'text');
   if (!showChecked) {
-    query = query.where(MemoRowFirestoreKeys.status, isEqualTo: MemoRowStatus.unchecked.name);
+    query = query.where(MemoRowFirestoreKeys.status,
+        isEqualTo: MemoRowStatus.unchecked.name);
   }
-  return query.orderBy(MemoRowFirestoreKeys.order, descending: false).snapshots().map((event) => event.docs.map((doc) => doc.data()).toList());
+  return query
+      .orderBy(MemoRowFirestoreKeys.order, descending: false)
+      .snapshots()
+      .map((event) => event.docs.map((doc) => doc.data()).toList());
 }
 
 @Riverpod(dependencies: [userDatabase])
-Stream<List<MemoRow>> linkMemoRows(LinkMemoRowsRef ref, {required String memoID}) {
+Stream<List<MemoRow>> linkMemoRows(LinkMemoRowsRef ref,
+    {required String memoID}) {
   final database = ref.watch(userDatabaseProvider);
   return database
       .memoRowsReference(memoID: memoID)
@@ -31,9 +39,13 @@ class AddTextMemoRow {
 
   AddTextMemoRow({required this.database});
 
-  Future<TextMemoRow> call({required String memoID, required String message, required int order}) async {
+  Future<TextMemoRow> call(
+      {required String memoID,
+      required String message,
+      required int order}) async {
     final docRef = database.memoRowsReference(memoID: memoID).doc();
-    final textMemoRow = TextMemoRow(id: docRef.id, memoID: memoID, message: message, order: order);
+    final textMemoRow = TextMemoRow(
+        id: docRef.id, memoID: memoID, message: message, order: order);
     await database.memoRowsReference(memoID: memoID).add(textMemoRow);
     return textMemoRow;
   }
