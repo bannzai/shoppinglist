@@ -28,10 +28,8 @@ void main() {
 
   test('MemoRows nextOrder', () {
     final rows = <MemoRow>[
-      MemoRow.text(
-          id: '1', memoID: 'memo-id', message: 'Item 1', order: 0),
-      MemoRow.text(
-          id: '2', memoID: 'memo-id', message: 'Item 2', order: 1),
+      MemoRow.text(id: '1', memoID: 'memo-id', message: 'Item 1', order: 0),
+      MemoRow.text(id: '2', memoID: 'memo-id', message: 'Item 2', order: 1),
     ];
     expect(rows.nextOrder, 2);
   });
