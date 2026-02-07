@@ -10,7 +10,8 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "genkit:start": "GENKIT_ENV=dev genkit start -- tsx --watch src/index.ts"
+    "genkit:start": "GENKIT_ENV=dev genkit start -- tsx --watch src/index.ts",
+    "test": "echo \"No tests yet\""
   },
   "engines": {
     "node": "22"
