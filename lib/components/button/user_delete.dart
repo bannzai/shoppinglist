@@ -58,7 +58,10 @@ class DeleteUserButton extends HookConsumerWidget {
                         isLoading.value = false;
                       }
                     },
-                    child: const Text('削除する', style: TextStyle(color: TextColor.danger, fontWeight: FontWeight.w600)),
+                    child: const Text('削除する',
+                        style: TextStyle(
+                            color: TextColor.danger,
+                            fontWeight: FontWeight.w600)),
                   ),
                 ],
               );
@@ -120,7 +123,9 @@ class DeleteUserButton extends HookConsumerWidget {
                 }
                 navigator.pop();
                 // ignore: use_build_context_synchronously
-                await _delete(context, isAppleLinked: isAppleLinked, isGoogleLinked: isGoogleLinked);
+                await _delete(context,
+                    isAppleLinked: isAppleLinked,
+                    isGoogleLinked: isGoogleLinked);
               },
               child: const Text(
                 '再ログインする',
@@ -198,7 +203,8 @@ class _CompletedDialog extends StatelessWidget {
 Future<void> appleReauthentification() async {
   try {
     final provider = AppleAuthProvider().addScope('email');
-    await FirebaseAuth.instance.currentUser?.reauthenticateWithProvider(provider);
+    await FirebaseAuth.instance.currentUser
+        ?.reauthenticateWithProvider(provider);
   } on FirebaseAuthException catch (e) {
     // Googleのcodeとは違うので注意
     if (e.code == 'canceled') {
@@ -211,7 +217,8 @@ Future<void> appleReauthentification() async {
 Future<void> googleReauthentification() async {
   try {
     final provider = GoogleAuthProvider().addScope('email');
-    await FirebaseAuth.instance.currentUser?.reauthenticateWithProvider(provider);
+    await FirebaseAuth.instance.currentUser
+        ?.reauthenticateWithProvider(provider);
   } on FirebaseAuthException catch (e) {
     // sign-in-failed という code で返ってくるが、コードを読んでると該当するエラーが多かったので実際にdumpしてみたメッセージでマッチしている
     // Appleのcodeとは違うので注意
@@ -223,11 +230,15 @@ Future<void> googleReauthentification() async {
 }
 
 bool isLinkedGoogleFor(User user) {
-  return user.providerData.where((element) => element.providerId == GoogleAuthProvider.PROVIDER_ID).isNotEmpty;
+  return user.providerData
+      .where((element) => element.providerId == GoogleAuthProvider.PROVIDER_ID)
+      .isNotEmpty;
 }
 
 bool isLinkedAppleFor(User user) {
-  return user.providerData.where((element) => element.providerId == AppleAuthProvider.PROVIDER_ID).isNotEmpty;
+  return user.providerData
+      .where((element) => element.providerId == AppleAuthProvider.PROVIDER_ID)
+      .isNotEmpty;
 }
 
 final isAppleLinkedProvider = Provider((ref) {

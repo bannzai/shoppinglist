@@ -33,7 +33,8 @@ class HomePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tabIndex = useState(0);
     final ticker = useSingleTickerProvider();
-    final tabController = useTabController(initialLength: HomePageTabType.values.length, vsync: ticker);
+    final tabController = useTabController(
+        initialLength: HomePageTabType.values.length, vsync: ticker);
     tabController.addListener(() {
       tabIndex.value = tabController.index;
       _screenTracking(tabController.index);

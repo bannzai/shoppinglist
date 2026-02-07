@@ -10,7 +10,7 @@ abstract class MemoFirestoreKeys {
 }
 
 @freezed
-class Memo with _$Memo {
+abstract class Memo with _$Memo {
   const Memo._();
 
   @JsonSerializable(explicitToJson: true)

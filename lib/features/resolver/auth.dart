@@ -29,7 +29,8 @@ class AuthResolver extends HookConsumerWidget {
     useEffect(() {
       final user = firebaseUserChanges.asData?.valueOrNull;
       if (user != null) {
-        sharedPreferences.setString(StringKey.lastSignInFirebaseAuthUserID, user.uid);
+        sharedPreferences.setString(
+            StringKey.lastSignInFirebaseAuthUserID, user.uid);
       }
       return null;
     }, [firebaseUserChanges.asData?.valueOrNull]);

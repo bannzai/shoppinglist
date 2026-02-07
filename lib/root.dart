@@ -25,7 +25,8 @@ class RootPage extends HookConsumerWidget {
               return AppEntityPrepareResolver(
                   userID: user.uid,
                   builder: (context) {
-                    debugPrint('Resolved AppEntityPrepareResolver user: ${user.uid}');
+                    debugPrint(
+                        'Resolved AppEntityPrepareResolver user: ${user.uid}');
                     return const HomePage();
                   });
             },

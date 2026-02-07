@@ -6,28 +6,39 @@ part of 'memo.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$MemoImpl _$$MemoImplFromJson(Map<String, dynamic> json) => _$MemoImpl(
+_Memo _$MemoFromJson(Map<String, dynamic> json) => _Memo(
       id: json['id'] as String,
       userID: json['userID'] as String,
       name: json['name'] as String? ?? '',
-      status: $enumDecodeNullable(_$MemoStatusEnumMap, json['status']) ?? MemoStatus.active,
-      ttlExpiresDateTime: _$JsonConverterFromJson<Timestamp, DateTime>(json['ttlExpiresDateTime'], const TimestampConverter().fromJson),
-      createdDateTime: const ClientCreatedTimestamp().fromJson(json['createdDateTime'] as Timestamp?),
-      updatedDateTime: const ClientUpdatedTimestamp().fromJson(json['updatedDateTime'] as Timestamp?),
-      serverCreatedDateTime: const ServerCreatedTimestamp().fromJson(json['serverCreatedDateTime']),
-      serverUpdatedDateTime: const ServerUpdatedTimestamp().fromJson(json['serverUpdatedDateTime']),
+      status: $enumDecodeNullable(_$MemoStatusEnumMap, json['status']) ??
+          MemoStatus.active,
+      ttlExpiresDateTime: _$JsonConverterFromJson<Timestamp, DateTime>(
+          json['ttlExpiresDateTime'], const TimestampConverter().fromJson),
+      createdDateTime: const ClientCreatedTimestamp()
+          .fromJson(json['createdDateTime'] as Timestamp?),
+      updatedDateTime: const ClientUpdatedTimestamp()
+          .fromJson(json['updatedDateTime'] as Timestamp?),
+      serverCreatedDateTime: const ServerCreatedTimestamp()
+          .fromJson(json['serverCreatedDateTime']),
+      serverUpdatedDateTime: const ServerUpdatedTimestamp()
+          .fromJson(json['serverUpdatedDateTime']),
     );
 
-Map<String, dynamic> _$$MemoImplToJson(_$MemoImpl instance) => <String, dynamic>{
+Map<String, dynamic> _$MemoToJson(_Memo instance) => <String, dynamic>{
       'id': instance.id,
       'userID': instance.userID,
       'name': instance.name,
       'status': _$MemoStatusEnumMap[instance.status]!,
-      'ttlExpiresDateTime': _$JsonConverterToJson<Timestamp, DateTime>(instance.ttlExpiresDateTime, const TimestampConverter().toJson),
-      'createdDateTime': const ClientCreatedTimestamp().toJson(instance.createdDateTime),
-      'updatedDateTime': const ClientUpdatedTimestamp().toJson(instance.updatedDateTime),
-      'serverCreatedDateTime': const ServerCreatedTimestamp().toJson(instance.serverCreatedDateTime),
-      'serverUpdatedDateTime': const ServerUpdatedTimestamp().toJson(instance.serverUpdatedDateTime),
+      'ttlExpiresDateTime': _$JsonConverterToJson<Timestamp, DateTime>(
+          instance.ttlExpiresDateTime, const TimestampConverter().toJson),
+      'createdDateTime':
+          const ClientCreatedTimestamp().toJson(instance.createdDateTime),
+      'updatedDateTime':
+          const ClientUpdatedTimestamp().toJson(instance.updatedDateTime),
+      'serverCreatedDateTime':
+          const ServerCreatedTimestamp().toJson(instance.serverCreatedDateTime),
+      'serverUpdatedDateTime':
+          const ServerUpdatedTimestamp().toJson(instance.serverUpdatedDateTime),
     };
 
 const _$MemoStatusEnumMap = {

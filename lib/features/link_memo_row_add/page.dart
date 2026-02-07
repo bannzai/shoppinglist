@@ -38,7 +38,8 @@ class LinkMemoRowAddPage extends HookConsumerWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            const Text('ECサイトメモを作成しましょう！', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text('ECサイトメモを作成しましょう！',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             Row(
               children: [
@@ -57,7 +58,8 @@ class LinkMemoRowAddPage extends HookConsumerWidget {
                       if (url.isEmpty) {
                         return;
                       }
-                      if (!url.startsWith('https://') && !url.startsWith('http://')) {
+                      if (!url.startsWith('https://') &&
+                          !url.startsWith('http://')) {
                         return;
                       }
                       try {

@@ -6,7 +6,8 @@ import 'package:shoppinglist/style/button.dart';
 class EmptyLinkMemoRows extends HookConsumerWidget {
   final String memoID;
   final ValueNotifier<List<MemoRow>> memoRows;
-  const EmptyLinkMemoRows({super.key, required this.memoID, required this.memoRows});
+  const EmptyLinkMemoRows(
+      {super.key, required this.memoID, required this.memoRows});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
