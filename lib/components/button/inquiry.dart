@@ -26,7 +26,8 @@ Future<String> debugInfo(String separator) async {
   final userID = FirebaseAuth.instance.currentUser?.uid;
   if (userID == null) {
     final sharedPreferences = await SharedPreferences.getInstance();
-    return Future.value('DEBUG INFO user is not found. lastest last login id ${sharedPreferences.getString(StringKey.lastSignInFirebaseAuthUserID)}');
+    return Future.value(
+        'DEBUG INFO user is not found. lastest last login id ${sharedPreferences.getString(StringKey.lastSignInFirebaseAuthUserID)}');
   }
 
   UserDatabase databaseConnection = UserDatabase(userID: userID);

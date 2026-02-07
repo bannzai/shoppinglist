@@ -12,12 +12,14 @@ class TextMemo extends HookConsumerWidget {
   final TextMemoRow textMemoRow;
   final List<MemoRow> memoRows;
 
-  const TextMemo({super.key, required this.textMemoRow, required this.memoRows});
+  const TextMemo(
+      {super.key, required this.textMemoRow, required this.memoRows});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final focusNode = useFocusNode();
-    final textEditingController = useTextEditingController(text: textMemoRow.message);
+    final textEditingController =
+        useTextEditingController(text: textMemoRow.message);
     final isEditing = useState(false);
 
     useEffect(() {
@@ -54,7 +56,9 @@ class TextMemo extends HookConsumerWidget {
                       .doc(textMemoRow.id)
                       .set(
                         textMemoRow.copyWith(
-                          status: textMemoRow.status == MemoRowStatus.checked ? MemoRowStatus.unchecked : MemoRowStatus.checked,
+                          status: textMemoRow.status == MemoRowStatus.checked
+                              ? MemoRowStatus.unchecked
+                              : MemoRowStatus.checked,
                         ),
                         SetOptions(merge: true),
                       );
@@ -125,7 +129,11 @@ class TextMemoTextField extends HookConsumerWidget {
       onKey: (event) {
         if (event.logicalKey == LogicalKeyboardKey.backspace) {
           if (text.value.isEmpty) {
-            ref.read(userDatabaseProvider).memoRowsReference(memoID: textMemoRow.memoID).doc(textMemoRow.id).delete();
+            ref
+                .read(userDatabaseProvider)
+                .memoRowsReference(memoID: textMemoRow.memoID)
+                .doc(textMemoRow.id)
+                .delete();
           }
         }
       },
@@ -137,7 +145,9 @@ class TextMemoTextField extends HookConsumerWidget {
         textInputAction: TextInputAction.next,
         style: TextStyle(
           color: TextColor.black,
-          decoration: textMemoRow.status == MemoRowStatus.checked ? TextDecoration.lineThrough : TextDecoration.none,
+          decoration: textMemoRow.status == MemoRowStatus.checked
+              ? TextDecoration.lineThrough
+              : TextDecoration.none,
         ),
         onChanged: (value) {
           text.value = value;

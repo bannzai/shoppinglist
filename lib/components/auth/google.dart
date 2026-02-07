@@ -7,21 +7,23 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 
 Future<UserCredential> signInWithGoogle() async {
-  // Trigger the authentication flow
-  final GoogleSignInAccount? googleUser = await GoogleSignIn(
-    scopes: [
-      'email',
-      'profile',
-    ],
-  ).signIn();
+  final googleSignIn = GoogleSignIn.instance;
 
-  // Obtain the auth details from the request
-  final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+  // Trigger the authentication flow
+  final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
+
+  // Obtain the idToken from authentication
+  final String? idToken = googleUser.authentication.idToken;
+
+  // Obtain the accessToken from authorization
+  final authorization = await googleUser.authorizationClient
+      .authorizationForScopes(['email', 'profile']);
+  final String? accessToken = authorization?.accessToken;
 
   // Create a new credential
   final credential = GoogleAuthProvider.credential(
-    accessToken: googleAuth?.accessToken,
-    idToken: googleAuth?.idToken,
+    accessToken: accessToken,
+    idToken: idToken,
   );
 
   // Once signed in, return the UserCredential

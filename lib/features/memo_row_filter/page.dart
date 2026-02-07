@@ -20,7 +20,8 @@ class MemoRowFilterPage extends HookConsumerWidget {
         title: const Text('メモフィルター'),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 32.0),
+        padding: const EdgeInsets.only(
+            left: 16.0, right: 16.0, top: 16.0, bottom: 32.0),
         child: Column(
           children: [
             Expanded(

@@ -72,7 +72,8 @@ class _Body extends HookConsumerWidget {
     return Retry(
       retry: () {
         retry();
-        ref.invalidate(textMemoRowsProvider(memoID: memoID.value, showChecked: showChecked.value));
+        ref.invalidate(textMemoRowsProvider(
+            memoID: memoID.value, showChecked: showChecked.value));
       },
       child: Scaffold(
         appBar: ShoppingListAppBar(
@@ -86,7 +87,8 @@ class _Body extends HookConsumerWidget {
           child: memoRowsAsync.when(
             data: (memoRows) {
               if (showChecked.value && memoRows.isEmpty) {
-                return EmptyTextMemoRows(memoID: memoID.value, memoRows: memoRows);
+                return EmptyTextMemoRows(
+                    memoID: memoID.value, memoRows: memoRows);
               } else {
                 return Column(
                   children: [
@@ -101,10 +103,15 @@ class _Body extends HookConsumerWidget {
                       ),
                       const SizedBox(height: 10),
                     ],
-                    Expanded(child: MemoRows(memoID: memoID.value, memoRows: memoRows, memoRowsAsync: memoRowsAsync)),
+                    Expanded(
+                        child: MemoRows(
+                            memoID: memoID.value,
+                            memoRows: memoRows,
+                            memoRowsAsync: memoRowsAsync)),
                     const AdMobBanner(),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
                       child: Column(
                         children: [
                           const SizedBox(height: 10),
@@ -112,15 +119,18 @@ class _Body extends HookConsumerWidget {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Expanded(
-                                child: MemoRowAddButton(memoID: memoID.value, memoRows: memoRows),
+                                child: MemoRowAddButton(
+                                    memoID: memoID.value, memoRows: memoRows),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
-                                child: ImagePickerButton(memoID: memoID.value, memoRows: memoRows),
+                                child: ImagePickerButton(
+                                    memoID: memoID.value, memoRows: memoRows),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
-                                child: CopyMultilineTextButton(memoID: memoID.value, memoRows: memoRows),
+                                child: CopyMultilineTextButton(
+                                    memoID: memoID.value, memoRows: memoRows),
                               ),
                             ],
                           ),

@@ -17,5 +17,6 @@ module.exports = {
   ignorePatterns: ["*.test.ts", "*.test.js", "lib", "yomiage-backend-node16"],
   rules: {
     "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-require-imports": "off",
   },
 };

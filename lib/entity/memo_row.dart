@@ -55,7 +55,8 @@ sealed class MemoRow with _$MemoRow {
     @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
   }) = LinkMemoRow;
 
-  factory MemoRow.fromJson(Map<String, dynamic> json) => _$MemoRowFromJson(json);
+  factory MemoRow.fromJson(Map<String, dynamic> json) =>
+      _$MemoRowFromJson(json);
 }
 
 extension MemoRows on List<MemoRow> {

@@ -59,18 +59,22 @@ class TextMemoRowsFamily extends Family<AsyncValue<List<MemoRow>>> {
     );
   }
 
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[userDatabaseProvider];
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    userDatabaseProvider
+  ];
 
   @override
   Iterable<ProviderOrFamily>? get dependencies => _dependencies;
 
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies = <ProviderOrFamily>{
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
     userDatabaseProvider,
     ...?userDatabaseProvider.allTransitiveDependencies
   };
 
   @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies => _allTransitiveDependencies;
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
 
   @override
   String? get name => r'textMemoRowsProvider';
@@ -90,9 +94,13 @@ class TextMemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
           ),
           from: textMemoRowsProvider,
           name: r'textMemoRowsProvider',
-          debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$textMemoRowsHash,
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$textMemoRowsHash,
           dependencies: TextMemoRowsFamily._dependencies,
-          allTransitiveDependencies: TextMemoRowsFamily._allTransitiveDependencies,
+          allTransitiveDependencies:
+              TextMemoRowsFamily._allTransitiveDependencies,
           memoID: memoID,
           showChecked: showChecked,
         );
@@ -137,7 +145,9 @@ class TextMemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
 
   @override
   bool operator ==(Object other) {
-    return other is TextMemoRowsProvider && other.memoID == memoID && other.showChecked == showChecked;
+    return other is TextMemoRowsProvider &&
+        other.memoID == memoID &&
+        other.showChecked == showChecked;
   }
 
   @override
@@ -150,6 +160,8 @@ class TextMemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin TextMemoRowsRef on AutoDisposeStreamProviderRef<List<MemoRow>> {
   /// The parameter `memoID` of this provider.
   String get memoID;
@@ -158,7 +170,9 @@ mixin TextMemoRowsRef on AutoDisposeStreamProviderRef<List<MemoRow>> {
   bool get showChecked;
 }
 
-class _TextMemoRowsProviderElement extends AutoDisposeStreamProviderElement<List<MemoRow>> with TextMemoRowsRef {
+class _TextMemoRowsProviderElement
+    extends AutoDisposeStreamProviderElement<List<MemoRow>>
+    with TextMemoRowsRef {
   _TextMemoRowsProviderElement(super.provider);
 
   @override
@@ -196,18 +210,22 @@ class LinkMemoRowsFamily extends Family<AsyncValue<List<MemoRow>>> {
     );
   }
 
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[userDatabaseProvider];
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    userDatabaseProvider
+  ];
 
   @override
   Iterable<ProviderOrFamily>? get dependencies => _dependencies;
 
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies = <ProviderOrFamily>{
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
     userDatabaseProvider,
     ...?userDatabaseProvider.allTransitiveDependencies
   };
 
   @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies => _allTransitiveDependencies;
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
 
   @override
   String? get name => r'linkMemoRowsProvider';
@@ -225,9 +243,13 @@ class LinkMemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
           ),
           from: linkMemoRowsProvider,
           name: r'linkMemoRowsProvider',
-          debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$linkMemoRowsHash,
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$linkMemoRowsHash,
           dependencies: LinkMemoRowsFamily._dependencies,
-          allTransitiveDependencies: LinkMemoRowsFamily._allTransitiveDependencies,
+          allTransitiveDependencies:
+              LinkMemoRowsFamily._allTransitiveDependencies,
           memoID: memoID,
         );
 
@@ -280,12 +302,16 @@ class LinkMemoRowsProvider extends AutoDisposeStreamProvider<List<MemoRow>> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin LinkMemoRowsRef on AutoDisposeStreamProviderRef<List<MemoRow>> {
   /// The parameter `memoID` of this provider.
   String get memoID;
 }
 
-class _LinkMemoRowsProviderElement extends AutoDisposeStreamProviderElement<List<MemoRow>> with LinkMemoRowsRef {
+class _LinkMemoRowsProviderElement
+    extends AutoDisposeStreamProviderElement<List<MemoRow>>
+    with LinkMemoRowsRef {
   _LinkMemoRowsProviderElement(super.provider);
 
   @override
@@ -299,11 +325,18 @@ String _$addTextMemoRowHash() => r'42a508c196eb0512f8108d80d0f3704e869ec007';
 final addTextMemoRowProvider = AutoDisposeProvider<AddTextMemoRow>.internal(
   addTextMemoRow,
   name: r'addTextMemoRowProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$addTextMemoRowHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$addTextMemoRowHash,
   dependencies: <ProviderOrFamily>[userDatabaseProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{userDatabaseProvider, ...?userDatabaseProvider.allTransitiveDependencies},
+  allTransitiveDependencies: <ProviderOrFamily>{
+    userDatabaseProvider,
+    ...?userDatabaseProvider.allTransitiveDependencies
+  },
 );
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 typedef AddTextMemoRowRef = AutoDisposeProviderRef<AddTextMemoRow>;
 String _$addLinkMemoRowHash() => r'bef1d96ed3a5a0de82ff40d29ca906fb11097af1';
 
@@ -312,24 +345,40 @@ String _$addLinkMemoRowHash() => r'bef1d96ed3a5a0de82ff40d29ca906fb11097af1';
 final addLinkMemoRowProvider = AutoDisposeProvider<AddLinkMemoRow>.internal(
   addLinkMemoRow,
   name: r'addLinkMemoRowProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$addLinkMemoRowHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$addLinkMemoRowHash,
   dependencies: <ProviderOrFamily>[userDatabaseProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{userDatabaseProvider, ...?userDatabaseProvider.allTransitiveDependencies},
+  allTransitiveDependencies: <ProviderOrFamily>{
+    userDatabaseProvider,
+    ...?userDatabaseProvider.allTransitiveDependencies
+  },
 );
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 typedef AddLinkMemoRowRef = AutoDisposeProviderRef<AddLinkMemoRow>;
-String _$memoRowBatchUpdateHash() => r'3e408fd1248e0f71e92551f87a33d3ade5b0b8cc';
+String _$memoRowBatchUpdateHash() =>
+    r'3e408fd1248e0f71e92551f87a33d3ade5b0b8cc';
 
 /// See also [memoRowBatchUpdate].
 @ProviderFor(memoRowBatchUpdate)
-final memoRowBatchUpdateProvider = AutoDisposeProvider<MemoRowBatchUpdate>.internal(
+final memoRowBatchUpdateProvider =
+    AutoDisposeProvider<MemoRowBatchUpdate>.internal(
   memoRowBatchUpdate,
   name: r'memoRowBatchUpdateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$memoRowBatchUpdateHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$memoRowBatchUpdateHash,
   dependencies: <ProviderOrFamily>[userDatabaseProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{userDatabaseProvider, ...?userDatabaseProvider.allTransitiveDependencies},
+  allTransitiveDependencies: <ProviderOrFamily>{
+    userDatabaseProvider,
+    ...?userDatabaseProvider.allTransitiveDependencies
+  },
 );
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 typedef MemoRowBatchUpdateRef = AutoDisposeProviderRef<MemoRowBatchUpdate>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
