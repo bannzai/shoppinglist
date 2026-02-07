@@ -1,33 +1,26 @@
-import { firebaseAuth } from "@genkit-ai/firebase/auth";
-import { FunctionFlowAuth, noAuth } from "@genkit-ai/firebase/functions";
-import * as z from "zod";
 import { appEnv } from "../../core/env";
 
-export function appAuthPolicy<I extends z.ZodTypeAny>(
-  fn: string
-): FunctionFlowAuth<I> {
+type AuthPolicy = (auth: any, data: any) => boolean | Promise<boolean>;
+
+export function appAuthPolicy(fn: string): AuthPolicy {
   if (process.env.ENV === "local") {
-    return noAuth();
+    return () => true;
   }
-  // 他のonFlowからrunFlow経由で呼び出す場合は、FUNCTION_NAMEが一致しないため、noAuthを返す
+  // 他のonFlowからrunFlow経由で呼び出す場合は、FUNCTION_NAMEが一致しないため、認証をスキップする
   if (process.env.FUNCTION_NAME !== fn) {
-    return noAuth();
+    return () => true;
   }
-  return firebaseAuth((user, input) => {
-    if (user.exp * 1000 < Date.now()) {
+  return (auth) => {
+    if (!auth) {
+      throw new Error("Unauthenticated");
+    }
+    if (auth.token?.exp * 1000 < Date.now()) {
       throw new Error("User token is expired");
     }
 
     if (appEnv() === "dev") {
-      console.log(
-        "[DEBUG] User ID: ",
-        user.uid,
-        "Input: ",
-        JSON.stringify(input)
-      );
+      console.log("[DEBUG] User ID: ", auth.uid);
     }
-    if (input.userID != null && input.userID !== user.uid) {
-      throw new Error("User ID is not matched");
-    }
-  });
+    return true;
+  };
 }
