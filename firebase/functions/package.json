@@ -11,7 +11,7 @@
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
     "genkit:start": "GENKIT_ENV=dev genkit start -- tsx --watch src/index.ts",
-    "test": "echo \"No tests yet\""
+    "test": "jest"
   },
   "engines": {
     "node": "22"
@@ -28,6 +28,7 @@
     "zod": "^3.25.0"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.54.0",
@@ -38,7 +39,9 @@
     "eslint-plugin-prettier": "^5.5.5",
     "firebase-functions-test": "^3.4.1",
     "genkit-cli": "^1.28.0",
+    "jest": "^30.2.0",
     "prettier": "^3.8.1",
+    "ts-jest": "^29.4.6",
     "typescript": "^5.9.3"
   },
   "private": true
