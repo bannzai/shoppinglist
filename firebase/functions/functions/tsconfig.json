@@ -1,6 +1,7 @@
 {
   "compileOnSave": true,
   "include": ["src"],
+  "exclude": ["src/**/*.test.ts"],
   "compilerOptions": {
     "module": "commonjs",
     "noImplicitReturns": true,
