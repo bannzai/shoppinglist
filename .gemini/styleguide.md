@@ -1,6 +1,10 @@
 # Styleguide
 このファイルはGeminiがこのリポジトリで作業する際のガイダンスを提供します。
 
+## Rule
+返信は日本語でしてください
+
+
 ## Firebase Firestore
 
 - **group配下の同時書き込み対策**: group配下のドキュメントでユーザーの同時書き込みによりデータが消える可能性がある場合は、`runTransaction` を使用すること
