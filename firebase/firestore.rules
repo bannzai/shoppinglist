@@ -6,7 +6,7 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function isUserResource(id) {
+    function isUserAuth(id) {
       return request.auth != null && request.auth.uid == id;
     }
 
@@ -15,7 +15,7 @@ service cloud.firestore {
     }
 
     match /users/{userID} {
-      allow read: if isUserResource(userID);
+      allow read: if isUserAuth(userID);
       allow create, update: if isUserAuth(userID);
     }
 
