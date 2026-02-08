@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
-import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 class PurchaseSetupResolver extends HookConsumerWidget {
   final String userID;
@@ -19,7 +19,7 @@ class PurchaseSetupResolver extends HookConsumerWidget {
     final isDone = useState(false);
     useEffect(() {
       void f() async {
-        await initializePurchase(userID);
+        Purchases.logIn(userID);
         isDone.value = true;
       }
 

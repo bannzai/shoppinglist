@@ -13,6 +13,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/provider/shared_preferences.dart';
 import 'package:shoppinglist/utils/config/environment.dart';
 import 'package:shoppinglist/utils/development/debug.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:shoppinglist/utils/remote_config/remote_config.dart';
 
 void main() async {
@@ -33,9 +34,10 @@ void main() async {
     }
 
     // ignore: prefer_typing_uninitialized_variables
-    final (sharedPreferences, _) = await (
+    final (sharedPreferences, _, _) = await (
       SharedPreferences.getInstance(),
       setupRemoteConfig(),
+      initializePurchase(),
     ).wait;
 
     // MEMO: FirebaseCrashlytics#recordFlutterError called dumpErrorToConsole in function.
