@@ -1,0 +1,27 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    function isUserResource(id) {
+      return request.auth != null && request.auth.uid == id;
+    }
+
+    function isMember(members) {
+      return request.auth != null && request.auth.uid in members;
+    }
+
+    match /users/{userID} {
+      allow read: if isUserResource(userID);
+      allow create, update: if isUserAuth(userID);
+    }
+
+    // カップル
+    match /groups/{groupID} {
+      allow read, create, update: if isMember(resource.data.members);
+    }
+  }
+}
