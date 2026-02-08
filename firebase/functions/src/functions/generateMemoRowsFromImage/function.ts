@@ -1,10 +1,10 @@
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import { GoogleAIFileManager } from "@google/generative-ai/server";
 import admin from "firebase-admin";
-import functions = require("firebase-functions");
+import { logger } from "firebase-functions";
+import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
 import { ai } from "../utils/genkit";
-import { onFlow } from "@genkit-ai/firebase/functions";
 import { appAuthPolicy } from "../utils/authPolicy";
 import { DataResponseSchema, ErrorResponseSchema } from "../../entity/response";
 import fs from "fs";
@@ -24,14 +24,13 @@ async function cleanupTemporaryImage(filePath: string): Promise<void> {
   try {
     const bucket = admin.storage().bucket();
     await bucket.file(filePath).delete();
-    functions.logger.info(`Cleaned up temporary file: ${filePath}`);
+    logger.info(`Cleaned up temporary file: ${filePath}`);
   } catch (error) {
-    functions.logger.error(`Error cleaning up file ${filePath}:`, error);
+    logger.error(`Error cleaning up file ${filePath}:`, error);
   }
 }
 
-module.exports = onFlow(
-  ai,
+const generateMemoRowsFromImageFlow = ai.defineFlow(
   {
     name: "generateMemoRowsFromImage",
     inputSchema: z.object({
@@ -39,9 +38,8 @@ module.exports = onFlow(
       base64Image: z.string(),
     }),
     outputSchema: ResponseSchema,
-    authPolicy: appAuthPolicy("generateMemoRowsFromImage"),
   },
-  async (input) => {
+  async (input: { mimeType: string; base64Image: string }) => {
     const { mimeType, base64Image } = input;
     const tempFilePath: string | null = null;
 
@@ -106,7 +104,7 @@ module.exports = onFlow(
         },
       } as z.infer<typeof ResponseSchema>;
     } catch (error) {
-      functions.logger.error(error);
+      logger.error(error);
       return {
         result: "NG",
         status: 500,
@@ -119,6 +117,13 @@ module.exports = onFlow(
       }
     }
   }
+);
+
+module.exports = onCallGenkit(
+  {
+    authPolicy: appAuthPolicy("generateMemoRowsFromImage"),
+  },
+  generateMemoRowsFromImageFlow
 );
 
 const apiKey = defineString("GOOGLE_GENAI_API_KEY").value();

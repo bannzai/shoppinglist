@@ -28,7 +28,9 @@ class MemoAdd {
     final memo = Memo(
       id: docRef.id,
       userID: userID,
-      name: count == 0 ? DateFormat('yyyy-MM-dd').format(DateTime.now()) : '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ($count)',
+      name: count == 0
+          ? DateFormat('yyyy-MM-dd').format(DateTime.now())
+          : '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ($count)',
       status: MemoStatus.active,
       ttlExpiresDateTime: DateTime.now().add(const Duration(days: 30)),
     );
@@ -82,9 +84,13 @@ class MemoDuplicate {
   final AddTextMemoRow addTextMemoRow;
   final UserDatabase database;
 
-  MemoDuplicate({required this.memoAdd, required this.addTextMemoRow, required this.database});
+  MemoDuplicate(
+      {required this.memoAdd,
+      required this.addTextMemoRow,
+      required this.database});
 
-  Future<Memo> call({required String userID, required List<MemoRow> memoRows}) async {
+  Future<Memo> call(
+      {required String userID, required List<MemoRow> memoRows}) async {
     final memo = await memoAdd(userID: userID);
     for (var memoRow in memoRows) {
       if (memoRow is TextMemoRow) {
@@ -105,5 +111,6 @@ MemoDuplicate memoDuplicate(MemoDuplicateRef ref) {
   final memoAdd = ref.watch(memoAddProvider);
   final addTextMemoRow = ref.watch(addTextMemoRowProvider);
   final database = ref.watch(userDatabaseProvider);
-  return MemoDuplicate(memoAdd: memoAdd, addTextMemoRow: addTextMemoRow, database: database);
+  return MemoDuplicate(
+      memoAdd: memoAdd, addTextMemoRow: addTextMemoRow, database: database);
 }

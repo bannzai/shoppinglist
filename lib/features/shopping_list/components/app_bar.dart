@@ -10,7 +10,8 @@ import 'package:shoppinglist/features/memo_setting/page.dart';
 import 'package:shoppinglist/provider/memo.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
-class ShoppingListAppBar extends HookConsumerWidget implements PreferredSizeWidget {
+class ShoppingListAppBar extends HookConsumerWidget
+    implements PreferredSizeWidget {
   final ValueNotifier<String> memoID;
   final List<Memo> memos;
   final Memo? memo;
@@ -96,7 +97,8 @@ class ShoppingListAppBar extends HookConsumerWidget implements PreferredSizeWidg
                         ListTile(
                           title: const Text('現在のメモを複製'),
                           onTap: () async {
-                            final newMemo = await memoDuplicate(userID: memo.userID, memoRows: memoRows);
+                            final newMemo = await memoDuplicate(
+                                userID: memo.userID, memoRows: memoRows);
                             memoID.value = newMemo.id;
 
                             if (context.mounted) {

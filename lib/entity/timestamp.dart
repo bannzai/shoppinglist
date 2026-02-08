@@ -15,7 +15,8 @@ class TimestampConverter implements JsonConverter<DateTime, Timestamp> {
   }
 }
 
-class NullableTimestampConverter implements JsonConverter<DateTime?, Timestamp?> {
+class NullableTimestampConverter
+    implements JsonConverter<DateTime?, Timestamp?> {
   const NullableTimestampConverter();
 
   @override

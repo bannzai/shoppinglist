@@ -25,7 +25,8 @@ class CheckForceUpdate {
     final config = remoteConfigParameter;
     final packageVersion = await Version.fromPackage();
 
-    final forceUpdate = packageVersion.isLessThan(Version.parse(config.minimumAppVersion));
+    final forceUpdate =
+        packageVersion.isLessThan(Version.parse(config.minimumAppVersion));
     if (forceUpdate) {
       analytics.logEvent(
         name: 'screen_type_force_update',

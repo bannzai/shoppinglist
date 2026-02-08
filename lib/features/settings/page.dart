@@ -28,8 +28,12 @@ class SettingPage extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    analytics.logEvent(name: 'did_select_terms_of_service', parameters: {});
-                    launchUrl(Uri.parse('https://bannzai.github.io/shoppinglist/TermsOfService'), mode: LaunchMode.externalApplication);
+                    analytics.logEvent(
+                        name: 'did_select_terms_of_service', parameters: {});
+                    launchUrl(
+                        Uri.parse(
+                            'https://bannzai.github.io/shoppinglist/TermsOfService'),
+                        mode: LaunchMode.externalApplication);
                   }),
               const _Divider(),
               ListTile(
@@ -41,8 +45,12 @@ class SettingPage extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  analytics.logEvent(name: 'did_select_privacy_policy', parameters: {});
-                  launchUrl(Uri.parse('https://bannzai.github.io/shoppinglist/PrivacyPolicy'), mode: LaunchMode.externalApplication);
+                  analytics.logEvent(
+                      name: 'did_select_privacy_policy', parameters: {});
+                  launchUrl(
+                      Uri.parse(
+                          'https://bannzai.github.io/shoppinglist/PrivacyPolicy'),
+                      mode: LaunchMode.externalApplication);
                 },
               ),
               const _Divider(),
@@ -55,8 +63,12 @@ class SettingPage extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    analytics.logEvent(name: 'did_select_specified_commercial_transaction_act', parameters: {});
-                    launchUrl(Uri.parse('https://bannzai.github.io/shoppinglist/SpecifiedCommercialTransactionAct'),
+                    analytics.logEvent(
+                        name: 'did_select_specified_commercial_transaction_act',
+                        parameters: {});
+                    launchUrl(
+                        Uri.parse(
+                            'https://bannzai.github.io/shoppinglist/SpecifiedCommercialTransactionAct'),
                         mode: LaunchMode.externalApplication);
                   }),
               const _Divider(),

@@ -19,7 +19,7 @@ abstract class TextColor {
   static const Color danger = Color(0xFFB00020);
   static const Color discount = Color(0xFFB00020);
 
-  static Color highEmphasis(Color color) => color.withOpacity(0.87);
-  static Color mediumEmphasis(Color color) => color.withOpacity(0.6);
-  static Color disabled(Color color) => color.withOpacity(0.37);
+  static Color highEmphasis(Color color) => color.withValues(alpha: 0.87);
+  static Color mediumEmphasis(Color color) => color.withValues(alpha: 0.6);
+  static Color disabled(Color color) => color.withValues(alpha: 0.37);
 }

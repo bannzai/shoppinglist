@@ -20,7 +20,7 @@ class AppUserCreate {
       return;
     }
     await userDatabase.userReference().set(
-          const AppUser(),
+          AppUser(id: userDatabase.userID),
           SetOptions(merge: true),
         );
   }
@@ -34,7 +34,8 @@ class AppUserCreateResolver extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appUser = ref.watch(appUserProvider);
-    final appUserCreate = AppUserCreate(userDatabase: ref.watch(userDatabaseProvider));
+    final appUserCreate =
+        AppUserCreate(userDatabase: ref.watch(userDatabaseProvider));
 
     useEffect(() {
       appUserCreate();
