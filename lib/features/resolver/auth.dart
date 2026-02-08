@@ -12,7 +12,6 @@ import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/features/auth/page.dart';
 import 'package:shoppinglist/provider/shared_preferences.dart';
-import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 
 part 'auth.g.dart';
