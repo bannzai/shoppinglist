@@ -21,7 +21,8 @@ service cloud.firestore {
 
     // カップル
     match /groups/{groupID} {
-      allow read, create, update: if isMember(resource.data.members);
+      allow read, update: if isMember(resource.data.members);
+      allow create: if isMember(request.resource.data.members);
     }
   }
 }
