@@ -1,20 +1,20 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'shopping_list.dart';
+part of 'group_shopping_list.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_ShoppingList _$ShoppingListFromJson(Map<String, dynamic> json) =>
-    _ShoppingList(
+_GroupShoppingList _$GroupShoppingListFromJson(Map<String, dynamic> json) =>
+    _GroupShoppingList(
       id: json['id'] as String,
       createUserID: json['createUserID'] as String,
       groupID: json['groupID'] as String,
       name: json['name'] as String? ?? '',
-      status:
-          $enumDecodeNullable(_$ShoppingListStatusEnumMap, json['status']) ??
-              ShoppingListStatus.active,
+      status: $enumDecodeNullable(
+              _$GroupShoppingListStatusEnumMap, json['status']) ??
+          GroupShoppingListStatus.active,
       shoppingLocationID: json['shoppingLocationID'] as String?,
       duplicatedFromID: json['duplicatedFromID'] as String?,
       ttlExpiresDateTime: _$JsonConverterFromJson<Timestamp, DateTime>(
@@ -29,13 +29,13 @@ _ShoppingList _$ShoppingListFromJson(Map<String, dynamic> json) =>
           .fromJson(json['serverUpdatedDateTime']),
     );
 
-Map<String, dynamic> _$ShoppingListToJson(_ShoppingList instance) =>
+Map<String, dynamic> _$GroupShoppingListToJson(_GroupShoppingList instance) =>
     <String, dynamic>{
       'id': instance.id,
       'createUserID': instance.createUserID,
       'groupID': instance.groupID,
       'name': instance.name,
-      'status': _$ShoppingListStatusEnumMap[instance.status]!,
+      'status': _$GroupShoppingListStatusEnumMap[instance.status]!,
       'shoppingLocationID': instance.shoppingLocationID,
       'duplicatedFromID': instance.duplicatedFromID,
       'ttlExpiresDateTime': _$JsonConverterToJson<Timestamp, DateTime>(
@@ -50,10 +50,10 @@ Map<String, dynamic> _$ShoppingListToJson(_ShoppingList instance) =>
           const ServerUpdatedTimestamp().toJson(instance.serverUpdatedDateTime),
     };
 
-const _$ShoppingListStatusEnumMap = {
-  ShoppingListStatus.active: 'active',
-  ShoppingListStatus.done: 'done',
-  ShoppingListStatus.archived: 'archived',
+const _$GroupShoppingListStatusEnumMap = {
+  GroupShoppingListStatus.active: 'active',
+  GroupShoppingListStatus.done: 'done',
+  GroupShoppingListStatus.archived: 'archived',
 };
 
 Value? _$JsonConverterFromJson<Json, Value>(

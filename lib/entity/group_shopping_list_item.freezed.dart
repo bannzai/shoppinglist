@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'shopping_list_item.dart';
+part of 'group_shopping_list_item.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -11,26 +11,27 @@ part of 'shopping_list_item.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-ShoppingListItem _$ShoppingListItemFromJson(Map<String, dynamic> json) {
+GroupShoppingListItem _$GroupShoppingListItemFromJson(
+    Map<String, dynamic> json) {
   switch (json['type']) {
     case 'text':
-      return TextShoppingListItem.fromJson(json);
+      return TextGroupShoppingListItem.fromJson(json);
     case 'link':
-      return LinkShoppingListItem.fromJson(json);
+      return LinkGroupShoppingListItem.fromJson(json);
 
     default:
-      throw CheckedFromJsonException(json, 'type', 'ShoppingListItem',
+      throw CheckedFromJsonException(json, 'type', 'GroupShoppingListItem',
           'Invalid union type "${json['type']}"!');
   }
 }
 
 /// @nodoc
-mixin _$ShoppingListItem {
+mixin _$GroupShoppingListItem {
   String get id;
   String get shoppingListID; // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
 // NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
   int get order;
-  ShoppingListItemStatus get status;
+  GroupShoppingListItemStatus get status;
   String? get description;
   String? get color;
   String? get categoryID;
@@ -45,22 +46,22 @@ mixin _$ShoppingListItem {
   @ServerUpdatedTimestamp()
   DateTime? get serverUpdatedDateTime;
 
-  /// Create a copy of ShoppingListItem
+  /// Create a copy of GroupShoppingListItem
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $ShoppingListItemCopyWith<ShoppingListItem> get copyWith =>
-      _$ShoppingListItemCopyWithImpl<ShoppingListItem>(
-          this as ShoppingListItem, _$identity);
+  $GroupShoppingListItemCopyWith<GroupShoppingListItem> get copyWith =>
+      _$GroupShoppingListItemCopyWithImpl<GroupShoppingListItem>(
+          this as GroupShoppingListItem, _$identity);
 
-  /// Serializes this ShoppingListItem to a JSON map.
+  /// Serializes this GroupShoppingListItem to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is ShoppingListItem &&
+            other is GroupShoppingListItem &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.shoppingListID, shoppingListID) ||
                 other.shoppingListID == shoppingListID) &&
@@ -102,21 +103,21 @@ mixin _$ShoppingListItem {
 
   @override
   String toString() {
-    return 'ShoppingListItem(id: $id, shoppingListID: $shoppingListID, order: $order, status: $status, description: $description, color: $color, categoryID: $categoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItem(id: $id, shoppingListID: $shoppingListID, order: $order, status: $status, description: $description, color: $color, categoryID: $categoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
 /// @nodoc
-abstract mixin class $ShoppingListItemCopyWith<$Res> {
-  factory $ShoppingListItemCopyWith(
-          ShoppingListItem value, $Res Function(ShoppingListItem) _then) =
-      _$ShoppingListItemCopyWithImpl;
+abstract mixin class $GroupShoppingListItemCopyWith<$Res> {
+  factory $GroupShoppingListItemCopyWith(GroupShoppingListItem value,
+          $Res Function(GroupShoppingListItem) _then) =
+      _$GroupShoppingListItemCopyWithImpl;
   @useResult
   $Res call(
       {String id,
       String shoppingListID,
       int order,
-      ShoppingListItemStatus status,
+      GroupShoppingListItemStatus status,
       String? description,
       String? color,
       String? categoryID,
@@ -128,14 +129,14 @@ abstract mixin class $ShoppingListItemCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ShoppingListItemCopyWithImpl<$Res>
-    implements $ShoppingListItemCopyWith<$Res> {
-  _$ShoppingListItemCopyWithImpl(this._self, this._then);
+class _$GroupShoppingListItemCopyWithImpl<$Res>
+    implements $GroupShoppingListItemCopyWith<$Res> {
+  _$GroupShoppingListItemCopyWithImpl(this._self, this._then);
 
-  final ShoppingListItem _self;
-  final $Res Function(ShoppingListItem) _then;
+  final GroupShoppingListItem _self;
+  final $Res Function(GroupShoppingListItem) _then;
 
-  /// Create a copy of ShoppingListItem
+  /// Create a copy of GroupShoppingListItem
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -169,7 +170,7 @@ class _$ShoppingListItemCopyWithImpl<$Res>
       status: null == status
           ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
-              as ShoppingListItemStatus,
+              as GroupShoppingListItemStatus,
       description: freezed == description
           ? _self.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -206,8 +207,8 @@ class _$ShoppingListItemCopyWithImpl<$Res>
   }
 }
 
-/// Adds pattern-matching-related methods to [ShoppingListItem].
-extension ShoppingListItemPatterns on ShoppingListItem {
+/// Adds pattern-matching-related methods to [GroupShoppingListItem].
+extension GroupShoppingListItemPatterns on GroupShoppingListItem {
   /// A variant of `map` that fallback to returning `orElse`.
   ///
   /// It is equivalent to doing:
@@ -222,15 +223,15 @@ extension ShoppingListItemPatterns on ShoppingListItem {
 
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(TextShoppingListItem value)? text,
-    TResult Function(LinkShoppingListItem value)? link,
+    TResult Function(TextGroupShoppingListItem value)? text,
+    TResult Function(LinkGroupShoppingListItem value)? link,
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case TextShoppingListItem() when text != null:
+      case TextGroupShoppingListItem() when text != null:
         return text(_that);
-      case LinkShoppingListItem() when link != null:
+      case LinkGroupShoppingListItem() when link != null:
         return link(_that);
       case _:
         return orElse();
@@ -252,14 +253,14 @@ extension ShoppingListItemPatterns on ShoppingListItem {
 
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(TextShoppingListItem value) text,
-    required TResult Function(LinkShoppingListItem value) link,
+    required TResult Function(TextGroupShoppingListItem value) text,
+    required TResult Function(LinkGroupShoppingListItem value) link,
   }) {
     final _that = this;
     switch (_that) {
-      case TextShoppingListItem():
+      case TextGroupShoppingListItem():
         return text(_that);
-      case LinkShoppingListItem():
+      case LinkGroupShoppingListItem():
         return link(_that);
     }
   }
@@ -278,14 +279,14 @@ extension ShoppingListItemPatterns on ShoppingListItem {
 
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(TextShoppingListItem value)? text,
-    TResult? Function(LinkShoppingListItem value)? link,
+    TResult? Function(TextGroupShoppingListItem value)? text,
+    TResult? Function(LinkGroupShoppingListItem value)? link,
   }) {
     final _that = this;
     switch (_that) {
-      case TextShoppingListItem() when text != null:
+      case TextGroupShoppingListItem() when text != null:
         return text(_that);
-      case LinkShoppingListItem() when link != null:
+      case LinkGroupShoppingListItem() when link != null:
         return link(_that);
       case _:
         return null;
@@ -311,7 +312,7 @@ extension ShoppingListItemPatterns on ShoppingListItem {
             String shoppingListID,
             String message,
             int order,
-            ShoppingListItemStatus status,
+            GroupShoppingListItemStatus status,
             String? description,
             String? color,
             String? categoryID,
@@ -329,7 +330,7 @@ extension ShoppingListItemPatterns on ShoppingListItem {
             String? metadataTitle,
             String? metadataDescription,
             String? metadataImageURL,
-            ShoppingListItemStatus status,
+            GroupShoppingListItemStatus status,
             String? description,
             String? color,
             String? categoryID,
@@ -343,7 +344,7 @@ extension ShoppingListItemPatterns on ShoppingListItem {
   }) {
     final _that = this;
     switch (_that) {
-      case TextShoppingListItem() when text != null:
+      case TextGroupShoppingListItem() when text != null:
         return text(
             _that.id,
             _that.shoppingListID,
@@ -358,7 +359,7 @@ extension ShoppingListItemPatterns on ShoppingListItem {
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
             _that.serverUpdatedDateTime);
-      case LinkShoppingListItem() when link != null:
+      case LinkGroupShoppingListItem() when link != null:
         return link(
             _that.id,
             _that.shoppingListID,
@@ -401,7 +402,7 @@ extension ShoppingListItemPatterns on ShoppingListItem {
             String shoppingListID,
             String message,
             int order,
-            ShoppingListItemStatus status,
+            GroupShoppingListItemStatus status,
             String? description,
             String? color,
             String? categoryID,
@@ -419,7 +420,7 @@ extension ShoppingListItemPatterns on ShoppingListItem {
             String? metadataTitle,
             String? metadataDescription,
             String? metadataImageURL,
-            ShoppingListItemStatus status,
+            GroupShoppingListItemStatus status,
             String? description,
             String? color,
             String? categoryID,
@@ -432,7 +433,7 @@ extension ShoppingListItemPatterns on ShoppingListItem {
   }) {
     final _that = this;
     switch (_that) {
-      case TextShoppingListItem():
+      case TextGroupShoppingListItem():
         return text(
             _that.id,
             _that.shoppingListID,
@@ -447,7 +448,7 @@ extension ShoppingListItemPatterns on ShoppingListItem {
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
             _that.serverUpdatedDateTime);
-      case LinkShoppingListItem():
+      case LinkGroupShoppingListItem():
         return link(
             _that.id,
             _that.shoppingListID,
@@ -487,7 +488,7 @@ extension ShoppingListItemPatterns on ShoppingListItem {
             String shoppingListID,
             String message,
             int order,
-            ShoppingListItemStatus status,
+            GroupShoppingListItemStatus status,
             String? description,
             String? color,
             String? categoryID,
@@ -505,7 +506,7 @@ extension ShoppingListItemPatterns on ShoppingListItem {
             String? metadataTitle,
             String? metadataDescription,
             String? metadataImageURL,
-            ShoppingListItemStatus status,
+            GroupShoppingListItemStatus status,
             String? description,
             String? color,
             String? categoryID,
@@ -518,7 +519,7 @@ extension ShoppingListItemPatterns on ShoppingListItem {
   }) {
     final _that = this;
     switch (_that) {
-      case TextShoppingListItem() when text != null:
+      case TextGroupShoppingListItem() when text != null:
         return text(
             _that.id,
             _that.shoppingListID,
@@ -533,7 +534,7 @@ extension ShoppingListItemPatterns on ShoppingListItem {
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
             _that.serverUpdatedDateTime);
-      case LinkShoppingListItem() when link != null:
+      case LinkGroupShoppingListItem() when link != null:
         return link(
             _that.id,
             _that.shoppingListID,
@@ -560,13 +561,13 @@ extension ShoppingListItemPatterns on ShoppingListItem {
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true)
-class TextShoppingListItem implements ShoppingListItem {
-  const TextShoppingListItem(
+class TextGroupShoppingListItem implements GroupShoppingListItem {
+  const TextGroupShoppingListItem(
       {required this.id,
       required this.shoppingListID,
       required this.message,
       required this.order,
-      this.status = ShoppingListItemStatus.unchecked,
+      this.status = GroupShoppingListItemStatus.unchecked,
       this.description,
       this.color,
       this.categoryID,
@@ -577,8 +578,8 @@ class TextShoppingListItem implements ShoppingListItem {
       @ServerUpdatedTimestamp() this.serverUpdatedDateTime,
       final String? $type})
       : $type = $type ?? 'text';
-  factory TextShoppingListItem.fromJson(Map<String, dynamic> json) =>
-      _$TextShoppingListItemFromJson(json);
+  factory TextGroupShoppingListItem.fromJson(Map<String, dynamic> json) =>
+      _$TextGroupShoppingListItemFromJson(json);
 
   @override
   final String id;
@@ -591,7 +592,7 @@ class TextShoppingListItem implements ShoppingListItem {
   final int order;
   @override
   @JsonKey()
-  final ShoppingListItemStatus status;
+  final GroupShoppingListItemStatus status;
   @override
   final String? description;
   @override
@@ -617,18 +618,18 @@ class TextShoppingListItem implements ShoppingListItem {
   @JsonKey(name: 'type')
   final String $type;
 
-  /// Create a copy of ShoppingListItem
+  /// Create a copy of GroupShoppingListItem
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $TextShoppingListItemCopyWith<TextShoppingListItem> get copyWith =>
-      _$TextShoppingListItemCopyWithImpl<TextShoppingListItem>(
+  $TextGroupShoppingListItemCopyWith<TextGroupShoppingListItem> get copyWith =>
+      _$TextGroupShoppingListItemCopyWithImpl<TextGroupShoppingListItem>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$TextShoppingListItemToJson(
+    return _$TextGroupShoppingListItemToJson(
       this,
     );
   }
@@ -637,7 +638,7 @@ class TextShoppingListItem implements ShoppingListItem {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is TextShoppingListItem &&
+            other is TextGroupShoppingListItem &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.shoppingListID, shoppingListID) ||
                 other.shoppingListID == shoppingListID) &&
@@ -681,16 +682,16 @@ class TextShoppingListItem implements ShoppingListItem {
 
   @override
   String toString() {
-    return 'ShoppingListItem.text(id: $id, shoppingListID: $shoppingListID, message: $message, order: $order, status: $status, description: $description, color: $color, categoryID: $categoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItem.text(id: $id, shoppingListID: $shoppingListID, message: $message, order: $order, status: $status, description: $description, color: $color, categoryID: $categoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
 /// @nodoc
-abstract mixin class $TextShoppingListItemCopyWith<$Res>
-    implements $ShoppingListItemCopyWith<$Res> {
-  factory $TextShoppingListItemCopyWith(TextShoppingListItem value,
-          $Res Function(TextShoppingListItem) _then) =
-      _$TextShoppingListItemCopyWithImpl;
+abstract mixin class $TextGroupShoppingListItemCopyWith<$Res>
+    implements $GroupShoppingListItemCopyWith<$Res> {
+  factory $TextGroupShoppingListItemCopyWith(TextGroupShoppingListItem value,
+          $Res Function(TextGroupShoppingListItem) _then) =
+      _$TextGroupShoppingListItemCopyWithImpl;
   @override
   @useResult
   $Res call(
@@ -698,7 +699,7 @@ abstract mixin class $TextShoppingListItemCopyWith<$Res>
       String shoppingListID,
       String message,
       int order,
-      ShoppingListItemStatus status,
+      GroupShoppingListItemStatus status,
       String? description,
       String? color,
       String? categoryID,
@@ -710,14 +711,14 @@ abstract mixin class $TextShoppingListItemCopyWith<$Res>
 }
 
 /// @nodoc
-class _$TextShoppingListItemCopyWithImpl<$Res>
-    implements $TextShoppingListItemCopyWith<$Res> {
-  _$TextShoppingListItemCopyWithImpl(this._self, this._then);
+class _$TextGroupShoppingListItemCopyWithImpl<$Res>
+    implements $TextGroupShoppingListItemCopyWith<$Res> {
+  _$TextGroupShoppingListItemCopyWithImpl(this._self, this._then);
 
-  final TextShoppingListItem _self;
-  final $Res Function(TextShoppingListItem) _then;
+  final TextGroupShoppingListItem _self;
+  final $Res Function(TextGroupShoppingListItem) _then;
 
-  /// Create a copy of ShoppingListItem
+  /// Create a copy of GroupShoppingListItem
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -736,7 +737,7 @@ class _$TextShoppingListItemCopyWithImpl<$Res>
     Object? serverCreatedDateTime = freezed,
     Object? serverUpdatedDateTime = freezed,
   }) {
-    return _then(TextShoppingListItem(
+    return _then(TextGroupShoppingListItem(
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -756,7 +757,7 @@ class _$TextShoppingListItemCopyWithImpl<$Res>
       status: null == status
           ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
-              as ShoppingListItemStatus,
+              as GroupShoppingListItemStatus,
       description: freezed == description
           ? _self.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -796,8 +797,8 @@ class _$TextShoppingListItemCopyWithImpl<$Res>
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true)
-class LinkShoppingListItem implements ShoppingListItem {
-  const LinkShoppingListItem(
+class LinkGroupShoppingListItem implements GroupShoppingListItem {
+  const LinkGroupShoppingListItem(
       {required this.id,
       required this.shoppingListID,
       required this.url,
@@ -805,7 +806,7 @@ class LinkShoppingListItem implements ShoppingListItem {
       this.metadataTitle,
       this.metadataDescription,
       this.metadataImageURL,
-      this.status = ShoppingListItemStatus.unchecked,
+      this.status = GroupShoppingListItemStatus.unchecked,
       this.description,
       this.color,
       this.categoryID,
@@ -816,8 +817,8 @@ class LinkShoppingListItem implements ShoppingListItem {
       @ServerUpdatedTimestamp() this.serverUpdatedDateTime,
       final String? $type})
       : $type = $type ?? 'link';
-  factory LinkShoppingListItem.fromJson(Map<String, dynamic> json) =>
-      _$LinkShoppingListItemFromJson(json);
+  factory LinkGroupShoppingListItem.fromJson(Map<String, dynamic> json) =>
+      _$LinkGroupShoppingListItemFromJson(json);
 
   @override
   final String id;
@@ -833,7 +834,7 @@ class LinkShoppingListItem implements ShoppingListItem {
   final String? metadataImageURL;
   @override
   @JsonKey()
-  final ShoppingListItemStatus status;
+  final GroupShoppingListItemStatus status;
   @override
   final String? description;
   @override
@@ -859,18 +860,18 @@ class LinkShoppingListItem implements ShoppingListItem {
   @JsonKey(name: 'type')
   final String $type;
 
-  /// Create a copy of ShoppingListItem
+  /// Create a copy of GroupShoppingListItem
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $LinkShoppingListItemCopyWith<LinkShoppingListItem> get copyWith =>
-      _$LinkShoppingListItemCopyWithImpl<LinkShoppingListItem>(
+  $LinkGroupShoppingListItemCopyWith<LinkGroupShoppingListItem> get copyWith =>
+      _$LinkGroupShoppingListItemCopyWithImpl<LinkGroupShoppingListItem>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$LinkShoppingListItemToJson(
+    return _$LinkGroupShoppingListItemToJson(
       this,
     );
   }
@@ -879,7 +880,7 @@ class LinkShoppingListItem implements ShoppingListItem {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is LinkShoppingListItem &&
+            other is LinkGroupShoppingListItem &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.shoppingListID, shoppingListID) ||
                 other.shoppingListID == shoppingListID) &&
@@ -932,16 +933,16 @@ class LinkShoppingListItem implements ShoppingListItem {
 
   @override
   String toString() {
-    return 'ShoppingListItem.link(id: $id, shoppingListID: $shoppingListID, url: $url, order: $order, metadataTitle: $metadataTitle, metadataDescription: $metadataDescription, metadataImageURL: $metadataImageURL, status: $status, description: $description, color: $color, categoryID: $categoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItem.link(id: $id, shoppingListID: $shoppingListID, url: $url, order: $order, metadataTitle: $metadataTitle, metadataDescription: $metadataDescription, metadataImageURL: $metadataImageURL, status: $status, description: $description, color: $color, categoryID: $categoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
 /// @nodoc
-abstract mixin class $LinkShoppingListItemCopyWith<$Res>
-    implements $ShoppingListItemCopyWith<$Res> {
-  factory $LinkShoppingListItemCopyWith(LinkShoppingListItem value,
-          $Res Function(LinkShoppingListItem) _then) =
-      _$LinkShoppingListItemCopyWithImpl;
+abstract mixin class $LinkGroupShoppingListItemCopyWith<$Res>
+    implements $GroupShoppingListItemCopyWith<$Res> {
+  factory $LinkGroupShoppingListItemCopyWith(LinkGroupShoppingListItem value,
+          $Res Function(LinkGroupShoppingListItem) _then) =
+      _$LinkGroupShoppingListItemCopyWithImpl;
   @override
   @useResult
   $Res call(
@@ -952,7 +953,7 @@ abstract mixin class $LinkShoppingListItemCopyWith<$Res>
       String? metadataTitle,
       String? metadataDescription,
       String? metadataImageURL,
-      ShoppingListItemStatus status,
+      GroupShoppingListItemStatus status,
       String? description,
       String? color,
       String? categoryID,
@@ -964,14 +965,14 @@ abstract mixin class $LinkShoppingListItemCopyWith<$Res>
 }
 
 /// @nodoc
-class _$LinkShoppingListItemCopyWithImpl<$Res>
-    implements $LinkShoppingListItemCopyWith<$Res> {
-  _$LinkShoppingListItemCopyWithImpl(this._self, this._then);
+class _$LinkGroupShoppingListItemCopyWithImpl<$Res>
+    implements $LinkGroupShoppingListItemCopyWith<$Res> {
+  _$LinkGroupShoppingListItemCopyWithImpl(this._self, this._then);
 
-  final LinkShoppingListItem _self;
-  final $Res Function(LinkShoppingListItem) _then;
+  final LinkGroupShoppingListItem _self;
+  final $Res Function(LinkGroupShoppingListItem) _then;
 
-  /// Create a copy of ShoppingListItem
+  /// Create a copy of GroupShoppingListItem
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -993,7 +994,7 @@ class _$LinkShoppingListItemCopyWithImpl<$Res>
     Object? serverCreatedDateTime = freezed,
     Object? serverUpdatedDateTime = freezed,
   }) {
-    return _then(LinkShoppingListItem(
+    return _then(LinkGroupShoppingListItem(
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -1025,7 +1026,7 @@ class _$LinkShoppingListItemCopyWithImpl<$Res>
       status: null == status
           ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
-              as ShoppingListItemStatus,
+              as GroupShoppingListItemStatus,
       description: freezed == description
           ? _self.description
           : description // ignore: cast_nullable_to_non_nullable

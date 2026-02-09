@@ -6,12 +6,12 @@ part of 'shopping_list.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$shoppingListsHash() => r'9379988541b1f091627422160a3ec7c6b0667fa7';
+String _$shoppingListsHash() => r'4cc92a414f44ffe552d13422b0fe01076af28176';
 
 /// See also [shoppingLists].
 @ProviderFor(shoppingLists)
 final shoppingListsProvider =
-    AutoDisposeStreamProvider<List<ShoppingList>>.internal(
+    AutoDisposeStreamProvider<List<GroupShoppingList>>.internal(
   shoppingLists,
   name: r'shoppingListsProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -26,7 +26,8 @@ final shoppingListsProvider =
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef ShoppingListsRef = AutoDisposeStreamProviderRef<List<ShoppingList>>;
+typedef ShoppingListsRef
+    = AutoDisposeStreamProviderRef<List<GroupShoppingList>>;
 String _$shoppingListAddHash() => r'd8132db83f3db4de1e739825445e18bbb812f796';
 
 /// See also [shoppingListAdd].

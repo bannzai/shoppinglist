@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shoppinglist/entity/shopping_list.dart';
-import 'package:shoppinglist/entity/shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_list.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 
 void main() {
   test('ShoppingList entity smoke test', () {
-    final shoppingList = ShoppingList(
+    final shoppingList = GroupShoppingList(
       id: 'test-id',
       createUserID: 'user-id',
       groupID: 'group-id',
@@ -14,11 +14,11 @@ void main() {
     expect(shoppingList.createUserID, 'user-id');
     expect(shoppingList.groupID, 'group-id');
     expect(shoppingList.name, '');
-    expect(shoppingList.status, ShoppingListStatus.active);
+    expect(shoppingList.status, GroupShoppingListStatus.active);
   });
 
   test('ShoppingListItem entity smoke test', () {
-    final item = ShoppingListItem.text(
+    final item = GroupShoppingListItem.text(
       id: 'item-id',
       shoppingListID: 'shopping-list-id',
       message: 'Buy milk',
@@ -29,13 +29,13 @@ void main() {
   });
 
   test('ShoppingListItems nextOrder', () {
-    final items = <ShoppingListItem>[
-      ShoppingListItem.text(
+    final items = <GroupShoppingListItem>[
+      GroupShoppingListItem.text(
           id: '1',
           shoppingListID: 'shopping-list-id',
           message: 'Item 1',
           order: 0),
-      ShoppingListItem.text(
+      GroupShoppingListItem.text(
           id: '2',
           shoppingListID: 'shopping-list-id',
           message: 'Item 2',

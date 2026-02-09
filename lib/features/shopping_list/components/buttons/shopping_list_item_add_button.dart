@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/entity/shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 
 class ShoppingListItemAddButton extends HookConsumerWidget {
   final String shoppingListID;
-  final List<ShoppingListItem> shoppingListItems;
+  final List<GroupShoppingListItem> shoppingListItems;
 
   const ShoppingListItemAddButton(
       {super.key,

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/entity/shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/link_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 
 class ShoppingListItems extends HookConsumerWidget {
   final String shoppingListID;
-  final List<ShoppingListItem> shoppingListItems;
-  final AsyncValue<List<ShoppingListItem>> shoppingListItemsAsync;
+  final List<GroupShoppingListItem> shoppingListItems;
+  final AsyncValue<List<GroupShoppingListItem>> shoppingListItemsAsync;
 
   const ShoppingListItems({
     super.key,
@@ -58,11 +58,11 @@ class ShoppingListItems extends HookConsumerWidget {
         final item = items.value[index];
 
         return switch (item) {
-          TextShoppingListItem textItem => TextShoppingListItemWidget(
+          TextGroupShoppingListItem textItem => TextShoppingListItemWidget(
               key: ValueKey(item.id),
               textShoppingListItem: textItem,
               shoppingListItems: items.value),
-          LinkShoppingListItem linkItem => LinkShoppingListItemWidget(
+          LinkGroupShoppingListItem linkItem => LinkShoppingListItemWidget(
               key: ValueKey(item.id),
               linkShoppingListItem: linkItem,
               shoppingListItems: items.value),

@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
-import 'package:shoppinglist/entity/shopping_list.dart';
-import 'package:shoppinglist/entity/shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_list.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -8,11 +8,11 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 part 'shopping_list.g.dart';
 
 @Riverpod(dependencies: [groupDatabase])
-Stream<List<ShoppingList>> shoppingLists(ShoppingListsRef ref) {
+Stream<List<GroupShoppingList>> shoppingLists(ShoppingListsRef ref) {
   final database = ref.watch(groupDatabaseProvider);
   return database
       .shoppingListsReference()
-      .orderBy(ShoppingListFirestoreKeys.createdDateTime, descending: true)
+      .orderBy(GroupShoppingListFirestoreKeys.createdDateTime, descending: true)
       .snapshots()
       .map((event) => event.docs.map((doc) => doc.data()).toList());
 }
@@ -22,18 +22,18 @@ class ShoppingListAdd {
 
   ShoppingListAdd({required this.database});
 
-  Future<ShoppingList> call(
+  Future<GroupShoppingList> call(
       {required String createUserID, required String groupID}) async {
-    final docRef = database.newShoppingListReference();
-    final count = await database.countOfShoppingLists();
-    final shoppingList = ShoppingList(
+    final docRef = database.newGroupShoppingListReference();
+    final count = await database.countOfGroupShoppingLists();
+    final shoppingList = GroupShoppingList(
       id: docRef.id,
       createUserID: createUserID,
       groupID: groupID,
       name: count == 0
           ? DateFormat('yyyy-MM-dd').format(DateTime.now())
           : '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ($count)',
-      status: ShoppingListStatus.active,
+      status: GroupShoppingListStatus.active,
       ttlExpiresDateTime: DateTime.now().add(const Duration(days: 30)),
     );
     await docRef.set(shoppingList);
@@ -72,7 +72,7 @@ class ShoppingListUpdate {
 
   Future<void> call(
       {required String shoppingListID,
-      required ShoppingList shoppingList}) async {
+      required GroupShoppingList shoppingList}) async {
     final docRef =
         database.shoppingListReference(shoppingListID: shoppingListID);
     await docRef.set(shoppingList);
@@ -95,14 +95,14 @@ class ShoppingListDuplicate {
       required this.addTextShoppingListItem,
       required this.database});
 
-  Future<ShoppingList> call(
+  Future<GroupShoppingList> call(
       {required String createUserID,
       required String groupID,
-      required List<ShoppingListItem> shoppingListItems}) async {
+      required List<GroupShoppingListItem> shoppingListItems}) async {
     final shoppingList =
         await shoppingListAdd(createUserID: createUserID, groupID: groupID);
     for (var item in shoppingListItems) {
-      if (item is TextShoppingListItem) {
+      if (item is TextGroupShoppingListItem) {
         await addTextShoppingListItem(
           shoppingListID: shoppingList.id,
           message: item.message,

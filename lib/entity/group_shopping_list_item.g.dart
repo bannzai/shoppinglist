@@ -1,21 +1,21 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'shopping_list_item.dart';
+part of 'group_shopping_list_item.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-TextShoppingListItem _$TextShoppingListItemFromJson(
+TextGroupShoppingListItem _$TextGroupShoppingListItemFromJson(
         Map<String, dynamic> json) =>
-    TextShoppingListItem(
+    TextGroupShoppingListItem(
       id: json['id'] as String,
       shoppingListID: json['shoppingListID'] as String,
       message: json['message'] as String,
       order: (json['order'] as num).toInt(),
       status: $enumDecodeNullable(
-              _$ShoppingListItemStatusEnumMap, json['status']) ??
-          ShoppingListItemStatus.unchecked,
+              _$GroupShoppingListItemStatusEnumMap, json['status']) ??
+          GroupShoppingListItemStatus.unchecked,
       description: json['description'] as String?,
       color: json['color'] as String?,
       categoryID: json['categoryID'] as String?,
@@ -32,14 +32,14 @@ TextShoppingListItem _$TextShoppingListItemFromJson(
       $type: json['type'] as String?,
     );
 
-Map<String, dynamic> _$TextShoppingListItemToJson(
-        TextShoppingListItem instance) =>
+Map<String, dynamic> _$TextGroupShoppingListItemToJson(
+        TextGroupShoppingListItem instance) =>
     <String, dynamic>{
       'id': instance.id,
       'shoppingListID': instance.shoppingListID,
       'message': instance.message,
       'order': instance.order,
-      'status': _$ShoppingListItemStatusEnumMap[instance.status]!,
+      'status': _$GroupShoppingListItemStatusEnumMap[instance.status]!,
       'description': instance.description,
       'color': instance.color,
       'categoryID': instance.categoryID,
@@ -56,14 +56,14 @@ Map<String, dynamic> _$TextShoppingListItemToJson(
       'type': instance.$type,
     };
 
-const _$ShoppingListItemStatusEnumMap = {
-  ShoppingListItemStatus.checked: 'checked',
-  ShoppingListItemStatus.unchecked: 'unchecked',
+const _$GroupShoppingListItemStatusEnumMap = {
+  GroupShoppingListItemStatus.checked: 'checked',
+  GroupShoppingListItemStatus.unchecked: 'unchecked',
 };
 
-LinkShoppingListItem _$LinkShoppingListItemFromJson(
+LinkGroupShoppingListItem _$LinkGroupShoppingListItemFromJson(
         Map<String, dynamic> json) =>
-    LinkShoppingListItem(
+    LinkGroupShoppingListItem(
       id: json['id'] as String,
       shoppingListID: json['shoppingListID'] as String,
       url: json['url'] as String,
@@ -72,8 +72,8 @@ LinkShoppingListItem _$LinkShoppingListItemFromJson(
       metadataDescription: json['metadataDescription'] as String?,
       metadataImageURL: json['metadataImageURL'] as String?,
       status: $enumDecodeNullable(
-              _$ShoppingListItemStatusEnumMap, json['status']) ??
-          ShoppingListItemStatus.unchecked,
+              _$GroupShoppingListItemStatusEnumMap, json['status']) ??
+          GroupShoppingListItemStatus.unchecked,
       description: json['description'] as String?,
       color: json['color'] as String?,
       categoryID: json['categoryID'] as String?,
@@ -90,8 +90,8 @@ LinkShoppingListItem _$LinkShoppingListItemFromJson(
       $type: json['type'] as String?,
     );
 
-Map<String, dynamic> _$LinkShoppingListItemToJson(
-        LinkShoppingListItem instance) =>
+Map<String, dynamic> _$LinkGroupShoppingListItemToJson(
+        LinkGroupShoppingListItem instance) =>
     <String, dynamic>{
       'id': instance.id,
       'shoppingListID': instance.shoppingListID,
@@ -100,7 +100,7 @@ Map<String, dynamic> _$LinkShoppingListItemToJson(
       'metadataTitle': instance.metadataTitle,
       'metadataDescription': instance.metadataDescription,
       'metadataImageURL': instance.metadataImageURL,
-      'status': _$ShoppingListItemStatusEnumMap[instance.status]!,
+      'status': _$GroupShoppingListItemStatusEnumMap[instance.status]!,
       'description': instance.description,
       'color': instance.color,
       'categoryID': instance.categoryID,

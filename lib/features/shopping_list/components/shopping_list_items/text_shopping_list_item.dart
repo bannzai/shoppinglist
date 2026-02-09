@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/entity/shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/color.dart';
 
 class TextShoppingListItemWidget extends HookConsumerWidget {
-  final TextShoppingListItem textShoppingListItem;
-  final List<ShoppingListItem> shoppingListItems;
+  final TextGroupShoppingListItem textShoppingListItem;
+  final List<GroupShoppingListItem> shoppingListItems;
 
   const TextShoppingListItemWidget(
       {super.key,
@@ -49,7 +49,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
               scale: 1.5,
               child: Checkbox(
                 value: textShoppingListItem.status ==
-                    ShoppingListItemStatus.checked,
+                    GroupShoppingListItemStatus.checked,
                 onChanged: (value) {
                   ref
                       .read(groupDatabaseProvider)
@@ -60,9 +60,9 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                       .set(
                         textShoppingListItem.copyWith(
                           status: textShoppingListItem.status ==
-                                  ShoppingListItemStatus.checked
-                              ? ShoppingListItemStatus.unchecked
-                              : ShoppingListItemStatus.checked,
+                                  GroupShoppingListItemStatus.checked
+                              ? GroupShoppingListItemStatus.unchecked
+                              : GroupShoppingListItemStatus.checked,
                         ),
                         SetOptions(merge: true),
                       );
@@ -113,8 +113,8 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
 class TextShoppingListItemTextField extends HookConsumerWidget {
   final TextEditingController textEditingController;
   final FocusNode focusNode;
-  final TextShoppingListItem textShoppingListItem;
-  final List<ShoppingListItem> shoppingListItems;
+  final TextGroupShoppingListItem textShoppingListItem;
+  final List<GroupShoppingListItem> shoppingListItems;
   const TextShoppingListItemTextField({
     super.key,
     required this.textEditingController,
@@ -151,7 +151,7 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
         style: TextStyle(
           color: TextColor.black,
           decoration:
-              textShoppingListItem.status == ShoppingListItemStatus.checked
+              textShoppingListItem.status == GroupShoppingListItemStatus.checked
                   ? TextDecoration.lineThrough
                   : TextDecoration.none,
         ),

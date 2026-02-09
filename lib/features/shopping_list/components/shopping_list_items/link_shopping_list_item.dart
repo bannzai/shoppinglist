@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shoppinglist/entity/shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 
 class LinkShoppingListItemWidget extends StatelessWidget {
-  final LinkShoppingListItem linkShoppingListItem;
-  final List<ShoppingListItem> shoppingListItems;
+  final LinkGroupShoppingListItem linkShoppingListItem;
+  final List<GroupShoppingListItem> shoppingListItems;
 
   const LinkShoppingListItemWidget(
       {super.key,

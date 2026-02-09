@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:shoppinglist/entity/timestamp.dart';
 
-part 'shopping_list_item.freezed.dart';
-part 'shopping_list_item.g.dart';
+part 'group_shopping_list_item.freezed.dart';
+part 'group_shopping_list_item.g.dart';
 
-abstract class ShoppingListItemFirestoreKeys {
+abstract class GroupShoppingListItemFirestoreKeys {
   static const id = 'id';
   static const type = 'type';
   static const status = 'status';
@@ -17,17 +17,18 @@ abstract class ShoppingListItemFirestoreKeys {
 }
 
 @Freezed(unionKey: 'type')
-sealed class ShoppingListItem with _$ShoppingListItem {
+sealed class GroupShoppingListItem with _$GroupShoppingListItem {
   @FreezedUnionValue('text')
   @JsonSerializable(explicitToJson: true)
-  const factory ShoppingListItem.text({
+  const factory GroupShoppingListItem.text({
     required String id,
     required String shoppingListID,
     required String message,
     // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
     // NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
     required int order,
-    @Default(ShoppingListItemStatus.unchecked) ShoppingListItemStatus status,
+    @Default(GroupShoppingListItemStatus.unchecked)
+    GroupShoppingListItemStatus status,
     String? description,
     String? color,
     String? categoryID,
@@ -36,11 +37,11 @@ sealed class ShoppingListItem with _$ShoppingListItem {
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
     @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
-  }) = TextShoppingListItem;
+  }) = TextGroupShoppingListItem;
 
   @FreezedUnionValue('link')
   @JsonSerializable(explicitToJson: true)
-  const factory ShoppingListItem.link({
+  const factory GroupShoppingListItem.link({
     required String id,
     required String shoppingListID,
     required String url,
@@ -50,7 +51,8 @@ sealed class ShoppingListItem with _$ShoppingListItem {
     String? metadataTitle,
     String? metadataDescription,
     String? metadataImageURL,
-    @Default(ShoppingListItemStatus.unchecked) ShoppingListItemStatus status,
+    @Default(GroupShoppingListItemStatus.unchecked)
+    GroupShoppingListItemStatus status,
     String? description,
     String? color,
     String? categoryID,
@@ -59,17 +61,17 @@ sealed class ShoppingListItem with _$ShoppingListItem {
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
     @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
-  }) = LinkShoppingListItem;
+  }) = LinkGroupShoppingListItem;
 
-  factory ShoppingListItem.fromJson(Map<String, dynamic> json) =>
-      _$ShoppingListItemFromJson(json);
+  factory GroupShoppingListItem.fromJson(Map<String, dynamic> json) =>
+      _$GroupShoppingListItemFromJson(json);
 }
 
-extension ShoppingListItems on List<ShoppingListItem> {
+extension GroupShoppingListItems on List<GroupShoppingListItem> {
   int get nextOrder => (lastOrNull?.order ?? -1) + 1;
 }
 
-enum ShoppingListItemStatus {
+enum GroupShoppingListItemStatus {
   @JsonValue('checked')
   checked,
   @JsonValue('unchecked')

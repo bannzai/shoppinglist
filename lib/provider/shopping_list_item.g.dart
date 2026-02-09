@@ -7,7 +7,7 @@ part of 'shopping_list_item.dart';
 // **************************************************************************
 
 String _$textShoppingListItemsHash() =>
-    r'16b954d570880311023efacebe95b890842ec067';
+    r'a8947ac0d3d82d744f42562d0143d4d1fdfae41b';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -36,7 +36,7 @@ const textShoppingListItemsProvider = TextShoppingListItemsFamily();
 
 /// See also [textShoppingListItems].
 class TextShoppingListItemsFamily
-    extends Family<AsyncValue<List<ShoppingListItem>>> {
+    extends Family<AsyncValue<List<GroupShoppingListItem>>> {
   /// See also [textShoppingListItems].
   const TextShoppingListItemsFamily();
 
@@ -84,7 +84,7 @@ class TextShoppingListItemsFamily
 
 /// See also [textShoppingListItems].
 class TextShoppingListItemsProvider
-    extends AutoDisposeStreamProvider<List<ShoppingListItem>> {
+    extends AutoDisposeStreamProvider<List<GroupShoppingListItem>> {
   /// See also [textShoppingListItems].
   TextShoppingListItemsProvider({
     required String shoppingListID,
@@ -124,7 +124,8 @@ class TextShoppingListItemsProvider
 
   @override
   Override overrideWith(
-    Stream<List<ShoppingListItem>> Function(TextShoppingListItemsRef provider)
+    Stream<List<GroupShoppingListItem>> Function(
+            TextShoppingListItemsRef provider)
         create,
   ) {
     return ProviderOverride(
@@ -143,7 +144,8 @@ class TextShoppingListItemsProvider
   }
 
   @override
-  AutoDisposeStreamProviderElement<List<ShoppingListItem>> createElement() {
+  AutoDisposeStreamProviderElement<List<GroupShoppingListItem>>
+      createElement() {
     return _TextShoppingListItemsProviderElement(this);
   }
 
@@ -167,7 +169,7 @@ class TextShoppingListItemsProvider
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin TextShoppingListItemsRef
-    on AutoDisposeStreamProviderRef<List<ShoppingListItem>> {
+    on AutoDisposeStreamProviderRef<List<GroupShoppingListItem>> {
   /// The parameter `shoppingListID` of this provider.
   String get shoppingListID;
 
@@ -176,7 +178,7 @@ mixin TextShoppingListItemsRef
 }
 
 class _TextShoppingListItemsProviderElement
-    extends AutoDisposeStreamProviderElement<List<ShoppingListItem>>
+    extends AutoDisposeStreamProviderElement<List<GroupShoppingListItem>>
     with TextShoppingListItemsRef {
   _TextShoppingListItemsProviderElement(super.provider);
 
@@ -188,7 +190,7 @@ class _TextShoppingListItemsProviderElement
 }
 
 String _$linkShoppingListItemsHash() =>
-    r'd6a1d3dc504394cca526db32fe6ffb5f895ca88d';
+    r'284c07fc74399f91a37b76da9aa18293de4adc3f';
 
 /// See also [linkShoppingListItems].
 @ProviderFor(linkShoppingListItems)
@@ -196,7 +198,7 @@ const linkShoppingListItemsProvider = LinkShoppingListItemsFamily();
 
 /// See also [linkShoppingListItems].
 class LinkShoppingListItemsFamily
-    extends Family<AsyncValue<List<ShoppingListItem>>> {
+    extends Family<AsyncValue<List<GroupShoppingListItem>>> {
   /// See also [linkShoppingListItems].
   const LinkShoppingListItemsFamily();
 
@@ -241,7 +243,7 @@ class LinkShoppingListItemsFamily
 
 /// See also [linkShoppingListItems].
 class LinkShoppingListItemsProvider
-    extends AutoDisposeStreamProvider<List<ShoppingListItem>> {
+    extends AutoDisposeStreamProvider<List<GroupShoppingListItem>> {
   /// See also [linkShoppingListItems].
   LinkShoppingListItemsProvider({
     required String shoppingListID,
@@ -276,7 +278,8 @@ class LinkShoppingListItemsProvider
 
   @override
   Override overrideWith(
-    Stream<List<ShoppingListItem>> Function(LinkShoppingListItemsRef provider)
+    Stream<List<GroupShoppingListItem>> Function(
+            LinkShoppingListItemsRef provider)
         create,
   ) {
     return ProviderOverride(
@@ -294,7 +297,8 @@ class LinkShoppingListItemsProvider
   }
 
   @override
-  AutoDisposeStreamProviderElement<List<ShoppingListItem>> createElement() {
+  AutoDisposeStreamProviderElement<List<GroupShoppingListItem>>
+      createElement() {
     return _LinkShoppingListItemsProviderElement(this);
   }
 
@@ -316,13 +320,13 @@ class LinkShoppingListItemsProvider
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin LinkShoppingListItemsRef
-    on AutoDisposeStreamProviderRef<List<ShoppingListItem>> {
+    on AutoDisposeStreamProviderRef<List<GroupShoppingListItem>> {
   /// The parameter `shoppingListID` of this provider.
   String get shoppingListID;
 }
 
 class _LinkShoppingListItemsProviderElement
-    extends AutoDisposeStreamProviderElement<List<ShoppingListItem>>
+    extends AutoDisposeStreamProviderElement<List<GroupShoppingListItem>>
     with LinkShoppingListItemsRef {
   _LinkShoppingListItemsProviderElement(super.provider);
 

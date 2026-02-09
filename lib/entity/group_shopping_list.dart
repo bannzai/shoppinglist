@@ -2,24 +2,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:shoppinglist/entity/timestamp.dart';
 
-part 'shopping_list.g.dart';
-part 'shopping_list.freezed.dart';
+part 'group_shopping_list.g.dart';
+part 'group_shopping_list.freezed.dart';
 
-abstract class ShoppingListFirestoreKeys {
+abstract class GroupShoppingListFirestoreKeys {
   static const createdDateTime = 'createdDateTime';
 }
 
 @freezed
-abstract class ShoppingList with _$ShoppingList {
-  const ShoppingList._();
+abstract class GroupShoppingList with _$GroupShoppingList {
+  const GroupShoppingList._();
 
   @JsonSerializable(explicitToJson: true)
-  const factory ShoppingList({
+  const factory GroupShoppingList({
     required String id,
     required String createUserID,
     required String groupID,
     @Default('') String name,
-    @Default(ShoppingListStatus.active) ShoppingListStatus status,
+    @Default(GroupShoppingListStatus.active) GroupShoppingListStatus status,
     String? shoppingLocationID,
     String? duplicatedFromID,
     @TimestampConverter() required DateTime? ttlExpiresDateTime,
@@ -27,13 +27,13 @@ abstract class ShoppingList with _$ShoppingList {
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
     @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
-  }) = _ShoppingList;
+  }) = _GroupShoppingList;
 
-  factory ShoppingList.fromJson(Map<String, dynamic> json) =>
-      _$ShoppingListFromJson(json);
+  factory GroupShoppingList.fromJson(Map<String, dynamic> json) =>
+      _$GroupShoppingListFromJson(json);
 }
 
-enum ShoppingListStatus {
+enum GroupShoppingListStatus {
   @JsonValue('active')
   active,
   @JsonValue('done')

@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'shopping_list.dart';
+part of 'group_shopping_list.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -13,12 +13,12 @@ part of 'shopping_list.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$ShoppingList {
+mixin _$GroupShoppingList {
   String get id;
   String get createUserID;
   String get groupID;
   String get name;
-  ShoppingListStatus get status;
+  GroupShoppingListStatus get status;
   String? get shoppingLocationID;
   String? get duplicatedFromID;
   @TimestampConverter()
@@ -32,22 +32,22 @@ mixin _$ShoppingList {
   @ServerUpdatedTimestamp()
   DateTime? get serverUpdatedDateTime;
 
-  /// Create a copy of ShoppingList
+  /// Create a copy of GroupShoppingList
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $ShoppingListCopyWith<ShoppingList> get copyWith =>
-      _$ShoppingListCopyWithImpl<ShoppingList>(
-          this as ShoppingList, _$identity);
+  $GroupShoppingListCopyWith<GroupShoppingList> get copyWith =>
+      _$GroupShoppingListCopyWithImpl<GroupShoppingList>(
+          this as GroupShoppingList, _$identity);
 
-  /// Serializes this ShoppingList to a JSON map.
+  /// Serializes this GroupShoppingList to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is ShoppingList &&
+            other is GroupShoppingList &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.createUserID, createUserID) ||
                 other.createUserID == createUserID) &&
@@ -89,22 +89,22 @@ mixin _$ShoppingList {
 
   @override
   String toString() {
-    return 'ShoppingList(id: $id, createUserID: $createUserID, groupID: $groupID, name: $name, status: $status, shoppingLocationID: $shoppingLocationID, duplicatedFromID: $duplicatedFromID, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingList(id: $id, createUserID: $createUserID, groupID: $groupID, name: $name, status: $status, shoppingLocationID: $shoppingLocationID, duplicatedFromID: $duplicatedFromID, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
 /// @nodoc
-abstract mixin class $ShoppingListCopyWith<$Res> {
-  factory $ShoppingListCopyWith(
-          ShoppingList value, $Res Function(ShoppingList) _then) =
-      _$ShoppingListCopyWithImpl;
+abstract mixin class $GroupShoppingListCopyWith<$Res> {
+  factory $GroupShoppingListCopyWith(
+          GroupShoppingList value, $Res Function(GroupShoppingList) _then) =
+      _$GroupShoppingListCopyWithImpl;
   @useResult
   $Res call(
       {String id,
       String createUserID,
       String groupID,
       String name,
-      ShoppingListStatus status,
+      GroupShoppingListStatus status,
       String? shoppingLocationID,
       String? duplicatedFromID,
       @TimestampConverter() DateTime? ttlExpiresDateTime,
@@ -115,13 +115,14 @@ abstract mixin class $ShoppingListCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ShoppingListCopyWithImpl<$Res> implements $ShoppingListCopyWith<$Res> {
-  _$ShoppingListCopyWithImpl(this._self, this._then);
+class _$GroupShoppingListCopyWithImpl<$Res>
+    implements $GroupShoppingListCopyWith<$Res> {
+  _$GroupShoppingListCopyWithImpl(this._self, this._then);
 
-  final ShoppingList _self;
-  final $Res Function(ShoppingList) _then;
+  final GroupShoppingList _self;
+  final $Res Function(GroupShoppingList) _then;
 
-  /// Create a copy of ShoppingList
+  /// Create a copy of GroupShoppingList
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -159,7 +160,7 @@ class _$ShoppingListCopyWithImpl<$Res> implements $ShoppingListCopyWith<$Res> {
       status: null == status
           ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
-              as ShoppingListStatus,
+              as GroupShoppingListStatus,
       shoppingLocationID: freezed == shoppingLocationID
           ? _self.shoppingLocationID
           : shoppingLocationID // ignore: cast_nullable_to_non_nullable
@@ -192,8 +193,8 @@ class _$ShoppingListCopyWithImpl<$Res> implements $ShoppingListCopyWith<$Res> {
   }
 }
 
-/// Adds pattern-matching-related methods to [ShoppingList].
-extension ShoppingListPatterns on ShoppingList {
+/// Adds pattern-matching-related methods to [GroupShoppingList].
+extension GroupShoppingListPatterns on GroupShoppingList {
   /// A variant of `map` that fallback to returning `orElse`.
   ///
   /// It is equivalent to doing:
@@ -208,12 +209,12 @@ extension ShoppingListPatterns on ShoppingList {
 
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>(
-    TResult Function(_ShoppingList value)? $default, {
+    TResult Function(_GroupShoppingList value)? $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case _ShoppingList() when $default != null:
+      case _GroupShoppingList() when $default != null:
         return $default(_that);
       case _:
         return orElse();
@@ -235,11 +236,11 @@ extension ShoppingListPatterns on ShoppingList {
 
   @optionalTypeArgs
   TResult map<TResult extends Object?>(
-    TResult Function(_ShoppingList value) $default,
+    TResult Function(_GroupShoppingList value) $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _ShoppingList():
+      case _GroupShoppingList():
         return $default(_that);
       case _:
         throw StateError('Unexpected subclass');
@@ -260,11 +261,11 @@ extension ShoppingListPatterns on ShoppingList {
 
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_ShoppingList value)? $default,
+    TResult? Function(_GroupShoppingList value)? $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _ShoppingList() when $default != null:
+      case _GroupShoppingList() when $default != null:
         return $default(_that);
       case _:
         return null;
@@ -290,7 +291,7 @@ extension ShoppingListPatterns on ShoppingList {
             String createUserID,
             String groupID,
             String name,
-            ShoppingListStatus status,
+            GroupShoppingListStatus status,
             String? shoppingLocationID,
             String? duplicatedFromID,
             @TimestampConverter() DateTime? ttlExpiresDateTime,
@@ -303,7 +304,7 @@ extension ShoppingListPatterns on ShoppingList {
   }) {
     final _that = this;
     switch (_that) {
-      case _ShoppingList() when $default != null:
+      case _GroupShoppingList() when $default != null:
         return $default(
             _that.id,
             _that.createUserID,
@@ -342,7 +343,7 @@ extension ShoppingListPatterns on ShoppingList {
             String createUserID,
             String groupID,
             String name,
-            ShoppingListStatus status,
+            GroupShoppingListStatus status,
             String? shoppingLocationID,
             String? duplicatedFromID,
             @TimestampConverter() DateTime? ttlExpiresDateTime,
@@ -354,7 +355,7 @@ extension ShoppingListPatterns on ShoppingList {
   ) {
     final _that = this;
     switch (_that) {
-      case _ShoppingList():
+      case _GroupShoppingList():
         return $default(
             _that.id,
             _that.createUserID,
@@ -392,7 +393,7 @@ extension ShoppingListPatterns on ShoppingList {
             String createUserID,
             String groupID,
             String name,
-            ShoppingListStatus status,
+            GroupShoppingListStatus status,
             String? shoppingLocationID,
             String? duplicatedFromID,
             @TimestampConverter() DateTime? ttlExpiresDateTime,
@@ -404,7 +405,7 @@ extension ShoppingListPatterns on ShoppingList {
   ) {
     final _that = this;
     switch (_that) {
-      case _ShoppingList() when $default != null:
+      case _GroupShoppingList() when $default != null:
         return $default(
             _that.id,
             _that.createUserID,
@@ -427,13 +428,13 @@ extension ShoppingListPatterns on ShoppingList {
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true)
-class _ShoppingList extends ShoppingList {
-  const _ShoppingList(
+class _GroupShoppingList extends GroupShoppingList {
+  const _GroupShoppingList(
       {required this.id,
       required this.createUserID,
       required this.groupID,
       this.name = '',
-      this.status = ShoppingListStatus.active,
+      this.status = GroupShoppingListStatus.active,
       this.shoppingLocationID,
       this.duplicatedFromID,
       @TimestampConverter() required this.ttlExpiresDateTime,
@@ -442,8 +443,8 @@ class _ShoppingList extends ShoppingList {
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
       @ServerUpdatedTimestamp() this.serverUpdatedDateTime})
       : super._();
-  factory _ShoppingList.fromJson(Map<String, dynamic> json) =>
-      _$ShoppingListFromJson(json);
+  factory _GroupShoppingList.fromJson(Map<String, dynamic> json) =>
+      _$GroupShoppingListFromJson(json);
 
   @override
   final String id;
@@ -456,7 +457,7 @@ class _ShoppingList extends ShoppingList {
   final String name;
   @override
   @JsonKey()
-  final ShoppingListStatus status;
+  final GroupShoppingListStatus status;
   @override
   final String? shoppingLocationID;
   @override
@@ -477,17 +478,17 @@ class _ShoppingList extends ShoppingList {
   @ServerUpdatedTimestamp()
   final DateTime? serverUpdatedDateTime;
 
-  /// Create a copy of ShoppingList
+  /// Create a copy of GroupShoppingList
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$ShoppingListCopyWith<_ShoppingList> get copyWith =>
-      __$ShoppingListCopyWithImpl<_ShoppingList>(this, _$identity);
+  _$GroupShoppingListCopyWith<_GroupShoppingList> get copyWith =>
+      __$GroupShoppingListCopyWithImpl<_GroupShoppingList>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$ShoppingListToJson(
+    return _$GroupShoppingListToJson(
       this,
     );
   }
@@ -496,7 +497,7 @@ class _ShoppingList extends ShoppingList {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _ShoppingList &&
+            other is _GroupShoppingList &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.createUserID, createUserID) ||
                 other.createUserID == createUserID) &&
@@ -538,16 +539,16 @@ class _ShoppingList extends ShoppingList {
 
   @override
   String toString() {
-    return 'ShoppingList(id: $id, createUserID: $createUserID, groupID: $groupID, name: $name, status: $status, shoppingLocationID: $shoppingLocationID, duplicatedFromID: $duplicatedFromID, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingList(id: $id, createUserID: $createUserID, groupID: $groupID, name: $name, status: $status, shoppingLocationID: $shoppingLocationID, duplicatedFromID: $duplicatedFromID, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$ShoppingListCopyWith<$Res>
-    implements $ShoppingListCopyWith<$Res> {
-  factory _$ShoppingListCopyWith(
-          _ShoppingList value, $Res Function(_ShoppingList) _then) =
-      __$ShoppingListCopyWithImpl;
+abstract mixin class _$GroupShoppingListCopyWith<$Res>
+    implements $GroupShoppingListCopyWith<$Res> {
+  factory _$GroupShoppingListCopyWith(
+          _GroupShoppingList value, $Res Function(_GroupShoppingList) _then) =
+      __$GroupShoppingListCopyWithImpl;
   @override
   @useResult
   $Res call(
@@ -555,7 +556,7 @@ abstract mixin class _$ShoppingListCopyWith<$Res>
       String createUserID,
       String groupID,
       String name,
-      ShoppingListStatus status,
+      GroupShoppingListStatus status,
       String? shoppingLocationID,
       String? duplicatedFromID,
       @TimestampConverter() DateTime? ttlExpiresDateTime,
@@ -566,14 +567,14 @@ abstract mixin class _$ShoppingListCopyWith<$Res>
 }
 
 /// @nodoc
-class __$ShoppingListCopyWithImpl<$Res>
-    implements _$ShoppingListCopyWith<$Res> {
-  __$ShoppingListCopyWithImpl(this._self, this._then);
+class __$GroupShoppingListCopyWithImpl<$Res>
+    implements _$GroupShoppingListCopyWith<$Res> {
+  __$GroupShoppingListCopyWithImpl(this._self, this._then);
 
-  final _ShoppingList _self;
-  final $Res Function(_ShoppingList) _then;
+  final _GroupShoppingList _self;
+  final $Res Function(_GroupShoppingList) _then;
 
-  /// Create a copy of ShoppingList
+  /// Create a copy of GroupShoppingList
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -591,7 +592,7 @@ class __$ShoppingListCopyWithImpl<$Res>
     Object? serverCreatedDateTime = freezed,
     Object? serverUpdatedDateTime = freezed,
   }) {
-    return _then(_ShoppingList(
+    return _then(_GroupShoppingList(
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -611,7 +612,7 @@ class __$ShoppingListCopyWithImpl<$Res>
       status: null == status
           ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
-              as ShoppingListStatus,
+              as GroupShoppingListStatus,
       shoppingLocationID: freezed == shoppingLocationID
           ? _self.shoppingLocationID
           : shoppingLocationID // ignore: cast_nullable_to_non_nullable

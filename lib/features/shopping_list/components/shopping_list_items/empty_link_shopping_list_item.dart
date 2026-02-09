@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/entity/shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/style/button.dart';
 
 class EmptyLinkShoppingListItems extends HookConsumerWidget {
   final String shoppingListID;
-  final ValueNotifier<List<ShoppingListItem>> shoppingListItems;
+  final ValueNotifier<List<GroupShoppingListItem>> shoppingListItems;
   const EmptyLinkShoppingListItems(
       {super.key,
       required this.shoppingListID,

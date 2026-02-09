@@ -3,14 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shoppinglist/entity/shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/image/image.dart';
 
 class ImagePickerButton extends HookConsumerWidget {
   final String shoppingListID;
-  final List<ShoppingListItem> shoppingListItems;
+  final List<GroupShoppingListItem> shoppingListItems;
 
   const ImagePickerButton(
       {super.key,
@@ -86,7 +86,7 @@ class ImagePickerButton extends HookConsumerWidget {
   }
 
   Future<void> _addShoppingListItems(BuildContext context, WidgetRef ref,
-      XFile photo, List<ShoppingListItem> shoppingListItems) async {
+      XFile photo, List<GroupShoppingListItem> shoppingListItems) async {
     final file = File(photo.path);
     final base64Image = await base64CompressImage(file);
     final rawItems = await functions.generateShoppingListItemsFromImage(
@@ -98,8 +98,8 @@ class ImagePickerButton extends HookConsumerWidget {
     final distincted = rawItems.toSet().toList();
 
     for (var (i, e) in distincted.indexed) {
-      if (shoppingListItems
-          .any((item) => item is TextShoppingListItem && item.message == e)) {
+      if (shoppingListItems.any(
+          (item) => item is TextGroupShoppingListItem && item.message == e)) {
         continue;
       }
 

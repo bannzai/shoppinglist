@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/toolbar/picker.dart';
-import 'package:shoppinglist/entity/shopping_list.dart';
-import 'package:shoppinglist/entity/shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_list.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list_item_filter/page.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
@@ -13,10 +13,10 @@ import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 class ShoppingListAppBar extends HookConsumerWidget
     implements PreferredSizeWidget {
   final ValueNotifier<String> shoppingListID;
-  final List<ShoppingList> shoppingLists;
-  final ShoppingList? shoppingList;
+  final List<GroupShoppingList> shoppingLists;
+  final GroupShoppingList? shoppingList;
   final ValueNotifier<bool> showChecked;
-  final List<ShoppingListItem> shoppingListItems;
+  final List<GroupShoppingListItem> shoppingListItems;
   const ShoppingListAppBar({
     super.key,
     required this.shoppingListID,

@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/alert.dart';
-import 'package:shoppinglist/entity/shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:metadata_fetch/metadata_fetch.dart';
 
 class LinkShoppingListItemAddPage extends HookConsumerWidget {
   final String shoppingListID;
-  final LinkShoppingListItem linkShoppingListItem;
-  final List<ShoppingListItem> shoppingListItems;
+  final LinkGroupShoppingListItem linkShoppingListItem;
+  final List<GroupShoppingListItem> shoppingListItems;
   const LinkShoppingListItemAddPage({
     super.key,
     required this.shoppingListID,

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:shoppinglist/entity/shopping_list.dart';
+import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/style/button.dart';
 import 'package:shoppinglist/style/color.dart';
 
 class ShoppingListSettingPage extends HookConsumerWidget {
   final String shoppingListID;
-  final ShoppingList shoppingList;
+  final GroupShoppingList shoppingList;
   final VoidCallback onDelete;
   const ShoppingListSettingPage({
     super.key,

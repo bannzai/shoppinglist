@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:shoppinglist/components/admob/banner.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
-import 'package:shoppinglist/entity/shopping_list.dart';
+import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/features/shopping_list/components/app_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/buttons/copy_multiline_text_button.dart';
 import 'package:shoppinglist/features/shopping_list/components/buttons/image_picker_button.dart';
@@ -36,7 +36,7 @@ class ShoppingListPage extends HookConsumerWidget {
 }
 
 class _Body extends HookConsumerWidget {
-  final List<ShoppingList> shoppingLists;
+  final List<GroupShoppingList> shoppingLists;
 
   const _Body({required this.shoppingLists});
 
