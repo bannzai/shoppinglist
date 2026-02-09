@@ -6,8 +6,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shoppinglist/entity/app_user.dart';
-import 'package:shoppinglist/entity/memo.dart';
-import 'package:shoppinglist/entity/memo_row.dart';
+import 'package:shoppinglist/entity/shopping_list.dart';
+import 'package:shoppinglist/entity/shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -15,9 +15,11 @@ part 'database.g.dart';
 
 abstract class _CollectionPath {
   static const String users = '/users';
-  static String memos({required String userID}) => '/users/$userID/memos';
-  static String memoRows({required String userID, required String memoID}) =>
-      '/users/$userID/memos/$memoID/memoRows';
+  static String shoppingLists({required String groupID}) =>
+      '/groups/$groupID/shoppingLists';
+  static String shoppingListItems(
+          {required String groupID, required String shoppingListID}) =>
+      '/groups/$groupID/shoppingLists/$shoppingListID/items';
 }
 
 @Riverpod(keepAlive: true, dependencies: [])
@@ -40,69 +42,86 @@ class UserDatabase {
         fromFirestore: _userFromFirestore,
         toFirestore: _userToFirestore,
       );
+}
 
-  final FromFirestore<Memo> _memoFromFirestore = (snapshot, options) =>
-      Memo.fromJson(snapshot.data()!..['id'] = snapshot.id);
-  final ToFirestore<Memo> _memoToFirestore = (memo, options) => memo.toJson();
-  CollectionReference<Memo> memosReference() => FirebaseFirestore.instance
-      .collection(_CollectionPath.memos(userID: userID))
-      .withConverter(
-        fromFirestore: _memoFromFirestore,
-        toFirestore: _memoToFirestore,
-      );
-  Future<int> countOfMemos() async {
+@Riverpod(keepAlive: true, dependencies: [])
+GroupDatabase groupDatabase(GroupDatabaseRef ref) {
+  throw UnimplementedError('groupDatabase is not implemented');
+}
+
+class GroupDatabase {
+  final String groupID;
+  GroupDatabase({required this.groupID});
+
+  final FromFirestore<ShoppingList> _shoppingListFromFirestore =
+      (snapshot, options) =>
+          ShoppingList.fromJson(snapshot.data()!..['id'] = snapshot.id);
+  final ToFirestore<ShoppingList> _shoppingListToFirestore =
+      (shoppingList, options) => shoppingList.toJson();
+  CollectionReference<ShoppingList> shoppingListsReference() =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.shoppingLists(groupID: groupID))
+          .withConverter(
+            fromFirestore: _shoppingListFromFirestore,
+            toFirestore: _shoppingListToFirestore,
+          );
+  Future<int> countOfShoppingLists() async {
     final aggregated = await FirebaseFirestore.instance
-        .collection(_CollectionPath.memos(userID: userID))
+        .collection(_CollectionPath.shoppingLists(groupID: groupID))
         .count()
         .get();
     return aggregated.count ?? 0;
   }
 
-  DocumentReference<Memo> memoReference({
-    required String memoID,
+  DocumentReference<ShoppingList> shoppingListReference({
+    required String shoppingListID,
   }) =>
       FirebaseFirestore.instance
-          .collection(_CollectionPath.memos(userID: userID))
-          .doc(memoID)
+          .collection(_CollectionPath.shoppingLists(groupID: groupID))
+          .doc(shoppingListID)
           .withConverter(
-            fromFirestore: _memoFromFirestore,
-            toFirestore: _memoToFirestore,
+            fromFirestore: _shoppingListFromFirestore,
+            toFirestore: _shoppingListToFirestore,
           );
-  DocumentReference<Memo> newMemoReference() => FirebaseFirestore.instance
-      .collection(_CollectionPath.memos(userID: userID))
-      .doc()
-      .withConverter(
-        fromFirestore: _memoFromFirestore,
-        toFirestore: _memoToFirestore,
-      );
+  DocumentReference<ShoppingList> newShoppingListReference() =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.shoppingLists(groupID: groupID))
+          .doc()
+          .withConverter(
+            fromFirestore: _shoppingListFromFirestore,
+            toFirestore: _shoppingListToFirestore,
+          );
 
-  final FromFirestore<MemoRow> _memoRowFromFirestore = (snapshot, options) =>
-      MemoRow.fromJson(snapshot.data()!..['id'] = snapshot.id);
-  final ToFirestore<MemoRow> _memoRowToFirestore =
-      (memoRow, options) => memoRow.toJson();
-  CollectionReference<MemoRow> memoRowsReference({required String memoID}) =>
+  final FromFirestore<ShoppingListItem> _shoppingListItemFromFirestore =
+      (snapshot, options) =>
+          ShoppingListItem.fromJson(snapshot.data()!..['id'] = snapshot.id);
+  final ToFirestore<ShoppingListItem> _shoppingListItemToFirestore =
+      (item, options) => item.toJson();
+  CollectionReference<ShoppingListItem> shoppingListItemsReference(
+          {required String shoppingListID}) =>
       FirebaseFirestore.instance
           .collection(
-            _CollectionPath.memoRows(
-              userID: userID,
-              memoID: memoID,
+            _CollectionPath.shoppingListItems(
+              groupID: groupID,
+              shoppingListID: shoppingListID,
             ),
           )
           .withConverter(
-            fromFirestore: _memoRowFromFirestore,
-            toFirestore: _memoRowToFirestore,
+            fromFirestore: _shoppingListItemFromFirestore,
+            toFirestore: _shoppingListItemToFirestore,
           );
 
-  DocumentReference<MemoRow> memoRowReference({
-    required String memoID,
-    required String memoRowID,
+  DocumentReference<ShoppingListItem> shoppingListItemReference({
+    required String shoppingListID,
+    required String itemID,
   }) =>
       FirebaseFirestore.instance
-          .collection(_CollectionPath.memoRows(userID: userID, memoID: memoID))
-          .doc(memoRowID)
+          .collection(_CollectionPath.shoppingListItems(
+              groupID: groupID, shoppingListID: shoppingListID))
+          .doc(itemID)
           .withConverter(
-            fromFirestore: _memoRowFromFirestore,
-            toFirestore: _memoRowToFirestore,
+            fromFirestore: _shoppingListItemFromFirestore,
+            toFirestore: _shoppingListItemToFirestore,
           );
 }
 
@@ -135,5 +154,26 @@ class UserDatabaseResolver extends HookConsumerWidget {
     } else {
       return const Loading();
     }
+  }
+}
+
+class GroupDatabaseResolver extends HookConsumerWidget {
+  final String groupID;
+  final Widget Function(BuildContext) builder;
+
+  const GroupDatabaseResolver(
+      {super.key, required this.groupID, required this.builder});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ProviderScope(
+      overrides: [
+        groupDatabaseProvider
+            .overrideWith((ref) => GroupDatabase(groupID: groupID))
+      ],
+      child: Consumer(
+        builder: ((context, ref, child) => builder(context)),
+      ),
+    );
   }
 }

@@ -2,34 +2,38 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:shoppinglist/entity/timestamp.dart';
 
-part 'memo.g.dart';
-part 'memo.freezed.dart';
+part 'shopping_list.g.dart';
+part 'shopping_list.freezed.dart';
 
-abstract class MemoFirestoreKeys {
+abstract class ShoppingListFirestoreKeys {
   static const createdDateTime = 'createdDateTime';
 }
 
 @freezed
-abstract class Memo with _$Memo {
-  const Memo._();
+abstract class ShoppingList with _$ShoppingList {
+  const ShoppingList._();
 
   @JsonSerializable(explicitToJson: true)
-  const factory Memo({
+  const factory ShoppingList({
     required String id,
-    required String userID,
+    required String createUserID,
+    required String groupID,
     @Default('') String name,
-    @Default(MemoStatus.active) MemoStatus status,
+    @Default(ShoppingListStatus.active) ShoppingListStatus status,
+    String? shoppingLocationID,
+    String? duplicatedFromID,
     @TimestampConverter() required DateTime? ttlExpiresDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
     @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
-  }) = _Memo;
+  }) = _ShoppingList;
 
-  factory Memo.fromJson(Map<String, dynamic> json) => _$MemoFromJson(json);
+  factory ShoppingList.fromJson(Map<String, dynamic> json) =>
+      _$ShoppingListFromJson(json);
 }
 
-enum MemoStatus {
+enum ShoppingListStatus {
   @JsonValue('active')
   active,
   @JsonValue('done')

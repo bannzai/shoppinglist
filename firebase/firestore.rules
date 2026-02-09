@@ -19,6 +19,18 @@ service cloud.firestore {
     match /groups/{groupID} {
       allow read, update: if isMember(resource.data.members);
       allow create: if isMember(request.resource.data.members);
+
+      match /shoppingLists/{shoppingListID} {
+        allow read, write: if isMember(
+          get(/databases/$(database)/documents/groups/$(groupID)).data.members
+        );
+
+        match /items/{itemID} {
+          allow read, write: if isMember(
+            get(/databases/$(database)/documents/groups/$(groupID)).data.members
+          );
+        }
+      }
     }
   }
 }

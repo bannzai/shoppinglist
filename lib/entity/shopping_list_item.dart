@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:shoppinglist/entity/timestamp.dart';
 
-part 'memo_row.freezed.dart';
-part 'memo_row.g.dart';
+part 'shopping_list_item.freezed.dart';
+part 'shopping_list_item.g.dart';
 
-abstract class MemoRowFirestoreKeys {
+abstract class ShoppingListItemFirestoreKeys {
   static const id = 'id';
   static const type = 'type';
   static const status = 'status';
@@ -17,29 +17,32 @@ abstract class MemoRowFirestoreKeys {
 }
 
 @Freezed(unionKey: 'type')
-sealed class MemoRow with _$MemoRow {
+sealed class ShoppingListItem with _$ShoppingListItem {
   @FreezedUnionValue('text')
   @JsonSerializable(explicitToJson: true)
-  const factory MemoRow.text({
+  const factory ShoppingListItem.text({
     required String id,
-    required String memoID,
+    required String shoppingListID,
     required String message,
     // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
     // NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
     required int order,
-    @Default(MemoRowStatus.unchecked) MemoRowStatus status,
+    @Default(ShoppingListItemStatus.unchecked) ShoppingListItemStatus status,
+    String? description,
+    String? color,
+    String? categoryID,
     @NullableTimestampConverter() DateTime? reminderDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
     @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
-  }) = TextMemoRow;
+  }) = TextShoppingListItem;
 
   @FreezedUnionValue('link')
   @JsonSerializable(explicitToJson: true)
-  const factory MemoRow.link({
+  const factory ShoppingListItem.link({
     required String id,
-    required String memoID,
+    required String shoppingListID,
     required String url,
     // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
     // NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
@@ -47,23 +50,26 @@ sealed class MemoRow with _$MemoRow {
     String? metadataTitle,
     String? metadataDescription,
     String? metadataImageURL,
-    @Default(MemoRowStatus.unchecked) MemoRowStatus status,
+    @Default(ShoppingListItemStatus.unchecked) ShoppingListItemStatus status,
+    String? description,
+    String? color,
+    String? categoryID,
     @NullableTimestampConverter() DateTime? reminderDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
     @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
-  }) = LinkMemoRow;
+  }) = LinkShoppingListItem;
 
-  factory MemoRow.fromJson(Map<String, dynamic> json) =>
-      _$MemoRowFromJson(json);
+  factory ShoppingListItem.fromJson(Map<String, dynamic> json) =>
+      _$ShoppingListItemFromJson(json);
 }
 
-extension MemoRows on List<MemoRow> {
+extension ShoppingListItems on List<ShoppingListItem> {
   int get nextOrder => (lastOrNull?.order ?? -1) + 1;
 }
 
-enum MemoRowStatus {
+enum ShoppingListItemStatus {
   @JsonValue('checked')
   checked,
   @JsonValue('unchecked')

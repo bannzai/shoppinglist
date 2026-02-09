@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'memo_row.dart';
+part of 'shopping_list_item.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -11,26 +11,29 @@ part of 'memo_row.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-MemoRow _$MemoRowFromJson(Map<String, dynamic> json) {
+ShoppingListItem _$ShoppingListItemFromJson(Map<String, dynamic> json) {
   switch (json['type']) {
     case 'text':
-      return TextMemoRow.fromJson(json);
+      return TextShoppingListItem.fromJson(json);
     case 'link':
-      return LinkMemoRow.fromJson(json);
+      return LinkShoppingListItem.fromJson(json);
 
     default:
-      throw CheckedFromJsonException(
-          json, 'type', 'MemoRow', 'Invalid union type "${json['type']}"!');
+      throw CheckedFromJsonException(json, 'type', 'ShoppingListItem',
+          'Invalid union type "${json['type']}"!');
   }
 }
 
 /// @nodoc
-mixin _$MemoRow {
+mixin _$ShoppingListItem {
   String get id;
-  String get memoID; // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
+  String get shoppingListID; // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
 // NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
   int get order;
-  MemoRowStatus get status;
+  ShoppingListItemStatus get status;
+  String? get description;
+  String? get color;
+  String? get categoryID;
   @NullableTimestampConverter()
   DateTime? get reminderDateTime;
   @ClientCreatedTimestamp()
@@ -42,25 +45,32 @@ mixin _$MemoRow {
   @ServerUpdatedTimestamp()
   DateTime? get serverUpdatedDateTime;
 
-  /// Create a copy of MemoRow
+  /// Create a copy of ShoppingListItem
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $MemoRowCopyWith<MemoRow> get copyWith =>
-      _$MemoRowCopyWithImpl<MemoRow>(this as MemoRow, _$identity);
+  $ShoppingListItemCopyWith<ShoppingListItem> get copyWith =>
+      _$ShoppingListItemCopyWithImpl<ShoppingListItem>(
+          this as ShoppingListItem, _$identity);
 
-  /// Serializes this MemoRow to a JSON map.
+  /// Serializes this ShoppingListItem to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is MemoRow &&
+            other is ShoppingListItem &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.memoID, memoID) || other.memoID == memoID) &&
+            (identical(other.shoppingListID, shoppingListID) ||
+                other.shoppingListID == shoppingListID) &&
             (identical(other.order, order) || other.order == order) &&
             (identical(other.status, status) || other.status == status) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.color, color) || other.color == color) &&
+            (identical(other.categoryID, categoryID) ||
+                other.categoryID == categoryID) &&
             (identical(other.reminderDateTime, reminderDateTime) ||
                 other.reminderDateTime == reminderDateTime) &&
             (identical(other.createdDateTime, createdDateTime) ||
@@ -78,9 +88,12 @@ mixin _$MemoRow {
   int get hashCode => Object.hash(
       runtimeType,
       id,
-      memoID,
+      shoppingListID,
       order,
       status,
+      description,
+      color,
+      categoryID,
       reminderDateTime,
       createdDateTime,
       updatedDateTime,
@@ -89,20 +102,24 @@ mixin _$MemoRow {
 
   @override
   String toString() {
-    return 'MemoRow(id: $id, memoID: $memoID, order: $order, status: $status, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'ShoppingListItem(id: $id, shoppingListID: $shoppingListID, order: $order, status: $status, description: $description, color: $color, categoryID: $categoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
 /// @nodoc
-abstract mixin class $MemoRowCopyWith<$Res> {
-  factory $MemoRowCopyWith(MemoRow value, $Res Function(MemoRow) _then) =
-      _$MemoRowCopyWithImpl;
+abstract mixin class $ShoppingListItemCopyWith<$Res> {
+  factory $ShoppingListItemCopyWith(
+          ShoppingListItem value, $Res Function(ShoppingListItem) _then) =
+      _$ShoppingListItemCopyWithImpl;
   @useResult
   $Res call(
       {String id,
-      String memoID,
+      String shoppingListID,
       int order,
-      MemoRowStatus status,
+      ShoppingListItemStatus status,
+      String? description,
+      String? color,
+      String? categoryID,
       @NullableTimestampConverter() DateTime? reminderDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -111,21 +128,25 @@ abstract mixin class $MemoRowCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$MemoRowCopyWithImpl<$Res> implements $MemoRowCopyWith<$Res> {
-  _$MemoRowCopyWithImpl(this._self, this._then);
+class _$ShoppingListItemCopyWithImpl<$Res>
+    implements $ShoppingListItemCopyWith<$Res> {
+  _$ShoppingListItemCopyWithImpl(this._self, this._then);
 
-  final MemoRow _self;
-  final $Res Function(MemoRow) _then;
+  final ShoppingListItem _self;
+  final $Res Function(ShoppingListItem) _then;
 
-  /// Create a copy of MemoRow
+  /// Create a copy of ShoppingListItem
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? id = null,
-    Object? memoID = null,
+    Object? shoppingListID = null,
     Object? order = null,
     Object? status = null,
+    Object? description = freezed,
+    Object? color = freezed,
+    Object? categoryID = freezed,
     Object? reminderDateTime = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
@@ -137,9 +158,9 @@ class _$MemoRowCopyWithImpl<$Res> implements $MemoRowCopyWith<$Res> {
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      memoID: null == memoID
-          ? _self.memoID
-          : memoID // ignore: cast_nullable_to_non_nullable
+      shoppingListID: null == shoppingListID
+          ? _self.shoppingListID
+          : shoppingListID // ignore: cast_nullable_to_non_nullable
               as String,
       order: null == order
           ? _self.order
@@ -148,7 +169,19 @@ class _$MemoRowCopyWithImpl<$Res> implements $MemoRowCopyWith<$Res> {
       status: null == status
           ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
-              as MemoRowStatus,
+              as ShoppingListItemStatus,
+      description: freezed == description
+          ? _self.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      color: freezed == color
+          ? _self.color
+          : color // ignore: cast_nullable_to_non_nullable
+              as String?,
+      categoryID: freezed == categoryID
+          ? _self.categoryID
+          : categoryID // ignore: cast_nullable_to_non_nullable
+              as String?,
       reminderDateTime: freezed == reminderDateTime
           ? _self.reminderDateTime
           : reminderDateTime // ignore: cast_nullable_to_non_nullable
@@ -173,8 +206,8 @@ class _$MemoRowCopyWithImpl<$Res> implements $MemoRowCopyWith<$Res> {
   }
 }
 
-/// Adds pattern-matching-related methods to [MemoRow].
-extension MemoRowPatterns on MemoRow {
+/// Adds pattern-matching-related methods to [ShoppingListItem].
+extension ShoppingListItemPatterns on ShoppingListItem {
   /// A variant of `map` that fallback to returning `orElse`.
   ///
   /// It is equivalent to doing:
@@ -189,15 +222,15 @@ extension MemoRowPatterns on MemoRow {
 
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(TextMemoRow value)? text,
-    TResult Function(LinkMemoRow value)? link,
+    TResult Function(TextShoppingListItem value)? text,
+    TResult Function(LinkShoppingListItem value)? link,
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case TextMemoRow() when text != null:
+      case TextShoppingListItem() when text != null:
         return text(_that);
-      case LinkMemoRow() when link != null:
+      case LinkShoppingListItem() when link != null:
         return link(_that);
       case _:
         return orElse();
@@ -219,14 +252,14 @@ extension MemoRowPatterns on MemoRow {
 
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(TextMemoRow value) text,
-    required TResult Function(LinkMemoRow value) link,
+    required TResult Function(TextShoppingListItem value) text,
+    required TResult Function(LinkShoppingListItem value) link,
   }) {
     final _that = this;
     switch (_that) {
-      case TextMemoRow():
+      case TextShoppingListItem():
         return text(_that);
-      case LinkMemoRow():
+      case LinkShoppingListItem():
         return link(_that);
     }
   }
@@ -245,14 +278,14 @@ extension MemoRowPatterns on MemoRow {
 
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(TextMemoRow value)? text,
-    TResult? Function(LinkMemoRow value)? link,
+    TResult? Function(TextShoppingListItem value)? text,
+    TResult? Function(LinkShoppingListItem value)? link,
   }) {
     final _that = this;
     switch (_that) {
-      case TextMemoRow() when text != null:
+      case TextShoppingListItem() when text != null:
         return text(_that);
-      case LinkMemoRow() when link != null:
+      case LinkShoppingListItem() when link != null:
         return link(_that);
       case _:
         return null;
@@ -275,10 +308,13 @@ extension MemoRowPatterns on MemoRow {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(
             String id,
-            String memoID,
+            String shoppingListID,
             String message,
             int order,
-            MemoRowStatus status,
+            ShoppingListItemStatus status,
+            String? description,
+            String? color,
+            String? categoryID,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -287,13 +323,16 @@ extension MemoRowPatterns on MemoRow {
         text,
     TResult Function(
             String id,
-            String memoID,
+            String shoppingListID,
             String url,
             int order,
             String? metadataTitle,
             String? metadataDescription,
             String? metadataImageURL,
-            MemoRowStatus status,
+            ShoppingListItemStatus status,
+            String? description,
+            String? color,
+            String? categoryID,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -304,28 +343,34 @@ extension MemoRowPatterns on MemoRow {
   }) {
     final _that = this;
     switch (_that) {
-      case TextMemoRow() when text != null:
+      case TextShoppingListItem() when text != null:
         return text(
             _that.id,
-            _that.memoID,
+            _that.shoppingListID,
             _that.message,
             _that.order,
             _that.status,
+            _that.description,
+            _that.color,
+            _that.categoryID,
             _that.reminderDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
             _that.serverUpdatedDateTime);
-      case LinkMemoRow() when link != null:
+      case LinkShoppingListItem() when link != null:
         return link(
             _that.id,
-            _that.memoID,
+            _that.shoppingListID,
             _that.url,
             _that.order,
             _that.metadataTitle,
             _that.metadataDescription,
             _that.metadataImageURL,
             _that.status,
+            _that.description,
+            _that.color,
+            _that.categoryID,
             _that.reminderDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
@@ -353,10 +398,13 @@ extension MemoRowPatterns on MemoRow {
   TResult when<TResult extends Object?>({
     required TResult Function(
             String id,
-            String memoID,
+            String shoppingListID,
             String message,
             int order,
-            MemoRowStatus status,
+            ShoppingListItemStatus status,
+            String? description,
+            String? color,
+            String? categoryID,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -365,13 +413,16 @@ extension MemoRowPatterns on MemoRow {
         text,
     required TResult Function(
             String id,
-            String memoID,
+            String shoppingListID,
             String url,
             int order,
             String? metadataTitle,
             String? metadataDescription,
             String? metadataImageURL,
-            MemoRowStatus status,
+            ShoppingListItemStatus status,
+            String? description,
+            String? color,
+            String? categoryID,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -381,28 +432,34 @@ extension MemoRowPatterns on MemoRow {
   }) {
     final _that = this;
     switch (_that) {
-      case TextMemoRow():
+      case TextShoppingListItem():
         return text(
             _that.id,
-            _that.memoID,
+            _that.shoppingListID,
             _that.message,
             _that.order,
             _that.status,
+            _that.description,
+            _that.color,
+            _that.categoryID,
             _that.reminderDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
             _that.serverUpdatedDateTime);
-      case LinkMemoRow():
+      case LinkShoppingListItem():
         return link(
             _that.id,
-            _that.memoID,
+            _that.shoppingListID,
             _that.url,
             _that.order,
             _that.metadataTitle,
             _that.metadataDescription,
             _that.metadataImageURL,
             _that.status,
+            _that.description,
+            _that.color,
+            _that.categoryID,
             _that.reminderDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
@@ -427,10 +484,13 @@ extension MemoRowPatterns on MemoRow {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(
             String id,
-            String memoID,
+            String shoppingListID,
             String message,
             int order,
-            MemoRowStatus status,
+            ShoppingListItemStatus status,
+            String? description,
+            String? color,
+            String? categoryID,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -439,13 +499,16 @@ extension MemoRowPatterns on MemoRow {
         text,
     TResult? Function(
             String id,
-            String memoID,
+            String shoppingListID,
             String url,
             int order,
             String? metadataTitle,
             String? metadataDescription,
             String? metadataImageURL,
-            MemoRowStatus status,
+            ShoppingListItemStatus status,
+            String? description,
+            String? color,
+            String? categoryID,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -455,28 +518,34 @@ extension MemoRowPatterns on MemoRow {
   }) {
     final _that = this;
     switch (_that) {
-      case TextMemoRow() when text != null:
+      case TextShoppingListItem() when text != null:
         return text(
             _that.id,
-            _that.memoID,
+            _that.shoppingListID,
             _that.message,
             _that.order,
             _that.status,
+            _that.description,
+            _that.color,
+            _that.categoryID,
             _that.reminderDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
             _that.serverUpdatedDateTime);
-      case LinkMemoRow() when link != null:
+      case LinkShoppingListItem() when link != null:
         return link(
             _that.id,
-            _that.memoID,
+            _that.shoppingListID,
             _that.url,
             _that.order,
             _that.metadataTitle,
             _that.metadataDescription,
             _that.metadataImageURL,
             _that.status,
+            _that.description,
+            _that.color,
+            _that.categoryID,
             _that.reminderDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
@@ -491,13 +560,16 @@ extension MemoRowPatterns on MemoRow {
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true)
-class TextMemoRow implements MemoRow {
-  const TextMemoRow(
+class TextShoppingListItem implements ShoppingListItem {
+  const TextShoppingListItem(
       {required this.id,
-      required this.memoID,
+      required this.shoppingListID,
       required this.message,
       required this.order,
-      this.status = MemoRowStatus.unchecked,
+      this.status = ShoppingListItemStatus.unchecked,
+      this.description,
+      this.color,
+      this.categoryID,
       @NullableTimestampConverter() this.reminderDateTime,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
@@ -505,13 +577,13 @@ class TextMemoRow implements MemoRow {
       @ServerUpdatedTimestamp() this.serverUpdatedDateTime,
       final String? $type})
       : $type = $type ?? 'text';
-  factory TextMemoRow.fromJson(Map<String, dynamic> json) =>
-      _$TextMemoRowFromJson(json);
+  factory TextShoppingListItem.fromJson(Map<String, dynamic> json) =>
+      _$TextShoppingListItemFromJson(json);
 
   @override
   final String id;
   @override
-  final String memoID;
+  final String shoppingListID;
   final String message;
 // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
 // NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
@@ -519,7 +591,13 @@ class TextMemoRow implements MemoRow {
   final int order;
   @override
   @JsonKey()
-  final MemoRowStatus status;
+  final ShoppingListItemStatus status;
+  @override
+  final String? description;
+  @override
+  final String? color;
+  @override
+  final String? categoryID;
   @override
   @NullableTimestampConverter()
   final DateTime? reminderDateTime;
@@ -539,17 +617,18 @@ class TextMemoRow implements MemoRow {
   @JsonKey(name: 'type')
   final String $type;
 
-  /// Create a copy of MemoRow
+  /// Create a copy of ShoppingListItem
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $TextMemoRowCopyWith<TextMemoRow> get copyWith =>
-      _$TextMemoRowCopyWithImpl<TextMemoRow>(this, _$identity);
+  $TextShoppingListItemCopyWith<TextShoppingListItem> get copyWith =>
+      _$TextShoppingListItemCopyWithImpl<TextShoppingListItem>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$TextMemoRowToJson(
+    return _$TextShoppingListItemToJson(
       this,
     );
   }
@@ -558,12 +637,18 @@ class TextMemoRow implements MemoRow {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is TextMemoRow &&
+            other is TextShoppingListItem &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.memoID, memoID) || other.memoID == memoID) &&
+            (identical(other.shoppingListID, shoppingListID) ||
+                other.shoppingListID == shoppingListID) &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.order, order) || other.order == order) &&
             (identical(other.status, status) || other.status == status) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.color, color) || other.color == color) &&
+            (identical(other.categoryID, categoryID) ||
+                other.categoryID == categoryID) &&
             (identical(other.reminderDateTime, reminderDateTime) ||
                 other.reminderDateTime == reminderDateTime) &&
             (identical(other.createdDateTime, createdDateTime) ||
@@ -581,10 +666,13 @@ class TextMemoRow implements MemoRow {
   int get hashCode => Object.hash(
       runtimeType,
       id,
-      memoID,
+      shoppingListID,
       message,
       order,
       status,
+      description,
+      color,
+      categoryID,
       reminderDateTime,
       createdDateTime,
       updatedDateTime,
@@ -593,24 +681,27 @@ class TextMemoRow implements MemoRow {
 
   @override
   String toString() {
-    return 'MemoRow.text(id: $id, memoID: $memoID, message: $message, order: $order, status: $status, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'ShoppingListItem.text(id: $id, shoppingListID: $shoppingListID, message: $message, order: $order, status: $status, description: $description, color: $color, categoryID: $categoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
 /// @nodoc
-abstract mixin class $TextMemoRowCopyWith<$Res>
-    implements $MemoRowCopyWith<$Res> {
-  factory $TextMemoRowCopyWith(
-          TextMemoRow value, $Res Function(TextMemoRow) _then) =
-      _$TextMemoRowCopyWithImpl;
+abstract mixin class $TextShoppingListItemCopyWith<$Res>
+    implements $ShoppingListItemCopyWith<$Res> {
+  factory $TextShoppingListItemCopyWith(TextShoppingListItem value,
+          $Res Function(TextShoppingListItem) _then) =
+      _$TextShoppingListItemCopyWithImpl;
   @override
   @useResult
   $Res call(
       {String id,
-      String memoID,
+      String shoppingListID,
       String message,
       int order,
-      MemoRowStatus status,
+      ShoppingListItemStatus status,
+      String? description,
+      String? color,
+      String? categoryID,
       @NullableTimestampConverter() DateTime? reminderDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -619,36 +710,40 @@ abstract mixin class $TextMemoRowCopyWith<$Res>
 }
 
 /// @nodoc
-class _$TextMemoRowCopyWithImpl<$Res> implements $TextMemoRowCopyWith<$Res> {
-  _$TextMemoRowCopyWithImpl(this._self, this._then);
+class _$TextShoppingListItemCopyWithImpl<$Res>
+    implements $TextShoppingListItemCopyWith<$Res> {
+  _$TextShoppingListItemCopyWithImpl(this._self, this._then);
 
-  final TextMemoRow _self;
-  final $Res Function(TextMemoRow) _then;
+  final TextShoppingListItem _self;
+  final $Res Function(TextShoppingListItem) _then;
 
-  /// Create a copy of MemoRow
+  /// Create a copy of ShoppingListItem
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $Res call({
     Object? id = null,
-    Object? memoID = null,
+    Object? shoppingListID = null,
     Object? message = null,
     Object? order = null,
     Object? status = null,
+    Object? description = freezed,
+    Object? color = freezed,
+    Object? categoryID = freezed,
     Object? reminderDateTime = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
     Object? serverUpdatedDateTime = freezed,
   }) {
-    return _then(TextMemoRow(
+    return _then(TextShoppingListItem(
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      memoID: null == memoID
-          ? _self.memoID
-          : memoID // ignore: cast_nullable_to_non_nullable
+      shoppingListID: null == shoppingListID
+          ? _self.shoppingListID
+          : shoppingListID // ignore: cast_nullable_to_non_nullable
               as String,
       message: null == message
           ? _self.message
@@ -661,7 +756,19 @@ class _$TextMemoRowCopyWithImpl<$Res> implements $TextMemoRowCopyWith<$Res> {
       status: null == status
           ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
-              as MemoRowStatus,
+              as ShoppingListItemStatus,
+      description: freezed == description
+          ? _self.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      color: freezed == color
+          ? _self.color
+          : color // ignore: cast_nullable_to_non_nullable
+              as String?,
+      categoryID: freezed == categoryID
+          ? _self.categoryID
+          : categoryID // ignore: cast_nullable_to_non_nullable
+              as String?,
       reminderDateTime: freezed == reminderDateTime
           ? _self.reminderDateTime
           : reminderDateTime // ignore: cast_nullable_to_non_nullable
@@ -689,16 +796,19 @@ class _$TextMemoRowCopyWithImpl<$Res> implements $TextMemoRowCopyWith<$Res> {
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true)
-class LinkMemoRow implements MemoRow {
-  const LinkMemoRow(
+class LinkShoppingListItem implements ShoppingListItem {
+  const LinkShoppingListItem(
       {required this.id,
-      required this.memoID,
+      required this.shoppingListID,
       required this.url,
       required this.order,
       this.metadataTitle,
       this.metadataDescription,
       this.metadataImageURL,
-      this.status = MemoRowStatus.unchecked,
+      this.status = ShoppingListItemStatus.unchecked,
+      this.description,
+      this.color,
+      this.categoryID,
       @NullableTimestampConverter() this.reminderDateTime,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
@@ -706,13 +816,13 @@ class LinkMemoRow implements MemoRow {
       @ServerUpdatedTimestamp() this.serverUpdatedDateTime,
       final String? $type})
       : $type = $type ?? 'link';
-  factory LinkMemoRow.fromJson(Map<String, dynamic> json) =>
-      _$LinkMemoRowFromJson(json);
+  factory LinkShoppingListItem.fromJson(Map<String, dynamic> json) =>
+      _$LinkShoppingListItemFromJson(json);
 
   @override
   final String id;
   @override
-  final String memoID;
+  final String shoppingListID;
   final String url;
 // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
 // NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
@@ -723,7 +833,13 @@ class LinkMemoRow implements MemoRow {
   final String? metadataImageURL;
   @override
   @JsonKey()
-  final MemoRowStatus status;
+  final ShoppingListItemStatus status;
+  @override
+  final String? description;
+  @override
+  final String? color;
+  @override
+  final String? categoryID;
   @override
   @NullableTimestampConverter()
   final DateTime? reminderDateTime;
@@ -743,17 +859,18 @@ class LinkMemoRow implements MemoRow {
   @JsonKey(name: 'type')
   final String $type;
 
-  /// Create a copy of MemoRow
+  /// Create a copy of ShoppingListItem
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $LinkMemoRowCopyWith<LinkMemoRow> get copyWith =>
-      _$LinkMemoRowCopyWithImpl<LinkMemoRow>(this, _$identity);
+  $LinkShoppingListItemCopyWith<LinkShoppingListItem> get copyWith =>
+      _$LinkShoppingListItemCopyWithImpl<LinkShoppingListItem>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$LinkMemoRowToJson(
+    return _$LinkShoppingListItemToJson(
       this,
     );
   }
@@ -762,9 +879,10 @@ class LinkMemoRow implements MemoRow {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is LinkMemoRow &&
+            other is LinkShoppingListItem &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.memoID, memoID) || other.memoID == memoID) &&
+            (identical(other.shoppingListID, shoppingListID) ||
+                other.shoppingListID == shoppingListID) &&
             (identical(other.url, url) || other.url == url) &&
             (identical(other.order, order) || other.order == order) &&
             (identical(other.metadataTitle, metadataTitle) ||
@@ -774,6 +892,11 @@ class LinkMemoRow implements MemoRow {
             (identical(other.metadataImageURL, metadataImageURL) ||
                 other.metadataImageURL == metadataImageURL) &&
             (identical(other.status, status) || other.status == status) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.color, color) || other.color == color) &&
+            (identical(other.categoryID, categoryID) ||
+                other.categoryID == categoryID) &&
             (identical(other.reminderDateTime, reminderDateTime) ||
                 other.reminderDateTime == reminderDateTime) &&
             (identical(other.createdDateTime, createdDateTime) ||
@@ -791,13 +914,16 @@ class LinkMemoRow implements MemoRow {
   int get hashCode => Object.hash(
       runtimeType,
       id,
-      memoID,
+      shoppingListID,
       url,
       order,
       metadataTitle,
       metadataDescription,
       metadataImageURL,
       status,
+      description,
+      color,
+      categoryID,
       reminderDateTime,
       createdDateTime,
       updatedDateTime,
@@ -806,27 +932,30 @@ class LinkMemoRow implements MemoRow {
 
   @override
   String toString() {
-    return 'MemoRow.link(id: $id, memoID: $memoID, url: $url, order: $order, metadataTitle: $metadataTitle, metadataDescription: $metadataDescription, metadataImageURL: $metadataImageURL, status: $status, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'ShoppingListItem.link(id: $id, shoppingListID: $shoppingListID, url: $url, order: $order, metadataTitle: $metadataTitle, metadataDescription: $metadataDescription, metadataImageURL: $metadataImageURL, status: $status, description: $description, color: $color, categoryID: $categoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
 /// @nodoc
-abstract mixin class $LinkMemoRowCopyWith<$Res>
-    implements $MemoRowCopyWith<$Res> {
-  factory $LinkMemoRowCopyWith(
-          LinkMemoRow value, $Res Function(LinkMemoRow) _then) =
-      _$LinkMemoRowCopyWithImpl;
+abstract mixin class $LinkShoppingListItemCopyWith<$Res>
+    implements $ShoppingListItemCopyWith<$Res> {
+  factory $LinkShoppingListItemCopyWith(LinkShoppingListItem value,
+          $Res Function(LinkShoppingListItem) _then) =
+      _$LinkShoppingListItemCopyWithImpl;
   @override
   @useResult
   $Res call(
       {String id,
-      String memoID,
+      String shoppingListID,
       String url,
       int order,
       String? metadataTitle,
       String? metadataDescription,
       String? metadataImageURL,
-      MemoRowStatus status,
+      ShoppingListItemStatus status,
+      String? description,
+      String? color,
+      String? categoryID,
       @NullableTimestampConverter() DateTime? reminderDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -835,39 +964,43 @@ abstract mixin class $LinkMemoRowCopyWith<$Res>
 }
 
 /// @nodoc
-class _$LinkMemoRowCopyWithImpl<$Res> implements $LinkMemoRowCopyWith<$Res> {
-  _$LinkMemoRowCopyWithImpl(this._self, this._then);
+class _$LinkShoppingListItemCopyWithImpl<$Res>
+    implements $LinkShoppingListItemCopyWith<$Res> {
+  _$LinkShoppingListItemCopyWithImpl(this._self, this._then);
 
-  final LinkMemoRow _self;
-  final $Res Function(LinkMemoRow) _then;
+  final LinkShoppingListItem _self;
+  final $Res Function(LinkShoppingListItem) _then;
 
-  /// Create a copy of MemoRow
+  /// Create a copy of ShoppingListItem
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $Res call({
     Object? id = null,
-    Object? memoID = null,
+    Object? shoppingListID = null,
     Object? url = null,
     Object? order = null,
     Object? metadataTitle = freezed,
     Object? metadataDescription = freezed,
     Object? metadataImageURL = freezed,
     Object? status = null,
+    Object? description = freezed,
+    Object? color = freezed,
+    Object? categoryID = freezed,
     Object? reminderDateTime = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
     Object? serverUpdatedDateTime = freezed,
   }) {
-    return _then(LinkMemoRow(
+    return _then(LinkShoppingListItem(
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      memoID: null == memoID
-          ? _self.memoID
-          : memoID // ignore: cast_nullable_to_non_nullable
+      shoppingListID: null == shoppingListID
+          ? _self.shoppingListID
+          : shoppingListID // ignore: cast_nullable_to_non_nullable
               as String,
       url: null == url
           ? _self.url
@@ -892,7 +1025,19 @@ class _$LinkMemoRowCopyWithImpl<$Res> implements $LinkMemoRowCopyWith<$Res> {
       status: null == status
           ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
-              as MemoRowStatus,
+              as ShoppingListItemStatus,
+      description: freezed == description
+          ? _self.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      color: freezed == color
+          ? _self.color
+          : color // ignore: cast_nullable_to_non_nullable
+              as String?,
+      categoryID: freezed == categoryID
+          ? _self.categoryID
+          : categoryID // ignore: cast_nullable_to_non_nullable
+              as String?,
       reminderDateTime: freezed == reminderDateTime
           ? _self.reminderDateTime
           : reminderDateTime // ignore: cast_nullable_to_non_nullable

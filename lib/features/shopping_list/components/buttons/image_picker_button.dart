@@ -3,17 +3,19 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shoppinglist/entity/memo_row.dart';
-import 'package:shoppinglist/provider/memo_row.dart';
+import 'package:shoppinglist/entity/shopping_list_item.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/image/image.dart';
 
 class ImagePickerButton extends HookConsumerWidget {
-  final String memoID;
-  final List<MemoRow> memoRows;
+  final String shoppingListID;
+  final List<ShoppingListItem> shoppingListItems;
 
   const ImagePickerButton(
-      {super.key, required this.memoID, required this.memoRows});
+      {super.key,
+      required this.shoppingListID,
+      required this.shoppingListItems});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,7 +39,8 @@ class ImagePickerButton extends HookConsumerWidget {
 
                         if (photo != null) {
                           if (context.mounted) {
-                            await _addMemoRows(context, ref, photo, memoRows);
+                            await _addShoppingListItems(
+                                context, ref, photo, shoppingListItems);
                           }
                           if (context.mounted) {
                             Navigator.of(context).pop();
@@ -53,7 +56,8 @@ class ImagePickerButton extends HookConsumerWidget {
                             source: ImageSource.gallery);
                         if (photo != null) {
                           if (context.mounted) {
-                            await _addMemoRows(context, ref, photo, memoRows);
+                            await _addShoppingListItems(
+                                context, ref, photo, shoppingListItems);
                           }
                           if (context.mounted) {
                             Navigator.of(context).pop();
@@ -81,29 +85,29 @@ class ImagePickerButton extends HookConsumerWidget {
     );
   }
 
-  Future<void> _addMemoRows(BuildContext context, WidgetRef ref, XFile photo,
-      List<MemoRow> memoRows) async {
+  Future<void> _addShoppingListItems(BuildContext context, WidgetRef ref,
+      XFile photo, List<ShoppingListItem> shoppingListItems) async {
     final file = File(photo.path);
     final base64Image = await base64CompressImage(file);
-    final memoRawRows = await functions.generateMemoRowsFromImage(
+    final rawItems = await functions.generateShoppingListItemsFromImage(
       mimeType: mimeType(file),
       base64Image: base64Image,
     );
-    debugPrint('memoRawRows: $memoRawRows');
+    debugPrint('rawItems: $rawItems');
 
-    final distincted = memoRawRows.toSet().toList();
+    final distincted = rawItems.toSet().toList();
 
     for (var (i, e) in distincted.indexed) {
-      if (memoRows
-          .any((memoRow) => memoRow is TextMemoRow && memoRow.message == e)) {
+      if (shoppingListItems.any((item) =>
+          item is TextShoppingListItem && item.message == e)) {
         continue;
       }
 
       try {
-        await ref.read(addTextMemoRowProvider).call(
-              memoID: memoID,
+        await ref.read(addTextShoppingListItemProvider).call(
+              shoppingListID: shoppingListID,
               message: e,
-              order: memoRows.nextOrder + i,
+              order: shoppingListItems.nextOrder + i,
             );
       } catch (e) {
         // エラーが発生しても次の凍レーションを継続する

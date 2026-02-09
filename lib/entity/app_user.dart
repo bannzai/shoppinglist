@@ -12,6 +12,7 @@ abstract class AppUser with _$AppUser {
   @JsonSerializable(explicitToJson: true)
   const factory AppUser({
     required String id,
+    String? defaultGroupID,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,

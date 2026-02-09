@@ -22,5 +22,22 @@ final userDatabaseProvider = Provider<UserDatabase>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UserDatabaseRef = ProviderRef<UserDatabase>;
+String _$groupDatabaseHash() => r'6902db419f0193df251f8c761165ca58a4a48193';
+
+/// See also [groupDatabase].
+@ProviderFor(groupDatabase)
+final groupDatabaseProvider = Provider<GroupDatabase>.internal(
+  groupDatabase,
+  name: r'groupDatabaseProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$groupDatabaseHash,
+  dependencies: const <ProviderOrFamily>[],
+  allTransitiveDependencies: const <ProviderOrFamily>{},
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef GroupDatabaseRef = ProviderRef<GroupDatabase>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

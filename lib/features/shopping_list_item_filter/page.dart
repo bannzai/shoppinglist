@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class MemoRowFilterPage extends HookConsumerWidget {
-  final String memoID;
+class ShoppingListItemFilterPage extends HookConsumerWidget {
+  final String shoppingListID;
   final ValueNotifier<bool> showChecked;
 
-  const MemoRowFilterPage({
+  const ShoppingListItemFilterPage({
     super.key,
-    required this.memoID,
+    required this.shoppingListID,
     required this.showChecked,
   });
 
@@ -17,7 +17,7 @@ class MemoRowFilterPage extends HookConsumerWidget {
     final showChecked = useState(this.showChecked.value);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('メモフィルター'),
+        title: const Text('フィルター'),
       ),
       body: Padding(
         padding: const EdgeInsets.only(

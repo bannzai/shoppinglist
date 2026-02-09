@@ -15,6 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppUser {
   String get id;
+  String? get defaultGroupID;
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime;
   @ClientUpdatedTimestamp()
@@ -40,6 +41,8 @@ mixin _$AppUser {
         (other.runtimeType == runtimeType &&
             other is AppUser &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.defaultGroupID, defaultGroupID) ||
+                other.defaultGroupID == defaultGroupID) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -52,12 +55,18 @@ mixin _$AppUser {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, createdDateTime,
-      updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      defaultGroupID,
+      createdDateTime,
+      updatedDateTime,
+      serverCreatedDateTime,
+      serverUpdatedDateTime);
 
   @override
   String toString() {
-    return 'AppUser(id: $id, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -68,6 +77,7 @@ abstract mixin class $AppUserCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
+      String? defaultGroupID,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -87,6 +97,7 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
   @override
   $Res call({
     Object? id = null,
+    Object? defaultGroupID = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -97,6 +108,10 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
+      defaultGroupID: freezed == defaultGroupID
+          ? _self.defaultGroupID
+          : defaultGroupID // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
           : createdDateTime // ignore: cast_nullable_to_non_nullable
@@ -212,6 +227,7 @@ extension AppUserPatterns on AppUser {
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
             String id,
+            String? defaultGroupID,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -222,8 +238,13 @@ extension AppUserPatterns on AppUser {
     final _that = this;
     switch (_that) {
       case _AppUser() when $default != null:
-        return $default(_that.id, _that.createdDateTime, _that.updatedDateTime,
-            _that.serverCreatedDateTime, _that.serverUpdatedDateTime);
+        return $default(
+            _that.id,
+            _that.defaultGroupID,
+            _that.createdDateTime,
+            _that.updatedDateTime,
+            _that.serverCreatedDateTime,
+            _that.serverUpdatedDateTime);
       case _:
         return orElse();
     }
@@ -246,6 +267,7 @@ extension AppUserPatterns on AppUser {
   TResult when<TResult extends Object?>(
     TResult Function(
             String id,
+            String? defaultGroupID,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -255,8 +277,13 @@ extension AppUserPatterns on AppUser {
     final _that = this;
     switch (_that) {
       case _AppUser():
-        return $default(_that.id, _that.createdDateTime, _that.updatedDateTime,
-            _that.serverCreatedDateTime, _that.serverUpdatedDateTime);
+        return $default(
+            _that.id,
+            _that.defaultGroupID,
+            _that.createdDateTime,
+            _that.updatedDateTime,
+            _that.serverCreatedDateTime,
+            _that.serverUpdatedDateTime);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -278,6 +305,7 @@ extension AppUserPatterns on AppUser {
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
             String id,
+            String? defaultGroupID,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -287,8 +315,13 @@ extension AppUserPatterns on AppUser {
     final _that = this;
     switch (_that) {
       case _AppUser() when $default != null:
-        return $default(_that.id, _that.createdDateTime, _that.updatedDateTime,
-            _that.serverCreatedDateTime, _that.serverUpdatedDateTime);
+        return $default(
+            _that.id,
+            _that.defaultGroupID,
+            _that.createdDateTime,
+            _that.updatedDateTime,
+            _that.serverCreatedDateTime,
+            _that.serverUpdatedDateTime);
       case _:
         return null;
     }
@@ -301,6 +334,7 @@ extension AppUserPatterns on AppUser {
 class _AppUser extends AppUser {
   const _AppUser(
       {required this.id,
+      this.defaultGroupID,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
@@ -311,6 +345,8 @@ class _AppUser extends AppUser {
 
   @override
   final String id;
+  @override
+  final String? defaultGroupID;
   @override
   @ClientCreatedTimestamp()
   final DateTime? createdDateTime;
@@ -345,6 +381,8 @@ class _AppUser extends AppUser {
         (other.runtimeType == runtimeType &&
             other is _AppUser &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.defaultGroupID, defaultGroupID) ||
+                other.defaultGroupID == defaultGroupID) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -357,12 +395,18 @@ class _AppUser extends AppUser {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, createdDateTime,
-      updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      defaultGroupID,
+      createdDateTime,
+      updatedDateTime,
+      serverCreatedDateTime,
+      serverUpdatedDateTime);
 
   @override
   String toString() {
-    return 'AppUser(id: $id, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -374,6 +418,7 @@ abstract mixin class _$AppUserCopyWith<$Res> implements $AppUserCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
+      String? defaultGroupID,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -393,6 +438,7 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   $Res call({
     Object? id = null,
+    Object? defaultGroupID = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -403,6 +449,10 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
+      defaultGroupID: freezed == defaultGroupID
+          ? _self.defaultGroupID
+          : defaultGroupID // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
           : createdDateTime // ignore: cast_nullable_to_non_nullable

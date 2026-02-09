@@ -6,15 +6,15 @@ import 'package:intl/intl.dart';
 import 'package:shoppinglist/components/admob/banner.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
-import 'package:shoppinglist/entity/memo.dart';
+import 'package:shoppinglist/entity/shopping_list.dart';
 import 'package:shoppinglist/features/shopping_list/components/app_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/buttons/copy_multiline_text_button.dart';
 import 'package:shoppinglist/features/shopping_list/components/buttons/image_picker_button.dart';
-import 'package:shoppinglist/features/shopping_list/components/buttons/memo_row_add_button.dart';
-import 'package:shoppinglist/features/shopping_list/components/memo_rows/empty_text_memo.dart';
-import 'package:shoppinglist/features/shopping_list/components/memo_rows/memo_rows.dart';
-import 'package:shoppinglist/provider/memo.dart';
-import 'package:shoppinglist/provider/memo_row.dart';
+import 'package:shoppinglist/features/shopping_list/components/buttons/shopping_list_item_add_button.dart';
+import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/empty_text_shopping_list_item.dart';
+import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_items.dart';
+import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/color.dart';
 
 class ShoppingListPage extends HookConsumerWidget {
@@ -22,12 +22,12 @@ class ShoppingListPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final memos = ref.watch(memosProvider);
+    final shoppingLists = ref.watch(shoppingListsProvider);
 
     return Retry(
-      retry: () => ref.invalidate(memosProvider),
-      child: memos.when(
-        data: (memos) => _Body(memos: memos),
+      retry: () => ref.invalidate(shoppingListsProvider),
+      child: shoppingLists.when(
+        data: (shoppingLists) => _Body(shoppingLists: shoppingLists),
         error: (e, st) => RetryPage(exception: e),
         loading: () => const Loading(),
       ),
@@ -36,66 +36,69 @@ class ShoppingListPage extends HookConsumerWidget {
 }
 
 class _Body extends HookConsumerWidget {
-  final List<Memo> memos;
+  final List<ShoppingList> shoppingLists;
 
-  const _Body({required this.memos});
+  const _Body({required this.shoppingLists});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final memoID = useState(memos.first.id);
+    final shoppingListID = useState(shoppingLists.first.id);
     final retry = Retry.of(context).retry;
     final showChecked = useState(true);
-    final memoRowsAsync = ref.watch(textMemoRowsProvider(
-      memoID: memoID.value,
+    final shoppingListItemsAsync = ref.watch(textShoppingListItemsProvider(
+      shoppingListID: shoppingListID.value,
       showChecked: showChecked.value,
     ));
-    final memo = memos.firstWhereOrNull((memo) => memo.id == memoID.value);
-    final ttlExpiresDateTime = memo?.ttlExpiresDateTime;
+    final shoppingList = shoppingLists
+        .firstWhereOrNull((sl) => sl.id == shoppingListID.value);
+    final ttlExpiresDateTime = shoppingList?.ttlExpiresDateTime;
 
-    // 削除した時にmemoIDを入れ替える
+    // 削除した時にshoppingListIDを入れ替える
     useEffect(() {
-      if (!memos.map((e) => e.id).contains(memoID.value)) {
-        final firstMemoID = memos.firstOrNull?.id;
-        if (firstMemoID != null) {
-          memoID.value = firstMemoID;
+      if (!shoppingLists.map((e) => e.id).contains(shoppingListID.value)) {
+        final firstID = shoppingLists.firstOrNull?.id;
+        if (firstID != null) {
+          shoppingListID.value = firstID;
         }
       }
       return null;
-    }, [memos.length]);
+    }, [shoppingLists.length]);
 
-    // memoIDが変わったらmemosProviderから更新してWidgetツリーを更新
+    // shoppingListIDが変わったらshoppingListsProviderから更新してWidgetツリーを更新
     useEffect(() {
-      ref.invalidate(memosProvider);
+      ref.invalidate(shoppingListsProvider);
       return null;
-    }, [memoID.value]);
+    }, [shoppingListID.value]);
 
     return Retry(
       retry: () {
         retry();
-        ref.invalidate(textMemoRowsProvider(
-            memoID: memoID.value, showChecked: showChecked.value));
+        ref.invalidate(textShoppingListItemsProvider(
+            shoppingListID: shoppingListID.value,
+            showChecked: showChecked.value));
       },
       child: Scaffold(
         appBar: ShoppingListAppBar(
-          memoID: memoID,
-          memos: memos,
-          memo: memo,
+          shoppingListID: shoppingListID,
+          shoppingLists: shoppingLists,
+          shoppingList: shoppingList,
           showChecked: showChecked,
-          memoRows: memoRowsAsync.asData?.value ?? [],
+          shoppingListItems: shoppingListItemsAsync.asData?.value ?? [],
         ),
         body: SafeArea(
-          child: memoRowsAsync.when(
-            data: (memoRows) {
-              if (showChecked.value && memoRows.isEmpty) {
-                return EmptyTextMemoRows(
-                    memoID: memoID.value, memoRows: memoRows);
+          child: shoppingListItemsAsync.when(
+            data: (shoppingListItems) {
+              if (showChecked.value && shoppingListItems.isEmpty) {
+                return EmptyTextShoppingListItems(
+                    shoppingListID: shoppingListID.value,
+                    shoppingListItems: shoppingListItems);
               } else {
                 return Column(
                   children: [
                     if (ttlExpiresDateTime != null) ...[
                       const SizedBox(height: 4),
                       Text(
-                        '※ このメモは${DateFormat.MEd().format(ttlExpiresDateTime)}まで保存されてます',
+                        '※ この買い物リストは${DateFormat.MEd().format(ttlExpiresDateTime)}まで保存されてます',
                         style: const TextStyle(
                           color: TextColor.gray,
                           fontSize: 12,
@@ -104,10 +107,10 @@ class _Body extends HookConsumerWidget {
                       const SizedBox(height: 10),
                     ],
                     Expanded(
-                        child: MemoRows(
-                            memoID: memoID.value,
-                            memoRows: memoRows,
-                            memoRowsAsync: memoRowsAsync)),
+                        child: ShoppingListItems(
+                            shoppingListID: shoppingListID.value,
+                            shoppingListItems: shoppingListItems,
+                            shoppingListItemsAsync: shoppingListItemsAsync)),
                     const AdMobBanner(),
                     Padding(
                       padding: const EdgeInsets.symmetric(
@@ -119,18 +122,21 @@ class _Body extends HookConsumerWidget {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Expanded(
-                                child: MemoRowAddButton(
-                                    memoID: memoID.value, memoRows: memoRows),
+                                child: ShoppingListItemAddButton(
+                                    shoppingListID: shoppingListID.value,
+                                    shoppingListItems: shoppingListItems),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: ImagePickerButton(
-                                    memoID: memoID.value, memoRows: memoRows),
+                                    shoppingListID: shoppingListID.value,
+                                    shoppingListItems: shoppingListItems),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: CopyMultilineTextButton(
-                                    memoID: memoID.value, memoRows: memoRows),
+                                    shoppingListID: shoppingListID.value,
+                                    shoppingListItems: shoppingListItems),
                               ),
                             ],
                           ),

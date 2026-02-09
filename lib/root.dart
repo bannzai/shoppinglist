@@ -5,8 +5,6 @@ import 'package:shoppinglist/features/resolver/app.dart';
 import 'package:shoppinglist/features/resolver/app_entntiy_prepare.dart';
 import 'package:shoppinglist/features/resolver/app_user_create.dart';
 import 'package:shoppinglist/features/resolver/force_update.dart';
-import 'package:shoppinglist/features/resolver/purchase_setup.dart';
-
 class RootPage extends HookConsumerWidget {
   const RootPage({super.key});
 
@@ -20,6 +18,7 @@ class RootPage extends HookConsumerWidget {
           debugPrint('Resolved ForceUpdateResolver user: ${user.uid}');
           return AppEntityPrepareResolver(
               userID: user.uid,
+              groupID: user.uid,
               builder: (context) {
                 debugPrint('Resolved AppEntityPrepareResolver user: ${user.uid}');
                 return const HomePage();

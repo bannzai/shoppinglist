@@ -2,31 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/alert.dart';
-import 'package:shoppinglist/entity/memo_row.dart';
-import 'package:shoppinglist/provider/memo_row.dart';
+import 'package:shoppinglist/entity/shopping_list_item.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:metadata_fetch/metadata_fetch.dart';
 
-class LinkMemoRowAddPage extends HookConsumerWidget {
-  final String memoID;
-  final LinkMemoRow linkMemoRow;
-  final List<MemoRow> memoRows;
-  const LinkMemoRowAddPage({
+class LinkShoppingListItemAddPage extends HookConsumerWidget {
+  final String shoppingListID;
+  final LinkShoppingListItem linkShoppingListItem;
+  final List<ShoppingListItem> shoppingListItems;
+  const LinkShoppingListItemAddPage({
     super.key,
-    required this.memoID,
-    required this.linkMemoRow,
-    required this.memoRows,
+    required this.shoppingListID,
+    required this.linkShoppingListItem,
+    required this.shoppingListItems,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textEditingController = useTextEditingController();
     final focusNode = useFocusNode();
-    final addLinkMemoRow = ref.watch(addLinkMemoRowProvider);
+    final addLinkShoppingListItem = ref.watch(addLinkShoppingListItemProvider);
 
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (linkMemoRow.url.isEmpty) {
+        if (linkShoppingListItem.url.isEmpty) {
           focusNode.requestFocus();
         }
       });
@@ -68,13 +68,13 @@ class LinkMemoRowAddPage extends HookConsumerWidget {
                         final description = metadata?.description;
                         final imageURL = metadata?.image;
 
-                        await addLinkMemoRow(
-                          memoID: memoID,
+                        await addLinkShoppingListItem(
+                          shoppingListID: shoppingListID,
                           url: url,
                           metadataTitle: title,
                           metadataDescription: description,
                           metadataImageURL: imageURL,
-                          order: memoRows.length,
+                          order: shoppingListItems.length,
                         );
                         if (context.mounted) {
                           Navigator.pop(context);

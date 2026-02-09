@@ -3,48 +3,48 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/toolbar/picker.dart';
-import 'package:shoppinglist/entity/memo.dart';
-import 'package:shoppinglist/entity/memo_row.dart';
-import 'package:shoppinglist/features/memo_row_filter/page.dart';
-import 'package:shoppinglist/features/memo_setting/page.dart';
-import 'package:shoppinglist/provider/memo.dart';
+import 'package:shoppinglist/entity/shopping_list.dart';
+import 'package:shoppinglist/entity/shopping_list_item.dart';
+import 'package:shoppinglist/features/shopping_list_item_filter/page.dart';
+import 'package:shoppinglist/features/shopping_list_setting/page.dart';
+import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
 class ShoppingListAppBar extends HookConsumerWidget
     implements PreferredSizeWidget {
-  final ValueNotifier<String> memoID;
-  final List<Memo> memos;
-  final Memo? memo;
+  final ValueNotifier<String> shoppingListID;
+  final List<ShoppingList> shoppingLists;
+  final ShoppingList? shoppingList;
   final ValueNotifier<bool> showChecked;
-  final List<MemoRow> memoRows;
+  final List<ShoppingListItem> shoppingListItems;
   const ShoppingListAppBar({
     super.key,
-    required this.memoID,
-    required this.memos,
-    required this.memo,
+    required this.shoppingListID,
+    required this.shoppingLists,
+    required this.shoppingList,
     required this.showChecked,
-    required this.memoRows,
+    required this.shoppingListItems,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final memo = this.memo;
-    final memoAdd = ref.watch(memoAddProvider);
-    final memoDelete = ref.watch(memoDeleteProvider);
-    final memoDuplicate = ref.watch(memoDuplicateProvider);
+    final shoppingList = this.shoppingList;
+    final shoppingListAdd = ref.watch(shoppingListAddProvider);
+    final shoppingListDelete = ref.watch(shoppingListDeleteProvider);
+    final shoppingListDuplicate = ref.watch(shoppingListDuplicateProvider);
 
     return AppBar(
       title: HookBuilder(
         builder: (context) {
-          final selectedMemoID = useState<String>(memoID.value);
+          final selectedID = useState<String>(shoppingListID.value);
           return GestureDetector(
             onTap: () {
-              selectedMemoID.value = memos.first.id;
-              _showPicker(context, selectedMemoID);
+              selectedID.value = shoppingLists.first.id;
+              _showPicker(context, selectedID);
             },
             child: Row(
               children: [
-                Text(memo?.name ?? ''),
+                Text(shoppingList?.name ?? ''),
                 const Icon(Icons.arrow_drop_down),
               ],
             ),
@@ -52,17 +52,18 @@ class ShoppingListAppBar extends HookConsumerWidget
         },
       ),
       actions: [
-        if (memo != null) ...[
+        if (shoppingList != null) ...[
           IconButton(
             onPressed: () {
               appShowModalBottomSheet(
                 context: context,
                 builder: (context) {
-                  return MemoSettingPage(
-                    memoID: memoID.value,
-                    memo: memo,
+                  return ShoppingListSettingPage(
+                    shoppingListID: shoppingListID.value,
+                    shoppingList: shoppingList,
                     onDelete: () {
-                      memoDelete(memoID: memoID.value);
+                      shoppingListDelete(
+                          shoppingListID: shoppingListID.value);
                       // pop alert
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     },
@@ -84,10 +85,12 @@ class ShoppingListAppBar extends HookConsumerWidget
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ListTile(
-                          title: const Text('メモを追加'),
+                          title: const Text('買い物リストを追加'),
                           onTap: () async {
-                            final newMemo = await memoAdd(userID: memo.userID);
-                            memoID.value = newMemo.id;
+                            final newShoppingList = await shoppingListAdd(
+                                createUserID: shoppingList.createUserID,
+                                groupID: shoppingList.groupID);
+                            shoppingListID.value = newShoppingList.id;
 
                             if (context.mounted) {
                               Navigator.pop(context);
@@ -95,11 +98,14 @@ class ShoppingListAppBar extends HookConsumerWidget
                           },
                         ),
                         ListTile(
-                          title: const Text('現在のメモを複製'),
+                          title: const Text('現在の買い物リストを複製'),
                           onTap: () async {
-                            final newMemo = await memoDuplicate(
-                                userID: memo.userID, memoRows: memoRows);
-                            memoID.value = newMemo.id;
+                            final newShoppingList =
+                                await shoppingListDuplicate(
+                                    createUserID: shoppingList.createUserID,
+                                    groupID: shoppingList.groupID,
+                                    shoppingListItems: shoppingListItems);
+                            shoppingListID.value = newShoppingList.id;
 
                             if (context.mounted) {
                               Navigator.pop(context);
@@ -120,8 +126,8 @@ class ShoppingListAppBar extends HookConsumerWidget
             appShowModalBottomSheet(
               context: context,
               builder: (context) {
-                return MemoRowFilterPage(
-                  memoID: memoID.value,
+                return ShoppingListItemFilterPage(
+                  shoppingListID: shoppingListID.value,
                   showChecked: showChecked,
                 );
               },
@@ -133,7 +139,8 @@ class ShoppingListAppBar extends HookConsumerWidget
     );
   }
 
-  void _showPicker(BuildContext context, ValueNotifier<String> selectedMemoID) {
+  void _showPicker(
+      BuildContext context, ValueNotifier<String> selectedID) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -144,7 +151,7 @@ class ShoppingListAppBar extends HookConsumerWidget
             PickerToolbar(
               done: () {
                 Navigator.pop(context);
-                memoID.value = selectedMemoID.value;
+                shoppingListID.value = selectedID.value;
               },
               cancel: () {
                 Navigator.pop(context);
@@ -158,9 +165,11 @@ class ShoppingListAppBar extends HookConsumerWidget
                 },
                 child: CupertinoPicker(
                   itemExtent: 40,
-                  children: memos.map((memo) => Text(memo.name)).toList(),
+                  children: shoppingLists
+                      .map((sl) => Text(sl.name))
+                      .toList(),
                   onSelectedItemChanged: (int value) {
-                    selectedMemoID.value = memos[value].id;
+                    selectedID.value = shoppingLists[value].id;
                   },
                 ),
               ),

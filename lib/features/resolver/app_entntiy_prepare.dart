@@ -2,34 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
-import 'package:shoppinglist/provider/memo.dart';
+import 'package:shoppinglist/provider/shopping_list.dart';
 
 class AppEntityPrepareResolver extends HookConsumerWidget {
   final String userID;
+  final String groupID;
   final Widget Function(BuildContext context) builder;
 
   const AppEntityPrepareResolver({
     super.key,
     required this.userID,
+    required this.groupID,
     required this.builder,
   });
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final memoAdd = ref.watch(memoAddProvider);
-    final memos = ref.watch(memosProvider);
+    final shoppingListAdd = ref.watch(shoppingListAddProvider);
+    final shoppingLists = ref.watch(shoppingListsProvider);
 
     useEffect(() {
       void f() async {
-        if (memos is AsyncData && memos.value?.isEmpty == true) {
-          await memoAdd(userID: userID);
+        if (shoppingLists is AsyncData && shoppingLists.value?.isEmpty == true) {
+          await shoppingListAdd(createUserID: userID, groupID: groupID);
         }
       }
 
       f();
       return null;
-    }, [memos]);
+    }, [shoppingLists]);
 
-    if (memos.valueOrNull?.isEmpty == true) {
+    if (shoppingLists.valueOrNull?.isEmpty == true) {
       return const Loading();
     }
     return builder(context);

@@ -22,7 +22,7 @@ admin.firestore().settings({ ignoreUndefinedProperties: true });
 
 if (
   !process.env.FUNCTION_NAME ||
-  process.env.FUNCTION_NAME === "generateMemoRowsFromImage"
+  process.env.FUNCTION_NAME === "generateShoppingListItemsFromImage"
 ) {
-  exports.generateMemoRowsFromImage = require("./functions/generateMemoRowsFromImage/function");
+  exports.generateShoppingListItemsFromImage = require("./functions/generateShoppingListItemsFromImage/function");
 }
