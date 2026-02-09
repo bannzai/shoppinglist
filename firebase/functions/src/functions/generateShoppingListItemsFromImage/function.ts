@@ -93,8 +93,8 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
       if (!functionCalls || functionCalls.length === 0) {
         throw new Error("Function call not found");
       }
-      // 型解決がわからなかったのでanyにしてお茶を濁している
-      const shoppingListItems = (functionCalls[0].args as any).shoppingListItems;
+      const shoppingListItems = (functionCalls[0].args as { shoppingListItems: string[] })
+        .shoppingListItems;
 
       return {
         result: "OK",
