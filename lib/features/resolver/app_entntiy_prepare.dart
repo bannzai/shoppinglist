@@ -22,7 +22,8 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
 
     useEffect(() {
       void f() async {
-        if (shoppingLists is AsyncData && shoppingLists.value?.isEmpty == true) {
+        if (shoppingLists is AsyncData &&
+            shoppingLists.value?.isEmpty == true) {
           await shoppingListAdd(createUserID: userID, groupID: groupID);
         }
       }

@@ -98,8 +98,8 @@ class ImagePickerButton extends HookConsumerWidget {
     final distincted = rawItems.toSet().toList();
 
     for (var (i, e) in distincted.indexed) {
-      if (shoppingListItems.any((item) =>
-          item is TextShoppingListItem && item.message == e)) {
+      if (shoppingListItems
+          .any((item) => item is TextShoppingListItem && item.message == e)) {
         continue;
       }
 

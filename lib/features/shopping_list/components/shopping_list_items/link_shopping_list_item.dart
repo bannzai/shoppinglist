@@ -17,8 +17,7 @@ class LinkShoppingListItemWidget extends StatelessWidget {
         SizedBox(
             width: 100,
             height: 100,
-            child: Image.network(
-                linkShoppingListItem.metadataImageURL ?? '',
+            child: Image.network(linkShoppingListItem.metadataImageURL ?? '',
                 fit: BoxFit.cover)),
         Text(linkShoppingListItem.metadataTitle ?? ''),
       ],

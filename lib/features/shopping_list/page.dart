@@ -49,8 +49,8 @@ class _Body extends HookConsumerWidget {
       shoppingListID: shoppingListID.value,
       showChecked: showChecked.value,
     ));
-    final shoppingList = shoppingLists
-        .firstWhereOrNull((sl) => sl.id == shoppingListID.value);
+    final shoppingList =
+        shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID.value);
     final ttlExpiresDateTime = shoppingList?.ttlExpiresDateTime;
 
     // 削除した時にshoppingListIDを入れ替える

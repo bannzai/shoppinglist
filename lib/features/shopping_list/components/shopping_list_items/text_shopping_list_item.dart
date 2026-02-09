@@ -89,8 +89,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                       ref
                           .read(groupDatabaseProvider)
                           .shoppingListItemsReference(
-                            shoppingListID:
-                                textShoppingListItem.shoppingListID,
+                            shoppingListID: textShoppingListItem.shoppingListID,
                           )
                           .doc(textShoppingListItem.id)
                           .delete();

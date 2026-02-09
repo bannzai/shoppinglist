@@ -99,8 +99,8 @@ class ShoppingListDuplicate {
       {required String createUserID,
       required String groupID,
       required List<ShoppingListItem> shoppingListItems}) async {
-    final shoppingList = await shoppingListAdd(
-        createUserID: createUserID, groupID: groupID);
+    final shoppingList =
+        await shoppingListAdd(createUserID: createUserID, groupID: groupID);
     for (var item in shoppingListItems) {
       if (item is TextShoppingListItem) {
         await addTextShoppingListItem(
@@ -115,11 +115,11 @@ class ShoppingListDuplicate {
   }
 }
 
-@Riverpod(dependencies: [shoppingListAdd, addTextShoppingListItem, groupDatabase])
+@Riverpod(
+    dependencies: [shoppingListAdd, addTextShoppingListItem, groupDatabase])
 ShoppingListDuplicate shoppingListDuplicate(ShoppingListDuplicateRef ref) {
   final shoppingListAdd = ref.watch(shoppingListAddProvider);
-  final addTextShoppingListItem =
-      ref.watch(addTextShoppingListItemProvider);
+  final addTextShoppingListItem = ref.watch(addTextShoppingListItemProvider);
   final database = ref.watch(groupDatabaseProvider);
   return ShoppingListDuplicate(
       shoppingListAdd: shoppingListAdd,

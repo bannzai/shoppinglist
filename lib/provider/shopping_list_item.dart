@@ -46,8 +46,9 @@ class AddTextShoppingListItem {
       {required String shoppingListID,
       required String message,
       required int order}) async {
-    final docRef =
-        database.shoppingListItemsReference(shoppingListID: shoppingListID).doc();
+    final docRef = database
+        .shoppingListItemsReference(shoppingListID: shoppingListID)
+        .doc();
     final textItem = TextShoppingListItem(
         id: docRef.id,
         shoppingListID: shoppingListID,
@@ -79,8 +80,9 @@ class AddLinkShoppingListItem {
     required String? metadataImageURL,
     required int order,
   }) async {
-    final docRef =
-        database.shoppingListItemsReference(shoppingListID: shoppingListID).doc();
+    final docRef = database
+        .shoppingListItemsReference(shoppingListID: shoppingListID)
+        .doc();
     final linkItem = LinkShoppingListItem(
       id: docRef.id,
       shoppingListID: shoppingListID,

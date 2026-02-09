@@ -62,8 +62,7 @@ class ShoppingListAppBar extends HookConsumerWidget
                     shoppingListID: shoppingListID.value,
                     shoppingList: shoppingList,
                     onDelete: () {
-                      shoppingListDelete(
-                          shoppingListID: shoppingListID.value);
+                      shoppingListDelete(shoppingListID: shoppingListID.value);
                       // pop alert
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     },
@@ -100,11 +99,10 @@ class ShoppingListAppBar extends HookConsumerWidget
                         ListTile(
                           title: const Text('現在の買い物リストを複製'),
                           onTap: () async {
-                            final newShoppingList =
-                                await shoppingListDuplicate(
-                                    createUserID: shoppingList.createUserID,
-                                    groupID: shoppingList.groupID,
-                                    shoppingListItems: shoppingListItems);
+                            final newShoppingList = await shoppingListDuplicate(
+                                createUserID: shoppingList.createUserID,
+                                groupID: shoppingList.groupID,
+                                shoppingListItems: shoppingListItems);
                             shoppingListID.value = newShoppingList.id;
 
                             if (context.mounted) {
@@ -139,8 +137,7 @@ class ShoppingListAppBar extends HookConsumerWidget
     );
   }
 
-  void _showPicker(
-      BuildContext context, ValueNotifier<String> selectedID) {
+  void _showPicker(BuildContext context, ValueNotifier<String> selectedID) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -165,9 +162,7 @@ class ShoppingListAppBar extends HookConsumerWidget
                 },
                 child: CupertinoPicker(
                   itemExtent: 40,
-                  children: shoppingLists
-                      .map((sl) => Text(sl.name))
-                      .toList(),
+                  children: shoppingLists.map((sl) => Text(sl.name)).toList(),
                   onSelectedItemChanged: (int value) {
                     selectedID.value = shoppingLists[value].id;
                   },
