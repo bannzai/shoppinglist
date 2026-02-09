@@ -35,6 +35,9 @@ Firebase Functions の規約です
 - 原則: クライアントから呼ぶ Functions は GenKit を使用して定義します
 - Deployはユーザーが行うので禁止
 
+### フィールド命名規約
+- Entityのフィールド名は省略せず、長くても実態がわかる名前をつける（例: `categoryID` ではなく `groupShoppingListItemCategoryID`）
+
 ### プロジェクト構成・ドキュメント方針
 - 実装のことは全てコード上のコメントに記載する
 - GenKitのFunctionsの検証のために引数は、Functionsの定義位置に記載する

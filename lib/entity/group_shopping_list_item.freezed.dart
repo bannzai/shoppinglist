@@ -34,7 +34,7 @@ mixin _$GroupShoppingListItem {
   GroupShoppingListItemStatus get status;
   String? get description;
   String? get color;
-  String? get categoryID;
+  String? get groupShoppingListItemCategoryID;
   @NullableTimestampConverter()
   DateTime? get reminderDateTime;
   @ClientCreatedTimestamp()
@@ -70,8 +70,10 @@ mixin _$GroupShoppingListItem {
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.color, color) || other.color == color) &&
-            (identical(other.categoryID, categoryID) ||
-                other.categoryID == categoryID) &&
+            (identical(other.groupShoppingListItemCategoryID,
+                    groupShoppingListItemCategoryID) ||
+                other.groupShoppingListItemCategoryID ==
+                    groupShoppingListItemCategoryID) &&
             (identical(other.reminderDateTime, reminderDateTime) ||
                 other.reminderDateTime == reminderDateTime) &&
             (identical(other.createdDateTime, createdDateTime) ||
@@ -94,7 +96,7 @@ mixin _$GroupShoppingListItem {
       status,
       description,
       color,
-      categoryID,
+      groupShoppingListItemCategoryID,
       reminderDateTime,
       createdDateTime,
       updatedDateTime,
@@ -103,7 +105,7 @@ mixin _$GroupShoppingListItem {
 
   @override
   String toString() {
-    return 'GroupShoppingListItem(id: $id, shoppingListID: $shoppingListID, order: $order, status: $status, description: $description, color: $color, categoryID: $categoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItem(id: $id, shoppingListID: $shoppingListID, order: $order, status: $status, description: $description, color: $color, groupShoppingListItemCategoryID: $groupShoppingListItemCategoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -120,7 +122,7 @@ abstract mixin class $GroupShoppingListItemCopyWith<$Res> {
       GroupShoppingListItemStatus status,
       String? description,
       String? color,
-      String? categoryID,
+      String? groupShoppingListItemCategoryID,
       @NullableTimestampConverter() DateTime? reminderDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -147,7 +149,7 @@ class _$GroupShoppingListItemCopyWithImpl<$Res>
     Object? status = null,
     Object? description = freezed,
     Object? color = freezed,
-    Object? categoryID = freezed,
+    Object? groupShoppingListItemCategoryID = freezed,
     Object? reminderDateTime = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
@@ -179,9 +181,10 @@ class _$GroupShoppingListItemCopyWithImpl<$Res>
           ? _self.color
           : color // ignore: cast_nullable_to_non_nullable
               as String?,
-      categoryID: freezed == categoryID
-          ? _self.categoryID
-          : categoryID // ignore: cast_nullable_to_non_nullable
+      groupShoppingListItemCategoryID: freezed ==
+              groupShoppingListItemCategoryID
+          ? _self.groupShoppingListItemCategoryID
+          : groupShoppingListItemCategoryID // ignore: cast_nullable_to_non_nullable
               as String?,
       reminderDateTime: freezed == reminderDateTime
           ? _self.reminderDateTime
@@ -315,7 +318,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             GroupShoppingListItemStatus status,
             String? description,
             String? color,
-            String? categoryID,
+            String? groupShoppingListItemCategoryID,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -333,7 +336,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             GroupShoppingListItemStatus status,
             String? description,
             String? color,
-            String? categoryID,
+            String? groupShoppingListItemCategoryID,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -353,7 +356,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             _that.status,
             _that.description,
             _that.color,
-            _that.categoryID,
+            _that.groupShoppingListItemCategoryID,
             _that.reminderDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
@@ -371,7 +374,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             _that.status,
             _that.description,
             _that.color,
-            _that.categoryID,
+            _that.groupShoppingListItemCategoryID,
             _that.reminderDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
@@ -405,7 +408,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             GroupShoppingListItemStatus status,
             String? description,
             String? color,
-            String? categoryID,
+            String? groupShoppingListItemCategoryID,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -423,7 +426,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             GroupShoppingListItemStatus status,
             String? description,
             String? color,
-            String? categoryID,
+            String? groupShoppingListItemCategoryID,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -442,7 +445,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             _that.status,
             _that.description,
             _that.color,
-            _that.categoryID,
+            _that.groupShoppingListItemCategoryID,
             _that.reminderDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
@@ -460,7 +463,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             _that.status,
             _that.description,
             _that.color,
-            _that.categoryID,
+            _that.groupShoppingListItemCategoryID,
             _that.reminderDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
@@ -491,7 +494,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             GroupShoppingListItemStatus status,
             String? description,
             String? color,
-            String? categoryID,
+            String? groupShoppingListItemCategoryID,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -509,7 +512,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             GroupShoppingListItemStatus status,
             String? description,
             String? color,
-            String? categoryID,
+            String? groupShoppingListItemCategoryID,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -528,7 +531,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             _that.status,
             _that.description,
             _that.color,
-            _that.categoryID,
+            _that.groupShoppingListItemCategoryID,
             _that.reminderDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
@@ -546,7 +549,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             _that.status,
             _that.description,
             _that.color,
-            _that.categoryID,
+            _that.groupShoppingListItemCategoryID,
             _that.reminderDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
@@ -570,7 +573,7 @@ class TextGroupShoppingListItem implements GroupShoppingListItem {
       this.status = GroupShoppingListItemStatus.unchecked,
       this.description,
       this.color,
-      this.categoryID,
+      this.groupShoppingListItemCategoryID,
       @NullableTimestampConverter() this.reminderDateTime,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
@@ -598,7 +601,7 @@ class TextGroupShoppingListItem implements GroupShoppingListItem {
   @override
   final String? color;
   @override
-  final String? categoryID;
+  final String? groupShoppingListItemCategoryID;
   @override
   @NullableTimestampConverter()
   final DateTime? reminderDateTime;
@@ -648,8 +651,10 @@ class TextGroupShoppingListItem implements GroupShoppingListItem {
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.color, color) || other.color == color) &&
-            (identical(other.categoryID, categoryID) ||
-                other.categoryID == categoryID) &&
+            (identical(other.groupShoppingListItemCategoryID,
+                    groupShoppingListItemCategoryID) ||
+                other.groupShoppingListItemCategoryID ==
+                    groupShoppingListItemCategoryID) &&
             (identical(other.reminderDateTime, reminderDateTime) ||
                 other.reminderDateTime == reminderDateTime) &&
             (identical(other.createdDateTime, createdDateTime) ||
@@ -673,7 +678,7 @@ class TextGroupShoppingListItem implements GroupShoppingListItem {
       status,
       description,
       color,
-      categoryID,
+      groupShoppingListItemCategoryID,
       reminderDateTime,
       createdDateTime,
       updatedDateTime,
@@ -682,7 +687,7 @@ class TextGroupShoppingListItem implements GroupShoppingListItem {
 
   @override
   String toString() {
-    return 'GroupShoppingListItem.text(id: $id, shoppingListID: $shoppingListID, message: $message, order: $order, status: $status, description: $description, color: $color, categoryID: $categoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItem.text(id: $id, shoppingListID: $shoppingListID, message: $message, order: $order, status: $status, description: $description, color: $color, groupShoppingListItemCategoryID: $groupShoppingListItemCategoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -702,7 +707,7 @@ abstract mixin class $TextGroupShoppingListItemCopyWith<$Res>
       GroupShoppingListItemStatus status,
       String? description,
       String? color,
-      String? categoryID,
+      String? groupShoppingListItemCategoryID,
       @NullableTimestampConverter() DateTime? reminderDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -730,7 +735,7 @@ class _$TextGroupShoppingListItemCopyWithImpl<$Res>
     Object? status = null,
     Object? description = freezed,
     Object? color = freezed,
-    Object? categoryID = freezed,
+    Object? groupShoppingListItemCategoryID = freezed,
     Object? reminderDateTime = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
@@ -766,9 +771,10 @@ class _$TextGroupShoppingListItemCopyWithImpl<$Res>
           ? _self.color
           : color // ignore: cast_nullable_to_non_nullable
               as String?,
-      categoryID: freezed == categoryID
-          ? _self.categoryID
-          : categoryID // ignore: cast_nullable_to_non_nullable
+      groupShoppingListItemCategoryID: freezed ==
+              groupShoppingListItemCategoryID
+          ? _self.groupShoppingListItemCategoryID
+          : groupShoppingListItemCategoryID // ignore: cast_nullable_to_non_nullable
               as String?,
       reminderDateTime: freezed == reminderDateTime
           ? _self.reminderDateTime
@@ -809,7 +815,7 @@ class LinkGroupShoppingListItem implements GroupShoppingListItem {
       this.status = GroupShoppingListItemStatus.unchecked,
       this.description,
       this.color,
-      this.categoryID,
+      this.groupShoppingListItemCategoryID,
       @NullableTimestampConverter() this.reminderDateTime,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
@@ -840,7 +846,7 @@ class LinkGroupShoppingListItem implements GroupShoppingListItem {
   @override
   final String? color;
   @override
-  final String? categoryID;
+  final String? groupShoppingListItemCategoryID;
   @override
   @NullableTimestampConverter()
   final DateTime? reminderDateTime;
@@ -896,8 +902,10 @@ class LinkGroupShoppingListItem implements GroupShoppingListItem {
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.color, color) || other.color == color) &&
-            (identical(other.categoryID, categoryID) ||
-                other.categoryID == categoryID) &&
+            (identical(other.groupShoppingListItemCategoryID,
+                    groupShoppingListItemCategoryID) ||
+                other.groupShoppingListItemCategoryID ==
+                    groupShoppingListItemCategoryID) &&
             (identical(other.reminderDateTime, reminderDateTime) ||
                 other.reminderDateTime == reminderDateTime) &&
             (identical(other.createdDateTime, createdDateTime) ||
@@ -924,7 +932,7 @@ class LinkGroupShoppingListItem implements GroupShoppingListItem {
       status,
       description,
       color,
-      categoryID,
+      groupShoppingListItemCategoryID,
       reminderDateTime,
       createdDateTime,
       updatedDateTime,
@@ -933,7 +941,7 @@ class LinkGroupShoppingListItem implements GroupShoppingListItem {
 
   @override
   String toString() {
-    return 'GroupShoppingListItem.link(id: $id, shoppingListID: $shoppingListID, url: $url, order: $order, metadataTitle: $metadataTitle, metadataDescription: $metadataDescription, metadataImageURL: $metadataImageURL, status: $status, description: $description, color: $color, categoryID: $categoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItem.link(id: $id, shoppingListID: $shoppingListID, url: $url, order: $order, metadataTitle: $metadataTitle, metadataDescription: $metadataDescription, metadataImageURL: $metadataImageURL, status: $status, description: $description, color: $color, groupShoppingListItemCategoryID: $groupShoppingListItemCategoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -956,7 +964,7 @@ abstract mixin class $LinkGroupShoppingListItemCopyWith<$Res>
       GroupShoppingListItemStatus status,
       String? description,
       String? color,
-      String? categoryID,
+      String? groupShoppingListItemCategoryID,
       @NullableTimestampConverter() DateTime? reminderDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -987,7 +995,7 @@ class _$LinkGroupShoppingListItemCopyWithImpl<$Res>
     Object? status = null,
     Object? description = freezed,
     Object? color = freezed,
-    Object? categoryID = freezed,
+    Object? groupShoppingListItemCategoryID = freezed,
     Object? reminderDateTime = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
@@ -1035,9 +1043,10 @@ class _$LinkGroupShoppingListItemCopyWithImpl<$Res>
           ? _self.color
           : color // ignore: cast_nullable_to_non_nullable
               as String?,
-      categoryID: freezed == categoryID
-          ? _self.categoryID
-          : categoryID // ignore: cast_nullable_to_non_nullable
+      groupShoppingListItemCategoryID: freezed ==
+              groupShoppingListItemCategoryID
+          ? _self.groupShoppingListItemCategoryID
+          : groupShoppingListItemCategoryID // ignore: cast_nullable_to_non_nullable
               as String?,
       reminderDateTime: freezed == reminderDateTime
           ? _self.reminderDateTime

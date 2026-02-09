@@ -18,7 +18,8 @@ TextGroupShoppingListItem _$TextGroupShoppingListItemFromJson(
           GroupShoppingListItemStatus.unchecked,
       description: json['description'] as String?,
       color: json['color'] as String?,
-      categoryID: json['categoryID'] as String?,
+      groupShoppingListItemCategoryID:
+          json['groupShoppingListItemCategoryID'] as String?,
       reminderDateTime: const NullableTimestampConverter()
           .fromJson(json['reminderDateTime'] as Timestamp?),
       createdDateTime: const ClientCreatedTimestamp()
@@ -42,7 +43,8 @@ Map<String, dynamic> _$TextGroupShoppingListItemToJson(
       'status': _$GroupShoppingListItemStatusEnumMap[instance.status]!,
       'description': instance.description,
       'color': instance.color,
-      'categoryID': instance.categoryID,
+      'groupShoppingListItemCategoryID':
+          instance.groupShoppingListItemCategoryID,
       'reminderDateTime':
           const NullableTimestampConverter().toJson(instance.reminderDateTime),
       'createdDateTime':
@@ -76,7 +78,8 @@ LinkGroupShoppingListItem _$LinkGroupShoppingListItemFromJson(
           GroupShoppingListItemStatus.unchecked,
       description: json['description'] as String?,
       color: json['color'] as String?,
-      categoryID: json['categoryID'] as String?,
+      groupShoppingListItemCategoryID:
+          json['groupShoppingListItemCategoryID'] as String?,
       reminderDateTime: const NullableTimestampConverter()
           .fromJson(json['reminderDateTime'] as Timestamp?),
       createdDateTime: const ClientCreatedTimestamp()
@@ -103,7 +106,8 @@ Map<String, dynamic> _$LinkGroupShoppingListItemToJson(
       'status': _$GroupShoppingListItemStatusEnumMap[instance.status]!,
       'description': instance.description,
       'color': instance.color,
-      'categoryID': instance.categoryID,
+      'groupShoppingListItemCategoryID':
+          instance.groupShoppingListItemCategoryID,
       'reminderDateTime':
           const NullableTimestampConverter().toJson(instance.reminderDateTime),
       'createdDateTime':
