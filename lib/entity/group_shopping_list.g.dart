@@ -16,7 +16,8 @@ _GroupShoppingList _$GroupShoppingListFromJson(Map<String, dynamic> json) =>
               _$GroupShoppingListStatusEnumMap, json['status']) ??
           GroupShoppingListStatus.active,
       shoppingLocationID: json['shoppingLocationID'] as String?,
-      duplicatedFromID: json['duplicatedFromID'] as String?,
+      duplicatedFromGroupShoppingListID:
+          json['duplicatedFromGroupShoppingListID'] as String?,
       ttlExpiresDateTime: _$JsonConverterFromJson<Timestamp, DateTime>(
           json['ttlExpiresDateTime'], const TimestampConverter().fromJson),
       createdDateTime: const ClientCreatedTimestamp()
@@ -37,7 +38,8 @@ Map<String, dynamic> _$GroupShoppingListToJson(_GroupShoppingList instance) =>
       'name': instance.name,
       'status': _$GroupShoppingListStatusEnumMap[instance.status]!,
       'shoppingLocationID': instance.shoppingLocationID,
-      'duplicatedFromID': instance.duplicatedFromID,
+      'duplicatedFromGroupShoppingListID':
+          instance.duplicatedFromGroupShoppingListID,
       'ttlExpiresDateTime': _$JsonConverterToJson<Timestamp, DateTime>(
           instance.ttlExpiresDateTime, const TimestampConverter().toJson),
       'createdDateTime':

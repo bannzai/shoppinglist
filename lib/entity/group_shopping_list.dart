@@ -21,7 +21,7 @@ abstract class GroupShoppingList with _$GroupShoppingList {
     @Default('') String name,
     @Default(GroupShoppingListStatus.active) GroupShoppingListStatus status,
     String? shoppingLocationID,
-    String? duplicatedFromID,
+    String? duplicatedFromGroupShoppingListID,
     @TimestampConverter() required DateTime? ttlExpiresDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,

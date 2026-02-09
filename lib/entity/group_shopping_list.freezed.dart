@@ -20,7 +20,7 @@ mixin _$GroupShoppingList {
   String get name;
   GroupShoppingListStatus get status;
   String? get shoppingLocationID;
-  String? get duplicatedFromID;
+  String? get duplicatedFromGroupShoppingListID;
   @TimestampConverter()
   DateTime? get ttlExpiresDateTime;
   @ClientCreatedTimestamp()
@@ -56,8 +56,10 @@ mixin _$GroupShoppingList {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.shoppingLocationID, shoppingLocationID) ||
                 other.shoppingLocationID == shoppingLocationID) &&
-            (identical(other.duplicatedFromID, duplicatedFromID) ||
-                other.duplicatedFromID == duplicatedFromID) &&
+            (identical(other.duplicatedFromGroupShoppingListID,
+                    duplicatedFromGroupShoppingListID) ||
+                other.duplicatedFromGroupShoppingListID ==
+                    duplicatedFromGroupShoppingListID) &&
             (identical(other.ttlExpiresDateTime, ttlExpiresDateTime) ||
                 other.ttlExpiresDateTime == ttlExpiresDateTime) &&
             (identical(other.createdDateTime, createdDateTime) ||
@@ -80,7 +82,7 @@ mixin _$GroupShoppingList {
       name,
       status,
       shoppingLocationID,
-      duplicatedFromID,
+      duplicatedFromGroupShoppingListID,
       ttlExpiresDateTime,
       createdDateTime,
       updatedDateTime,
@@ -89,7 +91,7 @@ mixin _$GroupShoppingList {
 
   @override
   String toString() {
-    return 'GroupShoppingList(id: $id, createUserID: $createUserID, groupID: $groupID, name: $name, status: $status, shoppingLocationID: $shoppingLocationID, duplicatedFromID: $duplicatedFromID, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingList(id: $id, createUserID: $createUserID, groupID: $groupID, name: $name, status: $status, shoppingLocationID: $shoppingLocationID, duplicatedFromGroupShoppingListID: $duplicatedFromGroupShoppingListID, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -106,7 +108,7 @@ abstract mixin class $GroupShoppingListCopyWith<$Res> {
       String name,
       GroupShoppingListStatus status,
       String? shoppingLocationID,
-      String? duplicatedFromID,
+      String? duplicatedFromGroupShoppingListID,
       @TimestampConverter() DateTime? ttlExpiresDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -133,7 +135,7 @@ class _$GroupShoppingListCopyWithImpl<$Res>
     Object? name = null,
     Object? status = null,
     Object? shoppingLocationID = freezed,
-    Object? duplicatedFromID = freezed,
+    Object? duplicatedFromGroupShoppingListID = freezed,
     Object? ttlExpiresDateTime = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
@@ -165,9 +167,10 @@ class _$GroupShoppingListCopyWithImpl<$Res>
           ? _self.shoppingLocationID
           : shoppingLocationID // ignore: cast_nullable_to_non_nullable
               as String?,
-      duplicatedFromID: freezed == duplicatedFromID
-          ? _self.duplicatedFromID
-          : duplicatedFromID // ignore: cast_nullable_to_non_nullable
+      duplicatedFromGroupShoppingListID: freezed ==
+              duplicatedFromGroupShoppingListID
+          ? _self.duplicatedFromGroupShoppingListID
+          : duplicatedFromGroupShoppingListID // ignore: cast_nullable_to_non_nullable
               as String?,
       ttlExpiresDateTime: freezed == ttlExpiresDateTime
           ? _self.ttlExpiresDateTime
@@ -293,7 +296,7 @@ extension GroupShoppingListPatterns on GroupShoppingList {
             String name,
             GroupShoppingListStatus status,
             String? shoppingLocationID,
-            String? duplicatedFromID,
+            String? duplicatedFromGroupShoppingListID,
             @TimestampConverter() DateTime? ttlExpiresDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -312,7 +315,7 @@ extension GroupShoppingListPatterns on GroupShoppingList {
             _that.name,
             _that.status,
             _that.shoppingLocationID,
-            _that.duplicatedFromID,
+            _that.duplicatedFromGroupShoppingListID,
             _that.ttlExpiresDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
@@ -345,7 +348,7 @@ extension GroupShoppingListPatterns on GroupShoppingList {
             String name,
             GroupShoppingListStatus status,
             String? shoppingLocationID,
-            String? duplicatedFromID,
+            String? duplicatedFromGroupShoppingListID,
             @TimestampConverter() DateTime? ttlExpiresDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -363,7 +366,7 @@ extension GroupShoppingListPatterns on GroupShoppingList {
             _that.name,
             _that.status,
             _that.shoppingLocationID,
-            _that.duplicatedFromID,
+            _that.duplicatedFromGroupShoppingListID,
             _that.ttlExpiresDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
@@ -395,7 +398,7 @@ extension GroupShoppingListPatterns on GroupShoppingList {
             String name,
             GroupShoppingListStatus status,
             String? shoppingLocationID,
-            String? duplicatedFromID,
+            String? duplicatedFromGroupShoppingListID,
             @TimestampConverter() DateTime? ttlExpiresDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -413,7 +416,7 @@ extension GroupShoppingListPatterns on GroupShoppingList {
             _that.name,
             _that.status,
             _that.shoppingLocationID,
-            _that.duplicatedFromID,
+            _that.duplicatedFromGroupShoppingListID,
             _that.ttlExpiresDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
@@ -436,7 +439,7 @@ class _GroupShoppingList extends GroupShoppingList {
       this.name = '',
       this.status = GroupShoppingListStatus.active,
       this.shoppingLocationID,
-      this.duplicatedFromID,
+      this.duplicatedFromGroupShoppingListID,
       @TimestampConverter() required this.ttlExpiresDateTime,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
@@ -461,7 +464,7 @@ class _GroupShoppingList extends GroupShoppingList {
   @override
   final String? shoppingLocationID;
   @override
-  final String? duplicatedFromID;
+  final String? duplicatedFromGroupShoppingListID;
   @override
   @TimestampConverter()
   final DateTime? ttlExpiresDateTime;
@@ -506,8 +509,10 @@ class _GroupShoppingList extends GroupShoppingList {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.shoppingLocationID, shoppingLocationID) ||
                 other.shoppingLocationID == shoppingLocationID) &&
-            (identical(other.duplicatedFromID, duplicatedFromID) ||
-                other.duplicatedFromID == duplicatedFromID) &&
+            (identical(other.duplicatedFromGroupShoppingListID,
+                    duplicatedFromGroupShoppingListID) ||
+                other.duplicatedFromGroupShoppingListID ==
+                    duplicatedFromGroupShoppingListID) &&
             (identical(other.ttlExpiresDateTime, ttlExpiresDateTime) ||
                 other.ttlExpiresDateTime == ttlExpiresDateTime) &&
             (identical(other.createdDateTime, createdDateTime) ||
@@ -530,7 +535,7 @@ class _GroupShoppingList extends GroupShoppingList {
       name,
       status,
       shoppingLocationID,
-      duplicatedFromID,
+      duplicatedFromGroupShoppingListID,
       ttlExpiresDateTime,
       createdDateTime,
       updatedDateTime,
@@ -539,7 +544,7 @@ class _GroupShoppingList extends GroupShoppingList {
 
   @override
   String toString() {
-    return 'GroupShoppingList(id: $id, createUserID: $createUserID, groupID: $groupID, name: $name, status: $status, shoppingLocationID: $shoppingLocationID, duplicatedFromID: $duplicatedFromID, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingList(id: $id, createUserID: $createUserID, groupID: $groupID, name: $name, status: $status, shoppingLocationID: $shoppingLocationID, duplicatedFromGroupShoppingListID: $duplicatedFromGroupShoppingListID, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -558,7 +563,7 @@ abstract mixin class _$GroupShoppingListCopyWith<$Res>
       String name,
       GroupShoppingListStatus status,
       String? shoppingLocationID,
-      String? duplicatedFromID,
+      String? duplicatedFromGroupShoppingListID,
       @TimestampConverter() DateTime? ttlExpiresDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -585,7 +590,7 @@ class __$GroupShoppingListCopyWithImpl<$Res>
     Object? name = null,
     Object? status = null,
     Object? shoppingLocationID = freezed,
-    Object? duplicatedFromID = freezed,
+    Object? duplicatedFromGroupShoppingListID = freezed,
     Object? ttlExpiresDateTime = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
@@ -617,9 +622,10 @@ class __$GroupShoppingListCopyWithImpl<$Res>
           ? _self.shoppingLocationID
           : shoppingLocationID // ignore: cast_nullable_to_non_nullable
               as String?,
-      duplicatedFromID: freezed == duplicatedFromID
-          ? _self.duplicatedFromID
-          : duplicatedFromID // ignore: cast_nullable_to_non_nullable
+      duplicatedFromGroupShoppingListID: freezed ==
+              duplicatedFromGroupShoppingListID
+          ? _self.duplicatedFromGroupShoppingListID
+          : duplicatedFromGroupShoppingListID // ignore: cast_nullable_to_non_nullable
               as String?,
       ttlExpiresDateTime: freezed == ttlExpiresDateTime
           ? _self.ttlExpiresDateTime
