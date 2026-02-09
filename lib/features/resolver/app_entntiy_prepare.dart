@@ -65,7 +65,7 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
   // 合成ID: group_{uid}
   static Future<void> _createDefaultGroup(
       WidgetRef ref, AppUser appUser) async {
-    final syntheticGroupID = 'group_${appUser.id}';
+    final syntheticGroupID = AppUser.appUserGroupID(appUser.id);
     await FirebaseFirestore.instance
         .collection('groups')
         .doc(syntheticGroupID)
