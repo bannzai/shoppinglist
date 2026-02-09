@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shoppinglist/entity/app_user.dart';
+import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/auth.dart';
@@ -15,6 +16,7 @@ part 'database.g.dart';
 
 abstract class _CollectionPath {
   static const String users = '/users';
+  static const String groups = '/groups';
   static String shoppingLists({required String groupID}) =>
       '/groups/$groupID/shoppingLists';
   static String shoppingListItems(
@@ -52,6 +54,18 @@ GroupDatabase groupDatabase(GroupDatabaseRef ref, {required String groupID}) {
 class GroupDatabase {
   final String groupID;
   GroupDatabase({required this.groupID});
+
+  final FromFirestore<Group> _groupFromFirestore = (snapshot, options) =>
+      Group.fromJson(snapshot.data()!..['id'] = snapshot.id);
+  final ToFirestore<Group> _groupToFirestore =
+      (group, options) => group.toJson();
+  DocumentReference<Group> groupReference() => FirebaseFirestore.instance
+      .collection(_CollectionPath.groups)
+      .doc(groupID)
+      .withConverter(
+        fromFirestore: _groupFromFirestore,
+        toFirestore: _groupToFirestore,
+      );
 
   final FromFirestore<GroupShoppingList> _shoppingListFromFirestore =
       (snapshot, options) =>
