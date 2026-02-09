@@ -4,18 +4,20 @@ import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 
 class ShoppingListItemAddButton extends HookConsumerWidget {
+  final String groupID;
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
 
   const ShoppingListItemAddButton(
       {super.key,
+      required this.groupID,
       required this.shoppingListID,
       required this.shoppingListItems});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return OutlinedButton(
       onPressed: () {
-        ref.read(addTextShoppingListItemProvider).call(
+        ref.read(addTextShoppingListItemProvider(groupID: groupID)).call(
               shoppingListID: shoppingListID,
               message: '',
               order: shoppingListItems.nextOrder,

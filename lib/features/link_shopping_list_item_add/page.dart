@@ -8,11 +8,13 @@ import 'package:shoppinglist/style/color.dart';
 import 'package:metadata_fetch/metadata_fetch.dart';
 
 class LinkShoppingListItemAddPage extends HookConsumerWidget {
+  final String groupID;
   final String shoppingListID;
   final LinkGroupShoppingListItem linkShoppingListItem;
   final List<GroupShoppingListItem> shoppingListItems;
   const LinkShoppingListItemAddPage({
     super.key,
+    required this.groupID,
     required this.shoppingListID,
     required this.linkShoppingListItem,
     required this.shoppingListItems,
@@ -22,7 +24,8 @@ class LinkShoppingListItemAddPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final textEditingController = useTextEditingController();
     final focusNode = useFocusNode();
-    final addLinkShoppingListItem = ref.watch(addLinkShoppingListItemProvider);
+    final addLinkShoppingListItem =
+        ref.watch(addLinkShoppingListItemProvider(groupID: groupID));
 
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {

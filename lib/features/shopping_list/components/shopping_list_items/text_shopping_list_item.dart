@@ -9,11 +9,13 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/color.dart';
 
 class TextShoppingListItemWidget extends HookConsumerWidget {
+  final String groupID;
   final TextGroupShoppingListItem textShoppingListItem;
   final List<GroupShoppingListItem> shoppingListItems;
 
   const TextShoppingListItemWidget(
       {super.key,
+      required this.groupID,
       required this.textShoppingListItem,
       required this.shoppingListItems});
 
@@ -52,7 +54,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                     GroupShoppingListItemStatus.checked,
                 onChanged: (value) {
                   ref
-                      .read(groupDatabaseProvider)
+                      .read(groupDatabaseProvider(groupID: groupID))
                       .shoppingListItemsReference(
                         shoppingListID: textShoppingListItem.shoppingListID,
                       )
@@ -77,6 +79,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                       height: 44,
                       width: double.infinity,
                       child: TextShoppingListItemTextField(
+                        groupID: groupID,
                         textEditingController: textEditingController,
                         focusNode: focusNode,
                         textShoppingListItem: textShoppingListItem,
@@ -87,7 +90,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                   IconButton(
                     onPressed: () {
                       ref
-                          .read(groupDatabaseProvider)
+                          .read(groupDatabaseProvider(groupID: groupID))
                           .shoppingListItemsReference(
                             shoppingListID: textShoppingListItem.shoppingListID,
                           )
@@ -111,12 +114,14 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
 }
 
 class TextShoppingListItemTextField extends HookConsumerWidget {
+  final String groupID;
   final TextEditingController textEditingController;
   final FocusNode focusNode;
   final TextGroupShoppingListItem textShoppingListItem;
   final List<GroupShoppingListItem> shoppingListItems;
   const TextShoppingListItemTextField({
     super.key,
+    required this.groupID,
     required this.textEditingController,
     required this.focusNode,
     required this.textShoppingListItem,
@@ -134,7 +139,7 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
         if (event.logicalKey == LogicalKeyboardKey.backspace) {
           if (text.value.isEmpty) {
             ref
-                .read(groupDatabaseProvider)
+                .read(groupDatabaseProvider(groupID: groupID))
                 .shoppingListItemsReference(
                     shoppingListID: textShoppingListItem.shoppingListID)
                 .doc(textShoppingListItem.id)
@@ -164,7 +169,7 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
           if (value.isEmpty) {
             if (shoppingListItems.length > 1) {
               ref
-                  .read(groupDatabaseProvider)
+                  .read(groupDatabaseProvider(groupID: groupID))
                   .shoppingListItemReference(
                     shoppingListID: textShoppingListItem.shoppingListID,
                     itemID: itemID,
@@ -172,7 +177,7 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
                   .delete();
             } else {
               ref
-                  .read(groupDatabaseProvider)
+                  .read(groupDatabaseProvider(groupID: groupID))
                   .shoppingListItemReference(
                     shoppingListID: textShoppingListItem.shoppingListID,
                     itemID: itemID,
@@ -181,7 +186,7 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
             }
           } else {
             ref
-                .read(groupDatabaseProvider)
+                .read(groupDatabaseProvider(groupID: groupID))
                 .shoppingListItemsReference(
                   shoppingListID: textShoppingListItem.shoppingListID,
                 )
@@ -191,7 +196,7 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
                   SetOptions(merge: true),
                 );
 
-            ref.read(addTextShoppingListItemProvider).call(
+            ref.read(addTextShoppingListItemProvider(groupID: groupID)).call(
                   shoppingListID: textShoppingListItem.shoppingListID,
                   message: '',
                   order: shoppingListItems.nextOrder,

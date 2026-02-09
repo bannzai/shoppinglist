@@ -17,8 +17,9 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
   });
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shoppingListAdd = ref.watch(shoppingListAddProvider);
-    final shoppingLists = ref.watch(shoppingListsProvider);
+    final shoppingListAdd =
+        ref.watch(shoppingListAddProvider(groupID: groupID));
+    final shoppingLists = ref.watch(shoppingListsProvider(groupID: groupID));
 
     useEffect(() {
       void f() async {

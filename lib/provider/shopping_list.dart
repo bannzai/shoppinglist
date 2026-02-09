@@ -8,8 +8,9 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 part 'shopping_list.g.dart';
 
 @Riverpod(dependencies: [groupDatabase])
-Stream<List<GroupShoppingList>> shoppingLists(ShoppingListsRef ref) {
-  final database = ref.watch(groupDatabaseProvider);
+Stream<List<GroupShoppingList>> shoppingLists(ShoppingListsRef ref,
+    {required String groupID}) {
+  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return database
       .shoppingListsReference()
       .orderBy(GroupShoppingListFirestoreKeys.createdDateTime, descending: true)
@@ -42,8 +43,9 @@ class ShoppingListAdd {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingListAdd shoppingListAdd(ShoppingListAddRef ref) {
-  final database = ref.watch(groupDatabaseProvider);
+ShoppingListAdd shoppingListAdd(ShoppingListAddRef ref,
+    {required String groupID}) {
+  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingListAdd(database: database);
 }
 
@@ -60,8 +62,9 @@ class ShoppingListDelete {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingListDelete shoppingListDelete(ShoppingListDeleteRef ref) {
-  final database = ref.watch(groupDatabaseProvider);
+ShoppingListDelete shoppingListDelete(ShoppingListDeleteRef ref,
+    {required String groupID}) {
+  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingListDelete(database: database);
 }
 
@@ -80,8 +83,9 @@ class ShoppingListUpdate {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingListUpdate shoppingListUpdate(ShoppingListUpdateRef ref) {
-  final database = ref.watch(groupDatabaseProvider);
+ShoppingListUpdate shoppingListUpdate(ShoppingListUpdateRef ref,
+    {required String groupID}) {
+  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingListUpdate(database: database);
 }
 
@@ -117,10 +121,12 @@ class ShoppingListDuplicate {
 
 @Riverpod(
     dependencies: [shoppingListAdd, addTextShoppingListItem, groupDatabase])
-ShoppingListDuplicate shoppingListDuplicate(ShoppingListDuplicateRef ref) {
-  final shoppingListAdd = ref.watch(shoppingListAddProvider);
-  final addTextShoppingListItem = ref.watch(addTextShoppingListItemProvider);
-  final database = ref.watch(groupDatabaseProvider);
+ShoppingListDuplicate shoppingListDuplicate(ShoppingListDuplicateRef ref,
+    {required String groupID}) {
+  final shoppingListAdd = ref.watch(shoppingListAddProvider(groupID: groupID));
+  final addTextShoppingListItem =
+      ref.watch(addTextShoppingListItemProvider(groupID: groupID));
+  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingListDuplicate(
       shoppingListAdd: shoppingListAdd,
       addTextShoppingListItem: addTextShoppingListItem,

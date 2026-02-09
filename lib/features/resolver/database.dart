@@ -45,8 +45,8 @@ class UserDatabase {
 }
 
 @Riverpod(keepAlive: true, dependencies: [])
-GroupDatabase groupDatabase(GroupDatabaseRef ref) {
-  throw UnimplementedError('groupDatabase is not implemented');
+GroupDatabase groupDatabase(GroupDatabaseRef ref, {required String groupID}) {
+  return GroupDatabase(groupID: groupID);
 }
 
 class GroupDatabase {
@@ -92,10 +92,9 @@ class GroupDatabase {
             toFirestore: _shoppingListToFirestore,
           );
 
-  final FromFirestore<GroupShoppingListItem>
-      _shoppingListItemFromFirestore = (snapshot, options) =>
-          GroupShoppingListItem.fromJson(
-              snapshot.data()!..['id'] = snapshot.id);
+  final FromFirestore<GroupShoppingListItem> _shoppingListItemFromFirestore =
+      (snapshot, options) => GroupShoppingListItem.fromJson(
+          snapshot.data()!..['id'] = snapshot.id);
   final ToFirestore<GroupShoppingListItem> _shoppingListItemToFirestore =
       (item, options) => item.toJson();
   CollectionReference<GroupShoppingListItem> shoppingListItemsReference(
@@ -155,26 +154,5 @@ class UserDatabaseResolver extends HookConsumerWidget {
     } else {
       return const Loading();
     }
-  }
-}
-
-class GroupDatabaseResolver extends HookConsumerWidget {
-  final String groupID;
-  final Widget Function(BuildContext) builder;
-
-  const GroupDatabaseResolver(
-      {super.key, required this.groupID, required this.builder});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ProviderScope(
-      overrides: [
-        groupDatabaseProvider
-            .overrideWith((ref) => GroupDatabase(groupID: groupID))
-      ],
-      child: Consumer(
-        builder: ((context, ref, child) => builder(context)),
-      ),
-    );
   }
 }

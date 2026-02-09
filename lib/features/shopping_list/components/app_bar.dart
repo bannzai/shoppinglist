@@ -12,6 +12,7 @@ import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
 class ShoppingListAppBar extends HookConsumerWidget
     implements PreferredSizeWidget {
+  final String groupID;
   final ValueNotifier<String> shoppingListID;
   final List<GroupShoppingList> shoppingLists;
   final GroupShoppingList? shoppingList;
@@ -19,6 +20,7 @@ class ShoppingListAppBar extends HookConsumerWidget
   final List<GroupShoppingListItem> shoppingListItems;
   const ShoppingListAppBar({
     super.key,
+    required this.groupID,
     required this.shoppingListID,
     required this.shoppingLists,
     required this.shoppingList,
@@ -29,9 +31,12 @@ class ShoppingListAppBar extends HookConsumerWidget
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final shoppingList = this.shoppingList;
-    final shoppingListAdd = ref.watch(shoppingListAddProvider);
-    final shoppingListDelete = ref.watch(shoppingListDeleteProvider);
-    final shoppingListDuplicate = ref.watch(shoppingListDuplicateProvider);
+    final shoppingListAdd =
+        ref.watch(shoppingListAddProvider(groupID: groupID));
+    final shoppingListDelete =
+        ref.watch(shoppingListDeleteProvider(groupID: groupID));
+    final shoppingListDuplicate =
+        ref.watch(shoppingListDuplicateProvider(groupID: groupID));
 
     return AppBar(
       title: HookBuilder(
@@ -59,6 +64,7 @@ class ShoppingListAppBar extends HookConsumerWidget
                 context: context,
                 builder: (context) {
                   return ShoppingListSettingPage(
+                    groupID: groupID,
                     shoppingListID: shoppingListID.value,
                     shoppingList: shoppingList,
                     onDelete: () {

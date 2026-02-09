@@ -27,7 +27,8 @@ extension HomePageTabFunctions on HomePageTabType {
 }
 
 class HomePage extends HookConsumerWidget {
-  const HomePage({super.key});
+  final String groupID;
+  const HomePage({super.key, required this.groupID});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -73,10 +74,10 @@ class HomePage extends HookConsumerWidget {
         body: TabBarView(
           physics: const NeverScrollableScrollPhysics(),
           controller: tabController,
-          children: const [
-            ShoppingListPage(),
+          children: [
+            ShoppingListPage(groupID: groupID),
             // ECItemsPage(),
-            SettingPage(),
+            const SettingPage(),
           ],
         ),
       ),

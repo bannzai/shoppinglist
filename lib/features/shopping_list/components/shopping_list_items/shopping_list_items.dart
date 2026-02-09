@@ -7,12 +7,14 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 
 class ShoppingListItems extends HookConsumerWidget {
+  final String groupID;
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
   final AsyncValue<List<GroupShoppingListItem>> shoppingListItemsAsync;
 
   const ShoppingListItems({
     super.key,
+    required this.groupID,
     required this.shoppingListID,
     required this.shoppingListItems,
     required this.shoppingListItemsAsync,
@@ -48,7 +50,7 @@ class ShoppingListItems extends HookConsumerWidget {
 
         items.value = [...orderedItems];
 
-        ref.read(shoppingListItemBatchUpdateProvider).call(
+        ref.read(shoppingListItemBatchUpdateProvider(groupID: groupID)).call(
               shoppingListID: shoppingListID,
               shoppingListItems: orderedItems,
             );
@@ -60,6 +62,7 @@ class ShoppingListItems extends HookConsumerWidget {
         return switch (item) {
           TextGroupShoppingListItem textItem => TextShoppingListItemWidget(
               key: ValueKey(item.id),
+              groupID: groupID,
               textShoppingListItem: textItem,
               shoppingListItems: items.value),
           LinkGroupShoppingListItem linkItem => LinkShoppingListItemWidget(

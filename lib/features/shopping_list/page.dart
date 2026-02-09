@@ -18,16 +18,18 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/color.dart';
 
 class ShoppingListPage extends HookConsumerWidget {
-  const ShoppingListPage({super.key});
+  final String groupID;
+  const ShoppingListPage({super.key, required this.groupID});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shoppingLists = ref.watch(shoppingListsProvider);
+    final shoppingLists = ref.watch(shoppingListsProvider(groupID: groupID));
 
     return Retry(
-      retry: () => ref.invalidate(shoppingListsProvider),
+      retry: () => ref.invalidate(shoppingListsProvider(groupID: groupID)),
       child: shoppingLists.when(
-        data: (shoppingLists) => _Body(shoppingLists: shoppingLists),
+        data: (shoppingLists) =>
+            _Body(groupID: groupID, shoppingLists: shoppingLists),
         error: (e, st) => RetryPage(exception: e),
         loading: () => const Loading(),
       ),
@@ -36,9 +38,10 @@ class ShoppingListPage extends HookConsumerWidget {
 }
 
 class _Body extends HookConsumerWidget {
+  final String groupID;
   final List<GroupShoppingList> shoppingLists;
 
-  const _Body({required this.shoppingLists});
+  const _Body({required this.groupID, required this.shoppingLists});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -46,6 +49,7 @@ class _Body extends HookConsumerWidget {
     final retry = Retry.of(context).retry;
     final showChecked = useState(true);
     final shoppingListItemsAsync = ref.watch(textShoppingListItemsProvider(
+      groupID: groupID,
       shoppingListID: shoppingListID.value,
       showChecked: showChecked.value,
     ));
@@ -66,7 +70,7 @@ class _Body extends HookConsumerWidget {
 
     // shoppingListIDが変わったらshoppingListsProviderから更新してWidgetツリーを更新
     useEffect(() {
-      ref.invalidate(shoppingListsProvider);
+      ref.invalidate(shoppingListsProvider(groupID: groupID));
       return null;
     }, [shoppingListID.value]);
 
@@ -74,11 +78,13 @@ class _Body extends HookConsumerWidget {
       retry: () {
         retry();
         ref.invalidate(textShoppingListItemsProvider(
+            groupID: groupID,
             shoppingListID: shoppingListID.value,
             showChecked: showChecked.value));
       },
       child: Scaffold(
         appBar: ShoppingListAppBar(
+          groupID: groupID,
           shoppingListID: shoppingListID,
           shoppingLists: shoppingLists,
           shoppingList: shoppingList,
@@ -90,6 +96,7 @@ class _Body extends HookConsumerWidget {
             data: (shoppingListItems) {
               if (showChecked.value && shoppingListItems.isEmpty) {
                 return EmptyTextShoppingListItems(
+                    groupID: groupID,
                     shoppingListID: shoppingListID.value,
                     shoppingListItems: shoppingListItems);
               } else {
@@ -108,6 +115,7 @@ class _Body extends HookConsumerWidget {
                     ],
                     Expanded(
                         child: ShoppingListItems(
+                            groupID: groupID,
                             shoppingListID: shoppingListID.value,
                             shoppingListItems: shoppingListItems,
                             shoppingListItemsAsync: shoppingListItemsAsync)),
@@ -123,18 +131,21 @@ class _Body extends HookConsumerWidget {
                             children: [
                               Expanded(
                                 child: ShoppingListItemAddButton(
+                                    groupID: groupID,
                                     shoppingListID: shoppingListID.value,
                                     shoppingListItems: shoppingListItems),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: ImagePickerButton(
+                                    groupID: groupID,
                                     shoppingListID: shoppingListID.value,
                                     shoppingListItems: shoppingListItems),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: CopyMultilineTextButton(
+                                    groupID: groupID,
                                     shoppingListID: shoppingListID.value,
                                     shoppingListItems: shoppingListItems),
                               ),

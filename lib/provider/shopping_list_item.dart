@@ -8,9 +8,10 @@ part 'shopping_list_item.g.dart';
 @Riverpod(dependencies: [groupDatabase])
 Stream<List<GroupShoppingListItem>> textShoppingListItems(
     TextShoppingListItemsRef ref,
-    {required String shoppingListID,
+    {required String groupID,
+    required String shoppingListID,
     required bool showChecked}) {
-  final database = ref.watch(groupDatabaseProvider);
+  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   var query = database
       .shoppingListItemsReference(shoppingListID: shoppingListID)
       .where(GroupShoppingListItemFirestoreKeys.type, isEqualTo: 'text');
@@ -27,8 +28,9 @@ Stream<List<GroupShoppingListItem>> textShoppingListItems(
 @Riverpod(dependencies: [groupDatabase])
 Stream<List<GroupShoppingListItem>> linkShoppingListItems(
     LinkShoppingListItemsRef ref,
-    {required String shoppingListID}) {
-  final database = ref.watch(groupDatabaseProvider);
+    {required String groupID,
+    required String shoppingListID}) {
+  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return database
       .shoppingListItemsReference(shoppingListID: shoppingListID)
       .where(GroupShoppingListItemFirestoreKeys.type, isEqualTo: 'link')
@@ -62,9 +64,10 @@ class AddTextShoppingListItem {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-AddTextShoppingListItem addTextShoppingListItem(
-    AddTextShoppingListItemRef ref) {
-  return AddTextShoppingListItem(database: ref.watch(groupDatabaseProvider));
+AddTextShoppingListItem addTextShoppingListItem(AddTextShoppingListItemRef ref,
+    {required String groupID}) {
+  return AddTextShoppingListItem(
+      database: ref.watch(groupDatabaseProvider(groupID: groupID)));
 }
 
 class AddLinkShoppingListItem {
@@ -100,9 +103,10 @@ class AddLinkShoppingListItem {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-AddLinkShoppingListItem addLinkShoppingListItem(
-    AddLinkShoppingListItemRef ref) {
-  return AddLinkShoppingListItem(database: ref.watch(groupDatabaseProvider));
+AddLinkShoppingListItem addLinkShoppingListItem(AddLinkShoppingListItemRef ref,
+    {required String groupID}) {
+  return AddLinkShoppingListItem(
+      database: ref.watch(groupDatabaseProvider(groupID: groupID)));
 }
 
 class ShoppingListItemBatchUpdate {
@@ -129,7 +133,8 @@ class ShoppingListItemBatchUpdate {
 
 @Riverpod(dependencies: [groupDatabase])
 ShoppingListItemBatchUpdate shoppingListItemBatchUpdate(
-    ShoppingListItemBatchUpdateRef ref) {
+    ShoppingListItemBatchUpdateRef ref,
+    {required String groupID}) {
   return ShoppingListItemBatchUpdate(
-      database: ref.watch(groupDatabaseProvider));
+      database: ref.watch(groupDatabaseProvider(groupID: groupID)));
 }

@@ -9,11 +9,13 @@ import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/image/image.dart';
 
 class ImagePickerButton extends HookConsumerWidget {
+  final String groupID;
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
 
   const ImagePickerButton(
       {super.key,
+      required this.groupID,
       required this.shoppingListID,
       required this.shoppingListItems});
 
@@ -104,7 +106,7 @@ class ImagePickerButton extends HookConsumerWidget {
       }
 
       try {
-        await ref.read(addTextShoppingListItemProvider).call(
+        await ref.read(addTextShoppingListItemProvider(groupID: groupID)).call(
               shoppingListID: shoppingListID,
               message: e,
               order: shoppingListItems.nextOrder + i,

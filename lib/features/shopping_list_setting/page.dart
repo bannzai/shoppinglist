@@ -8,11 +8,13 @@ import 'package:shoppinglist/style/button.dart';
 import 'package:shoppinglist/style/color.dart';
 
 class ShoppingListSettingPage extends HookConsumerWidget {
+  final String groupID;
   final String shoppingListID;
   final GroupShoppingList shoppingList;
   final VoidCallback onDelete;
   const ShoppingListSettingPage({
     super.key,
+    required this.groupID,
     required this.shoppingListID,
     required this.shoppingList,
     required this.onDelete,
@@ -23,7 +25,8 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     final shoppingList = useState(this.shoppingList);
     final textEditingController =
         useTextEditingController(text: shoppingList.value.name);
-    final shoppingListUpdate = ref.watch(shoppingListUpdateProvider);
+    final shoppingListUpdate =
+        ref.watch(shoppingListUpdateProvider(groupID: groupID));
     final ttlExpiresDateTimeValue = shoppingList.value.ttlExpiresDateTime;
 
     return Scaffold(

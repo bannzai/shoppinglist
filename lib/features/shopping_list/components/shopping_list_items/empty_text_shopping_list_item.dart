@@ -5,10 +5,12 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/button.dart';
 
 class EmptyTextShoppingListItems extends HookConsumerWidget {
+  final String groupID;
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
   const EmptyTextShoppingListItems(
       {super.key,
+      required this.groupID,
       required this.shoppingListID,
       required this.shoppingListItems});
 
@@ -28,7 +30,9 @@ class EmptyTextShoppingListItems extends HookConsumerWidget {
                 style: outlinedButtonStyle,
                 child: const Text('最初の買い物リストを作成しましょう！'),
                 onPressed: () {
-                  ref.read(addTextShoppingListItemProvider).call(
+                  ref
+                      .read(addTextShoppingListItemProvider(groupID: groupID))
+                      .call(
                         shoppingListID: shoppingListID,
                         message: '',
                         order: shoppingListItems.nextOrder,
