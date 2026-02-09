@@ -1,11 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
-import 'package:shoppinglist/entity/app_user.dart';
-import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/app_user.dart';
+import 'package:shoppinglist/provider/group_create.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 
 class AppEntityPrepareResolver extends HookConsumerWidget {
@@ -26,11 +24,12 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
     }
 
     final groupID = appUser.defaultGroupID;
+    final createGroup = ref.watch(createGroupProvider);
 
     // Group未作成の場合は作成してAppUserにセット
     useEffect(() {
       if (groupID == null) {
-        _createDefaultGroup(ref, appUser);
+        createGroup(appUser: appUser);
       }
       return null;
     }, [groupID]);
@@ -59,23 +58,5 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
       return const Loading();
     }
     return builder(context, groupID);
-  }
-
-  // 1人用グループを作成し、AppUserのdefaultGroupIDにセットする
-  // 合成ID: group_{uid}
-  static Future<void> _createDefaultGroup(
-      WidgetRef ref, AppUser appUser) async {
-    final syntheticGroupID = AppUser.appUserGroupID(appUser.id);
-    await FirebaseFirestore.instance
-        .collection('groups')
-        .doc(syntheticGroupID)
-        .set({
-      'members': [appUser.id],
-    }, SetOptions(merge: true));
-    final userDatabase = ref.read(userDatabaseProvider);
-    await userDatabase.userReference().set(
-          appUser.copyWith(defaultGroupID: syntheticGroupID),
-          SetOptions(merge: true),
-        );
   }
 }
