@@ -17,7 +17,11 @@ class CreateGroup {
     // groupIDはここで確定するため、GroupDatabaseはcall内で生成する
     final groupDocRef = FirebaseFirestore.instance.collection('groups').doc();
     final groupDatabase = GroupDatabase(groupID: groupDocRef.id);
-    final group = Group(id: groupDocRef.id, memberUserIDs: [appUser.id]);
+    final group = Group(
+      id: groupDocRef.id,
+      memberUserIDs: [appUser.id],
+      ownerUserID: appUser.id,
+    );
 
     batch.set(
       groupDatabase.groupReference(),
