@@ -12,19 +12,25 @@ class CreateGroup {
   CreateGroup({required this.userDatabase});
 
   Future<void> call({required AppUser appUser}) async {
-    final groupRef = FirebaseFirestore.instance.collection('groups').doc();
-    final group = Group(id: groupRef.id, memberUserIDs: [appUser.id]);
-    await groupRef
-        .withConverter(
-          fromFirestore: (snapshot, _) =>
-              Group.fromJson(snapshot.data()!..['id'] = snapshot.id),
-          toFirestore: (group, _) => group.toJson(),
-        )
-        .set(group);
-    await userDatabase.userReference().set(
-          appUser.copyWith(defaultGroupID: groupRef.id),
-          SetOptions(merge: true),
-        );
+    final batch = FirebaseFirestore.instance.batch();
+
+    // groupIDはここで確定するため、GroupDatabaseはcall内で生成する
+    final groupDocRef = FirebaseFirestore.instance.collection('groups').doc();
+    final groupDatabase = GroupDatabase(groupID: groupDocRef.id);
+    final group = Group(id: groupDocRef.id, memberUserIDs: [appUser.id]);
+
+    batch.set(
+      groupDatabase.groupReference(),
+      group,
+      SetOptions(merge: true),
+    );
+    batch.set(
+      userDatabase.userReference(),
+      appUser.copyWith(defaultGroupID: groupDocRef.id),
+      SetOptions(merge: true),
+    );
+
+    await batch.commit();
   }
 }
 
