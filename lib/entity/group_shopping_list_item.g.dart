@@ -1,18 +1,25 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'memo_row.dart';
+part of 'group_shopping_list_item.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-TextMemoRow _$TextMemoRowFromJson(Map<String, dynamic> json) => TextMemoRow(
+TextGroupShoppingListItem _$TextGroupShoppingListItemFromJson(
+        Map<String, dynamic> json) =>
+    TextGroupShoppingListItem(
       id: json['id'] as String,
-      memoID: json['memoID'] as String,
+      shoppingListID: json['shoppingListID'] as String,
       message: json['message'] as String,
       order: (json['order'] as num).toInt(),
-      status: $enumDecodeNullable(_$MemoRowStatusEnumMap, json['status']) ??
-          MemoRowStatus.unchecked,
+      status: $enumDecodeNullable(
+              _$GroupShoppingListItemStatusEnumMap, json['status']) ??
+          GroupShoppingListItemStatus.unchecked,
+      description: json['description'] as String?,
+      color: json['color'] as String?,
+      groupShoppingListItemCategoryID:
+          json['groupShoppingListItemCategoryID'] as String?,
       reminderDateTime: const NullableTimestampConverter()
           .fromJson(json['reminderDateTime'] as Timestamp?),
       createdDateTime: const ClientCreatedTimestamp()
@@ -26,13 +33,18 @@ TextMemoRow _$TextMemoRowFromJson(Map<String, dynamic> json) => TextMemoRow(
       $type: json['type'] as String?,
     );
 
-Map<String, dynamic> _$TextMemoRowToJson(TextMemoRow instance) =>
+Map<String, dynamic> _$TextGroupShoppingListItemToJson(
+        TextGroupShoppingListItem instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'memoID': instance.memoID,
+      'shoppingListID': instance.shoppingListID,
       'message': instance.message,
       'order': instance.order,
-      'status': _$MemoRowStatusEnumMap[instance.status]!,
+      'status': _$GroupShoppingListItemStatusEnumMap[instance.status]!,
+      'description': instance.description,
+      'color': instance.color,
+      'groupShoppingListItemCategoryID':
+          instance.groupShoppingListItemCategoryID,
       'reminderDateTime':
           const NullableTimestampConverter().toJson(instance.reminderDateTime),
       'createdDateTime':
@@ -46,21 +58,28 @@ Map<String, dynamic> _$TextMemoRowToJson(TextMemoRow instance) =>
       'type': instance.$type,
     };
 
-const _$MemoRowStatusEnumMap = {
-  MemoRowStatus.checked: 'checked',
-  MemoRowStatus.unchecked: 'unchecked',
+const _$GroupShoppingListItemStatusEnumMap = {
+  GroupShoppingListItemStatus.checked: 'checked',
+  GroupShoppingListItemStatus.unchecked: 'unchecked',
 };
 
-LinkMemoRow _$LinkMemoRowFromJson(Map<String, dynamic> json) => LinkMemoRow(
+LinkGroupShoppingListItem _$LinkGroupShoppingListItemFromJson(
+        Map<String, dynamic> json) =>
+    LinkGroupShoppingListItem(
       id: json['id'] as String,
-      memoID: json['memoID'] as String,
+      shoppingListID: json['shoppingListID'] as String,
       url: json['url'] as String,
       order: (json['order'] as num).toInt(),
       metadataTitle: json['metadataTitle'] as String?,
       metadataDescription: json['metadataDescription'] as String?,
       metadataImageURL: json['metadataImageURL'] as String?,
-      status: $enumDecodeNullable(_$MemoRowStatusEnumMap, json['status']) ??
-          MemoRowStatus.unchecked,
+      status: $enumDecodeNullable(
+              _$GroupShoppingListItemStatusEnumMap, json['status']) ??
+          GroupShoppingListItemStatus.unchecked,
+      description: json['description'] as String?,
+      color: json['color'] as String?,
+      groupShoppingListItemCategoryID:
+          json['groupShoppingListItemCategoryID'] as String?,
       reminderDateTime: const NullableTimestampConverter()
           .fromJson(json['reminderDateTime'] as Timestamp?),
       createdDateTime: const ClientCreatedTimestamp()
@@ -74,16 +93,21 @@ LinkMemoRow _$LinkMemoRowFromJson(Map<String, dynamic> json) => LinkMemoRow(
       $type: json['type'] as String?,
     );
 
-Map<String, dynamic> _$LinkMemoRowToJson(LinkMemoRow instance) =>
+Map<String, dynamic> _$LinkGroupShoppingListItemToJson(
+        LinkGroupShoppingListItem instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'memoID': instance.memoID,
+      'shoppingListID': instance.shoppingListID,
       'url': instance.url,
       'order': instance.order,
       'metadataTitle': instance.metadataTitle,
       'metadataDescription': instance.metadataDescription,
       'metadataImageURL': instance.metadataImageURL,
-      'status': _$MemoRowStatusEnumMap[instance.status]!,
+      'status': _$GroupShoppingListItemStatusEnumMap[instance.status]!,
+      'description': instance.description,
+      'color': instance.color,
+      'groupShoppingListItemCategoryID':
+          instance.groupShoppingListItemCategoryID,
       'reminderDateTime':
           const NullableTimestampConverter().toJson(instance.reminderDateTime),
       'createdDateTime':

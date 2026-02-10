@@ -2,33 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:shoppinglist/entity/memo.dart';
-import 'package:shoppinglist/provider/memo.dart';
+import 'package:shoppinglist/entity/group_shopping_list.dart';
+import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/style/button.dart';
 import 'package:shoppinglist/style/color.dart';
 
-class MemoSettingPage extends HookConsumerWidget {
-  final String memoID;
-  final Memo memo;
+class ShoppingListSettingPage extends HookConsumerWidget {
+  final String groupID;
+  final String shoppingListID;
+  final GroupShoppingList shoppingList;
   final VoidCallback onDelete;
-  const MemoSettingPage({
+  const ShoppingListSettingPage({
     super.key,
-    required this.memoID,
-    required this.memo,
+    required this.groupID,
+    required this.shoppingListID,
+    required this.shoppingList,
     required this.onDelete,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final memo = useState(this.memo);
+    final shoppingList = useState(this.shoppingList);
     final textEditingController =
-        useTextEditingController(text: memo.value.name);
-    final memoUpdate = ref.watch(memoUpdateProvider);
-    final ttlExpiresDateTimeValue = memo.value.ttlExpiresDateTime;
+        useTextEditingController(text: shoppingList.value.name);
+    final shoppingListUpdate =
+        ref.watch(shoppingListUpdateProvider(groupID: groupID));
+    final ttlExpiresDateTimeValue = shoppingList.value.ttlExpiresDateTime;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('メモ設定'),
+        title: const Text('買い物リスト設定'),
       ),
       body: SafeArea(
         child: Padding(
@@ -44,7 +47,7 @@ class MemoSettingPage extends HookConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('メモ名',
+                          const Text('買い物リスト名',
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold)),
                           SizedBox(
@@ -52,10 +55,12 @@ class MemoSettingPage extends HookConsumerWidget {
                             child: TextField(
                               controller: textEditingController,
                               onChanged: (value) {
-                                memo.value = memo.value.copyWith(name: value);
+                                shoppingList.value =
+                                    shoppingList.value.copyWith(name: value);
                               },
                               onSubmitted: (value) {
-                                memo.value = memo.value.copyWith(name: value);
+                                shoppingList.value =
+                                    shoppingList.value.copyWith(name: value);
                               },
                             ),
                           ),
@@ -70,7 +75,7 @@ class MemoSettingPage extends HookConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('メモの保存期間',
+                          const Text('買い物リストの保存期間',
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 8),
@@ -82,7 +87,7 @@ class MemoSettingPage extends HookConsumerWidget {
                                   lastDate: DateTime.now()
                                       .add(const Duration(days: 30)));
                               if (date != null) {
-                                memo.value = memo.value
+                                shoppingList.value = shoppingList.value
                                     .copyWith(ttlExpiresDateTime: date);
                               }
                             },
@@ -117,7 +122,9 @@ class MemoSettingPage extends HookConsumerWidget {
                     width: double.infinity,
                     child: OutlinedButton(
                       onPressed: () {
-                        memoUpdate(memoID: memoID, memo: memo.value);
+                        shoppingListUpdate(
+                            shoppingListID: shoppingListID,
+                            shoppingList: shoppingList.value);
                         Navigator.pop(context);
                       },
                       child: const Row(
@@ -144,7 +151,7 @@ class MemoSettingPage extends HookConsumerWidget {
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: const Text('メモを削除しますか？'),
+                            title: const Text('買い物リストを削除しますか？'),
                             actions: [
                               TextButton(
                                 onPressed: () {
@@ -172,7 +179,7 @@ class MemoSettingPage extends HookConsumerWidget {
                         children: [
                           Icon(Icons.delete),
                           SizedBox(width: 8),
-                          Text('メモを削除'),
+                          Text('買い物リストを削除'),
                         ],
                       ),
                     ),

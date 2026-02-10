@@ -35,6 +35,13 @@ Firebase Functions の規約です
 - 原則: クライアントから呼ぶ Functions は GenKit を使用して定義します
 - Deployはユーザーが行うので禁止
 
+### コーディング規約
+- Entityのフィールド名は省略せず、長くても実態がわかる名前をつける（例: `categoryID` ではなく `groupShoppingListItemCategoryID`）
+- FirestoreのDBをクライアントから操作する場合は、`call` 関数を定義したclassを通じて行う（例: `ShoppingListAdd`, `CreateGroup` など。Providerからそのclassのインスタンスを返却する）
+- 関数の引数は原則 `{required}` でラベルが呼び出し元につくようにする
+- コンストラクタの引数も nullable であっても `required` をつける。ただしtimestamp等のメタデータフィールドは除く
+- `ref.read` は極力使わない。`ref.watch` を使う。`ref.read` を使う場合はコメントで理由を明記する
+
 ### プロジェクト構成・ドキュメント方針
 - 実装のことは全てコード上のコメントに記載する
 - GenKitのFunctionsの検証のために引数は、Functionsの定義位置に記載する

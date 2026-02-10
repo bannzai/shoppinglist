@@ -13,7 +13,7 @@ import { defineString } from "firebase-functions/params";
 const ResponseSchema = z.union([
   DataResponseSchema.extend({
     data: z.object({
-      memoRows: z.array(z.string()),
+      shoppingListItems: z.array(z.string()),
     }),
   }),
   ErrorResponseSchema,
@@ -30,9 +30,9 @@ async function cleanupTemporaryImage(filePath: string): Promise<void> {
   }
 }
 
-const generateMemoRowsFromImageFlow = ai.defineFlow(
+const generateShoppingListItemsFromImageFlow = ai.defineFlow(
   {
-    name: "generateMemoRowsFromImage",
+    name: "generateShoppingListItemsFromImage",
     inputSchema: z.object({
       mimeType: z.string(),
       base64Image: z.string(),
@@ -59,7 +59,7 @@ const generateMemoRowsFromImageFlow = ai.defineFlow(
                 },
               },
               {
-                text: "この画像の手書きの箇条書きのメモの内容を文字列の配列で出力してください。内容は買い物メモです",
+                text: "この画像の手書きの箇条書きの買い物リストの内容を文字列の配列で出力してください。内容は買い物リストです",
               },
             ],
           },
@@ -68,13 +68,13 @@ const generateMemoRowsFromImageFlow = ai.defineFlow(
           {
             functionDeclarations: [
               {
-                name: "generateMemoRowsFromImage",
+                name: "generateShoppingListItemsFromImage",
                 description:
-                  "この画像の手書きの箇条書きのメモの内容を文字列の配列で出力してください。内容は買い物メモです",
+                  "この画像の手書きの箇条書きの買い物リストの内容を文字列の配列で出力してください。内容は買い物リストです",
                 parameters: {
                   type: SchemaType.OBJECT,
                   properties: {
-                    memoRows: {
+                    shoppingListItems: {
                       type: SchemaType.ARRAY,
                       items: {
                         type: SchemaType.STRING,
@@ -93,14 +93,14 @@ const generateMemoRowsFromImageFlow = ai.defineFlow(
       if (!functionCalls || functionCalls.length === 0) {
         throw new Error("Function call not found");
       }
-      // 型解決がわからなかったのでanyにしてお茶を濁している
-      const memoRows = (functionCalls[0].args as any).memoRows;
+      const shoppingListItems = (functionCalls[0].args as { shoppingListItems: string[] })
+        .shoppingListItems;
 
       return {
         result: "OK",
         status: 200,
         data: {
-          memoRows,
+          shoppingListItems,
         },
       } as z.infer<typeof ResponseSchema>;
     } catch (error) {
@@ -121,9 +121,9 @@ const generateMemoRowsFromImageFlow = ai.defineFlow(
 
 module.exports = onCallGenkit(
   {
-    authPolicy: appAuthPolicy("generateMemoRowsFromImage"),
+    authPolicy: appAuthPolicy("generateShoppingListItemsFromImage"),
   },
-  generateMemoRowsFromImageFlow
+  generateShoppingListItemsFromImageFlow
 );
 
 const apiKey = defineString("GOOGLE_GENAI_API_KEY").value();

@@ -1,36 +1,46 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shoppinglist/entity/memo.dart';
-import 'package:shoppinglist/entity/memo_row.dart';
+import 'package:shoppinglist/entity/group_shopping_list.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 
 void main() {
-  test('Memo entity smoke test', () {
-    final memo = Memo(
+  test('ShoppingList entity smoke test', () {
+    final shoppingList = GroupShoppingList(
       id: 'test-id',
-      userID: 'user-id',
+      createUserID: 'user-id',
+      groupID: 'group-id',
       ttlExpiresDateTime: null,
     );
-    expect(memo.id, 'test-id');
-    expect(memo.userID, 'user-id');
-    expect(memo.name, '');
-    expect(memo.status, MemoStatus.active);
+    expect(shoppingList.id, 'test-id');
+    expect(shoppingList.createUserID, 'user-id');
+    expect(shoppingList.groupID, 'group-id');
+    expect(shoppingList.name, '');
+    expect(shoppingList.status, GroupShoppingListStatus.active);
   });
 
-  test('MemoRow entity smoke test', () {
-    final row = MemoRow.text(
-      id: 'row-id',
-      memoID: 'memo-id',
+  test('ShoppingListItem entity smoke test', () {
+    final item = GroupShoppingListItem.text(
+      id: 'item-id',
+      shoppingListID: 'shopping-list-id',
       message: 'Buy milk',
       order: 0,
     );
-    expect(row.id, 'row-id');
-    expect(row.order, 0);
+    expect(item.id, 'item-id');
+    expect(item.order, 0);
   });
 
-  test('MemoRows nextOrder', () {
-    final rows = <MemoRow>[
-      MemoRow.text(id: '1', memoID: 'memo-id', message: 'Item 1', order: 0),
-      MemoRow.text(id: '2', memoID: 'memo-id', message: 'Item 2', order: 1),
+  test('ShoppingListItems nextOrder', () {
+    final items = <GroupShoppingListItem>[
+      GroupShoppingListItem.text(
+          id: '1',
+          shoppingListID: 'shopping-list-id',
+          message: 'Item 1',
+          order: 0),
+      GroupShoppingListItem.text(
+          id: '2',
+          shoppingListID: 'shopping-list-id',
+          message: 'Item 2',
+          order: 1),
     ];
-    expect(rows.nextOrder, 2);
+    expect(items.nextOrder, 2);
   });
 }

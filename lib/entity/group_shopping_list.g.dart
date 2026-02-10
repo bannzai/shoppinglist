@@ -1,17 +1,23 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'memo.dart';
+part of 'group_shopping_list.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_Memo _$MemoFromJson(Map<String, dynamic> json) => _Memo(
+_GroupShoppingList _$GroupShoppingListFromJson(Map<String, dynamic> json) =>
+    _GroupShoppingList(
       id: json['id'] as String,
-      userID: json['userID'] as String,
+      createUserID: json['createUserID'] as String,
+      groupID: json['groupID'] as String,
       name: json['name'] as String? ?? '',
-      status: $enumDecodeNullable(_$MemoStatusEnumMap, json['status']) ??
-          MemoStatus.active,
+      status: $enumDecodeNullable(
+              _$GroupShoppingListStatusEnumMap, json['status']) ??
+          GroupShoppingListStatus.active,
+      shoppingLocationID: json['shoppingLocationID'] as String?,
+      duplicatedFromGroupShoppingListID:
+          json['duplicatedFromGroupShoppingListID'] as String?,
       ttlExpiresDateTime: _$JsonConverterFromJson<Timestamp, DateTime>(
           json['ttlExpiresDateTime'], const TimestampConverter().fromJson),
       createdDateTime: const ClientCreatedTimestamp()
@@ -24,11 +30,16 @@ _Memo _$MemoFromJson(Map<String, dynamic> json) => _Memo(
           .fromJson(json['serverUpdatedDateTime']),
     );
 
-Map<String, dynamic> _$MemoToJson(_Memo instance) => <String, dynamic>{
+Map<String, dynamic> _$GroupShoppingListToJson(_GroupShoppingList instance) =>
+    <String, dynamic>{
       'id': instance.id,
-      'userID': instance.userID,
+      'createUserID': instance.createUserID,
+      'groupID': instance.groupID,
       'name': instance.name,
-      'status': _$MemoStatusEnumMap[instance.status]!,
+      'status': _$GroupShoppingListStatusEnumMap[instance.status]!,
+      'shoppingLocationID': instance.shoppingLocationID,
+      'duplicatedFromGroupShoppingListID':
+          instance.duplicatedFromGroupShoppingListID,
       'ttlExpiresDateTime': _$JsonConverterToJson<Timestamp, DateTime>(
           instance.ttlExpiresDateTime, const TimestampConverter().toJson),
       'createdDateTime':
@@ -41,10 +52,10 @@ Map<String, dynamic> _$MemoToJson(_Memo instance) => <String, dynamic>{
           const ServerUpdatedTimestamp().toJson(instance.serverUpdatedDateTime),
     };
 
-const _$MemoStatusEnumMap = {
-  MemoStatus.active: 'active',
-  MemoStatus.done: 'done',
-  MemoStatus.archived: 'archived',
+const _$GroupShoppingListStatusEnumMap = {
+  GroupShoppingListStatus.active: 'active',
+  GroupShoppingListStatus.done: 'done',
+  GroupShoppingListStatus.archived: 'archived',
 };
 
 Value? _$JsonConverterFromJson<Json, Value>(

@@ -3,28 +3,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/entity/memo_row.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
-import 'package:shoppinglist/provider/memo_row.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/color.dart';
 
-class TextMemo extends HookConsumerWidget {
-  final TextMemoRow textMemoRow;
-  final List<MemoRow> memoRows;
+class TextShoppingListItemWidget extends HookConsumerWidget {
+  final String groupID;
+  final TextGroupShoppingListItem textShoppingListItem;
+  final List<GroupShoppingListItem> shoppingListItems;
 
-  const TextMemo(
-      {super.key, required this.textMemoRow, required this.memoRows});
+  const TextShoppingListItemWidget(
+      {super.key,
+      required this.groupID,
+      required this.textShoppingListItem,
+      required this.shoppingListItems});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final focusNode = useFocusNode();
     final textEditingController =
-        useTextEditingController(text: textMemoRow.message);
+        useTextEditingController(text: textShoppingListItem.message);
     final isEditing = useState(false);
 
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (textMemoRow.message.isEmpty) {
+        if (textShoppingListItem.message.isEmpty) {
           focusNode.requestFocus();
         }
       });
@@ -46,19 +50,21 @@ class TextMemo extends HookConsumerWidget {
             Transform.scale(
               scale: 1.5,
               child: Checkbox(
-                value: textMemoRow.status == MemoRowStatus.checked,
+                value: textShoppingListItem.status ==
+                    GroupShoppingListItemStatus.checked,
                 onChanged: (value) {
                   ref
-                      .read(userDatabaseProvider)
-                      .memoRowsReference(
-                        memoID: textMemoRow.memoID,
+                      .read(groupDatabaseProvider(groupID: groupID))
+                      .shoppingListItemsReference(
+                        shoppingListID: textShoppingListItem.shoppingListID,
                       )
-                      .doc(textMemoRow.id)
+                      .doc(textShoppingListItem.id)
                       .set(
-                        textMemoRow.copyWith(
-                          status: textMemoRow.status == MemoRowStatus.checked
-                              ? MemoRowStatus.unchecked
-                              : MemoRowStatus.checked,
+                        textShoppingListItem.copyWith(
+                          status: textShoppingListItem.status ==
+                                  GroupShoppingListItemStatus.checked
+                              ? GroupShoppingListItemStatus.unchecked
+                              : GroupShoppingListItemStatus.checked,
                         ),
                         SetOptions(merge: true),
                       );
@@ -72,28 +78,29 @@ class TextMemo extends HookConsumerWidget {
                     child: SizedBox(
                       height: 44,
                       width: double.infinity,
-                      child: TextMemoTextField(
+                      child: TextShoppingListItemTextField(
+                        groupID: groupID,
                         textEditingController: textEditingController,
                         focusNode: focusNode,
-                        textMemoRow: textMemoRow,
-                        memoRows: memoRows,
+                        textShoppingListItem: textShoppingListItem,
+                        shoppingListItems: shoppingListItems,
                       ),
                     ),
                   ),
                   IconButton(
                     onPressed: () {
                       ref
-                          .read(userDatabaseProvider)
-                          .memoRowsReference(
-                            memoID: textMemoRow.memoID,
+                          .read(groupDatabaseProvider(groupID: groupID))
+                          .shoppingListItemsReference(
+                            shoppingListID: textShoppingListItem.shoppingListID,
                           )
-                          .doc(textMemoRow.id)
+                          .doc(textShoppingListItem.id)
                           .delete();
                     },
                     icon: const Icon(Icons.delete),
                   ),
                   ReorderableDragStartListener(
-                    index: textMemoRow.order,
+                    index: textShoppingListItem.order,
                     child: const Icon(Icons.drag_handle),
                   ),
                 ],
@@ -106,22 +113,26 @@ class TextMemo extends HookConsumerWidget {
   }
 }
 
-class TextMemoTextField extends HookConsumerWidget {
+class TextShoppingListItemTextField extends HookConsumerWidget {
+  final String groupID;
   final TextEditingController textEditingController;
   final FocusNode focusNode;
-  final TextMemoRow textMemoRow;
-  final List<MemoRow> memoRows;
-  const TextMemoTextField({
+  final TextGroupShoppingListItem textShoppingListItem;
+  final List<GroupShoppingListItem> shoppingListItems;
+  const TextShoppingListItemTextField({
     super.key,
+    required this.groupID,
     required this.textEditingController,
     required this.focusNode,
-    required this.textMemoRow,
-    required this.memoRows,
+    required this.textShoppingListItem,
+    required this.shoppingListItems,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final text = useState(textMemoRow.message);
+    final addTextShoppingListItem =
+        ref.watch(addTextShoppingListItemProvider(groupID: groupID));
+    final text = useState(textShoppingListItem.message);
 
     // ignore: deprecated_member_use KeyboardListenerだとSimulatorでMacのハードウェアキーボードにしか反応しない
     return RawKeyboardListener(
@@ -130,9 +141,10 @@ class TextMemoTextField extends HookConsumerWidget {
         if (event.logicalKey == LogicalKeyboardKey.backspace) {
           if (text.value.isEmpty) {
             ref
-                .read(userDatabaseProvider)
-                .memoRowsReference(memoID: textMemoRow.memoID)
-                .doc(textMemoRow.id)
+                .read(groupDatabaseProvider(groupID: groupID))
+                .shoppingListItemsReference(
+                    shoppingListID: textShoppingListItem.shoppingListID)
+                .doc(textShoppingListItem.id)
                 .delete();
           }
         }
@@ -145,51 +157,52 @@ class TextMemoTextField extends HookConsumerWidget {
         textInputAction: TextInputAction.next,
         style: TextStyle(
           color: TextColor.black,
-          decoration: textMemoRow.status == MemoRowStatus.checked
-              ? TextDecoration.lineThrough
-              : TextDecoration.none,
+          decoration:
+              textShoppingListItem.status == GroupShoppingListItemStatus.checked
+                  ? TextDecoration.lineThrough
+                  : TextDecoration.none,
         ),
         onChanged: (value) {
           text.value = value;
         },
         onSubmitted: (String v) async {
           final value = v.trim();
-          final textMemoRowID = textMemoRow.id;
+          final itemID = textShoppingListItem.id;
           if (value.isEmpty) {
-            if (memoRows.length > 1) {
+            if (shoppingListItems.length > 1) {
               ref
-                  .read(userDatabaseProvider)
-                  .memoRowReference(
-                    memoID: textMemoRow.memoID,
-                    memoRowID: textMemoRowID,
+                  .read(groupDatabaseProvider(groupID: groupID))
+                  .shoppingListItemReference(
+                    shoppingListID: textShoppingListItem.shoppingListID,
+                    itemID: itemID,
                   )
                   .delete();
             } else {
               ref
-                  .read(userDatabaseProvider)
-                  .memoRowReference(
-                    memoID: textMemoRow.memoID,
-                    memoRowID: textMemoRowID,
+                  .read(groupDatabaseProvider(groupID: groupID))
+                  .shoppingListItemReference(
+                    shoppingListID: textShoppingListItem.shoppingListID,
+                    itemID: itemID,
                   )
                   .delete();
             }
           } else {
             ref
-                .read(userDatabaseProvider)
-                .memoRowsReference(
-                  memoID: textMemoRow.memoID,
+                .read(groupDatabaseProvider(groupID: groupID))
+                .shoppingListItemsReference(
+                  shoppingListID: textShoppingListItem.shoppingListID,
                 )
-                .doc(textMemoRow.id)
+                .doc(textShoppingListItem.id)
                 .set(
-                  textMemoRow.copyWith(message: value),
+                  textShoppingListItem.copyWith(message: value),
                   SetOptions(merge: true),
                 );
 
-            ref.read(addTextMemoRowProvider).call(
-                  memoID: textMemoRow.memoID,
-                  message: '',
-                  order: memoRows.nextOrder,
-                );
+            addTextShoppingListItem.call(
+              shoppingListID: textShoppingListItem.shoppingListID,
+              message: '',
+              order: shoppingListItems.nextOrder,
+            );
           }
         },
       ),

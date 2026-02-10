@@ -5,24 +5,25 @@ import 'package:flutter/foundation.dart';
 final functions = FirebaseFunctions.instanceFor(region: 'us-central1');
 
 extension FirebaseFunctionsExt on FirebaseFunctions {
-  Future<List<String>> generateMemoRowsFromImage({
+  Future<List<String>> generateShoppingListItemsFromImage({
     required String mimeType,
     required String base64Image,
   }) async {
-    final result = await httpsCallable('generateMemoRowsFromImage').call(
+    final result =
+        await httpsCallable('generateShoppingListItemsFromImage').call(
       {
         'mimeType': mimeType,
         'base64Image': base64Image,
       },
     );
-    debugPrint('generateMemoRowsFromImage.result: ${result.data}');
+    debugPrint('generateShoppingListItemsFromImage.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
       throw Exception(response['error']['message']);
     }
 
     // as List<String> に直接変換するとExceptionが発生するため、一旦List<dynamic>に変換してからStringに変換する
-    final list = response['data']['memoRows'] as List<dynamic>;
+    final list = response['data']['shoppingListItems'] as List<dynamic>;
     return list.map((e) => e.toString()).toList();
   }
 }

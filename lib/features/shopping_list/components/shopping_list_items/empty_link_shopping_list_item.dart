@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/entity/memo_row.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/style/button.dart';
 
-class EmptyLinkMemoRows extends HookConsumerWidget {
-  final String memoID;
-  final ValueNotifier<List<MemoRow>> memoRows;
-  const EmptyLinkMemoRows(
-      {super.key, required this.memoID, required this.memoRows});
+class EmptyLinkShoppingListItems extends HookConsumerWidget {
+  final String shoppingListID;
+  final ValueNotifier<List<GroupShoppingListItem>> shoppingListItems;
+  const EmptyLinkShoppingListItems(
+      {super.key,
+      required this.shoppingListID,
+      required this.shoppingListItems});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,10 +30,10 @@ class EmptyLinkMemoRows extends HookConsumerWidget {
                   // showModalBottomSheet(
                   //   context: context,
                   //   builder: (context) => AppResolvers(
-                  //     builder: (context, user) => LinkMemoRowAddPage(
-                  //       memoID: memoID,
-                  //       memoRows: memoRows.value,
-                  //       linkMemoRow: LinkMemoRow(url: '', memoID: memoID, order: memoRows.value.length),
+                  //     builder: (context, user) => LinkShoppingListItemAddPage(
+                  //       shoppingListID: shoppingListID,
+                  //       shoppingListItems: shoppingListItems.value,
+                  //       linkShoppingListItem: LinkShoppingListItem(url: '', shoppingListID: shoppingListID, order: shoppingListItems.value.length),
                   //     ),
                   //   ),
                   // );
