@@ -70,14 +70,14 @@
 ## データモデル（Firestore）
 
 ```
-/users/{userID}
+/users/{userID} (Entity: AppUser)
   - id
   - soloGroupID          # 個人用グループのID（自動作成、削除不可）
   - defaultGroupID?      # デフォルトグループのID
   - createdDateTime
   - updatedDateTime
 
-/groups/{groupID}
+/groups/{groupID} (Entity: Group)
   - id
   - name                 # グループ名
   - members: string[]    # メンバーのuserID一覧
@@ -85,7 +85,7 @@
   - createdDateTime
   - updatedDateTime
 
-/groups/{groupID}/shoppingLists/{shoppingListID}
+/groups/{groupID}/shoppingLists/{shoppingListID} (Entity: GroupShoppingList)
   - id
   - groupID
   - name                              # リスト名
@@ -96,7 +96,7 @@
   - createdDateTime
   - updatedDateTime
 
-/groups/{groupID}/shoppingLists/{shoppingListID}/items/{itemID}
+/groups/{groupID}/shoppingLists/{shoppingListID}/items/{itemID} (Entity: GroupShoppingListItem)
   - id
   - groupShoppingListID
   - message              # アイテム名
@@ -110,20 +110,20 @@
   - createdDateTime
   - updatedDateTime
 
-/groups/{groupID}/shoppingLocations/{locationID}
+/groups/{groupID}/shoppingLocations/{locationID} (Entity: GroupShoppingLocation)
   - id
   - name                 # 場所名（例: イオン、マツキヨ）
   - createdDateTime
   - updatedDateTime
 
-/groups/{groupID}/categoryAxes/{axisID}
+/groups/{groupID}/categoryAxes/{axisID} (Entity: GroupCategoryAxis)
   - id
   - name                 # 軸名（例: 商品カテゴリ）
   - order                # 軸の並び順
   - createdDateTime
   - updatedDateTime
 
-/groups/{groupID}/categoryAxes/{axisID}/categories/{categoryID}
+/groups/{groupID}/categoryAxes/{axisID}/categories/{categoryID} (Entity: GroupCategory)
   - id
   - categoryAxisID
   - name                 # カテゴリ名（例: 野菜、肉、日用品）
@@ -131,7 +131,7 @@
   - createdDateTime
   - updatedDateTime
 
-/groupInvitations/{invitationID}
+/groupInvitations/{invitationID} (Entity: GroupInvitation)
   - id
   - groupID
   - inviterID            # 招待者のuserID
