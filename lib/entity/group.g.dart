@@ -8,8 +8,9 @@ part of 'group.dart';
 
 _Group _$GroupFromJson(Map<String, dynamic> json) => _Group(
       id: json['id'] as String,
-      members:
-          (json['members'] as List<dynamic>).map((e) => e as String).toList(),
+      memberUserIDs: (json['memberUserIDs'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       createdDateTime: const ClientCreatedTimestamp()
           .fromJson(json['createdDateTime'] as Timestamp?),
       updatedDateTime: const ClientUpdatedTimestamp()
@@ -22,7 +23,7 @@ _Group _$GroupFromJson(Map<String, dynamic> json) => _Group(
 
 Map<String, dynamic> _$GroupToJson(_Group instance) => <String, dynamic>{
       'id': instance.id,
-      'members': instance.members,
+      'memberUserIDs': instance.memberUserIDs,
       'createdDateTime':
           const ClientCreatedTimestamp().toJson(instance.createdDateTime),
       'updatedDateTime':

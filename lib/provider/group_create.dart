@@ -13,7 +13,7 @@ class CreateGroup {
 
   Future<void> call({required AppUser appUser}) async {
     final groupRef = FirebaseFirestore.instance.collection('groups').doc();
-    final group = Group(id: groupRef.id, members: [appUser.id]);
+    final group = Group(id: groupRef.id, memberUserIDs: [appUser.id]);
     await groupRef
         .withConverter(
           fromFirestore: (snapshot, _) =>

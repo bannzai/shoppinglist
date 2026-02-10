@@ -15,7 +15,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Group {
   String get id;
-  List<String> get members;
+
+  /// グループに所属するユーザーのAppUser.idの配列
+  List<String> get memberUserIDs;
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime;
   @ClientUpdatedTimestamp()
@@ -41,7 +43,8 @@ mixin _$Group {
         (other.runtimeType == runtimeType &&
             other is Group &&
             (identical(other.id, id) || other.id == id) &&
-            const DeepCollectionEquality().equals(other.members, members) &&
+            const DeepCollectionEquality()
+                .equals(other.memberUserIDs, memberUserIDs) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -57,7 +60,7 @@ mixin _$Group {
   int get hashCode => Object.hash(
       runtimeType,
       id,
-      const DeepCollectionEquality().hash(members),
+      const DeepCollectionEquality().hash(memberUserIDs),
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -65,7 +68,7 @@ mixin _$Group {
 
   @override
   String toString() {
-    return 'Group(id: $id, members: $members, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'Group(id: $id, memberUserIDs: $memberUserIDs, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -76,7 +79,7 @@ abstract mixin class $GroupCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      List<String> members,
+      List<String> memberUserIDs,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -96,7 +99,7 @@ class _$GroupCopyWithImpl<$Res> implements $GroupCopyWith<$Res> {
   @override
   $Res call({
     Object? id = null,
-    Object? members = null,
+    Object? memberUserIDs = null,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -107,9 +110,9 @@ class _$GroupCopyWithImpl<$Res> implements $GroupCopyWith<$Res> {
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      members: null == members
-          ? _self.members
-          : members // ignore: cast_nullable_to_non_nullable
+      memberUserIDs: null == memberUserIDs
+          ? _self.memberUserIDs
+          : memberUserIDs // ignore: cast_nullable_to_non_nullable
               as List<String>,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
@@ -226,7 +229,7 @@ extension GroupPatterns on Group {
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
             String id,
-            List<String> members,
+            List<String> memberUserIDs,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -239,7 +242,7 @@ extension GroupPatterns on Group {
       case _Group() when $default != null:
         return $default(
             _that.id,
-            _that.members,
+            _that.memberUserIDs,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -266,7 +269,7 @@ extension GroupPatterns on Group {
   TResult when<TResult extends Object?>(
     TResult Function(
             String id,
-            List<String> members,
+            List<String> memberUserIDs,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -278,7 +281,7 @@ extension GroupPatterns on Group {
       case _Group():
         return $default(
             _that.id,
-            _that.members,
+            _that.memberUserIDs,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -304,7 +307,7 @@ extension GroupPatterns on Group {
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
             String id,
-            List<String> members,
+            List<String> memberUserIDs,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -316,7 +319,7 @@ extension GroupPatterns on Group {
       case _Group() when $default != null:
         return $default(
             _that.id,
-            _that.members,
+            _that.memberUserIDs,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -333,23 +336,27 @@ extension GroupPatterns on Group {
 class _Group extends Group {
   const _Group(
       {required this.id,
-      required final List<String> members,
+      required final List<String> memberUserIDs,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
       @ServerUpdatedTimestamp() this.serverUpdatedDateTime})
-      : _members = members,
+      : _memberUserIDs = memberUserIDs,
         super._();
   factory _Group.fromJson(Map<String, dynamic> json) => _$GroupFromJson(json);
 
   @override
   final String id;
-  final List<String> _members;
+
+  /// グループに所属するユーザーのAppUser.idの配列
+  final List<String> _memberUserIDs;
+
+  /// グループに所属するユーザーのAppUser.idの配列
   @override
-  List<String> get members {
-    if (_members is EqualUnmodifiableListView) return _members;
+  List<String> get memberUserIDs {
+    if (_memberUserIDs is EqualUnmodifiableListView) return _memberUserIDs;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_members);
+    return EqualUnmodifiableListView(_memberUserIDs);
   }
 
   @override
@@ -386,7 +393,8 @@ class _Group extends Group {
         (other.runtimeType == runtimeType &&
             other is _Group &&
             (identical(other.id, id) || other.id == id) &&
-            const DeepCollectionEquality().equals(other._members, _members) &&
+            const DeepCollectionEquality()
+                .equals(other._memberUserIDs, _memberUserIDs) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -402,7 +410,7 @@ class _Group extends Group {
   int get hashCode => Object.hash(
       runtimeType,
       id,
-      const DeepCollectionEquality().hash(_members),
+      const DeepCollectionEquality().hash(_memberUserIDs),
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -410,7 +418,7 @@ class _Group extends Group {
 
   @override
   String toString() {
-    return 'Group(id: $id, members: $members, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'Group(id: $id, memberUserIDs: $memberUserIDs, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -422,7 +430,7 @@ abstract mixin class _$GroupCopyWith<$Res> implements $GroupCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      List<String> members,
+      List<String> memberUserIDs,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -442,7 +450,7 @@ class __$GroupCopyWithImpl<$Res> implements _$GroupCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   $Res call({
     Object? id = null,
-    Object? members = null,
+    Object? memberUserIDs = null,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -453,9 +461,9 @@ class __$GroupCopyWithImpl<$Res> implements _$GroupCopyWith<$Res> {
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      members: null == members
-          ? _self._members
-          : members // ignore: cast_nullable_to_non_nullable
+      memberUserIDs: null == memberUserIDs
+          ? _self._memberUserIDs
+          : memberUserIDs // ignore: cast_nullable_to_non_nullable
               as List<String>,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime

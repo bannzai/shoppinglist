@@ -11,7 +11,9 @@ abstract class Group with _$Group {
   @JsonSerializable(explicitToJson: true)
   const factory Group({
     required String id,
-    required List<String> members,
+
+    /// グループに所属するユーザーのAppUser.idの配列
+    required List<String> memberUserIDs,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
