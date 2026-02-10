@@ -5,6 +5,38 @@ import 'package:flutter/foundation.dart';
 final functions = FirebaseFunctions.instanceFor(region: 'us-central1');
 
 extension FirebaseFunctionsExt on FirebaseFunctions {
+  Future<String> createGroupInvitation({
+    required String groupID,
+  }) async {
+    final result = await httpsCallable('createGroupInvitation').call(
+      {
+        'groupID': groupID,
+      },
+    );
+    debugPrint('createGroupInvitation.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+    return response['data']['invitationURL'] as String;
+  }
+
+  Future<String> acceptGroupInvitation({
+    required String token,
+  }) async {
+    final result = await httpsCallable('acceptGroupInvitation').call(
+      {
+        'token': token,
+      },
+    );
+    debugPrint('acceptGroupInvitation.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+    return response['data']['groupID'] as String;
+  }
+
   Future<List<String>> generateShoppingListItemsFromImage({
     required String mimeType,
     required String base64Image,
