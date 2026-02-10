@@ -130,6 +130,8 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final addTextShoppingListItem =
+        ref.watch(addTextShoppingListItemProvider(groupID: groupID));
     final text = useState(textShoppingListItem.message);
 
     // ignore: deprecated_member_use KeyboardListenerだとSimulatorでMacのハードウェアキーボードにしか反応しない
@@ -196,7 +198,7 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
                   SetOptions(merge: true),
                 );
 
-            ref.read(addTextShoppingListItemProvider(groupID: groupID)).call(
+            addTextShoppingListItem.call(
                   shoppingListID: textShoppingListItem.shoppingListID,
                   message: '',
                   order: shoppingListItems.nextOrder,
