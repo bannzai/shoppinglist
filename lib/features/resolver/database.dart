@@ -55,10 +55,8 @@ class GroupDatabase {
   final String groupID;
   GroupDatabase({required this.groupID});
 
-  final FromFirestore<Group> _groupFromFirestore = (snapshot, options) =>
-      Group.fromJson(snapshot.data()!..['id'] = snapshot.id);
-  final ToFirestore<Group> _groupToFirestore =
-      (group, options) => group.toJson();
+  final FromFirestore<Group> _groupFromFirestore = Group.fromFirestore;
+  final ToFirestore<Group> _groupToFirestore = Group.toFirestore;
   DocumentReference<Group> groupReference() => FirebaseFirestore.instance
       .collection(_CollectionPath.groups)
       .doc(groupID)
