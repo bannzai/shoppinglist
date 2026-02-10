@@ -15,9 +15,11 @@ class ShoppingListItemAddButton extends HookConsumerWidget {
       required this.shoppingListItems});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final addTextShoppingListItem =
+        ref.watch(addTextShoppingListItemProvider(groupID: groupID));
     return OutlinedButton(
       onPressed: () {
-        ref.read(addTextShoppingListItemProvider(groupID: groupID)).call(
+        addTextShoppingListItem.call(
               shoppingListID: shoppingListID,
               message: '',
               order: shoppingListItems.nextOrder,
