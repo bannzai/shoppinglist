@@ -18,34 +18,31 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appUserAsync = ref.watch(appUserProvider);
     final appUser = appUserAsync.asData?.value;
-
-    if (appUser == null) {
-      return const Loading();
-    }
-
-    final groupID = appUser.defaultGroupID;
+    final groupID = appUser?.defaultGroupID;
     final createGroup = ref.watch(createGroupProvider);
+
+    final shoppingListAdd = groupID != null
+        ? ref.watch(shoppingListAddProvider(groupID: groupID))
+        : null;
+    final shoppingLists = groupID != null
+        ? ref.watch(shoppingListsProvider(groupID: groupID))
+        : null;
 
     // Group未作成の場合は作成してAppUserにセット
     useEffect(() {
-      if (groupID == null) {
+      if (appUser != null && groupID == null) {
         createGroup(appUser: appUser);
       }
       return null;
-    }, [groupID]);
-
-    if (groupID == null) {
-      return const Loading();
-    }
-
-    final shoppingListAdd =
-        ref.watch(shoppingListAddProvider(groupID: groupID));
-    final shoppingLists = ref.watch(shoppingListsProvider(groupID: groupID));
+    }, [appUser, groupID]);
 
     useEffect(() {
       void f() async {
-        if (shoppingLists is AsyncData &&
-            shoppingLists.value?.isEmpty == true) {
+        if (appUser != null &&
+            groupID != null &&
+            shoppingListAdd != null &&
+            shoppingLists is AsyncData &&
+            shoppingLists?.value?.isEmpty == true) {
           await shoppingListAdd(createUserID: appUser.id, groupID: groupID);
         }
       }
@@ -54,7 +51,15 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
       return null;
     }, [shoppingLists]);
 
-    if (shoppingLists.valueOrNull?.isEmpty == true) {
+    if (appUser == null) {
+      throw StateError('AppUser is not available');
+    }
+
+    if (groupID == null) {
+      return const Loading();
+    }
+
+    if (shoppingLists?.valueOrNull?.isEmpty == true) {
       return const Loading();
     }
     return builder(context, groupID);
