@@ -46,9 +46,9 @@ class ShoppingListItems extends HookConsumerWidget {
         items.value = [...orderedItems];
 
         shoppingListItemBatchUpdate.call(
-              shoppingListID: shoppingListID,
-              shoppingListItems: orderedItems,
-            );
+          shoppingListID: shoppingListID,
+          shoppingListItems: orderedItems,
+        );
       },
       itemCount: items.value.length,
       itemBuilder: (context, index) {

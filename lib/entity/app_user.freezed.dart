@@ -14,7 +14,8 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$AppUser {
-  String get id;
+  String
+      get id; // NOTE: アプリ開始時に作られるデータであり、その時にはdefaultGroupIDができてない。作成されるパターンはこのケースのみなので required はつけない。テストの時とかに簡単に使えるようにするため
   String? get defaultGroupID;
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime;
@@ -345,6 +346,7 @@ class _AppUser extends AppUser {
 
   @override
   final String id;
+// NOTE: アプリ開始時に作られるデータであり、その時にはdefaultGroupIDができてない。作成されるパターンはこのケースのみなので required はつけない。テストの時とかに簡単に使えるようにするため
   @override
   final String? defaultGroupID;
   @override

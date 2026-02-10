@@ -199,10 +199,10 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
                 );
 
             addTextShoppingListItem.call(
-                  shoppingListID: textShoppingListItem.shoppingListID,
-                  message: '',
-                  order: shoppingListItems.nextOrder,
-                );
+              shoppingListID: textShoppingListItem.shoppingListID,
+              message: '',
+              order: shoppingListItems.nextOrder,
+            );
           }
         },
       ),

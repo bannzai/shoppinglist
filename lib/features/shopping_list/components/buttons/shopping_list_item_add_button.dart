@@ -20,10 +20,10 @@ class ShoppingListItemAddButton extends HookConsumerWidget {
     return OutlinedButton(
       onPressed: () {
         addTextShoppingListItem.call(
-              shoppingListID: shoppingListID,
-              message: '',
-              order: shoppingListItems.nextOrder,
-            );
+          shoppingListID: shoppingListID,
+          message: '',
+          order: shoppingListItems.nextOrder,
+        );
       },
       child: const Padding(
         padding: EdgeInsets.symmetric(vertical: 8),
