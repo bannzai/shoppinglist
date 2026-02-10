@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
+import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/style/button.dart';
 import 'package:shoppinglist/style/color.dart';
@@ -27,6 +29,8 @@ class ShoppingListSettingPage extends HookConsumerWidget {
         useTextEditingController(text: shoppingList.value.name);
     final shoppingListUpdate =
         ref.watch(shoppingListUpdateProvider(groupID: groupID));
+    final createGroupInvitation = ref.read(createGroupInvitationProvider);
+    final isCreatingInvitation = useState(false);
     final ttlExpiresDateTimeValue = shoppingList.value.ttlExpiresDateTime;
 
     return Scaffold(
@@ -106,6 +110,58 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                 return const Text('有効期限を設定');
                               }
                             }(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('グループ招待',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton.icon(
+                              onPressed: isCreatingInvitation.value
+                                  ? null
+                                  : () async {
+                                      isCreatingInvitation.value = true;
+                                      try {
+                                        final url =
+                                            await createGroupInvitation.call(
+                                                groupID: groupID);
+                                        await Share.share(url);
+                                      } catch (e) {
+                                        if (context.mounted) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                  '招待の作成に失敗しました: $e'),
+                                            ),
+                                          );
+                                        }
+                                      } finally {
+                                        isCreatingInvitation.value = false;
+                                      }
+                                    },
+                              icon: isCreatingInvitation.value
+                                  ? const SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2),
+                                    )
+                                  : const Icon(Icons.person_add),
+                              label: const Text('グループに招待'),
+                            ),
                           ),
                         ],
                       ),
