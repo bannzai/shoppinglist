@@ -31,6 +31,15 @@ abstract class GroupShoppingList with _$GroupShoppingList {
 
   factory GroupShoppingList.fromJson(Map<String, dynamic> json) =>
       _$GroupShoppingListFromJson(json);
+
+  static GroupShoppingList fromFirestore(
+          DocumentSnapshot<Map<String, dynamic>> snapshot,
+          SnapshotOptions? options) =>
+      GroupShoppingList.fromJson(snapshot.data()!..['id'] = snapshot.id);
+
+  static Map<String, dynamic> toFirestore(
+          GroupShoppingList shoppingList, SetOptions? options) =>
+      shoppingList.toJson();
 }
 
 enum GroupShoppingListStatus {

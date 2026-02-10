@@ -1,11 +1,10 @@
-// ignore_for_file: prefer_function_declarations_over_variables
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shoppinglist/entity/app_user.dart';
+import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/auth.dart';
@@ -15,6 +14,7 @@ part 'database.g.dart';
 
 abstract class _CollectionPath {
   static const String users = '/users';
+  static const String groups = '/groups';
   static String shoppingLists({required String groupID}) =>
       '/groups/$groupID/shoppingLists';
   static String shoppingListItems(
@@ -31,16 +31,12 @@ class UserDatabase {
   final String userID;
   UserDatabase({required this.userID});
 
-  final FromFirestore<AppUser> _userFromFirestore = (snapshot, options) =>
-      AppUser.fromJson(snapshot.data()!..['id'] = snapshot.id);
-  final ToFirestore<AppUser> _userToFirestore =
-      (user, options) => user.toJson();
   DocumentReference<AppUser> userReference() => FirebaseFirestore.instance
       .collection(_CollectionPath.users)
       .doc(userID)
       .withConverter(
-        fromFirestore: _userFromFirestore,
-        toFirestore: _userToFirestore,
+        fromFirestore: AppUser.fromFirestore,
+        toFirestore: AppUser.toFirestore,
       );
 }
 
@@ -53,17 +49,20 @@ class GroupDatabase {
   final String groupID;
   GroupDatabase({required this.groupID});
 
-  final FromFirestore<GroupShoppingList> _shoppingListFromFirestore =
-      (snapshot, options) =>
-          GroupShoppingList.fromJson(snapshot.data()!..['id'] = snapshot.id);
-  final ToFirestore<GroupShoppingList> _shoppingListToFirestore =
-      (shoppingList, options) => shoppingList.toJson();
+  DocumentReference<Group> groupReference() => FirebaseFirestore.instance
+      .collection(_CollectionPath.groups)
+      .doc(groupID)
+      .withConverter(
+        fromFirestore: Group.fromFirestore,
+        toFirestore: Group.toFirestore,
+      );
+
   CollectionReference<GroupShoppingList> shoppingListsReference() =>
       FirebaseFirestore.instance
           .collection(_CollectionPath.shoppingLists(groupID: groupID))
           .withConverter(
-            fromFirestore: _shoppingListFromFirestore,
-            toFirestore: _shoppingListToFirestore,
+            fromFirestore: GroupShoppingList.fromFirestore,
+            toFirestore: GroupShoppingList.toFirestore,
           );
   Future<int> countOfGroupShoppingLists() async {
     final aggregated = await FirebaseFirestore.instance
@@ -80,23 +79,18 @@ class GroupDatabase {
           .collection(_CollectionPath.shoppingLists(groupID: groupID))
           .doc(shoppingListID)
           .withConverter(
-            fromFirestore: _shoppingListFromFirestore,
-            toFirestore: _shoppingListToFirestore,
+            fromFirestore: GroupShoppingList.fromFirestore,
+            toFirestore: GroupShoppingList.toFirestore,
           );
   DocumentReference<GroupShoppingList> newGroupShoppingListReference() =>
       FirebaseFirestore.instance
           .collection(_CollectionPath.shoppingLists(groupID: groupID))
           .doc()
           .withConverter(
-            fromFirestore: _shoppingListFromFirestore,
-            toFirestore: _shoppingListToFirestore,
+            fromFirestore: GroupShoppingList.fromFirestore,
+            toFirestore: GroupShoppingList.toFirestore,
           );
 
-  final FromFirestore<GroupShoppingListItem> _shoppingListItemFromFirestore =
-      (snapshot, options) => GroupShoppingListItem.fromJson(
-          snapshot.data()!..['id'] = snapshot.id);
-  final ToFirestore<GroupShoppingListItem> _shoppingListItemToFirestore =
-      (item, options) => item.toJson();
   CollectionReference<GroupShoppingListItem> shoppingListItemsReference(
           {required String shoppingListID}) =>
       FirebaseFirestore.instance
@@ -107,8 +101,8 @@ class GroupDatabase {
             ),
           )
           .withConverter(
-            fromFirestore: _shoppingListItemFromFirestore,
-            toFirestore: _shoppingListItemToFirestore,
+            fromFirestore: GroupShoppingListItem.fromFirestore,
+            toFirestore: GroupShoppingListItem.toFirestore,
           );
 
   DocumentReference<GroupShoppingListItem> shoppingListItemReference({
@@ -120,8 +114,8 @@ class GroupDatabase {
               groupID: groupID, shoppingListID: shoppingListID))
           .doc(itemID)
           .withConverter(
-            fromFirestore: _shoppingListItemFromFirestore,
-            toFirestore: _shoppingListItemToFirestore,
+            fromFirestore: GroupShoppingListItem.fromFirestore,
+            toFirestore: GroupShoppingListItem.toFirestore,
           );
 }
 
