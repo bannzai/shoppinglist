@@ -26,3 +26,17 @@ if (
 ) {
   exports.generateShoppingListItemsFromImage = require("./functions/generateShoppingListItemsFromImage/function");
 }
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "createGroupInvitation"
+) {
+  exports.createGroupInvitation = require("./functions/createGroupInvitation/function");
+}
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "acceptGroupInvitation"
+) {
+  exports.acceptGroupInvitation = require("./functions/acceptGroupInvitation/function");
+}
