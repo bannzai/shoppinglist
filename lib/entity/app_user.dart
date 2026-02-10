@@ -12,6 +12,7 @@ abstract class AppUser with _$AppUser {
   @JsonSerializable(explicitToJson: true)
   const factory AppUser({
     required String id,
+    // NOTE: アプリ開始時に作られるデータであり、その時にはdefaultGroupIDができてない。作成されるパターンはこのケースのみなので required はつけない。テストの時とかに簡単に使えるようにするため
     String? defaultGroupID,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
