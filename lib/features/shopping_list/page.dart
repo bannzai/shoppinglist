@@ -117,8 +117,7 @@ class _Body extends HookConsumerWidget {
                         child: ShoppingListItems(
                             groupID: groupID,
                             shoppingListID: shoppingListID.value,
-                            shoppingListItems: shoppingListItems,
-                            shoppingListItemsAsync: shoppingListItemsAsync)),
+                            shoppingListItems: shoppingListItems)),
                     const AdMobBanner(),
                     Padding(
                       padding: const EdgeInsets.symmetric(

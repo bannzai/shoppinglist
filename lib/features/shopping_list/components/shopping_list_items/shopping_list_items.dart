@@ -10,24 +10,19 @@ class ShoppingListItems extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
-  final AsyncValue<List<GroupShoppingListItem>> shoppingListItemsAsync;
 
   const ShoppingListItems({
     super.key,
     required this.groupID,
     required this.shoppingListID,
     required this.shoppingListItems,
-    required this.shoppingListItemsAsync,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final shoppingListItemBatchUpdate =
+        ref.watch(shoppingListItemBatchUpdateProvider(groupID: groupID));
     final items = useState(shoppingListItems);
-
-    useEffect(() {
-      items.value = shoppingListItemsAsync.asData?.value ?? [];
-      return null;
-    }, [shoppingListItemsAsync]);
 
     return ReorderableList(
       onReorder: (oldIndex, newIndex) {
@@ -50,7 +45,7 @@ class ShoppingListItems extends HookConsumerWidget {
 
         items.value = [...orderedItems];
 
-        ref.read(shoppingListItemBatchUpdateProvider(groupID: groupID)).call(
+        shoppingListItemBatchUpdate.call(
               shoppingListID: shoppingListID,
               shoppingListItems: orderedItems,
             );
