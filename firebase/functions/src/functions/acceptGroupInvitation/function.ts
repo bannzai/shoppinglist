@@ -102,17 +102,17 @@ const acceptGroupInvitationFlow = ai.defineFlow(
         } as z.infer<typeof ResponseSchema>;
       }
 
-      // バッチ書き込み: グループのmemberUserIDsに追加 + 招待ステータスを accepted に更新
-      const batch = firestore.batch();
-      batch.update(groupDoc.ref, {
-        memberUserIDs: admin.firestore.FieldValue.arrayUnion(uid),
-        updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+      // トランザクションを使用して、グループへの参加と招待ステータスの更新をアトミックに行います。
+      await firestore.runTransaction(async (transaction) => {
+        transaction.update(groupDoc.ref, {
+          memberUserIDs: admin.firestore.FieldValue.arrayUnion(uid),
+          updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        transaction.update(invitationDoc.ref, {
+          status: "accepted",
+          updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+        });
       });
-      batch.update(invitationDoc.ref, {
-        status: "accepted",
-        updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-      });
-      await batch.commit();
 
       logger.info(`User ${uid} joined group ${groupID} via invitation`);
 
