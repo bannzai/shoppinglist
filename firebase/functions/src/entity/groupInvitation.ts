@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { zTimestamp } from "./timestamp";
 
 export const GroupInvitationStatusSchema = z.enum([
   "pending",
@@ -14,9 +15,9 @@ export const GroupInvitationSchema = z.object({
   inviterUserID: z.string(),
   token: z.string(),
   status: GroupInvitationStatusSchema,
-  expiresDateTime: z.any(),
-  createdDateTime: z.any().optional(),
-  updatedDateTime: z.any().optional(),
+  expiresDateTime: zTimestamp,
+  createdDateTime: zTimestamp.optional(),
+  updatedDateTime: zTimestamp.optional(),
 });
 
 export type GroupInvitation = z.infer<typeof GroupInvitationSchema>;
