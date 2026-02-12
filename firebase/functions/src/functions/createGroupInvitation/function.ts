@@ -2,7 +2,7 @@ import admin from "firebase-admin";
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
-import { v4 as uuidv4 } from "uuid";
+import * as crypto from "crypto";
 import { ai } from "../utils/genkit";
 import { appAuthPolicy } from "../utils/authPolicy";
 import {
@@ -11,13 +11,22 @@ import {
 } from "../../entity/response";
 import { day } from "../../core/foundation";
 
-const INVITE_BASE_URL = "https://shopping-list-prod-a615c.web.app/invite";
+// 紛らわしい文字（O,0,I,1,L,2,U,Z）を除外した28文字のアルファベット
+const ALPHABET = "ABCDEFGHJKMNPQRSTVWXY3456789";
+const CODE_LENGTH = 8;
 const INVITATION_EXPIRY_DAYS = 7;
+
+function generateInvitationCode(): string {
+  const bytes = crypto.randomBytes(CODE_LENGTH);
+  return Array.from(bytes)
+    .map((b) => ALPHABET[b % ALPHABET.length])
+    .join("");
+}
 
 const ResponseSchema = z.union([
   DataResponseSchema.extend({
     data: z.object({
-      invitationURL: z.string(),
+      invitationCode: z.string(),
     }),
   }),
   ErrorResponseSchema,
@@ -63,7 +72,28 @@ const createGroupInvitationFlow = ai.defineFlow(
         };
       }
 
-      const token = uuidv4();
+      // コード重複チェック付きで招待コードを生成
+      let token: string;
+      let attempts = 0;
+      const maxAttempts = 10;
+      do {
+        token = generateInvitationCode();
+        const existing = await firestore
+          .collection("groupInvitations")
+          .where("token", "==", token)
+          .limit(1)
+          .get();
+        if (existing.empty) break;
+        attempts++;
+      } while (attempts < maxAttempts);
+
+      if (attempts >= maxAttempts) {
+        return {
+          result: "NG" as const,
+          error: { message: "招待コードの生成に失敗しました。再度お試しください" },
+        };
+      }
+
       const now = admin.firestore.Timestamp.now();
       const expiresDateTime = admin.firestore.Timestamp.fromMillis(
         now.toMillis() + day * INVITATION_EXPIRY_DAYS
@@ -81,13 +111,14 @@ const createGroupInvitationFlow = ai.defineFlow(
         updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
       });
 
-      const invitationURL = `${INVITE_BASE_URL}?token=${token}`;
-      logger.info(`Created invitation for group ${groupID}: ${invitationURL}`);
+      logger.info(
+        `Created invitation for group ${groupID}: code=${token}`
+      );
 
       return {
         result: "OK" as const,
         data: {
-          invitationURL,
+          invitationCode: token,
         },
       } as z.infer<typeof ResponseSchema>;
     } catch (error) {
