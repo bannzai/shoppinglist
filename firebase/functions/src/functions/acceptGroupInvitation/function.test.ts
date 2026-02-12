@@ -1,12 +1,9 @@
 // firebase-admin のモック
 const mockCollection = jest.fn();
-const mockBatch = {
-  update: jest.fn(),
-  commit: jest.fn().mockResolvedValue(undefined),
-};
+const mockRunTransaction = jest.fn();
 const mockFirestoreInstance = {
   collection: mockCollection,
-  batch: jest.fn(() => mockBatch),
+  runTransaction: mockRunTransaction,
 };
 
 const mockServerTimestamp = jest.fn(() => "SERVER_TIMESTAMP");
@@ -36,7 +33,7 @@ jest.mock("firebase-admin", () => ({
 
 // genkit のモック
 const mockCurrentContext = jest.fn();
-let capturedFlowFn: (input: { token: string }) => Promise<any>;
+let capturedFlowFn: (input: { invitationCode: string }) => Promise<any>;
 
 jest.mock("../utils/genkit", () => ({
   ai: {
@@ -70,12 +67,15 @@ require("./function");
 describe("acceptGroupInvitation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // clearAllMocks は実装をリセットしないが、batch mock の返却値を再確認
-    mockFirestoreInstance.batch.mockReturnValue(mockBatch);
-    mockBatch.commit.mockResolvedValue(undefined);
+    mockRunTransaction.mockImplementation(async (fn: any) => {
+      const mockTransaction = {
+        update: jest.fn(),
+      };
+      return fn(mockTransaction);
+    });
   });
 
-  test("正常系: 有効なトークンで参加できる", async () => {
+  test("正常系: 有効な招待コードで参加できる", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "new-user" } });
 
     const mockInvitationRef = { update: jest.fn() };
@@ -83,7 +83,7 @@ describe("acceptGroupInvitation", () => {
       ref: mockInvitationRef,
       data: () => ({
         groupID: "group-1",
-        token: "valid-token",
+        token: "ABCD3456",
         status: "pending",
         expiresDateTime: {
           toDate: () => new Date(Date.now() + 86400000),
@@ -123,15 +123,14 @@ describe("acceptGroupInvitation", () => {
       return {};
     });
 
-    const result = await capturedFlowFn({ token: "valid-token" });
+    const result = await capturedFlowFn({ invitationCode: "ABCD3456" });
 
     expect(result.result).toBe("OK");
     expect(result.data.groupID).toBe("group-1");
-    expect(mockBatch.update).toHaveBeenCalledTimes(2);
-    expect(mockBatch.commit).toHaveBeenCalled();
+    expect(mockRunTransaction).toHaveBeenCalled();
   });
 
-  test("異常系: 無効なトークンでエラーになる", async () => {
+  test("異常系: 無効な招待コードでエラーになる", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
 
     mockCollection.mockImplementation((path: string) => {
@@ -152,7 +151,7 @@ describe("acceptGroupInvitation", () => {
       return {};
     });
 
-    const result = await capturedFlowFn({ token: "invalid-token" });
+    const result = await capturedFlowFn({ invitationCode: "INVALID1" });
 
     expect(result.result).toBe("NG");
     expect(result.error.message).toBe("有効な招待が見つかりません");
@@ -168,7 +167,7 @@ describe("acceptGroupInvitation", () => {
       ref: mockInvitationRef,
       data: () => ({
         groupID: "group-1",
-        token: "expired-token",
+        token: "EXPD1234",
         status: "pending",
         expiresDateTime: {
           toDate: () => new Date(Date.now() - 86400000),
@@ -194,7 +193,7 @@ describe("acceptGroupInvitation", () => {
       return {};
     });
 
-    const result = await capturedFlowFn({ token: "expired-token" });
+    const result = await capturedFlowFn({ invitationCode: "EXPD1234" });
 
     expect(result.result).toBe("NG");
     expect(result.error.message).toBe("招待の有効期限が切れています");
@@ -210,7 +209,7 @@ describe("acceptGroupInvitation", () => {
       ref: { update: jest.fn() },
       data: () => ({
         groupID: "group-1",
-        token: "valid-token",
+        token: "ABCD3456",
         status: "pending",
         expiresDateTime: {
           toDate: () => new Date(Date.now() + 86400000),
@@ -249,17 +248,17 @@ describe("acceptGroupInvitation", () => {
       return {};
     });
 
-    const result = await capturedFlowFn({ token: "valid-token" });
+    const result = await capturedFlowFn({ invitationCode: "ABCD3456" });
 
     expect(result.result).toBe("OK");
     expect(result.data.groupID).toBe("group-1");
-    expect(mockBatch.update).not.toHaveBeenCalled();
+    expect(mockRunTransaction).not.toHaveBeenCalled();
   });
 
   test("異常系: 未認証ユーザーがエラーになる", async () => {
     mockCurrentContext.mockReturnValue(undefined);
 
-    const result = await capturedFlowFn({ token: "valid-token" });
+    const result = await capturedFlowFn({ invitationCode: "ABCD3456" });
 
     expect(result.result).toBe("NG");
     expect(result.error.message).toBe("認証されていません");

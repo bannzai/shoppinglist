@@ -33,6 +33,16 @@ jest.mock("firebase-admin", () => ({
   },
 }));
 
+// crypto のモック
+jest.mock("crypto", () => ({
+  randomBytes: jest.fn((size: number) => {
+    // ALPHABET = "ABCDEFGHJKMNPQRSTVWXY3456789" (28文字)
+    // 各バイトが ALPHABET[b % 28] にマッピングされる
+    // [0,1,2,3,4,5,6,7] → "ABCDEFGH"
+    return Buffer.from(Array.from({ length: size }, (_, i) => i));
+  }),
+}));
+
 // genkit のモック
 const mockCurrentContext = jest.fn();
 let capturedFlowFn: (input: { groupID: string }) => Promise<any>;
@@ -61,10 +71,6 @@ jest.mock("firebase-functions", () => ({
 
 jest.mock("firebase-functions/params", () => ({
   defineString: jest.fn(() => ({ value: () => "" })),
-}));
-
-jest.mock("uuid", () => ({
-  v4: jest.fn(() => "mock-uuid-token"),
 }));
 
 // モジュール読み込み
@@ -97,7 +103,14 @@ describe("createGroupInvitation", () => {
         };
       }
       if (path === "groupInvitations") {
-        return { doc: jest.fn(() => mockInvitationRef) };
+        return {
+          doc: jest.fn(() => mockInvitationRef),
+          where: jest.fn().mockReturnValue({
+            limit: jest.fn().mockReturnValue({
+              get: jest.fn().mockResolvedValue({ empty: true }),
+            }),
+          }),
+        };
       }
       return {};
     });
@@ -105,12 +118,12 @@ describe("createGroupInvitation", () => {
     const result = await capturedFlowFn({ groupID: "group-1" });
 
     expect(result.result).toBe("OK");
-    expect(result.data.invitationURL).toContain("mock-uuid-token");
+    expect(result.data.invitationCode).toHaveLength(8);
     expect(mockInvitationRef.set).toHaveBeenCalledWith(
       expect.objectContaining({
         groupID: "group-1",
         inviterUserID: "user-1",
-        token: "mock-uuid-token",
+        token: expect.any(String),
         status: "pending",
       })
     );
