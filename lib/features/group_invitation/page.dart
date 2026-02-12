@@ -4,11 +4,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 
 class GroupInvitationAcceptPage extends HookConsumerWidget {
-  final String token;
-
   const GroupInvitationAcceptPage({
     super.key,
-    required this.token,
   });
 
   @override
@@ -16,10 +13,12 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
     final acceptGroupInvitation = ref.read(acceptGroupInvitationProvider);
     final isAccepting = useState(false);
     final errorMessage = useState<String?>(null);
+    final codeController = useTextEditingController();
+    final isValidCode = useState(false);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('グループ招待'),
+        title: const Text('招待コードで参加'),
       ),
       body: SafeArea(
         child: Padding(
@@ -35,7 +34,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
               ),
               const SizedBox(height: 24),
               const Text(
-                'グループへの招待を受け取りました',
+                '招待コードを入力してください',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -44,12 +43,33 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
               ),
               const SizedBox(height: 12),
               const Text(
-                'このグループに参加しますか？',
+                'グループのメンバーから共有された8桁のコードを入力してください',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   color: Colors.grey,
                 ),
                 textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              TextField(
+                controller: codeController,
+                textCapitalization: TextCapitalization.characters,
+                textAlign: TextAlign.center,
+                maxLength: 8,
+                style: const TextStyle(
+                  fontSize: 24,
+                  letterSpacing: 4,
+                  fontWeight: FontWeight.bold,
+                ),
+                decoration: const InputDecoration(
+                  hintText: 'ABCD3456',
+                  counterText: '',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) {
+                  isValidCode.value =
+                      RegExp(r'^[A-Z0-9]{8}$').hasMatch(value);
+                },
               ),
               if (errorMessage.value != null) ...[
                 const SizedBox(height: 16),
@@ -64,15 +84,16 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: isAccepting.value
+                  onPressed: isAccepting.value || !isValidCode.value
                       ? null
                       : () async {
                           isAccepting.value = true;
                           errorMessage.value = null;
                           try {
-                            await acceptGroupInvitation.call(token: token);
+                            await acceptGroupInvitation.call(
+                                invitationCode:
+                                    codeController.text.toUpperCase());
                             if (context.mounted) {
-                              // ホームへ遷移（スタックをクリア）
                               Navigator.of(context)
                                   .popUntil((route) => route.isFirst);
                             }
