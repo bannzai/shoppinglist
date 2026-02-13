@@ -34,12 +34,16 @@ jest.mock("firebase-admin", () => ({
 }));
 
 // crypto のモック
+// リジェクションサンプリングにより randomBytes(1) が繰り返し呼ばれる
+let cryptoCallCount = 0;
 jest.mock("crypto", () => ({
-  randomBytes: jest.fn((size: number) => {
+  randomBytes: jest.fn((_size: number) => {
     // ALPHABET = "ABCDEFGHJKMNPQRSTVWXY3456789" (28文字)
-    // 各バイトが ALPHABET[b % 28] にマッピングされる
-    // [0,1,2,3,4,5,6,7] → "ABCDEFGH"
-    return Buffer.from(Array.from({ length: size }, (_, i) => i));
+    // limit = 256 - (256 % 28) = 252
+    // randomByte < 252 の場合のみ採用される
+    // 各呼び出しで 0,1,2,3,... を順次返す（全て < 252 なので全て採用される）
+    const value = cryptoCallCount++;
+    return Buffer.from([value]);
   }),
 }));
 
@@ -79,6 +83,7 @@ require("./function");
 describe("createGroupInvitation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    cryptoCallCount = 0;
   });
 
   test("正常系: メンバーが招待を作成できる", async () => {

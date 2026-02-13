@@ -17,10 +17,16 @@ const CODE_LENGTH = 8;
 const INVITATION_EXPIRY_DAYS = 7;
 
 function generateInvitationCode(): string {
-  const bytes = crypto.randomBytes(CODE_LENGTH);
-  return Array.from(bytes)
-    .map((b) => ALPHABET[b % ALPHABET.length])
-    .join("");
+  let code = "";
+  const alphabetLength = ALPHABET.length;
+  const limit = 256 - (256 % alphabetLength);
+  while (code.length < CODE_LENGTH) {
+    const randomByte = crypto.randomBytes(1)[0];
+    if (randomByte < limit) {
+      code += ALPHABET[randomByte % alphabetLength];
+    }
+  }
+  return code;
 }
 
 const ResponseSchema = z.union([
