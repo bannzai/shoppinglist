@@ -8,6 +8,7 @@ import {
   DataResponseSchema,
   ErrorResponseSchema,
 } from "../../entity/response";
+import { groupUserProfileDocumentID } from "../../entity/group_user_profile";
 
 const ResponseSchema = z.union([
   DataResponseSchema.extend({
@@ -115,11 +116,12 @@ const acceptGroupInvitationFlow = ai.defineFlow(
 
         // 参加ユーザーのプロフィールを作成
         const userRecord = await admin.auth().getUser(uid);
+        const profileID = groupUserProfileDocumentID({ groupID, userID: uid });
         const profileRef = groupRef
           .collection("userProfiles")
-          .doc(`group_${groupID}_userProfile_${uid}`);
+          .doc(profileID);
         transaction.set(profileRef, {
-          id: `group_${groupID}_userProfile_${uid}`,
+          id: profileID,
           userID: uid,
           displayName: userRecord.displayName || null,
           createdDateTime: admin.firestore.FieldValue.serverTimestamp(),

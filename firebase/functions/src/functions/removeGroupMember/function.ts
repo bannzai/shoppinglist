@@ -8,6 +8,7 @@ import {
   DataResponseSchema,
   ErrorResponseSchema,
 } from "../../entity/response";
+import { groupUserProfileDocumentID } from "../../entity/group_user_profile";
 
 interface GroupData {
   memberUserIDs: string[];
@@ -101,7 +102,7 @@ const removeGroupMemberFlow = ai.defineFlow(
         // 対象ユーザーのプロフィールを削除
         const profileRef = groupRef
           .collection("userProfiles")
-          .doc(`group_${groupID}_userProfile_${targetUserID}`);
+          .doc(groupUserProfileDocumentID({ groupID, userID: targetUserID }));
         transaction.delete(profileRef);
 
         // 対象ユーザーの defaultGroupID が当該グループの場合はnullに更新
