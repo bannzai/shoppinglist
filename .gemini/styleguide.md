@@ -30,9 +30,11 @@
 - 新規作成時は `serverCreatedDateTime` と `serverUpdatedDateTime` の両方を付与する
 
 ### Composite Document ID
-- サブコレクション内のドキュメントIDは、親ドキュメントのIDを含むcomposite形式にする
-  - 例: `group_{groupID}_userProfile_{userID}`
-- ID生成ロジックはエンティティクラスのstaticメソッドに集約する
+- 基本的にはFirestoreの自動生成IDを使用する
+- Composite IDは、Userと紐づく1:1の情報をmapではなくcollection/documentとして格納したい場合など、リレーションを明示する必要がある場合にのみ使用する
+  - 例: `group_{groupID}_userProfile_{userID}` — UserProfileはUser:Group間で1:1の関係
+- 通常のサブコレクション（例: `/groups/{groupID}/shoppingLocations/{id}`）ではFirestoreの自動生成IDで十分
+- Composite IDを使用する場合、ID生成ロジックはエンティティクラスのstaticメソッドに集約する
 
 ### Firebase Functions の呼び出し
 - Firebase Functions呼び出しは状態を持たないため、class + Providerでラップせず `functions.xxx()` を直接呼ぶ
