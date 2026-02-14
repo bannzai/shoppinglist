@@ -89,11 +89,9 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                           isAccepting.value = true;
                           errorMessage.value = null;
                           try {
-                            await ref
-                                .read(acceptGroupInvitationProvider)
-                                .call(
-                                    invitationCode:
-                                        codeController.text.toUpperCase());
+                            await ref.read(acceptGroupInvitationProvider).call(
+                                invitationCode:
+                                    codeController.text.toUpperCase());
                             if (context.mounted) {
                               Navigator.of(context)
                                   .popUntil((route) => route.isFirst);

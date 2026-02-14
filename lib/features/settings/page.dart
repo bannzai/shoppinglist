@@ -33,8 +33,7 @@ class SettingPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          const GroupInvitationAcceptPage(),
+                      builder: (context) => const GroupInvitationAcceptPage(),
                     ),
                   );
                 },

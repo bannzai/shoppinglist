@@ -133,11 +133,9 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                   : () async {
                                       isCreatingInvitation.value = true;
                                       try {
-                                        final invitationCode =
-                                            await ref
-                                                .read(
-                                                    createGroupInvitationProvider)
-                                                .call(groupID: groupID);
+                                        final invitationCode = await ref
+                                            .read(createGroupInvitationProvider)
+                                            .call(groupID: groupID);
                                         if (context.mounted) {
                                           showDialog(
                                             context: context,
