@@ -58,6 +58,40 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     final list = response['data']['shoppingListItems'] as List<dynamic>;
     return list.map((e) => e.toString()).toList();
   }
+
+  Future<void> removeGroupMember({
+    required String groupID,
+    required String targetUserID,
+  }) async {
+    final result = await httpsCallable('removeGroupMember').call(
+      {
+        'groupID': groupID,
+        'targetUserID': targetUserID,
+      },
+    );
+    debugPrint('removeGroupMember.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+  }
+
+  Future<void> updateGroupName({
+    required String groupID,
+    required String name,
+  }) async {
+    final result = await httpsCallable('updateGroupName').call(
+      {
+        'groupID': groupID,
+        'name': name,
+      },
+    );
+    debugPrint('updateGroupName.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+  }
 }
 
 // Map<String, dynamic>.fromだけだとネストした子要素が_Map<Object? Object?>のままになる
