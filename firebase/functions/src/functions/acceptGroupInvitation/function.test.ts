@@ -70,6 +70,7 @@ describe("acceptGroupInvitation", () => {
     mockRunTransaction.mockImplementation(async (fn: any) => {
       const mockTransaction = {
         update: jest.fn(),
+        get: jest.fn((ref: any) => ref.get()),
       };
       return fn(mockTransaction);
     });
@@ -78,7 +79,12 @@ describe("acceptGroupInvitation", () => {
   test("正常系: 有効な招待コードで参加できる", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "new-user" } });
 
-    const mockInvitationRef = { update: jest.fn() };
+    const mockInvitationRef = {
+      update: jest.fn(),
+      get: jest.fn().mockResolvedValue({
+        data: () => ({ status: "pending" }),
+      }),
+    };
     const mockInvitationDoc = {
       ref: mockInvitationRef,
       data: () => ({
@@ -206,7 +212,12 @@ describe("acceptGroupInvitation", () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
 
     const mockInvitationDoc = {
-      ref: { update: jest.fn() },
+      ref: {
+        update: jest.fn(),
+        get: jest.fn().mockResolvedValue({
+          data: () => ({ status: "pending" }),
+        }),
+      },
       data: () => ({
         groupID: "group-1",
         invitationCode: "ABCD3456",
@@ -252,7 +263,7 @@ describe("acceptGroupInvitation", () => {
 
     expect(result.result).toBe("OK");
     expect(result.data.groupID).toBe("group-1");
-    expect(mockRunTransaction).not.toHaveBeenCalled();
+    expect(mockRunTransaction).toHaveBeenCalled();
   });
 
   test("異常系: 未認証ユーザーがエラーになる", async () => {
