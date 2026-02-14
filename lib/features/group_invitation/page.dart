@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
+import 'package:shoppinglist/utils/invitation_code_validator.dart';
 
 class GroupInvitationAcceptPage extends HookConsumerWidget {
   const GroupInvitationAcceptPage({
@@ -67,8 +68,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (value) {
-                  isValidCode.value =
-                      RegExp(r'^[A-Z0-9]{8}$').hasMatch(value);
+                  isValidCode.value = isValidInvitationCode(value);
                 },
               ),
               if (errorMessage.value != null) ...[
