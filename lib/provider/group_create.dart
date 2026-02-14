@@ -20,6 +20,7 @@ class CreateGroup {
     final group = Group(
       id: groupDocRef.id,
       memberUserIDs: [appUser.id],
+      name: null,
       ownerUserID: appUser.id,
     );
 

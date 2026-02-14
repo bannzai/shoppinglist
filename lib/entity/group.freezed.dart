@@ -23,7 +23,7 @@ mixin _$Group {
   String? get name;
 
   /// グループを作成したユーザーのAppUser.id
-  String? get ownerUserID;
+  String get ownerUserID;
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime;
   @ClientUpdatedTimestamp()
@@ -92,7 +92,7 @@ abstract mixin class $GroupCopyWith<$Res> {
       {String id,
       List<String> memberUserIDs,
       String? name,
-      String? ownerUserID,
+      String ownerUserID,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -114,7 +114,7 @@ class _$GroupCopyWithImpl<$Res> implements $GroupCopyWith<$Res> {
     Object? id = null,
     Object? memberUserIDs = null,
     Object? name = freezed,
-    Object? ownerUserID = freezed,
+    Object? ownerUserID = null,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -133,10 +133,10 @@ class _$GroupCopyWithImpl<$Res> implements $GroupCopyWith<$Res> {
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
-      ownerUserID: freezed == ownerUserID
+      ownerUserID: null == ownerUserID
           ? _self.ownerUserID
           : ownerUserID // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
           : createdDateTime // ignore: cast_nullable_to_non_nullable
@@ -254,7 +254,7 @@ extension GroupPatterns on Group {
             String id,
             List<String> memberUserIDs,
             String? name,
-            String? ownerUserID,
+            String ownerUserID,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -298,7 +298,7 @@ extension GroupPatterns on Group {
             String id,
             List<String> memberUserIDs,
             String? name,
-            String? ownerUserID,
+            String ownerUserID,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -340,7 +340,7 @@ extension GroupPatterns on Group {
             String id,
             List<String> memberUserIDs,
             String? name,
-            String? ownerUserID,
+            String ownerUserID,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -372,8 +372,8 @@ class _Group extends Group {
   const _Group(
       {required this.id,
       required final List<String> memberUserIDs,
-      this.name,
-      this.ownerUserID,
+      required this.name,
+      required this.ownerUserID,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
@@ -402,7 +402,7 @@ class _Group extends Group {
 
   /// グループを作成したユーザーのAppUser.id
   @override
-  final String? ownerUserID;
+  final String ownerUserID;
   @override
   @ClientCreatedTimestamp()
   final DateTime? createdDateTime;
@@ -481,7 +481,7 @@ abstract mixin class _$GroupCopyWith<$Res> implements $GroupCopyWith<$Res> {
       {String id,
       List<String> memberUserIDs,
       String? name,
-      String? ownerUserID,
+      String ownerUserID,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -503,7 +503,7 @@ class __$GroupCopyWithImpl<$Res> implements _$GroupCopyWith<$Res> {
     Object? id = null,
     Object? memberUserIDs = null,
     Object? name = freezed,
-    Object? ownerUserID = freezed,
+    Object? ownerUserID = null,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -522,10 +522,10 @@ class __$GroupCopyWithImpl<$Res> implements _$GroupCopyWith<$Res> {
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
-      ownerUserID: freezed == ownerUserID
+      ownerUserID: null == ownerUserID
           ? _self.ownerUserID
           : ownerUserID // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
           : createdDateTime // ignore: cast_nullable_to_non_nullable

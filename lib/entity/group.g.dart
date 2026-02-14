@@ -12,7 +12,7 @@ _Group _$GroupFromJson(Map<String, dynamic> json) => _Group(
           .map((e) => e as String)
           .toList(),
       name: json['name'] as String?,
-      ownerUserID: json['ownerUserID'] as String?,
+      ownerUserID: json['ownerUserID'] as String,
       createdDateTime: const ClientCreatedTimestamp()
           .fromJson(json['createdDateTime'] as Timestamp?),
       updatedDateTime: const ClientUpdatedTimestamp()

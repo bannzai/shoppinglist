@@ -17,10 +17,10 @@ abstract class Group with _$Group {
     required List<String> memberUserIDs,
 
     /// グループ名
-    String? name,
+    required String? name,
 
     /// グループを作成したユーザーのAppUser.id
-    String? ownerUserID,
+    required String ownerUserID,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
