@@ -20,7 +20,8 @@ abstract class Group with _$Group {
     required String? name,
 
     /// グループを作成したユーザーのAppUser.id
-    required String ownerUserID,
+    /// NOTE: 既存のグループドキュメントにはこのフィールドが存在しない場合があるためnullable
+    String? ownerUserID,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
