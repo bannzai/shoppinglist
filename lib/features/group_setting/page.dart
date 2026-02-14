@@ -9,6 +9,7 @@ import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
+import 'package:shoppinglist/features/shopping_location/page.dart';
 import 'package:shoppinglist/style/color.dart';
 
 class GroupSettingPage extends HookConsumerWidget {
@@ -197,6 +198,39 @@ class _GroupSettingBody extends HookConsumerWidget {
                         : null,
                   );
                 }),
+                const Divider(height: 32),
+
+                // 買い物する場所セクション
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('買い物する場所',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ShoppingLocationPage(
+                                  groupID: groupID,
+                                ),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.store),
+                          label: const Text('場所を管理'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 const Divider(height: 32),
 
                 // グループ招待セクション
