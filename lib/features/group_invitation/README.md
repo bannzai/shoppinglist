@@ -1,24 +1,24 @@
 # グループ招待機能
 
 ## 概要
-URLベースのグループ招待機能。招待URLを生成→共有→受信者がリンクを開いてグループに参加する。
+招待コードベースのグループ招待機能。8桁の英数字コードを生成→共有→受信者がコードを入力してグループに参加する。
 
 ## 画面
-- `GroupInvitationAcceptPage`: 招待受け入れ確認画面
-  - ディープリンク経由で表示される
-  - 「参加する」ボタンで `AcceptGroupInvitation` を呼び出してグループに参加
+- `GroupInvitationAcceptPage`: 招待コード入力画面
+  - Settings画面の「招待コードでグループに参加」から遷移
+  - 8桁の招待コードを入力し「参加する」ボタンで `AcceptGroupInvitation` を呼び出してグループに参加
   - 成功時はホーム画面に遷移
   - エラー時（期限切れ等）はエラーメッセージを表示
 
 ## 招待フロー
 1. 既存メンバーが `ShoppingListSettingPage` の「グループに招待」ボタンをタップ
-2. `CreateGroupInvitation` で招待URLを生成
-3. OS標準シェアシートで招待URLを共有
-4. 受信者がURLを開くとアプリが起動し `DeepLinkResolver` が検知
-5. `GroupInvitationAcceptPage` が表示され「参加する」で完了
+2. `CreateGroupInvitation` で8桁の招待コードを生成
+3. ダイアログに招待コードが表示され、コピーして共有
+4. 受信者がSettings画面の「招待コードでグループに参加」をタップ
+5. `GroupInvitationAcceptPage` でコードを入力し「参加する」で完了
 
-## 招待URL形式
-`https://shopping-list-prod-a615c.web.app/invite?token={token}`
+## 招待コード形式
+英大文字 + 数字の8桁（例: `ABCD3456`）
 
 ## 有効期限
-招待リンクの有効期限は7日間。期限切れ後はエラーメッセージが表示される。
+招待コードの有効期限は7日間。期限切れ後はエラーメッセージが表示される。
