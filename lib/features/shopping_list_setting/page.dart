@@ -7,6 +7,7 @@ import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/features/group_setting/page.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/button.dart';
 import 'package:shoppinglist/style/color.dart';
 
@@ -68,6 +69,58 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                               },
                             ),
                           ),
+                        ],
+                      ),
+                    ),
+                    const Divider(),
+                    // 買い物する場所セクション
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('買い物する場所',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          () {
+                            final locationsAsync = ref.watch(
+                                shoppingLocationsProvider(groupID: groupID));
+                            return locationsAsync.when(
+                              data: (locations) =>
+                                  DropdownButtonFormField<String?>(
+                                initialValue: locations.any((l) =>
+                                        l.id ==
+                                        shoppingList
+                                            .value.shoppingLocationID)
+                                    ? shoppingList.value.shoppingLocationID
+                                    : null,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                ),
+                                items: [
+                                  const DropdownMenuItem<String?>(
+                                    value: null,
+                                    child: Text('なし'),
+                                  ),
+                                  ...locations.map((location) =>
+                                      DropdownMenuItem<String?>(
+                                        value: location.id,
+                                        child: Text(location.name),
+                                      )),
+                                ],
+                                onChanged: (value) {
+                                  shoppingList.value = shoppingList.value
+                                      .copyWith(shoppingLocationID: value);
+                                },
+                              ),
+                              error: (e, st) => Text(e.toString()),
+                              loading: () =>
+                                  const CircularProgressIndicator(),
+                            );
+                          }(),
                         ],
                       ),
                     ),
