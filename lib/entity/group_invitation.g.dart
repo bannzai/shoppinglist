@@ -11,7 +11,7 @@ _GroupInvitation _$GroupInvitationFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       groupID: json['groupID'] as String,
       inviterUserID: json['inviterUserID'] as String,
-      token: json['token'] as String,
+      invitationCode: json['invitationCode'] as String,
       status: $enumDecode(_$GroupInvitationStatusEnumMap, json['status']),
       expiresDateTime: const NullableTimestampConverter()
           .fromJson(json['expiresDateTime'] as Timestamp?),
@@ -30,7 +30,7 @@ Map<String, dynamic> _$GroupInvitationToJson(_GroupInvitation instance) =>
       'id': instance.id,
       'groupID': instance.groupID,
       'inviterUserID': instance.inviterUserID,
-      'token': instance.token,
+      'invitationCode': instance.invitationCode,
       'status': _$GroupInvitationStatusEnumMap[instance.status]!,
       'expiresDateTime':
           const NullableTimestampConverter().toJson(instance.expiresDateTime),

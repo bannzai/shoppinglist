@@ -18,17 +18,17 @@ const ResponseSchema = z.union([
   ErrorResponseSchema,
 ]);
 
-// 検証用引数: { "token": "test-token-uuid" }
+// 検証用引数: { "invitationCode": "ABCD3456" }
 const acceptGroupInvitationFlow = ai.defineFlow(
   {
     name: "acceptGroupInvitation",
     inputSchema: z.object({
-      token: z.string(),
+      invitationCode: z.string(),
     }),
     outputSchema: ResponseSchema,
   },
-  async (input: { token: string }) => {
-    const { token } = input;
+  async (input: { invitationCode: string }) => {
+    const { invitationCode } = input;
 
     try {
       const context = ai.currentContext();
@@ -42,10 +42,10 @@ const acceptGroupInvitationFlow = ai.defineFlow(
 
       const firestore = admin.firestore();
 
-      // token + status == "pending" で招待を検索
+      // invitationCode + status == "pending" で招待を検索
       const invitationSnapshot = await firestore
         .collection("groupInvitations")
-        .where("token", "==", token)
+        .where("invitationCode", "==", invitationCode)
         .where("status", "==", "pending")
         .limit(1)
         .get();

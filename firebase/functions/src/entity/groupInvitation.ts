@@ -13,7 +13,7 @@ export const GroupInvitationSchema = z.object({
   id: z.string(),
   groupID: z.string(),
   inviterUserID: z.string(),
-  token: z.string(),
+  invitationCode: z.string(),
   status: GroupInvitationStatusSchema,
   expiresDateTime: zTimestamp,
   createdDateTime: zTimestamp.optional(),

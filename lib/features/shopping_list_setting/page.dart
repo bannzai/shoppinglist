@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
@@ -134,10 +134,18 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                   : () async {
                                       isCreatingInvitation.value = true;
                                       try {
-                                        final url =
+                                        final invitationCode =
                                             await createGroupInvitation.call(
                                                 groupID: groupID);
-                                        await Share.share(url);
+                                        if (context.mounted) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                _InvitationCodeDialog(
+                                                    invitationCode:
+                                                        invitationCode),
+                                          );
+                                        }
                                       } catch (e) {
                                         if (context.mounted) {
                                           ScaffoldMessenger.of(context)
@@ -246,6 +254,59 @@ class ShoppingListSettingPage extends HookConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _InvitationCodeDialog extends StatelessWidget {
+  final String invitationCode;
+
+  const _InvitationCodeDialog({required this.invitationCode});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('招待コード'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('以下のコードを共有してください'),
+          const SizedBox(height: 16),
+          SelectableText(
+            invitationCode,
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 4,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            '有効期限: 7日間',
+            style: TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            await Clipboard.setData(ClipboardData(text: invitationCode));
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('招待コードをコピーしました')),
+              );
+            }
+          },
+          child: const Text('コピー'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('閉じる'),
+        ),
+      ],
     );
   }
 }

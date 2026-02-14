@@ -23,7 +23,7 @@ abstract class GroupInvitation with _$GroupInvitation {
     required String id,
     required String groupID,
     required String inviterUserID,
-    required String token,
+    required String invitationCode,
     required GroupInvitationStatus status,
     @NullableTimestampConverter() DateTime? expiresDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,

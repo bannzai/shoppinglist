@@ -33,6 +33,20 @@ jest.mock("firebase-admin", () => ({
   },
 }));
 
+// crypto のモック
+// リジェクションサンプリングにより randomBytes(1) が繰り返し呼ばれる
+let cryptoCallCount = 0;
+jest.mock("crypto", () => ({
+  randomBytes: jest.fn((_size: number) => {
+    // ALPHABET = "ABCDEFGHJKMNPQRSTVWXY3456789" (28文字)
+    // limit = 256 - (256 % 28) = 252
+    // randomByte < 252 の場合のみ採用される
+    // 各呼び出しで 0,1,2,3,... を順次返す（全て < 252 なので全て採用される）
+    const value = cryptoCallCount++;
+    return Buffer.from([value]);
+  }),
+}));
+
 // genkit のモック
 const mockCurrentContext = jest.fn();
 let capturedFlowFn: (input: { groupID: string }) => Promise<any>;
@@ -63,16 +77,13 @@ jest.mock("firebase-functions/params", () => ({
   defineString: jest.fn(() => ({ value: () => "" })),
 }));
 
-jest.mock("uuid", () => ({
-  v4: jest.fn(() => "mock-uuid-token"),
-}));
-
 // モジュール読み込み
 require("./function");
 
 describe("createGroupInvitation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    cryptoCallCount = 0;
   });
 
   test("正常系: メンバーが招待を作成できる", async () => {
@@ -97,7 +108,14 @@ describe("createGroupInvitation", () => {
         };
       }
       if (path === "groupInvitations") {
-        return { doc: jest.fn(() => mockInvitationRef) };
+        return {
+          doc: jest.fn(() => mockInvitationRef),
+          where: jest.fn().mockReturnValue({
+            limit: jest.fn().mockReturnValue({
+              get: jest.fn().mockResolvedValue({ empty: true }),
+            }),
+          }),
+        };
       }
       return {};
     });
@@ -105,12 +123,12 @@ describe("createGroupInvitation", () => {
     const result = await capturedFlowFn({ groupID: "group-1" });
 
     expect(result.result).toBe("OK");
-    expect(result.data.invitationURL).toContain("mock-uuid-token");
+    expect(result.data.invitationCode).toHaveLength(8);
     expect(mockInvitationRef.set).toHaveBeenCalledWith(
       expect.objectContaining({
         groupID: "group-1",
         inviterUserID: "user-1",
-        token: "mock-uuid-token",
+        invitationCode: expect.any(String),
         status: "pending",
       })
     );

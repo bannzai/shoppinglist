@@ -18,15 +18,15 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     if (response['result'] != 'OK') {
       throw Exception(response['error']['message']);
     }
-    return response['data']['invitationURL'] as String;
+    return response['data']['invitationCode'] as String;
   }
 
   Future<String> acceptGroupInvitation({
-    required String token,
+    required String invitationCode,
   }) async {
     final result = await httpsCallable('acceptGroupInvitation').call(
       {
-        'token': token,
+        'invitationCode': invitationCode,
       },
     );
     debugPrint('acceptGroupInvitation.result: ${result.data}');

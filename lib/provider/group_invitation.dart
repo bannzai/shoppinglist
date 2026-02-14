@@ -5,9 +5,9 @@ part 'group_invitation.g.dart';
 
 class CreateGroupInvitation {
   Future<String> call({required String groupID}) async {
-    final invitationURL =
+    final invitationCode =
         await functions.createGroupInvitation(groupID: groupID);
-    return invitationURL;
+    return invitationCode;
   }
 }
 
@@ -17,8 +17,9 @@ CreateGroupInvitation createGroupInvitation(CreateGroupInvitationRef ref) {
 }
 
 class AcceptGroupInvitation {
-  Future<String> call({required String token}) async {
-    final groupID = await functions.acceptGroupInvitation(token: token);
+  Future<String> call({required String invitationCode}) async {
+    final groupID =
+        await functions.acceptGroupInvitation(invitationCode: invitationCode);
     return groupID;
   }
 }

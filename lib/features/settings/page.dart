@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/components/button/inquiry.dart';
 import 'package:shoppinglist/components/button/user_delete.dart';
+import 'package:shoppinglist/features/group_invitation/page.dart';
 import 'package:shoppinglist/features/settings/components/section.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -18,6 +19,27 @@ class SettingPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
+            SettingSectionTitle(text: 'グループ', children: [
+              ListTile(
+                title: const Text(
+                  '招待コードでグループに参加',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 16,
+                  ),
+                ),
+                leading: const Icon(Icons.group_add),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const GroupInvitationAcceptPage(),
+                    ),
+                  );
+                },
+              ),
+            ]),
             SettingSectionTitle(text: 'アプリについて', children: [
               ListTile(
                   title: const Text(

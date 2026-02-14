@@ -4,7 +4,6 @@ import 'package:shoppinglist/features/home/page.dart';
 import 'package:shoppinglist/features/resolver/app.dart';
 import 'package:shoppinglist/features/resolver/app_entntiy_prepare.dart';
 import 'package:shoppinglist/features/resolver/app_user_create.dart';
-import 'package:shoppinglist/features/resolver/deep_link_resolver.dart';
 import 'package:shoppinglist/features/resolver/force_update.dart';
 
 class RootPage extends HookConsumerWidget {
@@ -20,10 +19,7 @@ class RootPage extends HookConsumerWidget {
           debugPrint('Resolved ForceUpdateResolver user: ${user.uid}');
           return AppEntityPrepareResolver(builder: (context, groupID) {
             debugPrint('Resolved AppEntityPrepareResolver user: ${user.uid}');
-            return DeepLinkResolver(builder: (context) {
-              debugPrint('Resolved DeepLinkResolver user: ${user.uid}');
-              return HomePage(groupID: groupID);
-            });
+            return HomePage(groupID: groupID);
           });
         });
       });
