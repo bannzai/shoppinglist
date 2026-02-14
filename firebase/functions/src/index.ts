@@ -40,3 +40,17 @@ if (
 ) {
   exports.acceptGroupInvitation = require("./functions/acceptGroupInvitation/function");
 }
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "removeGroupMember"
+) {
+  exports.removeGroupMember = require("./functions/removeGroupMember/function");
+}
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "updateGroupName"
+) {
+  exports.updateGroupName = require("./functions/updateGroupName/function");
+}

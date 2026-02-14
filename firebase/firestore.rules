@@ -30,6 +30,12 @@ service cloud.firestore {
         return isMember(get(/databases/$(database)/documents/groups/$(groupID)).data.memberUserIDs);
       }
 
+      match /userProfiles/{profileID} {
+        allow read: if isGroupMember();
+        allow create: if isGroupMember() && request.resource.data.userID == request.auth.uid;
+        allow update: if isGroupMember() && resource.data.userID == request.auth.uid;
+      }
+
       match /shoppingLists/{shoppingListID} {
         allow read, write: if isGroupMember();
 

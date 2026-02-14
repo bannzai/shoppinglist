@@ -23,11 +23,16 @@ const firestoreFunction = Object.assign(
   }
 );
 
+const mockGetUser = jest.fn();
+
 jest.mock("firebase-admin", () => ({
   __esModule: true,
   default: {
     firestore: firestoreFunction,
     initializeApp: jest.fn(),
+    auth: jest.fn(() => ({
+      getUser: mockGetUser,
+    })),
   },
 }));
 
@@ -71,6 +76,7 @@ describe("acceptGroupInvitation", () => {
       const mockTransaction = {
         update: jest.fn(),
         get: jest.fn((ref: any) => ref.get()),
+        set: jest.fn(),
       };
       return fn(mockTransaction);
     });
@@ -78,6 +84,7 @@ describe("acceptGroupInvitation", () => {
 
   test("正常系: 有効な招待コードで参加できる", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "new-user" } });
+    mockGetUser.mockResolvedValue({ displayName: "New User" });
 
     const mockInvitationRef = {
       update: jest.fn(),
@@ -97,7 +104,12 @@ describe("acceptGroupInvitation", () => {
       }),
     };
 
-    const mockGroupRef = { update: jest.fn() };
+    const mockGroupRef = {
+      update: jest.fn(),
+      collection: jest.fn().mockReturnValue({
+        doc: jest.fn().mockReturnValue({ id: "group_userProfile_new-user" }),
+      }),
+    };
     const mockGroupDoc = {
       exists: true,
       ref: mockGroupRef,
@@ -123,6 +135,7 @@ describe("acceptGroupInvitation", () => {
         return {
           doc: jest.fn(() => ({
             get: jest.fn().mockResolvedValue(mockGroupDoc),
+            collection: mockGroupRef.collection,
           })),
         };
       }

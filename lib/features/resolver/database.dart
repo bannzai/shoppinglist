@@ -7,6 +7,7 @@ import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/resolver/auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -20,6 +21,8 @@ abstract class _CollectionPath {
   static String shoppingListItems(
           {required String groupID, required String shoppingListID}) =>
       '/groups/$groupID/shoppingLists/$shoppingListID/items';
+  static String userProfiles({required String groupID}) =>
+      '/groups/$groupID/userProfiles';
 }
 
 @Riverpod(keepAlive: true, dependencies: [])
@@ -116,6 +119,25 @@ class GroupDatabase {
           .withConverter(
             fromFirestore: GroupShoppingListItem.fromFirestore,
             toFirestore: GroupShoppingListItem.toFirestore,
+          );
+
+  CollectionReference<GroupUserProfile> userProfilesReference() =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.userProfiles(groupID: groupID))
+          .withConverter(
+            fromFirestore: GroupUserProfile.fromFirestore,
+            toFirestore: GroupUserProfile.toFirestore,
+          );
+
+  DocumentReference<GroupUserProfile> userProfileReference({
+    required String userID,
+  }) =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.userProfiles(groupID: groupID))
+          .doc(GroupUserProfile.documentID(groupID: groupID, userID: userID))
+          .withConverter(
+            fromFirestore: GroupUserProfile.fromFirestore,
+            toFirestore: GroupUserProfile.toFirestore,
           );
 }
 
