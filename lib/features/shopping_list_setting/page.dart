@@ -29,7 +29,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
         useTextEditingController(text: shoppingList.value.name);
     final shoppingListUpdate =
         ref.watch(shoppingListUpdateProvider(groupID: groupID));
-    final createGroupInvitation = ref.read(createGroupInvitationProvider);
+    final createGroupInvitation = ref.watch(createGroupInvitationProvider);
     final isCreatingInvitation = useState(false);
     final ttlExpiresDateTimeValue = shoppingList.value.ttlExpiresDateTime;
 
