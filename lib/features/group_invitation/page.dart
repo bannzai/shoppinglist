@@ -11,7 +11,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final acceptGroupInvitation = ref.read(acceptGroupInvitationProvider);
+    final acceptGroupInvitation = ref.watch(acceptGroupInvitationProvider);
     final isAccepting = useState(false);
     final errorMessage = useState<String?>(null);
     final codeController = useTextEditingController();
