@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -50,7 +51,7 @@ class ShoppingLocationUpdate {
   }) async {
     final docRef = database.shoppingLocationReference(
         shoppingLocationID: shoppingLocationID);
-    await docRef.set(shoppingLocation);
+    await docRef.set(shoppingLocation, SetOptions(merge: true));
   }
 }
 
