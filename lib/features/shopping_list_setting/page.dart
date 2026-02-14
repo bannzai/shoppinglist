@@ -29,7 +29,6 @@ class ShoppingListSettingPage extends HookConsumerWidget {
         useTextEditingController(text: shoppingList.value.name);
     final shoppingListUpdate =
         ref.watch(shoppingListUpdateProvider(groupID: groupID));
-    final createGroupInvitation = ref.watch(createGroupInvitationProvider);
     final isCreatingInvitation = useState(false);
     final ttlExpiresDateTimeValue = shoppingList.value.ttlExpiresDateTime;
 
@@ -135,8 +134,10 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                       isCreatingInvitation.value = true;
                                       try {
                                         final invitationCode =
-                                            await createGroupInvitation.call(
-                                                groupID: groupID);
+                                            await ref
+                                                .read(
+                                                    createGroupInvitationProvider)
+                                                .call(groupID: groupID);
                                         if (context.mounted) {
                                           showDialog(
                                             context: context,
