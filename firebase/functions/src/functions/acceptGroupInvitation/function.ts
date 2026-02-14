@@ -45,7 +45,7 @@ const acceptGroupInvitationFlow = ai.defineFlow(
       // invitationCode + status == "pending" で招待を検索
       const invitationSnapshot = await firestore
         .collection("groupInvitations")
-        .where("token", "==", invitationCode)
+        .where("invitationCode", "==", invitationCode)
         .where("status", "==", "pending")
         .limit(1)
         .get();

@@ -83,7 +83,7 @@ describe("acceptGroupInvitation", () => {
       ref: mockInvitationRef,
       data: () => ({
         groupID: "group-1",
-        token: "ABCD3456",
+        invitationCode: "ABCD3456",
         status: "pending",
         expiresDateTime: {
           toDate: () => new Date(Date.now() + 86400000),
@@ -167,7 +167,7 @@ describe("acceptGroupInvitation", () => {
       ref: mockInvitationRef,
       data: () => ({
         groupID: "group-1",
-        token: "EXPD1234",
+        invitationCode: "EXPD1234",
         status: "pending",
         expiresDateTime: {
           toDate: () => new Date(Date.now() - 86400000),
@@ -209,7 +209,7 @@ describe("acceptGroupInvitation", () => {
       ref: { update: jest.fn() },
       data: () => ({
         groupID: "group-1",
-        token: "ABCD3456",
+        invitationCode: "ABCD3456",
         status: "pending",
         expiresDateTime: {
           toDate: () => new Date(Date.now() + 86400000),

@@ -128,7 +128,7 @@ describe("createGroupInvitation", () => {
       expect.objectContaining({
         groupID: "group-1",
         inviterUserID: "user-1",
-        token: expect.any(String),
+        invitationCode: expect.any(String),
         status: "pending",
       })
     );

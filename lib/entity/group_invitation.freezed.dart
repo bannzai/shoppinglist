@@ -17,7 +17,7 @@ mixin _$GroupInvitation {
   String get id;
   String get groupID;
   String get inviterUserID;
-  String get token;
+  String get invitationCode;
   GroupInvitationStatus get status;
   @NullableTimestampConverter()
   DateTime? get expiresDateTime;
@@ -50,7 +50,8 @@ mixin _$GroupInvitation {
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.inviterUserID, inviterUserID) ||
                 other.inviterUserID == inviterUserID) &&
-            (identical(other.token, token) || other.token == token) &&
+            (identical(other.invitationCode, invitationCode) ||
+                other.invitationCode == invitationCode) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.expiresDateTime, expiresDateTime) ||
                 other.expiresDateTime == expiresDateTime) &&
@@ -71,7 +72,7 @@ mixin _$GroupInvitation {
       id,
       groupID,
       inviterUserID,
-      token,
+      invitationCode,
       status,
       expiresDateTime,
       createdDateTime,
@@ -81,7 +82,7 @@ mixin _$GroupInvitation {
 
   @override
   String toString() {
-    return 'GroupInvitation(id: $id, groupID: $groupID, inviterUserID: $inviterUserID, token: $token, status: $status, expiresDateTime: $expiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupInvitation(id: $id, groupID: $groupID, inviterUserID: $inviterUserID, invitationCode: $invitationCode, status: $status, expiresDateTime: $expiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -95,7 +96,7 @@ abstract mixin class $GroupInvitationCopyWith<$Res> {
       {String id,
       String groupID,
       String inviterUserID,
-      String token,
+      String invitationCode,
       GroupInvitationStatus status,
       @NullableTimestampConverter() DateTime? expiresDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -120,7 +121,7 @@ class _$GroupInvitationCopyWithImpl<$Res>
     Object? id = null,
     Object? groupID = null,
     Object? inviterUserID = null,
-    Object? token = null,
+    Object? invitationCode = null,
     Object? status = null,
     Object? expiresDateTime = freezed,
     Object? createdDateTime = freezed,
@@ -141,9 +142,9 @@ class _$GroupInvitationCopyWithImpl<$Res>
           ? _self.inviterUserID
           : inviterUserID // ignore: cast_nullable_to_non_nullable
               as String,
-      token: null == token
-          ? _self.token
-          : token // ignore: cast_nullable_to_non_nullable
+      invitationCode: null == invitationCode
+          ? _self.invitationCode
+          : invitationCode // ignore: cast_nullable_to_non_nullable
               as String,
       status: null == status
           ? _self.status
@@ -270,7 +271,7 @@ extension GroupInvitationPatterns on GroupInvitation {
             String id,
             String groupID,
             String inviterUserID,
-            String token,
+            String invitationCode,
             GroupInvitationStatus status,
             @NullableTimestampConverter() DateTime? expiresDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -287,7 +288,7 @@ extension GroupInvitationPatterns on GroupInvitation {
             _that.id,
             _that.groupID,
             _that.inviterUserID,
-            _that.token,
+            _that.invitationCode,
             _that.status,
             _that.expiresDateTime,
             _that.createdDateTime,
@@ -318,7 +319,7 @@ extension GroupInvitationPatterns on GroupInvitation {
             String id,
             String groupID,
             String inviterUserID,
-            String token,
+            String invitationCode,
             GroupInvitationStatus status,
             @NullableTimestampConverter() DateTime? expiresDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -334,7 +335,7 @@ extension GroupInvitationPatterns on GroupInvitation {
             _that.id,
             _that.groupID,
             _that.inviterUserID,
-            _that.token,
+            _that.invitationCode,
             _that.status,
             _that.expiresDateTime,
             _that.createdDateTime,
@@ -364,7 +365,7 @@ extension GroupInvitationPatterns on GroupInvitation {
             String id,
             String groupID,
             String inviterUserID,
-            String token,
+            String invitationCode,
             GroupInvitationStatus status,
             @NullableTimestampConverter() DateTime? expiresDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -380,7 +381,7 @@ extension GroupInvitationPatterns on GroupInvitation {
             _that.id,
             _that.groupID,
             _that.inviterUserID,
-            _that.token,
+            _that.invitationCode,
             _that.status,
             _that.expiresDateTime,
             _that.createdDateTime,
@@ -401,7 +402,7 @@ class _GroupInvitation extends GroupInvitation {
       {required this.id,
       required this.groupID,
       required this.inviterUserID,
-      required this.token,
+      required this.invitationCode,
       required this.status,
       @NullableTimestampConverter() this.expiresDateTime,
       @ClientCreatedTimestamp() this.createdDateTime,
@@ -419,7 +420,7 @@ class _GroupInvitation extends GroupInvitation {
   @override
   final String inviterUserID;
   @override
-  final String token;
+  final String invitationCode;
   @override
   final GroupInvitationStatus status;
   @override
@@ -462,7 +463,8 @@ class _GroupInvitation extends GroupInvitation {
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.inviterUserID, inviterUserID) ||
                 other.inviterUserID == inviterUserID) &&
-            (identical(other.token, token) || other.token == token) &&
+            (identical(other.invitationCode, invitationCode) ||
+                other.invitationCode == invitationCode) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.expiresDateTime, expiresDateTime) ||
                 other.expiresDateTime == expiresDateTime) &&
@@ -483,7 +485,7 @@ class _GroupInvitation extends GroupInvitation {
       id,
       groupID,
       inviterUserID,
-      token,
+      invitationCode,
       status,
       expiresDateTime,
       createdDateTime,
@@ -493,7 +495,7 @@ class _GroupInvitation extends GroupInvitation {
 
   @override
   String toString() {
-    return 'GroupInvitation(id: $id, groupID: $groupID, inviterUserID: $inviterUserID, token: $token, status: $status, expiresDateTime: $expiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupInvitation(id: $id, groupID: $groupID, inviterUserID: $inviterUserID, invitationCode: $invitationCode, status: $status, expiresDateTime: $expiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -509,7 +511,7 @@ abstract mixin class _$GroupInvitationCopyWith<$Res>
       {String id,
       String groupID,
       String inviterUserID,
-      String token,
+      String invitationCode,
       GroupInvitationStatus status,
       @NullableTimestampConverter() DateTime? expiresDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -534,7 +536,7 @@ class __$GroupInvitationCopyWithImpl<$Res>
     Object? id = null,
     Object? groupID = null,
     Object? inviterUserID = null,
-    Object? token = null,
+    Object? invitationCode = null,
     Object? status = null,
     Object? expiresDateTime = freezed,
     Object? createdDateTime = freezed,
@@ -555,9 +557,9 @@ class __$GroupInvitationCopyWithImpl<$Res>
           ? _self.inviterUserID
           : inviterUserID // ignore: cast_nullable_to_non_nullable
               as String,
-      token: null == token
-          ? _self.token
-          : token // ignore: cast_nullable_to_non_nullable
+      invitationCode: null == invitationCode
+          ? _self.invitationCode
+          : invitationCode // ignore: cast_nullable_to_non_nullable
               as String,
       status: null == status
           ? _self.status

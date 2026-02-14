@@ -79,14 +79,14 @@ const createGroupInvitationFlow = ai.defineFlow(
       }
 
       // コード重複チェック付きで招待コードを生成
-      let token: string;
+      let invitationCode: string;
       let attempts = 0;
       const maxAttempts = 10;
       do {
-        token = generateInvitationCode();
+        invitationCode = generateInvitationCode();
         const existing = await firestore
           .collection("groupInvitations")
-          .where("token", "==", token)
+          .where("invitationCode", "==", invitationCode)
           .limit(1)
           .get();
         if (existing.empty) break;
@@ -110,7 +110,7 @@ const createGroupInvitationFlow = ai.defineFlow(
         id: invitationRef.id,
         groupID,
         inviterUserID: uid,
-        token,
+        invitationCode,
         status: "pending",
         expiresDateTime,
         createdDateTime: admin.firestore.FieldValue.serverTimestamp(),
@@ -118,13 +118,13 @@ const createGroupInvitationFlow = ai.defineFlow(
       });
 
       logger.info(
-        `Created invitation for group ${groupID}: code=${token}`
+        `Created invitation for group ${groupID}: code=${invitationCode}`
       );
 
       return {
         result: "OK" as const,
         data: {
-          invitationCode: token,
+          invitationCode,
         },
       } as z.infer<typeof ResponseSchema>;
     } catch (error) {
