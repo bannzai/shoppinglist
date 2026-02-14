@@ -24,3 +24,10 @@
 ### Document Reference の更新は、{ merge: true }  をつける
 - つけてないと指定したフィールド以外消える。ちょっとしたコードの移動で意識せずに消える
 
+## Riverpod
+
+### ref.watch と ref.read の使い分け
+- `build` メソッド内では必ず `ref.watch` を使用する。`ref.read` を使うとProviderの値が変化してもWidgetが再ビルドされず、UIに反映されない
+- `ref.read` は `onPressed` 等のコールバックや非同期クロージャ内など、build外で一度だけ値を読む場合に使用する
+- firestoreのDBに書き込むProviderでは、`ref.read` を使用してクロージャの中で呼ぶ
+
