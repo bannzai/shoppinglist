@@ -134,7 +134,7 @@ class GroupDatabase {
   }) =>
       FirebaseFirestore.instance
           .collection(_CollectionPath.userProfiles(groupID: groupID))
-          .doc('group_userProfile_$userID')
+          .doc(GroupUserProfile.documentID(groupID: groupID, userID: userID))
           .withConverter(
             fromFirestore: GroupUserProfile.fromFirestore,
             toFirestore: GroupUserProfile.toFirestore,

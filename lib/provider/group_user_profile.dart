@@ -32,7 +32,7 @@ class GroupUserProfileUpdate {
       });
     } else {
       final profile = GroupUserProfile(
-        id: 'group_userProfile_$userID',
+        id: GroupUserProfile.documentID(groupID: database.groupID, userID: userID),
         userID: userID,
         displayName: displayName,
       );

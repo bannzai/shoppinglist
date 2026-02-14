@@ -92,7 +92,7 @@ const removeGroupMemberFlow = ai.defineFlow(
         // 対象ユーザーのプロフィールを削除
         const profileRef = groupRef
           .collection("userProfiles")
-          .doc(`group_userProfile_${targetUserID}`);
+          .doc(`group_${groupID}_userProfile_${targetUserID}`);
         transaction.delete(profileRef);
 
         // 対象ユーザーの defaultGroupID が当該グループの場合はnullに更新

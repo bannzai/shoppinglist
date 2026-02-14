@@ -31,4 +31,8 @@ abstract class GroupUserProfile with _$GroupUserProfile {
   static Map<String, dynamic> toFirestore(
           GroupUserProfile profile, SetOptions? options) =>
       profile.toJson();
+
+  /// composite ID: group_{groupID}_userProfile_{userID}
+  static String documentID({required String groupID, required String userID}) =>
+      'group_${groupID}_userProfile_$userID';
 }

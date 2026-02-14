@@ -116,9 +116,9 @@ const acceptGroupInvitationFlow = ai.defineFlow(
         const userRecord = await admin.auth().getUser(uid);
         const profileRef = groupRef
           .collection("userProfiles")
-          .doc(`group_userProfile_${uid}`);
+          .doc(`group_${groupID}_userProfile_${uid}`);
         transaction.set(profileRef, {
-          id: `group_userProfile_${uid}`,
+          id: `group_${groupID}_userProfile_${uid}`,
           userID: uid,
           displayName: userRecord.displayName || null,
           createdDateTime: admin.firestore.FieldValue.serverTimestamp(),
