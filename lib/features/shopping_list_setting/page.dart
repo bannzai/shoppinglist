@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
+import 'package:shoppinglist/features/group_setting/page.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/style/button.dart';
@@ -167,6 +168,38 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                     )
                                   : const Icon(Icons.person_add),
                               label: const Text('グループに招待'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('グループ管理',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton.icon(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => GroupSettingPage(
+                                      groupID: groupID,
+                                    ),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.settings),
+                              label: const Text('グループ設定'),
                             ),
                           ),
                         ],
