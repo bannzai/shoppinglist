@@ -34,3 +34,9 @@
 - `ref.read` は `onPressed` 等のコールバックや非同期クロージャ内など、build外で一度だけ値を読む場合に使用する
 - firestoreのDBに書き込むProviderでは、`ref.read` を使用してクロージャの中で呼ぶ
 
+## Flutter Hooks
+
+### useEffect のコメント必須
+- `useEffect` を使用する際は、その直前に目的と依存配列の意図を説明するコメントを追加する
+- 特に依存配列に含めなかったものがある場合はその理由を明記する
+

@@ -33,6 +33,8 @@ class SettingPage extends HookConsumerWidget {
         .where((p) => p.userID == currentUserID)
         .firstOrNull;
 
+    // Firestoreからプロフィールデータが初回読み込みされた時にTextFieldへ反映する。
+    // displayNameController.textが空の場合のみ設定することで、ユーザーが入力中の値を上書きしない。
     useEffect(() {
       if (myProfile != null && displayNameController.text.isEmpty) {
         displayNameController.text = myProfile.displayName ?? '';
