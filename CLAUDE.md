@@ -42,6 +42,7 @@ Firebase Functions の規約です
 - 関数の引数は原則 `{required}` でラベルが呼び出し元につくようにする
 - コンストラクタの引数も nullable であっても `required` をつける。ただしtimestamp等のメタデータフィールドは除く
 - firestoreのDBに書き込むProviderでは、ref.readを使用してClosureの中で呼ぶ
+- エラーメッセージについては、基本的にそのまま表示する（`e.toString()` の加工・プレフィックス除去等はしない）
 
 ### プロジェクト構成・ドキュメント方針
 - 実装のことは全てコード上のコメントに記載する
