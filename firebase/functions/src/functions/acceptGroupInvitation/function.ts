@@ -78,10 +78,21 @@ const acceptGroupInvitationFlow = ai.defineFlow(
       const groupRef = firestore.collection("groups").doc(groupID);
 
       // トランザクションを使用して、グループへの参加と招待ステータスの更新をアトミックに行います。
+      // 招待ドキュメントもトランザクション内で再読み込みし、レースコンディションを防ぎます。
       const joined = await firestore.runTransaction(async (transaction) => {
-        const groupDoc = await transaction.get(groupRef);
+        const [groupDoc, invitationDocSnapshot] = await Promise.all([
+          transaction.get(groupRef),
+          transaction.get(invitationDoc.ref),
+        ]);
+
         if (!groupDoc.exists) {
           throw new Error("グループが見つかりません");
+        }
+
+        // トランザクション内で招待ステータスを再検証（同時利用によるレースコンディション対策）
+        const currentInvitationData = invitationDocSnapshot.data();
+        if (!currentInvitationData || currentInvitationData.status !== "pending") {
+          throw new Error("この招待コードは既に使用されています");
         }
 
         const groupData = groupDoc.data();
