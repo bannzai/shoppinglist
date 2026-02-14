@@ -7,9 +7,8 @@ import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
-import 'package:shoppinglist/provider/group_member_remove.dart';
-import 'package:shoppinglist/provider/group_name_update.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
+import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/style/color.dart';
 
 class GroupSettingPage extends HookConsumerWidget {
@@ -115,9 +114,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                                 : () async {
                                     isUpdatingName.value = true;
                                     try {
-                                      await ref
-                                          .read(updateGroupNameProvider)
-                                          .call(
+                                      await functions.updateGroupName(
                                             groupID: groupID,
                                             name: groupNameController.text,
                                           );
@@ -284,7 +281,7 @@ class _GroupSettingBody extends HookConsumerWidget {
               Navigator.pop(dialogContext);
               isRemovingMember.value = true;
               try {
-                await ref.read(removeGroupMemberProvider).call(
+                await functions.removeGroupMember(
                       groupID: groupID,
                       targetUserID: profile.userID,
                     );
