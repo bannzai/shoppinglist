@@ -24,6 +24,25 @@
 ### Document Reference の更新は、{ merge: true }  をつける
 - つけてないと指定したフィールド以外消える。ちょっとしたコードの移動で意識せずに消える
 
+### タイムスタンプの扱い
+- クライアント側で `DateTime.now()` を使わず `FieldValue.serverTimestamp()` を使用する
+- Firestoreドキュメントの更新時は `serverUpdatedDateTime: FieldValue.serverTimestamp()` を必ず付与する
+- 新規作成時は `serverCreatedDateTime` と `serverUpdatedDateTime` の両方を付与する
+
+### Composite Document ID
+- サブコレクション内のドキュメントIDは、親ドキュメントのIDを含むcomposite形式にする
+  - 例: `group_{groupID}_userProfile_{userID}`
+- ID生成ロジックはエンティティクラスのstaticメソッドに集約する
+
+### Firebase Functions の呼び出し
+- Firebase Functions呼び出しは状態を持たないため、class + Providerでラップせず `functions.xxx()` を直接呼ぶ
+- Firestoreへの直接読み書き（Functions経由でない）は引き続きclass + Providerで定義する
+
+## TypeScript (Firebase Functions)
+
+### any 型の回避
+- `doc.data()` の戻り値はそのまま使わず、`interface` を定義して `as` で型アサーションする
+
 ## エラーメッセージ
 - エラーメッセージについては、基本的にそのまま表示する（`e.toString()` の加工・プレフィックス除去等はしない）
 
