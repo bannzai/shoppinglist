@@ -38,7 +38,7 @@ class GroupUserProfileUpdate {
         userID: userID,
         displayName: displayName,
       );
-      await docRef.set(profile);
+      await docRef.set(profile, SetOptions(merge: true));
     }
   }
 }
