@@ -25,7 +25,12 @@
 - つけてないと指定したフィールド以外消える。ちょっとしたコードの移動で意識せずに消える
 
 ### タイムスタンプの扱い
-- クライアント側で `DateTime.now()` を使わず `FieldValue.serverTimestamp()` を使用する
+- Entityには以下の4つのタイムスタンプフィールドを持たせる:
+  - `createdDateTime` (`@ClientCreatedTimestamp`) — クライアント側の作成日時
+  - `updatedDateTime` (`@ClientUpdatedTimestamp`) — クライアント側の更新日時
+  - `serverCreatedDateTime` (`@ServerCreatedTimestamp`) — サーバー側の作成日時
+  - `serverUpdatedDateTime` (`@ServerUpdatedTimestamp`) — サーバー側の更新日時
+- サーバータイムスタンプだけでなくクライアントタイムスタンプも保持する（デバッグやオフライン対応のため）
 - Firestoreドキュメントの更新時は `serverUpdatedDateTime: FieldValue.serverTimestamp()` を必ず付与する
 - 新規作成時は `serverCreatedDateTime` と `serverUpdatedDateTime` の両方を付与する
 
