@@ -11,7 +11,6 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final acceptGroupInvitation = ref.watch(acceptGroupInvitationProvider);
     final isAccepting = useState(false);
     final errorMessage = useState<String?>(null);
     final codeController = useTextEditingController();
@@ -90,9 +89,11 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                           isAccepting.value = true;
                           errorMessage.value = null;
                           try {
-                            await acceptGroupInvitation.call(
-                                invitationCode:
-                                    codeController.text.toUpperCase());
+                            await ref
+                                .read(acceptGroupInvitationProvider)
+                                .call(
+                                    invitationCode:
+                                        codeController.text.toUpperCase());
                             if (context.mounted) {
                               Navigator.of(context)
                                   .popUntil((route) => route.isFirst);
