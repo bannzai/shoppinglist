@@ -111,6 +111,20 @@ const acceptGroupInvitationFlow = ai.defineFlow(
           status: "accepted",
           updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
         });
+
+        // 参加ユーザーのプロフィールを作成
+        const userRecord = await admin.auth().getUser(uid);
+        const profileRef = groupRef
+          .collection("userProfiles")
+          .doc(`group_userProfile_${uid}`);
+        transaction.set(profileRef, {
+          id: `group_userProfile_${uid}`,
+          userID: uid,
+          displayName: userRecord.displayName || null,
+          createdDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+        });
+
         return true;
       });
 
