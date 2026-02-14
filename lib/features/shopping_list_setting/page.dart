@@ -152,8 +152,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             SnackBar(
-                                              content: Text(
-                                                  '招待の作成に失敗しました: $e'),
+                                              content: Text(e.toString()),
                                             ),
                                           );
                                         }
