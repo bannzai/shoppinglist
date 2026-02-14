@@ -75,35 +75,23 @@ const acceptGroupInvitationFlow = ai.defineFlow(
       }
 
       const groupID = invitationData.groupID;
-
-      // グループの存在確認
-      const groupDoc = await firestore
-        .collection("groups")
-        .doc(groupID)
-        .get();
-      if (!groupDoc.exists) {
-        return {
-          result: "NG" as const,
-          error: { message: "グループが見つかりません" },
-        };
-      }
-
-      const groupData = groupDoc.data();
-      const memberUserIDs: string[] = groupData?.memberUserIDs ?? [];
-
-      // 冪等性: 既にメンバーの場合は正常終了
-      if (memberUserIDs.includes(uid)) {
-        logger.info(
-          `User ${uid} is already a member of group ${groupID}. Skipping.`
-        );
-        return {
-          result: "OK" as const,
-          data: { groupID },
-        } as z.infer<typeof ResponseSchema>;
-      }
+      const groupRef = firestore.collection("groups").doc(groupID);
 
       // トランザクションを使用して、グループへの参加と招待ステータスの更新をアトミックに行います。
-      await firestore.runTransaction(async (transaction) => {
+      const joined = await firestore.runTransaction(async (transaction) => {
+        const groupDoc = await transaction.get(groupRef);
+        if (!groupDoc.exists) {
+          throw new Error("グループが見つかりません");
+        }
+
+        const groupData = groupDoc.data();
+        const memberUserIDs: string[] = groupData?.memberUserIDs ?? [];
+
+        // 冪等性: 既にメンバーの場合は何もしない
+        if (memberUserIDs.includes(uid)) {
+          return false;
+        }
+
         transaction.update(groupDoc.ref, {
           memberUserIDs: admin.firestore.FieldValue.arrayUnion(uid),
           updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
@@ -112,9 +100,16 @@ const acceptGroupInvitationFlow = ai.defineFlow(
           status: "accepted",
           updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
         });
+        return true;
       });
 
-      logger.info(`User ${uid} joined group ${groupID} via invitation`);
+      if (joined) {
+        logger.info(`User ${uid} joined group ${groupID} via invitation`);
+      } else {
+        logger.info(
+          `User ${uid} is already a member of group ${groupID}. Skipping.`
+        );
+      }
 
       return {
         result: "OK" as const,
