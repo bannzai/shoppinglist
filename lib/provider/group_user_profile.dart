@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
@@ -28,7 +29,8 @@ class GroupUserProfileUpdate {
     if (doc.exists) {
       await docRef.update({
         'displayName': displayName,
-        'updatedDateTime': DateTime.now(),
+        'updatedDateTime': FieldValue.serverTimestamp(),
+        'serverUpdatedDateTime': FieldValue.serverTimestamp(),
       });
     } else {
       final profile = GroupUserProfile(
