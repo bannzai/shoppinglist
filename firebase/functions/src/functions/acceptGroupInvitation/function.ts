@@ -106,6 +106,7 @@ const acceptGroupInvitationFlow = ai.defineFlow(
         transaction.update(groupDoc.ref, {
           memberUserIDs: admin.firestore.FieldValue.arrayUnion(uid),
           updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
         });
         transaction.update(invitationDoc.ref, {
           status: "accepted",
@@ -123,6 +124,8 @@ const acceptGroupInvitationFlow = ai.defineFlow(
           displayName: userRecord.displayName || null,
           createdDateTime: admin.firestore.FieldValue.serverTimestamp(),
           updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          serverCreatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
         });
 
         return true;

@@ -87,6 +87,7 @@ const removeGroupMemberFlow = ai.defineFlow(
         transaction.update(groupRef, {
           memberUserIDs: admin.firestore.FieldValue.arrayRemove(targetUserID),
           updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
         });
 
         // 対象ユーザーのプロフィールを削除

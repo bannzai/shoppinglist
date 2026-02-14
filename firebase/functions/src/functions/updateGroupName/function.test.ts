@@ -98,6 +98,7 @@ describe("updateGroupName", () => {
     expect(mockUpdate).toHaveBeenCalledWith({
       name: "新しいグループ名",
       updatedDateTime: "SERVER_TIMESTAMP",
+      serverUpdatedDateTime: "SERVER_TIMESTAMP",
     });
   });
 
@@ -134,6 +135,7 @@ describe("updateGroupName", () => {
     expect(mockUpdate).toHaveBeenCalledWith({
       name: "レガシーグループの新名前",
       updatedDateTime: "SERVER_TIMESTAMP",
+      serverUpdatedDateTime: "SERVER_TIMESTAMP",
     });
   });
 

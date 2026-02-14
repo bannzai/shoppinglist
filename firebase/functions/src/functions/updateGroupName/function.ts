@@ -74,6 +74,7 @@ const updateGroupNameFlow = ai.defineFlow(
       await groupRef.update({
         name,
         updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+        serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
       });
 
       logger.info(`Group ${groupID} name updated to "${name}" by ${uid}`);
