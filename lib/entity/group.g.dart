@@ -11,6 +11,8 @@ _Group _$GroupFromJson(Map<String, dynamic> json) => _Group(
       memberUserIDs: (json['memberUserIDs'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
+      name: json['name'] as String?,
+      ownerUserID: json['ownerUserID'] as String?,
       createdDateTime: const ClientCreatedTimestamp()
           .fromJson(json['createdDateTime'] as Timestamp?),
       updatedDateTime: const ClientUpdatedTimestamp()
@@ -24,6 +26,8 @@ _Group _$GroupFromJson(Map<String, dynamic> json) => _Group(
 Map<String, dynamic> _$GroupToJson(_Group instance) => <String, dynamic>{
       'id': instance.id,
       'memberUserIDs': instance.memberUserIDs,
+      'name': instance.name,
+      'ownerUserID': instance.ownerUserID,
       'createdDateTime':
           const ClientCreatedTimestamp().toJson(instance.createdDateTime),
       'updatedDateTime':

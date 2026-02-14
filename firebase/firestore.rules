@@ -15,6 +15,12 @@ service cloud.firestore {
       allow create, update: if isUserAuth(userID);
     }
 
+    // グループ招待: 読み書きともにクライアントからは不可。Functions Admin SDK 経由でのみ操作する
+    match /groupInvitations/{invitationID} {
+      allow read: if false;
+      allow write: if false;
+    }
+
     // カップル
     match /groups/{groupID} {
       allow read, update: if isMember(resource.data.memberUserIDs);

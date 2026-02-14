@@ -15,6 +15,13 @@ abstract class Group with _$Group {
 
     /// グループに所属するユーザーのAppUser.idの配列
     required List<String> memberUserIDs,
+
+    /// グループ名
+    required String? name,
+
+    /// グループを作成したユーザーのAppUser.id
+    /// NOTE: 既存のグループドキュメントにはこのフィールドが存在しない場合があるためnullable
+    String? ownerUserID,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
