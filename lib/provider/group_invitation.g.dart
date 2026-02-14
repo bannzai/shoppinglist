@@ -27,7 +27,7 @@ final createGroupInvitationProvider =
 typedef CreateGroupInvitationRef
     = AutoDisposeProviderRef<CreateGroupInvitation>;
 String _$acceptGroupInvitationHash() =>
-    r'6bc367cc4af2df4de1adcd32201a3bf658c389b3';
+    r'0b02a95d6a3ace9aee14a55a1b1c01262acafd18';
 
 /// See also [acceptGroupInvitation].
 @ProviderFor(acceptGroupInvitation)
@@ -38,8 +38,11 @@ final acceptGroupInvitationProvider =
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
       : _$acceptGroupInvitationHash,
-  dependencies: const <ProviderOrFamily>[],
-  allTransitiveDependencies: const <ProviderOrFamily>{},
+  dependencies: <ProviderOrFamily>[userDatabaseProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{
+    userDatabaseProvider,
+    ...?userDatabaseProvider.allTransitiveDependencies
+  },
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
