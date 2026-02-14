@@ -9,6 +9,14 @@ import {
   ErrorResponseSchema,
 } from "../../entity/response";
 
+interface GroupData {
+  memberUserIDs: string[];
+  ownerUserID: string | null;
+  name: string | null;
+  updatedDateTime?: FirebaseFirestore.Timestamp;
+  serverUpdatedDateTime?: FirebaseFirestore.Timestamp;
+}
+
 const ResponseSchema = z.union([
   DataResponseSchema.extend({
     data: z.object({}),
@@ -50,7 +58,7 @@ const updateGroupNameFlow = ai.defineFlow(
         };
       }
 
-      const groupData = groupDoc.data();
+      const groupData = groupDoc.data() as GroupData | undefined;
       const memberUserIDs: string[] = groupData?.memberUserIDs ?? [];
 
       if (!memberUserIDs.includes(uid)) {

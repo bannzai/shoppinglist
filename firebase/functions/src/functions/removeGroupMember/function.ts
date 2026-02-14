@@ -9,6 +9,14 @@ import {
   ErrorResponseSchema,
 } from "../../entity/response";
 
+interface GroupData {
+  memberUserIDs: string[];
+  ownerUserID: string | null;
+  name: string | null;
+  updatedDateTime?: FirebaseFirestore.Timestamp;
+  serverUpdatedDateTime?: FirebaseFirestore.Timestamp;
+}
+
 const ResponseSchema = z.union([
   DataResponseSchema.extend({
     data: z.object({}),
@@ -50,7 +58,7 @@ const removeGroupMemberFlow = ai.defineFlow(
         };
       }
 
-      const groupData = groupDoc.data();
+      const groupData = groupDoc.data() as GroupData | undefined;
       const ownerUserID = groupData?.ownerUserID ?? null;
 
       if (ownerUserID === null) {
@@ -76,7 +84,7 @@ const removeGroupMemberFlow = ai.defineFlow(
 
       await firestore.runTransaction(async (transaction) => {
         const groupSnapshot = await transaction.get(groupRef);
-        const currentData = groupSnapshot.data();
+        const currentData = groupSnapshot.data() as GroupData | undefined;
         const memberUserIDs: string[] = currentData?.memberUserIDs ?? [];
 
         // 冪等性: 既にメンバーでなければそのまま終了
