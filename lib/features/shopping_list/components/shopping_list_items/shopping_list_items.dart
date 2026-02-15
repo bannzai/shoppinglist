@@ -44,12 +44,7 @@ class ShoppingListItems extends HookConsumerWidget {
           categoryAxisID: axis.id,
         );
       },
-      // カテゴリ読み込み中・エラー時はフラット表示にフォールバック
-      error: (e, st) => _FlatShoppingListItems(
-        groupID: groupID,
-        shoppingListID: shoppingListID,
-        shoppingListItems: shoppingListItems,
-      ),
+      error: (e, st) => Center(child: Text(e.toString())),
       loading: () => _FlatShoppingListItems(
         groupID: groupID,
         shoppingListID: shoppingListID,
@@ -165,11 +160,7 @@ class _CategorizedShoppingListItems extends HookConsumerWidget {
           grouped: grouped,
         );
       },
-      error: (e, st) => _FlatShoppingListItems(
-        groupID: groupID,
-        shoppingListID: shoppingListID,
-        shoppingListItems: shoppingListItems,
-      ),
+      error: (e, st) => Center(child: Text(e.toString())),
       loading: () => _FlatShoppingListItems(
         groupID: groupID,
         shoppingListID: shoppingListID,
