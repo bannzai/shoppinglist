@@ -13,12 +13,14 @@ class ShoppingListItems extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
+  final bool sortByCategory;
 
   const ShoppingListItems({
     super.key,
     required this.groupID,
     required this.shoppingListID,
     required this.shoppingListItems,
+    required this.sortByCategory,
   });
 
   @override
@@ -28,7 +30,7 @@ class ShoppingListItems extends HookConsumerWidget {
 
     return axesAsync.when(
       data: (axes) {
-        if (axes.isEmpty) {
+        if (axes.isEmpty || !sortByCategory) {
           return _FlatShoppingListItems(
             groupID: groupID,
             shoppingListID: shoppingListID,
