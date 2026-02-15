@@ -72,13 +72,27 @@ class _CategoryEditBody extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('カテゴリ編集'),
-        actions: [
-          TextButton(
-            onPressed: isSaving.value
-                ? null
-                : () async {
-                    final name = nameController.text.trim();
-                    if (name.isEmpty) return;
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('カテゴリ名',
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: nameController,
+                  textInputAction: TextInputAction.done,
+                  decoration: const InputDecoration(
+                    hintText: 'カテゴリ名を入力',
+                  ),
+                  onSubmitted: (String value) async {
+                    final name = value.trim();
+                    if (name.isEmpty || name == category.name) return;
                     isSaving.value = true;
                     try {
                       await ref
@@ -104,32 +118,6 @@ class _CategoryEditBody extends HookConsumerWidget {
                       isSaving.value = false;
                     }
                   },
-            child: isSaving.value
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Text('保存'),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('カテゴリ名',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                    hintText: 'カテゴリ名を入力',
-                  ),
                 ),
                 const SizedBox(height: 24),
                 Row(
