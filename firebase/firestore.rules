@@ -40,6 +40,14 @@ service cloud.firestore {
         allow read, write: if isGroupMember();
       }
 
+      match /categoryAxes/{axisID} {
+        allow read, write: if isGroupMember();
+
+        match /categories/{categoryID} {
+          allow read, write: if isGroupMember();
+        }
+      }
+
       match /shoppingLists/{shoppingListID} {
         allow read, write: if isGroupMember();
 
