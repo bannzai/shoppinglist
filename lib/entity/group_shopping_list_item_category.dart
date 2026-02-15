@@ -18,6 +18,7 @@ abstract class GroupShoppingListItemCategory
   @JsonSerializable(explicitToJson: true)
   const factory GroupShoppingListItemCategory({
     required String id,
+    required String groupID,
     required String groupShoppingListItemCategoryAxisID,
     required String name,
     required int order,

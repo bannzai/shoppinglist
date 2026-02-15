@@ -67,7 +67,7 @@ class GroupShoppingListItemCategoryPage extends HookConsumerWidget {
     if (existingAxes.isEmpty) {
       axis = await ref
           .read(groupShoppingListItemCategoryAxisAddProvider(groupID: groupID))
-          .call(name: 'デフォルト', order: 0);
+          .call(groupID: groupID, name: 'デフォルト', order: 0);
     } else {
       axis = existingAxes.first;
     }
@@ -109,6 +109,7 @@ class GroupShoppingListItemCategoryPage extends HookConsumerWidget {
                     .read(groupShoppingListItemCategoryAddProvider(
                         groupID: groupID))
                     .call(
+                      groupID: groupID,
                       categoryAxisID: categoryAxisID,
                       name: name,
                       order: 0,
@@ -223,6 +224,7 @@ class _CategoryListBody extends HookConsumerWidget {
                     .read(groupShoppingListItemCategoryAddProvider(
                         groupID: groupID))
                     .call(
+                      groupID: groupID,
                       categoryAxisID: categoryAxisID,
                       name: name,
                       order: currentCategoryCount,

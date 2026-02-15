@@ -15,6 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$GroupShoppingListItemCategoryAxis {
   String get id;
+  String get groupID;
   String get name;
   int get order;
   @ClientCreatedTimestamp()
@@ -44,6 +45,7 @@ mixin _$GroupShoppingListItemCategoryAxis {
         (other.runtimeType == runtimeType &&
             other is GroupShoppingListItemCategoryAxis &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.order, order) || other.order == order) &&
             (identical(other.createdDateTime, createdDateTime) ||
@@ -58,12 +60,20 @@ mixin _$GroupShoppingListItemCategoryAxis {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, order, createdDateTime,
-      updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      groupID,
+      name,
+      order,
+      createdDateTime,
+      updatedDateTime,
+      serverCreatedDateTime,
+      serverUpdatedDateTime);
 
   @override
   String toString() {
-    return 'GroupShoppingListItemCategoryAxis(id: $id, name: $name, order: $order, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItemCategoryAxis(id: $id, groupID: $groupID, name: $name, order: $order, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -76,6 +86,7 @@ abstract mixin class $GroupShoppingListItemCategoryAxisCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
+      String groupID,
       String name,
       int order,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -98,6 +109,7 @@ class _$GroupShoppingListItemCategoryAxisCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
+    Object? groupID = null,
     Object? name = null,
     Object? order = null,
     Object? createdDateTime = freezed,
@@ -109,6 +121,10 @@ class _$GroupShoppingListItemCategoryAxisCopyWithImpl<$Res>
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      groupID: null == groupID
+          ? _self.groupID
+          : groupID // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _self.name
@@ -234,6 +250,7 @@ extension GroupShoppingListItemCategoryAxisPatterns
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
             String id,
+            String groupID,
             String name,
             int order,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -248,6 +265,7 @@ extension GroupShoppingListItemCategoryAxisPatterns
       case _GroupShoppingListItemCategoryAxis() when $default != null:
         return $default(
             _that.id,
+            _that.groupID,
             _that.name,
             _that.order,
             _that.createdDateTime,
@@ -276,6 +294,7 @@ extension GroupShoppingListItemCategoryAxisPatterns
   TResult when<TResult extends Object?>(
     TResult Function(
             String id,
+            String groupID,
             String name,
             int order,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -289,6 +308,7 @@ extension GroupShoppingListItemCategoryAxisPatterns
       case _GroupShoppingListItemCategoryAxis():
         return $default(
             _that.id,
+            _that.groupID,
             _that.name,
             _that.order,
             _that.createdDateTime,
@@ -316,6 +336,7 @@ extension GroupShoppingListItemCategoryAxisPatterns
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
             String id,
+            String groupID,
             String name,
             int order,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -329,6 +350,7 @@ extension GroupShoppingListItemCategoryAxisPatterns
       case _GroupShoppingListItemCategoryAxis() when $default != null:
         return $default(
             _that.id,
+            _that.groupID,
             _that.name,
             _that.order,
             _that.createdDateTime,
@@ -348,6 +370,7 @@ class _GroupShoppingListItemCategoryAxis
     extends GroupShoppingListItemCategoryAxis {
   const _GroupShoppingListItemCategoryAxis(
       {required this.id,
+      required this.groupID,
       required this.name,
       required this.order,
       @ClientCreatedTimestamp() this.createdDateTime,
@@ -361,6 +384,8 @@ class _GroupShoppingListItemCategoryAxis
 
   @override
   final String id;
+  @override
+  final String groupID;
   @override
   final String name;
   @override
@@ -401,6 +426,7 @@ class _GroupShoppingListItemCategoryAxis
         (other.runtimeType == runtimeType &&
             other is _GroupShoppingListItemCategoryAxis &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.order, order) || other.order == order) &&
             (identical(other.createdDateTime, createdDateTime) ||
@@ -415,12 +441,20 @@ class _GroupShoppingListItemCategoryAxis
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, order, createdDateTime,
-      updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      groupID,
+      name,
+      order,
+      createdDateTime,
+      updatedDateTime,
+      serverCreatedDateTime,
+      serverUpdatedDateTime);
 
   @override
   String toString() {
-    return 'GroupShoppingListItemCategoryAxis(id: $id, name: $name, order: $order, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItemCategoryAxis(id: $id, groupID: $groupID, name: $name, order: $order, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -435,6 +469,7 @@ abstract mixin class _$GroupShoppingListItemCategoryAxisCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
+      String groupID,
       String name,
       int order,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -457,6 +492,7 @@ class __$GroupShoppingListItemCategoryAxisCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   $Res call({
     Object? id = null,
+    Object? groupID = null,
     Object? name = null,
     Object? order = null,
     Object? createdDateTime = freezed,
@@ -468,6 +504,10 @@ class __$GroupShoppingListItemCategoryAxisCopyWithImpl<$Res>
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      groupID: null == groupID
+          ? _self.groupID
+          : groupID // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _self.name

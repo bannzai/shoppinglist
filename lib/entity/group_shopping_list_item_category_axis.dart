@@ -17,6 +17,7 @@ abstract class GroupShoppingListItemCategoryAxis
   @JsonSerializable(explicitToJson: true)
   const factory GroupShoppingListItemCategoryAxis({
     required String id,
+    required String groupID,
     required String name,
     required int order,
     @ClientCreatedTimestamp() DateTime? createdDateTime,

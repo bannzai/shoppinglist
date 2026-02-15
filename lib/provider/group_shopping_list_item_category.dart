@@ -27,12 +27,14 @@ class GroupShoppingListItemCategoryAxisAdd {
   GroupShoppingListItemCategoryAxisAdd({required this.database});
 
   Future<GroupShoppingListItemCategoryAxis> call({
+    required String groupID,
     required String name,
     required int order,
   }) async {
     final docRef = database.newCategoryAxisReference();
     final categoryAxis = GroupShoppingListItemCategoryAxis(
       id: docRef.id,
+      groupID: groupID,
       name: name,
       order: order,
     );
@@ -91,6 +93,7 @@ class GroupShoppingListItemCategoryAdd {
   GroupShoppingListItemCategoryAdd({required this.database});
 
   Future<GroupShoppingListItemCategory> call({
+    required String groupID,
     required String categoryAxisID,
     required String name,
     required int order,
@@ -99,6 +102,7 @@ class GroupShoppingListItemCategoryAdd {
         database.newCategoryReference(categoryAxisID: categoryAxisID);
     final category = GroupShoppingListItemCategory(
       id: docRef.id,
+      groupID: groupID,
       groupShoppingListItemCategoryAxisID: categoryAxisID,
       name: name,
       order: order,
