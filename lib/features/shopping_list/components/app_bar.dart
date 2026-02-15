@@ -133,6 +133,7 @@ class ShoppingListAppBar extends HookConsumerWidget
               context: context,
               builder: (context) {
                 return ShoppingListItemFilterPage(
+                  groupID: groupID,
                   shoppingListID: shoppingListID.value,
                   showChecked: showChecked,
                   sortByCategory: sortByCategory,

@@ -3,12 +3,14 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ShoppingListItemFilterPage extends HookConsumerWidget {
+  final String groupID;
   final String shoppingListID;
   final ValueNotifier<bool> showChecked;
   final ValueNotifier<bool> sortByCategory;
 
   const ShoppingListItemFilterPage({
     super.key,
+    required this.groupID,
     required this.shoppingListID,
     required this.showChecked,
     required this.sortByCategory,
