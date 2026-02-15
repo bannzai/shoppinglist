@@ -5,16 +5,19 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class ShoppingListItemFilterPage extends HookConsumerWidget {
   final String shoppingListID;
   final ValueNotifier<bool> showChecked;
+  final ValueNotifier<bool> sortByCategory;
 
   const ShoppingListItemFilterPage({
     super.key,
     required this.shoppingListID,
     required this.showChecked,
+    required this.sortByCategory,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final showChecked = useState(this.showChecked.value);
+    final sortByCategory = useState(this.sortByCategory.value);
     return Scaffold(
       appBar: AppBar(
         title: const Text('フィルター'),
@@ -34,6 +37,13 @@ class ShoppingListItemFilterPage extends HookConsumerWidget {
                       showChecked.value = value;
                     },
                   ),
+                  SwitchListTile(
+                    title: const Text('カテゴリ順で表示する'),
+                    value: sortByCategory.value,
+                    onChanged: (value) {
+                      sortByCategory.value = value;
+                    },
+                  ),
                 ],
               ),
             ),
@@ -43,6 +53,7 @@ class ShoppingListItemFilterPage extends HookConsumerWidget {
                 onPressed: () {
                   Navigator.pop(context);
                   this.showChecked.value = showChecked.value;
+                  this.sortByCategory.value = sortByCategory.value;
                 },
                 child: const Text('適用'),
               ),
