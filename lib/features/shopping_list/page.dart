@@ -48,6 +48,7 @@ class _Body extends HookConsumerWidget {
     final shoppingListID = useState(shoppingLists.first.id);
     final retry = Retry.of(context).retry;
     final showChecked = useState(true);
+    final sortByCategory = useState(true);
     final shoppingListItemsAsync = ref.watch(textShoppingListItemsProvider(
       groupID: groupID,
       shoppingListID: shoppingListID.value,
@@ -89,6 +90,7 @@ class _Body extends HookConsumerWidget {
           shoppingLists: shoppingLists,
           shoppingList: shoppingList,
           showChecked: showChecked,
+          sortByCategory: sortByCategory,
           shoppingListItems: shoppingListItemsAsync.asData?.value ?? [],
         ),
         body: SafeArea(
@@ -117,7 +119,8 @@ class _Body extends HookConsumerWidget {
                         child: ShoppingListItems(
                             groupID: groupID,
                             shoppingListID: shoppingListID.value,
-                            shoppingListItems: shoppingListItems)),
+                            shoppingListItems: shoppingListItems,
+                            sortByCategory: sortByCategory.value)),
                     const AdMobBanner(),
                     Padding(
                       padding: const EdgeInsets.symmetric(

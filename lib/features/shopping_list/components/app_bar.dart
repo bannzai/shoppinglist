@@ -17,6 +17,7 @@ class ShoppingListAppBar extends HookConsumerWidget
   final List<GroupShoppingList> shoppingLists;
   final GroupShoppingList? shoppingList;
   final ValueNotifier<bool> showChecked;
+  final ValueNotifier<bool> sortByCategory;
   final List<GroupShoppingListItem> shoppingListItems;
   const ShoppingListAppBar({
     super.key,
@@ -25,6 +26,7 @@ class ShoppingListAppBar extends HookConsumerWidget
     required this.shoppingLists,
     required this.shoppingList,
     required this.showChecked,
+    required this.sortByCategory,
     required this.shoppingListItems,
   });
 
@@ -131,8 +133,10 @@ class ShoppingListAppBar extends HookConsumerWidget
               context: context,
               builder: (context) {
                 return ShoppingListItemFilterPage(
+                  groupID: groupID,
                   shoppingListID: shoppingListID.value,
                   showChecked: showChecked,
+                  sortByCategory: sortByCategory,
                 );
               },
             );
