@@ -153,24 +153,13 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                       )
                       .doc(textShoppingListItem.id);
 
-                  if (selectedColor.value == null &&
-                      textShoppingListItem.color != null) {
-                    // colorをnullに戻す場合はFieldValue.delete()を使う
-                    // freezedのcopyWithではnullableフィールドにnullを渡しても「変更しない」扱いになるため
-                    docRef.update({
-                      'description':
-                          description.isEmpty ? FieldValue.delete() : description,
-                      'color': FieldValue.delete(),
-                    });
-                  } else {
-                    docRef.set(
-                      textShoppingListItem.copyWith(
-                        description: description.isEmpty ? null : description,
-                        color: selectedColor.value,
-                      ),
-                      SetOptions(merge: true),
-                    );
-                  }
+                  docRef.set(
+                    textShoppingListItem.copyWith(
+                      description: description.isEmpty ? null : description,
+                      color: selectedColor.value,
+                    ),
+                    SetOptions(merge: true),
+                  );
 
                   Navigator.pop(context);
                 },
