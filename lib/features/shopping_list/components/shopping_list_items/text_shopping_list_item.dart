@@ -5,8 +5,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item_detail_bottom_sheet.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/color.dart';
+import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
 class TextShoppingListItemWidget extends HookConsumerWidget {
   final String groupID;
@@ -38,9 +40,15 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       return null;
     }, []);
 
+    final hasDescription = textShoppingListItem.description != null &&
+        textShoppingListItem.description!.isNotEmpty;
+    final backgroundColor = textShoppingListItem.color != null
+        ? colorFromHex(textShoppingListItem.color!).withValues(alpha: 0.1)
+        : Colors.transparent;
+
     // NOTE: ReorderableListViewのDrag移動中に `No Material widget found` というエラーが出るので、Materialでラップする
     return Material(
-      color: Colors.transparent,
+      color: backgroundColor,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Row(
@@ -75,17 +83,50 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: SizedBox(
-                      height: 44,
-                      width: double.infinity,
-                      child: TextShoppingListItemTextField(
-                        groupID: groupID,
-                        textEditingController: textEditingController,
-                        focusNode: focusNode,
-                        textShoppingListItem: textShoppingListItem,
-                        shoppingListItems: shoppingListItems,
-                      ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 44,
+                          width: double.infinity,
+                          child: TextShoppingListItemTextField(
+                            groupID: groupID,
+                            textEditingController: textEditingController,
+                            focusNode: focusNode,
+                            textShoppingListItem: textShoppingListItem,
+                            shoppingListItems: shoppingListItems,
+                          ),
+                        ),
+                        if (hasDescription)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Text(
+                              textShoppingListItem.description!,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: TextColor.gray,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                      ],
                     ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      appShowModalBottomSheet(
+                        context: context,
+                        builder: (context) {
+                          return TextShoppingListItemDetailBottomSheet(
+                            groupID: groupID,
+                            textShoppingListItem: textShoppingListItem,
+                          );
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.info_outline, size: 20),
                   ),
                   IconButton(
                     onPressed: () {
