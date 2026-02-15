@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
 
 class ShoppingListItemFilterPage extends HookConsumerWidget {
   final String groupID;
@@ -18,8 +19,12 @@ class ShoppingListItemFilterPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final axesAsync =
+        ref.watch(groupShoppingListItemCategoryAxesProvider(groupID: groupID));
     final showChecked = useState(this.showChecked.value);
     final sortByCategory = useState(this.sortByCategory.value);
+    final hasCategories =
+        axesAsync.maybeWhen(data: (axes) => axes.isNotEmpty, orElse: () => false);
     return Scaffold(
       appBar: AppBar(
         title: const Text('フィルター'),
@@ -42,9 +47,11 @@ class ShoppingListItemFilterPage extends HookConsumerWidget {
                   SwitchListTile(
                     title: const Text('カテゴリ順で表示する'),
                     value: sortByCategory.value,
-                    onChanged: (value) {
-                      sortByCategory.value = value;
-                    },
+                    onChanged: hasCategories
+                        ? (value) {
+                            sortByCategory.value = value;
+                          }
+                        : null,
                   ),
                 ],
               ),
