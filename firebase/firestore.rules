@@ -36,6 +36,10 @@ service cloud.firestore {
         allow update: if isGroupMember() && resource.data.userID == request.auth.uid;
       }
 
+      match /shoppingLocations/{locationID} {
+        allow read, write: if isGroupMember();
+      }
+
       match /shoppingLists/{shoppingListID} {
         allow read, write: if isGroupMember();
 

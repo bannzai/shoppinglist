@@ -7,6 +7,7 @@ import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/resolver/auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -21,6 +22,8 @@ abstract class _CollectionPath {
   static String shoppingListItems(
           {required String groupID, required String shoppingListID}) =>
       '/groups/$groupID/shoppingLists/$shoppingListID/items';
+  static String shoppingLocations({required String groupID}) =>
+      '/groups/$groupID/shoppingLocations';
   static String userProfiles({required String groupID}) =>
       '/groups/$groupID/userProfiles';
 }
@@ -119,6 +122,34 @@ class GroupDatabase {
           .withConverter(
             fromFirestore: GroupShoppingListItem.fromFirestore,
             toFirestore: GroupShoppingListItem.toFirestore,
+          );
+
+  CollectionReference<GroupShoppingLocation> shoppingLocationsReference() =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.shoppingLocations(groupID: groupID))
+          .withConverter(
+            fromFirestore: GroupShoppingLocation.fromFirestore,
+            toFirestore: GroupShoppingLocation.toFirestore,
+          );
+
+  DocumentReference<GroupShoppingLocation> shoppingLocationReference({
+    required String shoppingLocationID,
+  }) =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.shoppingLocations(groupID: groupID))
+          .doc(shoppingLocationID)
+          .withConverter(
+            fromFirestore: GroupShoppingLocation.fromFirestore,
+            toFirestore: GroupShoppingLocation.toFirestore,
+          );
+
+  DocumentReference<GroupShoppingLocation> newShoppingLocationReference() =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.shoppingLocations(groupID: groupID))
+          .doc()
+          .withConverter(
+            fromFirestore: GroupShoppingLocation.fromFirestore,
+            toFirestore: GroupShoppingLocation.toFirestore,
           );
 
   CollectionReference<GroupUserProfile> userProfilesReference() =>

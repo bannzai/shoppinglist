@@ -40,7 +40,8 @@ class CreateGroup {
     // グループ作成者のプロフィールを作成
     final currentUser = FirebaseAuth.instance.currentUser;
     final profile = GroupUserProfile(
-      id: GroupUserProfile.documentID(groupID: groupDocRef.id, userID: appUser.id),
+      id: GroupUserProfile.documentID(
+          groupID: groupDocRef.id, userID: appUser.id),
       userID: appUser.id,
       displayName: currentUser?.displayName,
     );

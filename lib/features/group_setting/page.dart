@@ -9,6 +9,7 @@ import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
+import 'package:shoppinglist/features/shopping_location/page.dart';
 import 'package:shoppinglist/style/color.dart';
 
 class GroupSettingPage extends HookConsumerWidget {
@@ -115,23 +116,21 @@ class _GroupSettingBody extends HookConsumerWidget {
                                     isUpdatingName.value = true;
                                     try {
                                       await functions.updateGroupName(
-                                            groupID: groupID,
-                                            name: groupNameController.text,
-                                          );
+                                        groupID: groupID,
+                                        name: groupNameController.text,
+                                      );
                                       if (context.mounted) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           const SnackBar(
-                                              content:
-                                                  Text('グループ名を更新しました')),
+                                              content: Text('グループ名を更新しました')),
                                         );
                                       }
                                     } catch (e) {
                                       if (context.mounted) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
-                                          SnackBar(
-                                              content: Text(e.toString())),
+                                          SnackBar(content: Text(e.toString())),
                                         );
                                       }
                                     } finally {
@@ -164,10 +163,8 @@ class _GroupSettingBody extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 ...profiles.map((profile) {
-                  final isProfileOwner =
-                      profile.userID == group.ownerUserID;
-                  final isSelf =
-                      profile.userID == currentUserID;
+                  final isProfileOwner = profile.userID == group.ownerUserID;
+                  final isSelf = profile.userID == currentUserID;
                   return ListTile(
                     leading: const Icon(Icons.person),
                     title: Text(profile.displayName ?? '名前未設定'),
@@ -199,6 +196,39 @@ class _GroupSettingBody extends HookConsumerWidget {
                 }),
                 const Divider(height: 32),
 
+                // 買い物する場所セクション
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('買い物する場所',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ShoppingLocationPage(
+                                  groupID: groupID,
+                                ),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.store),
+                          label: const Text('場所を管理'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 32),
+
                 // グループ招待セクション
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -226,16 +256,14 @@ class _GroupSettingBody extends HookConsumerWidget {
                                         context: context,
                                         builder: (context) =>
                                             _InvitationCodeDialog(
-                                                invitationCode:
-                                                    invitationCode),
+                                                invitationCode: invitationCode),
                                       );
                                     }
                                   } catch (e) {
                                     if (context.mounted) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
-                                        SnackBar(
-                                            content: Text(e.toString())),
+                                        SnackBar(content: Text(e.toString())),
                                       );
                                     }
                                   } finally {
@@ -246,8 +274,8 @@ class _GroupSettingBody extends HookConsumerWidget {
                               ? const SizedBox(
                                   width: 16,
                                   height: 16,
-                                  child: CircularProgressIndicator(
-                                      strokeWidth: 2),
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
                                 )
                               : const Icon(Icons.person_add),
                           label: const Text('グループに招待'),
@@ -282,14 +310,14 @@ class _GroupSettingBody extends HookConsumerWidget {
               isRemovingMember.value = true;
               try {
                 await functions.removeGroupMember(
-                      groupID: groupID,
-                      targetUserID: profile.userID,
-                    );
+                  groupID: groupID,
+                  targetUserID: profile.userID,
+                );
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                        content: Text(
-                            '${profile.displayName ?? 'メンバー'}を削除しました')),
+                        content:
+                            Text('${profile.displayName ?? 'メンバー'}を削除しました')),
                   );
                 }
               } catch (e) {
