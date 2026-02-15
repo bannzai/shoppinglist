@@ -84,7 +84,7 @@ class SettingPage extends HookConsumerWidget {
                                 try {
                                   await ref
                                       .read(groupUserProfileUpdateProvider(
-                                          groupID: groupID!))
+                                          groupID: groupID))
                                       .call(
                                         userID: currentUserID,
                                         displayName:
