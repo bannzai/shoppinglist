@@ -7,6 +7,8 @@ import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/resolver/auth.dart';
@@ -24,6 +26,11 @@ abstract class _CollectionPath {
       '/groups/$groupID/shoppingLists/$shoppingListID/items';
   static String shoppingLocations({required String groupID}) =>
       '/groups/$groupID/shoppingLocations';
+  static String categoryAxes({required String groupID}) =>
+      '/groups/$groupID/categoryAxes';
+  static String categories(
+          {required String groupID, required String categoryAxisID}) =>
+      '/groups/$groupID/categoryAxes/$categoryAxisID/categories';
   static String userProfiles({required String groupID}) =>
       '/groups/$groupID/userProfiles';
 }
@@ -150,6 +157,72 @@ class GroupDatabase {
           .withConverter(
             fromFirestore: GroupShoppingLocation.fromFirestore,
             toFirestore: GroupShoppingLocation.toFirestore,
+          );
+
+  CollectionReference<GroupShoppingListItemCategoryAxis>
+      categoryAxesReference() => FirebaseFirestore.instance
+              .collection(_CollectionPath.categoryAxes(groupID: groupID))
+              .withConverter(
+                fromFirestore:
+                    GroupShoppingListItemCategoryAxis.fromFirestore,
+                toFirestore: GroupShoppingListItemCategoryAxis.toFirestore,
+              );
+
+  DocumentReference<GroupShoppingListItemCategoryAxis> categoryAxisReference({
+    required String categoryAxisID,
+  }) =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.categoryAxes(groupID: groupID))
+          .doc(categoryAxisID)
+          .withConverter(
+            fromFirestore: GroupShoppingListItemCategoryAxis.fromFirestore,
+            toFirestore: GroupShoppingListItemCategoryAxis.toFirestore,
+          );
+
+  DocumentReference<GroupShoppingListItemCategoryAxis>
+      newCategoryAxisReference() => FirebaseFirestore.instance
+              .collection(_CollectionPath.categoryAxes(groupID: groupID))
+              .doc()
+              .withConverter(
+                fromFirestore:
+                    GroupShoppingListItemCategoryAxis.fromFirestore,
+                toFirestore: GroupShoppingListItemCategoryAxis.toFirestore,
+              );
+
+  CollectionReference<GroupShoppingListItemCategory> categoriesReference({
+    required String categoryAxisID,
+  }) =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.categories(
+              groupID: groupID, categoryAxisID: categoryAxisID))
+          .withConverter(
+            fromFirestore: GroupShoppingListItemCategory.fromFirestore,
+            toFirestore: GroupShoppingListItemCategory.toFirestore,
+          );
+
+  DocumentReference<GroupShoppingListItemCategory> categoryReference({
+    required String categoryAxisID,
+    required String categoryID,
+  }) =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.categories(
+              groupID: groupID, categoryAxisID: categoryAxisID))
+          .doc(categoryID)
+          .withConverter(
+            fromFirestore: GroupShoppingListItemCategory.fromFirestore,
+            toFirestore: GroupShoppingListItemCategory.toFirestore,
+          );
+
+  DocumentReference<GroupShoppingListItemCategory> newCategoryReference({
+    required String categoryAxisID,
+  }) =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.categories(
+              groupID: groupID, categoryAxisID: categoryAxisID))
+          .doc()
+          .withConverter(
+            fromFirestore: GroupShoppingListItemCategory.fromFirestore,
+            toFirestore: GroupShoppingListItemCategory.toFirestore,
           );
 
   CollectionReference<GroupUserProfile> userProfilesReference() =>
