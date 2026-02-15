@@ -43,6 +43,7 @@ Firebase Functions の規約です
 - コンストラクタの引数も nullable であっても `required` をつける。ただしtimestamp等のメタデータフィールドは除く
 - firestoreのDBに書き込むProviderでは、ref.readを使用してClosureの中で呼ぶ
 - エラーメッセージについては、基本的にそのまま表示する（`e.toString()` の加工・プレフィックス除去等はしない）
+- Firestoreのサブコレクションに保存されるEntityは、親ドキュメントのIDをフィールドとして保持する（詳細: `documents/entity-parent-id-rules.md`）
 
 ### プロジェクト構成・ドキュメント方針
 - 実装のことは全てコード上のコメントに記載する
