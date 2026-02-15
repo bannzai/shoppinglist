@@ -185,7 +185,7 @@ class _GroupedListView extends StatelessWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupShoppingListItemCategory> categories;
-  final Map<String?, List<GroupShoppingListItem>> grouped;
+  final Map<String, List<GroupShoppingListItem>> grouped;
 
   const _GroupedListView({
     required this.groupID,
@@ -227,7 +227,7 @@ class _GroupedListView extends StatelessWidget {
     }
 
     // 未分類アイテム
-    final uncategorizedItems = grouped[null];
+    final uncategorizedItems = grouped[uncategorizedCategoryID];
     if (uncategorizedItems != null && uncategorizedItems.isNotEmpty) {
       children.add(const _CategoryHeader(categoryName: '未分類'));
 
