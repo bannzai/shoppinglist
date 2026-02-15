@@ -23,3 +23,7 @@ abstract class TextColor {
   static Color mediumEmphasis(Color color) => color.withValues(alpha: 0.6);
   static Color disabled(Color color) => color.withValues(alpha: 0.37);
 }
+
+Color colorFromHex(String hex) {
+  return Color(int.parse(hex.replaceFirst('#', '0xFF')));
+}
