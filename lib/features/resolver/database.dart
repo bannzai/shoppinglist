@@ -126,8 +126,7 @@ class GroupDatabase {
 
   CollectionReference<GroupShoppingLocation> shoppingLocationsReference() =>
       FirebaseFirestore.instance
-          .collection(
-              _CollectionPath.shoppingLocations(groupID: groupID))
+          .collection(_CollectionPath.shoppingLocations(groupID: groupID))
           .withConverter(
             fromFirestore: GroupShoppingLocation.fromFirestore,
             toFirestore: GroupShoppingLocation.toFirestore,
@@ -137,8 +136,7 @@ class GroupDatabase {
     required String shoppingLocationID,
   }) =>
       FirebaseFirestore.instance
-          .collection(
-              _CollectionPath.shoppingLocations(groupID: groupID))
+          .collection(_CollectionPath.shoppingLocations(groupID: groupID))
           .doc(shoppingLocationID)
           .withConverter(
             fromFirestore: GroupShoppingLocation.fromFirestore,
@@ -147,8 +145,7 @@ class GroupDatabase {
 
   DocumentReference<GroupShoppingLocation> newShoppingLocationReference() =>
       FirebaseFirestore.instance
-          .collection(
-              _CollectionPath.shoppingLocations(groupID: groupID))
+          .collection(_CollectionPath.shoppingLocations(groupID: groupID))
           .doc()
           .withConverter(
             fromFirestore: GroupShoppingLocation.fromFirestore,

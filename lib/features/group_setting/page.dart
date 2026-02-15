@@ -116,23 +116,21 @@ class _GroupSettingBody extends HookConsumerWidget {
                                     isUpdatingName.value = true;
                                     try {
                                       await functions.updateGroupName(
-                                            groupID: groupID,
-                                            name: groupNameController.text,
-                                          );
+                                        groupID: groupID,
+                                        name: groupNameController.text,
+                                      );
                                       if (context.mounted) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           const SnackBar(
-                                              content:
-                                                  Text('グループ名を更新しました')),
+                                              content: Text('グループ名を更新しました')),
                                         );
                                       }
                                     } catch (e) {
                                       if (context.mounted) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
-                                          SnackBar(
-                                              content: Text(e.toString())),
+                                          SnackBar(content: Text(e.toString())),
                                         );
                                       }
                                     } finally {
@@ -165,10 +163,8 @@ class _GroupSettingBody extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 ...profiles.map((profile) {
-                  final isProfileOwner =
-                      profile.userID == group.ownerUserID;
-                  final isSelf =
-                      profile.userID == currentUserID;
+                  final isProfileOwner = profile.userID == group.ownerUserID;
+                  final isSelf = profile.userID == currentUserID;
                   return ListTile(
                     leading: const Icon(Icons.person),
                     title: Text(profile.displayName ?? '名前未設定'),
@@ -260,16 +256,14 @@ class _GroupSettingBody extends HookConsumerWidget {
                                         context: context,
                                         builder: (context) =>
                                             _InvitationCodeDialog(
-                                                invitationCode:
-                                                    invitationCode),
+                                                invitationCode: invitationCode),
                                       );
                                     }
                                   } catch (e) {
                                     if (context.mounted) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
-                                        SnackBar(
-                                            content: Text(e.toString())),
+                                        SnackBar(content: Text(e.toString())),
                                       );
                                     }
                                   } finally {
@@ -280,8 +274,8 @@ class _GroupSettingBody extends HookConsumerWidget {
                               ? const SizedBox(
                                   width: 16,
                                   height: 16,
-                                  child: CircularProgressIndicator(
-                                      strokeWidth: 2),
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
                                 )
                               : const Icon(Icons.person_add),
                           label: const Text('グループに招待'),
@@ -316,14 +310,14 @@ class _GroupSettingBody extends HookConsumerWidget {
               isRemovingMember.value = true;
               try {
                 await functions.removeGroupMember(
-                      groupID: groupID,
-                      targetUserID: profile.userID,
-                    );
+                  groupID: groupID,
+                  targetUserID: profile.userID,
+                );
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                        content: Text(
-                            '${profile.displayName ?? 'メンバー'}を削除しました')),
+                        content:
+                            Text('${profile.displayName ?? 'メンバー'}を削除しました')),
                   );
                 }
               } catch (e) {

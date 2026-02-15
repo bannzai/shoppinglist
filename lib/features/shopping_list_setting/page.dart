@@ -93,8 +93,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                   DropdownButtonFormField<String?>(
                                 initialValue: locations.any((l) =>
                                         l.id ==
-                                        shoppingList
-                                            .value.shoppingLocationID)
+                                        shoppingList.value.shoppingLocationID)
                                     ? shoppingList.value.shoppingLocationID
                                     : null,
                                 decoration: const InputDecoration(
@@ -105,11 +104,11 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                     value: null,
                                     child: Text('なし'),
                                   ),
-                                  ...locations.map((location) =>
-                                      DropdownMenuItem<String?>(
-                                        value: location.id,
-                                        child: Text(location.name),
-                                      )),
+                                  ...locations.map(
+                                      (location) => DropdownMenuItem<String?>(
+                                            value: location.id,
+                                            child: Text(location.name),
+                                          )),
                                 ],
                                 onChanged: (value) {
                                   shoppingList.value = shoppingList.value
@@ -117,8 +116,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                 },
                               ),
                               error: (e, st) => Text(e.toString()),
-                              loading: () =>
-                                  const CircularProgressIndicator(),
+                              loading: () => const CircularProgressIndicator(),
                             );
                           }(),
                         ],

@@ -6,8 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'shopping_location.g.dart';
 
 @Riverpod(dependencies: [groupDatabase])
-Stream<List<GroupShoppingLocation>> shoppingLocations(
-    ShoppingLocationsRef ref,
+Stream<List<GroupShoppingLocation>> shoppingLocations(ShoppingLocationsRef ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return database

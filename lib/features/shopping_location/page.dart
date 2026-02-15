@@ -49,8 +49,7 @@ class ShoppingLocationPage extends HookConsumerWidget {
                       },
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete,
-                          color: TextColor.danger),
+                      icon: const Icon(Icons.delete, color: TextColor.danger),
                       onPressed: () {
                         _showDeleteDialog(
                           context: context,

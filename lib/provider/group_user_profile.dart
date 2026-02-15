@@ -34,7 +34,8 @@ class GroupUserProfileUpdate {
       });
     } else {
       final profile = GroupUserProfile(
-        id: GroupUserProfile.documentID(groupID: database.groupID, userID: userID),
+        id: GroupUserProfile.documentID(
+            groupID: database.groupID, userID: userID),
         userID: userID,
         displayName: displayName,
       );

@@ -49,106 +49,121 @@ class SettingPage extends HookConsumerWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
-          children: [
-            SettingSectionTitle(text: 'プロフィール', children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0, vertical: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '表示名',
+            children: [
+              SettingSectionTitle(text: 'プロフィール', children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        '表示名',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w300,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      TextField(
+                        controller: displayNameController,
+                        decoration: const InputDecoration(
+                          hintText: '表示名を入力',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: (isSavingProfile.value ||
+                                  groupID == null ||
+                                  currentUserID == null)
+                              ? null
+                              : () async {
+                                  isSavingProfile.value = true;
+                                  try {
+                                    await ref
+                                        .read(groupUserProfileUpdateProvider(
+                                            groupID: groupID))
+                                        .call(
+                                          userID: currentUserID,
+                                          displayName:
+                                              displayNameController.text,
+                                        );
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text('表示名を更新しました')),
+                                      );
+                                    }
+                                  } catch (e) {
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(content: Text(e.toString())),
+                                      );
+                                    }
+                                  } finally {
+                                    isSavingProfile.value = false;
+                                  }
+                                },
+                          icon: isSavingProfile.value
+                              ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : const Icon(Icons.save),
+                          label: const Text('保存'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ]),
+              SettingSectionTitle(text: 'グループ', children: [
+                ListTile(
+                  title: const Text(
+                    '招待コードでグループに参加',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w300,
+                      fontSize: 16,
+                    ),
+                  ),
+                  leading: const Icon(Icons.group_add),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const GroupInvitationAcceptPage(),
+                      ),
+                    );
+                  },
+                ),
+              ]),
+              SettingSectionTitle(text: 'アプリについて', children: [
+                ListTile(
+                    title: const Text(
+                      '利用規約',
                       style: TextStyle(
                         fontWeight: FontWeight.w300,
-                        fontSize: 14,
+                        fontSize: 16,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    TextField(
-                      controller: displayNameController,
-                      decoration: const InputDecoration(
-                        hintText: '表示名を入力',
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: (isSavingProfile.value ||
-                                groupID == null ||
-                                currentUserID == null)
-                            ? null
-                            : () async {
-                                isSavingProfile.value = true;
-                                try {
-                                  await ref
-                                      .read(groupUserProfileUpdateProvider(
-                                          groupID: groupID))
-                                      .call(
-                                        userID: currentUserID,
-                                        displayName:
-                                            displayNameController.text,
-                                      );
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(
-                                      const SnackBar(
-                                          content:
-                                              Text('表示名を更新しました')),
-                                    );
-                                  }
-                                } catch (e) {
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(
-                                      SnackBar(
-                                          content: Text(e.toString())),
-                                    );
-                                  }
-                                } finally {
-                                  isSavingProfile.value = false;
-                                }
-                              },
-                        icon: isSavingProfile.value
-                            ? const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                    strokeWidth: 2),
-                              )
-                            : const Icon(Icons.save),
-                        label: const Text('保存'),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ]),
-            SettingSectionTitle(text: 'グループ', children: [
-              ListTile(
-                title: const Text(
-                  '招待コードでグループに参加',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w300,
-                    fontSize: 16,
-                  ),
-                ),
-                leading: const Icon(Icons.group_add),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const GroupInvitationAcceptPage(),
-                    ),
-                  );
-                },
-              ),
-            ]),
-            SettingSectionTitle(text: 'アプリについて', children: [
-              ListTile(
+                    onTap: () {
+                      analytics.logEvent(
+                          name: 'did_select_terms_of_service', parameters: {});
+                      launchUrl(
+                          Uri.parse(
+                              'https://bannzai.github.io/shoppinglist/TermsOfService'),
+                          mode: LaunchMode.externalApplication);
+                    }),
+                const _Divider(),
+                ListTile(
                   title: const Text(
-                    '利用規約',
+                    'プライバシーポリシー',
                     style: TextStyle(
                       fontWeight: FontWeight.w300,
                       fontSize: 16,
@@ -156,59 +171,43 @@ class SettingPage extends HookConsumerWidget {
                   ),
                   onTap: () {
                     analytics.logEvent(
-                        name: 'did_select_terms_of_service', parameters: {});
+                        name: 'did_select_privacy_policy', parameters: {});
                     launchUrl(
                         Uri.parse(
-                            'https://bannzai.github.io/shoppinglist/TermsOfService'),
+                            'https://bannzai.github.io/shoppinglist/PrivacyPolicy'),
                         mode: LaunchMode.externalApplication);
-                  }),
-              const _Divider(),
-              ListTile(
-                title: const Text(
-                  'プライバシーポリシー',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w300,
-                    fontSize: 16,
-                  ),
+                  },
                 ),
-                onTap: () {
-                  analytics.logEvent(
-                      name: 'did_select_privacy_policy', parameters: {});
-                  launchUrl(
-                      Uri.parse(
-                          'https://bannzai.github.io/shoppinglist/PrivacyPolicy'),
-                      mode: LaunchMode.externalApplication);
-                },
-              ),
-              const _Divider(),
-              ListTile(
-                  title: const Text(
-                    '特定商法取引法に基づく表記',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16,
+                const _Divider(),
+                ListTile(
+                    title: const Text(
+                      '特定商法取引法に基づく表記',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        fontSize: 16,
+                      ),
                     ),
-                  ),
+                    onTap: () {
+                      analytics.logEvent(
+                          name:
+                              'did_select_specified_commercial_transaction_act',
+                          parameters: {});
+                      launchUrl(
+                          Uri.parse(
+                              'https://bannzai.github.io/shoppinglist/SpecifiedCommercialTransactionAct'),
+                          mode: LaunchMode.externalApplication);
+                    }),
+                const _Divider(),
+                ListTile(
+                  title: const Text('お問い合わせ'),
                   onTap: () {
-                    analytics.logEvent(
-                        name: 'did_select_specified_commercial_transaction_act',
-                        parameters: {});
-                    launchUrl(
-                        Uri.parse(
-                            'https://bannzai.github.io/shoppinglist/SpecifiedCommercialTransactionAct'),
-                        mode: LaunchMode.externalApplication);
-                  }),
-              const _Divider(),
-              ListTile(
-                title: const Text('お問い合わせ'),
-                onTap: () {
-                  inquiry();
-                },
-              ),
-            ]),
-            const DeleteUserButton(),
-          ],
-        ),
+                    inquiry();
+                  },
+                ),
+              ]),
+              const DeleteUserButton(),
+            ],
+          ),
         ),
       ),
     );
