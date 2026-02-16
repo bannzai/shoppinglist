@@ -36,6 +36,9 @@ class EmptyTextShoppingListItems extends HookConsumerWidget {
                         shoppingListID: shoppingListID,
                         message: '',
                         order: shoppingListItems.nextOrder,
+                        groupShoppingListItemCategoryID: null,
+                        description: null,
+                        color: null,
                       );
                 },
               ),

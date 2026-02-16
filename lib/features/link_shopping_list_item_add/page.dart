@@ -78,6 +78,9 @@ class LinkShoppingListItemAddPage extends HookConsumerWidget {
                           metadataDescription: description,
                           metadataImageURL: imageURL,
                           order: shoppingListItems.length,
+                          groupShoppingListItemCategoryID: null,
+                          description: null,
+                          color: null,
                         );
                         if (context.mounted) {
                           Navigator.pop(context);

@@ -23,6 +23,9 @@ class ShoppingListItemAddButton extends HookConsumerWidget {
           shoppingListID: shoppingListID,
           message: '',
           order: shoppingListItems.nextOrder,
+          groupShoppingListItemCategoryID: null,
+          description: null,
+          color: null,
         );
       },
       child: const Padding(
