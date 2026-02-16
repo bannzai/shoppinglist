@@ -37,8 +37,6 @@ class ShoppingListAppBar extends HookConsumerWidget
     final shoppingList = this.shoppingList;
     final shoppingListDelete =
         ref.watch(shoppingListDeleteProvider(groupID: groupID));
-    final shoppingListDuplicate =
-        ref.watch(shoppingListDuplicateProvider(groupID: groupID));
     final linkShoppingListItemsAsync = ref.watch(linkShoppingListItemsProvider(
       groupID: groupID,
       shoppingListID: shoppingListID.value,
@@ -95,7 +93,6 @@ class ShoppingListAppBar extends HookConsumerWidget
                     shoppingListID: shoppingListID,
                     shoppingListItems: shoppingListItems,
                     linkShoppingListItemsAsync: linkShoppingListItemsAsync,
-                    shoppingListDuplicate: shoppingListDuplicate,
                   );
                 },
               );
@@ -171,7 +168,6 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
   final ValueNotifier<String> shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
   final AsyncValue<List<GroupShoppingListItem>> linkShoppingListItemsAsync;
-  final ShoppingListDuplicate shoppingListDuplicate;
 
   const _AddShoppingListBottomSheet({
     required this.groupID,
@@ -179,7 +175,6 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
     required this.shoppingListID,
     required this.shoppingListItems,
     required this.linkShoppingListItemsAsync,
-    required this.shoppingListDuplicate,
   });
 
   @override
@@ -244,13 +239,19 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
               final linkItems =
                   linkShoppingListItemsAsync.asData?.value ?? [];
               final allItems = [...shoppingListItems, ...linkItems];
+              final shoppingListDuplicate = ref.read(
+                  shoppingListDuplicateProvider(
+                      groupID: selectedGroupID.value));
               final newShoppingList = await shoppingListDuplicate(
                 createUserID: shoppingList.createUserID,
-                groupID: shoppingList.groupID,
+                groupID: selectedGroupID.value,
                 sourceShoppingList: shoppingList,
                 shoppingListItems: allItems,
               );
-              shoppingListID.value = newShoppingList.id;
+              // 同じグループの場合のみshoppingListIDを切り替える
+              if (selectedGroupID.value == groupID) {
+                shoppingListID.value = newShoppingList.id;
+              }
 
               if (context.mounted) {
                 Navigator.pop(context);
