@@ -13,7 +13,11 @@ class CreateGroup {
 
   CreateGroup({required this.userDatabase});
 
-  Future<void> call({required AppUser appUser}) async {
+  Future<void> call({
+    required AppUser appUser,
+    String? name,
+    bool setAsDefault = true,
+  }) async {
     final batch = FirebaseFirestore.instance.batch();
 
     // groupIDはここで確定するため、GroupDatabaseはcall内で生成する
@@ -22,7 +26,7 @@ class CreateGroup {
     final group = Group(
       id: groupDocRef.id,
       memberUserIDs: [appUser.id],
-      name: null,
+      name: name,
       ownerUserID: appUser.id,
     );
 
@@ -31,11 +35,18 @@ class CreateGroup {
       group,
       SetOptions(merge: true),
     );
-    batch.set(
-      userDatabase.userReference(),
-      appUser.copyWith(defaultGroupID: groupDocRef.id),
-      SetOptions(merge: true),
-    );
+
+    // setAsDefault == true → 常にdefaultGroupIDを更新
+    // setAsDefault == false → defaultGroupIDがnullの場合のみ自動設定
+    final shouldSetDefault =
+        setAsDefault || appUser.defaultGroupID == null;
+    if (shouldSetDefault) {
+      batch.set(
+        userDatabase.userReference(),
+        appUser.copyWith(defaultGroupID: groupDocRef.id),
+        SetOptions(merge: true),
+      );
+    }
 
     // グループ作成者のプロフィールを作成
     final currentUser = FirebaseAuth.instance.currentUser;
