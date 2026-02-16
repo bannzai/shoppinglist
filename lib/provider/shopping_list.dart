@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
@@ -91,14 +92,12 @@ ShoppingListUpdate shoppingListUpdate(ShoppingListUpdateRef ref,
 
 class ShoppingListDuplicate {
   final ShoppingListAdd shoppingListAdd;
-  final ShoppingListUpdate shoppingListUpdate;
   final AddTextShoppingListItem addTextShoppingListItem;
   final AddLinkShoppingListItem addLinkShoppingListItem;
   final GroupDatabase database;
 
   ShoppingListDuplicate({
     required this.shoppingListAdd,
-    required this.shoppingListUpdate,
     required this.addTextShoppingListItem,
     required this.addLinkShoppingListItem,
     required this.database,
@@ -113,13 +112,16 @@ class ShoppingListDuplicate {
     final newShoppingList =
         await shoppingListAdd(createUserID: createUserID, groupID: groupID);
 
+    await database
+        .shoppingListReference(shoppingListID: newShoppingList.id)
+        .update({
+      'shoppingLocationID': sourceShoppingList.shoppingLocationID,
+      'duplicatedFromGroupShoppingListID': sourceShoppingList.id,
+      'serverUpdatedDateTime': FieldValue.serverTimestamp(),
+    });
     final updatedShoppingList = newShoppingList.copyWith(
       shoppingLocationID: sourceShoppingList.shoppingLocationID,
       duplicatedFromGroupShoppingListID: sourceShoppingList.id,
-    );
-    await shoppingListUpdate(
-      shoppingListID: updatedShoppingList.id,
-      shoppingList: updatedShoppingList,
     );
 
     for (final item in shoppingListItems) {
@@ -156,7 +158,6 @@ class ShoppingListDuplicate {
 
 @Riverpod(dependencies: [
   shoppingListAdd,
-  shoppingListUpdate,
   addTextShoppingListItem,
   addLinkShoppingListItem,
   groupDatabase,
@@ -164,8 +165,6 @@ class ShoppingListDuplicate {
 ShoppingListDuplicate shoppingListDuplicate(ShoppingListDuplicateRef ref,
     {required String groupID}) {
   final shoppingListAdd = ref.watch(shoppingListAddProvider(groupID: groupID));
-  final shoppingListUpdate =
-      ref.watch(shoppingListUpdateProvider(groupID: groupID));
   final addTextShoppingListItem =
       ref.watch(addTextShoppingListItemProvider(groupID: groupID));
   final addLinkShoppingListItem =
@@ -173,7 +172,6 @@ ShoppingListDuplicate shoppingListDuplicate(ShoppingListDuplicateRef ref,
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingListDuplicate(
     shoppingListAdd: shoppingListAdd,
-    shoppingListUpdate: shoppingListUpdate,
     addTextShoppingListItem: addTextShoppingListItem,
     addLinkShoppingListItem: addLinkShoppingListItem,
     database: database,
