@@ -8,6 +8,7 @@ import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list_item_filter/page.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
 class ShoppingListAppBar extends HookConsumerWidget
@@ -39,6 +40,10 @@ class ShoppingListAppBar extends HookConsumerWidget
         ref.watch(shoppingListDeleteProvider(groupID: groupID));
     final shoppingListDuplicate =
         ref.watch(shoppingListDuplicateProvider(groupID: groupID));
+    final linkShoppingListItemsAsync = ref.watch(linkShoppingListItemsProvider(
+      groupID: groupID,
+      shoppingListID: shoppingListID.value,
+    ));
 
     return AppBar(
       title: HookBuilder(
@@ -96,7 +101,9 @@ class ShoppingListAppBar extends HookConsumerWidget
                           onTap: () async {
                             final newShoppingList = await shoppingListAdd(
                                 createUserID: shoppingList.createUserID,
-                                groupID: shoppingList.groupID);
+                                groupID: shoppingList.groupID,
+                                shoppingLocationID: null,
+                                duplicatedFromGroupShoppingListID: null);
                             shoppingListID.value = newShoppingList.id;
 
                             if (context.mounted) {
@@ -107,10 +114,17 @@ class ShoppingListAppBar extends HookConsumerWidget
                         ListTile(
                           title: const Text('現在の買い物リストを複製'),
                           onTap: () async {
+                            final linkItems =
+                                linkShoppingListItemsAsync.asData?.value ?? [];
+                            final allItems = [
+                              ...shoppingListItems,
+                              ...linkItems
+                            ];
                             final newShoppingList = await shoppingListDuplicate(
                                 createUserID: shoppingList.createUserID,
                                 groupID: shoppingList.groupID,
-                                shoppingListItems: shoppingListItems);
+                                sourceShoppingList: shoppingList,
+                                shoppingListItems: allItems);
                             shoppingListID.value = newShoppingList.id;
 
                             if (context.mounted) {

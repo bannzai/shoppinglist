@@ -243,6 +243,9 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
               shoppingListID: textShoppingListItem.shoppingListID,
               message: '',
               order: shoppingListItems.nextOrder,
+              groupShoppingListItemCategoryID: null,
+              description: null,
+              color: null,
             );
           }
         },

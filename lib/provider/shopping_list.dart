@@ -23,8 +23,12 @@ class ShoppingListAdd {
 
   ShoppingListAdd({required this.database});
 
-  Future<GroupShoppingList> call(
-      {required String createUserID, required String groupID}) async {
+  Future<GroupShoppingList> call({
+    required String createUserID,
+    required String groupID,
+    required String? shoppingLocationID,
+    required String? duplicatedFromGroupShoppingListID,
+  }) async {
     final docRef = database.newGroupShoppingListReference();
     final count = await database.countOfGroupShoppingLists();
     final shoppingList = GroupShoppingList(
@@ -36,6 +40,8 @@ class ShoppingListAdd {
           : '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ($count)',
       status: GroupShoppingListStatus.active,
       ttlExpiresDateTime: DateTime.now().add(const Duration(days: 30)),
+      shoppingLocationID: shoppingLocationID,
+      duplicatedFromGroupShoppingListID: duplicatedFromGroupShoppingListID,
     );
     await docRef.set(shoppingList);
     return shoppingList;
@@ -92,43 +98,74 @@ ShoppingListUpdate shoppingListUpdate(ShoppingListUpdateRef ref,
 class ShoppingListDuplicate {
   final ShoppingListAdd shoppingListAdd;
   final AddTextShoppingListItem addTextShoppingListItem;
-  final GroupDatabase database;
+  final AddLinkShoppingListItem addLinkShoppingListItem;
 
-  ShoppingListDuplicate(
-      {required this.shoppingListAdd,
-      required this.addTextShoppingListItem,
-      required this.database});
+  ShoppingListDuplicate({
+    required this.shoppingListAdd,
+    required this.addTextShoppingListItem,
+    required this.addLinkShoppingListItem,
+  });
 
-  Future<GroupShoppingList> call(
-      {required String createUserID,
-      required String groupID,
-      required List<GroupShoppingListItem> shoppingListItems}) async {
-    final shoppingList =
-        await shoppingListAdd(createUserID: createUserID, groupID: groupID);
-    for (var item in shoppingListItems) {
-      if (item is TextGroupShoppingListItem) {
-        await addTextShoppingListItem(
-          shoppingListID: shoppingList.id,
-          message: item.message,
-          order: item.order,
-        );
+  Future<GroupShoppingList> call({
+    required String createUserID,
+    required String groupID,
+    required GroupShoppingList sourceShoppingList,
+    required List<GroupShoppingListItem> shoppingListItems,
+  }) async {
+    final newShoppingList = await shoppingListAdd(
+      createUserID: createUserID,
+      groupID: groupID,
+      shoppingLocationID: sourceShoppingList.shoppingLocationID,
+      duplicatedFromGroupShoppingListID: sourceShoppingList.id,
+    );
+
+    for (final item in shoppingListItems) {
+      switch (item) {
+        case TextGroupShoppingListItem():
+          await addTextShoppingListItem(
+            shoppingListID: newShoppingList.id,
+            message: item.message,
+            order: item.order,
+            groupShoppingListItemCategoryID:
+                item.groupShoppingListItemCategoryID,
+            description: item.description,
+            color: item.color,
+          );
+        case LinkGroupShoppingListItem():
+          await addLinkShoppingListItem(
+            shoppingListID: newShoppingList.id,
+            url: item.url,
+            metadataTitle: item.metadataTitle,
+            metadataDescription: item.metadataDescription,
+            metadataImageURL: item.metadataImageURL,
+            order: item.order,
+            groupShoppingListItemCategoryID:
+                item.groupShoppingListItemCategoryID,
+            description: item.description,
+            color: item.color,
+          );
       }
     }
 
-    return shoppingList;
+    return newShoppingList;
   }
 }
 
-@Riverpod(
-    dependencies: [shoppingListAdd, addTextShoppingListItem, groupDatabase])
+@Riverpod(dependencies: [
+  shoppingListAdd,
+  addTextShoppingListItem,
+  addLinkShoppingListItem,
+])
 ShoppingListDuplicate shoppingListDuplicate(ShoppingListDuplicateRef ref,
     {required String groupID}) {
   final shoppingListAdd = ref.watch(shoppingListAddProvider(groupID: groupID));
   final addTextShoppingListItem =
       ref.watch(addTextShoppingListItemProvider(groupID: groupID));
-  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
+  final addLinkShoppingListItem =
+      ref.watch(addLinkShoppingListItemProvider(groupID: groupID));
   return ShoppingListDuplicate(
-      shoppingListAdd: shoppingListAdd,
-      addTextShoppingListItem: addTextShoppingListItem,
-      database: database);
+    shoppingListAdd: shoppingListAdd,
+    addTextShoppingListItem: addTextShoppingListItem,
+    addLinkShoppingListItem: addLinkShoppingListItem,
+  );
 }

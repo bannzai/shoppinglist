@@ -110,6 +110,9 @@ class ImagePickerButton extends HookConsumerWidget {
               shoppingListID: shoppingListID,
               message: e,
               order: shoppingListItems.nextOrder + i,
+              groupShoppingListItemCategoryID: null,
+              description: null,
+              color: null,
             );
       } catch (e) {
         // エラーが発生しても次の凍レーションを継続する

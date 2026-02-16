@@ -115,6 +115,43 @@ class _Body extends HookConsumerWidget {
                       ),
                       const SizedBox(height: 10),
                     ],
+                    if (shoppingList?.duplicatedFromGroupShoppingListID !=
+                        null) ...[
+                      const SizedBox(height: 4),
+                      GestureDetector(
+                        onTap: () {
+                          final sourceID = shoppingList!
+                              .duplicatedFromGroupShoppingListID!;
+                          if (shoppingLists
+                              .any((sl) => sl.id == sourceID)) {
+                            shoppingListID.value = sourceID;
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text('複製元の買い物リストは削除されています')),
+                            );
+                          }
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.content_copy,
+                                size: 14, color: Colors.blue),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingList!.duplicatedFromGroupShoppingListID)?.name ?? "削除済みリスト"}から複製',
+                              style: const TextStyle(
+                                color: Colors.blue,
+                                fontSize: 12,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
                     Expanded(
                         child: ShoppingListItems(
                             groupID: groupID,
