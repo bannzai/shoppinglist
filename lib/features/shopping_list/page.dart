@@ -11,27 +11,78 @@ import 'package:shoppinglist/features/shopping_list/components/app_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/buttons/copy_multiline_text_button.dart';
 import 'package:shoppinglist/features/shopping_list/components/buttons/image_picker_button.dart';
 import 'package:shoppinglist/features/shopping_list/components/buttons/shopping_list_item_add_button.dart';
+import 'package:shoppinglist/features/shopping_list/components/group_switcher.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/empty_text_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_items.dart';
+import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/style/color.dart';
 
 class ShoppingListPage extends HookConsumerWidget {
   final String groupID;
-  const ShoppingListPage({super.key, required this.groupID});
+  final void Function(String groupID)? onGroupChanged;
+  const ShoppingListPage({
+    super.key,
+    required this.groupID,
+    this.onGroupChanged,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final shoppingLists = ref.watch(shoppingListsProvider(groupID: groupID));
+    final userGroupsAsync = ref.watch(userGroupsProvider);
+    final appUserAsync = ref.watch(appUserProvider);
+    final appUser = appUserAsync.asData?.value;
+
+    // 切り替え先のグループに買い物リストが0件の場合、デフォルトリストを自動作成
+    useEffect(() {
+      void f() async {
+        if (appUser != null &&
+            shoppingLists is AsyncData<List<GroupShoppingList>> &&
+            shoppingLists.value.isEmpty == true) {
+          final shoppingListAdd =
+              ref.read(shoppingListAddProvider(groupID: groupID));
+          await shoppingListAdd(
+            createUserID: appUser.id,
+            groupID: groupID,
+            shoppingLocationID: null,
+            duplicatedFromGroupShoppingListID: null,
+          );
+        }
+      }
+
+      f();
+      return null;
+    }, [shoppingLists]);
 
     return Retry(
       retry: () => ref.invalidate(shoppingListsProvider(groupID: groupID)),
-      child: shoppingLists.when(
-        data: (shoppingLists) =>
-            _Body(groupID: groupID, shoppingLists: shoppingLists),
-        error: (e, st) => RetryPage(exception: e),
-        loading: () => const Loading(),
+      child: Column(
+        children: [
+          if (userGroupsAsync.asData?.value != null)
+            GroupSwitcher(
+              groups: userGroupsAsync.asData!.value,
+              currentGroupID: groupID,
+              onGroupChanged: (newGroupID) {
+                onGroupChanged?.call(newGroupID);
+              },
+            ),
+          Expanded(
+            child: shoppingLists.when(
+              data: (shoppingLists) {
+                if (shoppingLists.isEmpty) {
+                  return const Loading();
+                }
+                return _Body(
+                    groupID: groupID, shoppingLists: shoppingLists);
+              },
+              error: (e, st) => RetryPage(exception: e),
+              loading: () => const Loading(),
+            ),
+          ),
+        ],
       ),
     );
   }

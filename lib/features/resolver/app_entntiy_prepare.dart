@@ -7,7 +7,7 @@ import 'package:shoppinglist/provider/group_create.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 
 class AppEntityPrepareResolver extends HookConsumerWidget {
-  final Widget Function(BuildContext context, String groupID) builder;
+  final Widget Function(BuildContext context) builder;
 
   const AppEntityPrepareResolver({
     super.key,
@@ -66,6 +66,6 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
     if (shoppingLists?.valueOrNull?.isEmpty == true) {
       return const Loading();
     }
-    return builder(context, groupID);
+    return builder(context);
   }
 }

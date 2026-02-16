@@ -16,7 +16,7 @@ on:
 
 jobs:
   lint:
-    runs-on: macos-26
+    runs-on: ubuntu-latest
     if: ${{ !contains(github.event.pull_request.title, '[Skip CI]') }}
     steps:
     - uses: actions/checkout@v1
@@ -30,7 +30,7 @@ jobs:
     - run: dart format --set-exit-if-changed ./
 
   codegen:
-    runs-on: macos-26
+    runs-on: ubuntu-latest
     if: ${{ !contains(github.event.pull_request.title, '[Skip CI]') }}
     steps:
     - uses: actions/checkout@v1
@@ -44,7 +44,7 @@ jobs:
     - run: git diff --quiet --exit-code
 
   test:
-    runs-on: macos-26
+    runs-on: ubuntu-latest
     if: ${{ !contains(github.event.pull_request.title, '[Skip CI]') }}
     steps:
     - uses: actions/checkout@v1
