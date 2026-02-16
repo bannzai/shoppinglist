@@ -63,9 +63,7 @@ class AddTextShoppingListItem {
         groupShoppingListItemCategoryID: groupShoppingListItemCategoryID,
         description: description,
         color: color);
-    await database
-        .shoppingListItemsReference(shoppingListID: shoppingListID)
-        .add(textItem);
+    await docRef.set(textItem);
     return textItem;
   }
 }
@@ -108,9 +106,7 @@ class AddLinkShoppingListItem {
       description: description,
       color: color,
     );
-    await database
-        .shoppingListItemsReference(shoppingListID: shoppingListID)
-        .add(linkItem);
+    await docRef.set(linkItem);
     return linkItem;
   }
 }
