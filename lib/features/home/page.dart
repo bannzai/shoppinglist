@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/features/shopping_list/page.dart';
 import 'package:shoppinglist/features/settings/page.dart';
 // import 'package:shoppinglist/features/ec_items/page.dart';
+import 'package:shoppinglist/provider/app_user.dart';
+import 'package:shoppinglist/provider/default_group_update.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -27,11 +30,27 @@ extension HomePageTabFunctions on HomePageTabType {
 }
 
 class HomePage extends HookConsumerWidget {
-  final String groupID;
-  const HomePage({super.key, required this.groupID});
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final appUserAsync = ref.watch(appUserProvider);
+    final appUser = appUserAsync.asData?.value;
+    final currentGroupID = useState<String?>(appUser?.defaultGroupID);
+
+    // defaultGroupIDの初期化
+    useEffect(() {
+      if (appUser?.defaultGroupID != null && currentGroupID.value == null) {
+        currentGroupID.value = appUser!.defaultGroupID;
+      }
+      return null;
+    }, [appUser?.defaultGroupID]);
+
+    final groupID = currentGroupID.value;
+    if (groupID == null) {
+      return const Loading();
+    }
+
     final tabIndex = useState(0);
     final ticker = useSingleTickerProvider();
     final tabController = useTabController(
@@ -75,7 +94,15 @@ class HomePage extends HookConsumerWidget {
           physics: const NeverScrollableScrollPhysics(),
           controller: tabController,
           children: [
-            ShoppingListPage(groupID: groupID),
+            ShoppingListPage(
+              groupID: groupID,
+              onGroupChanged: (newGroupID) {
+                currentGroupID.value = newGroupID;
+                ref
+                    .read(defaultGroupUpdateProvider)
+                    .call(groupID: newGroupID);
+              },
+            ),
             // ECItemsPage(),
             const SettingPage(),
           ],
