@@ -53,8 +53,8 @@ class GroupCreatePage extends HookConsumerWidget {
                             }
                             await ref.read(createGroupProvider).call(
                                   appUser: appUser,
-                                  name: nameController.text.isNotEmpty
-                                      ? nameController.text
+                                  name: nameController.text.trim().isNotEmpty
+                                      ? nameController.text.trim()
                                       : null,
                                   setAsDefault: false,
                                 );
