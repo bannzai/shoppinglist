@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/button/inquiry.dart';
 import 'package:shoppinglist/components/button/user_delete.dart';
 import 'package:shoppinglist/features/group_invitation/page.dart';
+import 'package:shoppinglist/features/group_list/page.dart';
 import 'package:shoppinglist/features/settings/components/section.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
@@ -124,6 +125,24 @@ class SettingPage extends HookConsumerWidget {
                 ),
               ]),
               SettingSectionTitle(text: 'グループ', children: [
+                ListTile(
+                  title: const Text(
+                    'グループ管理',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w300,
+                      fontSize: 16,
+                    ),
+                  ),
+                  leading: const Icon(Icons.groups),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const GroupListPage(),
+                      ),
+                    );
+                  },
+                ),
                 ListTile(
                   title: const Text(
                     '招待コードでグループに参加',
