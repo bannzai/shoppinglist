@@ -44,10 +44,14 @@ class AddTextShoppingListItem {
 
   AddTextShoppingListItem({required this.database});
 
-  Future<TextGroupShoppingListItem> call(
-      {required String shoppingListID,
-      required String message,
-      required int order}) async {
+  Future<TextGroupShoppingListItem> call({
+    required String shoppingListID,
+    required String message,
+    required int order,
+    required String? groupShoppingListItemCategoryID,
+    required String? description,
+    required String? color,
+  }) async {
     final docRef = database
         .shoppingListItemsReference(shoppingListID: shoppingListID)
         .doc();
@@ -55,7 +59,10 @@ class AddTextShoppingListItem {
         id: docRef.id,
         shoppingListID: shoppingListID,
         message: message,
-        order: order);
+        order: order,
+        groupShoppingListItemCategoryID: groupShoppingListItemCategoryID,
+        description: description,
+        color: color);
     await database
         .shoppingListItemsReference(shoppingListID: shoppingListID)
         .add(textItem);
@@ -82,6 +89,9 @@ class AddLinkShoppingListItem {
     required String? metadataDescription,
     required String? metadataImageURL,
     required int order,
+    required String? groupShoppingListItemCategoryID,
+    required String? description,
+    required String? color,
   }) async {
     final docRef = database
         .shoppingListItemsReference(shoppingListID: shoppingListID)
@@ -94,6 +104,9 @@ class AddLinkShoppingListItem {
       metadataDescription: metadataDescription,
       metadataImageURL: metadataImageURL,
       order: order,
+      groupShoppingListItemCategoryID: groupShoppingListItemCategoryID,
+      description: description,
+      color: color,
     );
     await database
         .shoppingListItemsReference(shoppingListID: shoppingListID)
