@@ -10,48 +10,49 @@ class GroupListPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final groupsAsync = ref.watch(userGroupsProvider);
     final appUserAsync = ref.watch(appUserProvider);
-    final defaultGroupID = appUserAsync.asData?.value.defaultGroupID;
+    final groupsAsync = ref.watch(userGroupsProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('グループ管理'),
       ),
-      body: groupsAsync.when(
-        data: (groups) {
-          if (groups.isEmpty) {
-            return const Center(
-              child: Text('所属しているグループはありません'),
-            );
-          }
-          return ListView.builder(
-            itemCount: groups.length,
-            itemBuilder: (context, index) {
-              final group = groups[index];
-              final isDefault = group.id == defaultGroupID;
-              return ListTile(
-                title: Text(group.name ?? '名前未設定'),
-                subtitle: Text('メンバー ${group.memberUserIDs.length}人'),
-                trailing: isDefault
-                    ? const Icon(Icons.check_circle, color: Colors.green)
-                    : null,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          GroupSettingPage(groupID: group.id),
-                    ),
-                  );
-                },
-              );
-            },
-          );
-        },
-        error: (e, st) => Center(child: Text(e.toString())),
-        loading: () => const Center(child: CircularProgressIndicator()),
-      ),
+      body: switch ((appUserAsync, groupsAsync)) {
+        (AsyncData(value: final appUser), AsyncData(value: final groups)) =>
+          groups.isEmpty
+              ? const Center(
+                  child: Text('所属しているグループはありません'),
+                )
+              : ListView.builder(
+                  itemCount: groups.length,
+                  itemBuilder: (context, index) {
+                    final group = groups[index];
+                    final isDefault =
+                        group.id == appUser.defaultGroupID;
+                    return ListTile(
+                      title: Text(group.name ?? '名前未設定'),
+                      subtitle:
+                          Text('メンバー ${group.memberUserIDs.length}人'),
+                      trailing: isDefault
+                          ? const Icon(Icons.check_circle,
+                              color: Colors.green)
+                          : null,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                GroupSettingPage(groupID: group.id),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+        (AsyncError(:final error), _) || (_, AsyncError(:final error)) =>
+          Center(child: Text(error.toString())),
+        _ => const Center(child: CircularProgressIndicator()),
+      },
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
