@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
@@ -24,8 +23,12 @@ class ShoppingListAdd {
 
   ShoppingListAdd({required this.database});
 
-  Future<GroupShoppingList> call(
-      {required String createUserID, required String groupID}) async {
+  Future<GroupShoppingList> call({
+    required String createUserID,
+    required String groupID,
+    required String? shoppingLocationID,
+    required String? duplicatedFromGroupShoppingListID,
+  }) async {
     final docRef = database.newGroupShoppingListReference();
     final count = await database.countOfGroupShoppingLists();
     final shoppingList = GroupShoppingList(
@@ -37,6 +40,8 @@ class ShoppingListAdd {
           : '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ($count)',
       status: GroupShoppingListStatus.active,
       ttlExpiresDateTime: DateTime.now().add(const Duration(days: 30)),
+      shoppingLocationID: shoppingLocationID,
+      duplicatedFromGroupShoppingListID: duplicatedFromGroupShoppingListID,
     );
     await docRef.set(shoppingList);
     return shoppingList;
@@ -94,13 +99,11 @@ class ShoppingListDuplicate {
   final ShoppingListAdd shoppingListAdd;
   final AddTextShoppingListItem addTextShoppingListItem;
   final AddLinkShoppingListItem addLinkShoppingListItem;
-  final GroupDatabase database;
 
   ShoppingListDuplicate({
     required this.shoppingListAdd,
     required this.addTextShoppingListItem,
     required this.addLinkShoppingListItem,
-    required this.database,
   });
 
   Future<GroupShoppingList> call({
@@ -109,17 +112,9 @@ class ShoppingListDuplicate {
     required GroupShoppingList sourceShoppingList,
     required List<GroupShoppingListItem> shoppingListItems,
   }) async {
-    final newShoppingList =
-        await shoppingListAdd(createUserID: createUserID, groupID: groupID);
-
-    await database
-        .shoppingListReference(shoppingListID: newShoppingList.id)
-        .update({
-      'shoppingLocationID': sourceShoppingList.shoppingLocationID,
-      'duplicatedFromGroupShoppingListID': sourceShoppingList.id,
-      'serverUpdatedDateTime': FieldValue.serverTimestamp(),
-    });
-    final updatedShoppingList = newShoppingList.copyWith(
+    final newShoppingList = await shoppingListAdd(
+      createUserID: createUserID,
+      groupID: groupID,
       shoppingLocationID: sourceShoppingList.shoppingLocationID,
       duplicatedFromGroupShoppingListID: sourceShoppingList.id,
     );
@@ -152,7 +147,7 @@ class ShoppingListDuplicate {
       }
     }
 
-    return updatedShoppingList;
+    return newShoppingList;
   }
 }
 
@@ -160,7 +155,6 @@ class ShoppingListDuplicate {
   shoppingListAdd,
   addTextShoppingListItem,
   addLinkShoppingListItem,
-  groupDatabase,
 ])
 ShoppingListDuplicate shoppingListDuplicate(ShoppingListDuplicateRef ref,
     {required String groupID}) {
@@ -169,11 +163,9 @@ ShoppingListDuplicate shoppingListDuplicate(ShoppingListDuplicateRef ref,
       ref.watch(addTextShoppingListItemProvider(groupID: groupID));
   final addLinkShoppingListItem =
       ref.watch(addLinkShoppingListItemProvider(groupID: groupID));
-  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingListDuplicate(
     shoppingListAdd: shoppingListAdd,
     addTextShoppingListItem: addTextShoppingListItem,
     addLinkShoppingListItem: addLinkShoppingListItem,
-    database: database,
   );
 }

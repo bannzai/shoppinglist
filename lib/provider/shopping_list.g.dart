@@ -582,7 +582,7 @@ class _ShoppingListUpdateProviderElement
 }
 
 String _$shoppingListDuplicateHash() =>
-    r'3c3faf8d3a6ff4bf577cb30f7092f99bdc7402f9';
+    r'2dc9615e89cb7d08f5084fb0015fca05a3f9c275';
 
 /// See also [shoppingListDuplicate].
 @ProviderFor(shoppingListDuplicate)
@@ -611,12 +611,11 @@ class ShoppingListDuplicateFamily extends Family<ShoppingListDuplicate> {
     );
   }
 
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>{
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
     shoppingListAddProvider,
     addTextShoppingListItemProvider,
-    addLinkShoppingListItemProvider,
-    groupDatabaseProvider
-  };
+    addLinkShoppingListItemProvider
+  ];
 
   @override
   Iterable<ProviderOrFamily>? get dependencies => _dependencies;
@@ -628,9 +627,7 @@ class ShoppingListDuplicateFamily extends Family<ShoppingListDuplicate> {
     addTextShoppingListItemProvider,
     ...?addTextShoppingListItemProvider.allTransitiveDependencies,
     addLinkShoppingListItemProvider,
-    ...?addLinkShoppingListItemProvider.allTransitiveDependencies,
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
+    ...?addLinkShoppingListItemProvider.allTransitiveDependencies
   };
 
   @override

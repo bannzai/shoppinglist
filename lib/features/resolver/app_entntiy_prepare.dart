@@ -43,7 +43,11 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
             shoppingListAdd != null &&
             shoppingLists is AsyncData &&
             shoppingLists?.value?.isEmpty == true) {
-          await shoppingListAdd(createUserID: appUser.id, groupID: groupID);
+          await shoppingListAdd(
+              createUserID: appUser.id,
+              groupID: groupID,
+              shoppingLocationID: null,
+              duplicatedFromGroupShoppingListID: null);
         }
       }
 

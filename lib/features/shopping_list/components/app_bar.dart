@@ -101,7 +101,9 @@ class ShoppingListAppBar extends HookConsumerWidget
                           onTap: () async {
                             final newShoppingList = await shoppingListAdd(
                                 createUserID: shoppingList.createUserID,
-                                groupID: shoppingList.groupID);
+                                groupID: shoppingList.groupID,
+                                shoppingLocationID: null,
+                                duplicatedFromGroupShoppingListID: null);
                             shoppingListID.value = newShoppingList.id;
 
                             if (context.mounted) {
