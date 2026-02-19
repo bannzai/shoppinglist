@@ -113,6 +113,8 @@ const removeGroupMemberFlow = ai.defineFlow(
           if (userData?.defaultGroupID === groupID) {
             transaction.update(userRef, {
               defaultGroupID: null,
+              updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+              serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
             });
           }
         }
