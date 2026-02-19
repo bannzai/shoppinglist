@@ -115,6 +115,8 @@ const createGroupInvitationFlow = ai.defineFlow(
         expiresDateTime,
         createdDateTime: admin.firestore.FieldValue.serverTimestamp(),
         updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+        serverCreatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+        serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
       });
 
       logger.info(
