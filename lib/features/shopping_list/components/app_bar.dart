@@ -8,7 +8,6 @@ import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list_item_filter/page.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
-import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
@@ -37,11 +36,6 @@ class ShoppingListAppBar extends HookConsumerWidget
     final shoppingList = this.shoppingList;
     final shoppingListDelete =
         ref.watch(shoppingListDeleteProvider(groupID: groupID));
-    final linkShoppingListItemsAsync = ref.watch(linkShoppingListItemsProvider(
-      groupID: groupID,
-      shoppingListID: shoppingListID.value,
-    ));
-
     return AppBar(
       title: HookBuilder(
         builder: (context) {
@@ -92,7 +86,6 @@ class ShoppingListAppBar extends HookConsumerWidget
                     shoppingList: shoppingList,
                     shoppingListID: shoppingListID,
                     shoppingListItems: shoppingListItems,
-                    linkShoppingListItemsAsync: linkShoppingListItemsAsync,
                   );
                 },
               );
@@ -167,14 +160,12 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
   final GroupShoppingList shoppingList;
   final ValueNotifier<String> shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
-  final AsyncValue<List<GroupShoppingListItem>> linkShoppingListItemsAsync;
 
   const _AddShoppingListBottomSheet({
     required this.groupID,
     required this.shoppingList,
     required this.shoppingListID,
     required this.shoppingListItems,
-    required this.linkShoppingListItemsAsync,
   });
 
   @override
@@ -236,9 +227,6 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
           ListTile(
             title: const Text('現在の買い物リストを複製'),
             onTap: () async {
-              final linkItems =
-                  linkShoppingListItemsAsync.asData?.value ?? [];
-              final allItems = [...shoppingListItems, ...linkItems];
               final shoppingListDuplicate = ref.read(
                   shoppingListDuplicateProvider(
                       groupID: selectedGroupID.value));
@@ -246,7 +234,7 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
                 createUserID: shoppingList.createUserID,
                 groupID: selectedGroupID.value,
                 sourceShoppingList: shoppingList,
-                shoppingListItems: allItems,
+                shoppingListItems: shoppingListItems,
               );
               // 同じグループの場合のみshoppingListIDを切り替える
               if (selectedGroupID.value == groupID) {

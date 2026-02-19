@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
-import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/link_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
 import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -102,19 +101,14 @@ class _FlatShoppingListItems extends HookConsumerWidget {
       },
       itemCount: items.value.length,
       itemBuilder: (context, index) {
-        final item = items.value[index];
+        final item = items.value[index] as TextGroupShoppingListItem;
 
-        return switch (item) {
-          TextGroupShoppingListItem textItem => TextShoppingListItemWidget(
-              key: ValueKey(item.id),
-              groupID: groupID,
-              textShoppingListItem: textItem,
-              shoppingListItems: items.value),
-          LinkGroupShoppingListItem linkItem => LinkShoppingListItemWidget(
-              key: ValueKey(item.id),
-              linkShoppingListItem: linkItem,
-              shoppingListItems: items.value),
-        };
+        return TextShoppingListItemWidget(
+          key: ValueKey(item.id),
+          groupID: groupID,
+          textShoppingListItem: item,
+          shoppingListItems: items.value,
+        );
       },
     );
   }
@@ -205,17 +199,12 @@ class _GroupedListView extends StatelessWidget {
       ));
 
       for (final item in items) {
-        children.add(switch (item) {
-          TextGroupShoppingListItem textItem => TextShoppingListItemWidget(
-              key: ValueKey(item.id),
-              groupID: groupID,
-              textShoppingListItem: textItem,
-              shoppingListItems: items),
-          LinkGroupShoppingListItem linkItem => LinkShoppingListItemWidget(
-              key: ValueKey(item.id),
-              linkShoppingListItem: linkItem,
-              shoppingListItems: items),
-        });
+        children.add(TextShoppingListItemWidget(
+          key: ValueKey(item.id),
+          groupID: groupID,
+          textShoppingListItem: item as TextGroupShoppingListItem,
+          shoppingListItems: items,
+        ));
       }
     }
 
@@ -225,17 +214,12 @@ class _GroupedListView extends StatelessWidget {
       children.add(const _CategoryHeader(categoryName: '未分類'));
 
       for (final item in uncategorizedItems) {
-        children.add(switch (item) {
-          TextGroupShoppingListItem textItem => TextShoppingListItemWidget(
-              key: ValueKey(item.id),
-              groupID: groupID,
-              textShoppingListItem: textItem,
-              shoppingListItems: uncategorizedItems),
-          LinkGroupShoppingListItem linkItem => LinkShoppingListItemWidget(
-              key: ValueKey(item.id),
-              linkShoppingListItem: linkItem,
-              shoppingListItems: uncategorizedItems),
-        });
+        children.add(TextShoppingListItemWidget(
+          key: ValueKey(item.id),
+          groupID: groupID,
+          textShoppingListItem: item as TextGroupShoppingListItem,
+          shoppingListItems: uncategorizedItems,
+        ));
       }
     }
 
