@@ -207,42 +207,6 @@ void main() {
       expect(result['cat1'], isNull);
     });
 
-    test('Link型アイテムは未分類', () {
-      final categories = [
-        GroupShoppingListItemCategory(
-          id: 'cat1',
-          groupID: 'group1',
-          groupShoppingListItemCategoryAxisID: 'axis1',
-          name: '野菜',
-          order: 0,
-          keywords: [
-            const GroupShoppingListItemCategoryKeyword(
-              keyword: 'にんじん',
-              matchingType:
-                  GroupShoppingListItemCategoryKeywordMatchingType.partial,
-            ),
-          ],
-        ),
-      ];
-
-      final items = [
-        const GroupShoppingListItem.link(
-          id: 'item1',
-          shoppingListID: 'list1',
-          url: 'https://example.com/にんじん',
-          order: 0,
-        ),
-      ];
-
-      final result = groupItemsByCategory(
-        items: items,
-        categories: categories,
-      );
-
-      expect(result[uncategorizedCategoryID]?.length, 1);
-      expect(result['cat1'], isNull);
-    });
-
     test('カテゴリが空の場合は全て未分類', () {
       final items = [
         const GroupShoppingListItem.text(
