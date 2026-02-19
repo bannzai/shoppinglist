@@ -98,12 +98,10 @@ ShoppingListUpdate shoppingListUpdate(ShoppingListUpdateRef ref,
 class ShoppingListDuplicate {
   final ShoppingListAdd shoppingListAdd;
   final AddTextShoppingListItem addTextShoppingListItem;
-  final AddLinkShoppingListItem addLinkShoppingListItem;
 
   ShoppingListDuplicate({
     required this.shoppingListAdd,
     required this.addTextShoppingListItem,
-    required this.addLinkShoppingListItem,
   });
 
   Future<GroupShoppingList> call({
@@ -120,31 +118,15 @@ class ShoppingListDuplicate {
     );
 
     for (final item in shoppingListItems) {
-      switch (item) {
-        case TextGroupShoppingListItem():
-          await addTextShoppingListItem(
-            shoppingListID: newShoppingList.id,
-            message: item.message,
-            order: item.order,
-            groupShoppingListItemCategoryID:
-                item.groupShoppingListItemCategoryID,
-            description: item.description,
-            color: item.color,
-          );
-        case LinkGroupShoppingListItem():
-          await addLinkShoppingListItem(
-            shoppingListID: newShoppingList.id,
-            url: item.url,
-            metadataTitle: item.metadataTitle,
-            metadataDescription: item.metadataDescription,
-            metadataImageURL: item.metadataImageURL,
-            order: item.order,
-            groupShoppingListItemCategoryID:
-                item.groupShoppingListItemCategoryID,
-            description: item.description,
-            color: item.color,
-          );
-      }
+      await addTextShoppingListItem(
+        shoppingListID: newShoppingList.id,
+        message: item.message,
+        order: item.order,
+        groupShoppingListItemCategoryID:
+            item.groupShoppingListItemCategoryID,
+        description: item.description,
+        color: item.color,
+      );
     }
 
     return newShoppingList;
@@ -154,18 +136,14 @@ class ShoppingListDuplicate {
 @Riverpod(dependencies: [
   shoppingListAdd,
   addTextShoppingListItem,
-  addLinkShoppingListItem,
 ])
 ShoppingListDuplicate shoppingListDuplicate(ShoppingListDuplicateRef ref,
     {required String groupID}) {
   final shoppingListAdd = ref.watch(shoppingListAddProvider(groupID: groupID));
   final addTextShoppingListItem =
       ref.watch(addTextShoppingListItemProvider(groupID: groupID));
-  final addLinkShoppingListItem =
-      ref.watch(addLinkShoppingListItemProvider(groupID: groupID));
   return ShoppingListDuplicate(
     shoppingListAdd: shoppingListAdd,
     addTextShoppingListItem: addTextShoppingListItem,
-    addLinkShoppingListItem: addLinkShoppingListItem,
   );
 }
