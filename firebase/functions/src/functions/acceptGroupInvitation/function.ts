@@ -68,6 +68,7 @@ const acceptGroupInvitationFlow = ai.defineFlow(
         await invitationDoc.ref.update({
           status: "expired",
           updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
         });
         return {
           result: "NG" as const,
@@ -112,6 +113,7 @@ const acceptGroupInvitationFlow = ai.defineFlow(
         transaction.update(invitationDoc.ref, {
           status: "accepted",
           updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
         });
 
         // 参加ユーザーのプロフィールを作成
