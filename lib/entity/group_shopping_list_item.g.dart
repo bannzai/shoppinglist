@@ -30,7 +30,6 @@ TextGroupShoppingListItem _$TextGroupShoppingListItemFromJson(
           .fromJson(json['serverCreatedDateTime']),
       serverUpdatedDateTime: const ServerUpdatedTimestamp()
           .fromJson(json['serverUpdatedDateTime']),
-      $type: json['type'] as String?,
     );
 
 Map<String, dynamic> _$TextGroupShoppingListItemToJson(
@@ -55,68 +54,9 @@ Map<String, dynamic> _$TextGroupShoppingListItemToJson(
           const ServerCreatedTimestamp().toJson(instance.serverCreatedDateTime),
       'serverUpdatedDateTime':
           const ServerUpdatedTimestamp().toJson(instance.serverUpdatedDateTime),
-      'type': instance.$type,
     };
 
 const _$GroupShoppingListItemStatusEnumMap = {
   GroupShoppingListItemStatus.checked: 'checked',
   GroupShoppingListItemStatus.unchecked: 'unchecked',
 };
-
-LinkGroupShoppingListItem _$LinkGroupShoppingListItemFromJson(
-        Map<String, dynamic> json) =>
-    LinkGroupShoppingListItem(
-      id: json['id'] as String,
-      shoppingListID: json['shoppingListID'] as String,
-      url: json['url'] as String,
-      order: (json['order'] as num).toInt(),
-      metadataTitle: json['metadataTitle'] as String?,
-      metadataDescription: json['metadataDescription'] as String?,
-      metadataImageURL: json['metadataImageURL'] as String?,
-      status: $enumDecodeNullable(
-              _$GroupShoppingListItemStatusEnumMap, json['status']) ??
-          GroupShoppingListItemStatus.unchecked,
-      description: json['description'] as String?,
-      color: json['color'] as String?,
-      groupShoppingListItemCategoryID:
-          json['groupShoppingListItemCategoryID'] as String?,
-      reminderDateTime: const NullableTimestampConverter()
-          .fromJson(json['reminderDateTime'] as Timestamp?),
-      createdDateTime: const ClientCreatedTimestamp()
-          .fromJson(json['createdDateTime'] as Timestamp?),
-      updatedDateTime: const ClientUpdatedTimestamp()
-          .fromJson(json['updatedDateTime'] as Timestamp?),
-      serverCreatedDateTime: const ServerCreatedTimestamp()
-          .fromJson(json['serverCreatedDateTime']),
-      serverUpdatedDateTime: const ServerUpdatedTimestamp()
-          .fromJson(json['serverUpdatedDateTime']),
-      $type: json['type'] as String?,
-    );
-
-Map<String, dynamic> _$LinkGroupShoppingListItemToJson(
-        LinkGroupShoppingListItem instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'shoppingListID': instance.shoppingListID,
-      'url': instance.url,
-      'order': instance.order,
-      'metadataTitle': instance.metadataTitle,
-      'metadataDescription': instance.metadataDescription,
-      'metadataImageURL': instance.metadataImageURL,
-      'status': _$GroupShoppingListItemStatusEnumMap[instance.status]!,
-      'description': instance.description,
-      'color': instance.color,
-      'groupShoppingListItemCategoryID':
-          instance.groupShoppingListItemCategoryID,
-      'reminderDateTime':
-          const NullableTimestampConverter().toJson(instance.reminderDateTime),
-      'createdDateTime':
-          const ClientCreatedTimestamp().toJson(instance.createdDateTime),
-      'updatedDateTime':
-          const ClientUpdatedTimestamp().toJson(instance.updatedDateTime),
-      'serverCreatedDateTime':
-          const ServerCreatedTimestamp().toJson(instance.serverCreatedDateTime),
-      'serverUpdatedDateTime':
-          const ServerUpdatedTimestamp().toJson(instance.serverUpdatedDateTime),
-      'type': instance.$type,
-    };
