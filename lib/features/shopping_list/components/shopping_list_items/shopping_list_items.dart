@@ -101,13 +101,15 @@ class _FlatShoppingListItems extends HookConsumerWidget {
       },
       itemCount: items.value.length,
       itemBuilder: (context, index) {
-        final item = items.value[index] as TextGroupShoppingListItem;
+        final item = items.value[index];
 
-        return TextShoppingListItemWidget(
-          key: ValueKey(item.id),
-          groupID: groupID,
-          textShoppingListItem: item,
-          shoppingListItems: items.value,
+        return item.map(
+          text: (textItem) => TextShoppingListItemWidget(
+            key: ValueKey(textItem.id),
+            groupID: groupID,
+            textShoppingListItem: textItem,
+            shoppingListItems: items.value,
+          ),
         );
       },
     );
@@ -199,11 +201,13 @@ class _GroupedListView extends StatelessWidget {
       ));
 
       for (final item in items) {
-        children.add(TextShoppingListItemWidget(
-          key: ValueKey(item.id),
-          groupID: groupID,
-          textShoppingListItem: item as TextGroupShoppingListItem,
-          shoppingListItems: items,
+        children.add(item.map(
+          text: (textItem) => TextShoppingListItemWidget(
+            key: ValueKey(textItem.id),
+            groupID: groupID,
+            textShoppingListItem: textItem,
+            shoppingListItems: items,
+          ),
         ));
       }
     }
@@ -214,11 +218,13 @@ class _GroupedListView extends StatelessWidget {
       children.add(const _CategoryHeader(categoryName: '未分類'));
 
       for (final item in uncategorizedItems) {
-        children.add(TextShoppingListItemWidget(
-          key: ValueKey(item.id),
-          groupID: groupID,
-          textShoppingListItem: item as TextGroupShoppingListItem,
-          shoppingListItems: uncategorizedItems,
+        children.add(item.map(
+          text: (textItem) => TextShoppingListItemWidget(
+            key: ValueKey(textItem.id),
+            groupID: groupID,
+            textShoppingListItem: textItem,
+            shoppingListItems: uncategorizedItems,
+          ),
         ));
       }
     }
