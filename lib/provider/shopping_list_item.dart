@@ -25,20 +25,6 @@ Stream<List<GroupShoppingListItem>> textShoppingListItems(
       .map((event) => event.docs.map((doc) => doc.data()).toList());
 }
 
-@Riverpod(dependencies: [groupDatabase])
-Stream<List<GroupShoppingListItem>> linkShoppingListItems(
-    LinkShoppingListItemsRef ref,
-    {required String groupID,
-    required String shoppingListID}) {
-  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
-  return database
-      .shoppingListItemsReference(shoppingListID: shoppingListID)
-      .where(GroupShoppingListItemFirestoreKeys.type, isEqualTo: 'link')
-      .orderBy(GroupShoppingListItemFirestoreKeys.order, descending: false)
-      .snapshots()
-      .map((event) => event.docs.map((doc) => doc.data()).toList());
-}
-
 class AddTextShoppingListItem {
   final GroupDatabase database;
 
@@ -72,49 +58,6 @@ class AddTextShoppingListItem {
 AddTextShoppingListItem addTextShoppingListItem(AddTextShoppingListItemRef ref,
     {required String groupID}) {
   return AddTextShoppingListItem(
-      database: ref.watch(groupDatabaseProvider(groupID: groupID)));
-}
-
-class AddLinkShoppingListItem {
-  final GroupDatabase database;
-
-  AddLinkShoppingListItem({required this.database});
-
-  Future<LinkGroupShoppingListItem> call({
-    required String shoppingListID,
-    required String url,
-    required String? metadataTitle,
-    required String? metadataDescription,
-    required String? metadataImageURL,
-    required int order,
-    required String? groupShoppingListItemCategoryID,
-    required String? description,
-    required String? color,
-  }) async {
-    final docRef = database
-        .shoppingListItemsReference(shoppingListID: shoppingListID)
-        .doc();
-    final linkItem = LinkGroupShoppingListItem(
-      id: docRef.id,
-      shoppingListID: shoppingListID,
-      url: url,
-      metadataTitle: metadataTitle,
-      metadataDescription: metadataDescription,
-      metadataImageURL: metadataImageURL,
-      order: order,
-      groupShoppingListItemCategoryID: groupShoppingListItemCategoryID,
-      description: description,
-      color: color,
-    );
-    await docRef.set(linkItem);
-    return linkItem;
-  }
-}
-
-@Riverpod(dependencies: [groupDatabase])
-AddLinkShoppingListItem addLinkShoppingListItem(AddLinkShoppingListItemRef ref,
-    {required String groupID}) {
-  return AddLinkShoppingListItem(
       database: ref.watch(groupDatabaseProvider(groupID: groupID)));
 }
 

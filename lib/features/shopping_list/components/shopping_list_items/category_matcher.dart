@@ -5,10 +5,10 @@ import 'package:shoppinglist/entity/group_shopping_list_item_category_keyword.da
 /// 未分類アイテムのカテゴリIDとして使用する定数
 const uncategorizedCategoryID = '__uncategorized__';
 
-/// Text型アイテムのmessageとカテゴリのキーワードをマッチングし、
+/// アイテムのmessageとカテゴリのキーワードをマッチングし、
 /// カテゴリIDごとにアイテムをグルーピングする。
 /// 複数カテゴリにマッチした場合はorderが小さい（先頭の）カテゴリに分類。
-/// マッチしないアイテム・Link型アイテムは「未分類」（key=uncategorizedCategoryID）グループに入る。
+/// マッチしないアイテムは「未分類」（key=uncategorizedCategoryID）グループに入る。
 Map<String, List<GroupShoppingListItem>> groupItemsByCategory({
   required List<GroupShoppingListItem> items,
   required List<GroupShoppingListItemCategory> categories,
@@ -31,13 +31,7 @@ String _findMatchingCategoryID({
   required GroupShoppingListItem item,
   required List<GroupShoppingListItemCategory> categories,
 }) {
-  // Link型はカテゴリ分類対象外
-  if (item is LinkGroupShoppingListItem) {
-    return uncategorizedCategoryID;
-  }
-
-  final textItem = item as TextGroupShoppingListItem;
-  final messageLower = textItem.message.toLowerCase();
+  final messageLower = item.message.toLowerCase();
 
   for (final category in categories) {
     for (final keyword in category.keywords) {
