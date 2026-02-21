@@ -19,6 +19,7 @@ GroupShoppingListItem _$GroupShoppingListItemFromJson(
 /// @nodoc
 mixin _$GroupShoppingListItem {
   String get id;
+  String get groupID;
   String get shoppingListID;
   String get message; // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
 // NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
@@ -55,6 +56,7 @@ mixin _$GroupShoppingListItem {
         (other.runtimeType == runtimeType &&
             other is GroupShoppingListItem &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.shoppingListID, shoppingListID) ||
                 other.shoppingListID == shoppingListID) &&
             (identical(other.message, message) || other.message == message) &&
@@ -84,6 +86,7 @@ mixin _$GroupShoppingListItem {
   int get hashCode => Object.hash(
       runtimeType,
       id,
+      groupID,
       shoppingListID,
       message,
       order,
@@ -99,7 +102,7 @@ mixin _$GroupShoppingListItem {
 
   @override
   String toString() {
-    return 'GroupShoppingListItem(id: $id, shoppingListID: $shoppingListID, message: $message, order: $order, status: $status, description: $description, color: $color, groupShoppingListItemCategoryID: $groupShoppingListItemCategoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, message: $message, order: $order, status: $status, description: $description, color: $color, groupShoppingListItemCategoryID: $groupShoppingListItemCategoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -111,6 +114,7 @@ abstract mixin class $GroupShoppingListItemCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
+      String groupID,
       String shoppingListID,
       String message,
       int order,
@@ -139,6 +143,7 @@ class _$GroupShoppingListItemCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
+    Object? groupID = null,
     Object? shoppingListID = null,
     Object? message = null,
     Object? order = null,
@@ -156,6 +161,10 @@ class _$GroupShoppingListItemCopyWithImpl<$Res>
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      groupID: null == groupID
+          ? _self.groupID
+          : groupID // ignore: cast_nullable_to_non_nullable
               as String,
       shoppingListID: null == shoppingListID
           ? _self.shoppingListID
@@ -303,6 +312,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(
             String id,
+            String groupID,
             String shoppingListID,
             String message,
             int order,
@@ -323,6 +333,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
       case TextGroupShoppingListItem() when text != null:
         return text(
             _that.id,
+            _that.groupID,
             _that.shoppingListID,
             _that.message,
             _that.order,
@@ -357,6 +368,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
   TResult when<TResult extends Object?>({
     required TResult Function(
             String id,
+            String groupID,
             String shoppingListID,
             String message,
             int order,
@@ -376,6 +388,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
       case TextGroupShoppingListItem():
         return text(
             _that.id,
+            _that.groupID,
             _that.shoppingListID,
             _that.message,
             _that.order,
@@ -407,6 +420,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(
             String id,
+            String groupID,
             String shoppingListID,
             String message,
             int order,
@@ -426,6 +440,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
       case TextGroupShoppingListItem() when text != null:
         return text(
             _that.id,
+            _that.groupID,
             _that.shoppingListID,
             _that.message,
             _that.order,
@@ -450,6 +465,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
 class TextGroupShoppingListItem implements GroupShoppingListItem {
   const TextGroupShoppingListItem(
       {required this.id,
+      required this.groupID,
       required this.shoppingListID,
       required this.message,
       required this.order,
@@ -467,6 +483,8 @@ class TextGroupShoppingListItem implements GroupShoppingListItem {
 
   @override
   final String id;
+  @override
+  final String groupID;
   @override
   final String shoppingListID;
   @override
@@ -522,6 +540,7 @@ class TextGroupShoppingListItem implements GroupShoppingListItem {
         (other.runtimeType == runtimeType &&
             other is TextGroupShoppingListItem &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.shoppingListID, shoppingListID) ||
                 other.shoppingListID == shoppingListID) &&
             (identical(other.message, message) || other.message == message) &&
@@ -551,6 +570,7 @@ class TextGroupShoppingListItem implements GroupShoppingListItem {
   int get hashCode => Object.hash(
       runtimeType,
       id,
+      groupID,
       shoppingListID,
       message,
       order,
@@ -566,7 +586,7 @@ class TextGroupShoppingListItem implements GroupShoppingListItem {
 
   @override
   String toString() {
-    return 'GroupShoppingListItem.text(id: $id, shoppingListID: $shoppingListID, message: $message, order: $order, status: $status, description: $description, color: $color, groupShoppingListItemCategoryID: $groupShoppingListItemCategoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItem.text(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, message: $message, order: $order, status: $status, description: $description, color: $color, groupShoppingListItemCategoryID: $groupShoppingListItemCategoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -580,6 +600,7 @@ abstract mixin class $TextGroupShoppingListItemCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
+      String groupID,
       String shoppingListID,
       String message,
       int order,
@@ -608,6 +629,7 @@ class _$TextGroupShoppingListItemCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   $Res call({
     Object? id = null,
+    Object? groupID = null,
     Object? shoppingListID = null,
     Object? message = null,
     Object? order = null,
@@ -625,6 +647,10 @@ class _$TextGroupShoppingListItemCopyWithImpl<$Res>
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      groupID: null == groupID
+          ? _self.groupID
+          : groupID // ignore: cast_nullable_to_non_nullable
               as String,
       shoppingListID: null == shoppingListID
           ? _self.shoppingListID
