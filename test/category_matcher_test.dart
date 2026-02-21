@@ -27,12 +27,14 @@ void main() {
       final items = [
         const GroupShoppingListItem.text(
           id: 'item1',
+          groupID: 'group1',
           shoppingListID: 'list1',
           message: 'にんじん',
           order: 0,
         ),
         const GroupShoppingListItem.text(
           id: 'item2',
+          groupID: 'group1',
           shoppingListID: 'list1',
           message: 'にんじんジュース',
           order: 1,
@@ -71,6 +73,7 @@ void main() {
       final items = [
         const GroupShoppingListItem.text(
           id: 'item1',
+          groupID: 'group1',
           shoppingListID: 'list1',
           message: 'にんじんジュース',
           order: 0,
@@ -107,6 +110,7 @@ void main() {
       final items = [
         const GroupShoppingListItem.text(
           id: 'item1',
+          groupID: 'group1',
           shoppingListID: 'list1',
           message: 'milk',
           order: 0,
@@ -156,6 +160,7 @@ void main() {
       final items = [
         const GroupShoppingListItem.text(
           id: 'item1',
+          groupID: 'group1',
           shoppingListID: 'list1',
           message: 'トマト',
           order: 0,
@@ -192,6 +197,7 @@ void main() {
       final items = [
         const GroupShoppingListItem.text(
           id: 'item1',
+          groupID: 'group1',
           shoppingListID: 'list1',
           message: '牛乳',
           order: 0,
@@ -211,12 +217,14 @@ void main() {
       final items = [
         const GroupShoppingListItem.text(
           id: 'item1',
+          groupID: 'group1',
           shoppingListID: 'list1',
           message: 'にんじん',
           order: 0,
         ),
         const GroupShoppingListItem.text(
           id: 'item2',
+          groupID: 'group1',
           shoppingListID: 'list1',
           message: '牛乳',
           order: 1,
