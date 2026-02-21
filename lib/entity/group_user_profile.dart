@@ -12,6 +12,7 @@ abstract class GroupUserProfile with _$GroupUserProfile {
   @JsonSerializable(explicitToJson: true)
   const factory GroupUserProfile({
     required String id,
+    required String groupID,
     required String userID,
     String? displayName,
     @ClientCreatedTimestamp() DateTime? createdDateTime,

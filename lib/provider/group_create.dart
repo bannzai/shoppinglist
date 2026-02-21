@@ -53,6 +53,7 @@ class CreateGroup {
     final profile = GroupUserProfile(
       id: GroupUserProfile.documentID(
           groupID: groupDocRef.id, userID: appUser.id),
+      groupID: groupDocRef.id,
       userID: appUser.id,
       displayName: currentUser?.displayName,
     );

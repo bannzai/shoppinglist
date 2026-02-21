@@ -15,6 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$GroupUserProfile {
   String get id;
+  String get groupID;
   String get userID;
   String? get displayName;
   @ClientCreatedTimestamp()
@@ -43,6 +44,7 @@ mixin _$GroupUserProfile {
         (other.runtimeType == runtimeType &&
             other is GroupUserProfile &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.displayName, displayName) ||
                 other.displayName == displayName) &&
@@ -61,6 +63,7 @@ mixin _$GroupUserProfile {
   int get hashCode => Object.hash(
       runtimeType,
       id,
+      groupID,
       userID,
       displayName,
       createdDateTime,
@@ -70,7 +73,7 @@ mixin _$GroupUserProfile {
 
   @override
   String toString() {
-    return 'GroupUserProfile(id: $id, userID: $userID, displayName: $displayName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupUserProfile(id: $id, groupID: $groupID, userID: $userID, displayName: $displayName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -82,6 +85,7 @@ abstract mixin class $GroupUserProfileCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
+      String groupID,
       String userID,
       String? displayName,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -104,6 +108,7 @@ class _$GroupUserProfileCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
+    Object? groupID = null,
     Object? userID = null,
     Object? displayName = freezed,
     Object? createdDateTime = freezed,
@@ -115,6 +120,10 @@ class _$GroupUserProfileCopyWithImpl<$Res>
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      groupID: null == groupID
+          ? _self.groupID
+          : groupID // ignore: cast_nullable_to_non_nullable
               as String,
       userID: null == userID
           ? _self.userID
@@ -239,6 +248,7 @@ extension GroupUserProfilePatterns on GroupUserProfile {
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
             String id,
+            String groupID,
             String userID,
             String? displayName,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -253,6 +263,7 @@ extension GroupUserProfilePatterns on GroupUserProfile {
       case _GroupUserProfile() when $default != null:
         return $default(
             _that.id,
+            _that.groupID,
             _that.userID,
             _that.displayName,
             _that.createdDateTime,
@@ -281,6 +292,7 @@ extension GroupUserProfilePatterns on GroupUserProfile {
   TResult when<TResult extends Object?>(
     TResult Function(
             String id,
+            String groupID,
             String userID,
             String? displayName,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -294,6 +306,7 @@ extension GroupUserProfilePatterns on GroupUserProfile {
       case _GroupUserProfile():
         return $default(
             _that.id,
+            _that.groupID,
             _that.userID,
             _that.displayName,
             _that.createdDateTime,
@@ -321,6 +334,7 @@ extension GroupUserProfilePatterns on GroupUserProfile {
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
             String id,
+            String groupID,
             String userID,
             String? displayName,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -334,6 +348,7 @@ extension GroupUserProfilePatterns on GroupUserProfile {
       case _GroupUserProfile() when $default != null:
         return $default(
             _that.id,
+            _that.groupID,
             _that.userID,
             _that.displayName,
             _that.createdDateTime,
@@ -352,6 +367,7 @@ extension GroupUserProfilePatterns on GroupUserProfile {
 class _GroupUserProfile extends GroupUserProfile {
   const _GroupUserProfile(
       {required this.id,
+      required this.groupID,
       required this.userID,
       this.displayName,
       @ClientCreatedTimestamp() this.createdDateTime,
@@ -364,6 +380,8 @@ class _GroupUserProfile extends GroupUserProfile {
 
   @override
   final String id;
+  @override
+  final String groupID;
   @override
   final String userID;
   @override
@@ -402,6 +420,7 @@ class _GroupUserProfile extends GroupUserProfile {
         (other.runtimeType == runtimeType &&
             other is _GroupUserProfile &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.displayName, displayName) ||
                 other.displayName == displayName) &&
@@ -420,6 +439,7 @@ class _GroupUserProfile extends GroupUserProfile {
   int get hashCode => Object.hash(
       runtimeType,
       id,
+      groupID,
       userID,
       displayName,
       createdDateTime,
@@ -429,7 +449,7 @@ class _GroupUserProfile extends GroupUserProfile {
 
   @override
   String toString() {
-    return 'GroupUserProfile(id: $id, userID: $userID, displayName: $displayName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupUserProfile(id: $id, groupID: $groupID, userID: $userID, displayName: $displayName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -443,6 +463,7 @@ abstract mixin class _$GroupUserProfileCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
+      String groupID,
       String userID,
       String? displayName,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -465,6 +486,7 @@ class __$GroupUserProfileCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   $Res call({
     Object? id = null,
+    Object? groupID = null,
     Object? userID = null,
     Object? displayName = freezed,
     Object? createdDateTime = freezed,
@@ -476,6 +498,10 @@ class __$GroupUserProfileCopyWithImpl<$Res>
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      groupID: null == groupID
+          ? _self.groupID
+          : groupID // ignore: cast_nullable_to_non_nullable
               as String,
       userID: null == userID
           ? _self.userID
