@@ -124,6 +124,7 @@ const acceptGroupInvitationFlow = ai.defineFlow(
           .doc(profileID);
         transaction.set(profileRef, {
           id: profileID,
+          groupID: groupID,
           userID: uid,
           displayName: userRecord.displayName || null,
           createdDateTime: admin.firestore.FieldValue.serverTimestamp(),
