@@ -127,8 +127,6 @@ const acceptGroupInvitationFlow = ai.defineFlow(
           groupID: groupID,
           userID: uid,
           displayName: userRecord.displayName || null,
-          createdDateTime: admin.firestore.FieldValue.serverTimestamp(),
-          updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
           serverCreatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
           serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
         });
