@@ -161,12 +161,11 @@ class GroupDatabase {
 
   CollectionReference<GroupShoppingListItemCategoryAxis>
       categoryAxesReference() => FirebaseFirestore.instance
-              .collection(_CollectionPath.categoryAxes(groupID: groupID))
-              .withConverter(
-                fromFirestore:
-                    GroupShoppingListItemCategoryAxis.fromFirestore,
-                toFirestore: GroupShoppingListItemCategoryAxis.toFirestore,
-              );
+          .collection(_CollectionPath.categoryAxes(groupID: groupID))
+          .withConverter(
+            fromFirestore: GroupShoppingListItemCategoryAxis.fromFirestore,
+            toFirestore: GroupShoppingListItemCategoryAxis.toFirestore,
+          );
 
   DocumentReference<GroupShoppingListItemCategoryAxis> categoryAxisReference({
     required String categoryAxisID,
@@ -181,13 +180,12 @@ class GroupDatabase {
 
   DocumentReference<GroupShoppingListItemCategoryAxis>
       newCategoryAxisReference() => FirebaseFirestore.instance
-              .collection(_CollectionPath.categoryAxes(groupID: groupID))
-              .doc()
-              .withConverter(
-                fromFirestore:
-                    GroupShoppingListItemCategoryAxis.fromFirestore,
-                toFirestore: GroupShoppingListItemCategoryAxis.toFirestore,
-              );
+          .collection(_CollectionPath.categoryAxes(groupID: groupID))
+          .doc()
+          .withConverter(
+            fromFirestore: GroupShoppingListItemCategoryAxis.fromFirestore,
+            toFirestore: GroupShoppingListItemCategoryAxis.toFirestore,
+          );
 
   CollectionReference<GroupShoppingListItemCategory> categoriesReference({
     required String categoryAxisID,

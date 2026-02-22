@@ -98,9 +98,7 @@ class HomePage extends HookConsumerWidget {
               groupID: groupID,
               onGroupChanged: (newGroupID) {
                 currentGroupID.value = newGroupID;
-                ref
-                    .read(defaultGroupUpdateProvider)
-                    .call(groupID: newGroupID);
+                ref.read(defaultGroupUpdateProvider).call(groupID: newGroupID);
               },
             ),
             // ECItemsPage(),

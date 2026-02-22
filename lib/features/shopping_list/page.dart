@@ -75,8 +75,7 @@ class ShoppingListPage extends HookConsumerWidget {
                 if (shoppingLists.isEmpty) {
                   return const Loading();
                 }
-                return _Body(
-                    groupID: groupID, shoppingLists: shoppingLists);
+                return _Body(groupID: groupID, shoppingLists: shoppingLists);
               },
               error: (e, st) => RetryPage(exception: e),
               loading: () => const Loading(),
@@ -171,16 +170,14 @@ class _Body extends HookConsumerWidget {
                       const SizedBox(height: 4),
                       GestureDetector(
                         onTap: () {
-                          final sourceID = shoppingList!
-                              .duplicatedFromGroupShoppingListID!;
-                          if (shoppingLists
-                              .any((sl) => sl.id == sourceID)) {
+                          final sourceID =
+                              shoppingList!.duplicatedFromGroupShoppingListID!;
+                          if (shoppingLists.any((sl) => sl.id == sourceID)) {
                             shoppingListID.value = sourceID;
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                  content:
-                                      Text('複製元の買い物リストは削除されています')),
+                                  content: Text('複製元の買い物リストは削除されています')),
                             );
                           }
                         },

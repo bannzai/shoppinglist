@@ -38,8 +38,7 @@ class CreateGroup {
 
     // setAsDefault == true → 常にdefaultGroupIDを更新
     // setAsDefault == false → defaultGroupIDがnullの場合のみ自動設定
-    final shouldSetDefault =
-        setAsDefault || appUser.defaultGroupID == null;
+    final shouldSetDefault = setAsDefault || appUser.defaultGroupID == null;
     if (shouldSetDefault) {
       batch.set(
         userDatabase.userReference(),

@@ -27,15 +27,12 @@ class GroupListPage extends HookConsumerWidget {
                   itemCount: groups.length,
                   itemBuilder: (context, index) {
                     final group = groups[index];
-                    final isDefault =
-                        group.id == appUser.defaultGroupID;
+                    final isDefault = group.id == appUser.defaultGroupID;
                     return ListTile(
                       title: Text(group.name ?? '名前未設定'),
-                      subtitle:
-                          Text('メンバー ${group.memberUserIDs.length}人'),
+                      subtitle: Text('メンバー ${group.memberUserIDs.length}人'),
                       trailing: isDefault
-                          ? const Icon(Icons.check_circle,
-                              color: Colors.green)
+                          ? const Icon(Icons.check_circle, color: Colors.green)
                           : null,
                       onTap: () {
                         Navigator.push(
@@ -49,7 +46,8 @@ class GroupListPage extends HookConsumerWidget {
                     );
                   },
                 ),
-        (AsyncError(:final error), _) || (_, AsyncError(:final error)) =>
+        (AsyncError(:final error), _) ||
+        (_, AsyncError(:final error)) =>
           Center(child: Text(error.toString())),
         _ => const Center(child: CircularProgressIndicator()),
       },

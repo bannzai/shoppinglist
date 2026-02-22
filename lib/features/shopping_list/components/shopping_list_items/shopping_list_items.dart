@@ -24,8 +24,8 @@ class ShoppingListItems extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final axesAsync = ref.watch(
-        groupShoppingListItemCategoryAxesProvider(groupID: groupID));
+    final axesAsync =
+        ref.watch(groupShoppingListItemCategoryAxesProvider(groupID: groupID));
 
     return axesAsync.when(
       data: (axes) {
@@ -132,9 +132,8 @@ class _CategorizedShoppingListItems extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesAsync = ref.watch(
-        groupShoppingListItemCategoriesProvider(
-            groupID: groupID, categoryAxisID: categoryAxisID));
+    final categoriesAsync = ref.watch(groupShoppingListItemCategoriesProvider(
+        groupID: groupID, categoryAxisID: categoryAxisID));
 
     return categoriesAsync.when(
       data: (categories) {
