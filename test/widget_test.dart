@@ -20,6 +20,7 @@ void main() {
   test('ShoppingListItem entity smoke test', () {
     final item = GroupShoppingListItem.text(
       id: 'item-id',
+      groupID: 'group-id',
       shoppingListID: 'shopping-list-id',
       message: 'Buy milk',
       order: 0,
@@ -32,11 +33,13 @@ void main() {
     final items = <GroupShoppingListItem>[
       GroupShoppingListItem.text(
           id: '1',
+          groupID: 'group-id',
           shoppingListID: 'shopping-list-id',
           message: 'Item 1',
           order: 0),
       GroupShoppingListItem.text(
           id: '2',
+          groupID: 'group-id',
           shoppingListID: 'shopping-list-id',
           message: 'Item 2',
           order: 1),

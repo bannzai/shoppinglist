@@ -22,6 +22,7 @@ sealed class GroupShoppingListItem with _$GroupShoppingListItem {
   @JsonSerializable(explicitToJson: true)
   const factory GroupShoppingListItem.text({
     required String id,
+    required String groupID,
     required String shoppingListID,
     required String message,
     // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない

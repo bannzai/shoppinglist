@@ -25,6 +25,7 @@ class ShoppingLocationAdd {
     final docRef = database.newShoppingLocationReference();
     final shoppingLocation = GroupShoppingLocation(
       id: docRef.id,
+      groupID: database.groupID,
       name: name,
     );
     await docRef.set(shoppingLocation);

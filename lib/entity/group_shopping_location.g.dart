@@ -10,6 +10,7 @@ _GroupShoppingLocation _$GroupShoppingLocationFromJson(
         Map<String, dynamic> json) =>
     _GroupShoppingLocation(
       id: json['id'] as String,
+      groupID: json['groupID'] as String,
       name: json['name'] as String,
       createdDateTime: const ClientCreatedTimestamp()
           .fromJson(json['createdDateTime'] as Timestamp?),
@@ -25,6 +26,7 @@ Map<String, dynamic> _$GroupShoppingLocationToJson(
         _GroupShoppingLocation instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'groupID': instance.groupID,
       'name': instance.name,
       'createdDateTime':
           const ClientCreatedTimestamp().toJson(instance.createdDateTime),

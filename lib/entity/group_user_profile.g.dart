@@ -9,6 +9,7 @@ part of 'group_user_profile.dart';
 _GroupUserProfile _$GroupUserProfileFromJson(Map<String, dynamic> json) =>
     _GroupUserProfile(
       id: json['id'] as String,
+      groupID: json['groupID'] as String,
       userID: json['userID'] as String,
       displayName: json['displayName'] as String?,
       createdDateTime: const ClientCreatedTimestamp()
@@ -24,6 +25,7 @@ _GroupUserProfile _$GroupUserProfileFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$GroupUserProfileToJson(_GroupUserProfile instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'groupID': instance.groupID,
       'userID': instance.userID,
       'displayName': instance.displayName,
       'createdDateTime':

@@ -10,6 +10,7 @@ TextGroupShoppingListItem _$TextGroupShoppingListItemFromJson(
         Map<String, dynamic> json) =>
     TextGroupShoppingListItem(
       id: json['id'] as String,
+      groupID: json['groupID'] as String,
       shoppingListID: json['shoppingListID'] as String,
       message: json['message'] as String,
       order: (json['order'] as num).toInt(),
@@ -36,6 +37,7 @@ Map<String, dynamic> _$TextGroupShoppingListItemToJson(
         TextGroupShoppingListItem instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'groupID': instance.groupID,
       'shoppingListID': instance.shoppingListID,
       'message': instance.message,
       'order': instance.order,

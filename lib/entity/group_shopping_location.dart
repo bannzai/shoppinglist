@@ -16,6 +16,7 @@ abstract class GroupShoppingLocation with _$GroupShoppingLocation {
   @JsonSerializable(explicitToJson: true)
   const factory GroupShoppingLocation({
     required String id,
+    required String groupID,
     required String name,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,

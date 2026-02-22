@@ -15,6 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$GroupShoppingLocation {
   String get id;
+  String get groupID;
   String get name;
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime;
@@ -42,6 +43,7 @@ mixin _$GroupShoppingLocation {
         (other.runtimeType == runtimeType &&
             other is GroupShoppingLocation &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
@@ -55,12 +57,19 @@ mixin _$GroupShoppingLocation {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, createdDateTime,
-      updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      groupID,
+      name,
+      createdDateTime,
+      updatedDateTime,
+      serverCreatedDateTime,
+      serverUpdatedDateTime);
 
   @override
   String toString() {
-    return 'GroupShoppingLocation(id: $id, name: $name, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingLocation(id: $id, groupID: $groupID, name: $name, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -72,6 +81,7 @@ abstract mixin class $GroupShoppingLocationCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
+      String groupID,
       String name,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -93,6 +103,7 @@ class _$GroupShoppingLocationCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
+    Object? groupID = null,
     Object? name = null,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
@@ -103,6 +114,10 @@ class _$GroupShoppingLocationCopyWithImpl<$Res>
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      groupID: null == groupID
+          ? _self.groupID
+          : groupID // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _self.name
@@ -223,6 +238,7 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
             String id,
+            String groupID,
             String name,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -236,6 +252,7 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
       case _GroupShoppingLocation() when $default != null:
         return $default(
             _that.id,
+            _that.groupID,
             _that.name,
             _that.createdDateTime,
             _that.updatedDateTime,
@@ -263,6 +280,7 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
   TResult when<TResult extends Object?>(
     TResult Function(
             String id,
+            String groupID,
             String name,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -275,6 +293,7 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
       case _GroupShoppingLocation():
         return $default(
             _that.id,
+            _that.groupID,
             _that.name,
             _that.createdDateTime,
             _that.updatedDateTime,
@@ -301,6 +320,7 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
             String id,
+            String groupID,
             String name,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -313,6 +333,7 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
       case _GroupShoppingLocation() when $default != null:
         return $default(
             _that.id,
+            _that.groupID,
             _that.name,
             _that.createdDateTime,
             _that.updatedDateTime,
@@ -330,6 +351,7 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
 class _GroupShoppingLocation extends GroupShoppingLocation {
   const _GroupShoppingLocation(
       {required this.id,
+      required this.groupID,
       required this.name,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
@@ -341,6 +363,8 @@ class _GroupShoppingLocation extends GroupShoppingLocation {
 
   @override
   final String id;
+  @override
+  final String groupID;
   @override
   final String name;
   @override
@@ -378,6 +402,7 @@ class _GroupShoppingLocation extends GroupShoppingLocation {
         (other.runtimeType == runtimeType &&
             other is _GroupShoppingLocation &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
@@ -391,12 +416,19 @@ class _GroupShoppingLocation extends GroupShoppingLocation {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, createdDateTime,
-      updatedDateTime, serverCreatedDateTime, serverUpdatedDateTime);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      groupID,
+      name,
+      createdDateTime,
+      updatedDateTime,
+      serverCreatedDateTime,
+      serverUpdatedDateTime);
 
   @override
   String toString() {
-    return 'GroupShoppingLocation(id: $id, name: $name, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingLocation(id: $id, groupID: $groupID, name: $name, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -410,6 +442,7 @@ abstract mixin class _$GroupShoppingLocationCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
+      String groupID,
       String name,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
@@ -431,6 +464,7 @@ class __$GroupShoppingLocationCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   $Res call({
     Object? id = null,
+    Object? groupID = null,
     Object? name = null,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
@@ -441,6 +475,10 @@ class __$GroupShoppingLocationCopyWithImpl<$Res>
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      groupID: null == groupID
+          ? _self.groupID
+          : groupID // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _self.name

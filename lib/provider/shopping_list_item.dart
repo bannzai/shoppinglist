@@ -43,6 +43,7 @@ class AddTextShoppingListItem {
         .doc();
     final textItem = TextGroupShoppingListItem(
         id: docRef.id,
+        groupID: database.groupID,
         shoppingListID: shoppingListID,
         message: message,
         order: order,

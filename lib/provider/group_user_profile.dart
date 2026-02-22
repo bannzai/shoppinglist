@@ -36,6 +36,7 @@ class GroupUserProfileUpdate {
       final profile = GroupUserProfile(
         id: GroupUserProfile.documentID(
             groupID: database.groupID, userID: userID),
+        groupID: database.groupID,
         userID: userID,
         displayName: displayName,
       );
