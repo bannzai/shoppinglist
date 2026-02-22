@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
@@ -43,7 +44,7 @@ class ShoppingListAdd {
       shoppingLocationID: shoppingLocationID,
       duplicatedFromGroupShoppingListID: duplicatedFromGroupShoppingListID,
     );
-    await docRef.set(shoppingList);
+    await docRef.set(shoppingList, SetOptions(merge: true));
     return shoppingList;
   }
 }
@@ -84,7 +85,7 @@ class ShoppingListUpdate {
       required GroupShoppingList shoppingList}) async {
     final docRef =
         database.shoppingListReference(shoppingListID: shoppingListID);
-    await docRef.set(shoppingList);
+    await docRef.set(shoppingList, SetOptions(merge: true));
   }
 }
 

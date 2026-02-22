@@ -38,7 +38,7 @@ class GroupShoppingListItemCategoryAxisAdd {
       name: name,
       order: order,
     );
-    await docRef.set(categoryAxis);
+    await docRef.set(categoryAxis, SetOptions(merge: true));
     return categoryAxis;
   }
 }
@@ -107,7 +107,7 @@ class GroupShoppingListItemCategoryAdd {
       name: name,
       order: order,
     );
-    await docRef.set(category);
+    await docRef.set(category, SetOptions(merge: true));
     return category;
   }
 }

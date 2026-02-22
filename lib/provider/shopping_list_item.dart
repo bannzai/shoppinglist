@@ -50,7 +50,7 @@ class AddTextShoppingListItem {
         groupShoppingListItemCategoryID: groupShoppingListItemCategoryID,
         description: description,
         color: color);
-    await docRef.set(textItem);
+    await docRef.set(textItem, SetOptions(merge: true));
     return textItem;
   }
 }
