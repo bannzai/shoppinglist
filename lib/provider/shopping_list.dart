@@ -123,8 +123,7 @@ class ShoppingListDuplicate {
         shoppingListID: newShoppingList.id,
         message: item.message,
         order: item.order,
-        groupShoppingListItemCategoryID:
-            item.groupShoppingListItemCategoryID,
+        groupShoppingListItemCategoryID: item.groupShoppingListItemCategoryID,
         description: item.description,
         color: item.color,
       );

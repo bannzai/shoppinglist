@@ -10,8 +10,7 @@ part 'group_shopping_list_item_category.g.dart';
 
 @Riverpod(dependencies: [groupDatabase])
 Stream<List<GroupShoppingListItemCategoryAxis>>
-    groupShoppingListItemCategoryAxes(
-        GroupShoppingListItemCategoryAxesRef ref,
+    groupShoppingListItemCategoryAxes(GroupShoppingListItemCategoryAxesRef ref,
         {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return database
@@ -64,10 +63,9 @@ class GroupShoppingListItemCategoryAxisDelete {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupShoppingListItemCategoryAxisDelete
-    groupShoppingListItemCategoryAxisDelete(
-        GroupShoppingListItemCategoryAxisDeleteRef ref,
-        {required String groupID}) {
+GroupShoppingListItemCategoryAxisDelete groupShoppingListItemCategoryAxisDelete(
+    GroupShoppingListItemCategoryAxisDeleteRef ref,
+    {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupShoppingListItemCategoryAxisDelete(database: database);
 }
