@@ -28,7 +28,7 @@ class ShoppingLocationAdd {
       groupID: database.groupID,
       name: name,
     );
-    await docRef.set(shoppingLocation);
+    await docRef.set(shoppingLocation, SetOptions(merge: true));
     return shoppingLocation;
   }
 }

@@ -23,8 +23,8 @@ class ShoppingListItemFilterPage extends HookConsumerWidget {
         ref.watch(groupShoppingListItemCategoryAxesProvider(groupID: groupID));
     final showChecked = useState(this.showChecked.value);
     final sortByCategory = useState(this.sortByCategory.value);
-    final hasCategories =
-        axesAsync.maybeWhen(data: (axes) => axes.isNotEmpty, orElse: () => false);
+    final hasCategories = axesAsync.maybeWhen(
+        data: (axes) => axes.isNotEmpty, orElse: () => false);
     return Scaffold(
       appBar: AppBar(
         title: const Text('フィルター'),

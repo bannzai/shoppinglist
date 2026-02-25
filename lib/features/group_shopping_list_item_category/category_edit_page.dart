@@ -20,15 +20,13 @@ class GroupShoppingListItemCategoryEditPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesAsync = ref.watch(
-        groupShoppingListItemCategoriesProvider(
-            groupID: groupID, categoryAxisID: categoryAxisID));
+    final categoriesAsync = ref.watch(groupShoppingListItemCategoriesProvider(
+        groupID: groupID, categoryAxisID: categoryAxisID));
 
     return categoriesAsync.when(
       data: (categories) {
-        final category = categories
-            .where((c) => c.id == categoryID)
-            .firstOrNull;
+        final category =
+            categories.where((c) => c.id == categoryID).firstOrNull;
         if (category == null) {
           return Scaffold(
             appBar: AppBar(title: const Text('カテゴリ編集')),
@@ -155,8 +153,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                         style: const TextStyle(fontSize: 12),
                       ),
                       trailing: IconButton(
-                        icon:
-                            const Icon(Icons.delete, color: TextColor.danger),
+                        icon: const Icon(Icons.delete, color: TextColor.danger),
                         onPressed: () => _deleteKeyword(
                           context: context,
                           ref: ref,
