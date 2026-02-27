@@ -32,7 +32,11 @@ service cloud.firestore {
 
       match /userProfiles/{profileID} {
         allow read: if isGroupMember();
-        allow create: if isGroupMember() && request.resource.data.userID == request.auth.uid;
+        // getAfter() はバッチ/トランザクション適用後の状態を参照する
+        // - グループ新規作成時: 同一バッチ内で作成されるグループドキュメントを参照できる
+        // - 既存グループへの参加時: 既に存在するグループドキュメントをそのまま参照する
+        allow create: if request.resource.data.userID == request.auth.uid
+                      && isMember(getAfter(/databases/$(database)/documents/groups/$(groupID)).data.memberUserIDs);
         allow update: if isGroupMember() && resource.data.userID == request.auth.uid;
       }
 

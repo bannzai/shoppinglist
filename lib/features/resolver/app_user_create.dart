@@ -34,8 +34,7 @@ class AppUserCreateResolver extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appUser = ref.watch(appUserProvider);
-    final appUserCreate =
-        AppUserCreate(userDatabase: ref.watch(userDatabaseProvider));
+    final appUserCreate = AppUserCreate(userDatabase: ref.watch(userDatabaseProvider));
 
     useEffect(() {
       appUserCreate();
@@ -49,6 +48,7 @@ class AppUserCreateResolver extends HookConsumerWidget {
           data: (appUser) => builder(context),
           error: (e, st) => RetryPage(
             exception: e,
+            stackTrace: st,
           ),
           loading: () => const Loading(),
         );
