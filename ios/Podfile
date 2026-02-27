@@ -32,8 +32,10 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # Ref: https://github.dev/FirebaseExtended/flutterfire/tree/master/packages/firebase_core/firebase_core/ios/firebase_sdk_version.rb#L1-L2
-  # pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => $FirebaseSDKVersion
+  # Firestoreのビルド高速化: プリコンパイル済みフレームワークを使用
+  # バージョンは firebase_core の firebase_sdk_version.rb から動的取得
+  require File.expand_path(File.join('.symlinks', 'plugins', 'firebase_core', 'ios', 'firebase_sdk_version.rb'), File.dirname(File.realpath(__FILE__)))
+  pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => firebase_sdk_version!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
