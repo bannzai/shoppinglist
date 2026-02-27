@@ -24,15 +24,17 @@ class Retry extends InheritedWidget {
 
 class RetryPage extends HookConsumerWidget {
   final Object exception;
+  final StackTrace stackTrace;
 
   const RetryPage({
     super.key,
     required this.exception,
+    required this.stackTrace,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    debugPrint('Retry: $exception');
+    debugPrint('Retry: $exception, $stackTrace');
     return Scaffold(
       body: Center(
         child: Column(
