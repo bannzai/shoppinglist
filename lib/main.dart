@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -28,6 +29,11 @@ void main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await (MobileAds.instance.initialize(), Firebase.initializeApp()).wait;
+
+    // Keychain sharing の設定 (iOS/macOSでのみ有効)
+    await FirebaseAuth.instance.setSettings(
+      userAccessGroup: 'TQPN82UBBY.com.bannzai.shoppinglist',
+    );
 
     if (kDebugMode) {
       overrideDebugPrint();
