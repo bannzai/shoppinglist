@@ -39,8 +39,11 @@ class ShoppingListPage extends HookConsumerWidget {
     // 切り替え先のグループに買い物リストが0件の場合、デフォルトリストを自動作成
     useEffect(() {
       void f() async {
-        if (appUser != null && shoppingLists is AsyncData<List<GroupShoppingList>> && shoppingLists.value.isEmpty == true) {
-          final shoppingListAdd = ref.read(shoppingListAddProvider(groupID: groupID));
+        if (appUser != null &&
+            shoppingLists is AsyncData<List<GroupShoppingList>> &&
+            shoppingLists.value.isEmpty == true) {
+          final shoppingListAdd =
+              ref.read(shoppingListAddProvider(groupID: groupID));
           await shoppingListAdd(
             createUserID: appUser.id,
             groupID: groupID,
@@ -101,7 +104,8 @@ class _Body extends HookConsumerWidget {
       shoppingListID: shoppingListID.value,
       showChecked: showChecked.value,
     ));
-    final shoppingList = shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID.value);
+    final shoppingList =
+        shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID.value);
     final ttlExpiresDateTime = shoppingList?.ttlExpiresDateTime;
 
     // 削除した時にshoppingListIDを入れ替える
@@ -124,7 +128,10 @@ class _Body extends HookConsumerWidget {
     return Retry(
       retry: () {
         retry();
-        ref.invalidate(textShoppingListItemsProvider(groupID: groupID, shoppingListID: shoppingListID.value, showChecked: showChecked.value));
+        ref.invalidate(textShoppingListItemsProvider(
+            groupID: groupID,
+            shoppingListID: shoppingListID.value,
+            showChecked: showChecked.value));
       },
       child: Scaffold(
         appBar: ShoppingListAppBar(
@@ -140,7 +147,10 @@ class _Body extends HookConsumerWidget {
           child: shoppingListItemsAsync.when(
             data: (shoppingListItems) {
               if (showChecked.value && shoppingListItems.isEmpty) {
-                return EmptyTextShoppingListItems(groupID: groupID, shoppingListID: shoppingListID.value, shoppingListItems: shoppingListItems);
+                return EmptyTextShoppingListItems(
+                    groupID: groupID,
+                    shoppingListID: shoppingListID.value,
+                    shoppingListItems: shoppingListItems);
               } else {
                 return Column(
                   children: [
@@ -155,23 +165,27 @@ class _Body extends HookConsumerWidget {
                       ),
                       const SizedBox(height: 10),
                     ],
-                    if (shoppingList?.duplicatedFromGroupShoppingListID != null) ...[
+                    if (shoppingList?.duplicatedFromGroupShoppingListID !=
+                        null) ...[
                       const SizedBox(height: 4),
                       GestureDetector(
                         onTap: () {
-                          final sourceID = shoppingList!.duplicatedFromGroupShoppingListID!;
+                          final sourceID =
+                              shoppingList!.duplicatedFromGroupShoppingListID!;
                           if (shoppingLists.any((sl) => sl.id == sourceID)) {
                             shoppingListID.value = sourceID;
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('複製元の買い物リストは削除されています')),
+                              const SnackBar(
+                                  content: Text('複製元の買い物リストは削除されています')),
                             );
                           }
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.content_copy, size: 14, color: Colors.blue),
+                            const Icon(Icons.content_copy,
+                                size: 14, color: Colors.blue),
                             const SizedBox(width: 4),
                             Text(
                               '${shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingList!.duplicatedFromGroupShoppingListID)?.name ?? "削除済みリスト"}から複製',
@@ -194,7 +208,8 @@ class _Body extends HookConsumerWidget {
                             sortByCategory: sortByCategory.value)),
                     const AdMobBanner(),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
                       child: Column(
                         children: [
                           const SizedBox(height: 10),
@@ -203,17 +218,23 @@ class _Body extends HookConsumerWidget {
                             children: [
                               Expanded(
                                 child: ShoppingListItemAddButton(
-                                    groupID: groupID, shoppingListID: shoppingListID.value, shoppingListItems: shoppingListItems),
+                                    groupID: groupID,
+                                    shoppingListID: shoppingListID.value,
+                                    shoppingListItems: shoppingListItems),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
-                                child:
-                                    ImagePickerButton(groupID: groupID, shoppingListID: shoppingListID.value, shoppingListItems: shoppingListItems),
+                                child: ImagePickerButton(
+                                    groupID: groupID,
+                                    shoppingListID: shoppingListID.value,
+                                    shoppingListItems: shoppingListItems),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: CopyMultilineTextButton(
-                                    groupID: groupID, shoppingListID: shoppingListID.value, shoppingListItems: shoppingListItems),
+                                    groupID: groupID,
+                                    shoppingListID: shoppingListID.value,
+                                    shoppingListItems: shoppingListItems),
                               ),
                             ],
                           ),

@@ -14,7 +14,10 @@ class CreateGroup {
 
   CreateGroup({required this.userDatabase});
 
-  Future<void> call({required AppUser appUser, required String? name, required bool setAsDefault}) async {
+  Future<void> call(
+      {required AppUser appUser,
+      required String? name,
+      required bool setAsDefault}) async {
     try {
       final batch = FirebaseFirestore.instance.batch();
 
@@ -48,7 +51,8 @@ class CreateGroup {
       // グループ作成者のプロフィールを作成
       final currentUser = FirebaseAuth.instance.currentUser;
       final profile = GroupUserProfile(
-        id: GroupUserProfile.documentID(groupID: groupDocRef.id, userID: appUser.id),
+        id: GroupUserProfile.documentID(
+            groupID: groupDocRef.id, userID: appUser.id),
         groupID: groupDocRef.id,
         userID: appUser.id,
         displayName: currentUser?.displayName,

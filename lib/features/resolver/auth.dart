@@ -34,7 +34,8 @@ class AuthResolver extends HookConsumerWidget {
     useEffect(() {
       final userID = firebaseUserChanges.asData?.valueOrNull?.uid;
       if (userID != null) {
-        sharedPreferences.setString(StringKey.lastSignInFirebaseAuthUserID, userID);
+        sharedPreferences.setString(
+            StringKey.lastSignInFirebaseAuthUserID, userID);
 
         unawaited(Purchases.logIn(userID));
         unawaited(FirebaseCrashlytics.instance.setUserIdentifier(userID));
