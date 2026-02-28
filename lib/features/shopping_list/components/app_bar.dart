@@ -184,7 +184,7 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: DropdownButtonFormField<String>(
-                value: selectedGroupID.value,
+                initialValue: selectedGroupID.value,
                 decoration: const InputDecoration(
                   labelText: 'グループ',
                   border: OutlineInputBorder(),

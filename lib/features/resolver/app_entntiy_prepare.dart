@@ -21,8 +21,12 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
     final groupID = appUser?.defaultGroupID;
     final createGroup = ref.watch(createGroupProvider);
 
-    final shoppingListAdd = groupID != null ? ref.watch(shoppingListAddProvider(groupID: groupID)) : null;
-    final shoppingLists = groupID != null ? ref.watch(shoppingListsProvider(groupID: groupID)) : null;
+    final shoppingListAdd = groupID != null
+        ? ref.watch(shoppingListAddProvider(groupID: groupID))
+        : null;
+    final shoppingLists = groupID != null
+        ? ref.watch(shoppingListsProvider(groupID: groupID))
+        : null;
 
     // Group未作成の場合は作成してAppUserにセット
     useEffect(() {
@@ -34,8 +38,16 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
 
     useEffect(() {
       void f() async {
-        if (appUser != null && groupID != null && shoppingListAdd != null && shoppingLists is AsyncData && shoppingLists?.value?.isEmpty == true) {
-          await shoppingListAdd(createUserID: appUser.id, groupID: groupID, shoppingLocationID: null, duplicatedFromGroupShoppingListID: null);
+        if (appUser != null &&
+            groupID != null &&
+            shoppingListAdd != null &&
+            shoppingLists is AsyncData &&
+            shoppingLists?.value?.isEmpty == true) {
+          await shoppingListAdd(
+              createUserID: appUser.id,
+              groupID: groupID,
+              shoppingLocationID: null,
+              duplicatedFromGroupShoppingListID: null);
         }
       }
 
