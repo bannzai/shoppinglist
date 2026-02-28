@@ -9,6 +9,7 @@ import 'package:shoppinglist/features/shopping_list_item_filter/page.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
 class ShoppingListAppBar extends HookConsumerWidget
@@ -42,6 +43,7 @@ class ShoppingListAppBar extends HookConsumerWidget
           final selectedID = useState<String>(shoppingListID.value);
           return GestureDetector(
             onTap: () {
+              analytics.logEvent(name: 'tap_open_list_picker', parameters: {'groupID': groupID, 'shoppingListID': shoppingListID.value});
               selectedID.value = shoppingLists.first.id;
               _showPicker(context, selectedID);
             },
@@ -58,6 +60,7 @@ class ShoppingListAppBar extends HookConsumerWidget
         if (shoppingList != null) ...[
           IconButton(
             onPressed: () {
+              analytics.logEvent(name: 'tap_open_list_setting', parameters: {'groupID': groupID, 'shoppingListID': shoppingListID.value});
               appShowModalBottomSheet(
                 context: context,
                 builder: (context) {
@@ -78,6 +81,7 @@ class ShoppingListAppBar extends HookConsumerWidget
           ),
           IconButton(
             onPressed: () async {
+              analytics.logEvent(name: 'tap_open_add_list_sheet', parameters: {'groupID': groupID});
               showModalBottomSheet(
                 context: context,
                 builder: (context) {
@@ -95,6 +99,7 @@ class ShoppingListAppBar extends HookConsumerWidget
         ],
         IconButton(
           onPressed: () {
+            analytics.logEvent(name: 'tap_open_filter', parameters: {'groupID': groupID, 'shoppingListID': shoppingListID.value});
             appShowModalBottomSheet(
               context: context,
               builder: (context) {
@@ -123,10 +128,12 @@ class ShoppingListAppBar extends HookConsumerWidget
           children: [
             PickerToolbar(
               done: () {
+                analytics.logEvent(name: 'tap_confirm_list_picker', parameters: {'groupID': groupID, 'selectedShoppingListID': selectedID.value});
                 Navigator.pop(context);
                 shoppingListID.value = selectedID.value;
               },
               cancel: () {
+                analytics.logEvent(name: 'cancel_list_picker', parameters: {'groupID': groupID});
                 Navigator.pop(context);
               },
             ),
@@ -206,6 +213,7 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
           ListTile(
             title: const Text('買い物リストを追加'),
             onTap: () async {
+              analytics.logEvent(name: 'tap_create_new_list', parameters: {'groupID': groupID});
               final addProvider = ref.read(
                   shoppingListAddProvider(groupID: selectedGroupID.value));
               final newShoppingList = await addProvider(
@@ -227,6 +235,7 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
           ListTile(
             title: const Text('現在の買い物リストを複製'),
             onTap: () async {
+              analytics.logEvent(name: 'tap_duplicate_list', parameters: {'groupID': groupID, 'sourceShoppingListID': shoppingList.id});
               final shoppingListDuplicate = ref.read(
                   shoppingListDuplicateProvider(
                       groupID: selectedGroupID.value));

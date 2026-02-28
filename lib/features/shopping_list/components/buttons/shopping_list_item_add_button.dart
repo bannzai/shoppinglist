@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class ShoppingListItemAddButton extends HookConsumerWidget {
   final String groupID;
@@ -19,6 +20,7 @@ class ShoppingListItemAddButton extends HookConsumerWidget {
         ref.watch(addTextShoppingListItemProvider(groupID: groupID));
     return OutlinedButton(
       onPressed: () {
+        analytics.logEvent(name: 'tap_add_item', parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
         addTextShoppingListItem.call(
           shoppingListID: shoppingListID,
           message: '',

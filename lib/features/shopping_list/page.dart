@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/components/admob/banner.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
@@ -172,6 +173,7 @@ class _Body extends HookConsumerWidget {
                         onTap: () {
                           final sourceID =
                               shoppingList!.duplicatedFromGroupShoppingListID!;
+                          analytics.logEvent(name: 'tap_navigate_source_list', parameters: {'groupID': groupID, 'shoppingListID': shoppingListID.value, 'sourceShoppingListID': sourceID});
                           if (shoppingLists.any((sl) => sl.id == sourceID)) {
                             shoppingListID.value = sourceID;
                           } else {
