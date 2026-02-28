@@ -81,6 +81,7 @@ class SettingPage extends HookConsumerWidget {
                                   currentUserID == null)
                               ? null
                               : () async {
+                                  analytics.logEvent(name: 'tap_save_profile', parameters: {'groupID': groupID});
                                   isSavingProfile.value = true;
                                   try {
                                     await ref
@@ -135,6 +136,7 @@ class SettingPage extends HookConsumerWidget {
                   ),
                   leading: const Icon(Icons.groups),
                   onTap: () {
+                    analytics.logEvent(name: 'tap_navigate_group_list', parameters: {});
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -153,6 +155,7 @@ class SettingPage extends HookConsumerWidget {
                   ),
                   leading: const Icon(Icons.group_add),
                   onTap: () {
+                    analytics.logEvent(name: 'tap_navigate_invitation', parameters: {});
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -220,6 +223,7 @@ class SettingPage extends HookConsumerWidget {
                 ListTile(
                   title: const Text('お問い合わせ'),
                   onTap: () {
+                    analytics.logEvent(name: 'tap_open_inquiry', parameters: {});
                     inquiry();
                   },
                 ),
