@@ -7,7 +7,7 @@ part of 'auth.dart';
 // **************************************************************************
 
 String _$firebaseUserChangesHash() =>
-    r'7640fb519be2781b52dfbaa306b26ede6d0fc3cc';
+    r'5bd1f286b92f4208602a0fabe059e643a85b22c3';
 
 /// See also [firebaseUserChanges].
 @ProviderFor(firebaseUserChanges)

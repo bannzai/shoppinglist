@@ -7,7 +7,7 @@ part of 'group_shopping_list_item_category.dart';
 // **************************************************************************
 
 String _$groupShoppingListItemCategoryAxesHash() =>
-    r'39e4b7bdffc086a0d3f9807528773fb3bd02123d';
+    r'08c1742aa1641da3acdfe421d4f363d13ce3d57f';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -176,7 +176,7 @@ class _GroupShoppingListItemCategoryAxesProviderElement
 }
 
 String _$groupShoppingListItemCategoryAxisAddHash() =>
-    r'1f01742488ca69527d8ab18bc1012ef929b4ddca';
+    r'64c84bcfcbba5e4e2f6383381168663771bf182a';
 
 /// See also [groupShoppingListItemCategoryAxisAdd].
 @ProviderFor(groupShoppingListItemCategoryAxisAdd)
@@ -324,7 +324,7 @@ class _GroupShoppingListItemCategoryAxisAddProviderElement
 }
 
 String _$groupShoppingListItemCategoryAxisDeleteHash() =>
-    r'2691e4ea85e29c5fc669de2bc3002dbe9c7cd128';
+    r'5a6ee93ed38f45a3c856706cfe3b9cdf37c41836';
 
 /// See also [groupShoppingListItemCategoryAxisDelete].
 @ProviderFor(groupShoppingListItemCategoryAxisDelete)
@@ -473,7 +473,7 @@ class _GroupShoppingListItemCategoryAxisDeleteProviderElement
 }
 
 String _$groupShoppingListItemCategoriesHash() =>
-    r'6dab03ec9d3290655771f6e3a709ed0d5d035d52';
+    r'f3253e1a258bd7302966fe97de2accb5d87be84c';
 
 /// See also [groupShoppingListItemCategories].
 @ProviderFor(groupShoppingListItemCategories)
@@ -638,7 +638,7 @@ class _GroupShoppingListItemCategoriesProviderElement
 }
 
 String _$groupShoppingListItemCategoryAddHash() =>
-    r'8522f792a39725adb5008ed6799787cfbb9035e7';
+    r'd42a67029528a038217b4ad955fa94a083bba4b6';
 
 /// See also [groupShoppingListItemCategoryAdd].
 @ProviderFor(groupShoppingListItemCategoryAdd)
@@ -784,7 +784,7 @@ class _GroupShoppingListItemCategoryAddProviderElement
 }
 
 String _$groupShoppingListItemCategoryUpdateHash() =>
-    r'5c78b2a1433d15c75bc2fe1165fbb8cc5b1d62e7';
+    r'73b1d57731b2c81cd4ed8b1ac0f778cf264fbebd';
 
 /// See also [groupShoppingListItemCategoryUpdate].
 @ProviderFor(groupShoppingListItemCategoryUpdate)
@@ -931,7 +931,7 @@ class _GroupShoppingListItemCategoryUpdateProviderElement
 }
 
 String _$groupShoppingListItemCategoryDeleteHash() =>
-    r'60a3b148ffa860c553f3fde5bd4c8139f8758ce7';
+    r'018d188591db71d653acccbce46665082ee74621';
 
 /// See also [groupShoppingListItemCategoryDelete].
 @ProviderFor(groupShoppingListItemCategoryDelete)
@@ -1078,7 +1078,7 @@ class _GroupShoppingListItemCategoryDeleteProviderElement
 }
 
 String _$groupShoppingListItemCategoryBatchUpdateHash() =>
-    r'a14f8352395763cb6dc079bd38fa5c54790255c2';
+    r'2b45c8fe16816600143b3ceb1c05df5f15ce685f';
 
 /// See also [groupShoppingListItemCategoryBatchUpdate].
 @ProviderFor(groupShoppingListItemCategoryBatchUpdate)

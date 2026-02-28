@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'shopping_location.g.dart';
 
 @Riverpod(dependencies: [groupDatabase])
-Stream<List<GroupShoppingLocation>> shoppingLocations(ShoppingLocationsRef ref,
+Stream<List<GroupShoppingLocation>> shoppingLocations(Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return database
@@ -34,8 +35,7 @@ class ShoppingLocationAdd {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingLocationAdd shoppingLocationAdd(ShoppingLocationAddRef ref,
-    {required String groupID}) {
+ShoppingLocationAdd shoppingLocationAdd(Ref ref, {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingLocationAdd(database: database);
 }
@@ -56,7 +56,7 @@ class ShoppingLocationUpdate {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingLocationUpdate shoppingLocationUpdate(ShoppingLocationUpdateRef ref,
+ShoppingLocationUpdate shoppingLocationUpdate(Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingLocationUpdate(database: database);
@@ -75,7 +75,7 @@ class ShoppingLocationDelete {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingLocationDelete shoppingLocationDelete(ShoppingLocationDeleteRef ref,
+ShoppingLocationDelete shoppingLocationDelete(Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingLocationDelete(database: database);

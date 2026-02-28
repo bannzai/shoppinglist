@@ -1,4 +1,5 @@
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'default_group_update.g.dart';
@@ -15,6 +16,6 @@ class DefaultGroupUpdate {
 }
 
 @Riverpod(dependencies: [userDatabase])
-DefaultGroupUpdate defaultGroupUpdate(DefaultGroupUpdateRef ref) {
+DefaultGroupUpdate defaultGroupUpdate(Ref ref) {
   return DefaultGroupUpdate(userDatabase: ref.read(userDatabaseProvider));
 }

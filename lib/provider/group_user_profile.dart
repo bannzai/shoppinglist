@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
@@ -6,7 +7,7 @@ import 'package:shoppinglist/features/resolver/database.dart';
 part 'group_user_profile.g.dart';
 
 @Riverpod(dependencies: [groupDatabase])
-Stream<List<GroupUserProfile>> groupUserProfiles(GroupUserProfilesRef ref,
+Stream<List<GroupUserProfile>> groupUserProfiles(Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return database
@@ -46,7 +47,7 @@ class GroupUserProfileUpdate {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupUserProfileUpdate groupUserProfileUpdate(GroupUserProfileUpdateRef ref,
+GroupUserProfileUpdate groupUserProfileUpdate(Ref ref,
     {required String groupID}) {
   final database = ref.read(groupDatabaseProvider(groupID: groupID));
   return GroupUserProfileUpdate(database: database);

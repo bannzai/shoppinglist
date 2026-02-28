@@ -7,6 +7,7 @@ import 'package:shoppinglist/secret/secret.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/logger/error.dart';
 import 'package:shoppinglist/utils/purchase/error.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'purchase.g.dart';
@@ -101,12 +102,12 @@ extension CustomerInfoExtension on CustomerInfo {
 }
 
 @Riverpod()
-Future<Offerings> offerings(OfferingsRef ref) {
+Future<Offerings> offerings(Ref ref) {
   return Purchases.getOfferings();
 }
 
 @Riverpod()
-List<Package> currentOfferingPackages(CurrentOfferingPackagesRef ref) {
+List<Package> currentOfferingPackages(Ref ref) {
   final offerings = ref.watch(offeringsProvider).asData?.value;
   final customerInfo = ref.watch(customerInfoProvider).asData?.value;
   if (offerings == null || customerInfo == null) {
@@ -121,28 +122,28 @@ List<Package> currentOfferingPackages(CurrentOfferingPackagesRef ref) {
 }
 
 @Riverpod()
-Package? weeklyPackage(WeeklyPackageRef ref) {
+Package? weeklyPackage(Ref ref) {
   final currentOfferingPackages = ref.watch(currentOfferingPackagesProvider);
   return currentOfferingPackages
       .firstWhereOrNull((element) => element.packageType == PackageType.weekly);
 }
 
 @Riverpod()
-Package? monthlyPackage(MonthlyPackageRef ref) {
+Package? monthlyPackage(Ref ref) {
   final currentOfferingPackages = ref.watch(currentOfferingPackagesProvider);
   return currentOfferingPackages.firstWhereOrNull(
       (element) => element.packageType == PackageType.monthly);
 }
 
 @Riverpod()
-Package? sixMonthPackage(SixMonthPackageRef ref) {
+Package? sixMonthPackage(Ref ref) {
   final currentOfferingPackages = ref.watch(currentOfferingPackagesProvider);
   return currentOfferingPackages.firstWhereOrNull(
       (element) => element.packageType == PackageType.sixMonth);
 }
 
 @Riverpod()
-Package? monthlyPremiumPackage(MonthlyPremiumPackageRef ref) {
+Package? monthlyPremiumPackage(Ref ref) {
   const premiumPackageOfferingType = OfferingType.premium;
   final offering = ref
       .watch(offeringsProvider)

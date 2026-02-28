@@ -6,7 +6,7 @@ part of 'user_groups.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$userGroupsHash() => r'8c5902af1b4ad555dbeb08ceec1cd8aafbed5325';
+String _$userGroupsHash() => r'dad1683587f62d6e3d9f2b12d8f5f871ca484bfd';
 
 /// See also [userGroups].
 @ProviderFor(userGroups)

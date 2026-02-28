@@ -5,6 +5,7 @@ import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'group_create.g.dart';
@@ -72,6 +73,6 @@ class CreateGroup {
 }
 
 @Riverpod(dependencies: [userDatabase])
-CreateGroup createGroup(CreateGroupRef ref) {
+CreateGroup createGroup(Ref ref) {
   return CreateGroup(userDatabase: ref.watch(userDatabaseProvider));
 }

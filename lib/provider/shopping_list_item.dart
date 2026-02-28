@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'shopping_list_item.g.dart';
 
 @Riverpod(dependencies: [groupDatabase])
-Stream<List<GroupShoppingListItem>> textShoppingListItems(
-    TextShoppingListItemsRef ref,
+Stream<List<GroupShoppingListItem>> textShoppingListItems(Ref ref,
     {required String groupID,
     required String shoppingListID,
     required bool showChecked}) {
@@ -56,7 +56,7 @@ class AddTextShoppingListItem {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-AddTextShoppingListItem addTextShoppingListItem(AddTextShoppingListItemRef ref,
+AddTextShoppingListItem addTextShoppingListItem(Ref ref,
     {required String groupID}) {
   return AddTextShoppingListItem(
       database: ref.watch(groupDatabaseProvider(groupID: groupID)));
@@ -85,8 +85,7 @@ class ShoppingListItemBatchUpdate {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingListItemBatchUpdate shoppingListItemBatchUpdate(
-    ShoppingListItemBatchUpdateRef ref,
+ShoppingListItemBatchUpdate shoppingListItemBatchUpdate(Ref ref,
     {required String groupID}) {
   return ShoppingListItemBatchUpdate(
       database: ref.watch(groupDatabaseProvider(groupID: groupID)));

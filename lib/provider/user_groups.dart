@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_groups.g.dart';
 
 @Riverpod(dependencies: [userDatabase])
-Stream<List<Group>> userGroups(UserGroupsRef ref) {
+Stream<List<Group>> userGroups(Ref ref) {
   final database = ref.watch(userDatabaseProvider);
   return FirebaseFirestore.instance
       .collection('/groups')

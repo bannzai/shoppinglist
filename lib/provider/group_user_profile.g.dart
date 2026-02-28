@@ -6,7 +6,7 @@ part of 'group_user_profile.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$groupUserProfilesHash() => r'e617234f50c1881869e0711f10bfb571fe8c00a4';
+String _$groupUserProfilesHash() => r'6634d3a9fe8eb366149721ac613ef119fb8b0a21';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -169,7 +169,7 @@ class _GroupUserProfilesProviderElement
 }
 
 String _$groupUserProfileUpdateHash() =>
-    r'cf657427b21cccf05fb115def874f2588b5285d6';
+    r'4303c9dd6531e4b14bd0e020276574f2fafbecc3';
 
 /// See also [groupUserProfileUpdate].
 @ProviderFor(groupUserProfileUpdate)

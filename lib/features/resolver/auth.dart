@@ -17,7 +17,7 @@ import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 part 'auth.g.dart';
 
 @Riverpod(keepAlive: true, dependencies: [])
-Stream<User?> firebaseUserChanges(FirebaseUserChangesRef ref) {
+Stream<User?> firebaseUserChanges(Ref ref) {
   return FirebaseAuth.instance.userChanges();
 }
 

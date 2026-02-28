@@ -6,7 +6,7 @@ part of 'shopping_list.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$shoppingListsHash() => r'9f1e8381bb70f342d4f1934885accd9c02a1de92';
+String _$shoppingListsHash() => r'6d2679957616ece54f3043c04a0fc7e04adc42c8';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -166,7 +166,7 @@ class _ShoppingListsProviderElement
   String get groupID => (origin as ShoppingListsProvider).groupID;
 }
 
-String _$shoppingListAddHash() => r'cffff9bad3e3c04b13fc51694f378604edd33ebf';
+String _$shoppingListAddHash() => r'36207893c21f77fd46ad8760207a52933eaa5869';
 
 /// See also [shoppingListAdd].
 @ProviderFor(shoppingListAdd)
@@ -304,7 +304,7 @@ class _ShoppingListAddProviderElement
 }
 
 String _$shoppingListDeleteHash() =>
-    r'd6f23679c5360b00d20c30c157f952eba231bfef';
+    r'53194ebbcaca78982b67ad88d5433c427a23462d';
 
 /// See also [shoppingListDelete].
 @ProviderFor(shoppingListDelete)
@@ -443,7 +443,7 @@ class _ShoppingListDeleteProviderElement
 }
 
 String _$shoppingListUpdateHash() =>
-    r'09378e26a5eafc0ebb3f1839102b8b37ebcd203b';
+    r'78b4ec8d0e4956e2998fd8c202915a274aae7bc5';
 
 /// See also [shoppingListUpdate].
 @ProviderFor(shoppingListUpdate)
@@ -582,7 +582,7 @@ class _ShoppingListUpdateProviderElement
 }
 
 String _$shoppingListDuplicateHash() =>
-    r'9d81ac64e3f4cddd65cdec9f6e91c50dc2c5de25';
+    r'261c9a9e1ae11f8b722edc1130fbaae627e071b2';
 
 /// See also [shoppingListDuplicate].
 @ProviderFor(shoppingListDuplicate)
