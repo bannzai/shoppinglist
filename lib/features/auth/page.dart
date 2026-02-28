@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/auth/apple.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/components/auth/google.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -71,6 +72,7 @@ class _Note extends StatelessWidget {
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
+                    analytics.logEvent(name: 'tap_auth_privacy_policy');
                     launchUrl(
                         Uri.parse(
                             'https://bannzai.github.io/shoppinglist/PrivacyPolicy'),
@@ -94,6 +96,7 @@ class _Note extends StatelessWidget {
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
+                    analytics.logEvent(name: 'tap_auth_terms_of_service');
                     launchUrl(
                         Uri.parse(
                             'https://bannzai.github.io/shoppinglist/Terms'),

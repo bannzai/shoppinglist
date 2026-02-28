@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 Future<UserCredential> signInWithApple() async {
@@ -46,6 +47,7 @@ class AppSignInWithAppleButton extends HookConsumerWidget {
             child: SignInWithAppleButton(
               onPressed: () async {
                 if (isLoading.value) return;
+                analytics.logEvent(name: 'tap_sign_in_apple');
                 isLoading.value = true;
                 await signInWithApple();
                 isLoading.value = false;

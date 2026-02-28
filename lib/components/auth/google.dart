@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 
 Future<UserCredential> signInWithGoogle() async {
   final googleSignIn = GoogleSignIn.instance;
@@ -54,6 +55,7 @@ class AppSignInWithGoogleButton extends HookConsumerWidget {
               ),
               onPressed: () async {
                 if (isLoading.value) return;
+                analytics.logEvent(name: 'tap_sign_in_google');
                 isLoading.value = true;
                 await signInWithGoogle();
                 isLoading.value = false;
