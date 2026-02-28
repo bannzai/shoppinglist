@@ -10,6 +10,7 @@ import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/button.dart';
 import 'package:shoppinglist/style/color.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class ShoppingListSettingPage extends HookConsumerWidget {
   final String groupID;
@@ -64,6 +65,13 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                     shoppingList.value.copyWith(name: value);
                               },
                               onSubmitted: (value) {
+                                analytics.logEvent(
+                                  name: 'submit_list_name',
+                                  parameters: {
+                                    'groupID': groupID,
+                                    'shoppingListID': shoppingListID,
+                                  },
+                                );
                                 shoppingList.value =
                                     shoppingList.value.copyWith(name: value);
                               },
@@ -111,6 +119,13 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                           )),
                                 ],
                                 onChanged: (value) {
+                                  analytics.logEvent(
+                                    name: 'select_list_location',
+                                    parameters: {
+                                      'groupID': groupID,
+                                      'shoppingListID': shoppingListID,
+                                    },
+                                  );
                                   shoppingList.value = shoppingList.value
                                       .copyWith(shoppingLocationID: value);
                                 },
@@ -136,6 +151,13 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                           const SizedBox(height: 8),
                           TextButton.icon(
                             onPressed: () async {
+                              analytics.logEvent(
+                                name: 'tap_set_list_expiration',
+                                parameters: {
+                                  'groupID': groupID,
+                                  'shoppingListID': shoppingListID,
+                                },
+                              );
                               final date = await showDatePicker(
                                   context: context,
                                   firstDate: DateTime.now(),
@@ -183,6 +205,10 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                               onPressed: isCreatingInvitation.value
                                   ? null
                                   : () async {
+                                      analytics.logEvent(
+                                        name: 'tap_create_list_invitation',
+                                        parameters: {'groupID': groupID},
+                                      );
                                       isCreatingInvitation.value = true;
                                       try {
                                         final invitationCode = await ref
@@ -240,6 +266,10 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                             width: double.infinity,
                             child: OutlinedButton.icon(
                               onPressed: () {
+                                analytics.logEvent(
+                                  name: 'tap_navigate_grp_setting',
+                                  parameters: {'groupID': groupID},
+                                );
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -268,6 +298,13 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                     width: double.infinity,
                     child: OutlinedButton(
                       onPressed: () {
+                        analytics.logEvent(
+                          name: 'tap_save_list_setting',
+                          parameters: {
+                            'groupID': groupID,
+                            'shoppingListID': shoppingListID,
+                          },
+                        );
                         shoppingListUpdate(
                             shoppingListID: shoppingListID,
                             shoppingList: shoppingList.value);
@@ -294,6 +331,13 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                 WidgetStatePropertyAll(Colors.red)),
                       ),
                       onPressed: () {
+                        analytics.logEvent(
+                          name: 'tap_delete_list',
+                          parameters: {
+                            'groupID': groupID,
+                            'shoppingListID': shoppingListID,
+                          },
+                        );
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
@@ -301,6 +345,13 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                             actions: [
                               TextButton(
                                 onPressed: () {
+                                  analytics.logEvent(
+                                    name: 'tap_confirm_delete_list',
+                                    parameters: {
+                                      'groupID': groupID,
+                                      'shoppingListID': shoppingListID,
+                                    },
+                                  );
                                   onDelete();
                                 },
                                 child: const Text(
@@ -312,6 +363,13 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                               ),
                               TextButton(
                                 onPressed: () {
+                                  analytics.logEvent(
+                                    name: 'cancel_delete_list',
+                                    parameters: {
+                                      'groupID': groupID,
+                                      'shoppingListID': shoppingListID,
+                                    },
+                                  );
                                   Navigator.pop(context);
                                 },
                                 child: const Text('キャンセル'),
@@ -373,6 +431,7 @@ class _InvitationCodeDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () async {
+            analytics.logEvent(name: 'tap_copy_list_invite_code');
             await Clipboard.setData(ClipboardData(text: invitationCode));
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -384,6 +443,7 @@ class _InvitationCodeDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
+            analytics.logEvent(name: 'cancel_list_invite_dialog');
             Navigator.pop(context);
           },
           child: const Text('閉じる'),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class Retry extends InheritedWidget {
   final VoidCallback retry;
@@ -47,6 +48,7 @@ class RetryPage extends HookConsumerWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
+                analytics.logEvent(name: 'tap_retry');
                 Retry.of(context).retry();
               },
               child: const Text('Retry'),
