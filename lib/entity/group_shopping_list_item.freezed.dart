@@ -11,10 +11,6 @@ part of 'group_shopping_list_item.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-GroupShoppingListItem _$GroupShoppingListItemFromJson(
-    Map<String, dynamic> json) {
-  return TextGroupShoppingListItem.fromJson(json);
-}
 
 /// @nodoc
 mixin _$GroupShoppingListItem {
@@ -234,14 +230,14 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
   /// ```
 
   @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(TextGroupShoppingListItem value)? text,
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_GroupShoppingListItem value)? $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case TextGroupShoppingListItem() when text != null:
-        return text(_that);
+      case _GroupShoppingListItem() when $default != null:
+        return $default(_that);
       case _:
         return orElse();
     }
@@ -261,13 +257,15 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
   /// ```
 
   @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(TextGroupShoppingListItem value) text,
-  }) {
+  TResult map<TResult extends Object?>(
+    TResult Function(_GroupShoppingListItem value) $default,
+  ) {
     final _that = this;
     switch (_that) {
-      case TextGroupShoppingListItem():
-        return text(_that);
+      case _GroupShoppingListItem():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
     }
   }
 
@@ -284,13 +282,13 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
   /// ```
 
   @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(TextGroupShoppingListItem value)? text,
-  }) {
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_GroupShoppingListItem value)? $default,
+  ) {
     final _that = this;
     switch (_that) {
-      case TextGroupShoppingListItem() when text != null:
-        return text(_that);
+      case _GroupShoppingListItem() when $default != null:
+        return $default(_that);
       case _:
         return null;
     }
@@ -309,7 +307,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
   /// ```
 
   @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
+  TResult maybeWhen<TResult extends Object?>(
     TResult Function(
             String id,
             String groupID,
@@ -325,13 +323,13 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)?
-        text,
+        $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case TextGroupShoppingListItem() when text != null:
-        return text(
+      case _GroupShoppingListItem() when $default != null:
+        return $default(
             _that.id,
             _that.groupID,
             _that.shoppingListID,
@@ -365,8 +363,8 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
   /// ```
 
   @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(
+  TResult when<TResult extends Object?>(
+    TResult Function(
             String id,
             String groupID,
             String shoppingListID,
@@ -381,12 +379,12 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)
-        text,
-  }) {
+        $default,
+  ) {
     final _that = this;
     switch (_that) {
-      case TextGroupShoppingListItem():
-        return text(
+      case _GroupShoppingListItem():
+        return $default(
             _that.id,
             _that.groupID,
             _that.shoppingListID,
@@ -401,6 +399,8 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
             _that.serverUpdatedDateTime);
+      case _:
+        throw StateError('Unexpected subclass');
     }
   }
 
@@ -417,7 +417,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
   /// ```
 
   @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
+  TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
             String id,
             String groupID,
@@ -433,12 +433,12 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)?
-        text,
-  }) {
+        $default,
+  ) {
     final _that = this;
     switch (_that) {
-      case TextGroupShoppingListItem() when text != null:
-        return text(
+      case _GroupShoppingListItem() when $default != null:
+        return $default(
             _that.id,
             _that.groupID,
             _that.shoppingListID,
@@ -462,8 +462,8 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true)
-class TextGroupShoppingListItem implements GroupShoppingListItem {
-  const TextGroupShoppingListItem(
+class _GroupShoppingListItem implements GroupShoppingListItem {
+  const _GroupShoppingListItem(
       {required this.id,
       required this.groupID,
       required this.shoppingListID,
@@ -478,8 +478,8 @@ class TextGroupShoppingListItem implements GroupShoppingListItem {
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
       @ServerUpdatedTimestamp() this.serverUpdatedDateTime});
-  factory TextGroupShoppingListItem.fromJson(Map<String, dynamic> json) =>
-      _$TextGroupShoppingListItemFromJson(json);
+  factory _GroupShoppingListItem.fromJson(Map<String, dynamic> json) =>
+      _$GroupShoppingListItemFromJson(json);
 
   @override
   final String id;
@@ -523,13 +523,13 @@ class TextGroupShoppingListItem implements GroupShoppingListItem {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $TextGroupShoppingListItemCopyWith<TextGroupShoppingListItem> get copyWith =>
-      _$TextGroupShoppingListItemCopyWithImpl<TextGroupShoppingListItem>(
+  _$GroupShoppingListItemCopyWith<_GroupShoppingListItem> get copyWith =>
+      __$GroupShoppingListItemCopyWithImpl<_GroupShoppingListItem>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$TextGroupShoppingListItemToJson(
+    return _$GroupShoppingListItemToJson(
       this,
     );
   }
@@ -538,7 +538,7 @@ class TextGroupShoppingListItem implements GroupShoppingListItem {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is TextGroupShoppingListItem &&
+            other is _GroupShoppingListItem &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.shoppingListID, shoppingListID) ||
@@ -586,16 +586,16 @@ class TextGroupShoppingListItem implements GroupShoppingListItem {
 
   @override
   String toString() {
-    return 'GroupShoppingListItem.text(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, message: $message, order: $order, status: $status, description: $description, color: $color, groupShoppingListItemCategoryID: $groupShoppingListItemCategoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, message: $message, order: $order, status: $status, description: $description, color: $color, groupShoppingListItemCategoryID: $groupShoppingListItemCategoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
 /// @nodoc
-abstract mixin class $TextGroupShoppingListItemCopyWith<$Res>
+abstract mixin class _$GroupShoppingListItemCopyWith<$Res>
     implements $GroupShoppingListItemCopyWith<$Res> {
-  factory $TextGroupShoppingListItemCopyWith(TextGroupShoppingListItem value,
-          $Res Function(TextGroupShoppingListItem) _then) =
-      _$TextGroupShoppingListItemCopyWithImpl;
+  factory _$GroupShoppingListItemCopyWith(_GroupShoppingListItem value,
+          $Res Function(_GroupShoppingListItem) _then) =
+      __$GroupShoppingListItemCopyWithImpl;
   @override
   @useResult
   $Res call(
@@ -616,12 +616,12 @@ abstract mixin class $TextGroupShoppingListItemCopyWith<$Res>
 }
 
 /// @nodoc
-class _$TextGroupShoppingListItemCopyWithImpl<$Res>
-    implements $TextGroupShoppingListItemCopyWith<$Res> {
-  _$TextGroupShoppingListItemCopyWithImpl(this._self, this._then);
+class __$GroupShoppingListItemCopyWithImpl<$Res>
+    implements _$GroupShoppingListItemCopyWith<$Res> {
+  __$GroupShoppingListItemCopyWithImpl(this._self, this._then);
 
-  final TextGroupShoppingListItem _self;
-  final $Res Function(TextGroupShoppingListItem) _then;
+  final _GroupShoppingListItem _self;
+  final $Res Function(_GroupShoppingListItem) _then;
 
   /// Create a copy of GroupShoppingListItem
   /// with the given fields replaced by the non-null parameter values.
@@ -643,7 +643,7 @@ class _$TextGroupShoppingListItemCopyWithImpl<$Res>
     Object? serverCreatedDateTime = freezed,
     Object? serverUpdatedDateTime = freezed,
   }) {
-    return _then(TextGroupShoppingListItem(
+    return _then(_GroupShoppingListItem(
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable

@@ -7,7 +7,6 @@ part 'group_shopping_list_item.g.dart';
 
 abstract class GroupShoppingListItemFirestoreKeys {
   static const id = 'id';
-  static const type = 'type';
   static const status = 'status';
   static const order = 'order';
   static const createdDateTime = 'createdDateTime';
@@ -16,11 +15,10 @@ abstract class GroupShoppingListItemFirestoreKeys {
   static const serverUpdatedDateTime = 'serverUpdatedDateTime';
 }
 
-@Freezed(unionKey: 'type')
-sealed class GroupShoppingListItem with _$GroupShoppingListItem {
-  @FreezedUnionValue('text')
+@freezed
+abstract class GroupShoppingListItem with _$GroupShoppingListItem {
   @JsonSerializable(explicitToJson: true)
-  const factory GroupShoppingListItem.text({
+  const factory GroupShoppingListItem({
     required String id,
     required String groupID,
     required String shoppingListID,
@@ -38,7 +36,7 @@ sealed class GroupShoppingListItem with _$GroupShoppingListItem {
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
     @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
-  }) = TextGroupShoppingListItem;
+  }) = _GroupShoppingListItem;
 
   factory GroupShoppingListItem.fromJson(Map<String, dynamic> json) =>
       _$GroupShoppingListItemFromJson(json);
@@ -48,11 +46,9 @@ sealed class GroupShoppingListItem with _$GroupShoppingListItem {
           SnapshotOptions? options) =>
       GroupShoppingListItem.fromJson(snapshot.data()!..['id'] = snapshot.id);
 
-  // NOTE: freezedはコンストラクタが1つだけの場合、unionKey('type')をtoJsonに含めない。
-  // Firestoreクエリが .where('type', isEqualTo: 'text') でフィルタしているため、手動で追加する。
   static Map<String, dynamic> toFirestore(
           GroupShoppingListItem item, SetOptions? options) =>
-      item.toJson()..['type'] = 'text';
+      item.toJson();
 }
 
 extension GroupShoppingListItems on List<GroupShoppingListItem> {
