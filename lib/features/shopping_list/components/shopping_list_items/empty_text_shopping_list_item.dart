@@ -41,7 +41,7 @@ class EmptyTextShoppingListItems extends HookConsumerWidget {
                       });
                   try {
                     final result = await ref
-                        .read(addTextShoppingListItemProvider(groupID: groupID))
+                        .read(addShoppingListItemProvider(groupID: groupID))
                         .call(
                           shoppingListID: shoppingListID,
                           message: '',
