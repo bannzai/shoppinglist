@@ -7,7 +7,7 @@ part of 'remote_config_parameter.dart';
 // **************************************************************************
 
 String _$remoteConfigParameterHash() =>
-    r'ad696ca938d52e5a3c3c4b9f3ab9be996f5fcaac';
+    r'b9399eeb323c749b3fd038ccc21f9630d0c85aa6';
 
 /// See also [remoteConfigParameter].
 @ProviderFor(remoteConfigParameter)

@@ -6,7 +6,7 @@ part of 'database.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$userDatabaseHash() => r'35709f65ca4a0feec61e6242b2bff4a5defb5e56';
+String _$userDatabaseHash() => r'6c4f08fee8e04762434e1cb38af1556d14a74025';
 
 /// See also [userDatabase].
 @ProviderFor(userDatabase)
@@ -22,7 +22,7 @@ final userDatabaseProvider = Provider<UserDatabase>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UserDatabaseRef = ProviderRef<UserDatabase>;
-String _$groupDatabaseHash() => r'61da22f4243932579f224c8b0dc12902e6bcf56e';
+String _$groupDatabaseHash() => r'2197743e24dc6e9d93ea3b2eb6a01b7db0bc425a';
 
 /// Copied from Dart SDK
 class _SystemHash {

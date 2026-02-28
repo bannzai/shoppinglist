@@ -7,7 +7,7 @@ part of 'group_invitation.dart';
 // **************************************************************************
 
 String _$createGroupInvitationHash() =>
-    r'37d90c1c7b87d21cde64f7e18904ec1610e4ec0d';
+    r'8fd84068c2740f3c9816fa717509c5fd6dd251c9';
 
 /// See also [createGroupInvitation].
 @ProviderFor(createGroupInvitation)
@@ -27,7 +27,7 @@ final createGroupInvitationProvider =
 typedef CreateGroupInvitationRef
     = AutoDisposeProviderRef<CreateGroupInvitation>;
 String _$acceptGroupInvitationHash() =>
-    r'0b02a95d6a3ace9aee14a55a1b1c01262acafd18';
+    r'a8ea2f300c0a017166becc2afb1276000fc660a8';
 
 /// See also [acceptGroupInvitation].
 @ProviderFor(acceptGroupInvitation)

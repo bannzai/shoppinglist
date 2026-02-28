@@ -6,7 +6,7 @@ part of 'purchase.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$offeringsHash() => r'06a7e9fadc8200b9115c16675938df040bc9dbb2';
+String _$offeringsHash() => r'a44517ca66731d95ed64ddb147c72567df8b12c7';
 
 /// See also [offerings].
 @ProviderFor(offerings)
@@ -23,7 +23,7 @@ final offeringsProvider = AutoDisposeFutureProvider<Offerings>.internal(
 // ignore: unused_element
 typedef OfferingsRef = AutoDisposeFutureProviderRef<Offerings>;
 String _$currentOfferingPackagesHash() =>
-    r'bc5b95ba59c277672df55a56189603d12e0ad4d8';
+    r'a5f231d916ab1a9331b6b80f29c6241e38a0ae62';
 
 /// See also [currentOfferingPackages].
 @ProviderFor(currentOfferingPackages)
@@ -41,7 +41,7 @@ final currentOfferingPackagesProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CurrentOfferingPackagesRef = AutoDisposeProviderRef<List<Package>>;
-String _$weeklyPackageHash() => r'f475e65427c56d2c2e865348fced38a182e08805';
+String _$weeklyPackageHash() => r'ba26c9b5ee0fd47b82377fe698a98759c7286f1e';
 
 /// See also [weeklyPackage].
 @ProviderFor(weeklyPackage)
@@ -58,7 +58,7 @@ final weeklyPackageProvider = AutoDisposeProvider<Package?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef WeeklyPackageRef = AutoDisposeProviderRef<Package?>;
-String _$monthlyPackageHash() => r'ac95005ce4b98f8ea79ddc3334f920cdea444a5e';
+String _$monthlyPackageHash() => r'43e529cd7d27fba0cf9e591bc80f23b0abf2d893';
 
 /// See also [monthlyPackage].
 @ProviderFor(monthlyPackage)
@@ -75,7 +75,7 @@ final monthlyPackageProvider = AutoDisposeProvider<Package?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MonthlyPackageRef = AutoDisposeProviderRef<Package?>;
-String _$sixMonthPackageHash() => r'95906fa81cdb103fdcd71b8ed2f4d235d906bcf6';
+String _$sixMonthPackageHash() => r'3293887aad384d28bcb0ae42e2f94c35a6028c33';
 
 /// See also [sixMonthPackage].
 @ProviderFor(sixMonthPackage)
@@ -93,7 +93,7 @@ final sixMonthPackageProvider = AutoDisposeProvider<Package?>.internal(
 // ignore: unused_element
 typedef SixMonthPackageRef = AutoDisposeProviderRef<Package?>;
 String _$monthlyPremiumPackageHash() =>
-    r'f0b94d6172882cdf55f7f427781c1532bc3778af';
+    r'b60369ee20eb3938b31dae6ff05bebfcb615512f';
 
 /// See also [monthlyPremiumPackage].
 @ProviderFor(monthlyPremiumPackage)

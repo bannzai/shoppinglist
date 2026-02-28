@@ -6,7 +6,7 @@ part of 'shopping_location.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$shoppingLocationsHash() => r'ff941e29da407eeb5deb5b1ad6064b966a6d7462';
+String _$shoppingLocationsHash() => r'7aed51dda16a45608c0db4f7a23717bdd80c6f27';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -170,7 +170,7 @@ class _ShoppingLocationsProviderElement
 }
 
 String _$shoppingLocationAddHash() =>
-    r'5817f6c61feb05afadbf20d18847410640f320c4';
+    r'de0716db61107ad8cbd46cf74587fb167f6d8598';
 
 /// See also [shoppingLocationAdd].
 @ProviderFor(shoppingLocationAdd)
@@ -309,7 +309,7 @@ class _ShoppingLocationAddProviderElement
 }
 
 String _$shoppingLocationUpdateHash() =>
-    r'e5f0ca4ce3352706d7c6bd62c856321acc302b22';
+    r'0557896dbd7b18fa7eb8f3239a5934a8688d2114';
 
 /// See also [shoppingLocationUpdate].
 @ProviderFor(shoppingLocationUpdate)
@@ -449,7 +449,7 @@ class _ShoppingLocationUpdateProviderElement
 }
 
 String _$shoppingLocationDeleteHash() =>
-    r'9cd57d651e145304c634bc9536af4bb9872d38e7';
+    r'7782457cf60a645870f39b136a8088058d359816';
 
 /// See also [shoppingLocationDelete].
 @ProviderFor(shoppingLocationDelete)

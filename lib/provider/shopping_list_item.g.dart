@@ -7,7 +7,7 @@ part of 'shopping_list_item.dart';
 // **************************************************************************
 
 String _$textShoppingListItemsHash() =>
-    r'26e9350a671f5b6e02ec0cdd8a59dab83f643e02';
+    r'fedcef26726858093765cf91446dce1131b88931';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -206,7 +206,7 @@ class _TextShoppingListItemsProviderElement
 }
 
 String _$addTextShoppingListItemHash() =>
-    r'1bf7cbb78805afa1167a0373d886ac8fa586a539';
+    r'a69787184aed890835d18cb219b89926ac3bc5cf';
 
 /// See also [addTextShoppingListItem].
 @ProviderFor(addTextShoppingListItem)
@@ -347,7 +347,7 @@ class _AddTextShoppingListItemProviderElement
 }
 
 String _$shoppingListItemBatchUpdateHash() =>
-    r'07ca9f761a30797148b2e274425da94628435613';
+    r'd1d20f2dc3ac6e9a43e79e02e7d3d6d2e4f2ca09';
 
 /// See also [shoppingListItemBatchUpdate].
 @ProviderFor(shoppingListItemBatchUpdate)

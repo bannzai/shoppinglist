@@ -6,7 +6,7 @@ part of 'group.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$groupHash() => r'93b695959e386795599877905e17611ff47c3a47';
+String _$groupHash() => r'00db553ddde7bb5b274e9eb9932fa26c9f18296a';
 
 /// Copied from Dart SDK
 class _SystemHash {
