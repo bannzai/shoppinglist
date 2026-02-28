@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/color.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class ShoppingLocationPage extends HookConsumerWidget {
   final String groupID;
@@ -41,6 +42,7 @@ class ShoppingLocationPage extends HookConsumerWidget {
                     IconButton(
                       icon: const Icon(Icons.edit),
                       onPressed: () {
+                        analytics.logEvent(name: 'tap_edit_location', parameters: {'groupID': groupID, 'locationID': location.id});
                         _showEditDialog(
                           context: context,
                           ref: ref,
@@ -51,6 +53,7 @@ class ShoppingLocationPage extends HookConsumerWidget {
                     IconButton(
                       icon: const Icon(Icons.delete, color: TextColor.danger),
                       onPressed: () {
+                        analytics.logEvent(name: 'tap_delete_location', parameters: {'groupID': groupID, 'locationID': location.id});
                         _showDeleteDialog(
                           context: context,
                           ref: ref,
@@ -69,6 +72,7 @@ class ShoppingLocationPage extends HookConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          analytics.logEvent(name: 'tap_add_location', parameters: {'groupID': groupID});
           _showAddDialog(context: context, ref: ref);
         },
         child: const Icon(Icons.add),
@@ -97,6 +101,7 @@ class ShoppingLocationPage extends HookConsumerWidget {
             onPressed: () async {
               final name = controller.text.trim();
               if (name.isEmpty) return;
+              analytics.logEvent(name: 'tap_confirm_add_location', parameters: {'groupID': groupID});
               Navigator.pop(dialogContext);
               try {
                 await ref
@@ -114,6 +119,7 @@ class ShoppingLocationPage extends HookConsumerWidget {
           ),
           TextButton(
             onPressed: () {
+              analytics.logEvent(name: 'cancel_add_location', parameters: {'groupID': groupID});
               Navigator.pop(dialogContext);
             },
             child: const Text('キャンセル'),
@@ -145,6 +151,7 @@ class ShoppingLocationPage extends HookConsumerWidget {
             onPressed: () async {
               final name = controller.text.trim();
               if (name.isEmpty) return;
+              analytics.logEvent(name: 'tap_save_location', parameters: {'groupID': groupID, 'locationID': location.id});
               Navigator.pop(dialogContext);
               try {
                 await ref
@@ -165,6 +172,7 @@ class ShoppingLocationPage extends HookConsumerWidget {
           ),
           TextButton(
             onPressed: () {
+              analytics.logEvent(name: 'cancel_edit_location', parameters: {'groupID': groupID, 'locationID': location.id});
               Navigator.pop(dialogContext);
             },
             child: const Text('キャンセル'),
@@ -187,6 +195,7 @@ class ShoppingLocationPage extends HookConsumerWidget {
         actions: [
           TextButton(
             onPressed: () async {
+              analytics.logEvent(name: 'tap_confirm_del_location', parameters: {'groupID': groupID, 'locationID': location.id});
               Navigator.pop(dialogContext);
               try {
                 await ref
@@ -207,6 +216,7 @@ class ShoppingLocationPage extends HookConsumerWidget {
           ),
           TextButton(
             onPressed: () {
+              analytics.logEvent(name: 'cancel_del_location', parameters: {'groupID': groupID, 'locationID': location.id});
               Navigator.pop(dialogContext);
             },
             child: const Text('キャンセル'),
