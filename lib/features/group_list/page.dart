@@ -4,6 +4,7 @@ import 'package:shoppinglist/features/group_create/page.dart';
 import 'package:shoppinglist/features/group_setting/page.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupListPage extends HookConsumerWidget {
   const GroupListPage({super.key});
@@ -35,6 +36,7 @@ class GroupListPage extends HookConsumerWidget {
                           ? const Icon(Icons.check_circle, color: Colors.green)
                           : null,
                       onTap: () {
+                        analytics.logEvent(name: 'tap_select_group', parameters: {'groupID': group.id});
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -53,6 +55,7 @@ class GroupListPage extends HookConsumerWidget {
       },
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          analytics.logEvent(name: 'tap_navigate_group_create');
           Navigator.push(
             context,
             MaterialPageRoute(

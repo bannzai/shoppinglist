@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/group_create.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupCreatePage extends HookConsumerWidget {
   const GroupCreatePage({super.key});
@@ -44,6 +45,7 @@ class GroupCreatePage extends HookConsumerWidget {
                   onPressed: isCreating.value
                       ? null
                       : () async {
+                          analytics.logEvent(name: 'tap_create_group');
                           isCreating.value = true;
                           try {
                             final appUser =

@@ -12,6 +12,7 @@ import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/features/group_shopping_list_item_category/page.dart';
 import 'package:shoppinglist/features/shopping_location/page.dart';
 import 'package:shoppinglist/style/color.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupSettingPage extends HookConsumerWidget {
   final String groupID;
@@ -114,6 +115,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                             onPressed: isUpdatingName.value
                                 ? null
                                 : () async {
+                                    analytics.logEvent(name: 'tap_save_group_name', parameters: {'groupID': groupID});
                                     isUpdatingName.value = true;
                                     try {
                                       await functions.updateGroupName(
@@ -184,6 +186,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                             onPressed: isRemovingMember.value
                                 ? null
                                 : () {
+                                    analytics.logEvent(name: 'tap_remove_member', parameters: {'groupID': groupID, 'targetUserID': profile.userID});
                                     _showRemoveMemberDialog(
                                       context: context,
                                       ref: ref,
@@ -212,6 +215,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                         width: double.infinity,
                         child: OutlinedButton.icon(
                           onPressed: () {
+                            analytics.logEvent(name: 'tap_manage_locations', parameters: {'groupID': groupID});
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -245,6 +249,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                         width: double.infinity,
                         child: OutlinedButton.icon(
                           onPressed: () {
+                            analytics.logEvent(name: 'tap_manage_categories', parameters: {'groupID': groupID});
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -281,6 +286,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                           onPressed: isCreatingInvitation.value
                               ? null
                               : () async {
+                                  analytics.logEvent(name: 'tap_create_grp_invitation', parameters: {'groupID': groupID});
                                   isCreatingInvitation.value = true;
                                   try {
                                     final invitationCode = await ref
@@ -291,6 +297,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                                         context: context,
                                         builder: (context) =>
                                             _InvitationCodeDialog(
+                                                groupID: groupID,
                                                 invitationCode: invitationCode),
                                       );
                                     }
@@ -341,6 +348,7 @@ class _GroupSettingBody extends HookConsumerWidget {
         actions: [
           TextButton(
             onPressed: () async {
+              analytics.logEvent(name: 'tap_confirm_remove_member', parameters: {'groupID': groupID, 'targetUserID': profile.userID});
               Navigator.pop(dialogContext);
               isRemovingMember.value = true;
               try {
@@ -372,6 +380,7 @@ class _GroupSettingBody extends HookConsumerWidget {
           ),
           TextButton(
             onPressed: () {
+              analytics.logEvent(name: 'cancel_remove_member', parameters: {'groupID': groupID});
               Navigator.pop(dialogContext);
             },
             child: const Text('キャンセル'),
@@ -383,9 +392,10 @@ class _GroupSettingBody extends HookConsumerWidget {
 }
 
 class _InvitationCodeDialog extends StatelessWidget {
+  final String groupID;
   final String invitationCode;
 
-  const _InvitationCodeDialog({required this.invitationCode});
+  const _InvitationCodeDialog({required this.groupID, required this.invitationCode});
 
   @override
   Widget build(BuildContext context) {
@@ -415,6 +425,7 @@ class _InvitationCodeDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () async {
+            analytics.logEvent(name: 'tap_copy_invitation_code', parameters: {'groupID': groupID});
             await Clipboard.setData(ClipboardData(text: invitationCode));
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -426,6 +437,7 @@ class _InvitationCodeDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
+            analytics.logEvent(name: 'cancel_invitation_dialog', parameters: {'groupID': groupID});
             Navigator.pop(context);
           },
           child: const Text('閉じる'),
