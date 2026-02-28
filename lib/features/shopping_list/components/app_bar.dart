@@ -213,7 +213,7 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
           ListTile(
             title: const Text('買い物リストを追加'),
             onTap: () async {
-              analytics.logEvent(name: 'tap_create_new_list', parameters: {'groupID': groupID});
+              analytics.logEvent(name: 'tap_create_new_list', parameters: {'groupID': groupID, 'selectedGroupID': selectedGroupID.value});
               final addProvider = ref.read(
                   shoppingListAddProvider(groupID: selectedGroupID.value));
               final newShoppingList = await addProvider(
@@ -235,7 +235,7 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
           ListTile(
             title: const Text('現在の買い物リストを複製'),
             onTap: () async {
-              analytics.logEvent(name: 'tap_duplicate_list', parameters: {'groupID': groupID, 'sourceShoppingListID': shoppingList.id});
+              analytics.logEvent(name: 'tap_duplicate_list', parameters: {'groupID': groupID, 'selectedGroupID': selectedGroupID.value, 'sourceShoppingListID': shoppingList.id});
               final shoppingListDuplicate = ref.read(
                   shoppingListDuplicateProvider(
                       groupID: selectedGroupID.value));

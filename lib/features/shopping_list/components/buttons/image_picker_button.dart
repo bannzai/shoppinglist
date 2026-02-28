@@ -76,7 +76,7 @@ class ImagePickerButton extends HookConsumerWidget {
                 actions: [
                   TextButton(
                     onPressed: () {
-                      analytics.logEvent(name: 'cancel_image_picker');
+                      analytics.logEvent(name: 'cancel_image_picker', parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
                       Navigator.pop(context);
                     },
                     child: const Text('閉じる'),
