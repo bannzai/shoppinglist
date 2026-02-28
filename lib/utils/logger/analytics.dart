@@ -7,8 +7,7 @@ final firebaseAnalytics = FirebaseAnalytics.instance;
 
 class Analytics {
   void logEvent({required String name, Map<String, Object>? parameters}) async {
-    assert(name.length <= 40,
-        'firebase analytics log event name limit length up to 40');
+    assert(name.length <= 40, 'firebase analytics log event name limit length up to 40');
     if (kDebugMode) {
       print('[INFO] logEvent name: $name, parameters: $parameters');
     }
@@ -45,8 +44,7 @@ class Analytics {
     assert(name.toLowerCase() != 'age');
     assert(name.toLowerCase() != 'gender');
     assert(name.toLowerCase() != 'interest');
-    assert(name.length < 25,
-        'firebase setUserProperties name limit length up to 25');
+    assert(name.length < 25, 'firebase setUserProperties name limit length up to 25');
     assert(!name.startsWith('firebase_'));
 
     if (kDebugMode) {
