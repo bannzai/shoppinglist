@@ -1,12 +1,13 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:shoppinglist/entity/remote_config_parameter.dart';
 import 'package:shoppinglist/utils/remote_config/remote_config.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'remote_config_parameter.g.dart';
 
 @Riverpod()
-RemoteConfigParameter remoteConfigParameter(RemoteConfigParameterRef ref) {
+RemoteConfigParameter remoteConfigParameter(Ref ref) {
   // fetchAndActiveをentrypointで完了しているので値が取れる想定
   return RemoteConfigParameter(
     minimumAppVersion: remoteConfig.getStringOrDefault(

@@ -36,7 +36,7 @@ abstract class _CollectionPath {
 }
 
 @Riverpod(keepAlive: true, dependencies: [])
-UserDatabase userDatabase(UserDatabaseRef ref) {
+UserDatabase userDatabase(Ref ref) {
   throw UnimplementedError('userDatabase is not implemented');
 }
 
@@ -54,7 +54,7 @@ class UserDatabase {
 }
 
 @Riverpod(keepAlive: true, dependencies: [])
-GroupDatabase groupDatabase(GroupDatabaseRef ref, {required String groupID}) {
+GroupDatabase groupDatabase(Ref ref, {required String groupID}) {
   return GroupDatabase(groupID: groupID);
 }
 

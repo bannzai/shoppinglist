@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item_category_axis.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'group_shopping_list_item_category.g.dart';
@@ -10,7 +11,7 @@ part 'group_shopping_list_item_category.g.dart';
 
 @Riverpod(dependencies: [groupDatabase])
 Stream<List<GroupShoppingListItemCategoryAxis>>
-    groupShoppingListItemCategoryAxes(GroupShoppingListItemCategoryAxesRef ref,
+    groupShoppingListItemCategoryAxes(Ref ref,
         {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return database
@@ -44,7 +45,7 @@ class GroupShoppingListItemCategoryAxisAdd {
 
 @Riverpod(dependencies: [groupDatabase])
 GroupShoppingListItemCategoryAxisAdd groupShoppingListItemCategoryAxisAdd(
-    GroupShoppingListItemCategoryAxisAddRef ref,
+    Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupShoppingListItemCategoryAxisAdd(database: database);
@@ -64,7 +65,7 @@ class GroupShoppingListItemCategoryAxisDelete {
 
 @Riverpod(dependencies: [groupDatabase])
 GroupShoppingListItemCategoryAxisDelete groupShoppingListItemCategoryAxisDelete(
-    GroupShoppingListItemCategoryAxisDeleteRef ref,
+    Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupShoppingListItemCategoryAxisDelete(database: database);
@@ -74,7 +75,7 @@ GroupShoppingListItemCategoryAxisDelete groupShoppingListItemCategoryAxisDelete(
 
 @Riverpod(dependencies: [groupDatabase])
 Stream<List<GroupShoppingListItemCategory>> groupShoppingListItemCategories(
-    GroupShoppingListItemCategoriesRef ref,
+    Ref ref,
     {required String groupID,
     required String categoryAxisID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
@@ -112,7 +113,7 @@ class GroupShoppingListItemCategoryAdd {
 
 @Riverpod(dependencies: [groupDatabase])
 GroupShoppingListItemCategoryAdd groupShoppingListItemCategoryAdd(
-    GroupShoppingListItemCategoryAddRef ref,
+    Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupShoppingListItemCategoryAdd(database: database);
@@ -136,7 +137,7 @@ class GroupShoppingListItemCategoryUpdate {
 
 @Riverpod(dependencies: [groupDatabase])
 GroupShoppingListItemCategoryUpdate groupShoppingListItemCategoryUpdate(
-    GroupShoppingListItemCategoryUpdateRef ref,
+    Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupShoppingListItemCategoryUpdate(database: database);
@@ -159,7 +160,7 @@ class GroupShoppingListItemCategoryDelete {
 
 @Riverpod(dependencies: [groupDatabase])
 GroupShoppingListItemCategoryDelete groupShoppingListItemCategoryDelete(
-    GroupShoppingListItemCategoryDeleteRef ref,
+    Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupShoppingListItemCategoryDelete(database: database);
@@ -189,7 +190,7 @@ class GroupShoppingListItemCategoryBatchUpdate {
 @Riverpod(dependencies: [groupDatabase])
 GroupShoppingListItemCategoryBatchUpdate
     groupShoppingListItemCategoryBatchUpdate(
-        GroupShoppingListItemCategoryBatchUpdateRef ref,
+        Ref ref,
         {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupShoppingListItemCategoryBatchUpdate(database: database);

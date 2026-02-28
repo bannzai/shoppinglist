@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
@@ -14,7 +15,7 @@ class CreateGroupInvitation {
 }
 
 @Riverpod(dependencies: [])
-CreateGroupInvitation createGroupInvitation(CreateGroupInvitationRef ref) {
+CreateGroupInvitation createGroupInvitation(Ref ref) {
   return CreateGroupInvitation();
 }
 
@@ -36,6 +37,6 @@ class AcceptGroupInvitation {
 }
 
 @Riverpod(dependencies: [userDatabase])
-AcceptGroupInvitation acceptGroupInvitation(AcceptGroupInvitationRef ref) {
+AcceptGroupInvitation acceptGroupInvitation(Ref ref) {
   return AcceptGroupInvitation(userDatabase: ref.read(userDatabaseProvider));
 }

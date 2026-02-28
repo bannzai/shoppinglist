@@ -3,13 +3,14 @@ import 'package:intl/intl.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 
 part 'shopping_list.g.dart';
 
 @Riverpod(dependencies: [groupDatabase])
-Stream<List<GroupShoppingList>> shoppingLists(ShoppingListsRef ref,
+Stream<List<GroupShoppingList>> shoppingLists(Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return database
@@ -50,7 +51,7 @@ class ShoppingListAdd {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingListAdd shoppingListAdd(ShoppingListAddRef ref,
+ShoppingListAdd shoppingListAdd(Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingListAdd(database: database);
@@ -69,7 +70,7 @@ class ShoppingListDelete {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingListDelete shoppingListDelete(ShoppingListDeleteRef ref,
+ShoppingListDelete shoppingListDelete(Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingListDelete(database: database);
@@ -90,7 +91,7 @@ class ShoppingListUpdate {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingListUpdate shoppingListUpdate(ShoppingListUpdateRef ref,
+ShoppingListUpdate shoppingListUpdate(Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingListUpdate(database: database);
@@ -137,7 +138,7 @@ class ShoppingListDuplicate {
   shoppingListAdd,
   addTextShoppingListItem,
 ])
-ShoppingListDuplicate shoppingListDuplicate(ShoppingListDuplicateRef ref,
+ShoppingListDuplicate shoppingListDuplicate(Ref ref,
     {required String groupID}) {
   final shoppingListAdd = ref.watch(shoppingListAddProvider(groupID: groupID));
   final addTextShoppingListItem =

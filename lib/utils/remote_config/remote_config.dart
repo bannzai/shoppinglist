@@ -1,6 +1,7 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/widgets.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/entity/remote_config_parameter.dart';
 import 'package:shoppinglist/utils/config/version.dart';
@@ -38,7 +39,7 @@ Future<void> setupRemoteConfig() async {
 }
 
 @Riverpod()
-Future<bool> appIsReleased(AppIsReleasedRef ref) async {
+Future<bool> appIsReleased(Ref ref) async {
   final releasedVersion =
       Version.parse(remoteConfig.getString(RemoteConfigKeys.releasedVersion));
   final packageInfo = await PackageInfo.fromPlatform();
