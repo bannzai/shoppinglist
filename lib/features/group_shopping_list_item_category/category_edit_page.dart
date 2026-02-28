@@ -5,6 +5,7 @@ import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item_category_keyword.dart';
 import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/style/color.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupShoppingListItemCategoryEditPage extends HookConsumerWidget {
   final String groupID;
@@ -91,6 +92,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                   onSubmitted: (String value) async {
                     final name = value.trim();
                     if (name.isEmpty || name == category.name) return;
+                    analytics.logEvent(name: 'submit_category_name', parameters: {'groupID': groupID, 'categoryID': category.id});
                     isSaving.value = true;
                     try {
                       await ref
@@ -125,10 +127,13 @@ class _CategoryEditBody extends HookConsumerWidget {
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                     IconButton(
-                      onPressed: () => _showAddKeywordDialog(
-                        context: context,
-                        ref: ref,
-                      ),
+                      onPressed: () {
+                        analytics.logEvent(name: 'tap_add_keyword', parameters: {'groupID': groupID, 'categoryID': category.id});
+                        _showAddKeywordDialog(
+                          context: context,
+                          ref: ref,
+                        );
+                      },
                       icon: const Icon(Icons.add),
                     ),
                   ],
@@ -204,6 +209,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                             .partial,
                     onSelected: (selected) {
                       if (selected) {
+                        analytics.logEvent(name: 'select_match_partial', parameters: {'groupID': groupID, 'categoryID': category.id});
                         setState(() {
                           selectedMatchingType =
                               GroupShoppingListItemCategoryKeywordMatchingType
@@ -219,6 +225,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                         GroupShoppingListItemCategoryKeywordMatchingType.exact,
                     onSelected: (selected) {
                       if (selected) {
+                        analytics.logEvent(name: 'select_match_exact', parameters: {'groupID': groupID, 'categoryID': category.id});
                         setState(() {
                           selectedMatchingType =
                               GroupShoppingListItemCategoryKeywordMatchingType
@@ -236,6 +243,7 @@ class _CategoryEditBody extends HookConsumerWidget {
               onPressed: () async {
                 final keyword = keywordController.text.trim();
                 if (keyword.isEmpty) return;
+                analytics.logEvent(name: 'tap_confirm_add_keyword', parameters: {'groupID': groupID, 'categoryID': category.id});
                 Navigator.pop(dialogContext);
 
                 final newKeyword = GroupShoppingListItemCategoryKeyword(
@@ -266,7 +274,10 @@ class _CategoryEditBody extends HookConsumerWidget {
               child: const Text('追加'),
             ),
             TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
+              onPressed: () {
+                analytics.logEvent(name: 'cancel_add_keyword', parameters: {'groupID': groupID, 'categoryID': category.id});
+                Navigator.pop(dialogContext);
+              },
               child: const Text('キャンセル'),
             ),
           ],
@@ -280,6 +291,7 @@ class _CategoryEditBody extends HookConsumerWidget {
     required WidgetRef ref,
     required int index,
   }) async {
+    analytics.logEvent(name: 'tap_delete_keyword', parameters: {'groupID': groupID, 'categoryID': category.id});
     final updatedKeywords = [...category.keywords]..removeAt(index);
     final updatedCategory = category.copyWith(keywords: updatedKeywords);
 
