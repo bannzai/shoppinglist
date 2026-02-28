@@ -173,7 +173,13 @@ class _Body extends HookConsumerWidget {
                         onTap: () {
                           final sourceID =
                               shoppingList!.duplicatedFromGroupShoppingListID!;
-                          analytics.logEvent(name: 'tap_navigate_source_list', parameters: {'groupID': groupID, 'shoppingListID': shoppingListID.value, 'sourceShoppingListID': sourceID});
+                          analytics.logEvent(
+                              name: 'tap_navigate_source_list',
+                              parameters: {
+                                'groupID': groupID,
+                                'shoppingListID': shoppingListID.value,
+                                'sourceShoppingListID': sourceID
+                              });
                           if (shoppingLists.any((sl) => sl.id == sourceID)) {
                             shoppingListID.value = sourceID;
                           } else {

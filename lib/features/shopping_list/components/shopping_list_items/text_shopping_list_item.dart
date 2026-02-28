@@ -62,7 +62,12 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                 value: textShoppingListItem.status ==
                     GroupShoppingListItemStatus.checked,
                 onChanged: (value) {
-                  analytics.logEvent(name: 'tap_toggle_item_checkbox', parameters: {'groupID': groupID, 'shoppingListID': textShoppingListItem.shoppingListID, 'itemID': textShoppingListItem.id});
+                  analytics
+                      .logEvent(name: 'tap_toggle_item_checkbox', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': textShoppingListItem.shoppingListID,
+                    'itemID': textShoppingListItem.id
+                  });
                   ref
                       .read(groupDatabaseProvider(groupID: groupID))
                       .shoppingListItemsReference(
@@ -118,7 +123,12 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                   ),
                   IconButton(
                     onPressed: () {
-                      analytics.logEvent(name: 'tap_open_item_detail', parameters: {'groupID': groupID, 'itemID': textShoppingListItem.id});
+                      analytics.logEvent(
+                          name: 'tap_open_item_detail',
+                          parameters: {
+                            'groupID': groupID,
+                            'itemID': textShoppingListItem.id
+                          });
                       appShowModalBottomSheet(
                         context: context,
                         builder: (context) {
@@ -133,7 +143,10 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                   ),
                   IconButton(
                     onPressed: () {
-                      analytics.logEvent(name: 'tap_delete_item', parameters: {'groupID': groupID, 'itemID': textShoppingListItem.id});
+                      analytics.logEvent(name: 'tap_delete_item', parameters: {
+                        'groupID': groupID,
+                        'itemID': textShoppingListItem.id
+                      });
                       ref
                           .read(groupDatabaseProvider(groupID: groupID))
                           .shoppingListItemsReference(
@@ -211,7 +224,10 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
           text.value = value;
         },
         onSubmitted: (String v) async {
-          analytics.logEvent(name: 'submit_item_text', parameters: {'groupID': groupID, 'itemID': textShoppingListItem.id});
+          analytics.logEvent(name: 'submit_item_text', parameters: {
+            'groupID': groupID,
+            'itemID': textShoppingListItem.id
+          });
           final value = v.trim();
           final itemID = textShoppingListItem.id;
           if (value.isEmpty) {

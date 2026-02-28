@@ -88,7 +88,12 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                       // 色なしボタン
                       GestureDetector(
                         onTap: () {
-                          analytics.logEvent(name: 'tap_item_remove_color', parameters: {'groupID': groupID, 'itemID': textShoppingListItem.id});
+                          analytics.logEvent(
+                              name: 'tap_item_remove_color',
+                              parameters: {
+                                'groupID': groupID,
+                                'itemID': textShoppingListItem.id
+                              });
                           selectedColor.value = null;
                         },
                         child: Container(
@@ -114,7 +119,13 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                       for (final preset in _presetColors)
                         GestureDetector(
                           onTap: () {
-                            analytics.logEvent(name: 'tap_item_select_color', parameters: {'groupID': groupID, 'itemID': textShoppingListItem.id, 'color': preset.hex});
+                            analytics.logEvent(
+                                name: 'tap_item_select_color',
+                                parameters: {
+                                  'groupID': groupID,
+                                  'itemID': textShoppingListItem.id,
+                                  'color': preset.hex
+                                });
                             selectedColor.value = preset.hex;
                           },
                           child: Container(
@@ -148,7 +159,10 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
-                  analytics.logEvent(name: 'tap_save_item_detail', parameters: {'groupID': groupID, 'itemID': textShoppingListItem.id});
+                  analytics.logEvent(name: 'tap_save_item_detail', parameters: {
+                    'groupID': groupID,
+                    'itemID': textShoppingListItem.id
+                  });
                   final description = descriptionController.text.trim();
                   final docRef = ref
                       .read(groupDatabaseProvider(groupID: groupID))

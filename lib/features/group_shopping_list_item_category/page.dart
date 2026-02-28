@@ -28,7 +28,9 @@ class GroupShoppingListItemCategoryPage extends HookConsumerWidget {
             body: Center(
               child: OutlinedButton.icon(
                 onPressed: () {
-                  analytics.logEvent(name: 'tap_add_first_category', parameters: {'groupID': groupID});
+                  analytics.logEvent(
+                      name: 'tap_add_first_category',
+                      parameters: {'groupID': groupID});
                   _addCategoryWithAutoAxis(
                     context: context,
                     ref: ref,
@@ -107,7 +109,9 @@ class GroupShoppingListItemCategoryPage extends HookConsumerWidget {
             onPressed: () async {
               final name = controller.text.trim();
               if (name.isEmpty) return;
-              analytics.logEvent(name: 'tap_confirm_add_category', parameters: {'groupID': groupID});
+              analytics.logEvent(
+                  name: 'tap_confirm_add_category',
+                  parameters: {'groupID': groupID});
               Navigator.pop(dialogContext);
               try {
                 final category = await ref
@@ -144,7 +148,9 @@ class GroupShoppingListItemCategoryPage extends HookConsumerWidget {
           ),
           TextButton(
             onPressed: () {
-              analytics.logEvent(name: 'cancel_add_category', parameters: {'groupID': groupID});
+              analytics.logEvent(
+                  name: 'cancel_add_category',
+                  parameters: {'groupID': groupID});
               Navigator.pop(dialogContext);
             },
             child: const Text('キャンセル'),
@@ -183,7 +189,8 @@ class _CategoryListBody extends HookConsumerWidget {
               ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            analytics.logEvent(name: 'tap_add_category', parameters: {'groupID': groupID});
+            analytics.logEvent(
+                name: 'tap_add_category', parameters: {'groupID': groupID});
             _showAddCategoryDialog(
               context: context,
               ref: ref,
@@ -228,7 +235,9 @@ class _CategoryListBody extends HookConsumerWidget {
             onPressed: () async {
               final name = controller.text.trim();
               if (name.isEmpty) return;
-              analytics.logEvent(name: 'tap_confirm_add_category', parameters: {'groupID': groupID});
+              analytics.logEvent(
+                  name: 'tap_confirm_add_category',
+                  parameters: {'groupID': groupID});
               Navigator.pop(dialogContext);
               try {
                 final category = await ref
@@ -265,7 +274,9 @@ class _CategoryListBody extends HookConsumerWidget {
           ),
           TextButton(
             onPressed: () {
-              analytics.logEvent(name: 'cancel_add_category', parameters: {'groupID': groupID});
+              analytics.logEvent(
+                  name: 'cancel_add_category',
+                  parameters: {'groupID': groupID});
               Navigator.pop(dialogContext);
             },
             child: const Text('キャンセル'),
@@ -291,7 +302,8 @@ class _CategoryReorderableList extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ReorderableListView.builder(
       onReorder: (oldIndex, newIndex) {
-        analytics.logEvent(name: 'reorder_category', parameters: {'groupID': groupID});
+        analytics.logEvent(
+            name: 'reorder_category', parameters: {'groupID': groupID});
         if (oldIndex < newIndex) {
           newIndex -= 1;
         }
@@ -328,7 +340,10 @@ class _CategoryReorderableList extends HookConsumerWidget {
               IconButton(
                 icon: const Icon(Icons.edit),
                 onPressed: () {
-                  analytics.logEvent(name: 'tap_edit_category', parameters: {'groupID': groupID, 'categoryID': category.id});
+                  analytics.logEvent(name: 'tap_edit_category', parameters: {
+                    'groupID': groupID,
+                    'categoryID': category.id
+                  });
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -345,7 +360,10 @@ class _CategoryReorderableList extends HookConsumerWidget {
               IconButton(
                 icon: const Icon(Icons.delete, color: TextColor.danger),
                 onPressed: () {
-                  analytics.logEvent(name: 'tap_delete_category', parameters: {'groupID': groupID, 'categoryID': category.id});
+                  analytics.logEvent(name: 'tap_delete_category', parameters: {
+                    'groupID': groupID,
+                    'categoryID': category.id
+                  });
                   _showDeleteDialog(
                     context: context,
                     ref: ref,
@@ -373,7 +391,9 @@ class _CategoryReorderableList extends HookConsumerWidget {
         actions: [
           TextButton(
             onPressed: () async {
-              analytics.logEvent(name: 'tap_confirm_del_category', parameters: {'groupID': groupID, 'categoryID': category.id});
+              analytics.logEvent(
+                  name: 'tap_confirm_del_category',
+                  parameters: {'groupID': groupID, 'categoryID': category.id});
               Navigator.pop(dialogContext);
               try {
                 await ref
@@ -398,7 +418,9 @@ class _CategoryReorderableList extends HookConsumerWidget {
           ),
           TextButton(
             onPressed: () {
-              analytics.logEvent(name: 'cancel_del_category', parameters: {'groupID': groupID, 'categoryID': category.id});
+              analytics.logEvent(
+                  name: 'cancel_del_category',
+                  parameters: {'groupID': groupID, 'categoryID': category.id});
               Navigator.pop(dialogContext);
             },
             child: const Text('キャンセル'),

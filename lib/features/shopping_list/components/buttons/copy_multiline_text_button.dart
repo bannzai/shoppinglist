@@ -20,7 +20,9 @@ class CopyMultilineTextButton extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return OutlinedButton(
       onPressed: () async {
-        analytics.logEvent(name: 'tap_paste_multiline', parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
+        analytics.logEvent(
+            name: 'tap_paste_multiline',
+            parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
         final data = await Clipboard.getData(Clipboard.kTextPlain);
         final text = data?.text;
         if (text != null) {

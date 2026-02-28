@@ -35,7 +35,10 @@ class GroupSwitcher extends StatelessWidget {
               selected: isSelected,
               onSelected: (selected) {
                 if (selected) {
-                  analytics.logEvent(name: 'tap_switch_group', parameters: {'fromGroupID': currentGroupID, 'toGroupID': group.id});
+                  analytics.logEvent(name: 'tap_switch_group', parameters: {
+                    'fromGroupID': currentGroupID,
+                    'toGroupID': group.id
+                  });
                   onGroupChanged(group.id);
                 }
               },

@@ -36,7 +36,9 @@ class GroupListPage extends HookConsumerWidget {
                           ? const Icon(Icons.check_circle, color: Colors.green)
                           : null,
                       onTap: () {
-                        analytics.logEvent(name: 'tap_select_group', parameters: {'groupID': group.id});
+                        analytics.logEvent(
+                            name: 'tap_select_group',
+                            parameters: {'groupID': group.id});
                         Navigator.push(
                           context,
                           MaterialPageRoute(

@@ -20,7 +20,9 @@ class ShoppingListItemAddButton extends HookConsumerWidget {
         ref.watch(addTextShoppingListItemProvider(groupID: groupID));
     return OutlinedButton(
       onPressed: () {
-        analytics.logEvent(name: 'tap_add_item', parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
+        analytics.logEvent(
+            name: 'tap_add_item',
+            parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
         addTextShoppingListItem.call(
           shoppingListID: shoppingListID,
           message: '',

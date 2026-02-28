@@ -31,7 +31,12 @@ class EmptyTextShoppingListItems extends HookConsumerWidget {
                 style: outlinedButtonStyle,
                 child: const Text('最初の買い物リストを作成しましょう！'),
                 onPressed: () {
-                  analytics.logEvent(name: 'tap_create_first_item', parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
+                  analytics.logEvent(
+                      name: 'tap_create_first_item',
+                      parameters: {
+                        'groupID': groupID,
+                        'shoppingListID': shoppingListID
+                      });
                   ref
                       .read(addTextShoppingListItemProvider(groupID: groupID))
                       .call(
