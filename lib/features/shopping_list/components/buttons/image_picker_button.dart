@@ -7,6 +7,7 @@ import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/image/image.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class ImagePickerButton extends HookConsumerWidget {
   final String groupID;
@@ -23,6 +24,9 @@ class ImagePickerButton extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return OutlinedButton(
       onPressed: () async {
+        analytics.logEvent(
+            name: 'tap_open_image_picker',
+            parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
         final imagePicker = ImagePicker();
 
         await showDialog(
@@ -36,6 +40,12 @@ class ImagePickerButton extends HookConsumerWidget {
                       title: const Text('カメラ'),
                       leading: const Icon(Icons.photo_camera),
                       onTap: () async {
+                        analytics.logEvent(
+                            name: 'tap_image_picker_camera',
+                            parameters: {
+                              'groupID': groupID,
+                              'shoppingListID': shoppingListID
+                            });
                         final XFile? photo = await imagePicker.pickImage(
                             source: ImageSource.camera);
 
@@ -54,6 +64,12 @@ class ImagePickerButton extends HookConsumerWidget {
                       title: const Text('フォトライブラリ'),
                       leading: const Icon(Icons.photo_album),
                       onTap: () async {
+                        analytics.logEvent(
+                            name: 'tap_image_picker_gallery',
+                            parameters: {
+                              'groupID': groupID,
+                              'shoppingListID': shoppingListID
+                            });
                         final XFile? photo = await imagePicker.pickImage(
                             source: ImageSource.gallery);
                         if (photo != null) {
@@ -72,6 +88,12 @@ class ImagePickerButton extends HookConsumerWidget {
                 actions: [
                   TextButton(
                     onPressed: () {
+                      analytics.logEvent(
+                          name: 'cancel_image_picker',
+                          parameters: {
+                            'groupID': groupID,
+                            'shoppingListID': shoppingListID
+                          });
                       Navigator.pop(context);
                     },
                     child: const Text('閉じる'),

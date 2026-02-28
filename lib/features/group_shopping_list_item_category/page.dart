@@ -5,6 +5,7 @@ import 'package:shoppinglist/entity/group_shopping_list_item_category_axis.dart'
 import 'package:shoppinglist/features/group_shopping_list_item_category/category_edit_page.dart';
 import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/style/color.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupShoppingListItemCategoryPage extends HookConsumerWidget {
   final String groupID;
@@ -26,11 +27,16 @@ class GroupShoppingListItemCategoryPage extends HookConsumerWidget {
             appBar: AppBar(title: const Text('カテゴリ')),
             body: Center(
               child: OutlinedButton.icon(
-                onPressed: () => _addCategoryWithAutoAxis(
-                  context: context,
-                  ref: ref,
-                  existingAxes: axes,
-                ),
+                onPressed: () {
+                  analytics.logEvent(
+                      name: 'tap_add_first_category',
+                      parameters: {'groupID': groupID});
+                  _addCategoryWithAutoAxis(
+                    context: context,
+                    ref: ref,
+                    existingAxes: axes,
+                  );
+                },
                 icon: const Icon(Icons.add),
                 label: const Text('カテゴリを追加'),
               ),
@@ -103,6 +109,9 @@ class GroupShoppingListItemCategoryPage extends HookConsumerWidget {
             onPressed: () async {
               final name = controller.text.trim();
               if (name.isEmpty) return;
+              analytics.logEvent(
+                  name: 'tap_confirm_add_category',
+                  parameters: {'groupID': groupID});
               Navigator.pop(dialogContext);
               try {
                 final category = await ref
@@ -138,7 +147,12 @@ class GroupShoppingListItemCategoryPage extends HookConsumerWidget {
             child: const Text('追加'),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
+            onPressed: () {
+              analytics.logEvent(
+                  name: 'cancel_add_category',
+                  parameters: {'groupID': groupID});
+              Navigator.pop(dialogContext);
+            },
             child: const Text('キャンセル'),
           ),
         ],
@@ -174,12 +188,16 @@ class _CategoryListBody extends HookConsumerWidget {
                 categories: categories,
               ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => _showAddCategoryDialog(
-            context: context,
-            ref: ref,
-            categoryAxisID: axis.id,
-            currentCategoryCount: categories.length,
-          ),
+          onPressed: () {
+            analytics.logEvent(
+                name: 'tap_add_category', parameters: {'groupID': groupID});
+            _showAddCategoryDialog(
+              context: context,
+              ref: ref,
+              categoryAxisID: axis.id,
+              currentCategoryCount: categories.length,
+            );
+          },
           child: const Icon(Icons.add),
         ),
       ),
@@ -217,6 +235,9 @@ class _CategoryListBody extends HookConsumerWidget {
             onPressed: () async {
               final name = controller.text.trim();
               if (name.isEmpty) return;
+              analytics.logEvent(
+                  name: 'tap_confirm_add_category',
+                  parameters: {'groupID': groupID});
               Navigator.pop(dialogContext);
               try {
                 final category = await ref
@@ -252,7 +273,12 @@ class _CategoryListBody extends HookConsumerWidget {
             child: const Text('追加'),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
+            onPressed: () {
+              analytics.logEvent(
+                  name: 'cancel_add_category',
+                  parameters: {'groupID': groupID});
+              Navigator.pop(dialogContext);
+            },
             child: const Text('キャンセル'),
           ),
         ],
@@ -276,6 +302,8 @@ class _CategoryReorderableList extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ReorderableListView.builder(
       onReorder: (oldIndex, newIndex) {
+        analytics.logEvent(
+            name: 'reorder_category', parameters: {'groupID': groupID});
         if (oldIndex < newIndex) {
           newIndex -= 1;
         }
@@ -312,6 +340,10 @@ class _CategoryReorderableList extends HookConsumerWidget {
               IconButton(
                 icon: const Icon(Icons.edit),
                 onPressed: () {
+                  analytics.logEvent(name: 'tap_edit_category', parameters: {
+                    'groupID': groupID,
+                    'categoryID': category.id
+                  });
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -328,6 +360,10 @@ class _CategoryReorderableList extends HookConsumerWidget {
               IconButton(
                 icon: const Icon(Icons.delete, color: TextColor.danger),
                 onPressed: () {
+                  analytics.logEvent(name: 'tap_delete_category', parameters: {
+                    'groupID': groupID,
+                    'categoryID': category.id
+                  });
                   _showDeleteDialog(
                     context: context,
                     ref: ref,
@@ -355,6 +391,9 @@ class _CategoryReorderableList extends HookConsumerWidget {
         actions: [
           TextButton(
             onPressed: () async {
+              analytics.logEvent(
+                  name: 'tap_confirm_del_category',
+                  parameters: {'groupID': groupID, 'categoryID': category.id});
               Navigator.pop(dialogContext);
               try {
                 await ref
@@ -378,7 +417,12 @@ class _CategoryReorderableList extends HookConsumerWidget {
             ),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
+            onPressed: () {
+              analytics.logEvent(
+                  name: 'cancel_del_category',
+                  parameters: {'groupID': groupID, 'categoryID': category.id});
+              Navigator.pop(dialogContext);
+            },
             child: const Text('キャンセル'),
           ),
         ],

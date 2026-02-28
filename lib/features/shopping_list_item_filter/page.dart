@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class ShoppingListItemFilterPage extends HookConsumerWidget {
   final String groupID;
@@ -41,6 +42,13 @@ class ShoppingListItemFilterPage extends HookConsumerWidget {
                     title: const Text('チェック済みを表示する'),
                     value: showChecked.value,
                     onChanged: (value) {
+                      analytics.logEvent(
+                          name: 'toggle_show_checked',
+                          parameters: {
+                            'groupID': groupID,
+                            'shoppingListID': shoppingListID,
+                            'value': value.toString()
+                          });
                       showChecked.value = value;
                     },
                   ),
@@ -49,6 +57,13 @@ class ShoppingListItemFilterPage extends HookConsumerWidget {
                     value: sortByCategory.value,
                     onChanged: hasCategories
                         ? (value) {
+                            analytics.logEvent(
+                                name: 'toggle_sort_by_category',
+                                parameters: {
+                                  'groupID': groupID,
+                                  'shoppingListID': shoppingListID,
+                                  'value': value.toString()
+                                });
                             sortByCategory.value = value;
                           }
                         : null,
@@ -60,6 +75,10 @@ class ShoppingListItemFilterPage extends HookConsumerWidget {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
+                  analytics.logEvent(name: 'tap_apply_filter', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID
+                  });
                   Navigator.pop(context);
                   this.showChecked.value = showChecked.value;
                   this.sortByCategory.value = sortByCategory.value;

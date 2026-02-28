@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/button.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class EmptyTextShoppingListItems extends HookConsumerWidget {
   final String groupID;
@@ -30,6 +31,12 @@ class EmptyTextShoppingListItems extends HookConsumerWidget {
                 style: outlinedButtonStyle,
                 child: const Text('最初の買い物リストを作成しましょう！'),
                 onPressed: () {
+                  analytics.logEvent(
+                      name: 'tap_create_first_item',
+                      parameters: {
+                        'groupID': groupID,
+                        'shoppingListID': shoppingListID
+                      });
                   ref
                       .read(addTextShoppingListItemProvider(groupID: groupID))
                       .call(

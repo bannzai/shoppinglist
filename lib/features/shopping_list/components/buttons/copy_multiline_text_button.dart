@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class CopyMultilineTextButton extends HookConsumerWidget {
   final String groupID;
@@ -19,6 +20,9 @@ class CopyMultilineTextButton extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return OutlinedButton(
       onPressed: () async {
+        analytics.logEvent(
+            name: 'tap_paste_multiline',
+            parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
         final data = await Clipboard.getData(Clipboard.kTextPlain);
         final text = data?.text;
         if (text != null) {

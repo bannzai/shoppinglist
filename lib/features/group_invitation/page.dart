@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/utils/invitation_code_validator.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupInvitationAcceptPage extends HookConsumerWidget {
   const GroupInvitationAcceptPage({
@@ -86,6 +87,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                   onPressed: isAccepting.value || !isValidCode.value
                       ? null
                       : () async {
+                          analytics.logEvent(name: 'tap_join_group');
                           isAccepting.value = true;
                           errorMessage.value = null;
                           try {
@@ -125,6 +127,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                   onPressed: isAccepting.value
                       ? null
                       : () {
+                          analytics.logEvent(name: 'cancel_join_group');
                           Navigator.pop(context);
                         },
                   child: const Text(

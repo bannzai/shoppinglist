@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/style/color.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupSwitcher extends StatelessWidget {
   final List<Group> groups;
@@ -34,6 +35,10 @@ class GroupSwitcher extends StatelessWidget {
               selected: isSelected,
               onSelected: (selected) {
                 if (selected) {
+                  analytics.logEvent(name: 'tap_switch_group', parameters: {
+                    'fromGroupID': currentGroupID,
+                    'toGroupID': group.id
+                  });
                   onGroupChanged(group.id);
                 }
               },
