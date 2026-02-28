@@ -25,14 +25,14 @@ void main() {
       ];
 
       final items = [
-        const GroupShoppingListItem.text(
+        const GroupShoppingListItem(
           id: 'item1',
           groupID: 'group1',
           shoppingListID: 'list1',
           message: 'にんじん',
           order: 0,
         ),
-        const GroupShoppingListItem.text(
+        const GroupShoppingListItem(
           id: 'item2',
           groupID: 'group1',
           shoppingListID: 'list1',
@@ -71,7 +71,7 @@ void main() {
       ];
 
       final items = [
-        const GroupShoppingListItem.text(
+        const GroupShoppingListItem(
           id: 'item1',
           groupID: 'group1',
           shoppingListID: 'list1',
@@ -108,7 +108,7 @@ void main() {
       ];
 
       final items = [
-        const GroupShoppingListItem.text(
+        const GroupShoppingListItem(
           id: 'item1',
           groupID: 'group1',
           shoppingListID: 'list1',
@@ -158,7 +158,7 @@ void main() {
       ];
 
       final items = [
-        const GroupShoppingListItem.text(
+        const GroupShoppingListItem(
           id: 'item1',
           groupID: 'group1',
           shoppingListID: 'list1',
@@ -195,7 +195,7 @@ void main() {
       ];
 
       final items = [
-        const GroupShoppingListItem.text(
+        const GroupShoppingListItem(
           id: 'item1',
           groupID: 'group1',
           shoppingListID: 'list1',
@@ -215,14 +215,14 @@ void main() {
 
     test('カテゴリが空の場合は全て未分類', () {
       final items = [
-        const GroupShoppingListItem.text(
+        const GroupShoppingListItem(
           id: 'item1',
           groupID: 'group1',
           shoppingListID: 'list1',
           message: 'にんじん',
           order: 0,
         ),
-        const GroupShoppingListItem.text(
+        const GroupShoppingListItem(
           id: 'item2',
           groupID: 'group1',
           shoppingListID: 'list1',
