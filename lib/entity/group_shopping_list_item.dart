@@ -48,9 +48,11 @@ sealed class GroupShoppingListItem with _$GroupShoppingListItem {
           SnapshotOptions? options) =>
       GroupShoppingListItem.fromJson(snapshot.data()!..['id'] = snapshot.id);
 
+  // NOTE: freezedはコンストラクタが1つだけの場合、unionKey('type')をtoJsonに含めない。
+  // Firestoreクエリが .where('type', isEqualTo: 'text') でフィルタしているため、手動で追加する。
   static Map<String, dynamic> toFirestore(
           GroupShoppingListItem item, SetOptions? options) =>
-      item.toJson();
+      item.toJson()..['type'] = 'text';
 }
 
 extension GroupShoppingListItems on List<GroupShoppingListItem> {
