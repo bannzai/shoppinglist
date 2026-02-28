@@ -96,11 +96,11 @@ ShoppingListUpdate shoppingListUpdate(Ref ref, {required String groupID}) {
 
 class ShoppingListDuplicate {
   final ShoppingListAdd shoppingListAdd;
-  final AddTextShoppingListItem addTextShoppingListItem;
+  final AddShoppingListItem addShoppingListItem;
 
   ShoppingListDuplicate({
     required this.shoppingListAdd,
-    required this.addTextShoppingListItem,
+    required this.addShoppingListItem,
   });
 
   Future<GroupShoppingList> call({
@@ -117,7 +117,7 @@ class ShoppingListDuplicate {
     );
 
     for (final item in shoppingListItems) {
-      await addTextShoppingListItem(
+      await addShoppingListItem(
         shoppingListID: newShoppingList.id,
         message: item.message,
         order: item.order,
@@ -133,15 +133,15 @@ class ShoppingListDuplicate {
 
 @Riverpod(dependencies: [
   shoppingListAdd,
-  addTextShoppingListItem,
+  addShoppingListItem,
 ])
 ShoppingListDuplicate shoppingListDuplicate(Ref ref,
     {required String groupID}) {
   final shoppingListAdd = ref.watch(shoppingListAddProvider(groupID: groupID));
-  final addTextShoppingListItem =
-      ref.watch(addTextShoppingListItemProvider(groupID: groupID));
+  final addShoppingListItem =
+      ref.watch(addShoppingListItemProvider(groupID: groupID));
   return ShoppingListDuplicate(
     shoppingListAdd: shoppingListAdd,
-    addTextShoppingListItem: addTextShoppingListItem,
+    addShoppingListItem: addShoppingListItem,
   );
 }
