@@ -7,8 +7,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'shopping_list_item.g.dart';
 
 @Riverpod(dependencies: [groupDatabase])
-Stream<List<GroupShoppingListItem>> textShoppingListItems(
-    Ref ref,
+Stream<List<GroupShoppingListItem>> textShoppingListItems(Ref ref,
     {required String groupID,
     required String shoppingListID,
     required bool showChecked}) {
@@ -86,8 +85,7 @@ class ShoppingListItemBatchUpdate {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingListItemBatchUpdate shoppingListItemBatchUpdate(
-    Ref ref,
+ShoppingListItemBatchUpdate shoppingListItemBatchUpdate(Ref ref,
     {required String groupID}) {
   return ShoppingListItemBatchUpdate(
       database: ref.watch(groupDatabaseProvider(groupID: groupID)));

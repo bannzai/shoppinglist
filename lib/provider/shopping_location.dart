@@ -35,8 +35,7 @@ class ShoppingLocationAdd {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingLocationAdd shoppingLocationAdd(Ref ref,
-    {required String groupID}) {
+ShoppingLocationAdd shoppingLocationAdd(Ref ref, {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingLocationAdd(database: database);
 }

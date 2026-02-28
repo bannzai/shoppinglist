@@ -51,8 +51,7 @@ class ShoppingListAdd {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingListAdd shoppingListAdd(Ref ref,
-    {required String groupID}) {
+ShoppingListAdd shoppingListAdd(Ref ref, {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingListAdd(database: database);
 }
@@ -70,8 +69,7 @@ class ShoppingListDelete {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingListDelete shoppingListDelete(Ref ref,
-    {required String groupID}) {
+ShoppingListDelete shoppingListDelete(Ref ref, {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingListDelete(database: database);
 }
@@ -91,8 +89,7 @@ class ShoppingListUpdate {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingListUpdate shoppingListUpdate(Ref ref,
-    {required String groupID}) {
+ShoppingListUpdate shoppingListUpdate(Ref ref, {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingListUpdate(database: database);
 }

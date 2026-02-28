@@ -11,8 +11,7 @@ part 'group_shopping_list_item_category.g.dart';
 
 @Riverpod(dependencies: [groupDatabase])
 Stream<List<GroupShoppingListItemCategoryAxis>>
-    groupShoppingListItemCategoryAxes(Ref ref,
-        {required String groupID}) {
+    groupShoppingListItemCategoryAxes(Ref ref, {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return database
       .categoryAxesReference()
@@ -112,8 +111,7 @@ class GroupShoppingListItemCategoryAdd {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupShoppingListItemCategoryAdd groupShoppingListItemCategoryAdd(
-    Ref ref,
+GroupShoppingListItemCategoryAdd groupShoppingListItemCategoryAdd(Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupShoppingListItemCategoryAdd(database: database);
@@ -136,8 +134,7 @@ class GroupShoppingListItemCategoryUpdate {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupShoppingListItemCategoryUpdate groupShoppingListItemCategoryUpdate(
-    Ref ref,
+GroupShoppingListItemCategoryUpdate groupShoppingListItemCategoryUpdate(Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupShoppingListItemCategoryUpdate(database: database);
@@ -159,8 +156,7 @@ class GroupShoppingListItemCategoryDelete {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupShoppingListItemCategoryDelete groupShoppingListItemCategoryDelete(
-    Ref ref,
+GroupShoppingListItemCategoryDelete groupShoppingListItemCategoryDelete(Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupShoppingListItemCategoryDelete(database: database);
@@ -189,8 +185,7 @@ class GroupShoppingListItemCategoryBatchUpdate {
 
 @Riverpod(dependencies: [groupDatabase])
 GroupShoppingListItemCategoryBatchUpdate
-    groupShoppingListItemCategoryBatchUpdate(
-        Ref ref,
+    groupShoppingListItemCategoryBatchUpdate(Ref ref,
         {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupShoppingListItemCategoryBatchUpdate(database: database);
