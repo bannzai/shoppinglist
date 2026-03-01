@@ -21,9 +21,15 @@ class ShoppingListItems extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shoppingListItems =
-        ref.watch(textShoppingListItemsProvider(groupID: groupID, shoppingListID: shoppingListID, showChecked: true)).valueOrNull ?? [];
-    final axesAsync = ref.watch(groupShoppingListItemCategoryAxesProvider(groupID: groupID));
+    final shoppingListItems = ref
+            .watch(textShoppingListItemsProvider(
+                groupID: groupID,
+                shoppingListID: shoppingListID,
+                showChecked: true))
+            .valueOrNull ??
+        [];
+    final axesAsync =
+        ref.watch(groupShoppingListItemCategoryAxesProvider(groupID: groupID));
 
     return axesAsync.when(
       data: (axes) {
@@ -80,7 +86,11 @@ class _FlatShoppingListItems extends ConsumerWidget {
         changedItems.insert(newIndex, movedItem);
 
         // 更新したリストに基づき order を再計算
-        final orderedItems = changedItems.asMap().entries.map((entry) => entry.value.copyWith(order: entry.key)).toList();
+        final orderedItems = changedItems
+            .asMap()
+            .entries
+            .map((entry) => entry.value.copyWith(order: entry.key))
+            .toList();
 
         ref.read(shoppingListItemBatchUpdateProvider(groupID: groupID)).call(
               shoppingListID: shoppingListID,
@@ -119,7 +129,8 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesAsync = ref.watch(groupShoppingListItemCategoriesProvider(groupID: groupID, categoryAxisID: categoryAxisID));
+    final categoriesAsync = ref.watch(groupShoppingListItemCategoriesProvider(
+        groupID: groupID, categoryAxisID: categoryAxisID));
 
     return categoriesAsync.when(
       data: (categories) {
