@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
@@ -8,7 +7,7 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 
-class ShoppingListItems extends HookConsumerWidget {
+class ShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final bool sortByCategory;
@@ -105,7 +104,7 @@ class _FlatShoppingListItems extends ConsumerWidget {
 }
 
 /// カテゴリが存在する場合のグルーピング表示
-class _CategorizedShoppingListItems extends HookConsumerWidget {
+class _CategorizedShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
