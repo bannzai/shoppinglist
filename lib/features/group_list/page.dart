@@ -6,7 +6,7 @@ import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
-class GroupListPage extends HookConsumerWidget {
+class GroupListPage extends ConsumerWidget {
   const GroupListPage({super.key});
 
   @override

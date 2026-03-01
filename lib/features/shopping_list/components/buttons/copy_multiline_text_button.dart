@@ -5,7 +5,7 @@ import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
-class CopyMultilineTextButton extends HookConsumerWidget {
+class CopyMultilineTextButton extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;

@@ -14,7 +14,7 @@ import 'package:shoppinglist/features/shopping_location/page.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
-class GroupSettingPage extends HookConsumerWidget {
+class GroupSettingPage extends ConsumerWidget {
   final String groupID;
 
   const GroupSettingPage({

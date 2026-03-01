@@ -8,7 +8,7 @@ import 'package:shoppinglist/components/auth/google.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class AuthPage extends HookConsumerWidget {
+class AuthPage extends ConsumerWidget {
   const AuthPage({super.key});
 
   @override

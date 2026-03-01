@@ -23,7 +23,7 @@ class Retry extends InheritedWidget {
   }
 }
 
-class RetryPage extends HookConsumerWidget {
+class RetryPage extends ConsumerWidget {
   final Object exception;
   final StackTrace stackTrace;
 
