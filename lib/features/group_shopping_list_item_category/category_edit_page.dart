@@ -7,7 +7,7 @@ import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
-class GroupShoppingListItemCategoryEditPage extends HookConsumerWidget {
+class GroupShoppingListItemCategoryEditPage extends ConsumerWidget {
   final String groupID;
   final String categoryAxisID;
   final String categoryID;

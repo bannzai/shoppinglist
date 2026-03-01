@@ -7,7 +7,7 @@ import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
-class GroupShoppingListItemCategoryPage extends HookConsumerWidget {
+class GroupShoppingListItemCategoryPage extends ConsumerWidget {
   final String groupID;
 
   const GroupShoppingListItemCategoryPage({
@@ -161,7 +161,7 @@ class GroupShoppingListItemCategoryPage extends HookConsumerWidget {
   }
 }
 
-class _CategoryListBody extends HookConsumerWidget {
+class _CategoryListBody extends ConsumerWidget {
   final String groupID;
   final GroupShoppingListItemCategoryAxis axis;
   final List<GroupShoppingListItemCategoryAxis> axes;
@@ -287,7 +287,7 @@ class _CategoryListBody extends HookConsumerWidget {
   }
 }
 
-class _CategoryReorderableList extends HookConsumerWidget {
+class _CategoryReorderableList extends ConsumerWidget {
   final String groupID;
   final String categoryAxisID;
   final List<GroupShoppingListItemCategory> categories;

@@ -5,7 +5,7 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/button.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
-class EmptyTextShoppingListItems extends HookConsumerWidget {
+class EmptyTextShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
