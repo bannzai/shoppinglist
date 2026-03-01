@@ -76,7 +76,7 @@ class ShoppingListPage extends HookConsumerWidget {
                 if (shoppingLists.isEmpty) {
                   return const Loading();
                 }
-                return _Body(groupID: groupID, shoppingLists: shoppingLists);
+                return _Body(groupID: groupID);
               },
               error: (e, st) => RetryPage(exception: e, stackTrace: st),
               loading: () => const Loading(),
@@ -90,12 +90,13 @@ class ShoppingListPage extends HookConsumerWidget {
 
 class _Body extends HookConsumerWidget {
   final String groupID;
-  final List<GroupShoppingList> shoppingLists;
 
-  const _Body({required this.groupID, required this.shoppingLists});
+  const _Body({required this.groupID});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final shoppingLists =
+        ref.watch(shoppingListsProvider(groupID: groupID)).valueOrNull ?? [];
     final shoppingListID = useState(shoppingLists.first.id);
     final retry = Retry.of(context).retry;
     final showChecked = useState(true);
@@ -212,7 +213,6 @@ class _Body extends HookConsumerWidget {
                         child: ShoppingListItems(
                             groupID: groupID,
                             shoppingListID: shoppingListID.value,
-                            shoppingListItems: shoppingListItems,
                             sortByCategory: sortByCategory.value)),
                     const AdMobBanner(),
                     Padding(
