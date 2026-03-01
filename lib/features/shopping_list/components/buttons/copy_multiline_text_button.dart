@@ -28,12 +28,11 @@ class CopyMultilineTextButton extends HookConsumerWidget {
         if (text != null) {
           final lines = text.split('\n').toSet();
           for (final (index, line) in lines.indexed) {
-            if (shoppingListItems.any((item) =>
-                item is TextGroupShoppingListItem && item.message == line)) {
+            if (shoppingListItems.any((item) => item.message == line)) {
               continue;
             }
             await ref
-                .read(addTextShoppingListItemProvider(groupID: groupID))
+                .read(addShoppingListItemProvider(groupID: groupID))
                 .call(
                   shoppingListID: shoppingListID,
                   message: line,
