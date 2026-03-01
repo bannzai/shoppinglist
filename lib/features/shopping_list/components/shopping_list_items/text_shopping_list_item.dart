@@ -24,6 +24,8 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
     final textEditingController = useTextEditingController(text: textShoppingListItem.message);
     final isEditing = useState(false);
 
+    // 初回ビルド時にテキストが空ならフォーカスを当て、フォーカス状態を監視して編集モードを切り替える
+    // このeffectはマウント時に一度だけ実行したいため、依存配列は空にする
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (textShoppingListItem.message.isEmpty) {
