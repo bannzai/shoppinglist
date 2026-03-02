@@ -45,6 +45,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
             'groupID': groupID,
             'shoppingListID': shoppingListID
           });
+          FocusScope.of(context).unfocus();
           _showPicker(context);
         },
         child: Row(
@@ -62,6 +63,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 'groupID': groupID,
                 'shoppingListID': shoppingListID
               });
+              FocusScope.of(context).unfocus();
               appShowModalBottomSheet(
                 context: context,
                 builder: (context) {
@@ -85,6 +87,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
               analytics.logEvent(
                   name: 'tap_open_add_list_sheet',
                   parameters: {'groupID': groupID});
+              FocusScope.of(context).unfocus();
               showModalBottomSheet(
                 context: context,
                 builder: (context) {
@@ -107,6 +110,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
               'groupID': groupID,
               'shoppingListID': shoppingListID
             });
+            FocusScope.of(context).unfocus();
             appShowModalBottomSheet(
               context: context,
               builder: (context) {
