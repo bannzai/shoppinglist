@@ -36,6 +36,7 @@ class ShoppingListPage extends HookConsumerWidget {
     final userGroupsAsync = ref.watch(userGroupsProvider);
     final appUserAsync = ref.watch(appUserProvider);
     final appUser = appUserAsync.asData?.value;
+    final shoppingListID = useState<String?>(null);
 
     // 切り替え先のグループに買い物リストが0件の場合、デフォルトリストを自動作成
     useEffect(() {
@@ -58,6 +59,18 @@ class ShoppingListPage extends HookConsumerWidget {
       return null;
     }, [shoppingLists]);
 
+    // shoppingListIDの初期化・削除時のフォールバック
+    useEffect(() {
+      final lists = shoppingLists.asData?.value ?? [];
+      if (lists.isNotEmpty) {
+        if (shoppingListID.value == null ||
+            !lists.map((e) => e.id).contains(shoppingListID.value)) {
+          shoppingListID.value = lists.first.id;
+        }
+      }
+      return null;
+    }, [shoppingLists]);
+
     return Retry(
       retry: () => ref.invalidate(shoppingListsProvider(groupID: groupID)),
       child: Column(
@@ -73,10 +86,17 @@ class ShoppingListPage extends HookConsumerWidget {
           Expanded(
             child: shoppingLists.when(
               data: (shoppingLists) {
-                if (shoppingLists.isEmpty) {
+                if (shoppingLists.isEmpty || shoppingListID.value == null) {
                   return const Loading();
                 }
-                return _Body(groupID: groupID, shoppingLists: shoppingLists);
+                return _Body(
+                  key: ValueKey(shoppingListID.value),
+                  groupID: groupID,
+                  shoppingListID: shoppingListID.value!,
+                  onShoppingListIDChanged: (newID) {
+                    shoppingListID.value = newID;
+                  },
+                );
               },
               error: (e, st) => RetryPage(exception: e, stackTrace: st),
               loading: () => const Loading(),
@@ -90,48 +110,38 @@ class ShoppingListPage extends HookConsumerWidget {
 
 class _Body extends HookConsumerWidget {
   final String groupID;
-  final List<GroupShoppingList> shoppingLists;
+  final String shoppingListID;
+  final void Function(String newID) onShoppingListIDChanged;
 
-  const _Body({required this.groupID, required this.shoppingLists});
+  const _Body({
+    super.key,
+    required this.groupID,
+    required this.shoppingListID,
+    required this.onShoppingListIDChanged,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shoppingListID = useState(shoppingLists.first.id);
+    final shoppingLists =
+        ref.watch(shoppingListsProvider(groupID: groupID)).valueOrNull ?? [];
     final retry = Retry.of(context).retry;
     final showChecked = useState(true);
     final sortByCategory = useState(true);
     final shoppingListItemsAsync = ref.watch(textShoppingListItemsProvider(
       groupID: groupID,
-      shoppingListID: shoppingListID.value,
+      shoppingListID: shoppingListID,
       showChecked: showChecked.value,
     ));
     final shoppingList =
-        shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID.value);
+        shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID);
     final ttlExpiresDateTime = shoppingList?.ttlExpiresDateTime;
-
-    // 削除した時にshoppingListIDを入れ替える
-    useEffect(() {
-      if (!shoppingLists.map((e) => e.id).contains(shoppingListID.value)) {
-        final firstID = shoppingLists.firstOrNull?.id;
-        if (firstID != null) {
-          shoppingListID.value = firstID;
-        }
-      }
-      return null;
-    }, [shoppingLists.length]);
-
-    // shoppingListIDが変わったらshoppingListsProviderから更新してWidgetツリーを更新
-    useEffect(() {
-      ref.invalidate(shoppingListsProvider(groupID: groupID));
-      return null;
-    }, [shoppingListID.value]);
 
     return Retry(
       retry: () {
         retry();
         ref.invalidate(textShoppingListItemsProvider(
             groupID: groupID,
-            shoppingListID: shoppingListID.value,
+            shoppingListID: shoppingListID,
             showChecked: showChecked.value));
       },
       child: Scaffold(
@@ -143,16 +153,18 @@ class _Body extends HookConsumerWidget {
           showChecked: showChecked,
           sortByCategory: sortByCategory,
           shoppingListItems: shoppingListItemsAsync.asData?.value ?? [],
+          onShoppingListIDChanged: onShoppingListIDChanged,
         ),
         body: SafeArea(
           child: shoppingListItemsAsync.when(
             data: (shoppingListItems) {
               final isEmpty = shoppingListItems.isEmpty;
-              debugPrint('[ShoppingListPage] data: アイテム数=${shoppingListItems.length}, showChecked=${showChecked.value}, isEmpty=$isEmpty, 空表示=${showChecked.value && isEmpty}');
+              debugPrint(
+                  '[ShoppingListPage] data: アイテム数=${shoppingListItems.length}, showChecked=${showChecked.value}, isEmpty=$isEmpty, 空表示=${showChecked.value && isEmpty}');
               if (showChecked.value && isEmpty) {
                 return EmptyTextShoppingListItems(
                     groupID: groupID,
-                    shoppingListID: shoppingListID.value,
+                    shoppingListID: shoppingListID,
                     shoppingListItems: shoppingListItems);
               } else {
                 return Column(
@@ -179,11 +191,11 @@ class _Body extends HookConsumerWidget {
                               name: 'tap_navigate_source_list',
                               parameters: {
                                 'groupID': groupID,
-                                'shoppingListID': shoppingListID.value,
+                                'shoppingListID': shoppingListID,
                                 'sourceShoppingListID': sourceID
                               });
                           if (shoppingLists.any((sl) => sl.id == sourceID)) {
-                            shoppingListID.value = sourceID;
+                            onShoppingListIDChanged(sourceID);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -213,8 +225,7 @@ class _Body extends HookConsumerWidget {
                     Expanded(
                         child: ShoppingListItems(
                             groupID: groupID,
-                            shoppingListID: shoppingListID.value,
-                            shoppingListItems: shoppingListItems,
+                            shoppingListID: shoppingListID,
                             sortByCategory: sortByCategory.value)),
                     const AdMobBanner(),
                     Padding(
@@ -229,21 +240,21 @@ class _Body extends HookConsumerWidget {
                               Expanded(
                                 child: ShoppingListItemAddButton(
                                     groupID: groupID,
-                                    shoppingListID: shoppingListID.value,
+                                    shoppingListID: shoppingListID,
                                     shoppingListItems: shoppingListItems),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: ImagePickerButton(
                                     groupID: groupID,
-                                    shoppingListID: shoppingListID.value,
+                                    shoppingListID: shoppingListID,
                                     shoppingListItems: shoppingListItems),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: CopyMultilineTextButton(
                                     groupID: groupID,
-                                    shoppingListID: shoppingListID.value,
+                                    shoppingListID: shoppingListID,
                                     shoppingListItems: shoppingListItems),
                               ),
                             ],

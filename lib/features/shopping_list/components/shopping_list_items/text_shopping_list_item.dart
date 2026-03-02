@@ -29,6 +29,8 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         useTextEditingController(text: textShoppingListItem.message);
     final isEditing = useState(false);
 
+    // 初回ビルド時にテキストが空ならフォーカスを当て、フォーカス状態を監視して編集モードを切り替える
+    // このeffectはマウント時に一度だけ実行したいため、依存配列は空にする
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (textShoppingListItem.message.isEmpty) {
@@ -171,7 +173,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
   }
 }
 
-class TextShoppingListItemTextField extends HookConsumerWidget {
+class TextShoppingListItemTextField extends ConsumerWidget {
   final String groupID;
   final TextEditingController textEditingController;
   final FocusNode focusNode;
@@ -190,14 +192,13 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final addShoppingListItem =
         ref.watch(addShoppingListItemProvider(groupID: groupID));
-    final text = useState(textShoppingListItem.message);
 
     // ignore: deprecated_member_use KeyboardListenerだとSimulatorでMacのハードウェアキーボードにしか反応しない
     return RawKeyboardListener(
       focusNode: FocusNode(),
       onKey: (event) {
         if (event.logicalKey == LogicalKeyboardKey.backspace) {
-          if (text.value.isEmpty) {
+          if (textEditingController.text.isEmpty) {
             ref
                 .read(groupDatabaseProvider(groupID: groupID))
                 .shoppingListItemsReference(
@@ -220,9 +221,6 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
                   ? TextDecoration.lineThrough
                   : TextDecoration.none,
         ),
-        onChanged: (value) {
-          text.value = value;
-        },
         onSubmitted: (String v) async {
           analytics.logEvent(name: 'submit_item_text', parameters: {
             'groupID': groupID,

@@ -5,7 +5,7 @@ import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
-class ShoppingLocationPage extends HookConsumerWidget {
+class ShoppingLocationPage extends ConsumerWidget {
   final String groupID;
 
   const ShoppingLocationPage({

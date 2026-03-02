@@ -6,7 +6,7 @@ import 'package:shoppinglist/features/resolver/app_entntiy_prepare.dart';
 import 'package:shoppinglist/features/resolver/app_user_create.dart';
 import 'package:shoppinglist/features/resolver/force_update.dart';
 
-class RootPage extends HookConsumerWidget {
+class RootPage extends ConsumerWidget {
   const RootPage({super.key});
 
   @override

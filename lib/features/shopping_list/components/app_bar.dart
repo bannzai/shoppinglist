@@ -12,15 +12,15 @@ import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
-class ShoppingListAppBar extends HookConsumerWidget
-    implements PreferredSizeWidget {
+class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final String groupID;
-  final ValueNotifier<String> shoppingListID;
+  final String shoppingListID;
   final List<GroupShoppingList> shoppingLists;
   final GroupShoppingList? shoppingList;
   final ValueNotifier<bool> showChecked;
   final ValueNotifier<bool> sortByCategory;
   final List<GroupShoppingListItem> shoppingListItems;
+  final void Function(String newID) onShoppingListIDChanged;
   const ShoppingListAppBar({
     super.key,
     required this.groupID,
@@ -30,6 +30,7 @@ class ShoppingListAppBar extends HookConsumerWidget
     required this.showChecked,
     required this.sortByCategory,
     required this.shoppingListItems,
+    required this.onShoppingListIDChanged,
   });
 
   @override
@@ -38,26 +39,20 @@ class ShoppingListAppBar extends HookConsumerWidget
     final shoppingListDelete =
         ref.watch(shoppingListDeleteProvider(groupID: groupID));
     return AppBar(
-      title: HookBuilder(
-        builder: (context) {
-          final selectedID = useState<String>(shoppingListID.value);
-          return GestureDetector(
-            onTap: () {
-              analytics.logEvent(name: 'tap_open_list_picker', parameters: {
-                'groupID': groupID,
-                'shoppingListID': shoppingListID.value
-              });
-              selectedID.value = shoppingLists.first.id;
-              _showPicker(context, selectedID);
-            },
-            child: Row(
-              children: [
-                Text(shoppingList?.name ?? ''),
-                const Icon(Icons.arrow_drop_down),
-              ],
-            ),
-          );
+      title: GestureDetector(
+        onTap: () {
+          analytics.logEvent(name: 'tap_open_list_picker', parameters: {
+            'groupID': groupID,
+            'shoppingListID': shoppingListID
+          });
+          _showPicker(context);
         },
+        child: Row(
+          children: [
+            Text(shoppingList?.name ?? ''),
+            const Icon(Icons.arrow_drop_down),
+          ],
+        ),
       ),
       actions: [
         if (shoppingList != null) ...[
@@ -65,17 +60,17 @@ class ShoppingListAppBar extends HookConsumerWidget
             onPressed: () {
               analytics.logEvent(name: 'tap_open_list_setting', parameters: {
                 'groupID': groupID,
-                'shoppingListID': shoppingListID.value
+                'shoppingListID': shoppingListID
               });
               appShowModalBottomSheet(
                 context: context,
                 builder: (context) {
                   return ShoppingListSettingPage(
                     groupID: groupID,
-                    shoppingListID: shoppingListID.value,
+                    shoppingListID: shoppingListID,
                     shoppingList: shoppingList,
                     onDelete: () {
-                      shoppingListDelete(shoppingListID: shoppingListID.value);
+                      shoppingListDelete(shoppingListID: shoppingListID);
                       // pop alert
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     },
@@ -98,6 +93,7 @@ class ShoppingListAppBar extends HookConsumerWidget
                     shoppingList: shoppingList,
                     shoppingListID: shoppingListID,
                     shoppingListItems: shoppingListItems,
+                    onShoppingListIDChanged: onShoppingListIDChanged,
                   );
                 },
               );
@@ -109,14 +105,14 @@ class ShoppingListAppBar extends HookConsumerWidget
           onPressed: () {
             analytics.logEvent(name: 'tap_open_filter', parameters: {
               'groupID': groupID,
-              'shoppingListID': shoppingListID.value
+              'shoppingListID': shoppingListID
             });
             appShowModalBottomSheet(
               context: context,
               builder: (context) {
                 return ShoppingListItemFilterPage(
                   groupID: groupID,
-                  shoppingListID: shoppingListID.value,
+                  shoppingListID: shoppingListID,
                   showChecked: showChecked,
                   sortByCategory: sortByCategory,
                 );
@@ -129,48 +125,56 @@ class ShoppingListAppBar extends HookConsumerWidget
     );
   }
 
-  void _showPicker(BuildContext context, ValueNotifier<String> selectedID) {
+  void _showPicker(BuildContext context) {
+    var selectedID = shoppingLists.first.id;
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            PickerToolbar(
-              done: () {
-                analytics.logEvent(
-                    name: 'tap_confirm_list_picker',
-                    parameters: {
-                      'groupID': groupID,
-                      'selectedShoppingListID': selectedID.value
-                    });
-                Navigator.pop(context);
-                shoppingListID.value = selectedID.value;
-              },
-              cancel: () {
-                analytics.logEvent(
-                    name: 'cancel_list_picker',
-                    parameters: {'groupID': groupID});
-                Navigator.pop(context);
-              },
-            ),
-            SizedBox(
-              height: 200,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: CupertinoPicker(
-                  itemExtent: 40,
-                  children: shoppingLists.map((sl) => Text(sl.name)).toList(),
-                  onSelectedItemChanged: (int value) {
-                    selectedID.value = shoppingLists[value].id;
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PickerToolbar(
+                  done: () {
+                    analytics.logEvent(
+                        name: 'tap_confirm_list_picker',
+                        parameters: {
+                          'groupID': groupID,
+                          'selectedShoppingListID': selectedID
+                        });
+                    Navigator.pop(context);
+                    onShoppingListIDChanged(selectedID);
+                  },
+                  cancel: () {
+                    analytics.logEvent(
+                        name: 'cancel_list_picker',
+                        parameters: {'groupID': groupID});
+                    Navigator.pop(context);
                   },
                 ),
-              ),
-            ),
-          ],
+                SizedBox(
+                  height: 200,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: CupertinoPicker(
+                      itemExtent: 40,
+                      children:
+                          shoppingLists.map((sl) => Text(sl.name)).toList(),
+                      onSelectedItemChanged: (int value) {
+                        setState(() {
+                          selectedID = shoppingLists[value].id;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -183,14 +187,16 @@ class ShoppingListAppBar extends HookConsumerWidget
 class _AddShoppingListBottomSheet extends HookConsumerWidget {
   final String groupID;
   final GroupShoppingList shoppingList;
-  final ValueNotifier<String> shoppingListID;
+  final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
+  final void Function(String newID) onShoppingListIDChanged;
 
   const _AddShoppingListBottomSheet({
     required this.groupID,
     required this.shoppingList,
     required this.shoppingListID,
     required this.shoppingListItems,
+    required this.onShoppingListIDChanged,
   });
 
   @override
@@ -245,7 +251,7 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
               );
               // 同じグループの場合のみshoppingListIDを切り替える
               if (selectedGroupID.value == groupID) {
-                shoppingListID.value = newShoppingList.id;
+                onShoppingListIDChanged(newShoppingList.id);
               }
 
               if (context.mounted) {
@@ -272,7 +278,7 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
               );
               // 同じグループの場合のみshoppingListIDを切り替える
               if (selectedGroupID.value == groupID) {
-                shoppingListID.value = newShoppingList.id;
+                onShoppingListIDChanged(newShoppingList.id);
               }
 
               if (context.mounted) {

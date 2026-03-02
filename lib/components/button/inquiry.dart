@@ -59,7 +59,7 @@ Future<String> debugInfo(String separator) async {
   return contents.join(separator);
 }
 
-class InquiryButton extends HookConsumerWidget {
+class InquiryButton extends ConsumerWidget {
   const InquiryButton({super.key});
 
   @override

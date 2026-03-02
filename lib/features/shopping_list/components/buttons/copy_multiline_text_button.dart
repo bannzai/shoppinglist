@@ -5,7 +5,7 @@ import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
-class CopyMultilineTextButton extends HookConsumerWidget {
+class CopyMultilineTextButton extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
@@ -31,9 +31,7 @@ class CopyMultilineTextButton extends HookConsumerWidget {
             if (shoppingListItems.any((item) => item.message == line)) {
               continue;
             }
-            await ref
-                .read(addShoppingListItemProvider(groupID: groupID))
-                .call(
+            await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
                   shoppingListID: shoppingListID,
                   message: line,
                   order: shoppingListItems.nextOrder + index,

@@ -5,7 +5,7 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/button.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
-class EmptyTextShoppingListItems extends HookConsumerWidget {
+class EmptyTextShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
@@ -32,7 +32,8 @@ class EmptyTextShoppingListItems extends HookConsumerWidget {
                 child: const Text('最初の買い物リストを作成しましょう！'),
                 onPressed: () async {
                   final nextOrder = shoppingListItems.nextOrder;
-                  debugPrint('[EmptyTextShoppingListItems] ボタン押下: shoppingListID=$shoppingListID, groupID=$groupID, nextOrder=$nextOrder');
+                  debugPrint(
+                      '[EmptyTextShoppingListItems] ボタン押下: shoppingListID=$shoppingListID, groupID=$groupID, nextOrder=$nextOrder');
                   analytics.logEvent(
                       name: 'tap_create_first_item',
                       parameters: {
@@ -50,9 +51,11 @@ class EmptyTextShoppingListItems extends HookConsumerWidget {
                           description: null,
                           color: null,
                         );
-                    debugPrint('[EmptyTextShoppingListItems] call() 成功: docID=${result.id}');
+                    debugPrint(
+                        '[EmptyTextShoppingListItems] call() 成功: docID=${result.id}');
                   } catch (e, st) {
-                    debugPrint('[EmptyTextShoppingListItems] call() 失敗: $e\n$st');
+                    debugPrint(
+                        '[EmptyTextShoppingListItems] call() 失敗: $e\n$st');
                   }
                 },
               ),

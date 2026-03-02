@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
@@ -8,22 +7,27 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 
-class ShoppingListItems extends HookConsumerWidget {
+class ShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
-  final List<GroupShoppingListItem> shoppingListItems;
   final bool sortByCategory;
 
   const ShoppingListItems({
     super.key,
     required this.groupID,
     required this.shoppingListID,
-    required this.shoppingListItems,
     required this.sortByCategory,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final shoppingListItems = ref
+            .watch(textShoppingListItemsProvider(
+                groupID: groupID,
+                shoppingListID: shoppingListID,
+                showChecked: true))
+            .valueOrNull ??
+        [];
     final axesAsync =
         ref.watch(groupShoppingListItemCategoryAxesProvider(groupID: groupID));
 
@@ -56,7 +60,7 @@ class ShoppingListItems extends HookConsumerWidget {
 }
 
 /// カテゴリが存在しない場合のフラット表示（従来の表示）
-class _FlatShoppingListItems extends HookConsumerWidget {
+class _FlatShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
@@ -69,10 +73,6 @@ class _FlatShoppingListItems extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shoppingListItemBatchUpdate =
-        ref.watch(shoppingListItemBatchUpdateProvider(groupID: groupID));
-    final items = useState(shoppingListItems);
-
     return ReorderableList(
       onReorder: (oldIndex, newIndex) {
         // NOTE: ドラッグ時にリストから要素を一時的に削除するため、newIndex が1つずれるのを調整。
@@ -81,7 +81,7 @@ class _FlatShoppingListItems extends HookConsumerWidget {
         }
         debugPrint('oldIndex: $oldIndex, newIndex: $newIndex');
 
-        final changedItems = [...items.value];
+        final changedItems = [...shoppingListItems];
         final movedItem = changedItems.removeAt(oldIndex);
         changedItems.insert(newIndex, movedItem);
 
@@ -92,22 +92,20 @@ class _FlatShoppingListItems extends HookConsumerWidget {
             .map((entry) => entry.value.copyWith(order: entry.key))
             .toList();
 
-        items.value = [...orderedItems];
-
-        shoppingListItemBatchUpdate.call(
-          shoppingListID: shoppingListID,
-          shoppingListItems: orderedItems,
-        );
+        ref.read(shoppingListItemBatchUpdateProvider(groupID: groupID)).call(
+              shoppingListID: shoppingListID,
+              shoppingListItems: orderedItems,
+            );
       },
-      itemCount: items.value.length,
+      itemCount: shoppingListItems.length,
       itemBuilder: (context, index) {
-        final item = items.value[index];
+        final item = shoppingListItems[index];
 
         return TextShoppingListItemWidget(
-            key: ValueKey(item.id),
-            groupID: groupID,
-            textShoppingListItem: item,
-            shoppingListItems: items.value,
+          key: ValueKey(item.id),
+          groupID: groupID,
+          textShoppingListItem: item,
+          shoppingListItems: shoppingListItems,
         );
       },
     );
@@ -115,7 +113,7 @@ class _FlatShoppingListItems extends HookConsumerWidget {
 }
 
 /// カテゴリが存在する場合のグルーピング表示
-class _CategorizedShoppingListItems extends HookConsumerWidget {
+class _CategorizedShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
@@ -199,10 +197,10 @@ class _GroupedListView extends StatelessWidget {
 
       for (final item in items) {
         children.add(TextShoppingListItemWidget(
-            key: ValueKey(item.id),
-            groupID: groupID,
-            textShoppingListItem: item,
-            shoppingListItems: items,
+          key: ValueKey(item.id),
+          groupID: groupID,
+          textShoppingListItem: item,
+          shoppingListItems: items,
         ));
       }
     }
@@ -214,10 +212,10 @@ class _GroupedListView extends StatelessWidget {
 
       for (final item in uncategorizedItems) {
         children.add(TextShoppingListItemWidget(
-            key: ValueKey(item.id),
-            groupID: groupID,
-            textShoppingListItem: item,
-            shoppingListItems: uncategorizedItems,
+          key: ValueKey(item.id),
+          groupID: groupID,
+          textShoppingListItem: item,
+          shoppingListItems: uncategorizedItems,
         ));
       }
     }
