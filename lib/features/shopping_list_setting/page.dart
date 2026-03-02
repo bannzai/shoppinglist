@@ -294,12 +294,14 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                   ),
                 ),
               ),
-              Column(
-                children: [
-                  SizedBox(
-                    height: 48,
-                    width: double.infinity,
-                    child: OutlinedButton(
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 48,
+                      width: double.infinity,
+                      child: OutlinedButton(
                       onPressed: () {
                         analytics.logEvent(
                           name: 'tap_save_list_setting',
@@ -390,8 +392,9 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                         ],
                       ),
                     ),
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
