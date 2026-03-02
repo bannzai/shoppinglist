@@ -12,8 +12,7 @@ import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
-class ShoppingListAppBar extends ConsumerWidget
-    implements PreferredSizeWidget {
+class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupShoppingList> shoppingLists;

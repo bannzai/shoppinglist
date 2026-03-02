@@ -16,12 +16,17 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
   final GroupShoppingListItem textShoppingListItem;
   final List<GroupShoppingListItem> shoppingListItems;
 
-  const TextShoppingListItemWidget({super.key, required this.groupID, required this.textShoppingListItem, required this.shoppingListItems});
+  const TextShoppingListItemWidget(
+      {super.key,
+      required this.groupID,
+      required this.textShoppingListItem,
+      required this.shoppingListItems});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final focusNode = useFocusNode();
-    final textEditingController = useTextEditingController(text: textShoppingListItem.message);
+    final textEditingController =
+        useTextEditingController(text: textShoppingListItem.message);
     final isEditing = useState(false);
 
     // 初回ビルド時にテキストが空ならフォーカスを当て、フォーカス状態を監視して編集モードを切り替える
@@ -38,9 +43,11 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       return null;
     }, []);
 
-    final hasDescription = textShoppingListItem.description != null && textShoppingListItem.description!.isNotEmpty;
-    final backgroundColor =
-        textShoppingListItem.color != null ? colorFromHex(textShoppingListItem.color!).withValues(alpha: 0.1) : Colors.transparent;
+    final hasDescription = textShoppingListItem.description != null &&
+        textShoppingListItem.description!.isNotEmpty;
+    final backgroundColor = textShoppingListItem.color != null
+        ? colorFromHex(textShoppingListItem.color!).withValues(alpha: 0.1)
+        : Colors.transparent;
 
     // NOTE: ReorderableListViewのDrag移動中に `No Material widget found` というエラーが出るので、Materialでラップする
     return Material(
@@ -54,11 +61,15 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
             Transform.scale(
               scale: 1.5,
               child: Checkbox(
-                value: textShoppingListItem.status == GroupShoppingListItemStatus.checked,
+                value: textShoppingListItem.status ==
+                    GroupShoppingListItemStatus.checked,
                 onChanged: (value) {
-                  analytics.logEvent(
-                      name: 'tap_toggle_item_checkbox',
-                      parameters: {'groupID': groupID, 'shoppingListID': textShoppingListItem.shoppingListID, 'itemID': textShoppingListItem.id});
+                  analytics
+                      .logEvent(name: 'tap_toggle_item_checkbox', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': textShoppingListItem.shoppingListID,
+                    'itemID': textShoppingListItem.id
+                  });
                   ref
                       .read(groupDatabaseProvider(groupID: groupID))
                       .shoppingListItemsReference(
@@ -67,7 +78,8 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                       .doc(textShoppingListItem.id)
                       .set(
                         textShoppingListItem.copyWith(
-                          status: textShoppingListItem.status == GroupShoppingListItemStatus.checked
+                          status: textShoppingListItem.status ==
+                                  GroupShoppingListItemStatus.checked
                               ? GroupShoppingListItemStatus.unchecked
                               : GroupShoppingListItemStatus.checked,
                         ),
@@ -113,7 +125,12 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                   ),
                   IconButton(
                     onPressed: () {
-                      analytics.logEvent(name: 'tap_open_item_detail', parameters: {'groupID': groupID, 'itemID': textShoppingListItem.id});
+                      analytics.logEvent(
+                          name: 'tap_open_item_detail',
+                          parameters: {
+                            'groupID': groupID,
+                            'itemID': textShoppingListItem.id
+                          });
                       appShowModalBottomSheet(
                         context: context,
                         builder: (context) {
@@ -128,7 +145,10 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                   ),
                   IconButton(
                     onPressed: () {
-                      analytics.logEvent(name: 'tap_delete_item', parameters: {'groupID': groupID, 'itemID': textShoppingListItem.id});
+                      analytics.logEvent(name: 'tap_delete_item', parameters: {
+                        'groupID': groupID,
+                        'itemID': textShoppingListItem.id
+                      });
                       ref
                           .read(groupDatabaseProvider(groupID: groupID))
                           .shoppingListItemsReference(
@@ -170,7 +190,8 @@ class TextShoppingListItemTextField extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final addShoppingListItem = ref.watch(addShoppingListItemProvider(groupID: groupID));
+    final addShoppingListItem =
+        ref.watch(addShoppingListItemProvider(groupID: groupID));
 
     // ignore: deprecated_member_use KeyboardListenerだとSimulatorでMacのハードウェアキーボードにしか反応しない
     return RawKeyboardListener(
@@ -180,7 +201,8 @@ class TextShoppingListItemTextField extends ConsumerWidget {
           if (textEditingController.text.isEmpty) {
             ref
                 .read(groupDatabaseProvider(groupID: groupID))
-                .shoppingListItemsReference(shoppingListID: textShoppingListItem.shoppingListID)
+                .shoppingListItemsReference(
+                    shoppingListID: textShoppingListItem.shoppingListID)
                 .doc(textShoppingListItem.id)
                 .delete();
           }
@@ -194,10 +216,16 @@ class TextShoppingListItemTextField extends ConsumerWidget {
         textInputAction: TextInputAction.next,
         style: TextStyle(
           color: TextColor.black,
-          decoration: textShoppingListItem.status == GroupShoppingListItemStatus.checked ? TextDecoration.lineThrough : TextDecoration.none,
+          decoration:
+              textShoppingListItem.status == GroupShoppingListItemStatus.checked
+                  ? TextDecoration.lineThrough
+                  : TextDecoration.none,
         ),
         onSubmitted: (String v) async {
-          analytics.logEvent(name: 'submit_item_text', parameters: {'groupID': groupID, 'itemID': textShoppingListItem.id});
+          analytics.logEvent(name: 'submit_item_text', parameters: {
+            'groupID': groupID,
+            'itemID': textShoppingListItem.id
+          });
           final value = v.trim();
           final itemID = textShoppingListItem.id;
           if (value.isEmpty) {

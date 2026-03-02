@@ -9,15 +9,23 @@ part 'shopping_list_item.g.dart';
 
 @Riverpod(dependencies: [groupDatabase])
 Stream<List<GroupShoppingListItem>> textShoppingListItems(Ref ref,
-    {required String groupID, required String shoppingListID, required bool showChecked}) {
+    {required String groupID,
+    required String shoppingListID,
+    required bool showChecked}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
-  Query<GroupShoppingListItem> query = database.shoppingListItemsReference(shoppingListID: shoppingListID);
+  Query<GroupShoppingListItem> query =
+      database.shoppingListItemsReference(shoppingListID: shoppingListID);
   if (!showChecked) {
-    query = query.where(GroupShoppingListItemFirestoreKeys.status, isEqualTo: GroupShoppingListItemStatus.unchecked.name);
+    query = query.where(GroupShoppingListItemFirestoreKeys.status,
+        isEqualTo: GroupShoppingListItemStatus.unchecked.name);
   }
-  return query.orderBy(GroupShoppingListItemFirestoreKeys.order, descending: false).snapshots().map((event) {
+  return query
+      .orderBy(GroupShoppingListItemFirestoreKeys.order, descending: false)
+      .snapshots()
+      .map((event) {
     final items = event.docs.map((doc) => doc.data()).toList();
-    debugPrint('[textShoppingListItems] Stream データ取得: アイテム数=${items.length}, showChecked=$showChecked, shoppingListID=$shoppingListID');
+    debugPrint(
+        '[textShoppingListItems] Stream データ取得: アイテム数=${items.length}, showChecked=$showChecked, shoppingListID=$shoppingListID');
     return items;
   });
 }
@@ -35,8 +43,11 @@ class AddShoppingListItem {
     required String? description,
     required String? color,
   }) async {
-    debugPrint('[AddShoppingListItem] 書き込み前: shoppingListID=$shoppingListID, order=$order, groupID=${database.groupID}');
-    final docRef = database.shoppingListItemsReference(shoppingListID: shoppingListID).doc();
+    debugPrint(
+        '[AddShoppingListItem] 書き込み前: shoppingListID=$shoppingListID, order=$order, groupID=${database.groupID}');
+    final docRef = database
+        .shoppingListItemsReference(shoppingListID: shoppingListID)
+        .doc();
     final item = GroupShoppingListItem(
         id: docRef.id,
         groupID: database.groupID,
@@ -54,7 +65,8 @@ class AddShoppingListItem {
 
 @Riverpod(dependencies: [groupDatabase])
 AddShoppingListItem addShoppingListItem(Ref ref, {required String groupID}) {
-  return AddShoppingListItem(database: ref.watch(groupDatabaseProvider(groupID: groupID)));
+  return AddShoppingListItem(
+      database: ref.watch(groupDatabaseProvider(groupID: groupID)));
 }
 
 class ShoppingListItemBatchUpdate {
@@ -69,7 +81,9 @@ class ShoppingListItemBatchUpdate {
     final batch = FirebaseFirestore.instance.batch();
 
     for (final item in shoppingListItems) {
-      final docRef = database.shoppingListItemsReference(shoppingListID: shoppingListID).doc(item.id);
+      final docRef = database
+          .shoppingListItemsReference(shoppingListID: shoppingListID)
+          .doc(item.id);
       batch.set(docRef, item, SetOptions(merge: true));
     }
 
@@ -78,6 +92,8 @@ class ShoppingListItemBatchUpdate {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingListItemBatchUpdate shoppingListItemBatchUpdate(Ref ref, {required String groupID}) {
-  return ShoppingListItemBatchUpdate(database: ref.watch(groupDatabaseProvider(groupID: groupID)));
+ShoppingListItemBatchUpdate shoppingListItemBatchUpdate(Ref ref,
+    {required String groupID}) {
+  return ShoppingListItemBatchUpdate(
+      database: ref.watch(groupDatabaseProvider(groupID: groupID)));
 }

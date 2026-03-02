@@ -102,10 +102,10 @@ class _FlatShoppingListItems extends ConsumerWidget {
         final item = shoppingListItems[index];
 
         return TextShoppingListItemWidget(
-            key: ValueKey(item.id),
-            groupID: groupID,
-            textShoppingListItem: item,
-            shoppingListItems: shoppingListItems,
+          key: ValueKey(item.id),
+          groupID: groupID,
+          textShoppingListItem: item,
+          shoppingListItems: shoppingListItems,
         );
       },
     );
@@ -197,10 +197,10 @@ class _GroupedListView extends StatelessWidget {
 
       for (final item in items) {
         children.add(TextShoppingListItemWidget(
-            key: ValueKey(item.id),
-            groupID: groupID,
-            textShoppingListItem: item,
-            shoppingListItems: items,
+          key: ValueKey(item.id),
+          groupID: groupID,
+          textShoppingListItem: item,
+          shoppingListItems: items,
         ));
       }
     }
@@ -212,10 +212,10 @@ class _GroupedListView extends StatelessWidget {
 
       for (final item in uncategorizedItems) {
         children.add(TextShoppingListItemWidget(
-            key: ValueKey(item.id),
-            groupID: groupID,
-            textShoppingListItem: item,
-            shoppingListItems: uncategorizedItems,
+          key: ValueKey(item.id),
+          groupID: groupID,
+          textShoppingListItem: item,
+          shoppingListItems: uncategorizedItems,
         ));
       }
     }

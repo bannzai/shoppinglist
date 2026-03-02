@@ -31,9 +31,7 @@ class CopyMultilineTextButton extends ConsumerWidget {
             if (shoppingListItems.any((item) => item.message == line)) {
               continue;
             }
-            await ref
-                .read(addShoppingListItemProvider(groupID: groupID))
-                .call(
+            await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
                   shoppingListID: shoppingListID,
                   message: line,
                   order: shoppingListItems.nextOrder + index,
