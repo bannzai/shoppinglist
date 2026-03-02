@@ -158,7 +158,9 @@ class _Body extends HookConsumerWidget {
         body: SafeArea(
           child: shoppingListItemsAsync.when(
             data: (shoppingListItems) {
-              if (showChecked.value && shoppingListItems.isEmpty) {
+              final isEmpty = shoppingListItems.isEmpty;
+              debugPrint('[ShoppingListPage] data: アイテム数=${shoppingListItems.length}, showChecked=${showChecked.value}, isEmpty=$isEmpty, 空表示=${showChecked.value && isEmpty}');
+              if (showChecked.value && isEmpty) {
                 return EmptyTextShoppingListItems(
                     groupID: groupID,
                     shoppingListID: shoppingListID,

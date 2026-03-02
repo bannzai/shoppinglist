@@ -18,7 +18,7 @@ void main() {
   });
 
   test('ShoppingListItem entity smoke test', () {
-    final item = GroupShoppingListItem.text(
+    final item = GroupShoppingListItem(
       id: 'item-id',
       groupID: 'group-id',
       shoppingListID: 'shopping-list-id',
@@ -31,13 +31,13 @@ void main() {
 
   test('ShoppingListItems nextOrder', () {
     final items = <GroupShoppingListItem>[
-      GroupShoppingListItem.text(
+      GroupShoppingListItem(
           id: '1',
           groupID: 'group-id',
           shoppingListID: 'shopping-list-id',
           message: 'Item 1',
           order: 0),
-      GroupShoppingListItem.text(
+      GroupShoppingListItem(
           id: '2',
           groupID: 'group-id',
           shoppingListID: 'shopping-list-id',

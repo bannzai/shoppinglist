@@ -6,9 +6,9 @@ part of 'group_shopping_list_item.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-TextGroupShoppingListItem _$TextGroupShoppingListItemFromJson(
+_GroupShoppingListItem _$GroupShoppingListItemFromJson(
         Map<String, dynamic> json) =>
-    TextGroupShoppingListItem(
+    _GroupShoppingListItem(
       id: json['id'] as String,
       groupID: json['groupID'] as String,
       shoppingListID: json['shoppingListID'] as String,
@@ -33,8 +33,8 @@ TextGroupShoppingListItem _$TextGroupShoppingListItemFromJson(
           .fromJson(json['serverUpdatedDateTime']),
     );
 
-Map<String, dynamic> _$TextGroupShoppingListItemToJson(
-        TextGroupShoppingListItem instance) =>
+Map<String, dynamic> _$GroupShoppingListItemToJson(
+        _GroupShoppingListItem instance) =>
     <String, dynamic>{
       'id': instance.id,
       'groupID': instance.groupID,

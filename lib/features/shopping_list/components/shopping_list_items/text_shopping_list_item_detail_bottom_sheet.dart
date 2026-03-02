@@ -27,7 +27,7 @@ const _presetColors = [
 
 class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
   final String groupID;
-  final TextGroupShoppingListItem textShoppingListItem;
+  final GroupShoppingListItem textShoppingListItem;
 
   const TextShoppingListItemDetailBottomSheet({
     super.key,

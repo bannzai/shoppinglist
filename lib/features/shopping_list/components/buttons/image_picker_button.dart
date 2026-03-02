@@ -122,13 +122,12 @@ class ImagePickerButton extends ConsumerWidget {
     final distincted = rawItems.toSet().toList();
 
     for (var (i, e) in distincted.indexed) {
-      if (shoppingListItems.any(
-          (item) => item is TextGroupShoppingListItem && item.message == e)) {
+      if (shoppingListItems.any((item) => item.message == e)) {
         continue;
       }
 
       try {
-        await ref.read(addTextShoppingListItemProvider(groupID: groupID)).call(
+        await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
               shoppingListID: shoppingListID,
               message: e,
               order: shoppingListItems.nextOrder + i,

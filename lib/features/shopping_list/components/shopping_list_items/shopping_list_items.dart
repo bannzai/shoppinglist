@@ -101,13 +101,12 @@ class _FlatShoppingListItems extends ConsumerWidget {
       itemBuilder: (context, index) {
         final item = shoppingListItems[index];
 
-        return item.map(
-            text: (textItem) => TextShoppingListItemWidget(
-                  key: ValueKey(textItem.id),
-                  groupID: groupID,
-                  textShoppingListItem: textItem,
-                  shoppingListItems: shoppingListItems,
-                ));
+        return TextShoppingListItemWidget(
+            key: ValueKey(item.id),
+            groupID: groupID,
+            textShoppingListItem: item,
+            shoppingListItems: shoppingListItems,
+        );
       },
     );
   }
@@ -197,13 +196,11 @@ class _GroupedListView extends StatelessWidget {
       ));
 
       for (final item in items) {
-        children.add(item.map(
-          text: (textItem) => TextShoppingListItemWidget(
-            key: ValueKey(textItem.id),
+        children.add(TextShoppingListItemWidget(
+            key: ValueKey(item.id),
             groupID: groupID,
-            textShoppingListItem: textItem,
+            textShoppingListItem: item,
             shoppingListItems: items,
-          ),
         ));
       }
     }
@@ -214,13 +211,11 @@ class _GroupedListView extends StatelessWidget {
       children.add(const _CategoryHeader(categoryName: '未分類'));
 
       for (final item in uncategorizedItems) {
-        children.add(item.map(
-          text: (textItem) => TextShoppingListItemWidget(
-            key: ValueKey(textItem.id),
+        children.add(TextShoppingListItemWidget(
+            key: ValueKey(item.id),
             groupID: groupID,
-            textShoppingListItem: textItem,
+            textShoppingListItem: item,
             shoppingListItems: uncategorizedItems,
-          ),
         ));
       }
     }

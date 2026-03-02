@@ -13,7 +13,7 @@ import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
 class TextShoppingListItemWidget extends HookConsumerWidget {
   final String groupID;
-  final TextGroupShoppingListItem textShoppingListItem;
+  final GroupShoppingListItem textShoppingListItem;
   final List<GroupShoppingListItem> shoppingListItems;
 
   const TextShoppingListItemWidget({super.key, required this.groupID, required this.textShoppingListItem, required this.shoppingListItems});
@@ -157,7 +157,7 @@ class TextShoppingListItemTextField extends ConsumerWidget {
   final String groupID;
   final TextEditingController textEditingController;
   final FocusNode focusNode;
-  final TextGroupShoppingListItem textShoppingListItem;
+  final GroupShoppingListItem textShoppingListItem;
   final List<GroupShoppingListItem> shoppingListItems;
   const TextShoppingListItemTextField({
     super.key,
@@ -170,7 +170,7 @@ class TextShoppingListItemTextField extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final addTextShoppingListItem = ref.watch(addTextShoppingListItemProvider(groupID: groupID));
+    final addShoppingListItem = ref.watch(addShoppingListItemProvider(groupID: groupID));
 
     // ignore: deprecated_member_use KeyboardListenerだとSimulatorでMacのハードウェアキーボードにしか反応しない
     return RawKeyboardListener(
@@ -230,7 +230,7 @@ class TextShoppingListItemTextField extends ConsumerWidget {
                   SetOptions(merge: true),
                 );
 
-            addTextShoppingListItem.call(
+            addShoppingListItem.call(
               shoppingListID: textShoppingListItem.shoppingListID,
               message: '',
               order: shoppingListItems.nextOrder,
