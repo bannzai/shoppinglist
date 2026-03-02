@@ -105,6 +105,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                             focusNode: focusNode,
                             textShoppingListItem: textShoppingListItem,
                             shoppingListItems: shoppingListItems,
+                            isEditing: isEditing.value,
                           ),
                         ),
                         if (hasDescription)
@@ -163,6 +164,7 @@ class TextShoppingListItemTextField extends ConsumerWidget {
   final FocusNode focusNode;
   final GroupShoppingListItem textShoppingListItem;
   final List<GroupShoppingListItem> shoppingListItems;
+  final bool isEditing;
   const TextShoppingListItemTextField({
     super.key,
     required this.groupID,
@@ -170,6 +172,7 @@ class TextShoppingListItemTextField extends ConsumerWidget {
     required this.focusNode,
     required this.textShoppingListItem,
     required this.shoppingListItems,
+    required this.isEditing,
   });
 
   @override
@@ -198,6 +201,9 @@ class TextShoppingListItemTextField extends ConsumerWidget {
         minLines: 1,
         maxLines: 7,
         textInputAction: TextInputAction.next,
+        decoration: isEditing
+            ? const InputDecoration()
+            : const InputDecoration(border: InputBorder.none),
         style: TextStyle(
           color: TextColor.black,
           decoration:
