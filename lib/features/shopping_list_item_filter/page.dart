@@ -39,13 +39,11 @@ class ShoppingListItemFilterPage extends ConsumerWidget {
             title: const Text('チェック済みを表示する'),
             value: showChecked.value,
             onChanged: (value) {
-              analytics.logEvent(
-                  name: 'toggle_show_checked',
-                  parameters: {
-                    'groupID': groupID,
-                    'shoppingListID': shoppingListID,
-                    'value': value.toString()
-                  });
+              analytics.logEvent(name: 'toggle_show_checked', parameters: {
+                'groupID': groupID,
+                'shoppingListID': shoppingListID,
+                'value': value.toString()
+              });
               showChecked.value = value;
             },
           ),

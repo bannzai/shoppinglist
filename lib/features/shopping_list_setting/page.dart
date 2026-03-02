@@ -83,7 +83,8 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                       'shoppingListID': shoppingListID,
                                     },
                                   );
-                                  autoSave(shoppingList.value.copyWith(name: value));
+                                  autoSave(
+                                      shoppingList.value.copyWith(name: value));
                                 },
                               ),
                             ),
@@ -308,71 +309,71 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                 child: Column(
                   children: [
                     SizedBox(
-                    height: 48,
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: elevatedButtonStyle.merge(
-                        const ButtonStyle(
-                            backgroundColor:
-                                WidgetStatePropertyAll(Colors.red)),
-                      ),
-                      onPressed: () {
-                        analytics.logEvent(
-                          name: 'tap_delete_list',
-                          parameters: {
-                            'groupID': groupID,
-                            'shoppingListID': shoppingListID,
-                          },
-                        );
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('買い物リストを削除しますか？'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  analytics.logEvent(
-                                    name: 'tap_confirm_delete_list',
-                                    parameters: {
-                                      'groupID': groupID,
-                                      'shoppingListID': shoppingListID,
-                                    },
-                                  );
-                                  onDelete();
-                                },
-                                child: const Text(
-                                  '削除',
-                                  style: TextStyle(
-                                    color: TextColor.danger,
+                      height: 48,
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: elevatedButtonStyle.merge(
+                          const ButtonStyle(
+                              backgroundColor:
+                                  WidgetStatePropertyAll(Colors.red)),
+                        ),
+                        onPressed: () {
+                          analytics.logEvent(
+                            name: 'tap_delete_list',
+                            parameters: {
+                              'groupID': groupID,
+                              'shoppingListID': shoppingListID,
+                            },
+                          );
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('買い物リストを削除しますか？'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    analytics.logEvent(
+                                      name: 'tap_confirm_delete_list',
+                                      parameters: {
+                                        'groupID': groupID,
+                                        'shoppingListID': shoppingListID,
+                                      },
+                                    );
+                                    onDelete();
+                                  },
+                                  child: const Text(
+                                    '削除',
+                                    style: TextStyle(
+                                      color: TextColor.danger,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  analytics.logEvent(
-                                    name: 'cancel_delete_list',
-                                    parameters: {
-                                      'groupID': groupID,
-                                      'shoppingListID': shoppingListID,
-                                    },
-                                  );
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('キャンセル'),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.delete),
-                          SizedBox(width: 8),
-                          Text('買い物リストを削除'),
-                        ],
+                                TextButton(
+                                  onPressed: () {
+                                    analytics.logEvent(
+                                      name: 'cancel_delete_list',
+                                      parameters: {
+                                        'groupID': groupID,
+                                        'shoppingListID': shoppingListID,
+                                      },
+                                    );
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('キャンセル'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.delete),
+                            SizedBox(width: 8),
+                            Text('買い物リストを削除'),
+                          ],
+                        ),
                       ),
-                    ),
                     ),
                   ],
                 ),

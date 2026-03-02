@@ -88,7 +88,8 @@ class ShoppingListPage extends HookConsumerWidget {
           Expanded(
             child: shoppingLists.when(
               data: (shoppingLists) {
-                if (shoppingLists.isEmpty || currentShoppingListID.value == null) {
+                if (shoppingLists.isEmpty ||
+                    currentShoppingListID.value == null) {
                   return const Loading();
                 }
                 return _Body(
