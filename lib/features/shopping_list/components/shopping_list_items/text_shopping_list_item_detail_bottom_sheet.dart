@@ -184,6 +184,57 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                 child: const Text('保存'),
               ),
             ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.red,
+                  side: const BorderSide(color: Colors.red),
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (dialogContext) => AlertDialog(
+                      title: const Text('このアイテムを削除しますか？'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            analytics.logEvent(
+                                name: 'tap_confirm_delete_item',
+                                parameters: {
+                                  'groupID': groupID,
+                                  'itemID': textShoppingListItem.id
+                                });
+                            ref
+                                .read(groupDatabaseProvider(groupID: groupID))
+                                .shoppingListItemsReference(
+                                  shoppingListID:
+                                      textShoppingListItem.shoppingListID,
+                                )
+                                .doc(textShoppingListItem.id)
+                                .delete();
+                            Navigator.pop(dialogContext);
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            '削除',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(dialogContext);
+                          },
+                          child: const Text('キャンセル'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                child: const Text('削除'),
+              ),
+            ),
           ],
         ),
       ),

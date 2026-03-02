@@ -119,7 +119,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
               },
             );
           },
-          icon: const Icon(Icons.filter_1_outlined),
+          icon: const Icon(Icons.filter_list),
         ),
       ],
     );

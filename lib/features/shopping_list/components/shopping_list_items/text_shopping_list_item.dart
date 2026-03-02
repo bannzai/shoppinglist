@@ -143,22 +143,6 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                     },
                     icon: const Icon(Icons.info_outline, size: 20),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      analytics.logEvent(name: 'tap_delete_item', parameters: {
-                        'groupID': groupID,
-                        'itemID': textShoppingListItem.id
-                      });
-                      ref
-                          .read(groupDatabaseProvider(groupID: groupID))
-                          .shoppingListItemsReference(
-                            shoppingListID: textShoppingListItem.shoppingListID,
-                          )
-                          .doc(textShoppingListItem.id)
-                          .delete();
-                    },
-                    icon: const Icon(Icons.delete),
-                  ),
                   ReorderableDragStartListener(
                     index: textShoppingListItem.order,
                     child: const Icon(Icons.drag_handle),
