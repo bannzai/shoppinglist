@@ -30,14 +30,23 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     final shoppingList = useState(this.shoppingList);
     final textEditingController =
         useTextEditingController(text: shoppingList.value.name);
-    final shoppingListUpdate =
-        ref.watch(shoppingListUpdateProvider(groupID: groupID));
     final isCreatingInvitation = useState(false);
     final ttlExpiresDateTimeValue = shoppingList.value.ttlExpiresDateTime;
+
+    void autoSave(GroupShoppingList updatedShoppingList) {
+      ref.read(shoppingListUpdateProvider(groupID: groupID))(
+        shoppingListID: shoppingListID,
+        shoppingList: updatedShoppingList,
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('買い物リスト設定'),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: SafeArea(
         child: Padding(
@@ -73,8 +82,10 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                       'shoppingListID': shoppingListID,
                                     },
                                   );
-                                  shoppingList.value =
+                                  final updated =
                                       shoppingList.value.copyWith(name: value);
+                                  shoppingList.value = updated;
+                                  autoSave(updated);
                                 },
                               ),
                             ),
@@ -127,8 +138,10 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                         'shoppingListID': shoppingListID,
                                       },
                                     );
-                                    shoppingList.value = shoppingList.value
+                                    final updated = shoppingList.value
                                         .copyWith(shoppingLocationID: value);
+                                    shoppingList.value = updated;
+                                    autoSave(updated);
                                   },
                                 ),
                                 error: (e, st) => Text(e.toString()),
@@ -166,8 +179,10 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                     lastDate: DateTime.now()
                                         .add(const Duration(days: 30)));
                                 if (date != null) {
-                                  shoppingList.value = shoppingList.value
+                                  final updated = shoppingList.value
                                       .copyWith(ttlExpiresDateTime: date);
+                                  shoppingList.value = updated;
+                                  autoSave(updated);
                                 }
                               },
                               style: TextButton.styleFrom(
@@ -299,34 +314,6 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                 child: Column(
                   children: [
                     SizedBox(
-                      height: 48,
-                      width: double.infinity,
-                      child: OutlinedButton(
-                      onPressed: () {
-                        analytics.logEvent(
-                          name: 'tap_save_list_setting',
-                          parameters: {
-                            'groupID': groupID,
-                            'shoppingListID': shoppingListID,
-                          },
-                        );
-                        shoppingListUpdate(
-                            shoppingListID: shoppingListID,
-                            shoppingList: shoppingList.value);
-                        Navigator.pop(context);
-                      },
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.save),
-                          SizedBox(width: 8),
-                          Text('変更を保存'),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
                     height: 48,
                     width: double.infinity,
                     child: ElevatedButton(
