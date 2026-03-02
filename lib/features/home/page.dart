@@ -51,6 +51,7 @@ class HomePage extends HookConsumerWidget {
       return const Loading();
     }
 
+    final currentShoppingListID = useState<String?>(null);
     final tabIndex = useState(0);
     final ticker = useSingleTickerProvider();
     final tabController = useTabController(
@@ -96,8 +97,10 @@ class HomePage extends HookConsumerWidget {
           children: [
             ShoppingListPage(
               groupID: groupID,
+              currentShoppingListID: currentShoppingListID,
               onGroupChanged: (newGroupID) {
                 currentGroupID.value = newGroupID;
+                currentShoppingListID.value = null;
                 ref.read(defaultGroupUpdateProvider).call(groupID: newGroupID);
               },
             ),
