@@ -33,10 +33,11 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     final isCreatingInvitation = useState(false);
     final ttlExpiresDateTimeValue = shoppingList.value.ttlExpiresDateTime;
 
-    void autoSave(GroupShoppingList updatedShoppingList) {
+    void autoSave(GroupShoppingList updated) {
+      shoppingList.value = updated;
       ref.read(shoppingListUpdateProvider(groupID: groupID))(
         shoppingListID: shoppingListID,
-        shoppingList: updatedShoppingList,
+        shoppingList: updated,
       );
     }
 
@@ -82,10 +83,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                       'shoppingListID': shoppingListID,
                                     },
                                   );
-                                  final updated =
-                                      shoppingList.value.copyWith(name: value);
-                                  shoppingList.value = updated;
-                                  autoSave(updated);
+                                  autoSave(shoppingList.value.copyWith(name: value));
                                 },
                               ),
                             ),
@@ -138,10 +136,8 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                         'shoppingListID': shoppingListID,
                                       },
                                     );
-                                    final updated = shoppingList.value
-                                        .copyWith(shoppingLocationID: value);
-                                    shoppingList.value = updated;
-                                    autoSave(updated);
+                                    autoSave(shoppingList.value
+                                        .copyWith(shoppingLocationID: value));
                                   },
                                 ),
                                 error: (e, st) => Text(e.toString()),
@@ -179,10 +175,8 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                     lastDate: DateTime.now()
                                         .add(const Duration(days: 30)));
                                 if (date != null) {
-                                  final updated = shoppingList.value
-                                      .copyWith(ttlExpiresDateTime: date);
-                                  shoppingList.value = updated;
-                                  autoSave(updated);
+                                  autoSave(shoppingList.value
+                                      .copyWith(ttlExpiresDateTime: date));
                                 }
                               },
                               style: TextButton.styleFrom(
