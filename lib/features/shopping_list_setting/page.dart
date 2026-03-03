@@ -30,14 +30,24 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     final shoppingList = useState(this.shoppingList);
     final textEditingController =
         useTextEditingController(text: shoppingList.value.name);
-    final shoppingListUpdate =
-        ref.watch(shoppingListUpdateProvider(groupID: groupID));
     final isCreatingInvitation = useState(false);
     final ttlExpiresDateTimeValue = shoppingList.value.ttlExpiresDateTime;
+
+    void autoSave(GroupShoppingList updated) {
+      shoppingList.value = updated;
+      ref.read(shoppingListUpdateProvider(groupID: groupID))(
+        shoppingListID: shoppingListID,
+        shoppingList: updated,
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('買い物リスト設定'),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: SafeArea(
         child: Padding(
@@ -73,8 +83,8 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                       'shoppingListID': shoppingListID,
                                     },
                                   );
-                                  shoppingList.value =
-                                      shoppingList.value.copyWith(name: value);
+                                  autoSave(
+                                      shoppingList.value.copyWith(name: value));
                                 },
                               ),
                             ),
@@ -127,8 +137,8 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                         'shoppingListID': shoppingListID,
                                       },
                                     );
-                                    shoppingList.value = shoppingList.value
-                                        .copyWith(shoppingLocationID: value);
+                                    autoSave(shoppingList.value
+                                        .copyWith(shoppingLocationID: value));
                                   },
                                 ),
                                 error: (e, st) => Text(e.toString()),
@@ -166,8 +176,8 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                     lastDate: DateTime.now()
                                         .add(const Duration(days: 30)));
                                 if (date != null) {
-                                  shoppingList.value = shoppingList.value
-                                      .copyWith(ttlExpiresDateTime: date);
+                                  autoSave(shoppingList.value
+                                      .copyWith(ttlExpiresDateTime: date));
                                 }
                               },
                               style: TextButton.styleFrom(
@@ -301,97 +311,69 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                     SizedBox(
                       height: 48,
                       width: double.infinity,
-                      child: OutlinedButton(
-                      onPressed: () {
-                        analytics.logEvent(
-                          name: 'tap_save_list_setting',
-                          parameters: {
-                            'groupID': groupID,
-                            'shoppingListID': shoppingListID,
-                          },
-                        );
-                        shoppingListUpdate(
-                            shoppingListID: shoppingListID,
-                            shoppingList: shoppingList.value);
-                        Navigator.pop(context);
-                      },
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.save),
-                          SizedBox(width: 8),
-                          Text('変更を保存'),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    height: 48,
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: elevatedButtonStyle.merge(
-                        const ButtonStyle(
-                            backgroundColor:
-                                WidgetStatePropertyAll(Colors.red)),
-                      ),
-                      onPressed: () {
-                        analytics.logEvent(
-                          name: 'tap_delete_list',
-                          parameters: {
-                            'groupID': groupID,
-                            'shoppingListID': shoppingListID,
-                          },
-                        );
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('買い物リストを削除しますか？'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  analytics.logEvent(
-                                    name: 'tap_confirm_delete_list',
-                                    parameters: {
-                                      'groupID': groupID,
-                                      'shoppingListID': shoppingListID,
-                                    },
-                                  );
-                                  onDelete();
-                                },
-                                child: const Text(
-                                  '削除',
-                                  style: TextStyle(
-                                    color: TextColor.danger,
+                      child: ElevatedButton(
+                        style: elevatedButtonStyle.merge(
+                          const ButtonStyle(
+                              backgroundColor:
+                                  WidgetStatePropertyAll(Colors.red)),
+                        ),
+                        onPressed: () {
+                          analytics.logEvent(
+                            name: 'tap_delete_list',
+                            parameters: {
+                              'groupID': groupID,
+                              'shoppingListID': shoppingListID,
+                            },
+                          );
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('買い物リストを削除しますか？'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    analytics.logEvent(
+                                      name: 'tap_confirm_delete_list',
+                                      parameters: {
+                                        'groupID': groupID,
+                                        'shoppingListID': shoppingListID,
+                                      },
+                                    );
+                                    onDelete();
+                                  },
+                                  child: const Text(
+                                    '削除',
+                                    style: TextStyle(
+                                      color: TextColor.danger,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  analytics.logEvent(
-                                    name: 'cancel_delete_list',
-                                    parameters: {
-                                      'groupID': groupID,
-                                      'shoppingListID': shoppingListID,
-                                    },
-                                  );
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('キャンセル'),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.delete),
-                          SizedBox(width: 8),
-                          Text('買い物リストを削除'),
-                        ],
+                                TextButton(
+                                  onPressed: () {
+                                    analytics.logEvent(
+                                      name: 'cancel_delete_list',
+                                      parameters: {
+                                        'groupID': groupID,
+                                        'shoppingListID': shoppingListID,
+                                      },
+                                    );
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('キャンセル'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.delete),
+                            SizedBox(width: 8),
+                            Text('買い物リストを削除'),
+                          ],
+                        ),
                       ),
-                    ),
                     ),
                   ],
                 ),
