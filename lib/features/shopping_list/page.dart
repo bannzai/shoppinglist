@@ -23,10 +23,12 @@ import 'package:shoppinglist/style/color.dart';
 
 class ShoppingListPage extends HookConsumerWidget {
   final String groupID;
+  final ValueNotifier<String?> currentShoppingListID;
   final void Function(String groupID)? onGroupChanged;
   const ShoppingListPage({
     super.key,
     required this.groupID,
+    required this.currentShoppingListID,
     this.onGroupChanged,
   });
 
@@ -36,7 +38,7 @@ class ShoppingListPage extends HookConsumerWidget {
     final userGroupsAsync = ref.watch(userGroupsProvider);
     final appUserAsync = ref.watch(appUserProvider);
     final appUser = appUserAsync.asData?.value;
-    final shoppingListID = useState<String?>(null);
+    useValueListenable(currentShoppingListID);
 
     // 切り替え先のグループに買い物リストが0件の場合、デフォルトリストを自動作成
     useEffect(() {
@@ -63,9 +65,9 @@ class ShoppingListPage extends HookConsumerWidget {
     useEffect(() {
       final lists = shoppingLists.asData?.value ?? [];
       if (lists.isNotEmpty) {
-        if (shoppingListID.value == null ||
-            !lists.map((e) => e.id).contains(shoppingListID.value)) {
-          shoppingListID.value = lists.first.id;
+        if (currentShoppingListID.value == null ||
+            !lists.map((e) => e.id).contains(currentShoppingListID.value)) {
+          currentShoppingListID.value = lists.first.id;
         }
       }
       return null;
@@ -86,15 +88,16 @@ class ShoppingListPage extends HookConsumerWidget {
           Expanded(
             child: shoppingLists.when(
               data: (shoppingLists) {
-                if (shoppingLists.isEmpty || shoppingListID.value == null) {
+                if (shoppingLists.isEmpty ||
+                    currentShoppingListID.value == null) {
                   return const Loading();
                 }
                 return _Body(
-                  key: ValueKey(shoppingListID.value),
+                  key: ValueKey(currentShoppingListID.value),
                   groupID: groupID,
-                  shoppingListID: shoppingListID.value!,
+                  shoppingListID: currentShoppingListID.value!,
                   onShoppingListIDChanged: (newID) {
-                    shoppingListID.value = newID;
+                    currentShoppingListID.value = newID;
                   },
                 );
               },
