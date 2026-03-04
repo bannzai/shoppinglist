@@ -79,12 +79,11 @@ class ShoppingListPage extends HookConsumerWidget {
                 if (shoppingLists.isEmpty) {
                   return const Loading();
                 }
-                final currentShoppingListIDValue =
-                    currentShoppingListID.value;
+                final currentShoppingListIDValue = currentShoppingListID.value;
                 final resolvedShoppingListID =
                     (currentShoppingListIDValue != null &&
-                            shoppingLists.any((e) =>
-                                e.id == currentShoppingListIDValue))
+                            shoppingLists
+                                .any((e) => e.id == currentShoppingListIDValue))
                         ? currentShoppingListIDValue
                         : shoppingLists.first.id;
                 return _Body(
