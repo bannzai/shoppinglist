@@ -49,8 +49,16 @@ class AppSignInWithAppleButton extends HookConsumerWidget {
                 if (isLoading.value) return;
                 analytics.logEvent(name: 'tap_sign_in_apple');
                 isLoading.value = true;
-                await signInWithApple();
-                isLoading.value = false;
+                try {
+                  await signInWithApple();
+                } on SignInWithAppleAuthorizationException catch (e) {
+                  if (e.code == AuthorizationErrorCode.canceled) {
+                    return;
+                  }
+                  rethrow;
+                } finally {
+                  isLoading.value = false;
+                }
               },
             ),
           ),

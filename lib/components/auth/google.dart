@@ -57,8 +57,16 @@ class AppSignInWithGoogleButton extends HookConsumerWidget {
                 if (isLoading.value) return;
                 analytics.logEvent(name: 'tap_sign_in_google');
                 isLoading.value = true;
-                await signInWithGoogle();
-                isLoading.value = false;
+                try {
+                  await signInWithGoogle();
+                } on GoogleSignInException catch (e) {
+                  if (e.code == GoogleSignInExceptionCode.canceled) {
+                    return;
+                  }
+                  rethrow;
+                } finally {
+                  isLoading.value = false;
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
