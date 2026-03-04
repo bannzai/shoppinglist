@@ -61,18 +61,6 @@ class ShoppingListPage extends HookConsumerWidget {
       return null;
     }, [shoppingLists]);
 
-    // shoppingListIDの初期化・削除時のフォールバック
-    useEffect(() {
-      final lists = shoppingLists.asData?.value ?? [];
-      if (lists.isNotEmpty) {
-        if (currentShoppingListID.value == null ||
-            !lists.map((e) => e.id).contains(currentShoppingListID.value)) {
-          currentShoppingListID.value = lists.first.id;
-        }
-      }
-      return null;
-    }, [shoppingLists]);
-
     return Retry(
       retry: () => ref.invalidate(shoppingListsProvider(groupID: groupID)),
       child: Column(
@@ -88,14 +76,20 @@ class ShoppingListPage extends HookConsumerWidget {
           Expanded(
             child: shoppingLists.when(
               data: (shoppingLists) {
-                if (shoppingLists.isEmpty ||
-                    currentShoppingListID.value == null) {
+                if (shoppingLists.isEmpty) {
                   return const Loading();
                 }
+                final currentShoppingListIDValue = currentShoppingListID.value;
+                final resolvedShoppingListID =
+                    (currentShoppingListIDValue != null &&
+                            shoppingLists
+                                .any((e) => e.id == currentShoppingListIDValue))
+                        ? currentShoppingListIDValue
+                        : shoppingLists.first.id;
                 return _Body(
-                  key: ValueKey(currentShoppingListID.value),
+                  key: ValueKey(resolvedShoppingListID),
                   groupID: groupID,
-                  shoppingListID: currentShoppingListID.value!,
+                  shoppingListID: resolvedShoppingListID,
                   onShoppingListIDChanged: (newID) {
                     currentShoppingListID.value = newID;
                   },
