@@ -1,0 +1,83 @@
+appId: com.bannzai.shoppinglist
+---
+
+# PreviewsPage が表示されるのを待つ
+- assertVisible: "Previews"
+
+# 1. AuthPage
+- tapOn: "AuthPage"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/01_auth_page
+- back
+
+# 2. HomePage
+- tapOn: "HomePage"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/02_home_page
+- back
+
+# 3. ShoppingListPage
+- tapOn: "ShoppingListPage"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/03_shopping_list_page
+- back
+
+# 4. SettingPage
+- tapOn: "SettingPage"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/04_setting_page
+- back
+
+# 5. GroupListPage
+- tapOn: "GroupListPage"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/05_group_list_page
+- back
+
+# 6. GroupCreatePage
+- tapOn: "GroupCreatePage"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/06_group_create_page
+- back
+
+# 7. GroupSettingPage
+- tapOn: "GroupSettingPage"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/07_group_setting_page
+- back
+
+# 8. GroupInvitationAcceptPage
+- tapOn: "GroupInvitationAcceptPage"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/08_group_invitation_accept_page
+- back
+
+# 9. ShoppingLocationPage
+- tapOn: "ShoppingLocationPage"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/09_shopping_location_page
+- back
+
+# 10. GroupShoppingListItemCategoryPage
+- tapOn: "GroupShoppingListItemCategoryPage"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/10_group_shopping_list_item_category_page
+- back
+
+# 11. GroupShoppingListItemCategoryEditPage
+- tapOn: "GroupShoppingListItemCategoryEditPage"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/11_group_shopping_list_item_category_edit_page
+- back
+
+# 12. ShoppingListItemFilterPage
+- tapOn: "ShoppingListItemFilterPage"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/12_shopping_list_item_filter_page
+- back
+
+# 13. ShoppingListSettingPage
+- tapOn: "ShoppingListSettingPage"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/13_shopping_list_setting_page
+- back
