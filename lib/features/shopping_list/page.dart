@@ -4,7 +4,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
-import 'package:shoppinglist/components/admob/banner.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
@@ -224,7 +223,6 @@ class _Body extends HookConsumerWidget {
                             groupID: groupID,
                             shoppingListID: shoppingListID,
                             sortByCategory: sortByCategory.value)),
-                    const AdMobBanner(),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 10),
