@@ -60,8 +60,7 @@ final _previewEntries = <_PreviewEntry>[
   ),
   _PreviewEntry(
     title: 'GroupShoppingListItemCategoryPage',
-    builder: (_) =>
-        GroupShoppingListItemCategoryPage(groupID: mockGroupID),
+    builder: (_) => GroupShoppingListItemCategoryPage(groupID: mockGroupID),
   ),
   _PreviewEntry(
     title: 'GroupShoppingListItemCategoryEditPage',

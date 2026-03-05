@@ -131,8 +131,7 @@ class _NoOpDefaultGroupUpdate extends DefaultGroupUpdate {
 }
 
 class _NoOpCreateGroup extends CreateGroup {
-  _NoOpCreateGroup()
-      : super(userDatabase: UserDatabase(userID: mockUserID));
+  _NoOpCreateGroup() : super(userDatabase: UserDatabase(userID: mockUserID));
 
   @override
   Future<void> call({
@@ -143,8 +142,7 @@ class _NoOpCreateGroup extends CreateGroup {
 }
 
 class _NoOpCategoryAxisAdd extends GroupShoppingListItemCategoryAxisAdd {
-  _NoOpCategoryAxisAdd()
-      : super(database: GroupDatabase(groupID: mockGroupID));
+  _NoOpCategoryAxisAdd() : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<GroupShoppingListItemCategoryAxis> call({
@@ -331,8 +329,7 @@ List<Override> previewProviderOverrides({
         .overrideWith((ref) => _NoOpCreateGroupInvitation()),
     acceptGroupInvitationProvider
         .overrideWith((ref) => _NoOpAcceptGroupInvitation()),
-    defaultGroupUpdateProvider
-        .overrideWith((ref) => _NoOpDefaultGroupUpdate()),
+    defaultGroupUpdateProvider.overrideWith((ref) => _NoOpDefaultGroupUpdate()),
     createGroupProvider.overrideWith((ref) => _NoOpCreateGroup()),
 
     // カテゴリ操作 (no-op)
