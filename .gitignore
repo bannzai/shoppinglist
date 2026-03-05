@@ -50,3 +50,6 @@ lib/secret/secret.dart
 
 maestro/screenshots/
 screenshots/
+
+# UI research artifacts
+.local/
