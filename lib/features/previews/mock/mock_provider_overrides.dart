@@ -11,6 +11,7 @@ import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/resolver/auth.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/app_user.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/default_group_update.dart';
 import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/provider/group_create.dart';
@@ -130,8 +131,7 @@ class _NoOpDefaultGroupUpdate extends DefaultGroupUpdate {
 }
 
 class _NoOpCreateGroup extends CreateGroup {
-  _NoOpCreateGroup()
-      : super(userDatabase: UserDatabase(userID: mockUserID));
+  _NoOpCreateGroup() : super(userDatabase: UserDatabase(userID: mockUserID));
 
   @override
   Future<void> call({
@@ -142,8 +142,7 @@ class _NoOpCreateGroup extends CreateGroup {
 }
 
 class _NoOpCategoryAxisAdd extends GroupShoppingListItemCategoryAxisAdd {
-  _NoOpCategoryAxisAdd()
-      : super(database: GroupDatabase(groupID: mockGroupID));
+  _NoOpCategoryAxisAdd() : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<GroupShoppingListItemCategoryAxis> call({
@@ -257,6 +256,7 @@ List<Override> previewProviderOverrides({
     // 基盤
     sharedPreferencesProvider.overrideWith((ref) => sharedPreferences),
     firebaseUserChangesProvider.overrideWith((ref) => Stream.value(null)),
+    currentUserIDProvider.overrideWithValue(mockUserID),
     userDatabaseProvider
         .overrideWith((ref) => UserDatabase(userID: mockUserID)),
     remoteConfigParameterProvider
@@ -329,8 +329,7 @@ List<Override> previewProviderOverrides({
         .overrideWith((ref) => _NoOpCreateGroupInvitation()),
     acceptGroupInvitationProvider
         .overrideWith((ref) => _NoOpAcceptGroupInvitation()),
-    defaultGroupUpdateProvider
-        .overrideWith((ref) => _NoOpDefaultGroupUpdate()),
+    defaultGroupUpdateProvider.overrideWith((ref) => _NoOpDefaultGroupUpdate()),
     createGroupProvider.overrideWith((ref) => _NoOpCreateGroup()),
 
     // カテゴリ操作 (no-op)
