@@ -1,0 +1,142 @@
+import 'package:shoppinglist/entity/app_user.dart';
+import 'package:shoppinglist/entity/group.dart';
+import 'package:shoppinglist/entity/group_shopping_list.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item_category_axis.dart';
+import 'package:shoppinglist/entity/group_shopping_location.dart';
+import 'package:shoppinglist/entity/group_user_profile.dart';
+
+const mockUserID = 'preview-user-001';
+const mockUserID2 = 'preview-user-002';
+const mockGroupID = 'preview-group-001';
+const mockShoppingListID = 'preview-shopping-list-001';
+const mockShoppingListID2 = 'preview-shopping-list-002';
+const mockCategoryAxisID = 'preview-category-axis-001';
+const mockCategoryID = 'preview-category-001';
+const mockCategoryID2 = 'preview-category-002';
+const mockShoppingLocationID = 'preview-location-001';
+
+AppUser mockAppUser() => const AppUser(
+      id: mockUserID,
+      defaultGroupID: mockGroupID,
+    );
+
+Group mockGroup() => const Group(
+      id: mockGroupID,
+      memberUserIDs: [mockUserID, mockUserID2],
+      name: 'プレビュー用グループ',
+      ownerUserID: mockUserID,
+    );
+
+List<GroupShoppingList> mockShoppingLists() => [
+      GroupShoppingList(
+        id: mockShoppingListID,
+        createUserID: mockUserID,
+        groupID: mockGroupID,
+        name: '今日の買い物',
+        status: GroupShoppingListStatus.active,
+        ttlExpiresDateTime: DateTime.now().add(const Duration(days: 30)),
+      ),
+      GroupShoppingList(
+        id: mockShoppingListID2,
+        createUserID: mockUserID,
+        groupID: mockGroupID,
+        name: '週末の買い物',
+        status: GroupShoppingListStatus.active,
+        ttlExpiresDateTime: DateTime.now().add(const Duration(days: 30)),
+      ),
+    ];
+
+List<GroupShoppingListItem> mockShoppingListItems() => [
+      const GroupShoppingListItem(
+        id: 'preview-item-001',
+        groupID: mockGroupID,
+        shoppingListID: mockShoppingListID,
+        message: '牛乳',
+        order: 0,
+        status: GroupShoppingListItemStatus.unchecked,
+      ),
+      const GroupShoppingListItem(
+        id: 'preview-item-002',
+        groupID: mockGroupID,
+        shoppingListID: mockShoppingListID,
+        message: '卵',
+        order: 1,
+        status: GroupShoppingListItemStatus.checked,
+      ),
+      const GroupShoppingListItem(
+        id: 'preview-item-003',
+        groupID: mockGroupID,
+        shoppingListID: mockShoppingListID,
+        message: '食パン',
+        order: 2,
+        status: GroupShoppingListItemStatus.unchecked,
+        groupShoppingListItemCategoryID: mockCategoryID,
+      ),
+      const GroupShoppingListItem(
+        id: 'preview-item-004',
+        groupID: mockGroupID,
+        shoppingListID: mockShoppingListID,
+        message: 'バナナ',
+        order: 3,
+        status: GroupShoppingListItemStatus.unchecked,
+        description: '3本入り',
+      ),
+      const GroupShoppingListItem(
+        id: 'preview-item-005',
+        groupID: mockGroupID,
+        shoppingListID: mockShoppingListID,
+        message: 'トイレットペーパー',
+        order: 4,
+        status: GroupShoppingListItemStatus.checked,
+      ),
+    ];
+
+GroupShoppingListItemCategoryAxis mockCategoryAxis() =>
+    const GroupShoppingListItemCategoryAxis(
+      id: mockCategoryAxisID,
+      groupID: mockGroupID,
+      name: '売り場',
+      order: 0,
+    );
+
+List<GroupShoppingListItemCategory> mockCategories() => [
+      const GroupShoppingListItemCategory(
+        id: mockCategoryID,
+        groupID: mockGroupID,
+        groupShoppingListItemCategoryAxisID: mockCategoryAxisID,
+        name: '食品',
+        order: 0,
+      ),
+      const GroupShoppingListItemCategory(
+        id: mockCategoryID2,
+        groupID: mockGroupID,
+        groupShoppingListItemCategoryAxisID: mockCategoryAxisID,
+        name: '日用品',
+        order: 1,
+      ),
+    ];
+
+GroupShoppingLocation mockShoppingLocation() => const GroupShoppingLocation(
+      id: mockShoppingLocationID,
+      groupID: mockGroupID,
+      name: '近所のスーパー',
+    );
+
+List<GroupUserProfile> mockUserProfiles() => [
+      GroupUserProfile(
+        id: GroupUserProfile.documentID(
+            groupID: mockGroupID, userID: mockUserID),
+        groupID: mockGroupID,
+        userID: mockUserID,
+        displayName: 'プレビューユーザー',
+      ),
+      GroupUserProfile(
+        id: GroupUserProfile.documentID(
+            groupID: mockGroupID, userID: mockUserID2),
+        groupID: mockGroupID,
+        userID: mockUserID2,
+        displayName: 'ゲストユーザー',
+      ),
+    ];
