@@ -43,17 +43,21 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       return null;
     }, []);
 
+    final isChecked = textShoppingListItem.status == GroupShoppingListItemStatus.checked;
+    final colorScheme = Theme.of(context).colorScheme;
     final hasDescription = textShoppingListItem.description != null &&
         textShoppingListItem.description!.isNotEmpty;
     final backgroundColor = textShoppingListItem.color != null
         ? colorFromHex(textShoppingListItem.color!).withValues(alpha: 0.1)
-        : Colors.transparent;
+        : isChecked
+            ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
+            : Colors.transparent;
 
     // NOTE: ReorderableListViewのDrag移動中に `No Material widget found` というエラーが出るので、Materialでラップする
     return Material(
       color: backgroundColor,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -113,9 +117,9 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                             padding: const EdgeInsets.only(bottom: 4),
                             child: Text(
                               textShoppingListItem.description!,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12,
-                                color: TextColor.gray,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -204,13 +208,19 @@ class TextShoppingListItemTextField extends ConsumerWidget {
         decoration: isEditing
             ? const InputDecoration()
             : const InputDecoration(border: InputBorder.none),
-        style: TextStyle(
-          color: TextColor.black,
-          decoration:
-              textShoppingListItem.status == GroupShoppingListItemStatus.checked
-                  ? TextDecoration.lineThrough
-                  : TextDecoration.none,
-        ),
+        style: () {
+          final isChecked = textShoppingListItem.status == GroupShoppingListItemStatus.checked;
+          final colorScheme = Theme.of(context).colorScheme;
+          return TextStyle(
+            color: isChecked
+                ? colorScheme.onSurface.withValues(alpha: 0.4)
+                : colorScheme.onSurface,
+            decoration: isChecked ? TextDecoration.lineThrough : TextDecoration.none,
+            decorationColor: isChecked
+                ? colorScheme.onSurface.withValues(alpha: 0.4)
+                : null,
+          );
+        }(),
         onSubmitted: (String v) async {
           analytics.logEvent(name: 'submit_item_text', parameters: {
             'groupID': groupID,
