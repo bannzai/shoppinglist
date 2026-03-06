@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import home_widget
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
@@ -7,6 +8,11 @@ import UIKit
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    if #available(iOS 17.0, *) {
+      HomeWidgetPlugin.setConfigurationLookup(to: [
+        "ShoppingListWidget": ShoppingListConfigurationIntent.self
+      ])
+    }
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
