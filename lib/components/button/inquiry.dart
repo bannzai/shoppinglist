@@ -7,7 +7,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
-import 'package:shoppinglist/style/color.dart';
+
 import 'package:shoppinglist/utils/config/environment.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
@@ -69,12 +69,12 @@ class InquiryButton extends ConsumerWidget {
         Icons.mail,
         size: 20,
       ),
-      label: const Text(
+      label: Text(
         'お問い合わせ',
         style: TextStyle(
           fontWeight: FontWeight.w300,
           fontSize: 14,
-          color: TextColor.black,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
       onPressed: () {

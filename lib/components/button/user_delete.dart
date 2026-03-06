@@ -8,7 +8,7 @@ import 'package:shoppinglist/components/alert/discard.dart';
 import 'package:shoppinglist/components/error/alert.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/features/resolver/auth.dart';
-import 'package:shoppinglist/style/color.dart';
+
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/logger/error.dart';
 
@@ -41,10 +41,10 @@ class DeleteUserButton extends HookConsumerWidget {
                       analytics.logEvent(name: 'cancel_delete_account');
                       Navigator.of(context).pop();
                     },
-                    child: const Text(
+                    child: Text(
                       'キャンセル',
                       style: TextStyle(
-                        color: TextColor.darkGray,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -62,9 +62,9 @@ class DeleteUserButton extends HookConsumerWidget {
                         isLoading.value = false;
                       }
                     },
-                    child: const Text('削除する',
+                    child: Text('削除する',
                         style: TextStyle(
-                            color: TextColor.danger,
+                            color: Theme.of(context).colorScheme.error,
                             fontWeight: FontWeight.w600)),
                   ),
                 ],
@@ -107,10 +107,10 @@ class DeleteUserButton extends HookConsumerWidget {
                 analytics.logEvent(name: 'cancel_reauth_for_delete');
                 Navigator.of(context).pop();
               },
-              child: const Text(
+              child: Text(
                 'キャンセル',
                 style: TextStyle(
-                  color: TextColor.darkGray,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -133,10 +133,10 @@ class DeleteUserButton extends HookConsumerWidget {
                     isAppleLinked: isAppleLinked,
                     isGoogleLinked: isGoogleLinked);
               },
-              child: const Text(
+              child: Text(
                 '再ログインする',
                 style: TextStyle(
-                  color: TextColor.main,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -165,20 +165,20 @@ class _CompletedDialog extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
+          Text(
             'アカウントを削除しました',
             style: TextStyle(
-              color: TextColor.main,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w700,
               fontSize: 16,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
-          const Text(
+          Text(
             'アプリを終了しますか？',
             style: TextStyle(
-              color: TextColor.main,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w400,
               fontSize: 14,
             ),
@@ -192,10 +192,10 @@ class _CompletedDialog extends StatelessWidget {
                 analytics.logEvent(name: 'tap_exit_app_after_delete');
                 exit(0);
               },
-              child: const Text(
+              child: Text(
                 '終了する',
                 style: TextStyle(
-                  color: TextColor.main,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
