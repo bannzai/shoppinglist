@@ -4,6 +4,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item_category_keyword.dart';
 import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
+import 'package:shoppinglist/style/category_presets.dart';
+import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupShoppingListItemCategoryEditPage extends ConsumerWidget {
@@ -120,6 +122,71 @@ class _CategoryEditBody extends HookConsumerWidget {
                       }
                     } finally {
                       isSaving.value = false;
+                    }
+                  },
+                ),
+                const SizedBox(height: 24),
+                const Text('カテゴリカラー',
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                _CategoryColorPicker(
+                  selectedColor: category.color,
+                  onColorSelected: (color) async {
+                    analytics.logEvent(
+                        name: 'select_category_color',
+                        parameters: {
+                          'groupID': groupID,
+                          'categoryID': category.id,
+                        });
+                    try {
+                      await ref
+                          .read(groupShoppingListItemCategoryUpdateProvider(
+                              groupID: groupID))
+                          .call(
+                            categoryAxisID: categoryAxisID,
+                            categoryID: category.id,
+                            category: category.copyWith(color: color),
+                          );
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.toString())),
+                        );
+                      }
+                    }
+                  },
+                ),
+                const SizedBox(height: 24),
+                const Text('カテゴリアイコン',
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                _CategoryIconPicker(
+                  selectedIconName: category.iconName,
+                  selectedColor: category.color,
+                  onIconSelected: (iconName) async {
+                    analytics.logEvent(
+                        name: 'select_category_icon',
+                        parameters: {
+                          'groupID': groupID,
+                          'categoryID': category.id,
+                        });
+                    try {
+                      await ref
+                          .read(groupShoppingListItemCategoryUpdateProvider(
+                              groupID: groupID))
+                          .call(
+                            categoryAxisID: categoryAxisID,
+                            categoryID: category.id,
+                            category: category.copyWith(iconName: iconName),
+                          );
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.toString())),
+                        );
+                      }
                     }
                   },
                 ),
@@ -339,5 +406,139 @@ class _CategoryEditBody extends HookConsumerWidget {
         );
       }
     }
+  }
+}
+
+class _CategoryColorPicker extends StatelessWidget {
+  final String? selectedColor;
+  final void Function(String?) onColorSelected;
+
+  const _CategoryColorPicker({
+    required this.selectedColor,
+    required this.onColorSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: [
+        // 色なしオプション
+        GestureDetector(
+          onTap: () => onColorSelected(null),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: selectedColor == null
+                    ? colorScheme.primary
+                    : colorScheme.outline,
+                width: selectedColor == null ? 3 : 1,
+              ),
+            ),
+            child: Icon(Icons.block,
+                size: 20, color: colorScheme.onSurfaceVariant),
+          ),
+        ),
+        ...categoryPresetColors.map((hex) {
+          final isSelected = selectedColor == hex;
+          final color = colorFromHex(hex);
+          return GestureDetector(
+            onTap: () => onColorSelected(hex),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+                border: isSelected
+                    ? Border.all(color: colorScheme.primary, width: 3)
+                    : null,
+              ),
+              child: isSelected
+                  ? const Icon(Icons.check, color: Colors.white, size: 20)
+                  : null,
+            ),
+          );
+        }),
+      ],
+    );
+  }
+}
+
+class _CategoryIconPicker extends StatelessWidget {
+  final String? selectedIconName;
+  final String? selectedColor;
+  final void Function(String?) onIconSelected;
+
+  const _CategoryIconPicker({
+    required this.selectedIconName,
+    required this.selectedColor,
+    required this.onIconSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final accentColor =
+        selectedColor != null ? colorFromHex(selectedColor!) : null;
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        // アイコンなしオプション
+        GestureDetector(
+          onTap: () => onIconSelected(null),
+          child: Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: selectedIconName == null
+                    ? colorScheme.primary
+                    : colorScheme.outline,
+                width: selectedIconName == null ? 2 : 1,
+              ),
+            ),
+            child: Icon(Icons.block,
+                size: 20, color: colorScheme.onSurfaceVariant),
+          ),
+        ),
+        ...categoryIconMap.entries.map((entry) {
+          final isSelected = selectedIconName == entry.key;
+          return GestureDetector(
+            onTap: () => onIconSelected(entry.key),
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: isSelected
+                    ? (accentColor ?? colorScheme.primary).withValues(alpha: 0.15)
+                    : null,
+                border: Border.all(
+                  color: isSelected
+                      ? (accentColor ?? colorScheme.primary)
+                      : colorScheme.outline,
+                  width: isSelected ? 2 : 1,
+                ),
+              ),
+              child: Icon(
+                entry.value,
+                size: 24,
+                color: isSelected
+                    ? (accentColor ?? colorScheme.primary)
+                    : colorScheme.onSurfaceVariant,
+              ),
+            ),
+          );
+        }),
+      ],
+    );
   }
 }

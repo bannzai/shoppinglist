@@ -4,6 +4,8 @@ import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item_category_axis.dart';
 import 'package:shoppinglist/features/group_shopping_list_item_category/category_edit_page.dart';
 import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
+import 'package:shoppinglist/style/category_presets.dart';
+import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupShoppingListItemCategoryPage extends ConsumerWidget {
@@ -328,9 +330,15 @@ class _CategoryReorderableList extends ConsumerWidget {
       itemCount: categories.length,
       itemBuilder: (context, index) {
         final category = categories[index];
+        final categoryColor = category.color != null
+            ? colorFromHex(category.color!)
+            : null;
         return ListTile(
           key: ValueKey(category.id),
-          leading: const Icon(Icons.category),
+          leading: Icon(
+            categoryIconFromName(category.iconName),
+            color: categoryColor,
+          ),
           title: Text(category.name),
           subtitle: Text('キーワード: ${category.keywords.length}件'),
           trailing: Row(
