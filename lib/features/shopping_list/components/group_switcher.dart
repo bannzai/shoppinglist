@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/entity/group.dart';
-import 'package:shoppinglist/style/color.dart';
+
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupSwitcher extends StatelessWidget {
@@ -42,10 +42,6 @@ class GroupSwitcher extends StatelessWidget {
                   onGroupChanged(group.id);
                 }
               },
-              selectedColor: AppColors.primary,
-              labelStyle: TextStyle(
-                color: isSelected ? Colors.black : TextColor.gray,
-              ),
             ),
           );
         }).toList(),
