@@ -167,7 +167,8 @@ class _CategoryEditBody extends HookConsumerWidget {
                         style: const TextStyle(fontSize: 12),
                       ),
                       trailing: IconButton(
-                        icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
+                        icon: Icon(Icons.delete,
+                            color: Theme.of(context).colorScheme.error),
                         onPressed: () => _deleteKeyword(
                           context: context,
                           ref: ref,

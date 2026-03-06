@@ -49,12 +49,10 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
                 final nextOrder = shoppingListItems.nextOrder;
                 debugPrint(
                     '[EmptyTextShoppingListItems] ボタン押下: shoppingListID=$shoppingListID, groupID=$groupID, nextOrder=$nextOrder');
-                analytics.logEvent(
-                    name: 'tap_create_first_item',
-                    parameters: {
-                      'groupID': groupID,
-                      'shoppingListID': shoppingListID
-                    });
+                analytics.logEvent(name: 'tap_create_first_item', parameters: {
+                  'groupID': groupID,
+                  'shoppingListID': shoppingListID
+                });
                 try {
                   final result = await ref
                       .read(addShoppingListItemProvider(groupID: groupID))
@@ -69,8 +67,7 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
                   debugPrint(
                       '[EmptyTextShoppingListItems] call() 成功: docID=${result.id}');
                 } catch (e, st) {
-                  debugPrint(
-                      '[EmptyTextShoppingListItems] call() 失敗: $e\n$st');
+                  debugPrint('[EmptyTextShoppingListItems] call() 失敗: $e\n$st');
                 }
               },
               icon: const Icon(Icons.add),

@@ -55,7 +55,8 @@ class ShoppingLocationPage extends ConsumerWidget {
                       },
                     ),
                     IconButton(
-                      icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
+                      icon: Icon(Icons.delete,
+                          color: Theme.of(context).colorScheme.error),
                       onPressed: () {
                         analytics.logEvent(
                             name: 'tap_delete_location',
