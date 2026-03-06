@@ -127,6 +127,16 @@ class _Body extends HookConsumerWidget {
       shoppingListID: shoppingListID,
       showChecked: showChecked.value,
     ));
+    final allItemsAsync = ref.watch(textShoppingListItemsProvider(
+      groupID: groupID,
+      shoppingListID: shoppingListID,
+      showChecked: true,
+    ));
+    final allItems = allItemsAsync.valueOrNull ?? [];
+    final checkedCount = allItems
+        .where((i) => i.status == GroupShoppingListItemStatus.checked)
+        .length;
+    final totalCount = allItems.length;
     final shoppingList =
         shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID);
     final ttlExpiresDateTime = shoppingList?.ttlExpiresDateTime;
@@ -234,11 +244,36 @@ class _Body extends HookConsumerWidget {
                       ),
                       const SizedBox(height: 10),
                     ],
+                    if (totalCount > 0)
+                      _ProgressSection(
+                        checkedCount: checkedCount,
+                        totalCount: totalCount,
+                      ),
                     Expanded(
                         child: ShoppingListItems(
                             groupID: groupID,
                             shoppingListID: shoppingListID,
                             sortByCategory: sortByCategory.value)),
+                    _AddItemPlaceholder(
+                      onTap: () {
+                        analytics.logEvent(
+                            name: 'tap_add_item_placeholder',
+                            parameters: {
+                              'groupID': groupID,
+                              'shoppingListID': shoppingListID,
+                            });
+                        ref
+                            .read(addShoppingListItemProvider(groupID: groupID))
+                            .call(
+                              shoppingListID: shoppingListID,
+                              message: '',
+                              order: allItems.nextOrder,
+                              groupShoppingListItemCategoryID: null,
+                              description: null,
+                              color: null,
+                            );
+                      },
+                    ),
                   ],
                 );
               }
@@ -246,6 +281,92 @@ class _Body extends HookConsumerWidget {
             error: (e, st) => RetryPage(exception: e, stackTrace: st),
             loading: () => const Loading(),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProgressSection extends StatelessWidget {
+  final int checkedCount;
+  final int totalCount;
+
+  const _ProgressSection({
+    required this.checkedCount,
+    required this.totalCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final progress = totalCount > 0 ? checkedCount / totalCount : 0.0;
+    final isComplete = checkedCount == totalCount && totalCount > 0;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                isComplete
+                    ? '$checkedCount/$totalCount 完了!'
+                    : '$checkedCount/$totalCount 完了',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isComplete
+                      ? colorScheme.primary
+                      : colorScheme.onSurfaceVariant,
+                  fontWeight: isComplete ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 4,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AddItemPlaceholder extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _AddItemPlaceholder({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(color: colorScheme.outlineVariant, width: 0.5),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.add_circle_outline,
+                size: 20, color: colorScheme.onSurfaceVariant),
+            const SizedBox(width: 12),
+            Text(
+              'アイテムを追加',
+              style: TextStyle(
+                color: colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
+            ),
+          ],
         ),
       ),
     );
