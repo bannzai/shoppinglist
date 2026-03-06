@@ -7,7 +7,7 @@ class ErrorAlert extends StatelessWidget {
   final String? faqLinkURL;
 
   const ErrorAlert(
-      {super.key, this.title, this.faqLinkURL, required this.errorMessage});
+      {super.key, required this.title, required this.faqLinkURL, required this.errorMessage});
   @override
   Widget build(BuildContext context) {
     final faq = faqLinkURL;
