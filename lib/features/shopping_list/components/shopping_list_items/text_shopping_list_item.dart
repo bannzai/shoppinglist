@@ -179,14 +179,25 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         padding: const EdgeInsets.only(left: 16),
         child: Icon(Icons.delete, color: colorScheme.onError),
       ),
-      onDismissed: (_) {
-        ref
-            .read(groupDatabaseProvider(groupID: groupID))
-            .shoppingListItemsReference(
-              shoppingListID: textShoppingListItem.shoppingListID,
-            )
-            .doc(textShoppingListItem.id)
-            .delete();
+      confirmDismiss: (direction) async {
+        try {
+          await ref
+              .read(groupDatabaseProvider(groupID: groupID))
+              .shoppingListItemsReference(
+                shoppingListID: textShoppingListItem.shoppingListID,
+              )
+              .doc(textShoppingListItem.id)
+              .delete();
+          return true;
+        } catch (e, st) {
+          debugPrint('アイテムの削除に失敗: $e\n$st');
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('アイテムの削除に失敗しました。')),
+            );
+          }
+          return false;
+        }
       },
       child: widget,
     );
