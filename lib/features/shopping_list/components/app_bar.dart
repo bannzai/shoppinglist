@@ -199,8 +199,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                       await imagePicker.pickImage(source: ImageSource.camera);
                   if (photo != null) {
                     if (context.mounted) {
-                      await _addShoppingListItemsFromImage(
-                          context, ref, photo);
+                      await _addShoppingListItemsFromImage(context, ref, photo);
                     }
                     if (context.mounted) {
                       Navigator.of(context).pop();
@@ -222,8 +221,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                       await imagePicker.pickImage(source: ImageSource.gallery);
                   if (photo != null) {
                     if (context.mounted) {
-                      await _addShoppingListItemsFromImage(
-                          context, ref, photo);
+                      await _addShoppingListItemsFromImage(context, ref, photo);
                     }
                     if (context.mounted) {
                       Navigator.of(context).pop();
@@ -236,12 +234,10 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
           actions: [
             TextButton(
               onPressed: () {
-                analytics.logEvent(
-                    name: 'cancel_image_picker',
-                    parameters: {
-                      'groupID': groupID,
-                      'shoppingListID': shoppingListID
-                    });
+                analytics.logEvent(name: 'cancel_image_picker', parameters: {
+                  'groupID': groupID,
+                  'shoppingListID': shoppingListID
+                });
                 Navigator.pop(context);
               },
               child: const Text('閉じる'),

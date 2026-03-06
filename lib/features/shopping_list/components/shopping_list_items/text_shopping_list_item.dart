@@ -43,7 +43,8 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       return null;
     }, []);
 
-    final isChecked = textShoppingListItem.status == GroupShoppingListItemStatus.checked;
+    final isChecked =
+        textShoppingListItem.status == GroupShoppingListItemStatus.checked;
     final colorScheme = Theme.of(context).colorScheme;
     final hasDescription = textShoppingListItem.description != null &&
         textShoppingListItem.description!.isNotEmpty;
@@ -119,7 +120,9 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                               textShoppingListItem.description!,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -209,16 +212,17 @@ class TextShoppingListItemTextField extends ConsumerWidget {
             ? const InputDecoration()
             : const InputDecoration(border: InputBorder.none),
         style: () {
-          final isChecked = textShoppingListItem.status == GroupShoppingListItemStatus.checked;
+          final isChecked = textShoppingListItem.status ==
+              GroupShoppingListItemStatus.checked;
           final colorScheme = Theme.of(context).colorScheme;
           return TextStyle(
             color: isChecked
                 ? colorScheme.onSurface.withValues(alpha: 0.4)
                 : colorScheme.onSurface,
-            decoration: isChecked ? TextDecoration.lineThrough : TextDecoration.none,
-            decorationColor: isChecked
-                ? colorScheme.onSurface.withValues(alpha: 0.4)
-                : null,
+            decoration:
+                isChecked ? TextDecoration.lineThrough : TextDecoration.none,
+            decorationColor:
+                isChecked ? colorScheme.onSurface.withValues(alpha: 0.4) : null,
           );
         }(),
         onSubmitted: (String v) async {

@@ -163,8 +163,7 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
             width: double.infinity,
             child: FilledButton(
               onPressed: () {
-                analytics
-                    .logEvent(name: 'tap_save_item_detail', parameters: {
+                analytics.logEvent(name: 'tap_save_item_detail', parameters: {
                   'groupID': groupID,
                   'itemID': textShoppingListItem.id
                 });
@@ -212,8 +211,7 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                                 'itemID': textShoppingListItem.id
                               });
                           ref
-                              .read(
-                                  groupDatabaseProvider(groupID: groupID))
+                              .read(groupDatabaseProvider(groupID: groupID))
                               .shoppingListItemsReference(
                                 shoppingListID:
                                     textShoppingListItem.shoppingListID,

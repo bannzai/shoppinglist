@@ -343,7 +343,8 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                   child: Text(
                                     '削除',
                                     style: TextStyle(
-                                      color: Theme.of(context).colorScheme.error,
+                                      color:
+                                          Theme.of(context).colorScheme.error,
                                     ),
                                   ),
                                 ),
