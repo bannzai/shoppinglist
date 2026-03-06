@@ -7,10 +7,9 @@ import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list/components/app_bar.dart';
-import 'package:shoppinglist/features/shopping_list/components/buttons/copy_multiline_text_button.dart';
-import 'package:shoppinglist/features/shopping_list/components/buttons/image_picker_button.dart';
-import 'package:shoppinglist/features/shopping_list/components/buttons/shopping_list_item_add_button.dart';
+
 import 'package:shoppinglist/features/shopping_list/components/group_switcher.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/empty_text_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_items.dart';
@@ -18,7 +17,7 @@ import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
-import 'package:shoppinglist/style/color.dart';
+
 
 class ShoppingListPage extends HookConsumerWidget {
   final String groupID;
@@ -151,6 +150,23 @@ class _Body extends HookConsumerWidget {
           shoppingListItems: shoppingListItemsAsync.asData?.value ?? [],
           onShoppingListIDChanged: onShoppingListIDChanged,
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            analytics.logEvent(name: 'tap_add_item_fab', parameters: {
+              'groupID': groupID,
+              'shoppingListID': shoppingListID,
+            });
+            ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+                  shoppingListID: shoppingListID,
+                  message: '',
+                  order: (shoppingListItemsAsync.asData?.value ?? []).nextOrder,
+                  groupShoppingListItemCategoryID: null,
+                  description: null,
+                  color: null,
+                );
+          },
+          child: const Icon(Icons.add),
+        ),
         body: SafeArea(
           child: shoppingListItemsAsync.when(
             data: (shoppingListItems) {
@@ -169,8 +185,8 @@ class _Body extends HookConsumerWidget {
                       const SizedBox(height: 4),
                       Text(
                         '※ この買い物リストは${DateFormat.MEd().format(ttlExpiresDateTime)}まで保存されてます',
-                        style: const TextStyle(
-                          color: TextColor.gray,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontSize: 12,
                         ),
                       ),
@@ -223,40 +239,6 @@ class _Body extends HookConsumerWidget {
                             groupID: groupID,
                             shoppingListID: shoppingListID,
                             sortByCategory: sortByCategory.value)),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Expanded(
-                                child: ShoppingListItemAddButton(
-                                    groupID: groupID,
-                                    shoppingListID: shoppingListID,
-                                    shoppingListItems: shoppingListItems),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: ImagePickerButton(
-                                    groupID: groupID,
-                                    shoppingListID: shoppingListID,
-                                    shoppingListItems: shoppingListItems),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: CopyMultilineTextButton(
-                                    groupID: groupID,
-                                    shoppingListID: shoppingListID,
-                                    shoppingListItems: shoppingListItems),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 );
               }
