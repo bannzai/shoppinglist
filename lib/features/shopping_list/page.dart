@@ -191,17 +191,6 @@ class _Body extends HookConsumerWidget {
               } else {
                 return Column(
                   children: [
-                    if (ttlExpiresDateTime != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        '※ この買い物リストは${DateFormat.MEd().format(ttlExpiresDateTime)}まで保存されてます',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          fontSize: 12,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                    ],
                     if (shoppingList?.duplicatedFromGroupShoppingListID !=
                         null) ...[
                       const SizedBox(height: 4),
@@ -254,26 +243,17 @@ class _Body extends HookConsumerWidget {
                             groupID: groupID,
                             shoppingListID: shoppingListID,
                             sortByCategory: sortByCategory.value)),
-                    _AddItemPlaceholder(
-                      onTap: () {
-                        analytics.logEvent(
-                            name: 'tap_add_item_placeholder',
-                            parameters: {
-                              'groupID': groupID,
-                              'shoppingListID': shoppingListID,
-                            });
-                        ref
-                            .read(addShoppingListItemProvider(groupID: groupID))
-                            .call(
-                              shoppingListID: shoppingListID,
-                              message: '',
-                              order: allItems.nextOrder,
-                              groupShoppingListItemCategoryID: null,
-                              description: null,
-                              color: null,
-                            );
-                      },
-                    ),
+                    if (ttlExpiresDateTime != null)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Text(
+                          '${DateFormat('M/d').format(ttlExpiresDateTime)}になるとこのリストは削除されます',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ),
                   ],
                 );
               }
@@ -337,38 +317,3 @@ class _ProgressSection extends StatelessWidget {
   }
 }
 
-class _AddItemPlaceholder extends StatelessWidget {
-  final VoidCallback onTap;
-
-  const _AddItemPlaceholder({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: colorScheme.outlineVariant, width: 0.5),
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.add_circle_outline,
-                size: 20, color: colorScheme.onSurfaceVariant),
-            const SizedBox(width: 12),
-            Text(
-              'アイテムを追加',
-              style: TextStyle(
-                color: colorScheme.onSurfaceVariant,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
