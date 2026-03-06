@@ -231,15 +231,22 @@ class _CategoryHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        border: Border(
+          bottom: BorderSide(color: colorScheme.outlineVariant, width: 0.5),
+        ),
+      ),
       child: Text(
         categoryName,
-        style: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-        ),
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.w600,
+            ),
       ),
     );
   }

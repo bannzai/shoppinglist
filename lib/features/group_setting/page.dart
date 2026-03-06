@@ -11,7 +11,6 @@ import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/features/group_shopping_list_item_category/page.dart';
 import 'package:shoppinglist/features/shopping_location/page.dart';
-import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupSettingPage extends ConsumerWidget {
@@ -183,8 +182,8 @@ class _GroupSettingBody extends HookConsumerWidget {
                     }(),
                     trailing: (isOwner && !isProfileOwner)
                         ? IconButton(
-                            icon: const Icon(Icons.remove_circle,
-                                color: TextColor.danger),
+                            icon: Icon(Icons.remove_circle,
+                                color: Theme.of(context).colorScheme.error),
                             onPressed: isRemovingMember.value
                                 ? null
                                 : () {
@@ -391,9 +390,9 @@ class _GroupSettingBody extends HookConsumerWidget {
                 isRemovingMember.value = false;
               }
             },
-            child: const Text(
+            child: Text(
               '削除',
-              style: TextStyle(color: TextColor.danger),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
           ),
           TextButton(

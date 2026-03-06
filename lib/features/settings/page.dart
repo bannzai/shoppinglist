@@ -9,7 +9,7 @@ import 'package:shoppinglist/features/settings/components/section.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
-import 'package:shoppinglist/style/color.dart';
+
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -58,13 +58,7 @@ class SettingPage extends HookConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        '表示名',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w300,
-                          fontSize: 14,
-                        ),
-                      ),
+                      const Text('表示名'),
                       const SizedBox(height: 4),
                       TextField(
                         controller: displayNameController,
@@ -131,10 +125,6 @@ class SettingPage extends HookConsumerWidget {
                 ListTile(
                   title: const Text(
                     'グループ管理',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16,
-                    ),
                   ),
                   leading: const Icon(Icons.groups),
                   onTap: () {
@@ -151,10 +141,6 @@ class SettingPage extends HookConsumerWidget {
                 ListTile(
                   title: const Text(
                     '招待コードでグループに参加',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16,
-                    ),
                   ),
                   leading: const Icon(Icons.group_add),
                   onTap: () {
@@ -190,10 +176,6 @@ class SettingPage extends HookConsumerWidget {
                 ListTile(
                   title: const Text(
                     'プライバシーポリシー',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16,
-                    ),
                   ),
                   onTap: () {
                     analytics.logEvent(
@@ -247,12 +229,6 @@ class _Divider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 15, right: 15),
-      child: Container(
-        height: 1,
-        color: AppColors.border,
-      ),
-    );
+    return const Divider(indent: 15, endIndent: 15);
   }
 }

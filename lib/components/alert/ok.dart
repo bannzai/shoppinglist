@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shoppinglist/style/color.dart';
 
 class OKDialog extends StatelessWidget {
   final IconData icon;
@@ -53,10 +52,10 @@ class OKDialog extends StatelessWidget {
               Navigator.of(context).pop();
             }
           },
-          child: const Text(
+          child: Text(
             'OK',
             style: TextStyle(
-              color: TextColor.main,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
           ),

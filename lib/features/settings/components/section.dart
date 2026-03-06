@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shoppinglist/style/color.dart';
 
 class SettingSectionTitle extends StatelessWidget {
   final String text;
@@ -32,10 +31,10 @@ class _SectionTitle extends StatelessWidget {
       padding: const EdgeInsets.only(top: 32, left: 15, right: 16),
       child: Text(
         text,
-        style: const TextStyle(
-          fontWeight: FontWeight.w300,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
           fontSize: 14,
-          color: TextColor.main,
+          color: Theme.of(context).colorScheme.primary,
         ),
       ),
     );

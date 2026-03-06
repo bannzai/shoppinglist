@@ -9,7 +9,7 @@ Future<T?> appShowModalBottomSheet<T>({
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.transparent,
+    showDragHandle: true,
     builder: (context) {
       return SizedBox(
         height: height * 0.8,
