@@ -1,14 +1,19 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/components/toolbar/picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list_item_filter/page.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
+import 'package:shoppinglist/utils/functions/firebase_function.dart';
+import 'package:shoppinglist/utils/image/image.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
@@ -39,21 +44,26 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final shoppingListDelete =
         ref.watch(shoppingListDeleteProvider(groupID: groupID));
     return AppBar(
-      title: GestureDetector(
-        onTap: () {
-          analytics.logEvent(name: 'tap_open_list_picker', parameters: {
-            'groupID': groupID,
-            'shoppingListID': shoppingListID
-          });
-          FocusScope.of(context).unfocus();
-          _showPicker(context);
+      title: DropdownButton<String>(
+        value: shoppingListID,
+        underline: const SizedBox.shrink(),
+        dropdownColor: Theme.of(context).colorScheme.surfaceContainer,
+        style: Theme.of(context).textTheme.titleLarge,
+        items: shoppingLists
+            .map((sl) => DropdownMenuItem(
+                  value: sl.id,
+                  child: Text(sl.name),
+                ))
+            .toList(),
+        onChanged: (newID) {
+          if (newID != null) {
+            analytics.logEvent(name: 'tap_confirm_list_picker', parameters: {
+              'groupID': groupID,
+              'selectedShoppingListID': newID,
+            });
+            onShoppingListIDChanged(newID);
+          }
         },
-        child: Row(
-          children: [
-            Text(shoppingList?.name ?? ''),
-            const Icon(Icons.arrow_drop_down),
-          ],
-        ),
       ),
       actions: [
         if (shoppingList != null) ...[
@@ -73,7 +83,6 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     shoppingList: shoppingList,
                     onDelete: () {
                       shoppingListDelete(shoppingListID: shoppingListID);
-                      // pop alert
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     },
                   );
@@ -82,26 +91,59 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
             },
             icon: const Icon(Icons.settings),
           ),
-          IconButton(
-            onPressed: () async {
-              analytics.logEvent(
-                  name: 'tap_open_add_list_sheet',
-                  parameters: {'groupID': groupID});
-              FocusScope.of(context).unfocus();
-              showModalBottomSheet(
-                context: context,
-                builder: (context) {
-                  return _AddShoppingListBottomSheet(
-                    groupID: groupID,
-                    shoppingList: shoppingList,
-                    shoppingListID: shoppingListID,
-                    shoppingListItems: shoppingListItems,
-                    onShoppingListIDChanged: onShoppingListIDChanged,
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            onSelected: (value) {
+              switch (value) {
+                case 'add_list':
+                  analytics.logEvent(
+                      name: 'tap_open_add_list_sheet',
+                      parameters: {'groupID': groupID});
+                  FocusScope.of(context).unfocus();
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return _AddShoppingListBottomSheet(
+                        groupID: groupID,
+                        shoppingList: shoppingList,
+                        shoppingListID: shoppingListID,
+                        shoppingListItems: shoppingListItems,
+                        onShoppingListIDChanged: onShoppingListIDChanged,
+                      );
+                    },
                   );
-                },
-              );
+                  break;
+                case 'image':
+                  _showImagePicker(context, ref);
+                  break;
+                case 'paste':
+                  _pasteFromClipboard(context, ref);
+                  break;
+              }
             },
-            icon: const Icon(Icons.add),
+            itemBuilder: (context) => const [
+              PopupMenuItem(
+                value: 'add_list',
+                child: ListTile(
+                  leading: Icon(Icons.playlist_add),
+                  title: Text('買い物リストを追加'),
+                ),
+              ),
+              PopupMenuItem(
+                value: 'image',
+                child: ListTile(
+                  leading: Icon(Icons.photo_camera),
+                  title: Text('画像から追加'),
+                ),
+              ),
+              PopupMenuItem(
+                value: 'paste',
+                child: ListTile(
+                  leading: Icon(Icons.content_paste_go),
+                  title: Text('テキスト貼り付け'),
+                ),
+              ),
+            ],
           ),
         ],
         IconButton(
@@ -111,8 +153,9 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
               'shoppingListID': shoppingListID
             });
             FocusScope.of(context).unfocus();
-            appShowModalBottomSheet(
+            showModalBottomSheet(
               context: context,
+              showDragHandle: true,
               builder: (context) {
                 return ShoppingListItemFilterPage(
                   groupID: groupID,
@@ -129,59 +172,140 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     );
   }
 
-  void _showPicker(BuildContext context) {
-    var selectedID = shoppingLists.first.id;
-    showModalBottomSheet(
+  void _showImagePicker(BuildContext context, WidgetRef ref) {
+    analytics.logEvent(
+        name: 'tap_open_image_picker',
+        parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
+    final imagePicker = ImagePicker();
+
+    showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                PickerToolbar(
-                  done: () {
-                    analytics.logEvent(
-                        name: 'tap_confirm_list_picker',
-                        parameters: {
-                          'groupID': groupID,
-                          'selectedShoppingListID': selectedID
-                        });
-                    Navigator.pop(context);
-                    onShoppingListIDChanged(selectedID);
-                  },
-                  cancel: () {
-                    analytics.logEvent(
-                        name: 'cancel_list_picker',
-                        parameters: {'groupID': groupID});
-                    Navigator.pop(context);
-                  },
-                ),
-                SizedBox(
-                  height: 200,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: CupertinoPicker(
-                      itemExtent: 40,
-                      children:
-                          shoppingLists.map((sl) => Text(sl.name)).toList(),
-                      onSelectedItemChanged: (int value) {
-                        setState(() {
-                          selectedID = shoppingLists[value].id;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
+      builder: (context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: const Text('カメラ'),
+                leading: const Icon(Icons.photo_camera),
+                onTap: () async {
+                  analytics.logEvent(
+                      name: 'tap_image_picker_camera',
+                      parameters: {
+                        'groupID': groupID,
+                        'shoppingListID': shoppingListID
+                      });
+                  final XFile? photo =
+                      await imagePicker.pickImage(source: ImageSource.camera);
+                  if (photo != null) {
+                    if (context.mounted) {
+                      await _addShoppingListItemsFromImage(
+                          context, ref, photo);
+                    }
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  }
+                },
+              ),
+              ListTile(
+                title: const Text('フォトライブラリ'),
+                leading: const Icon(Icons.photo_album),
+                onTap: () async {
+                  analytics.logEvent(
+                      name: 'tap_image_picker_gallery',
+                      parameters: {
+                        'groupID': groupID,
+                        'shoppingListID': shoppingListID
+                      });
+                  final XFile? photo =
+                      await imagePicker.pickImage(source: ImageSource.gallery);
+                  if (photo != null) {
+                    if (context.mounted) {
+                      await _addShoppingListItemsFromImage(
+                          context, ref, photo);
+                    }
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  }
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                analytics.logEvent(
+                    name: 'cancel_image_picker',
+                    parameters: {
+                      'groupID': groupID,
+                      'shoppingListID': shoppingListID
+                    });
+                Navigator.pop(context);
+              },
+              child: const Text('閉じる'),
+            ),
+          ],
         );
       },
     );
+  }
+
+  Future<void> _addShoppingListItemsFromImage(
+      BuildContext context, WidgetRef ref, XFile photo) async {
+    final file = File(photo.path);
+    final base64Image = await base64CompressImage(file);
+    final rawItems = await functions.generateShoppingListItemsFromImage(
+      mimeType: mimeType(file),
+      base64Image: base64Image,
+    );
+    debugPrint('rawItems: $rawItems');
+
+    final distincted = rawItems.toSet().toList();
+
+    for (var (i, e) in distincted.indexed) {
+      if (shoppingListItems.any((item) => item.message == e)) {
+        continue;
+      }
+
+      try {
+        await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+              shoppingListID: shoppingListID,
+              message: e,
+              order: shoppingListItems.nextOrder + i,
+              groupShoppingListItemCategoryID: null,
+              description: null,
+              color: null,
+            );
+      } catch (e) {
+        debugPrint('Error: $e');
+      }
+    }
+  }
+
+  Future<void> _pasteFromClipboard(BuildContext context, WidgetRef ref) async {
+    analytics.logEvent(
+        name: 'tap_paste_multiline',
+        parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
+    final data = await Clipboard.getData(Clipboard.kTextPlain);
+    final text = data?.text;
+    if (text != null) {
+      final lines = text.split('\n').toSet();
+      for (final (index, line) in lines.indexed) {
+        if (shoppingListItems.any((item) => item.message == line)) {
+          continue;
+        }
+        await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+              shoppingListID: shoppingListID,
+              message: line,
+              order: shoppingListItems.nextOrder + index,
+              groupShoppingListItemCategoryID: null,
+              description: null,
+              color: null,
+            );
+      }
+    }
   }
 
   @override
@@ -210,7 +334,7 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
     final selectedGroupID = useState(groupID);
 
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.surface,
       padding: const EdgeInsets.only(bottom: 30),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -253,7 +377,6 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
                 shoppingLocationID: null,
                 duplicatedFromGroupShoppingListID: null,
               );
-              // 同じグループの場合のみshoppingListIDを切り替える
               if (selectedGroupID.value == groupID) {
                 onShoppingListIDChanged(newShoppingList.id);
               }
@@ -280,7 +403,6 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
                 sourceShoppingList: shoppingList,
                 shoppingListItems: shoppingListItems,
               );
-              // 同じグループの場合のみshoppingListIDを切り替える
               if (selectedGroupID.value == groupID) {
                 onShoppingListIDChanged(newShoppingList.id);
               }
