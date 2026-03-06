@@ -165,13 +165,31 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       ),
     );
 
-    if (reorderIndex != null) {
-      return ReorderableDelayedDragStartListener(
-        index: reorderIndex!,
-        child: content,
-      );
-    }
-    return content;
+    final widget = reorderIndex != null
+        ? ReorderableDelayedDragStartListener(
+            index: reorderIndex!, child: content)
+        : content;
+
+    return Dismissible(
+      key: ValueKey(textShoppingListItem.id),
+      direction: DismissDirection.startToEnd,
+      background: Container(
+        color: colorScheme.error,
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.only(left: 16),
+        child: Icon(Icons.delete, color: colorScheme.onError),
+      ),
+      onDismissed: (_) {
+        ref
+            .read(groupDatabaseProvider(groupID: groupID))
+            .shoppingListItemsReference(
+              shoppingListID: textShoppingListItem.shoppingListID,
+            )
+            .doc(textShoppingListItem.id)
+            .delete();
+      },
+      child: widget,
+    );
   }
 }
 
