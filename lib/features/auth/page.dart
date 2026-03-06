@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/auth/apple.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/components/auth/google.dart';
-import 'package:shoppinglist/style/color.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 
 class AuthPage extends ConsumerWidget {
@@ -57,6 +57,7 @@ class _Note extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         RichText(
@@ -65,10 +66,10 @@ class _Note extends StatelessWidget {
             children: [
               TextSpan(
                 text: 'プライバシーポリシー',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w300,
                   fontSize: 10,
-                  color: TextColor.link,
+                  color: colorScheme.primary,
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
@@ -79,20 +80,20 @@ class _Note extends StatelessWidget {
                         mode: LaunchMode.externalApplication);
                   },
               ),
-              const TextSpan(
+              TextSpan(
                 text: 'と',
                 style: TextStyle(
                   fontWeight: FontWeight.w300,
                   fontSize: 10,
-                  color: TextColor.gray,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
               TextSpan(
                 text: '利用規約',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w300,
                   fontSize: 10,
-                  color: TextColor.link,
+                  color: colorScheme.primary,
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
@@ -103,12 +104,12 @@ class _Note extends StatelessWidget {
                         mode: LaunchMode.externalApplication);
                   },
               ),
-              const TextSpan(
+              TextSpan(
                 text: 'に同意した上でサインインしてください',
                 style: TextStyle(
                   fontWeight: FontWeight.w300,
                   fontSize: 10,
-                  color: TextColor.gray,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
