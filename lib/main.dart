@@ -12,9 +12,12 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/provider/shared_preferences.dart';
 import 'package:shoppinglist/utils/config/environment.dart';
+import 'package:shoppinglist/features/home_widget/home_widget_callback.dart';
+import 'package:shoppinglist/features/home_widget/home_widget_data_sync.dart';
 import 'package:shoppinglist/utils/development/debug.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:shoppinglist/utils/remote_config/remote_config.dart';
+import 'package:home_widget/home_widget.dart';
 
 void main() async {
   if (kDebugMode) {
@@ -33,6 +36,11 @@ void main() async {
     await FirebaseAuth.instance.setSettings(
       userAccessGroup: 'TQPN82UBBY.com.bannzai.shoppinglist',
     );
+
+    // ホーム画面ウィジェットの設定
+    await HomeWidget.setAppGroupId(HomeWidgetDataSync.appGroupId);
+    await HomeWidget.registerInteractivityCallback(
+        homeWidgetBackgroundCallback);
 
     if (kDebugMode) {
       overrideDebugPrint();
