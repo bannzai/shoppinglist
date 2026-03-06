@@ -18,7 +18,6 @@ import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
 
-
 class ShoppingListPage extends HookConsumerWidget {
   final String groupID;
   final ValueNotifier<String?> currentShoppingListID;
