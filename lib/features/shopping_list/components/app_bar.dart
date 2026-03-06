@@ -158,6 +158,8 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
           child: Row(
             children: [
               FilterChip(
+                avatar: const Icon(Icons.check, size: 18),
+                showCheckmark: false,
                 label: const Text('チェック済み表示'),
                 selected: showChecked.value,
                 onSelected: (value) {
@@ -173,6 +175,8 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
               ),
               const SizedBox(width: 8),
               FilterChip(
+                avatar: const Icon(Icons.check, size: 18),
+                showCheckmark: false,
                 label: const Text('カテゴリ順'),
                 selected: sortByCategory.value,
                 onSelected: hasCategories

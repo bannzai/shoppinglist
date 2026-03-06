@@ -165,13 +165,42 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       ),
     );
 
-    if (reorderIndex != null) {
-      return ReorderableDelayedDragStartListener(
-        index: reorderIndex!,
-        child: content,
-      );
-    }
-    return content;
+    final widget = reorderIndex != null
+        ? ReorderableDelayedDragStartListener(
+            index: reorderIndex!, child: content)
+        : content;
+
+    return Dismissible(
+      key: ValueKey(textShoppingListItem.id),
+      direction: DismissDirection.startToEnd,
+      background: Container(
+        color: colorScheme.error,
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.only(left: 16),
+        child: Icon(Icons.delete, color: colorScheme.onError),
+      ),
+      confirmDismiss: (direction) async {
+        try {
+          await ref
+              .read(groupDatabaseProvider(groupID: groupID))
+              .shoppingListItemsReference(
+                shoppingListID: textShoppingListItem.shoppingListID,
+              )
+              .doc(textShoppingListItem.id)
+              .delete();
+          return true;
+        } catch (e, st) {
+          debugPrint('アイテムの削除に失敗: $e\n$st');
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('アイテムの削除に失敗しました。')),
+            );
+          }
+          return false;
+        }
+      },
+      child: widget,
+    );
   }
 }
 
