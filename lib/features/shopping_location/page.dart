@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
-import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class ShoppingLocationPage extends ConsumerWidget {
@@ -56,7 +55,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                       },
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete, color: TextColor.danger),
+                      icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
                       onPressed: () {
                         analytics.logEvent(
                             name: 'tap_delete_location',
@@ -230,9 +229,9 @@ class ShoppingLocationPage extends ConsumerWidget {
                 }
               }
             },
-            child: const Text(
+            child: Text(
               '削除',
-              style: TextStyle(color: TextColor.danger),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
           ),
           TextButton(

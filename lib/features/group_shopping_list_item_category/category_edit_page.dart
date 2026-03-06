@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item_category_keyword.dart';
 import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
-import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupShoppingListItemCategoryEditPage extends ConsumerWidget {
@@ -168,7 +167,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                         style: const TextStyle(fontSize: 12),
                       ),
                       trailing: IconButton(
-                        icon: const Icon(Icons.delete, color: TextColor.danger),
+                        icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
                         onPressed: () => _deleteKeyword(
                           context: context,
                           ref: ref,
