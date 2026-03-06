@@ -248,7 +248,8 @@ class _Body extends HookConsumerWidget {
                         child: Text(
                           '${DateFormat('M/d').format(ttlExpiresDateTime)}になるとこのリストは削除されます',
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                             fontSize: 10,
                           ),
                         ),
@@ -315,4 +316,3 @@ class _ProgressSection extends StatelessWidget {
     );
   }
 }
-

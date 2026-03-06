@@ -330,9 +330,8 @@ class _CategoryReorderableList extends ConsumerWidget {
       itemCount: categories.length,
       itemBuilder: (context, index) {
         final category = categories[index];
-        final categoryColor = category.color != null
-            ? colorFromHex(category.color!)
-            : null;
+        final categoryColor =
+            category.color != null ? colorFromHex(category.color!) : null;
         return ListTile(
           key: ValueKey(category.id),
           leading: Icon(

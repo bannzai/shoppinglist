@@ -43,8 +43,8 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final shoppingList = this.shoppingList;
     final shoppingListDelete =
         ref.watch(shoppingListDeleteProvider(groupID: groupID));
-    final axesAsync = ref.watch(
-        groupShoppingListItemCategoryAxesProvider(groupID: groupID));
+    final axesAsync =
+        ref.watch(groupShoppingListItemCategoryAxesProvider(groupID: groupID));
     final hasCategories = axesAsync.maybeWhen(
         data: (axes) => axes.isNotEmpty, orElse: () => false);
     return AppBar(
@@ -163,13 +163,11 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 label: const Text('チェック済み表示'),
                 selected: showChecked.value,
                 onSelected: (value) {
-                  analytics.logEvent(
-                      name: 'toggle_show_checked',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': shoppingListID,
-                        'value': value.toString()
-                      });
+                  analytics.logEvent(name: 'toggle_show_checked', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                    'value': value.toString()
+                  });
                   showChecked.value = value;
                 },
               ),

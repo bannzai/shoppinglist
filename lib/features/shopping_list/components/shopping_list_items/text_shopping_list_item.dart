@@ -261,8 +261,8 @@ class TextShoppingListItemTextField extends ConsumerWidget {
             color: isChecked
                 ? colorScheme.onSurface.withValues(alpha: 0.35)
                 : colorScheme.onSurface,
-<<<<<<< HEAD
-            decoration: isChecked ? TextDecoration.lineThrough : TextDecoration.none,
+            decoration:
+                isChecked ? TextDecoration.lineThrough : TextDecoration.none,
             decorationColor: isChecked
                 ? colorScheme.onSurface.withValues(alpha: 0.35)
                 : null,

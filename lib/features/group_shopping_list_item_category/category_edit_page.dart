@@ -133,12 +133,11 @@ class _CategoryEditBody extends HookConsumerWidget {
                 _CategoryColorPicker(
                   selectedColor: category.color,
                   onColorSelected: (color) async {
-                    analytics.logEvent(
-                        name: 'select_category_color',
-                        parameters: {
-                          'groupID': groupID,
-                          'categoryID': category.id,
-                        });
+                    analytics
+                        .logEvent(name: 'select_category_color', parameters: {
+                      'groupID': groupID,
+                      'categoryID': category.id,
+                    });
                     try {
                       await ref
                           .read(groupShoppingListItemCategoryUpdateProvider(
@@ -166,12 +165,11 @@ class _CategoryEditBody extends HookConsumerWidget {
                   selectedIconName: category.iconName,
                   selectedColor: category.color,
                   onIconSelected: (iconName) async {
-                    analytics.logEvent(
-                        name: 'select_category_icon',
-                        parameters: {
-                          'groupID': groupID,
-                          'categoryID': category.id,
-                        });
+                    analytics
+                        .logEvent(name: 'select_category_icon', parameters: {
+                      'groupID': groupID,
+                      'categoryID': category.id,
+                    });
                     try {
                       await ref
                           .read(groupShoppingListItemCategoryUpdateProvider(
@@ -520,7 +518,8 @@ class _CategoryIconPicker extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 color: isSelected
-                    ? (accentColor ?? colorScheme.primary).withValues(alpha: 0.15)
+                    ? (accentColor ?? colorScheme.primary)
+                        .withValues(alpha: 0.15)
                     : null,
                 border: Border.all(
                   color: isSelected
