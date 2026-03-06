@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shoppinglist/style/color.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ErrorAlert extends StatelessWidget {
@@ -12,20 +11,21 @@ class ErrorAlert extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final faq = faqLinkURL;
+    final colorScheme = Theme.of(context).colorScheme;
     return AlertDialog(
       title: Text(
         title ?? 'エラーが発生しました',
-        style: const TextStyle(
+        style: TextStyle(
           fontWeight: FontWeight.w600,
           fontSize: 16,
-          color: TextColor.black,
+          color: colorScheme.onSurface,
         ),
       ),
       content: Text(errorMessage,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.w300,
             fontSize: 14,
-            color: TextColor.black,
+            color: colorScheme.onSurface,
           )),
       actions: <Widget>[
         if (faq != null)
@@ -33,10 +33,10 @@ class ErrorAlert extends StatelessWidget {
             onPressed: () async {
               launchUrl(Uri.parse(faq));
             },
-            child: const Text(
+            child: Text(
               'FAQを見る',
               style: TextStyle(
-                color: TextColor.link,
+                color: colorScheme.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -45,10 +45,10 @@ class ErrorAlert extends StatelessWidget {
           onPressed: () async {
             Navigator.of(context).pop();
           },
-          child: const Text(
+          child: Text(
             '閉じる',
             style: TextStyle(
-              color: TextColor.main,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
           ),

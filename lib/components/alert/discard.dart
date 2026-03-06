@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shoppinglist/style/color.dart';
 
 class DiscardDialog extends StatelessWidget {
   final String title;
@@ -26,10 +25,10 @@ class DiscardDialog extends StatelessWidget {
           if (title.isNotEmpty) ...[
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
-                color: TextColor.main,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
@@ -57,10 +56,10 @@ void showDiscardDialog(
       title: title,
       message: Text(
         message,
-        style: const TextStyle(
+        style: TextStyle(
           fontWeight: FontWeight.w300,
           fontSize: 14,
-          color: TextColor.main,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
       actions: actions,

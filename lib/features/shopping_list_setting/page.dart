@@ -9,7 +9,6 @@ import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/button.dart';
-import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class ShoppingListSettingPage extends HookConsumerWidget {
@@ -341,10 +340,10 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                     );
                                     onDelete();
                                   },
-                                  child: const Text(
+                                  child: Text(
                                     '削除',
                                     style: TextStyle(
-                                      color: TextColor.danger,
+                                      color: Theme.of(context).colorScheme.error,
                                     ),
                                   ),
                                 ),

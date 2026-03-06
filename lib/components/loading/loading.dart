@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/config/environment.dart';
 
 class Loading extends StatelessWidget {
@@ -9,18 +8,19 @@ class Loading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     if (Environment.disableWidgetAnimation) {
       return Center(
         child: Container(
-          color: AppColors.secondary,
+          color: colorScheme.secondary,
           width: 40,
           height: 40,
         ),
       );
     }
-    return const Center(
+    return Center(
       child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation(AppColors.secondary)),
+          valueColor: AlwaysStoppedAnimation(colorScheme.secondary)),
     );
   }
 }
@@ -31,7 +31,6 @@ class ScaffoldLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      backgroundColor: AppColors.background,
       body: Loading(),
     );
   }

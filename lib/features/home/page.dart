@@ -7,7 +7,6 @@ import 'package:shoppinglist/features/settings/page.dart';
 // import 'package:shoppinglist/features/ec_items/page.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/default_group_update.dart';
-import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 enum HomePageTabType {
@@ -64,32 +63,26 @@ class HomePage extends HookConsumerWidget {
     return DefaultTabController(
       length: HomePageTabType.values.length,
       child: Scaffold(
-        backgroundColor: AppColors.background,
         appBar: null,
-        bottomNavigationBar: Ink(
-          child: SafeArea(
-            child: TabBar(
-              controller: tabController,
-              labelColor: AppColors.primary,
-              labelStyle: const TextStyle(fontSize: 12),
-              indicatorColor: Colors.transparent,
-              unselectedLabelColor: TextColor.gray,
-              tabs: const <Tab>[
-                Tab(
-                  text: '買い物リスト',
-                  icon: Icon(Icons.list_alt_outlined),
-                ),
-                // Tab(
-                //   text: 'EC商品メモ',
-                //   icon: Icon(Icons.shopping_cart_outlined),
-                // ),
-                Tab(
-                  text: '設定',
-                  icon: Icon(Icons.settings_outlined),
-                ),
-              ],
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: tabIndex.value,
+          onDestinationSelected: (index) {
+            tabIndex.value = index;
+            tabController.animateTo(index);
+            _screenTracking(index);
+          },
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.list_alt_outlined),
+              selectedIcon: Icon(Icons.list_alt),
+              label: '買い物リスト',
             ),
-          ),
+            NavigationDestination(
+              icon: Icon(Icons.settings_outlined),
+              selectedIcon: Icon(Icons.settings),
+              label: '設定',
+            ),
+          ],
         ),
         body: TabBarView(
           physics: const NeverScrollableScrollPhysics(),
@@ -104,7 +97,6 @@ class HomePage extends HookConsumerWidget {
                 ref.read(defaultGroupUpdateProvider).call(groupID: newGroupID);
               },
             ),
-            // ECItemsPage(),
             const SettingPage(),
           ],
         ),

@@ -4,7 +4,6 @@ import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item_category_axis.dart';
 import 'package:shoppinglist/features/group_shopping_list_item_category/category_edit_page.dart';
 import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
-import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupShoppingListItemCategoryPage extends ConsumerWidget {
@@ -358,7 +357,7 @@ class _CategoryReorderableList extends ConsumerWidget {
                 },
               ),
               IconButton(
-                icon: const Icon(Icons.delete, color: TextColor.danger),
+                icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
                 onPressed: () {
                   analytics.logEvent(name: 'tap_delete_category', parameters: {
                     'groupID': groupID,
@@ -411,9 +410,9 @@ class _CategoryReorderableList extends ConsumerWidget {
                 }
               }
             },
-            child: const Text(
+            child: Text(
               '削除',
-              style: TextStyle(color: TextColor.danger),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
           ),
           TextButton(
