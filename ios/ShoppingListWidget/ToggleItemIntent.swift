@@ -32,34 +32,39 @@ struct ToggleItemIntent: AppIntent {
         self.currentStatus = currentStatus
     }
 
-    private let appGroupId = "group.com.bannzai.shoppinglist"
+    private let appGroupId = widgetAppGroupId
 
     func perform() async throws -> some IntentResult {
+        let success = await toggleFirestoreItemStatus(
+            groupID: groupID,
+            shoppingListID: shoppingListID,
+            itemID: itemID,
+            currentStatus: currentStatus
+        )
+
+        if !success {
+            // Firestore 書き込み失敗時は UserDefaults のみ更新（オフラインフォールバック）
+            updateUserDefaults()
+        }
+
+        WidgetCenter.shared.reloadAllTimelines()
+        return .result()
+    }
+
+    private func updateUserDefaults() {
         let userDefaults = UserDefaults(suiteName: appGroupId)
         let key = "widget_items_\(groupID)_\(shoppingListID)"
 
         guard let jsonString = userDefaults?.string(forKey: key),
               let data = jsonString.data(using: .utf8),
               var items = try? JSONDecoder().decode([ShoppingListItemData].self, from: data) else {
-            return .result()
+            return
         }
 
-        // ステータスを切り替え
         if let index = items.firstIndex(where: { $0.id == itemID }) {
-            let newStatus = currentStatus == "checked" ? "unchecked" : "checked"
-            let item = items[index]
-            items[index] = ShoppingListItemData(
-                id: item.id,
-                groupID: item.groupID,
-                shoppingListID: item.shoppingListID,
-                message: item.message,
-                status: newStatus,
-                order: item.order,
-                color: item.color
-            )
+            items[index].status = currentStatus == "checked" ? "unchecked" : "checked"
         }
 
-        // UserDefaultsに保存
         if let encoded = try? JSONEncoder().encode(items),
            let jsonStr = String(data: encoded, encoding: .utf8) {
             userDefaults?.set(jsonStr, forKey: key)
@@ -77,10 +82,5 @@ struct ToggleItemIntent: AppIntent {
            let jsonStr = String(data: encoded, encoding: .utf8) {
             userDefaults?.set(jsonStr, forKey: pendingKey)
         }
-
-        // ウィジェットのタイムラインを更新
-        WidgetCenter.shared.reloadAllTimelines()
-
-        return .result()
     }
 }
