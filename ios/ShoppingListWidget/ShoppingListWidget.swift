@@ -41,17 +41,16 @@ struct Provider: AppIntentTimelineProvider {
     }
 
     func snapshot(for configuration: ShoppingListConfigurationIntent, in context: Context) async -> ShoppingListEntry {
-        loadEntry(for: configuration)
+        await loadEntry(for: configuration)
     }
 
     func timeline(for configuration: ShoppingListConfigurationIntent, in context: Context) async -> Timeline<ShoppingListEntry> {
-        let entry = loadEntry(for: configuration)
+        let entry = await loadEntry(for: configuration)
         let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
         return Timeline(entries: [entry], policy: .after(nextUpdate))
     }
 
-    private func loadEntry(for configuration: ShoppingListConfigurationIntent) -> ShoppingListEntry {
-        let userDefaults = UserDefaults(suiteName: appGroupId)
+    private func loadEntry(for configuration: ShoppingListConfigurationIntent) async -> ShoppingListEntry {
         let showChecked = configuration.showCheckedItems
 
         let groupID: String
@@ -63,20 +62,18 @@ struct Provider: AppIntentTimelineProvider {
             shoppingListID = selectedList.id
             shoppingListName = selectedList.name
         } else {
+            let userDefaults = UserDefaults(suiteName: appGroupId)
             groupID = userDefaults?.string(forKey: "widget_current_group_id") ?? ""
             shoppingListID = userDefaults?.string(forKey: "widget_current_shopping_list_id") ?? ""
             shoppingListName = userDefaults?.string(forKey: "widget_current_shopping_list_name") ?? "買い物リスト"
         }
 
-        var items: [ShoppingListItemData] = []
-        let key = "widget_items_\(groupID)_\(shoppingListID)"
-        if let jsonString = userDefaults?.string(forKey: key),
-           let data = jsonString.data(using: .utf8) {
-            do {
-                items = try JSONDecoder().decode([ShoppingListItemData].self, from: data)
-            } catch {
-                // デコード失敗時は空配列
-            }
+        // Firestore から直接取得
+        var items = await FirestoreService.shared.fetchItems(groupID: groupID, shoppingListID: shoppingListID)
+
+        // フォールバック: Firestore 失敗時は UserDefaults から読み込み
+        if items.isEmpty {
+            items = loadItemsFromUserDefaults(groupID: groupID, shoppingListID: shoppingListID)
         }
 
         if !showChecked {
@@ -89,6 +86,20 @@ struct Provider: AppIntentTimelineProvider {
             items: items,
             showCheckedItems: showChecked
         )
+    }
+
+    private func loadItemsFromUserDefaults(groupID: String, shoppingListID: String) -> [ShoppingListItemData] {
+        let userDefaults = UserDefaults(suiteName: appGroupId)
+        let key = "widget_items_\(groupID)_\(shoppingListID)"
+        guard let jsonString = userDefaults?.string(forKey: key),
+              let data = jsonString.data(using: .utf8) else {
+            return []
+        }
+        do {
+            return try JSONDecoder().decode([ShoppingListItemData].self, from: data)
+        } catch {
+            return []
+        }
     }
 }
 
