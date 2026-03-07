@@ -53,3 +53,5 @@ screenshots/
 
 # UI research artifacts
 .local/
+
+ios/build
