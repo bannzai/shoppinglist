@@ -1,8 +1,6 @@
 import SwiftUI
 import WidgetKit
 
-private let appGroupId = "group.com.bannzai.shoppinglist"
-
 struct ShoppingListEntry: TimelineEntry {
     let date: Date
     let shoppingListName: String
@@ -15,7 +13,7 @@ struct ShoppingListItemData: Identifiable, Codable {
     let groupID: String
     let shoppingListID: String
     let message: String
-    let status: String
+    var status: String
     let order: Int
     let color: String?
 
@@ -62,7 +60,7 @@ struct Provider: AppIntentTimelineProvider {
             shoppingListID = selectedList.id
             shoppingListName = selectedList.name
         } else {
-            let userDefaults = UserDefaults(suiteName: appGroupId)
+            let userDefaults = UserDefaults(suiteName: widgetAppGroupId)
             groupID = userDefaults?.string(forKey: "widget_current_group_id") ?? ""
             shoppingListID = userDefaults?.string(forKey: "widget_current_shopping_list_id") ?? ""
             shoppingListName = userDefaults?.string(forKey: "widget_current_shopping_list_name") ?? "買い物リスト"
@@ -89,7 +87,7 @@ struct Provider: AppIntentTimelineProvider {
     }
 
     private func loadItemsFromUserDefaults(groupID: String, shoppingListID: String) -> [ShoppingListItemData] {
-        let userDefaults = UserDefaults(suiteName: appGroupId)
+        let userDefaults = UserDefaults(suiteName: widgetAppGroupId)
         let key = "widget_items_\(groupID)_\(shoppingListID)"
         guard let jsonString = userDefaults?.string(forKey: key),
               let data = jsonString.data(using: .utf8) else {

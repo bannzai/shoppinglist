@@ -1,6 +1,8 @@
 import AppIntents
 import Foundation
 
+let widgetAppGroupId = "group.com.bannzai.shoppinglist"
+
 @available(iOS 17.0, *)
 struct ShoppingListConfigurationIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource = "買い物リスト設定"
@@ -37,7 +39,7 @@ struct ShoppingListEntity: AppEntity, Codable {
 
 @available(iOS 17.0, *)
 struct ShoppingListEntityQuery: EntityQuery {
-    private let appGroupId = "group.com.bannzai.shoppinglist"
+    private let appGroupId = widgetAppGroupId
 
     func entities(for identifiers: [ShoppingListEntity.ID]) async throws -> [ShoppingListEntity] {
         let allEntities = await loadEntities()
