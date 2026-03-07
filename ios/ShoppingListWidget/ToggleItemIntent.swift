@@ -35,7 +35,7 @@ struct ToggleItemIntent: AppIntent {
     private let appGroupId = widgetAppGroupId
 
     func perform() async throws -> some IntentResult {
-        let success = await FirestoreService.shared.toggleItemStatus(
+        let success = await toggleFirestoreItemStatus(
             groupID: groupID,
             shoppingListID: shoppingListID,
             itemID: itemID,
