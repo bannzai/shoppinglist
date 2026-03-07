@@ -23,6 +23,10 @@
 		A1B2C3D401000004 /* ShoppingListConfigurationIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D411000004 /* ShoppingListConfigurationIntent.swift */; };
 		A1B2C3D401000005 /* ToggleItemIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D411000005 /* ToggleItemIntent.swift */; };
 		A1B2C3D401000006 /* ShoppingListWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A1B2C3D421000001 /* ShoppingListWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A1B2C3D401000007 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D411000008 /* FirestoreService.swift */; };
+		A1B2C3D401000008 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2053CEC12D15A8D1007C671B /* GoogleService-Info.plist */; };
+		A1B2C3D401000009 /* ShoppingListConfigurationIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D411000004 /* ShoppingListConfigurationIntent.swift */; };
+		A1B2C3D40100000A /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D411000008 /* FirestoreService.swift */; };
 		F6159644500D061721A9CE9A /* Pods_ShoppingListWidgetExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FBB05E77BA56BDD91AD1F91 /* Pods_ShoppingListWidgetExtension.framework */; };
 /* End PBXBuildFile section */
 
@@ -101,6 +105,7 @@
 		A1B2C3D411000005 /* ToggleItemIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleItemIntent.swift; sourceTree = "<group>"; };
 		A1B2C3D411000006 /* ShoppingListWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShoppingListWidget.entitlements; sourceTree = "<group>"; };
 		A1B2C3D411000007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1B2C3D411000008 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
 		A1B2C3D421000001 /* ShoppingListWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShoppingListWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A590BC155240FCD891A72E67 /* Pods-ShoppingListWidgetExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ShoppingListWidgetExtension.debug.xcconfig"; path = "Target Support Files/Pods-ShoppingListWidgetExtension/Pods-ShoppingListWidgetExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		AC508DB26B7743DCAC5589B1 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
@@ -238,6 +243,7 @@
 				A1B2C3D411000003 /* ShoppingListWidgetView.swift */,
 				A1B2C3D411000004 /* ShoppingListConfigurationIntent.swift */,
 				A1B2C3D411000005 /* ToggleItemIntent.swift */,
+				A1B2C3D411000008 /* FirestoreService.swift */,
 				A1B2C3D411000006 /* ShoppingListWidget.entitlements */,
 				A1B2C3D411000007 /* Info.plist */,
 			);
@@ -299,6 +305,7 @@
 				A1B2C3D491000001 /* Sources */,
 				A1B2C3D471000001 /* Frameworks */,
 				A1B2C3D4A1000001 /* Resources */,
+				1E65F776C51C5B72FA93F6C1 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -376,12 +383,30 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1B2C3D401000008 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1E65F776C51C5B72FA93F6C1 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ShoppingListWidgetExtension/Pods-ShoppingListWidgetExtension-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ShoppingListWidgetExtension/Pods-ShoppingListWidgetExtension-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ShoppingListWidgetExtension/Pods-ShoppingListWidgetExtension-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		20C9AC16B80CE0359895F0EA /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -530,6 +555,7 @@
 			files = (
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
+				A1B2C3D401000009 /* ShoppingListConfigurationIntent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -542,6 +568,7 @@
 				A1B2C3D401000003 /* ShoppingListWidgetView.swift in Sources */,
 				A1B2C3D401000004 /* ShoppingListConfigurationIntent.swift in Sources */,
 				A1B2C3D401000005 /* ToggleItemIntent.swift in Sources */,
+				A1B2C3D401000007 /* FirestoreService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -890,7 +917,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.bannzai.shoppinglist.ShoppingListWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG WIDGET_EXTENSION";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -922,6 +949,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.bannzai.shoppinglist.ShoppingListWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = WIDGET_EXTENSION;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -952,6 +980,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.bannzai.shoppinglist.ShoppingListWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = WIDGET_EXTENSION;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
