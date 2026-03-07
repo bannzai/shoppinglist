@@ -12,6 +12,9 @@ import home_widget
       HomeWidgetPlugin.setConfigurationLookup(to: [
         "ShoppingListWidget": ShoppingListConfigurationIntent.self
       ])
+      HomeWidgetBackgroundWorker.setPluginRegistrantCallback { registry in
+        GeneratedPluginRegistrant.register(with: registry)
+      }
     }
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

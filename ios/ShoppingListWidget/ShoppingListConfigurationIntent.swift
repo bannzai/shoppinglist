@@ -1,6 +1,9 @@
 import AppIntents
 import Foundation
 
+let widgetAppGroupId = "group.com.bannzai.shoppinglist"
+
+@available(iOS 17.0, *)
 struct ShoppingListConfigurationIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource = "買い物リスト設定"
     static var description: IntentDescription = "表示する買い物リストを選択します"
@@ -19,6 +22,7 @@ struct ShoppingListConfigurationIntent: WidgetConfigurationIntent {
     }
 }
 
+@available(iOS 17.0, *)
 struct ShoppingListEntity: AppEntity, Codable {
     let id: String
     let name: String
@@ -33,23 +37,35 @@ struct ShoppingListEntity: AppEntity, Codable {
     }
 }
 
+@available(iOS 17.0, *)
 struct ShoppingListEntityQuery: EntityQuery {
-    private let appGroupId = "group.com.bannzai.shoppinglist"
+    private let appGroupId = widgetAppGroupId
 
     func entities(for identifiers: [ShoppingListEntity.ID]) async throws -> [ShoppingListEntity] {
-        let allEntities = loadEntities()
+        let allEntities = await loadEntities()
         return allEntities.filter { identifiers.contains($0.id) }
     }
 
     func suggestedEntities() async throws -> [ShoppingListEntity] {
-        loadEntities()
+        await loadEntities()
     }
 
     func defaultResult() async -> ShoppingListEntity? {
-        loadEntities().first
+        await loadEntities().first
     }
 
-    private func loadEntities() -> [ShoppingListEntity] {
+    private func loadEntities() async -> [ShoppingListEntity] {
+        #if WIDGET_EXTENSION
+        let firestoreEntities = await fetchFirestoreShoppingLists()
+        if !firestoreEntities.isEmpty {
+            return firestoreEntities
+        }
+        #endif
+        // フォールバック: UserDefaults
+        return loadEntitiesFromUserDefaults()
+    }
+
+    private func loadEntitiesFromUserDefaults() -> [ShoppingListEntity] {
         let userDefaults = UserDefaults(suiteName: appGroupId)
         guard let jsonString = userDefaults?.string(forKey: "widget_shopping_lists"),
               let data = jsonString.data(using: .utf8) else {
