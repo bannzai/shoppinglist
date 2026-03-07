@@ -20,6 +20,8 @@ mixin _$GroupShoppingListItemCategory {
   String get name;
   int get order;
   List<GroupShoppingListItemCategoryKeyword> get keywords;
+  String? get color;
+  String? get iconName;
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime;
   @ClientUpdatedTimestamp()
@@ -55,6 +57,9 @@ mixin _$GroupShoppingListItemCategory {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.order, order) || other.order == order) &&
             const DeepCollectionEquality().equals(other.keywords, keywords) &&
+            (identical(other.color, color) || other.color == color) &&
+            (identical(other.iconName, iconName) ||
+                other.iconName == iconName) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -75,6 +80,8 @@ mixin _$GroupShoppingListItemCategory {
       name,
       order,
       const DeepCollectionEquality().hash(keywords),
+      color,
+      iconName,
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -82,7 +89,7 @@ mixin _$GroupShoppingListItemCategory {
 
   @override
   String toString() {
-    return 'GroupShoppingListItemCategory(id: $id, groupID: $groupID, groupShoppingListItemCategoryAxisID: $groupShoppingListItemCategoryAxisID, name: $name, order: $order, keywords: $keywords, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItemCategory(id: $id, groupID: $groupID, groupShoppingListItemCategoryAxisID: $groupShoppingListItemCategoryAxisID, name: $name, order: $order, keywords: $keywords, color: $color, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -100,6 +107,8 @@ abstract mixin class $GroupShoppingListItemCategoryCopyWith<$Res> {
       String name,
       int order,
       List<GroupShoppingListItemCategoryKeyword> keywords,
+      String? color,
+      String? iconName,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -125,6 +134,8 @@ class _$GroupShoppingListItemCategoryCopyWithImpl<$Res>
     Object? name = null,
     Object? order = null,
     Object? keywords = null,
+    Object? color = freezed,
+    Object? iconName = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -156,6 +167,14 @@ class _$GroupShoppingListItemCategoryCopyWithImpl<$Res>
           ? _self.keywords
           : keywords // ignore: cast_nullable_to_non_nullable
               as List<GroupShoppingListItemCategoryKeyword>,
+      color: freezed == color
+          ? _self.color
+          : color // ignore: cast_nullable_to_non_nullable
+              as String?,
+      iconName: freezed == iconName
+          ? _self.iconName
+          : iconName // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
           : createdDateTime // ignore: cast_nullable_to_non_nullable
@@ -277,6 +296,8 @@ extension GroupShoppingListItemCategoryPatterns
             String name,
             int order,
             List<GroupShoppingListItemCategoryKeyword> keywords,
+            String? color,
+            String? iconName,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -294,6 +315,8 @@ extension GroupShoppingListItemCategoryPatterns
             _that.name,
             _that.order,
             _that.keywords,
+            _that.color,
+            _that.iconName,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -325,6 +348,8 @@ extension GroupShoppingListItemCategoryPatterns
             String name,
             int order,
             List<GroupShoppingListItemCategoryKeyword> keywords,
+            String? color,
+            String? iconName,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -341,6 +366,8 @@ extension GroupShoppingListItemCategoryPatterns
             _that.name,
             _that.order,
             _that.keywords,
+            _that.color,
+            _that.iconName,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -371,6 +398,8 @@ extension GroupShoppingListItemCategoryPatterns
             String name,
             int order,
             List<GroupShoppingListItemCategoryKeyword> keywords,
+            String? color,
+            String? iconName,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -387,6 +416,8 @@ extension GroupShoppingListItemCategoryPatterns
             _that.name,
             _that.order,
             _that.keywords,
+            _that.color,
+            _that.iconName,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -408,6 +439,8 @@ class _GroupShoppingListItemCategory extends GroupShoppingListItemCategory {
       required this.name,
       required this.order,
       final List<GroupShoppingListItemCategoryKeyword> keywords = const [],
+      this.color,
+      this.iconName,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
@@ -436,6 +469,10 @@ class _GroupShoppingListItemCategory extends GroupShoppingListItemCategory {
     return EqualUnmodifiableListView(_keywords);
   }
 
+  @override
+  final String? color;
+  @override
+  final String? iconName;
   @override
   @ClientCreatedTimestamp()
   final DateTime? createdDateTime;
@@ -479,6 +516,9 @@ class _GroupShoppingListItemCategory extends GroupShoppingListItemCategory {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.order, order) || other.order == order) &&
             const DeepCollectionEquality().equals(other._keywords, _keywords) &&
+            (identical(other.color, color) || other.color == color) &&
+            (identical(other.iconName, iconName) ||
+                other.iconName == iconName) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -499,6 +539,8 @@ class _GroupShoppingListItemCategory extends GroupShoppingListItemCategory {
       name,
       order,
       const DeepCollectionEquality().hash(_keywords),
+      color,
+      iconName,
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -506,7 +548,7 @@ class _GroupShoppingListItemCategory extends GroupShoppingListItemCategory {
 
   @override
   String toString() {
-    return 'GroupShoppingListItemCategory(id: $id, groupID: $groupID, groupShoppingListItemCategoryAxisID: $groupShoppingListItemCategoryAxisID, name: $name, order: $order, keywords: $keywords, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItemCategory(id: $id, groupID: $groupID, groupShoppingListItemCategoryAxisID: $groupShoppingListItemCategoryAxisID, name: $name, order: $order, keywords: $keywords, color: $color, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -526,6 +568,8 @@ abstract mixin class _$GroupShoppingListItemCategoryCopyWith<$Res>
       String name,
       int order,
       List<GroupShoppingListItemCategoryKeyword> keywords,
+      String? color,
+      String? iconName,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -551,6 +595,8 @@ class __$GroupShoppingListItemCategoryCopyWithImpl<$Res>
     Object? name = null,
     Object? order = null,
     Object? keywords = null,
+    Object? color = freezed,
+    Object? iconName = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -582,6 +628,14 @@ class __$GroupShoppingListItemCategoryCopyWithImpl<$Res>
           ? _self._keywords
           : keywords // ignore: cast_nullable_to_non_nullable
               as List<GroupShoppingListItemCategoryKeyword>,
+      color: freezed == color
+          ? _self.color
+          : color // ignore: cast_nullable_to_non_nullable
+              as String?,
+      iconName: freezed == iconName
+          ? _self.iconName
+          : iconName // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
           : createdDateTime // ignore: cast_nullable_to_non_nullable

@@ -15,12 +15,14 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
   final String groupID;
   final GroupShoppingListItem textShoppingListItem;
   final List<GroupShoppingListItem> shoppingListItems;
+  final int? reorderIndex;
 
   const TextShoppingListItemWidget(
       {super.key,
       required this.groupID,
       required this.textShoppingListItem,
-      required this.shoppingListItems});
+      required this.shoppingListItems,
+      this.reorderIndex});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,7 +45,8 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       return null;
     }, []);
 
-    final isChecked = textShoppingListItem.status == GroupShoppingListItemStatus.checked;
+    final isChecked =
+        textShoppingListItem.status == GroupShoppingListItemStatus.checked;
     final colorScheme = Theme.of(context).colorScheme;
     final hasDescription = textShoppingListItem.description != null &&
         textShoppingListItem.description!.isNotEmpty;
@@ -54,7 +57,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
             : Colors.transparent;
 
     // NOTE: ReorderableListViewのDrag移動中に `No Material widget found` というエラーが出るので、Materialでラップする
-    return Material(
+    final content = Material(
       color: backgroundColor,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -65,6 +68,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
             Transform.scale(
               scale: 1.5,
               child: Checkbox(
+                shape: const CircleBorder(),
                 value: textShoppingListItem.status ==
                     GroupShoppingListItemStatus.checked,
                 onChanged: (value) {
@@ -119,7 +123,9 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                               textShoppingListItem.description!,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -146,11 +152,13 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                         },
                       );
                     },
-                    icon: const Icon(Icons.info_outline, size: 20),
-                  ),
-                  ReorderableDragStartListener(
-                    index: textShoppingListItem.order,
-                    child: const Icon(Icons.drag_handle),
+                    icon: Icon(
+                      Icons.info_outline,
+                      size: 20,
+                      color: isChecked
+                          ? colorScheme.onSurface.withValues(alpha: 0.35)
+                          : null,
+                    ),
                   ),
                 ],
               ),
@@ -158,6 +166,43 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
           ],
         ),
       ),
+    );
+
+    final widget = reorderIndex != null
+        ? ReorderableDelayedDragStartListener(
+            index: reorderIndex!, child: content)
+        : content;
+
+    return Dismissible(
+      key: ValueKey(textShoppingListItem.id),
+      direction: DismissDirection.startToEnd,
+      background: Container(
+        color: colorScheme.error,
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.only(left: 16),
+        child: Icon(Icons.delete, color: colorScheme.onError),
+      ),
+      confirmDismiss: (direction) async {
+        try {
+          await ref
+              .read(groupDatabaseProvider(groupID: groupID))
+              .shoppingListItemsReference(
+                shoppingListID: textShoppingListItem.shoppingListID,
+              )
+              .doc(textShoppingListItem.id)
+              .delete();
+          return true;
+        } catch (e, st) {
+          debugPrint('アイテムの削除に失敗: $e\n$st');
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('アイテムの削除に失敗しました。')),
+            );
+          }
+          return false;
+        }
+      },
+      child: widget,
     );
   }
 }
@@ -209,16 +254,22 @@ class TextShoppingListItemTextField extends ConsumerWidget {
             ? const InputDecoration()
             : const InputDecoration(border: InputBorder.none),
         style: () {
-          final isChecked = textShoppingListItem.status == GroupShoppingListItemStatus.checked;
+          final isChecked = textShoppingListItem.status ==
+              GroupShoppingListItemStatus.checked;
           final colorScheme = Theme.of(context).colorScheme;
           return TextStyle(
             color: isChecked
-                ? colorScheme.onSurface.withValues(alpha: 0.4)
+                ? colorScheme.onSurface.withValues(alpha: 0.35)
                 : colorScheme.onSurface,
-            decoration: isChecked ? TextDecoration.lineThrough : TextDecoration.none,
+            decoration:
+                isChecked ? TextDecoration.lineThrough : TextDecoration.none,
             decorationColor: isChecked
-                ? colorScheme.onSurface.withValues(alpha: 0.4)
+                ? colorScheme.onSurface.withValues(alpha: 0.35)
                 : null,
+            decoration:
+                isChecked ? TextDecoration.lineThrough : TextDecoration.none,
+            decorationColor:
+                isChecked ? colorScheme.onSurface.withValues(alpha: 0.4) : null,
           );
         }(),
         onSubmitted: (String v) async {
