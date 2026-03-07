@@ -56,7 +56,7 @@ struct ShoppingListEntityQuery: EntityQuery {
 
     private func loadEntities() async -> [ShoppingListEntity] {
         #if WIDGET_EXTENSION
-        let firestoreEntities = await FirestoreService.shared.fetchShoppingLists()
+        let firestoreEntities = await fetchFirestoreShoppingLists()
         if !firestoreEntities.isEmpty {
             return firestoreEntities
         }

@@ -67,7 +67,7 @@ struct Provider: AppIntentTimelineProvider {
         }
 
         // Firestore から直接取得
-        var items = await FirestoreService.shared.fetchItems(groupID: groupID, shoppingListID: shoppingListID)
+        var items = await fetchFirestoreItems(groupID: groupID, shoppingListID: shoppingListID)
 
         // フォールバック: Firestore 失敗時は UserDefaults から読み込み
         if items.isEmpty {
