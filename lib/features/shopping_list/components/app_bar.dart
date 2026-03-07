@@ -7,8 +7,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
-import 'package:shoppinglist/features/shopping_list_item_filter/page.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
+import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
@@ -43,6 +43,10 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final shoppingList = this.shoppingList;
     final shoppingListDelete =
         ref.watch(shoppingListDeleteProvider(groupID: groupID));
+    final axesAsync =
+        ref.watch(groupShoppingListItemCategoryAxesProvider(groupID: groupID));
+    final hasCategories = axesAsync.maybeWhen(
+        data: (axes) => axes.isNotEmpty, orElse: () => false);
     return AppBar(
       title: DropdownButton<String>(
         value: shoppingListID,
@@ -146,29 +150,50 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
             ],
           ),
         ],
-        IconButton(
-          onPressed: () {
-            analytics.logEvent(name: 'tap_open_filter', parameters: {
-              'groupID': groupID,
-              'shoppingListID': shoppingListID
-            });
-            FocusScope.of(context).unfocus();
-            showModalBottomSheet(
-              context: context,
-              showDragHandle: true,
-              builder: (context) {
-                return ShoppingListItemFilterPage(
-                  groupID: groupID,
-                  shoppingListID: shoppingListID,
-                  showChecked: showChecked,
-                  sortByCategory: sortByCategory,
-                );
-              },
-            );
-          },
-          icon: const Icon(Icons.filter_list),
-        ),
       ],
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(48),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: Row(
+            children: [
+              FilterChip(
+                avatar: const Icon(Icons.check, size: 18),
+                showCheckmark: false,
+                label: const Text('チェック済み表示'),
+                selected: showChecked.value,
+                onSelected: (value) {
+                  analytics.logEvent(name: 'toggle_show_checked', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                    'value': value.toString()
+                  });
+                  showChecked.value = value;
+                },
+              ),
+              const SizedBox(width: 8),
+              FilterChip(
+                avatar: const Icon(Icons.check, size: 18),
+                showCheckmark: false,
+                label: const Text('カテゴリ順'),
+                selected: sortByCategory.value,
+                onSelected: hasCategories
+                    ? (value) {
+                        analytics.logEvent(
+                            name: 'toggle_sort_by_category',
+                            parameters: {
+                              'groupID': groupID,
+                              'shoppingListID': shoppingListID,
+                              'value': value.toString()
+                            });
+                        sortByCategory.value = value;
+                      }
+                    : null,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -305,7 +330,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 48);
 }
 
 class _AddShoppingListBottomSheet extends HookConsumerWidget {

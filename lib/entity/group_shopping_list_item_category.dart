@@ -23,6 +23,8 @@ abstract class GroupShoppingListItemCategory
     required String name,
     required int order,
     @Default([]) List<GroupShoppingListItemCategoryKeyword> keywords,
+    String? color,
+    String? iconName,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,

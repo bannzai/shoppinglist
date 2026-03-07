@@ -126,6 +126,16 @@ class _Body extends HookConsumerWidget {
       shoppingListID: shoppingListID,
       showChecked: showChecked.value,
     ));
+    final allItemsAsync = ref.watch(textShoppingListItemsProvider(
+      groupID: groupID,
+      shoppingListID: shoppingListID,
+      showChecked: true,
+    ));
+    final allItems = allItemsAsync.valueOrNull ?? [];
+    final checkedCount = allItems
+        .where((i) => i.status == GroupShoppingListItemStatus.checked)
+        .length;
+    final totalCount = allItems.length;
     final shoppingList =
         shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID);
     final ttlExpiresDateTime = shoppingList?.ttlExpiresDateTime;
@@ -180,17 +190,6 @@ class _Body extends HookConsumerWidget {
               } else {
                 return Column(
                   children: [
-                    if (ttlExpiresDateTime != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        '※ この買い物リストは${DateFormat.MEd().format(ttlExpiresDateTime)}まで保存されてます',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          fontSize: 12,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                    ],
                     if (shoppingList?.duplicatedFromGroupShoppingListID !=
                         null) ...[
                       const SizedBox(height: 4),
@@ -233,11 +232,28 @@ class _Body extends HookConsumerWidget {
                       ),
                       const SizedBox(height: 10),
                     ],
+                    if (totalCount > 0)
+                      _ProgressSection(
+                        checkedCount: checkedCount,
+                        totalCount: totalCount,
+                      ),
                     Expanded(
                         child: ShoppingListItems(
                             groupID: groupID,
                             shoppingListID: shoppingListID,
                             sortByCategory: sortByCategory.value)),
+                    if (ttlExpiresDateTime != null)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Text(
+                          '${DateFormat('M/d').format(ttlExpiresDateTime)}になるとこのリストは削除されます',
+                          style: TextStyle(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ),
                   ],
                 );
               }
@@ -246,6 +262,56 @@ class _Body extends HookConsumerWidget {
             loading: () => const Loading(),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ProgressSection extends StatelessWidget {
+  final int checkedCount;
+  final int totalCount;
+
+  const _ProgressSection({
+    required this.checkedCount,
+    required this.totalCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final progress = totalCount > 0 ? checkedCount / totalCount : 0.0;
+    final isComplete = checkedCount == totalCount && totalCount > 0;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                isComplete
+                    ? '$checkedCount/$totalCount 完了!'
+                    : '$checkedCount/$totalCount 完了',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isComplete
+                      ? colorScheme.primary
+                      : colorScheme.onSurfaceVariant,
+                  fontWeight: isComplete ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 4,
+            ),
+          ),
+        ],
       ),
     );
   }

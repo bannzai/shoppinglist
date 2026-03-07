@@ -20,6 +20,8 @@ _GroupShoppingListItemCategory _$GroupShoppingListItemCategoryFromJson(
                   e as Map<String, dynamic>))
               .toList() ??
           const [],
+      color: json['color'] as String?,
+      iconName: json['iconName'] as String?,
       createdDateTime: const ClientCreatedTimestamp()
           .fromJson(json['createdDateTime'] as Timestamp?),
       updatedDateTime: const ClientUpdatedTimestamp()
@@ -40,6 +42,8 @@ Map<String, dynamic> _$GroupShoppingListItemCategoryToJson(
       'name': instance.name,
       'order': instance.order,
       'keywords': instance.keywords.map((e) => e.toJson()).toList(),
+      'color': instance.color,
+      'iconName': instance.iconName,
       'createdDateTime':
           const ClientCreatedTimestamp().toJson(instance.createdDateTime),
       'updatedDateTime':

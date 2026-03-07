@@ -6,6 +6,8 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
 import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/style/category_presets.dart';
+import 'package:shoppinglist/style/color.dart';
 
 class ShoppingListItems extends ConsumerWidget {
   final String groupID;
@@ -106,6 +108,7 @@ class _FlatShoppingListItems extends ConsumerWidget {
           groupID: groupID,
           textShoppingListItem: item,
           shoppingListItems: shoppingListItems,
+          reorderIndex: index,
         );
       },
     );
@@ -191,8 +194,11 @@ class _GroupedListView extends StatelessWidget {
       final items = grouped[categoryID];
       if (items == null || items.isEmpty) continue;
 
+      final category = categoryMap[categoryID]!;
       children.add(_CategoryHeader(
-        categoryName: categoryMap[categoryID]!.name,
+        categoryName: category.name,
+        color: category.color,
+        iconName: category.iconName,
       ));
 
       for (final item in items) {
@@ -226,27 +232,50 @@ class _GroupedListView extends StatelessWidget {
 
 class _CategoryHeader extends StatelessWidget {
   final String categoryName;
+  final String? color;
+  final String? iconName;
 
-  const _CategoryHeader({required this.categoryName});
+  const _CategoryHeader({
+    required this.categoryName,
+    this.color,
+    this.iconName,
+  });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final categoryColor = color != null ? colorFromHex(color!) : null;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
+        color: categoryColor?.withValues(alpha: 0.1) ??
+            colorScheme.surfaceContainerHighest,
         border: Border(
+          left: categoryColor != null
+              ? BorderSide(color: categoryColor, width: 4)
+              : BorderSide.none,
           bottom: BorderSide(color: colorScheme.outlineVariant, width: 0.5),
         ),
       ),
-      child: Text(
-        categoryName,
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w600,
+      child: Row(
+        children: [
+          if (iconName != null) ...[
+            Icon(
+              categoryIconFromName(iconName),
+              size: 18,
+              color: categoryColor ?? colorScheme.onSurfaceVariant,
             ),
+            const SizedBox(width: 8),
+          ],
+          Text(
+            categoryName,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: categoryColor ?? colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+        ],
       ),
     );
   }
