@@ -10,6 +10,7 @@ actor FirestoreService {
         Auth.auth().currentUser?.uid
     }
 
+    // Widget Extension で Firestore 操作後にファイルロックを解放する（0xdead10cc 回避）
     private func teardown() async {
         try? await Firestore.firestore().terminate()
     }
@@ -17,8 +18,10 @@ actor FirestoreService {
     /// ユーザーが所属するグループの買い物リスト一覧を取得
     func fetchShoppingLists() async -> [ShoppingListEntity] {
         guard let userID = currentUserID() else { return [] }
+        defer { Task { await teardown() } }
         do {
-            let groupsSnapshot = try await Firestore.firestore()
+            let db = Firestore.firestore()
+            let groupsSnapshot = try await db
                 .collection("groups")
                 .whereField("memberUserIDs", arrayContains: userID)
                 .getDocuments()
@@ -29,7 +32,7 @@ actor FirestoreService {
                 let groupID = groupDoc.documentID
                 let groupName = groupData["name"] as? String ?? ""
 
-                let listsSnapshot = try await Firestore.firestore()
+                let listsSnapshot = try await db
                     .collection("groups/\(groupID)/shoppingLists")
                     .getDocuments()
 
@@ -43,10 +46,8 @@ actor FirestoreService {
                     ))
                 }
             }
-            await teardown()
             return entities
         } catch {
-            await teardown()
             return []
         }
     }
@@ -54,13 +55,15 @@ actor FirestoreService {
     /// 指定した買い物リストのアイテムを取得
     func fetchItems(groupID: String, shoppingListID: String) async -> [ShoppingListItemData] {
         guard currentUserID() != nil else { return [] }
+        defer { Task { await teardown() } }
         do {
             let snapshot = try await Firestore.firestore()
                 .collection("groups/\(groupID)/shoppingLists/\(shoppingListID)/items")
                 .order(by: "order", descending: false)
+                .limit(to: 20)
                 .getDocuments()
 
-            let items = snapshot.documents.compactMap { doc -> ShoppingListItemData? in
+            return snapshot.documents.compactMap { doc -> ShoppingListItemData? in
                 let data = doc.data()
                 guard let message = data["message"] as? String,
                       let status = data["status"] as? String,
@@ -75,10 +78,7 @@ actor FirestoreService {
                     color: data["color"] as? String
                 )
             }
-            await teardown()
-            return items
         } catch {
-            await teardown()
             return []
         }
     }
@@ -86,16 +86,15 @@ actor FirestoreService {
     /// アイテムのステータスを切り替え
     func toggleItemStatus(groupID: String, shoppingListID: String, itemID: String, currentStatus: String) async -> Bool {
         guard currentUserID() != nil else { return false }
+        defer { Task { await teardown() } }
         let newStatus = currentStatus == "checked" ? "unchecked" : "checked"
         do {
             try await Firestore.firestore()
                 .collection("groups/\(groupID)/shoppingLists/\(shoppingListID)/items")
                 .document(itemID)
                 .setData(["status": newStatus], merge: true)
-            await teardown()
             return true
         } catch {
-            await teardown()
             return false
         }
     }

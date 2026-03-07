@@ -6,7 +6,9 @@ import WidgetKit
 @main
 struct ShoppingListWidgetBundle: WidgetBundle {
     init() {
-        FirebaseApp.configure()
+        if FirebaseApp.app() == nil {
+            FirebaseApp.configure()
+        }
         do {
             try Auth.auth().useUserAccessGroup("TQPN82UBBY.com.bannzai.shoppinglist")
         } catch {

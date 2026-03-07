@@ -32,7 +32,7 @@ struct ToggleItemIntent: AppIntent {
         self.currentStatus = currentStatus
     }
 
-    private let appGroupId = "group.com.bannzai.shoppinglist"
+    private let appGroupId = widgetAppGroupId
 
     func perform() async throws -> some IntentResult {
         let success = await FirestoreService.shared.toggleItemStatus(
@@ -62,17 +62,7 @@ struct ToggleItemIntent: AppIntent {
         }
 
         if let index = items.firstIndex(where: { $0.id == itemID }) {
-            let newStatus = currentStatus == "checked" ? "unchecked" : "checked"
-            let item = items[index]
-            items[index] = ShoppingListItemData(
-                id: item.id,
-                groupID: item.groupID,
-                shoppingListID: item.shoppingListID,
-                message: item.message,
-                status: newStatus,
-                order: item.order,
-                color: item.color
-            )
+            items[index].status = currentStatus == "checked" ? "unchecked" : "checked"
         }
 
         if let encoded = try? JSONEncoder().encode(items),

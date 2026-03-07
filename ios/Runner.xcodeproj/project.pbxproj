@@ -26,7 +26,6 @@
 		A1B2C3D401000007 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D411000008 /* FirestoreService.swift */; };
 		A1B2C3D401000008 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2053CEC12D15A8D1007C671B /* GoogleService-Info.plist */; };
 		A1B2C3D401000009 /* ShoppingListConfigurationIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D411000004 /* ShoppingListConfigurationIntent.swift */; };
-		A1B2C3D40100000A /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D411000008 /* FirestoreService.swift */; };
 		F6159644500D061721A9CE9A /* Pods_ShoppingListWidgetExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FBB05E77BA56BDD91AD1F91 /* Pods_ShoppingListWidgetExtension.framework */; };
 /* End PBXBuildFile section */
 
