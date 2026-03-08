@@ -13,6 +13,7 @@ import 'package:shoppinglist/features/shopping_list/components/app_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/group_switcher.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/empty_text_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_items.dart';
+import 'package:shoppinglist/features/home_widget/home_widget_sync.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -83,12 +84,18 @@ class ShoppingListPage extends HookConsumerWidget {
                                 .any((e) => e.id == currentShoppingListIDValue))
                         ? currentShoppingListIDValue
                         : shoppingLists.first.id;
-                return _Body(
-                  key: ValueKey(resolvedShoppingListID),
+                return HomeWidgetSync(
                   groupID: groupID,
                   shoppingListID: resolvedShoppingListID,
-                  onShoppingListIDChanged: (newID) {
-                    currentShoppingListID.value = newID;
+                  builder: (context) {
+                    return _Body(
+                      key: ValueKey(resolvedShoppingListID),
+                      groupID: groupID,
+                      shoppingListID: resolvedShoppingListID,
+                      onShoppingListIDChanged: (newID) {
+                        currentShoppingListID.value = newID;
+                      },
+                    );
                   },
                 );
               },
