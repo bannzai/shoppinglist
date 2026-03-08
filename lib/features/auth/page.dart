@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -35,13 +37,25 @@ class AuthPage extends ConsumerWidget {
                 ),
               ),
               const Spacer(),
-              const Column(
+              Column(
                 children: [
-                  AppSignInWithAppleButton(),
-                  SizedBox(height: 10),
-                  AppSignInWithGoogleButton(),
-                  SizedBox(height: 10),
-                  _Note(),
+                  const AppSignInWithAppleButton(),
+                  const SizedBox(height: 10),
+                  const AppSignInWithGoogleButton(),
+                  if (kDebugMode) ...[
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          await FirebaseAuth.instance.signInAnonymously();
+                        },
+                        child: const Text('匿名サインイン（デバッグ用）'),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 10),
+                  const _Note(),
                 ],
               ),
             ],

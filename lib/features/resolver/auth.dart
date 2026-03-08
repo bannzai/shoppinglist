@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -51,7 +52,7 @@ class AuthResolver extends HookConsumerWidget {
           data: (user) {
             debugPrint('user.uid: ${user?.uid}');
 
-            if (user == null || user.isAnonymous) {
+            if (user == null || (!kDebugMode && user.isAnonymous)) {
               return const AuthPage();
             } else {
               return builder(context, user);
