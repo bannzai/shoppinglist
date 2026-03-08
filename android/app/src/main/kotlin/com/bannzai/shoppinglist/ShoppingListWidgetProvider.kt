@@ -9,6 +9,7 @@ import android.content.SharedPreferences
 import android.widget.RemoteViews
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import es.antonborri.home_widget.HomeWidgetProvider
@@ -43,7 +44,11 @@ class ShoppingListWidgetProvider : HomeWidgetProvider() {
         FirebaseFirestore.getInstance()
             .collection("groups/$groupID/shoppingLists/$shoppingListID/items")
             .document(itemID)
-            .set(mapOf("status" to newStatus), SetOptions.merge())
+            .set(mapOf(
+                "status" to newStatus,
+                "updatedDateTime" to FieldValue.serverTimestamp(),
+                "serverUpdatedDateTime" to FieldValue.serverTimestamp()
+            ), SetOptions.merge())
             .addOnCompleteListener {
                 updateLocalCache(context, groupID, shoppingListID, itemID, currentStatus)
                 pendingResult.finish()
