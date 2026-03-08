@@ -99,9 +99,13 @@ class ShoppingListWidgetProvider : HomeWidgetProvider() {
             val key = "widget_items_${groupID}_${shoppingListID}"
             val itemsJson = widgetData.getString(key, "[]") ?: "[]"
 
+            val textIds = arrayOf(R.id.item_text_0, R.id.item_text_1, R.id.item_text_2, R.id.item_text_3, R.id.item_text_4)
+            val checkIds = arrayOf(R.id.item_check_0, R.id.item_check_1, R.id.item_check_2, R.id.item_check_3, R.id.item_check_4)
+            val rowIds = arrayOf(R.id.item_row_0, R.id.item_row_1, R.id.item_row_2, R.id.item_row_3, R.id.item_row_4)
+
             try {
                 val items = org.json.JSONArray(itemsJson)
-                val itemCount = minOf(items.length(), 10)
+                val itemCount = minOf(items.length(), 5)
 
                 for (i in 0 until itemCount) {
                     val item = items.getJSONObject(i)
@@ -123,49 +127,15 @@ class ShoppingListWidgetProvider : HomeWidgetProvider() {
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                     )
 
-                    if (i == 0) {
-                        views.setTextViewText(R.id.item_text_0, message)
-                        views.setTextViewText(R.id.item_check_0, if (isChecked) "\u2611" else "\u2610")
-                        views.setViewVisibility(R.id.item_row_0, android.view.View.VISIBLE)
-                        views.setOnClickPendingIntent(R.id.item_row_0, toggleIntent)
-                    }
-                    if (i == 1) {
-                        views.setTextViewText(R.id.item_text_1, message)
-                        views.setTextViewText(R.id.item_check_1, if (isChecked) "\u2611" else "\u2610")
-                        views.setViewVisibility(R.id.item_row_1, android.view.View.VISIBLE)
-                        views.setOnClickPendingIntent(R.id.item_row_1, toggleIntent)
-                    }
-                    if (i == 2) {
-                        views.setTextViewText(R.id.item_text_2, message)
-                        views.setTextViewText(R.id.item_check_2, if (isChecked) "\u2611" else "\u2610")
-                        views.setViewVisibility(R.id.item_row_2, android.view.View.VISIBLE)
-                        views.setOnClickPendingIntent(R.id.item_row_2, toggleIntent)
-                    }
-                    if (i == 3) {
-                        views.setTextViewText(R.id.item_text_3, message)
-                        views.setTextViewText(R.id.item_check_3, if (isChecked) "\u2611" else "\u2610")
-                        views.setViewVisibility(R.id.item_row_3, android.view.View.VISIBLE)
-                        views.setOnClickPendingIntent(R.id.item_row_3, toggleIntent)
-                    }
-                    if (i == 4) {
-                        views.setTextViewText(R.id.item_text_4, message)
-                        views.setTextViewText(R.id.item_check_4, if (isChecked) "\u2611" else "\u2610")
-                        views.setViewVisibility(R.id.item_row_4, android.view.View.VISIBLE)
-                        views.setOnClickPendingIntent(R.id.item_row_4, toggleIntent)
-                    }
+                    views.setTextViewText(textIds[i], message)
+                    views.setTextViewText(checkIds[i], if (isChecked) "\u2611" else "\u2610")
+                    views.setViewVisibility(rowIds[i], android.view.View.VISIBLE)
+                    views.setOnClickPendingIntent(rowIds[i], toggleIntent)
                 }
 
                 // 未使用の行を非表示
                 for (i in itemCount until 5) {
-                    val rowId = when (i) {
-                        0 -> R.id.item_row_0
-                        1 -> R.id.item_row_1
-                        2 -> R.id.item_row_2
-                        3 -> R.id.item_row_3
-                        4 -> R.id.item_row_4
-                        else -> continue
-                    }
-                    views.setViewVisibility(rowId, android.view.View.GONE)
+                    views.setViewVisibility(rowIds[i], android.view.View.GONE)
                 }
             } catch (e: Exception) {
                 // JSON解析エラー時は空表示
