@@ -69,7 +69,7 @@ class ShoppingListWidgetProvider : HomeWidgetProvider() {
                 }
             }
             prefs.edit().putString(key, items.toString()).apply()
-        } catch (_: Exception) {}
+        } catch (e: Exception) { e.printStackTrace() }
 
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val widgetIds = appWidgetManager.getAppWidgetIds(
