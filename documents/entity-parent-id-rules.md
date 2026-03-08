@@ -17,4 +17,5 @@ Firestoreのサブコレクションに保存されるEntityは、親ドキュ�
 - `GroupShoppingListItem`: `groupID`, `shoppingListID`
 - `GroupShoppingLocation`: `groupID`
 - `GroupUserProfile`: `groupID`
+- `AppUserPrivate`: `userID`
 - 今後追加されるサブコレクションEntityも同様に親IDを保持すること
