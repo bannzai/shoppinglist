@@ -9,6 +9,8 @@ part of 'app_user.dart';
 _AppUser _$AppUserFromJson(Map<String, dynamic> json) => _AppUser(
       id: json['id'] as String,
       defaultGroupID: json['defaultGroupID'] as String?,
+      name: json['name'] as String?,
+      iconImageURL: json['iconImageURL'] as String?,
       createdDateTime: const ClientCreatedTimestamp()
           .fromJson(json['createdDateTime'] as Timestamp?),
       updatedDateTime: const ClientUpdatedTimestamp()
@@ -22,6 +24,8 @@ _AppUser _$AppUserFromJson(Map<String, dynamic> json) => _AppUser(
 Map<String, dynamic> _$AppUserToJson(_AppUser instance) => <String, dynamic>{
       'id': instance.id,
       'defaultGroupID': instance.defaultGroupID,
+      'name': instance.name,
+      'iconImageURL': instance.iconImageURL,
       'createdDateTime':
           const ClientCreatedTimestamp().toJson(instance.createdDateTime),
       'updatedDateTime':

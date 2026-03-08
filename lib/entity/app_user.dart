@@ -14,6 +14,10 @@ abstract class AppUser with _$AppUser {
     required String id,
     // NOTE: アプリ開始時に作られるデータであり、その時にはdefaultGroupIDができてない。作成されるパターンはこのケースのみなので required はつけない。テストの時とかに簡単に使えるようにするため
     String? defaultGroupID,
+    // NOTE: Firebase Auth の displayName からマッピング。匿名ユーザーや既存ユーザーでは null になりうる
+    String? name,
+    // NOTE: Firebase Auth の photoURL からマッピング。匿名ユーザーや既存ユーザーでは null になりうる
+    String? iconImageURL,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,

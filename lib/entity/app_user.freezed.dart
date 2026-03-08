@@ -16,7 +16,11 @@ T _$identity<T>(T value) => value;
 mixin _$AppUser {
   String
       get id; // NOTE: アプリ開始時に作られるデータであり、その時にはdefaultGroupIDができてない。作成されるパターンはこのケースのみなので required はつけない。テストの時とかに簡単に使えるようにするため
-  String? get defaultGroupID;
+  String?
+      get defaultGroupID; // NOTE: Firebase Auth の displayName からマッピング。匿名ユーザーや既存ユーザーでは null になりうる
+  String?
+      get name; // NOTE: Firebase Auth の photoURL からマッピング。匿名ユーザーや既存ユーザーでは null になりうる
+  String? get iconImageURL;
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime;
   @ClientUpdatedTimestamp()
@@ -44,6 +48,9 @@ mixin _$AppUser {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.defaultGroupID, defaultGroupID) ||
                 other.defaultGroupID == defaultGroupID) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.iconImageURL, iconImageURL) ||
+                other.iconImageURL == iconImageURL) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -60,6 +67,8 @@ mixin _$AppUser {
       runtimeType,
       id,
       defaultGroupID,
+      name,
+      iconImageURL,
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -67,7 +76,7 @@ mixin _$AppUser {
 
   @override
   String toString() {
-    return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, name: $name, iconImageURL: $iconImageURL, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -79,6 +88,8 @@ abstract mixin class $AppUserCopyWith<$Res> {
   $Res call(
       {String id,
       String? defaultGroupID,
+      String? name,
+      String? iconImageURL,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -99,6 +110,8 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
   $Res call({
     Object? id = null,
     Object? defaultGroupID = freezed,
+    Object? name = freezed,
+    Object? iconImageURL = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -112,6 +125,14 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
       defaultGroupID: freezed == defaultGroupID
           ? _self.defaultGroupID
           : defaultGroupID // ignore: cast_nullable_to_non_nullable
+              as String?,
+      name: freezed == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      iconImageURL: freezed == iconImageURL
+          ? _self.iconImageURL
+          : iconImageURL // ignore: cast_nullable_to_non_nullable
               as String?,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
@@ -229,6 +250,8 @@ extension AppUserPatterns on AppUser {
     TResult Function(
             String id,
             String? defaultGroupID,
+            String? name,
+            String? iconImageURL,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -242,6 +265,8 @@ extension AppUserPatterns on AppUser {
         return $default(
             _that.id,
             _that.defaultGroupID,
+            _that.name,
+            _that.iconImageURL,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -269,6 +294,8 @@ extension AppUserPatterns on AppUser {
     TResult Function(
             String id,
             String? defaultGroupID,
+            String? name,
+            String? iconImageURL,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -281,6 +308,8 @@ extension AppUserPatterns on AppUser {
         return $default(
             _that.id,
             _that.defaultGroupID,
+            _that.name,
+            _that.iconImageURL,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -307,6 +336,8 @@ extension AppUserPatterns on AppUser {
     TResult? Function(
             String id,
             String? defaultGroupID,
+            String? name,
+            String? iconImageURL,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -319,6 +350,8 @@ extension AppUserPatterns on AppUser {
         return $default(
             _that.id,
             _that.defaultGroupID,
+            _that.name,
+            _that.iconImageURL,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -336,6 +369,8 @@ class _AppUser extends AppUser {
   const _AppUser(
       {required this.id,
       this.defaultGroupID,
+      this.name,
+      this.iconImageURL,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
@@ -349,6 +384,12 @@ class _AppUser extends AppUser {
 // NOTE: アプリ開始時に作られるデータであり、その時にはdefaultGroupIDができてない。作成されるパターンはこのケースのみなので required はつけない。テストの時とかに簡単に使えるようにするため
   @override
   final String? defaultGroupID;
+// NOTE: Firebase Auth の displayName からマッピング。匿名ユーザーや既存ユーザーでは null になりうる
+  @override
+  final String? name;
+// NOTE: Firebase Auth の photoURL からマッピング。匿名ユーザーや既存ユーザーでは null になりうる
+  @override
+  final String? iconImageURL;
   @override
   @ClientCreatedTimestamp()
   final DateTime? createdDateTime;
@@ -385,6 +426,9 @@ class _AppUser extends AppUser {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.defaultGroupID, defaultGroupID) ||
                 other.defaultGroupID == defaultGroupID) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.iconImageURL, iconImageURL) ||
+                other.iconImageURL == iconImageURL) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -401,6 +445,8 @@ class _AppUser extends AppUser {
       runtimeType,
       id,
       defaultGroupID,
+      name,
+      iconImageURL,
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -408,7 +454,7 @@ class _AppUser extends AppUser {
 
   @override
   String toString() {
-    return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, name: $name, iconImageURL: $iconImageURL, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -421,6 +467,8 @@ abstract mixin class _$AppUserCopyWith<$Res> implements $AppUserCopyWith<$Res> {
   $Res call(
       {String id,
       String? defaultGroupID,
+      String? name,
+      String? iconImageURL,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -441,6 +489,8 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
   $Res call({
     Object? id = null,
     Object? defaultGroupID = freezed,
+    Object? name = freezed,
+    Object? iconImageURL = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -454,6 +504,14 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
       defaultGroupID: freezed == defaultGroupID
           ? _self.defaultGroupID
           : defaultGroupID // ignore: cast_nullable_to_non_nullable
+              as String?,
+      name: freezed == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      iconImageURL: freezed == iconImageURL
+          ? _self.iconImageURL
+          : iconImageURL // ignore: cast_nullable_to_non_nullable
               as String?,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
