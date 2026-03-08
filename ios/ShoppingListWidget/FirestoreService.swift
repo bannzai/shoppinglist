@@ -89,7 +89,11 @@ func toggleFirestoreItemStatus(groupID: String, shoppingListID: String, itemID: 
         try await Firestore.firestore()
             .collection("groups/\(groupID)/shoppingLists/\(shoppingListID)/items")
             .document(itemID)
-            .setData(["status": newStatus], merge: true)
+            .setData([
+                "status": newStatus,
+                "updatedDateTime": FieldValue.serverTimestamp(),
+                "serverUpdatedDateTime": FieldValue.serverTimestamp()
+            ], merge: true)
         return true
     } catch {
         return false
