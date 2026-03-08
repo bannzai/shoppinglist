@@ -13,6 +13,11 @@ service cloud.firestore {
     match /users/{userID} {
       allow read: if isUserAuth(userID);
       allow create, update: if isUserAuth(userID);
+
+      match /privates/{privateID} {
+        allow read: if isUserAuth(userID);
+        allow create, update: if isUserAuth(userID);
+      }
     }
 
     // グループ招待: 読み書きともにクライアントからは不可。Functions Admin SDK 経由でのみ操作する
