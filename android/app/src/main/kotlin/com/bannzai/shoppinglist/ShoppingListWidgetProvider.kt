@@ -32,13 +32,13 @@ class ShoppingListWidgetProvider : HomeWidgetProvider() {
     }
 
     private fun toggleItemStatus(context: Context, groupID: String, shoppingListID: String, itemID: String, currentStatus: String) {
+        val newStatus = if (currentStatus == "checked") "unchecked" else "checked"
         FirebaseApp.initializeApp(context)
         val user = FirebaseAuth.getInstance().currentUser
         if (user == null) {
-            updateLocalCache(context, groupID, shoppingListID, itemID, currentStatus)
+            updateLocalCache(context, groupID, shoppingListID, itemID, newStatus)
             return
         }
-        val newStatus = if (currentStatus == "checked") "unchecked" else "checked"
         val pendingResult = goAsync()
 
         FirebaseFirestore.getInstance()
@@ -50,13 +50,12 @@ class ShoppingListWidgetProvider : HomeWidgetProvider() {
                 "serverUpdatedDateTime" to FieldValue.serverTimestamp()
             ), SetOptions.merge())
             .addOnCompleteListener {
-                updateLocalCache(context, groupID, shoppingListID, itemID, currentStatus)
+                updateLocalCache(context, groupID, shoppingListID, itemID, newStatus)
                 pendingResult.finish()
             }
     }
 
-    private fun updateLocalCache(context: Context, groupID: String, shoppingListID: String, itemID: String, currentStatus: String) {
-        val newStatus = if (currentStatus == "checked") "unchecked" else "checked"
+    private fun updateLocalCache(context: Context, groupID: String, shoppingListID: String, itemID: String, newStatus: String) {
         val prefs = context.getSharedPreferences("HomeWidgetPreferences", Context.MODE_PRIVATE)
         val key = "widget_items_${groupID}_${shoppingListID}"
         val itemsJson = prefs.getString(key, "[]") ?: "[]"
