@@ -52,6 +52,7 @@ class AuthResolver extends HookConsumerWidget {
           data: (user) {
             debugPrint('user.uid: ${user?.uid}');
 
+            // kDebugMode時は匿名ユーザーでも認証済みとして通過させる（自動テスト用）
             if (user == null || (!kDebugMode && user.isAnonymous)) {
               return const AuthPage();
             } else {
