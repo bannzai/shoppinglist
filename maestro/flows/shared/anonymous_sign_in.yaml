@@ -1,0 +1,7 @@
+appId: com.bannzai.shoppinglist
+---
+- assertVisible: "サインイン"
+- tapOn: "匿名サインイン（デバッグ用）"
+- assertVisible:
+    text: "買い物リスト"
+    timeout: 10000
