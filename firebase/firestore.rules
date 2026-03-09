@@ -15,7 +15,7 @@ service cloud.firestore {
       allow create, update: if isUserAuth(userID);
 
       match /privates/{privateID} {
-        allow read: if isUserAuth(userID);
+        allow read: if false;
         allow create, update: if isUserAuth(userID);
       }
     }
