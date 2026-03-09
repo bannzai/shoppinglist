@@ -21,22 +21,26 @@ class AppUserCreate {
     if (document.exists) {
       return;
     }
-    await userDatabase.userReference().set(
-          AppUser(
-            id: userDatabase.userID,
-            name: firebaseUser.displayName,
-            iconImageURL: firebaseUser.photoURL,
-          ),
-          SetOptions(merge: true),
-        );
-    await userDatabase.privateReference().set(
-          AppUserPrivate(
-            id: AppUserPrivate.documentID(userID: userDatabase.userID),
-            userID: userDatabase.userID,
-            email: firebaseUser.email,
-          ),
-          SetOptions(merge: true),
-        );
+    final batch = FirebaseFirestore.instance.batch();
+    batch.set(
+      userDatabase.userReference(),
+      AppUser(
+        id: userDatabase.userID,
+        name: firebaseUser.displayName,
+        iconImageURL: firebaseUser.photoURL,
+      ),
+      SetOptions(merge: true),
+    );
+    batch.set(
+      userDatabase.privateReference(),
+      AppUserPrivate(
+        id: AppUserPrivate.documentID(userID: userDatabase.userID),
+        userID: userDatabase.userID,
+        email: firebaseUser.email,
+      ),
+      SetOptions(merge: true),
+    );
+    await batch.commit();
   }
 }
 
