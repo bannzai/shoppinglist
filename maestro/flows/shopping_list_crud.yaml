@@ -1,0 +1,49 @@
+appId: com.bannzai.shoppinglist
+---
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 三点メニューから買い物リストを追加（tooltip: 'メニュー' を設定済み）
+- tapOn: "メニュー"
+- tapOn: "買い物リストを追加"
+- waitForAnimationToEnd
+
+# ボトムシートで「買い物リストを追加」を選択
+- tapOn: "買い物リストを追加"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/list_crud_01_new_list
+
+# リスト設定を開いてリスト名を変更（tooltip: 'リスト設定' を設定済み）
+- tapOn: "リスト設定"
+- assertVisible: "買い物リスト設定"
+
+# リスト名のTextFieldをタップしてクリア→新しい名前を入力
+# TextField に key: ValueKey('shopping_list_name_field') を設定済み
+- tapOn:
+    id: "shopping_list_name_field"
+- clearText
+- inputText: "週末の買い物"
+- pressKey: enter
+- takeScreenshot: screenshots/list_crud_02_renamed
+
+# 設定画面を閉じる
+- pressKey: back
+- waitForAnimationToEnd
+
+# ドロップダウンでリストを確認
+- tapOn: "週末の買い物"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/list_crud_03_list_picker
+
+# リスト設定から削除
+- tapOn: "リスト設定"
+- assertVisible: "買い物リスト設定"
+- scrollUntilVisible:
+    element: "買い物リストを削除"
+    direction: DOWN
+- tapOn: "買い物リストを削除"
+- assertVisible: "買い物リストを削除しますか？"
+- tapOn:
+    text: "削除"
+    index: 0
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/list_crud_04_after_delete

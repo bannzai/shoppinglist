@@ -1,0 +1,35 @@
+appId: com.bannzai.shoppinglist
+---
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 設定タブに切り替え（NavigationBarの2番目のタブ）
+- tapOn: "設定"
+- assertVisible: "設定"
+- takeScreenshot: screenshots/settings_01_initial
+
+# 表示名を入力
+- tapOn: "表示名を入力"
+- inputText: "テストユーザー"
+# キーボードを閉じてから保存ボタンをタップ
+- hideKeyboard
+- tapOn: "保存"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/settings_02_name_saved
+
+# グループ管理画面に遷移
+- tapOn: "グループ管理"
+- assertVisible: "グループ管理"
+- takeScreenshot: screenshots/settings_03_group_list
+
+# グループ作成画面に遷移（FABに tooltip: 'グループ作成' を設定済み）
+- tapOn: "グループ作成"
+- assertVisible: "グループ作成"
+- tapOn: "グループ名を入力"
+- inputText: "家族"
+- hideKeyboard
+- tapOn: "作成する"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/settings_04_group_created
+
+# 戻る
+- pressKey: back
