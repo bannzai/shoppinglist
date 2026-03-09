@@ -65,7 +65,9 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Transform.scale(
+            Semantics(
+              label: textShoppingListItem.message,
+              child: Transform.scale(
               scale: 1.5,
               child: Checkbox(
                 shape: const CircleBorder(),
@@ -95,6 +97,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                       );
                 },
               ),
+            ),
             ),
             Expanded(
               child: Row(
@@ -135,6 +138,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                     ),
                   ),
                   IconButton(
+                    tooltip: 'アイテム詳細',
                     onPressed: () {
                       analytics.logEvent(
                           name: 'tap_open_item_detail',

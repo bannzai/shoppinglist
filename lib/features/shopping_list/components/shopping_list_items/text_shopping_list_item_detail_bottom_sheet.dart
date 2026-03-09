@@ -91,7 +91,9 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
             runSpacing: 12,
             children: [
               // 色なしボタン
-              GestureDetector(
+              Semantics(
+                label: '色なし',
+                child: GestureDetector(
                 onTap: () {
                   analytics.logEvent(
                       name: 'tap_item_remove_color',
@@ -120,9 +122,12 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                   ),
                 ),
               ),
+              ),
               // プリセットカラー
               for (final preset in _presetColors)
-                GestureDetector(
+                Semantics(
+                  label: preset.label,
+                  child: GestureDetector(
                   onTap: () {
                     analytics.logEvent(
                         name: 'tap_item_select_color',
@@ -154,6 +159,7 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                           )
                         : null,
                   ),
+                ),
                 ),
             ],
           ),
