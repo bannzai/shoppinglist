@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shoppinglist/entity/app_user.dart';
+import 'package:shoppinglist/entity/app_user_private.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
@@ -31,6 +32,8 @@ abstract class _CollectionPath {
   static String categories(
           {required String groupID, required String categoryAxisID}) =>
       '/groups/$groupID/categoryAxes/$categoryAxisID/categories';
+  static String privates({required String userID}) =>
+      '/users/$userID/privates';
   static String userProfiles({required String groupID}) =>
       '/groups/$groupID/userProfiles';
 }
@@ -51,6 +54,15 @@ class UserDatabase {
         fromFirestore: AppUser.fromFirestore,
         toFirestore: AppUser.toFirestore,
       );
+
+  DocumentReference<AppUserPrivate> privateReference() =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.privates(userID: userID))
+          .doc(AppUserPrivate.documentID(userID: userID))
+          .withConverter(
+            fromFirestore: AppUserPrivate.fromFirestore,
+            toFirestore: AppUserPrivate.toFirestore,
+          );
 }
 
 @Riverpod(keepAlive: true, dependencies: [])
