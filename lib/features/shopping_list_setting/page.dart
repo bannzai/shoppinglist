@@ -69,6 +69,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                             SizedBox(
                               width: double.infinity,
                               child: TextField(
+                                key: const ValueKey('shopping_list_name_field'),
                                 controller: textEditingController,
                                 onChanged: (value) {
                                   shoppingList.value =
