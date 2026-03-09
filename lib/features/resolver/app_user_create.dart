@@ -60,6 +60,8 @@ class AppUserCreateResolver extends HookConsumerWidget {
     final appUserCreate =
         AppUserCreate(userDatabase: ref.watch(userDatabaseProvider));
 
+    // 初回ログイン時にFirestoreにAppUserドキュメントが存在しない場合、ここで作成する。
+    // この処理はユーザーごとに一度だけ実行されればよいため、依存配列は空にする。
     useEffect(() {
       appUserCreate(firebaseUser: firebaseUser);
       return null;
