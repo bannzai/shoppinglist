@@ -507,10 +507,7 @@ class _ShoppingLocationsSection extends ConsumerWidget {
               if (name.isEmpty) return;
               analytics.logEvent(
                   name: 'tap_save_location',
-                  parameters: {
-                    'groupID': groupID,
-                    'locationID': location.id
-                  });
+                  parameters: {'groupID': groupID, 'locationID': location.id});
               Navigator.pop(dialogContext);
               try {
                 await ref
@@ -533,10 +530,7 @@ class _ShoppingLocationsSection extends ConsumerWidget {
             onPressed: () {
               analytics.logEvent(
                   name: 'cancel_edit_location',
-                  parameters: {
-                    'groupID': groupID,
-                    'locationID': location.id
-                  });
+                  parameters: {'groupID': groupID, 'locationID': location.id});
               Navigator.pop(dialogContext);
             },
             child: const Text('キャンセル'),
@@ -561,10 +555,7 @@ class _ShoppingLocationsSection extends ConsumerWidget {
             onPressed: () async {
               analytics.logEvent(
                   name: 'tap_confirm_del_location',
-                  parameters: {
-                    'groupID': groupID,
-                    'locationID': location.id
-                  });
+                  parameters: {'groupID': groupID, 'locationID': location.id});
               Navigator.pop(dialogContext);
               try {
                 await ref
@@ -587,10 +578,7 @@ class _ShoppingLocationsSection extends ConsumerWidget {
             onPressed: () {
               analytics.logEvent(
                   name: 'cancel_del_location',
-                  parameters: {
-                    'groupID': groupID,
-                    'locationID': location.id
-                  });
+                  parameters: {'groupID': groupID, 'locationID': location.id});
               Navigator.pop(dialogContext);
             },
             child: const Text('キャンセル'),
@@ -645,8 +633,7 @@ void _showAddCategoryDialog({
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        GroupShoppingListItemCategoryEditPage(
+                    builder: (context) => GroupShoppingListItemCategoryEditPage(
                       groupID: groupID,
                       categoryAxisID: categoryAxisID,
                       categoryID: category.id,
@@ -667,8 +654,7 @@ void _showAddCategoryDialog({
         TextButton(
           onPressed: () {
             analytics.logEvent(
-                name: 'cancel_add_category',
-                parameters: {'groupID': groupID});
+                name: 'cancel_add_category', parameters: {'groupID': groupID});
             Navigator.pop(dialogContext);
           },
           child: const Text('キャンセル'),
@@ -687,8 +673,8 @@ class _CategoriesSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final axesAsync = ref.watch(
-        groupShoppingListItemCategoryAxesProvider(groupID: groupID));
+    final axesAsync =
+        ref.watch(groupShoppingListItemCategoryAxesProvider(groupID: groupID));
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
@@ -812,9 +798,8 @@ class _CategoryListContent extends ConsumerWidget {
         return Column(
           children: [
             ...categories.map((category) {
-              final categoryColor = category.color != null
-                  ? colorFromHex(category.color!)
-                  : null;
+              final categoryColor =
+                  category.color != null ? colorFromHex(category.color!) : null;
               return ListTile(
                 leading: Icon(
                   categoryIconFromName(category.iconName),
@@ -871,8 +856,7 @@ class _CategoryListContent extends ConsumerWidget {
             TextButton.icon(
               onPressed: () {
                 analytics.logEvent(
-                    name: 'tap_add_category',
-                    parameters: {'groupID': groupID});
+                    name: 'tap_add_category', parameters: {'groupID': groupID});
                 _showAddCategoryDialog(
                   context: context,
                   ref: ref,
@@ -907,10 +891,7 @@ class _CategoryListContent extends ConsumerWidget {
             onPressed: () async {
               analytics.logEvent(
                   name: 'tap_confirm_del_category',
-                  parameters: {
-                    'groupID': groupID,
-                    'categoryID': category.id
-                  });
+                  parameters: {'groupID': groupID, 'categoryID': category.id});
               Navigator.pop(dialogContext);
               try {
                 await ref
@@ -937,10 +918,7 @@ class _CategoryListContent extends ConsumerWidget {
             onPressed: () {
               analytics.logEvent(
                   name: 'cancel_del_category',
-                  parameters: {
-                    'groupID': groupID,
-                    'categoryID': category.id
-                  });
+                  parameters: {'groupID': groupID, 'categoryID': category.id});
               Navigator.pop(dialogContext);
             },
             child: const Text('キャンセル'),
