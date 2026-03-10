@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -32,15 +33,22 @@ abstract class _CollectionPath {
   static String categories(
           {required String groupID, required String categoryAxisID}) =>
       '/groups/$groupID/categoryAxes/$categoryAxisID/categories';
-  static String privates({required String userID}) =>
-      '/users/$userID/privates';
+  static String privates({required String userID}) => '/users/$userID/privates';
   static String userProfiles({required String groupID}) =>
       '/groups/$groupID/userProfiles';
 }
 
 @Riverpod(keepAlive: true, dependencies: [])
 UserDatabase userDatabase(Ref ref) {
-  throw UnimplementedError('userDatabase is not implemented');
+  final firebaseUserChanges = ref.watch(firebaseUserChangesProvider);
+  // 初回起動の時には.userChanges()のstreamは流れてこないので、currentUserのidを使う
+  final uid = firebaseUserChanges.asData?.value?.uid ??
+      FirebaseAuth.instance.currentUser?.uid;
+  debugPrint('[DEBUG] database uid is $uid');
+  if (uid == null) {
+    throw Exception('userID is null');
+  }
+  return UserDatabase(userID: uid);
 }
 
 class UserDatabase {
