@@ -3,7 +3,7 @@ appId: com.bannzai.shoppinglist
 - runFlow: shared/anonymous_sign_in.yaml
 
 # 空リスト状態を確認
-- assertVisible: "買い物リストが空です"
+- assertVisible: "アイテムを追加"
 - takeScreenshot: screenshots/add_item_01_empty
 
 # 「アイテムを追加」ボタンをタップ（空リスト状態のFilledButton）

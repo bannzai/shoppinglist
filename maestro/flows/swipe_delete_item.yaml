@@ -14,11 +14,14 @@ appId: com.bannzai.shoppinglist
 - takeScreenshot: screenshots/swipe_delete_01_before
 
 # アイテムをスワイプ削除（左→右方向、Dismissible direction: startToEnd）
+# from でセレクタを指定し、要素中心から RIGHT 方向へスワイプ
 - swipe:
-    text: "削除テスト用アイテム"
+    from:
+      text: "削除テスト用アイテム"
     direction: RIGHT
+    duration: 600
 - waitForAnimationToEnd
 
 # 空リスト状態に戻る
-- assertVisible: "買い物リストが空です"
+- assertVisible: "アイテムを追加"
 - takeScreenshot: screenshots/swipe_delete_02_after

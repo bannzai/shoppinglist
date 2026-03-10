@@ -18,34 +18,34 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appUserAsync = ref.watch(appUserProvider);
     final appUser = appUserAsync.asData?.value;
-    final groupID = appUser?.defaultGroupID;
+    final appUserDefaultGroupID = appUser?.defaultGroupID;
     final createGroup = ref.watch(createGroupProvider);
 
-    final shoppingListAdd = groupID != null
-        ? ref.watch(shoppingListAddProvider(groupID: groupID))
+    final shoppingListAdd = appUserDefaultGroupID != null
+        ? ref.watch(shoppingListAddProvider(groupID: appUserDefaultGroupID))
         : null;
-    final shoppingLists = groupID != null
-        ? ref.watch(shoppingListsProvider(groupID: groupID))
+    final shoppingLists = appUserDefaultGroupID != null
+        ? ref.watch(shoppingListsProvider(groupID: appUserDefaultGroupID))
         : null;
 
     // Group未作成の場合は作成してAppUserにセット
     useEffect(() {
-      if (appUser != null && groupID == null) {
+      if (appUser != null && appUserDefaultGroupID == null) {
         createGroup(appUser: appUser, name: null, setAsDefault: true);
       }
       return null;
-    }, [appUser, groupID]);
+    }, [appUser, appUserDefaultGroupID]);
 
     useEffect(() {
       void f() async {
         if (appUser != null &&
-            groupID != null &&
+            appUserDefaultGroupID != null &&
             shoppingListAdd != null &&
             shoppingLists is AsyncData &&
             shoppingLists?.value?.isEmpty == true) {
           await shoppingListAdd(
               createUserID: appUser.id,
-              groupID: groupID,
+              groupID: appUserDefaultGroupID,
               shoppingLocationID: null,
               duplicatedFromGroupShoppingListID: null);
         }
@@ -59,7 +59,7 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
       throw StateError('AppUser is not available');
     }
 
-    if (groupID == null) {
+    if (appUserDefaultGroupID == null) {
       return const Loading();
     }
 

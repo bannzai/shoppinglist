@@ -1,5 +1,10 @@
 appId: com.bannzai.shoppinglist
+# 実行前にPreview用ビルドが必要:
+#   flutter build ios --simulator -t lib/features/previews/main_preview.dart
+#   xcrun simctl install booted build/ios/iphonesimulator/Runner.app
 ---
+- launchApp:
+    clearState: true
 
 # PreviewsPage が表示されるのを待つ
 - assertVisible: "Previews"
