@@ -81,24 +81,6 @@ class _GroupSettingBody extends HookConsumerWidget {
         useTextEditingController(text: group.name ?? '');
     final isCreatingInvitation = useState(false);
     final isRemovingMember = useState(false);
-    final focusNode = useFocusNode();
-
-    // フォーカスが外れた時にグループ名を保存
-    useEffect(() {
-      if (!isOwner) return null;
-
-      void onFocusChange() {
-        if (focusNode.hasFocus) return;
-        final newName = groupNameController.text.trim();
-        if (newName.isEmpty || newName == (group.name ?? '')) return;
-        ref.read(groupNameUpdateProvider(groupID: groupID)).call(
-              name: newName,
-            );
-      }
-
-      focusNode.addListener(onFocusChange);
-      return () => focusNode.removeListener(onFocusChange);
-    }, [isOwner]);
 
     return Scaffold(
       appBar: AppBar(
@@ -123,11 +105,23 @@ class _GroupSettingBody extends HookConsumerWidget {
                       const SizedBox(height: 8),
                       TextField(
                         controller: groupNameController,
-                        focusNode: focusNode,
                         readOnly: !isOwner,
                         decoration: const InputDecoration(
                           hintText: 'グループ名を入力',
                         ),
+                        onSubmitted: !isOwner
+                            ? null
+                            : (value) {
+                                final newName = value.trim();
+                                if (newName.isEmpty ||
+                                    newName == (group.name ?? '')) {
+                                  return;
+                                }
+                                ref
+                                    .read(groupNameUpdateProvider(
+                                        groupID: groupID))
+                                    .call(name: newName);
+                              },
                       ),
                     ],
                   ),
