@@ -68,36 +68,37 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
             Semantics(
               label: textShoppingListItem.message,
               child: Transform.scale(
-              scale: 1.5,
-              child: Checkbox(
-                shape: const CircleBorder(),
-                value: textShoppingListItem.status ==
-                    GroupShoppingListItemStatus.checked,
-                onChanged: (value) {
-                  analytics
-                      .logEvent(name: 'tap_toggle_item_checkbox', parameters: {
-                    'groupID': groupID,
-                    'shoppingListID': textShoppingListItem.shoppingListID,
-                    'itemID': textShoppingListItem.id
-                  });
-                  ref
-                      .read(groupDatabaseProvider(groupID: groupID))
-                      .shoppingListItemsReference(
-                        shoppingListID: textShoppingListItem.shoppingListID,
-                      )
-                      .doc(textShoppingListItem.id)
-                      .set(
-                        textShoppingListItem.copyWith(
-                          status: textShoppingListItem.status ==
-                                  GroupShoppingListItemStatus.checked
-                              ? GroupShoppingListItemStatus.unchecked
-                              : GroupShoppingListItemStatus.checked,
-                        ),
-                        SetOptions(merge: true),
-                      );
-                },
+                scale: 1.5,
+                child: Checkbox(
+                  shape: const CircleBorder(),
+                  value: textShoppingListItem.status ==
+                      GroupShoppingListItemStatus.checked,
+                  onChanged: (value) {
+                    analytics.logEvent(
+                        name: 'tap_toggle_item_checkbox',
+                        parameters: {
+                          'groupID': groupID,
+                          'shoppingListID': textShoppingListItem.shoppingListID,
+                          'itemID': textShoppingListItem.id
+                        });
+                    ref
+                        .read(groupDatabaseProvider(groupID: groupID))
+                        .shoppingListItemsReference(
+                          shoppingListID: textShoppingListItem.shoppingListID,
+                        )
+                        .doc(textShoppingListItem.id)
+                        .set(
+                          textShoppingListItem.copyWith(
+                            status: textShoppingListItem.status ==
+                                    GroupShoppingListItemStatus.checked
+                                ? GroupShoppingListItemStatus.unchecked
+                                : GroupShoppingListItemStatus.checked,
+                          ),
+                          SetOptions(merge: true),
+                        );
+                  },
+                ),
               ),
-            ),
             ),
             Expanded(
               child: Row(
