@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -83,62 +81,23 @@ class _GroupSettingBody extends HookConsumerWidget {
         useTextEditingController(text: group.name ?? '');
     final isCreatingInvitation = useState(false);
     final isRemovingMember = useState(false);
+    final focusNode = useFocusNode();
 
-    // Auto-save state
-    final isSavingName = useState(false);
-    final showSavedCheck = useState(false);
-    final lastSavedName = useState(group.name ?? '');
-
-    // Debounce auto-save for group name
+    // フォーカスが外れた時にグループ名を保存
     useEffect(() {
       if (!isOwner) return null;
-      Timer? debounceTimer;
-      Timer? checkTimer;
 
-      void listener() {
-        debounceTimer?.cancel();
-        checkTimer?.cancel();
-        showSavedCheck.value = false;
-
-        debounceTimer = Timer(const Duration(seconds: 1), () async {
-          final newName = groupNameController.text.trim();
-          if (newName.isEmpty || newName == lastSavedName.value) return;
-
-          isSavingName.value = true;
-          try {
-            await functions.updateGroupName(
-              groupID: groupID,
+      void onFocusChange() {
+        if (focusNode.hasFocus) return;
+        final newName = groupNameController.text.trim();
+        if (newName.isEmpty || newName == (group.name ?? '')) return;
+        ref.read(groupNameUpdateProvider(groupID: groupID)).call(
               name: newName,
             );
-            analytics.logEvent(
-                name: 'auto_save_group_name',
-                parameters: {'groupID': groupID});
-            if (!context.mounted) return;
-            lastSavedName.value = newName;
-            showSavedCheck.value = true;
-            checkTimer = Timer(const Duration(seconds: 2), () {
-              showSavedCheck.value = false;
-            });
-          } catch (e) {
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(e.toString())),
-              );
-            }
-          } finally {
-            if (context.mounted) {
-              isSavingName.value = false;
-            }
-          }
-        });
       }
 
-      groupNameController.addListener(listener);
-      return () {
-        debounceTimer?.cancel();
-        checkTimer?.cancel();
-        groupNameController.removeListener(listener);
-      };
+      focusNode.addListener(onFocusChange);
+      return () => focusNode.removeListener(onFocusChange);
     }, [isOwner]);
 
     return Scaffold(
@@ -164,24 +123,10 @@ class _GroupSettingBody extends HookConsumerWidget {
                       const SizedBox(height: 8),
                       TextField(
                         controller: groupNameController,
+                        focusNode: focusNode,
                         readOnly: !isOwner,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'グループ名を入力',
-                          enabled: isOwner,
-                          suffixIcon: isSavingName.value
-                              ? const Padding(
-                                  padding: EdgeInsets.all(12.0),
-                                  child: SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                        strokeWidth: 2),
-                                  ),
-                                )
-                              : showSavedCheck.value
-                                  ? const Icon(Icons.check,
-                                      color: Colors.green)
-                                  : null,
                         ),
                       ),
                     ],
