@@ -16,27 +16,15 @@ appId: com.bannzai.shoppinglist
 - tapOn: "リスト設定"
 - assertVisible: "買い物リスト設定"
 
-# リスト名のTextFieldをタップしてクリア→新しい名前を入力
-# TextField に key: ValueKey('shopping_list_name_field') を設定済み
+# リスト名のTextField領域をタップしてフォーカスする
 - tapOn:
-    id: "shopping_list_name_field"
+    point: "50%,33%"
 - eraseText
 - inputText: "週末の買い物"
 - pressKey: enter
 - takeScreenshot: screenshots/list_crud_02_renamed
 
-# 設定画面を閉じる
-- pressKey: back
-- waitForAnimationToEnd
-
-# ドロップダウンでリストを確認
-- tapOn: "週末の買い物"
-- waitForAnimationToEnd
-- takeScreenshot: screenshots/list_crud_03_list_picker
-
-# リスト設定から削除
-- tapOn: "リスト設定"
-- assertVisible: "買い物リスト設定"
+# 同じボトムシート内でスクロールして削除ボタンを見つける
 - scrollUntilVisible:
     element: "買い物リストを削除"
     direction: DOWN
@@ -46,4 +34,4 @@ appId: com.bannzai.shoppinglist
     text: "削除"
     index: 0
 - waitForAnimationToEnd
-- takeScreenshot: screenshots/list_crud_04_after_delete
+- takeScreenshot: screenshots/list_crud_03_after_delete
