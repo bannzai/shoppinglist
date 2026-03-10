@@ -38,7 +38,7 @@ abstract class _CollectionPath {
       '/groups/$groupID/userProfiles';
 }
 
-@Riverpod(keepAlive: true, dependencies: [])
+@Riverpod(keepAlive: true, dependencies: [firebaseUserChanges])
 UserDatabase userDatabase(Ref ref) {
   final firebaseUserChanges = ref.watch(firebaseUserChangesProvider);
   // 初回起動の時には.userChanges()のstreamは流れてこないので、currentUserのidを使う
