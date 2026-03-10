@@ -20,5 +20,5 @@ appId: com.bannzai.shoppinglist
 - waitForAnimationToEnd
 
 # 空リスト状態に戻る
-- assertVisible: "買い物リストが空です"
+- assertVisible: "アイテムを追加"
 - takeScreenshot: screenshots/swipe_delete_02_after

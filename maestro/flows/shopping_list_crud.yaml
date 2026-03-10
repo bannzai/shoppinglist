@@ -20,7 +20,7 @@ appId: com.bannzai.shoppinglist
 # TextField に key: ValueKey('shopping_list_name_field') を設定済み
 - tapOn:
     id: "shopping_list_name_field"
-- clearText
+- eraseText
 - inputText: "週末の買い物"
 - pressKey: enter
 - takeScreenshot: screenshots/list_crud_02_renamed
