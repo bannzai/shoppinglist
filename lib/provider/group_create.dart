@@ -20,8 +20,6 @@ class CreateGroup {
       required String? name,
       required bool setAsDefault}) async {
     try {
-      final batch = FirebaseFirestore.instance.batch();
-
       // groupIDはここで確定するため、GroupDatabaseはcall内で生成する
       final groupDocRef = FirebaseFirestore.instance.collection('groups').doc();
       final groupDatabase = GroupDatabase(groupID: groupDocRef.id);
@@ -32,22 +30,9 @@ class CreateGroup {
         ownerUserID: appUser.id,
       );
 
-      batch.set(
-        groupDatabase.groupReference(),
-        group,
-        SetOptions(merge: true),
-      );
-
       // setAsDefault == true → 常にdefaultGroupIDを更新
       // setAsDefault == false → defaultGroupIDがnullの場合のみ自動設定
       final shouldSetDefault = setAsDefault || appUser.defaultGroupID == null;
-      if (shouldSetDefault) {
-        batch.set(
-          userDatabase.userReference(),
-          appUser.copyWith(defaultGroupID: groupDocRef.id),
-          SetOptions(merge: true),
-        );
-      }
 
       // グループ作成者のプロフィールを作成
       final currentUser = FirebaseAuth.instance.currentUser;
@@ -58,13 +43,35 @@ class CreateGroup {
         userID: appUser.id,
         displayName: currentUser?.displayName,
       );
-      batch.set(
-        groupDatabase.userProfileReference(userID: appUser.id),
-        profile,
-        SetOptions(merge: true),
-      );
 
-      await batch.commit();
+      // batch.commit() ではなく runTransaction を使用する。
+      // batch はローカルキャッシュを楽観的に即座更新するため、サーバー確認前に
+      // appUserProvider のストリームが発火し、shoppingListsProvider が
+      // まだサーバー上に存在しないグループドキュメントを読みに行き
+      // permission-denied エラーが発生する。
+      // runTransaction はサーバー確認後にのみローカルキャッシュを更新するため、
+      // ストリーム発火時にはグループドキュメントが確実にサーバー上に存在する。
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        transaction.set(
+          groupDatabase.groupReference(),
+          group,
+          SetOptions(merge: true),
+        );
+
+        if (shouldSetDefault) {
+          transaction.set(
+            userDatabase.userReference(),
+            appUser.copyWith(defaultGroupID: groupDocRef.id),
+            SetOptions(merge: true),
+          );
+        }
+
+        transaction.set(
+          groupDatabase.userProfileReference(userID: appUser.id),
+          profile,
+          SetOptions(merge: true),
+        );
+      });
     } catch (e) {
       debugPrint('Failed to create group: $e');
       rethrow;
