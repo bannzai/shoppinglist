@@ -3,15 +3,19 @@ appId: com.bannzai.shoppinglist
 - runFlow: shared/anonymous_sign_in.yaml
 
 # 設定タブに切り替え（NavigationBarの2番目のタブ）
-- tapOn: "設定"
-- assertVisible: "設定"
+- tapOn:
+    text: "設定.*"
+    index: 0
+- assertVisible: "設定.*"
 - takeScreenshot: screenshots/settings_01_initial
 
 # 表示名を入力
 - tapOn: "表示名を入力"
 - inputText: "テストユーザー"
-# キーボードを閉じてから保存ボタンをタップ
-- hideKeyboard
+# hideKeyboardはスクリーン上のリンクを誤タップする可能性があるため、
+# AppBarタイトルの安全な領域をタップしてキーボードを閉じる
+- tapOn:
+    point: "50%,6%"
 - tapOn: "保存"
 - waitForAnimationToEnd
 - takeScreenshot: screenshots/settings_02_name_saved
@@ -26,7 +30,8 @@ appId: com.bannzai.shoppinglist
 - assertVisible: "グループ作成"
 - tapOn: "グループ名を入力"
 - inputText: "家族"
-- hideKeyboard
+- tapOn:
+    point: "50%,6%"
 - tapOn: "作成する"
 - waitForAnimationToEnd
 - takeScreenshot: screenshots/settings_04_group_created
