@@ -1,0 +1,27 @@
+appId: com.bannzai.shoppinglist
+---
+- runFlow: shared/anonymous_sign_in.yaml
+
+# アイテムを追加
+- tapOn: "アイテムを追加"
+- inputText: "削除テスト用アイテム"
+- pressKey: enter
+# 空アイテムを削除
+- pressKey: enter
+- hideKeyboard
+- waitForAnimationToEnd
+- assertVisible: "削除テスト用アイテム"
+- takeScreenshot: screenshots/swipe_delete_01_before
+
+# アイテムをスワイプ削除（左→右方向、Dismissible direction: startToEnd）
+# from でセレクタを指定し、要素中心から RIGHT 方向へスワイプ
+- swipe:
+    from:
+      text: "削除テスト用アイテム"
+    direction: RIGHT
+    duration: 600
+- waitForAnimationToEnd
+
+# 空リスト状態に戻る
+- assertVisible: "アイテムを追加"
+- takeScreenshot: screenshots/swipe_delete_02_after

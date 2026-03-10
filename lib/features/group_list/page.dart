@@ -56,6 +56,7 @@ class GroupListPage extends ConsumerWidget {
         _ => const Center(child: CircularProgressIndicator()),
       },
       floatingActionButton: FloatingActionButton(
+        tooltip: 'グループ作成',
         onPressed: () {
           analytics.logEvent(name: 'tap_navigate_group_create');
           Navigator.push(

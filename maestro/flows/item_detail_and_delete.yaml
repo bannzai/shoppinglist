@@ -1,0 +1,47 @@
+appId: com.bannzai.shoppinglist
+---
+- runFlow: shared/anonymous_sign_in.yaml
+
+# アイテムを追加
+- tapOn: "アイテムを追加"
+- inputText: "醤油"
+- pressKey: enter
+# 空アイテムを削除
+- pressKey: enter
+# hideKeyboardはスクリーン上のリンクを誤タップする可能性があるため、
+# AppBarタイトルの安全な領域をタップしてキーボードを閉じる
+- tapOn:
+    point: "50%,6%"
+- waitForAnimationToEnd
+
+# 詳細ボトムシートを開く（info アイコンに tooltip: 'アイテム詳細' を設定済み）
+- tapOn: "アイテム詳細"
+
+# メモを入力
+- assertVisible: "メモ"
+- tapOn: "補足説明を入力"
+- inputText: "キッコーマンの丸大豆"
+
+# カラーを選択（赤）
+# カラー円に Semantics(label: preset.label) を設定済み
+- assertVisible: "カラー"
+- tapOn: "赤"
+
+# 保存
+- tapOn: "保存"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/item_detail_01_with_memo_color
+
+# 再度詳細を開いて削除
+- tapOn: "アイテム詳細"
+- assertVisible: "メモ"
+- tapOn: "削除"
+- assertVisible: "このアイテムを削除しますか？"
+- tapOn:
+    text: "削除"
+    index: 0
+- waitForAnimationToEnd
+
+# 空リスト状態に戻る
+- assertVisible: "アイテムを追加"
+- takeScreenshot: screenshots/item_detail_02_after_delete

@@ -91,68 +91,74 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
             runSpacing: 12,
             children: [
               // 色なしボタン
-              GestureDetector(
-                onTap: () {
-                  analytics.logEvent(
-                      name: 'tap_item_remove_color',
-                      parameters: {
-                        'groupID': groupID,
-                        'itemID': textShoppingListItem.id
-                      });
-                  selectedColor.value = null;
-                },
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: selectedColor.value == null
-                          ? colorScheme.onSurface
-                          : colorScheme.outline,
-                      width: selectedColor.value == null ? 2 : 1,
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.block,
-                    size: 20,
-                    color: colorScheme.outline,
-                  ),
-                ),
-              ),
-              // プリセットカラー
-              for (final preset in _presetColors)
-                GestureDetector(
+              Semantics(
+                label: '色なし',
+                child: GestureDetector(
                   onTap: () {
                     analytics.logEvent(
-                        name: 'tap_item_select_color',
+                        name: 'tap_item_remove_color',
                         parameters: {
                           'groupID': groupID,
-                          'itemID': textShoppingListItem.id,
-                          'color': preset.hex
+                          'itemID': textShoppingListItem.id
                         });
-                    selectedColor.value = preset.hex;
+                    selectedColor.value = null;
                   },
                   child: Container(
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: colorFromHex(preset.hex),
                       border: Border.all(
-                        color: selectedColor.value == preset.hex
+                        color: selectedColor.value == null
                             ? colorScheme.onSurface
-                            : Colors.transparent,
-                        width: 2,
+                            : colorScheme.outline,
+                        width: selectedColor.value == null ? 2 : 1,
                       ),
                     ),
-                    child: selectedColor.value == preset.hex
-                        ? Icon(
-                            Icons.check,
-                            size: 20,
-                            color: colorScheme.onPrimary,
-                          )
-                        : null,
+                    child: Icon(
+                      Icons.block,
+                      size: 20,
+                      color: colorScheme.outline,
+                    ),
+                  ),
+                ),
+              ),
+              // プリセットカラー
+              for (final preset in _presetColors)
+                Semantics(
+                  label: preset.label,
+                  child: GestureDetector(
+                    onTap: () {
+                      analytics.logEvent(
+                          name: 'tap_item_select_color',
+                          parameters: {
+                            'groupID': groupID,
+                            'itemID': textShoppingListItem.id,
+                            'color': preset.hex
+                          });
+                      selectedColor.value = preset.hex;
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: colorFromHex(preset.hex),
+                        border: Border.all(
+                          color: selectedColor.value == preset.hex
+                              ? colorScheme.onSurface
+                              : Colors.transparent,
+                          width: 2,
+                        ),
+                      ),
+                      child: selectedColor.value == preset.hex
+                          ? Icon(
+                              Icons.check,
+                              size: 20,
+                              color: colorScheme.onPrimary,
+                            )
+                          : null,
+                    ),
                   ),
                 ),
             ],

@@ -72,6 +72,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
       actions: [
         if (shoppingList != null) ...[
           IconButton(
+            tooltip: 'リスト設定',
             onPressed: () {
               analytics.logEvent(name: 'tap_open_list_setting', parameters: {
                 'groupID': groupID,
@@ -96,6 +97,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
             icon: const Icon(Icons.settings),
           ),
           PopupMenuButton<String>(
+            tooltip: 'メニュー',
             icon: const Icon(Icons.more_vert),
             onSelected: (value) {
               switch (value) {

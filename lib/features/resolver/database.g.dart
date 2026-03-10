@@ -6,7 +6,7 @@ part of 'database.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$userDatabaseHash() => r'6c4f08fee8e04762434e1cb38af1556d14a74025';
+String _$userDatabaseHash() => r'1be99a5e9f491a9db253bda5df29bdee070fce1f';
 
 /// See also [userDatabase].
 @ProviderFor(userDatabase)
@@ -15,8 +15,11 @@ final userDatabaseProvider = Provider<UserDatabase>.internal(
   name: r'userDatabaseProvider',
   debugGetCreateSourceHash:
       const bool.fromEnvironment('dart.vm.product') ? null : _$userDatabaseHash,
-  dependencies: const <ProviderOrFamily>[],
-  allTransitiveDependencies: const <ProviderOrFamily>{},
+  dependencies: <ProviderOrFamily>[firebaseUserChangesProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{
+    firebaseUserChangesProvider,
+    ...?firebaseUserChangesProvider.allTransitiveDependencies
+  },
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')

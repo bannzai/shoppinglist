@@ -1,0 +1,47 @@
+appId: com.bannzai.shoppinglist
+---
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 空リスト状態を確認
+- assertVisible: "アイテムを追加"
+- takeScreenshot: screenshots/add_item_01_empty
+
+# 「アイテムを追加」ボタンをタップ（空リスト状態のFilledButton）
+- tapOn: "アイテムを追加"
+
+# アイテムのテキストを入力
+# Enter送信でアイテムが保存され、新しい空アイテムが自動作成される
+- inputText: "牛乳"
+- pressKey: enter
+- inputText: "卵"
+- pressKey: enter
+- inputText: "パン"
+- pressKey: enter
+# 最後のEnterで自動作成された空アイテムを削除（空テキストでEnter→削除）
+- pressKey: enter
+
+# キーボードを閉じる
+- hideKeyboard
+- waitForAnimationToEnd
+
+# 3アイテム追加されたことを確認
+- assertVisible: "牛乳"
+- assertVisible: "卵"
+- assertVisible: "パン"
+- takeScreenshot: screenshots/add_item_02_items_added
+
+# 1つ目のアイテムをチェック
+# Checkboxに Semantics(label: "牛乳") を設定済み。type: Switch, label: "牛乳" として認識される
+- tapOn:
+    text: "牛乳"
+    index: 0
+- takeScreenshot: screenshots/add_item_03_one_checked
+
+# 「チェック済み表示」フィルターをタップしてOFF/ONを切り替え
+- tapOn: "チェック済み表示"
+- takeScreenshot: screenshots/add_item_04_filter_toggled
+
+# フィルターをONに戻す
+- tapOn: "チェック済み表示"
+- assertVisible: "牛乳"
+- takeScreenshot: screenshots/add_item_05_filter_restored
