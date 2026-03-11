@@ -17,25 +17,22 @@ appId: com.bannzai.shoppinglist
 - assertVisible: "グループ作成"
 - tapOn: "グループ名を入力"
 - inputText: "テストグループ"
-- tapOn:
-    point: "50%,6%"
+- pressKey: Enter
 - tapOn: "作成する"
-- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "グループ管理"
+    timeout: 15000
 
 # グループ設定画面に遷移（グループリストからタップ）
 - tapOn: "テストグループ"
 - assertVisible: "グループ設定"
 - takeScreenshot: screenshots/group_setting_01_initial
 
-# グループ名編集 → 自動保存確認
-- tapOn: "グループ名を入力"
+# グループ名編集 → onSubmittedで保存
+- tapOn: "テストグループ"
 - eraseText: 7
 - inputText: "更新されたグループ"
-- tapOn:
-    point: "50%,6%"
-- extendedWaitUntil:
-    visible: ".*check.*"
-    timeout: 5000
+- pressKey: Enter
 - takeScreenshot: screenshots/group_setting_02_name_saved
 
 # 場所を追加
