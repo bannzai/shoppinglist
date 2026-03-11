@@ -24,7 +24,10 @@ appId: com.bannzai.shoppinglist
     timeout: 15000
 
 # グループ設定画面に遷移（グループリストからタップ）
-- tapOn: "テストグループ"
+- extendedWaitUntil:
+    visible: ".*テストグループ.*"
+    timeout: 10000
+- tapOn: ".*テストグループ.*"
 - assertVisible: "グループ設定"
 - takeScreenshot: screenshots/group_setting_01_initial
 
@@ -59,14 +62,13 @@ appId: com.bannzai.shoppinglist
 # カテゴリ追加後はカテゴリ編集画面に遷移する
 - assertVisible: "カテゴリ編集"
 - takeScreenshot: screenshots/group_setting_04_category_edit
-- pressKey: back
+- tapOn: "Back"
 
 # グループ設定画面に戻り、カテゴリが表示されていることを確認
 - assertVisible: "グループ設定"
-- scrollUntilVisible:
-    element: "野菜"
-    direction: DOWN
-- assertVisible: "野菜"
+- extendedWaitUntil:
+    visible: ".*野菜.*"
+    timeout: 10000
 - takeScreenshot: screenshots/group_setting_05_category_added
 
 # スクリーンショット（最終状態）
