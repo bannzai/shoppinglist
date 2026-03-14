@@ -5,17 +5,6 @@ appId: com.bannzai.shoppinglist
     clearKeychain: true
 - assertVisible: "サインイン"
 - tapOn: "匿名サインイン（デバッグ用）"
-# permission-deniedエラーでRetryボタンが表示される場合がある
-- runFlow:
-    when:
-      visible: "Retry"
-    commands:
-      - tapOn: "Retry"
-- runFlow:
-    when:
-      visible: "Retry"
-    commands:
-      - tapOn: "Retry"
 - extendedWaitUntil:
     visible: "アイテムを追加"
     timeout: 30000
