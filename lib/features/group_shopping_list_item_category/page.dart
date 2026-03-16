@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item_category_axis.dart';
 import 'package:shoppinglist/features/group_shopping_list_item_category/category_edit_page.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
@@ -72,9 +73,10 @@ class GroupShoppingListItemCategoryPage extends ConsumerWidget {
     // Axisがなければ自動作成
     GroupShoppingListItemCategoryAxis axis;
     if (existingAxes.isEmpty) {
+      final userID = ref.read(userDatabaseProvider).userID;
       axis = await ref
           .read(groupShoppingListItemCategoryAxisAddProvider(groupID: groupID))
-          .call(groupID: groupID, name: 'デフォルト', order: 0);
+          .call(groupID: groupID, userID: userID, name: 'デフォルト', order: 0);
     } else {
       axis = existingAxes.first;
     }
@@ -115,11 +117,13 @@ class GroupShoppingListItemCategoryPage extends ConsumerWidget {
                   parameters: {'groupID': groupID});
               Navigator.pop(dialogContext);
               try {
+                final userID = ref.read(userDatabaseProvider).userID;
                 final category = await ref
                     .read(groupShoppingListItemCategoryAddProvider(
                         groupID: groupID))
                     .call(
                       groupID: groupID,
+                      userID: userID,
                       categoryAxisID: categoryAxisID,
                       name: name,
                       order: 0,
@@ -241,11 +245,13 @@ class _CategoryListBody extends ConsumerWidget {
                   parameters: {'groupID': groupID});
               Navigator.pop(dialogContext);
               try {
+                final userID = ref.read(userDatabaseProvider).userID;
                 final category = await ref
                     .read(groupShoppingListItemCategoryAddProvider(
                         groupID: groupID))
                     .call(
                       groupID: groupID,
+                      userID: userID,
                       categoryAxisID: categoryAxisID,
                       name: name,
                       order: currentCategoryCount,

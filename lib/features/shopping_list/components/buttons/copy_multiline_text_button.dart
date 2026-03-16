@@ -35,7 +35,6 @@ class CopyMultilineTextButton extends ConsumerWidget {
                   shoppingListID: shoppingListID,
                   message: line,
                   order: shoppingListItems.nextOrder + index,
-                  groupShoppingListItemCategoryID: null,
                   description: null,
                   color: null,
                 );
