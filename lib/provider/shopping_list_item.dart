@@ -39,7 +39,6 @@ class AddShoppingListItem {
     required String shoppingListID,
     required String message,
     required int order,
-    required String? groupShoppingListItemCategoryID,
     required String? description,
     required String? color,
   }) async {
@@ -54,7 +53,6 @@ class AddShoppingListItem {
         shoppingListID: shoppingListID,
         message: message,
         order: order,
-        groupShoppingListItemCategoryID: groupShoppingListItemCategoryID,
         description: description,
         color: color);
     await docRef.set(item, SetOptions(merge: true));

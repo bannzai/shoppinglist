@@ -9,12 +9,15 @@ part 'group_shopping_list_item_category.g.dart';
 
 // --- CategoryAxis Providers ---
 
-@Riverpod(dependencies: [groupDatabase])
+@Riverpod(dependencies: [groupDatabase, userDatabase])
 Stream<List<GroupShoppingListItemCategoryAxis>>
     groupShoppingListItemCategoryAxes(Ref ref, {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
+  final userDatabase = ref.watch(userDatabaseProvider);
   return database
       .categoryAxesReference()
+      .where(GroupShoppingListItemCategoryAxisFirestoreKeys.userID,
+          isEqualTo: userDatabase.userID)
       .orderBy(GroupShoppingListItemCategoryAxisFirestoreKeys.order)
       .snapshots()
       .map((event) => event.docs.map((doc) => doc.data()).toList());
@@ -27,6 +30,7 @@ class GroupShoppingListItemCategoryAxisAdd {
 
   Future<GroupShoppingListItemCategoryAxis> call({
     required String groupID,
+    required String userID,
     required String name,
     required int order,
   }) async {
@@ -34,6 +38,7 @@ class GroupShoppingListItemCategoryAxisAdd {
     final categoryAxis = GroupShoppingListItemCategoryAxis(
       id: docRef.id,
       groupID: groupID,
+      userID: userID,
       name: name,
       order: order,
     );
@@ -72,7 +77,7 @@ GroupShoppingListItemCategoryAxisDelete groupShoppingListItemCategoryAxisDelete(
 
 // --- Category Providers ---
 
-@Riverpod(dependencies: [groupDatabase])
+@Riverpod(dependencies: [groupDatabase, userDatabase])
 Stream<List<GroupShoppingListItemCategory>> groupShoppingListItemCategories(
     Ref ref,
     {required String groupID,
@@ -92,6 +97,7 @@ class GroupShoppingListItemCategoryAdd {
 
   Future<GroupShoppingListItemCategory> call({
     required String groupID,
+    required String userID,
     required String categoryAxisID,
     required String name,
     required int order,
@@ -101,6 +107,7 @@ class GroupShoppingListItemCategoryAdd {
     final category = GroupShoppingListItemCategory(
       id: docRef.id,
       groupID: groupID,
+      userID: userID,
       groupShoppingListItemCategoryAxisID: categoryAxisID,
       name: name,
       order: order,
