@@ -11,6 +11,7 @@ void main() {
         GroupShoppingListItemCategory(
           id: 'cat1',
           groupID: 'group1',
+          userID: 'user1',
           groupShoppingListItemCategoryAxisID: 'axis1',
           name: '野菜',
           order: 0,
@@ -57,6 +58,7 @@ void main() {
         GroupShoppingListItemCategory(
           id: 'cat1',
           groupID: 'group1',
+          userID: 'user1',
           groupShoppingListItemCategoryAxisID: 'axis1',
           name: '野菜',
           order: 0,
@@ -94,6 +96,7 @@ void main() {
         GroupShoppingListItemCategory(
           id: 'cat1',
           groupID: 'group1',
+          userID: 'user1',
           groupShoppingListItemCategoryAxisID: 'axis1',
           name: 'Drinks',
           order: 0,
@@ -130,6 +133,7 @@ void main() {
         GroupShoppingListItemCategory(
           id: 'cat1',
           groupID: 'group1',
+          userID: 'user1',
           groupShoppingListItemCategoryAxisID: 'axis1',
           name: '野菜',
           order: 0,
@@ -144,6 +148,7 @@ void main() {
         GroupShoppingListItemCategory(
           id: 'cat2',
           groupID: 'group1',
+          userID: 'user1',
           groupShoppingListItemCategoryAxisID: 'axis1',
           name: '果物',
           order: 1,
@@ -181,6 +186,7 @@ void main() {
         GroupShoppingListItemCategory(
           id: 'cat1',
           groupID: 'group1',
+          userID: 'user1',
           groupShoppingListItemCategoryAxisID: 'axis1',
           name: '野菜',
           order: 0,
@@ -245,6 +251,7 @@ void main() {
         GroupShoppingListItemCategory(
           id: 'cat1',
           groupID: 'group1',
+          userID: 'user1',
           groupShoppingListItemCategoryAxisID: 'axis1',
           name: '野菜',
           order: 0,
