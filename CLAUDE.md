@@ -11,11 +11,16 @@
 iOS,Androidアプリをサポートします。Firebase の設定ファイルは flutterfireの.jsonを定義する方法を使用せずに、iOSではGoogleService-Info.plist,Androidでは、google-service.jsonの配置を行い構成します
 
 #### ビルド・テスト・検証方法
+実装後は手動テスト前に必ず、以下のテストを実行する。該当するものがなければテストを新規作成する。作成・実行が難しい場合はユーザーに報告する。
+
 - コード生成: `dart run build_runner build` (freezed/json_serializable/riverpod_generator の生成ファイルを更新)
 - iOS ビルド: `flutter build ios`
 - Android ビルド: `flutter build apk` または `flutter build appbundle`
 - テスト実行: `flutter test`
+- Widget Test: widget 上の表示の条件分岐が多い・複雑の場合に書く:`flutter test`
 - 静的解析: `flutter analyze`
+- Maestro E2E テスト: `maestro test maestro/flows/`。 `./maestro` にテストを記載する
+
 
 ### Firebase
 firebase/ ディレクトリ配下についてです。主にbackendで動くFirebase Functionsの設定です。クライアントから呼ぶ処理は GenKit を使って定義します。AIを使わなくてもGenKitでonCallの関数を定義します。なぜならAPI コンソールがついてきて検証がしやすいから
