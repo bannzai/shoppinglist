@@ -11,6 +11,7 @@ _GroupShoppingListItemCategory _$GroupShoppingListItemCategoryFromJson(
     _GroupShoppingListItemCategory(
       id: json['id'] as String,
       groupID: json['groupID'] as String,
+      userID: json['userID'] as String,
       groupShoppingListItemCategoryAxisID:
           json['groupShoppingListItemCategoryAxisID'] as String,
       name: json['name'] as String,
@@ -37,6 +38,7 @@ Map<String, dynamic> _$GroupShoppingListItemCategoryToJson(
     <String, dynamic>{
       'id': instance.id,
       'groupID': instance.groupID,
+      'userID': instance.userID,
       'groupShoppingListItemCategoryAxisID':
           instance.groupShoppingListItemCategoryAxisID,
       'name': instance.name,

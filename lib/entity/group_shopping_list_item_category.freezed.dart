@@ -16,6 +16,7 @@ T _$identity<T>(T value) => value;
 mixin _$GroupShoppingListItemCategory {
   String get id;
   String get groupID;
+  String get userID;
   String get groupShoppingListItemCategoryAxisID;
   String get name;
   int get order;
@@ -50,6 +51,7 @@ mixin _$GroupShoppingListItemCategory {
             other is GroupShoppingListItemCategory &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
+            (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.groupShoppingListItemCategoryAxisID,
                     groupShoppingListItemCategoryAxisID) ||
                 other.groupShoppingListItemCategoryAxisID ==
@@ -76,6 +78,7 @@ mixin _$GroupShoppingListItemCategory {
       runtimeType,
       id,
       groupID,
+      userID,
       groupShoppingListItemCategoryAxisID,
       name,
       order,
@@ -89,7 +92,7 @@ mixin _$GroupShoppingListItemCategory {
 
   @override
   String toString() {
-    return 'GroupShoppingListItemCategory(id: $id, groupID: $groupID, groupShoppingListItemCategoryAxisID: $groupShoppingListItemCategoryAxisID, name: $name, order: $order, keywords: $keywords, color: $color, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItemCategory(id: $id, groupID: $groupID, userID: $userID, groupShoppingListItemCategoryAxisID: $groupShoppingListItemCategoryAxisID, name: $name, order: $order, keywords: $keywords, color: $color, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -103,6 +106,7 @@ abstract mixin class $GroupShoppingListItemCategoryCopyWith<$Res> {
   $Res call(
       {String id,
       String groupID,
+      String userID,
       String groupShoppingListItemCategoryAxisID,
       String name,
       int order,
@@ -130,6 +134,7 @@ class _$GroupShoppingListItemCategoryCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? groupID = null,
+    Object? userID = null,
     Object? groupShoppingListItemCategoryAxisID = null,
     Object? name = null,
     Object? order = null,
@@ -149,6 +154,10 @@ class _$GroupShoppingListItemCategoryCopyWithImpl<$Res>
       groupID: null == groupID
           ? _self.groupID
           : groupID // ignore: cast_nullable_to_non_nullable
+              as String,
+      userID: null == userID
+          ? _self.userID
+          : userID // ignore: cast_nullable_to_non_nullable
               as String,
       groupShoppingListItemCategoryAxisID: null ==
               groupShoppingListItemCategoryAxisID
@@ -292,6 +301,7 @@ extension GroupShoppingListItemCategoryPatterns
     TResult Function(
             String id,
             String groupID,
+            String userID,
             String groupShoppingListItemCategoryAxisID,
             String name,
             int order,
@@ -311,6 +321,7 @@ extension GroupShoppingListItemCategoryPatterns
         return $default(
             _that.id,
             _that.groupID,
+            _that.userID,
             _that.groupShoppingListItemCategoryAxisID,
             _that.name,
             _that.order,
@@ -344,6 +355,7 @@ extension GroupShoppingListItemCategoryPatterns
     TResult Function(
             String id,
             String groupID,
+            String userID,
             String groupShoppingListItemCategoryAxisID,
             String name,
             int order,
@@ -362,6 +374,7 @@ extension GroupShoppingListItemCategoryPatterns
         return $default(
             _that.id,
             _that.groupID,
+            _that.userID,
             _that.groupShoppingListItemCategoryAxisID,
             _that.name,
             _that.order,
@@ -394,6 +407,7 @@ extension GroupShoppingListItemCategoryPatterns
     TResult? Function(
             String id,
             String groupID,
+            String userID,
             String groupShoppingListItemCategoryAxisID,
             String name,
             int order,
@@ -412,6 +426,7 @@ extension GroupShoppingListItemCategoryPatterns
         return $default(
             _that.id,
             _that.groupID,
+            _that.userID,
             _that.groupShoppingListItemCategoryAxisID,
             _that.name,
             _that.order,
@@ -435,6 +450,7 @@ class _GroupShoppingListItemCategory extends GroupShoppingListItemCategory {
   const _GroupShoppingListItemCategory(
       {required this.id,
       required this.groupID,
+      required this.userID,
       required this.groupShoppingListItemCategoryAxisID,
       required this.name,
       required this.order,
@@ -454,6 +470,8 @@ class _GroupShoppingListItemCategory extends GroupShoppingListItemCategory {
   final String id;
   @override
   final String groupID;
+  @override
+  final String userID;
   @override
   final String groupShoppingListItemCategoryAxisID;
   @override
@@ -509,6 +527,7 @@ class _GroupShoppingListItemCategory extends GroupShoppingListItemCategory {
             other is _GroupShoppingListItemCategory &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
+            (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.groupShoppingListItemCategoryAxisID,
                     groupShoppingListItemCategoryAxisID) ||
                 other.groupShoppingListItemCategoryAxisID ==
@@ -535,6 +554,7 @@ class _GroupShoppingListItemCategory extends GroupShoppingListItemCategory {
       runtimeType,
       id,
       groupID,
+      userID,
       groupShoppingListItemCategoryAxisID,
       name,
       order,
@@ -548,7 +568,7 @@ class _GroupShoppingListItemCategory extends GroupShoppingListItemCategory {
 
   @override
   String toString() {
-    return 'GroupShoppingListItemCategory(id: $id, groupID: $groupID, groupShoppingListItemCategoryAxisID: $groupShoppingListItemCategoryAxisID, name: $name, order: $order, keywords: $keywords, color: $color, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItemCategory(id: $id, groupID: $groupID, userID: $userID, groupShoppingListItemCategoryAxisID: $groupShoppingListItemCategoryAxisID, name: $name, order: $order, keywords: $keywords, color: $color, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -564,6 +584,7 @@ abstract mixin class _$GroupShoppingListItemCategoryCopyWith<$Res>
   $Res call(
       {String id,
       String groupID,
+      String userID,
       String groupShoppingListItemCategoryAxisID,
       String name,
       int order,
@@ -591,6 +612,7 @@ class __$GroupShoppingListItemCategoryCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? groupID = null,
+    Object? userID = null,
     Object? groupShoppingListItemCategoryAxisID = null,
     Object? name = null,
     Object? order = null,
@@ -610,6 +632,10 @@ class __$GroupShoppingListItemCategoryCopyWithImpl<$Res>
       groupID: null == groupID
           ? _self.groupID
           : groupID // ignore: cast_nullable_to_non_nullable
+              as String,
+      userID: null == userID
+          ? _self.userID
+          : userID // ignore: cast_nullable_to_non_nullable
               as String,
       groupShoppingListItemCategoryAxisID: null ==
               groupShoppingListItemCategoryAxisID

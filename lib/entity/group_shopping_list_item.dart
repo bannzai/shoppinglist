@@ -30,7 +30,6 @@ abstract class GroupShoppingListItem with _$GroupShoppingListItem {
     GroupShoppingListItemStatus status,
     String? description,
     String? color,
-    String? groupShoppingListItemCategoryID,
     @NullableTimestampConverter() DateTime? reminderDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,

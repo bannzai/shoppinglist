@@ -16,6 +16,7 @@ T _$identity<T>(T value) => value;
 mixin _$GroupShoppingListItemCategoryAxis {
   String get id;
   String get groupID;
+  String get userID;
   String get name;
   int get order;
   @ClientCreatedTimestamp()
@@ -46,6 +47,7 @@ mixin _$GroupShoppingListItemCategoryAxis {
             other is GroupShoppingListItemCategoryAxis &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
+            (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.order, order) || other.order == order) &&
             (identical(other.createdDateTime, createdDateTime) ||
@@ -64,6 +66,7 @@ mixin _$GroupShoppingListItemCategoryAxis {
       runtimeType,
       id,
       groupID,
+      userID,
       name,
       order,
       createdDateTime,
@@ -73,7 +76,7 @@ mixin _$GroupShoppingListItemCategoryAxis {
 
   @override
   String toString() {
-    return 'GroupShoppingListItemCategoryAxis(id: $id, groupID: $groupID, name: $name, order: $order, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItemCategoryAxis(id: $id, groupID: $groupID, userID: $userID, name: $name, order: $order, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -87,6 +90,7 @@ abstract mixin class $GroupShoppingListItemCategoryAxisCopyWith<$Res> {
   $Res call(
       {String id,
       String groupID,
+      String userID,
       String name,
       int order,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -110,6 +114,7 @@ class _$GroupShoppingListItemCategoryAxisCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? groupID = null,
+    Object? userID = null,
     Object? name = null,
     Object? order = null,
     Object? createdDateTime = freezed,
@@ -125,6 +130,10 @@ class _$GroupShoppingListItemCategoryAxisCopyWithImpl<$Res>
       groupID: null == groupID
           ? _self.groupID
           : groupID // ignore: cast_nullable_to_non_nullable
+              as String,
+      userID: null == userID
+          ? _self.userID
+          : userID // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _self.name
@@ -251,6 +260,7 @@ extension GroupShoppingListItemCategoryAxisPatterns
     TResult Function(
             String id,
             String groupID,
+            String userID,
             String name,
             int order,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -266,6 +276,7 @@ extension GroupShoppingListItemCategoryAxisPatterns
         return $default(
             _that.id,
             _that.groupID,
+            _that.userID,
             _that.name,
             _that.order,
             _that.createdDateTime,
@@ -295,6 +306,7 @@ extension GroupShoppingListItemCategoryAxisPatterns
     TResult Function(
             String id,
             String groupID,
+            String userID,
             String name,
             int order,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -309,6 +321,7 @@ extension GroupShoppingListItemCategoryAxisPatterns
         return $default(
             _that.id,
             _that.groupID,
+            _that.userID,
             _that.name,
             _that.order,
             _that.createdDateTime,
@@ -337,6 +350,7 @@ extension GroupShoppingListItemCategoryAxisPatterns
     TResult? Function(
             String id,
             String groupID,
+            String userID,
             String name,
             int order,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -351,6 +365,7 @@ extension GroupShoppingListItemCategoryAxisPatterns
         return $default(
             _that.id,
             _that.groupID,
+            _that.userID,
             _that.name,
             _that.order,
             _that.createdDateTime,
@@ -371,6 +386,7 @@ class _GroupShoppingListItemCategoryAxis
   const _GroupShoppingListItemCategoryAxis(
       {required this.id,
       required this.groupID,
+      required this.userID,
       required this.name,
       required this.order,
       @ClientCreatedTimestamp() this.createdDateTime,
@@ -386,6 +402,8 @@ class _GroupShoppingListItemCategoryAxis
   final String id;
   @override
   final String groupID;
+  @override
+  final String userID;
   @override
   final String name;
   @override
@@ -427,6 +445,7 @@ class _GroupShoppingListItemCategoryAxis
             other is _GroupShoppingListItemCategoryAxis &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
+            (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.order, order) || other.order == order) &&
             (identical(other.createdDateTime, createdDateTime) ||
@@ -445,6 +464,7 @@ class _GroupShoppingListItemCategoryAxis
       runtimeType,
       id,
       groupID,
+      userID,
       name,
       order,
       createdDateTime,
@@ -454,7 +474,7 @@ class _GroupShoppingListItemCategoryAxis
 
   @override
   String toString() {
-    return 'GroupShoppingListItemCategoryAxis(id: $id, groupID: $groupID, name: $name, order: $order, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItemCategoryAxis(id: $id, groupID: $groupID, userID: $userID, name: $name, order: $order, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -470,6 +490,7 @@ abstract mixin class _$GroupShoppingListItemCategoryAxisCopyWith<$Res>
   $Res call(
       {String id,
       String groupID,
+      String userID,
       String name,
       int order,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -493,6 +514,7 @@ class __$GroupShoppingListItemCategoryAxisCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? groupID = null,
+    Object? userID = null,
     Object? name = null,
     Object? order = null,
     Object? createdDateTime = freezed,
@@ -508,6 +530,10 @@ class __$GroupShoppingListItemCategoryAxisCopyWithImpl<$Res>
       groupID: null == groupID
           ? _self.groupID
           : groupID // ignore: cast_nullable_to_non_nullable
+              as String,
+      userID: null == userID
+          ? _self.userID
+          : userID // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _self.name

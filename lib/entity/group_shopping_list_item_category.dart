@@ -19,6 +19,7 @@ abstract class GroupShoppingListItemCategory
   const factory GroupShoppingListItemCategory({
     required String id,
     required String groupID,
+    required String userID,
     required String groupShoppingListItemCategoryAxisID,
     required String name,
     required int order,
