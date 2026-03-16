@@ -12,7 +12,7 @@ Future<T?> appShowModalBottomSheet<T>({
     showDragHandle: true,
     builder: (context) {
       return SizedBox(
-        height: height * 0.8,
+        height: height * 0.9,
         child: AppResolvers(
           builder: (context, user) => builder(context),
         ),

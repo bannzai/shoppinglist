@@ -51,10 +51,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
+          child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -300,18 +297,13 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                         ),
                       ),
                       const Divider(),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 48,
-                      width: double.infinity,
-                      child: ElevatedButton(
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: SizedBox(
+                          height: 48,
+                          width: double.infinity,
+                          child: ElevatedButton(
                         style: elevatedButtonStyle.merge(
                           const ButtonStyle(
                               backgroundColor:
@@ -376,11 +368,11 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 32),
+                ],
               ),
-            ],
-          ),
+            ),
         ),
       ),
     );
