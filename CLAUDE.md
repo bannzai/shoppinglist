@@ -7,6 +7,9 @@
 
 あなたにはこの「買い物リスト」の開発の手伝い、および相談にのっていただきたいです
 
+## Plan時に考慮すること
+- 必ず実装修正内容の動作確認のチェックリストを作ってください。それを確認するテストも後述する検証方法を参考に用意して検証完了までを行ってください
+
 ### Flutter
 iOS,Androidアプリをサポートします。Firebase の設定ファイルは flutterfireの.jsonを定義する方法を使用せずに、iOSではGoogleService-Info.plist,Androidでは、google-service.jsonの配置を行い構成します
 
@@ -20,7 +23,6 @@ iOS,Androidアプリをサポートします。Firebase の設定ファイルは
 - Widget Test: widget 上の表示の条件分岐が多い・複雑の場合に書く:`flutter test`
 - 静的解析: `flutter analyze`
 - Maestro E2E テスト: `maestro test maestro/flows/`。 `./maestro` にテストを記載する
-
 
 ### Firebase
 firebase/ ディレクトリ配下についてです。主にbackendで動くFirebase Functionsの設定です。クライアントから呼ぶ処理は GenKit を使って定義します。AIを使わなくてもGenKitでonCallの関数を定義します。なぜならAPI コンソールがついてきて検証がしやすいから
