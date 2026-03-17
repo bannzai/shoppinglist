@@ -7,7 +7,7 @@ part of 'group_shopping_list_item_category.dart';
 // **************************************************************************
 
 String _$groupShoppingListItemCategoryAxesHash() =>
-    r'08c1742aa1641da3acdfe421d4f363d13ce3d57f';
+    r'a12952e840e82c690c4a0411794fc866e315bab9';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -60,7 +60,8 @@ class GroupShoppingListItemCategoryAxesFamily
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
+    userDatabaseProvider
   ];
 
   @override
@@ -69,7 +70,9 @@ class GroupShoppingListItemCategoryAxesFamily
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
     groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
+    ...?groupDatabaseProvider.allTransitiveDependencies,
+    userDatabaseProvider,
+    ...?userDatabaseProvider.allTransitiveDependencies
   };
 
   @override
@@ -473,7 +476,7 @@ class _GroupShoppingListItemCategoryAxisDeleteProviderElement
 }
 
 String _$groupShoppingListItemCategoriesHash() =>
-    r'f3253e1a258bd7302966fe97de2accb5d87be84c';
+    r'1816bf350dd01e9b96728e21df363eef8af6adf5';
 
 /// See also [groupShoppingListItemCategories].
 @ProviderFor(groupShoppingListItemCategories)
@@ -508,7 +511,8 @@ class GroupShoppingListItemCategoriesFamily
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
+    userDatabaseProvider
   ];
 
   @override
@@ -517,7 +521,9 @@ class GroupShoppingListItemCategoriesFamily
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
     groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
+    ...?groupDatabaseProvider.allTransitiveDependencies,
+    userDatabaseProvider,
+    ...?userDatabaseProvider.allTransitiveDependencies
   };
 
   @override

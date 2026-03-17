@@ -28,11 +28,11 @@ abstract class _CollectionPath {
       '/groups/$groupID/shoppingLists/$shoppingListID/items';
   static String shoppingLocations({required String groupID}) =>
       '/groups/$groupID/shoppingLocations';
-  static String categoryAxes({required String groupID}) =>
-      '/groups/$groupID/categoryAxes';
+  static String userCategoryAxes({required String groupID}) =>
+      '/groups/$groupID/userCategoryAxes';
   static String categories(
           {required String groupID, required String categoryAxisID}) =>
-      '/groups/$groupID/categoryAxes/$categoryAxisID/categories';
+      '/groups/$groupID/userCategoryAxes/$categoryAxisID/categories';
   static String privates({required String userID}) => '/users/$userID/privates';
   static String userProfiles({required String groupID}) =>
       '/groups/$groupID/userProfiles';
@@ -181,7 +181,7 @@ class GroupDatabase {
 
   CollectionReference<GroupShoppingListItemCategoryAxis>
       categoryAxesReference() => FirebaseFirestore.instance
-          .collection(_CollectionPath.categoryAxes(groupID: groupID))
+          .collection(_CollectionPath.userCategoryAxes(groupID: groupID))
           .withConverter(
             fromFirestore: GroupShoppingListItemCategoryAxis.fromFirestore,
             toFirestore: GroupShoppingListItemCategoryAxis.toFirestore,
@@ -191,7 +191,7 @@ class GroupDatabase {
     required String categoryAxisID,
   }) =>
       FirebaseFirestore.instance
-          .collection(_CollectionPath.categoryAxes(groupID: groupID))
+          .collection(_CollectionPath.userCategoryAxes(groupID: groupID))
           .doc(categoryAxisID)
           .withConverter(
             fromFirestore: GroupShoppingListItemCategoryAxis.fromFirestore,
@@ -200,7 +200,7 @@ class GroupDatabase {
 
   DocumentReference<GroupShoppingListItemCategoryAxis>
       newCategoryAxisReference() => FirebaseFirestore.instance
-          .collection(_CollectionPath.categoryAxes(groupID: groupID))
+          .collection(_CollectionPath.userCategoryAxes(groupID: groupID))
           .doc()
           .withConverter(
             fromFirestore: GroupShoppingListItemCategoryAxis.fromFirestore,

@@ -60,7 +60,6 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
                         shoppingListID: shoppingListID,
                         message: '',
                         order: nextOrder,
-                        groupShoppingListItemCategoryID: null,
                         description: null,
                         color: null,
                       );

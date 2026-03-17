@@ -297,7 +297,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
               shoppingListID: shoppingListID,
               message: e,
               order: shoppingListItems.nextOrder + i,
-              groupShoppingListItemCategoryID: null,
+
               description: null,
               color: null,
             );
@@ -323,7 +323,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
               shoppingListID: shoppingListID,
               message: line,
               order: shoppingListItems.nextOrder + index,
-              groupShoppingListItemCategoryID: null,
+
               description: null,
               color: null,
             );

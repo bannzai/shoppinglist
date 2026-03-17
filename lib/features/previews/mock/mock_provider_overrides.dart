@@ -86,7 +86,6 @@ class _NoOpAddShoppingListItem extends AddShoppingListItem {
     required String shoppingListID,
     required String message,
     required int order,
-    required String? groupShoppingListItemCategoryID,
     required String? description,
     required String? color,
   }) async {
@@ -147,6 +146,7 @@ class _NoOpCategoryAxisAdd extends GroupShoppingListItemCategoryAxisAdd {
   @override
   Future<GroupShoppingListItemCategoryAxis> call({
     required String groupID,
+    required String userID,
     required String name,
     required int order,
   }) async {
@@ -168,6 +168,7 @@ class _NoOpCategoryAdd extends GroupShoppingListItemCategoryAdd {
   @override
   Future<GroupShoppingListItemCategory> call({
     required String groupID,
+    required String userID,
     required String categoryAxisID,
     required String name,
     required int order,

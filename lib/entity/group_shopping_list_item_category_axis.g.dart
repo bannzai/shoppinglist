@@ -11,6 +11,7 @@ _GroupShoppingListItemCategoryAxis _$GroupShoppingListItemCategoryAxisFromJson(
     _GroupShoppingListItemCategoryAxis(
       id: json['id'] as String,
       groupID: json['groupID'] as String,
+      userID: json['userID'] as String,
       name: json['name'] as String,
       order: (json['order'] as num).toInt(),
       createdDateTime: const ClientCreatedTimestamp()
@@ -28,6 +29,7 @@ Map<String, dynamic> _$GroupShoppingListItemCategoryAxisToJson(
     <String, dynamic>{
       'id': instance.id,
       'groupID': instance.groupID,
+      'userID': instance.userID,
       'name': instance.name,
       'order': instance.order,
       'createdDateTime':

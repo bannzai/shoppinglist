@@ -176,7 +176,6 @@ class _Body extends HookConsumerWidget {
                   shoppingListID: shoppingListID,
                   message: '',
                   order: (shoppingListItemsAsync.asData?.value ?? []).nextOrder,
-                  groupShoppingListItemCategoryID: null,
                   description: null,
                   color: null,
                 );

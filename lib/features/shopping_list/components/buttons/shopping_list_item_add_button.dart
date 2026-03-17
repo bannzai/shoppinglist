@@ -27,7 +27,6 @@ class ShoppingListItemAddButton extends ConsumerWidget {
           shoppingListID: shoppingListID,
           message: '',
           order: shoppingListItems.nextOrder,
-          groupShoppingListItemCategoryID: null,
           description: null,
           color: null,
         );

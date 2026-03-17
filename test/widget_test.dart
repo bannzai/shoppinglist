@@ -58,7 +58,6 @@ void main() {
         status: GroupShoppingListItemStatus.unchecked,
         description: 'organic eggs',
         color: '#FF0000',
-        groupShoppingListItemCategoryID: 'cat-1',
       );
     }
 
@@ -124,8 +123,6 @@ void main() {
       expect(restored.status, original.status);
       expect(restored.description, original.description);
       expect(restored.color, original.color);
-      expect(restored.groupShoppingListItemCategoryID,
-          original.groupShoppingListItemCategoryID);
     });
   });
 }

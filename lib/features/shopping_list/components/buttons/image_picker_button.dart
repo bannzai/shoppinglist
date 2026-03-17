@@ -131,7 +131,6 @@ class ImagePickerButton extends ConsumerWidget {
               shoppingListID: shoppingListID,
               message: e,
               order: shoppingListItems.nextOrder + i,
-              groupShoppingListItemCategoryID: null,
               description: null,
               color: null,
             );

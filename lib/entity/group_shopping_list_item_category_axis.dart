@@ -6,6 +6,7 @@ part 'group_shopping_list_item_category_axis.g.dart';
 part 'group_shopping_list_item_category_axis.freezed.dart';
 
 abstract class GroupShoppingListItemCategoryAxisFirestoreKeys {
+  static const userID = 'userID';
   static const order = 'order';
 }
 
@@ -18,6 +19,7 @@ abstract class GroupShoppingListItemCategoryAxis
   const factory GroupShoppingListItemCategoryAxis({
     required String id,
     required String groupID,
+    required String userID,
     required String name,
     required int order,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
