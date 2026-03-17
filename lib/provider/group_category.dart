@@ -1,41 +1,41 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category_axis.dart';
+import 'package:shoppinglist/entity/group_category.dart';
+import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'group_shopping_list_item_category.g.dart';
+part 'group_category.g.dart';
 
 // --- CategoryAxis Providers ---
 
 @Riverpod(dependencies: [groupDatabase, userDatabase])
-Stream<List<GroupShoppingListItemCategoryAxis>>
-    groupShoppingListItemCategoryAxes(Ref ref, {required String groupID}) {
+Stream<List<GroupCategoryAxis>>
+    groupCategoryAxes(Ref ref, {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   final userDatabase = ref.watch(userDatabaseProvider);
   return database
       .categoryAxesReference()
-      .where(GroupShoppingListItemCategoryAxisFirestoreKeys.userID,
+      .where(GroupCategoryAxisFirestoreKeys.userID,
           isEqualTo: userDatabase.userID)
-      .orderBy(GroupShoppingListItemCategoryAxisFirestoreKeys.order)
+      .orderBy(GroupCategoryAxisFirestoreKeys.order)
       .snapshots()
       .map((event) => event.docs.map((doc) => doc.data()).toList());
 }
 
-class GroupShoppingListItemCategoryAxisAdd {
+class GroupCategoryAxisAdd {
   final GroupDatabase database;
 
-  GroupShoppingListItemCategoryAxisAdd({required this.database});
+  GroupCategoryAxisAdd({required this.database});
 
-  Future<GroupShoppingListItemCategoryAxis> call({
+  Future<GroupCategoryAxis> call({
     required String groupID,
     required String userID,
     required String name,
     required int order,
   }) async {
     final docRef = database.newCategoryAxisReference();
-    final categoryAxis = GroupShoppingListItemCategoryAxis(
+    final categoryAxis = GroupCategoryAxis(
       id: docRef.id,
       groupID: groupID,
       userID: userID,
@@ -48,17 +48,17 @@ class GroupShoppingListItemCategoryAxisAdd {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupShoppingListItemCategoryAxisAdd groupShoppingListItemCategoryAxisAdd(
+GroupCategoryAxisAdd groupCategoryAxisAdd(
     Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
-  return GroupShoppingListItemCategoryAxisAdd(database: database);
+  return GroupCategoryAxisAdd(database: database);
 }
 
-class GroupShoppingListItemCategoryAxisDelete {
+class GroupCategoryAxisDelete {
   final GroupDatabase database;
 
-  GroupShoppingListItemCategoryAxisDelete({required this.database});
+  GroupCategoryAxisDelete({required this.database});
 
   Future<void> call({required String categoryAxisID}) async {
     final docRef =
@@ -68,34 +68,34 @@ class GroupShoppingListItemCategoryAxisDelete {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupShoppingListItemCategoryAxisDelete groupShoppingListItemCategoryAxisDelete(
+GroupCategoryAxisDelete groupCategoryAxisDelete(
     Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
-  return GroupShoppingListItemCategoryAxisDelete(database: database);
+  return GroupCategoryAxisDelete(database: database);
 }
 
 // --- Category Providers ---
 
 @Riverpod(dependencies: [groupDatabase, userDatabase])
-Stream<List<GroupShoppingListItemCategory>> groupShoppingListItemCategories(
+Stream<List<GroupCategory>> groupCategories(
     Ref ref,
     {required String groupID,
     required String categoryAxisID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return database
       .categoriesReference(categoryAxisID: categoryAxisID)
-      .orderBy(GroupShoppingListItemCategoryFirestoreKeys.order)
+      .orderBy(GroupCategoryFirestoreKeys.order)
       .snapshots()
       .map((event) => event.docs.map((doc) => doc.data()).toList());
 }
 
-class GroupShoppingListItemCategoryAdd {
+class GroupCategoryAdd {
   final GroupDatabase database;
 
-  GroupShoppingListItemCategoryAdd({required this.database});
+  GroupCategoryAdd({required this.database});
 
-  Future<GroupShoppingListItemCategory> call({
+  Future<GroupCategory> call({
     required String groupID,
     required String userID,
     required String categoryAxisID,
@@ -104,11 +104,11 @@ class GroupShoppingListItemCategoryAdd {
   }) async {
     final docRef =
         database.newCategoryReference(categoryAxisID: categoryAxisID);
-    final category = GroupShoppingListItemCategory(
+    final category = GroupCategory(
       id: docRef.id,
       groupID: groupID,
       userID: userID,
-      groupShoppingListItemCategoryAxisID: categoryAxisID,
+      groupCategoryAxisID: categoryAxisID,
       name: name,
       order: order,
     );
@@ -118,21 +118,21 @@ class GroupShoppingListItemCategoryAdd {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupShoppingListItemCategoryAdd groupShoppingListItemCategoryAdd(Ref ref,
+GroupCategoryAdd groupCategoryAdd(Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
-  return GroupShoppingListItemCategoryAdd(database: database);
+  return GroupCategoryAdd(database: database);
 }
 
-class GroupShoppingListItemCategoryUpdate {
+class GroupCategoryUpdate {
   final GroupDatabase database;
 
-  GroupShoppingListItemCategoryUpdate({required this.database});
+  GroupCategoryUpdate({required this.database});
 
   Future<void> call({
     required String categoryAxisID,
     required String categoryID,
-    required GroupShoppingListItemCategory category,
+    required GroupCategory category,
   }) async {
     final docRef = database.categoryReference(
         categoryAxisID: categoryAxisID, categoryID: categoryID);
@@ -141,16 +141,16 @@ class GroupShoppingListItemCategoryUpdate {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupShoppingListItemCategoryUpdate groupShoppingListItemCategoryUpdate(Ref ref,
+GroupCategoryUpdate groupCategoryUpdate(Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
-  return GroupShoppingListItemCategoryUpdate(database: database);
+  return GroupCategoryUpdate(database: database);
 }
 
-class GroupShoppingListItemCategoryDelete {
+class GroupCategoryDelete {
   final GroupDatabase database;
 
-  GroupShoppingListItemCategoryDelete({required this.database});
+  GroupCategoryDelete({required this.database});
 
   Future<void> call({
     required String categoryAxisID,
@@ -163,20 +163,20 @@ class GroupShoppingListItemCategoryDelete {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupShoppingListItemCategoryDelete groupShoppingListItemCategoryDelete(Ref ref,
+GroupCategoryDelete groupCategoryDelete(Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
-  return GroupShoppingListItemCategoryDelete(database: database);
+  return GroupCategoryDelete(database: database);
 }
 
-class GroupShoppingListItemCategoryBatchUpdate {
+class GroupCategoryBatchUpdate {
   final GroupDatabase database;
 
-  GroupShoppingListItemCategoryBatchUpdate({required this.database});
+  GroupCategoryBatchUpdate({required this.database});
 
   Future<void> call({
     required String categoryAxisID,
-    required List<GroupShoppingListItemCategory> categories,
+    required List<GroupCategory> categories,
   }) async {
     final batch = FirebaseFirestore.instance.batch();
 
@@ -191,9 +191,9 @@ class GroupShoppingListItemCategoryBatchUpdate {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupShoppingListItemCategoryBatchUpdate
-    groupShoppingListItemCategoryBatchUpdate(Ref ref,
+GroupCategoryBatchUpdate
+    groupCategoryBatchUpdate(Ref ref,
         {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
-  return GroupShoppingListItemCategoryBatchUpdate(database: database);
+  return GroupCategoryBatchUpdate(database: database);
 }
