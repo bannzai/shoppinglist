@@ -3,8 +3,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category_axis.dart';
+import 'package:shoppinglist/entity/group_category.dart';
+import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/entity/remote_config_parameter.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
@@ -16,7 +16,7 @@ import 'package:shoppinglist/provider/default_group_update.dart';
 import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/provider/group_create.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
-import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
+import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/remote_config_parameter.dart';
 import 'package:shoppinglist/provider/shared_preferences.dart';
@@ -140,11 +140,11 @@ class _NoOpCreateGroup extends CreateGroup {
   }) async {}
 }
 
-class _NoOpCategoryAxisAdd extends GroupShoppingListItemCategoryAxisAdd {
+class _NoOpCategoryAxisAdd extends GroupCategoryAxisAdd {
   _NoOpCategoryAxisAdd() : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
-  Future<GroupShoppingListItemCategoryAxis> call({
+  Future<GroupCategoryAxis> call({
     required String groupID,
     required String userID,
     required String name,
@@ -154,7 +154,7 @@ class _NoOpCategoryAxisAdd extends GroupShoppingListItemCategoryAxisAdd {
   }
 }
 
-class _NoOpCategoryAxisDelete extends GroupShoppingListItemCategoryAxisDelete {
+class _NoOpCategoryAxisDelete extends GroupCategoryAxisDelete {
   _NoOpCategoryAxisDelete()
       : super(database: GroupDatabase(groupID: mockGroupID));
 
@@ -162,11 +162,11 @@ class _NoOpCategoryAxisDelete extends GroupShoppingListItemCategoryAxisDelete {
   Future<void> call({required String categoryAxisID}) async {}
 }
 
-class _NoOpCategoryAdd extends GroupShoppingListItemCategoryAdd {
+class _NoOpCategoryAdd extends GroupCategoryAdd {
   _NoOpCategoryAdd() : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
-  Future<GroupShoppingListItemCategory> call({
+  Future<GroupCategory> call({
     required String groupID,
     required String userID,
     required String categoryAxisID,
@@ -177,18 +177,18 @@ class _NoOpCategoryAdd extends GroupShoppingListItemCategoryAdd {
   }
 }
 
-class _NoOpCategoryUpdate extends GroupShoppingListItemCategoryUpdate {
+class _NoOpCategoryUpdate extends GroupCategoryUpdate {
   _NoOpCategoryUpdate() : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<void> call({
     required String categoryAxisID,
     required String categoryID,
-    required GroupShoppingListItemCategory category,
+    required GroupCategory category,
   }) async {}
 }
 
-class _NoOpCategoryDelete extends GroupShoppingListItemCategoryDelete {
+class _NoOpCategoryDelete extends GroupCategoryDelete {
   _NoOpCategoryDelete() : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
@@ -199,14 +199,14 @@ class _NoOpCategoryDelete extends GroupShoppingListItemCategoryDelete {
 }
 
 class _NoOpCategoryBatchUpdate
-    extends GroupShoppingListItemCategoryBatchUpdate {
+    extends GroupCategoryBatchUpdate {
   _NoOpCategoryBatchUpdate()
       : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<void> call({
     required String categoryAxisID,
-    required List<GroupShoppingListItemCategory> categories,
+    required List<GroupCategory> categories,
   }) async {}
 }
 
@@ -296,9 +296,9 @@ List<Override> previewProviderOverrides({
     ).overrideWith((ref) => Stream.value(mockShoppingListItems())),
 
     // カテゴリ
-    groupShoppingListItemCategoryAxesProvider(groupID: mockGroupID)
+    groupCategoryAxesProvider(groupID: mockGroupID)
         .overrideWith((ref) => Stream.value([mockCategoryAxis()])),
-    groupShoppingListItemCategoriesProvider(
+    groupCategoriesProvider(
       groupID: mockGroupID,
       categoryAxisID: mockCategoryAxisID,
     ).overrideWith((ref) => Stream.value(mockCategories())),
@@ -334,17 +334,17 @@ List<Override> previewProviderOverrides({
     createGroupProvider.overrideWith((ref) => _NoOpCreateGroup()),
 
     // カテゴリ操作 (no-op)
-    groupShoppingListItemCategoryAxisAddProvider(groupID: mockGroupID)
+    groupCategoryAxisAddProvider(groupID: mockGroupID)
         .overrideWith((ref) => _NoOpCategoryAxisAdd()),
-    groupShoppingListItemCategoryAxisDeleteProvider(groupID: mockGroupID)
+    groupCategoryAxisDeleteProvider(groupID: mockGroupID)
         .overrideWith((ref) => _NoOpCategoryAxisDelete()),
-    groupShoppingListItemCategoryAddProvider(groupID: mockGroupID)
+    groupCategoryAddProvider(groupID: mockGroupID)
         .overrideWith((ref) => _NoOpCategoryAdd()),
-    groupShoppingListItemCategoryUpdateProvider(groupID: mockGroupID)
+    groupCategoryUpdateProvider(groupID: mockGroupID)
         .overrideWith((ref) => _NoOpCategoryUpdate()),
-    groupShoppingListItemCategoryDeleteProvider(groupID: mockGroupID)
+    groupCategoryDeleteProvider(groupID: mockGroupID)
         .overrideWith((ref) => _NoOpCategoryDelete()),
-    groupShoppingListItemCategoryBatchUpdateProvider(groupID: mockGroupID)
+    groupCategoryBatchUpdateProvider(groupID: mockGroupID)
         .overrideWith((ref) => _NoOpCategoryBatchUpdate()),
 
     // ユーザープロファイル操作

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
+import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
-import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
+import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
@@ -31,7 +31,7 @@ class ShoppingListItems extends ConsumerWidget {
             .valueOrNull ??
         [];
     final axesAsync =
-        ref.watch(groupShoppingListItemCategoryAxesProvider(groupID: groupID));
+        ref.watch(groupCategoryAxesProvider(groupID: groupID));
 
     return axesAsync.when(
       data: (axes) {
@@ -131,7 +131,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesAsync = ref.watch(groupShoppingListItemCategoriesProvider(
+    final categoriesAsync = ref.watch(groupCategoriesProvider(
         groupID: groupID, categoryAxisID: categoryAxisID));
 
     return categoriesAsync.when(
@@ -171,7 +171,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
 class _GroupedListView extends StatelessWidget {
   final String groupID;
   final String shoppingListID;
-  final List<GroupShoppingListItemCategory> categories;
+  final List<GroupCategory> categories;
   final Map<String, List<GroupShoppingListItem>> grouped;
 
   const _GroupedListView({

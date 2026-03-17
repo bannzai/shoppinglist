@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
-import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
+import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
@@ -44,7 +44,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final shoppingListDelete =
         ref.watch(shoppingListDeleteProvider(groupID: groupID));
     final axesAsync =
-        ref.watch(groupShoppingListItemCategoryAxesProvider(groupID: groupID));
+        ref.watch(groupCategoryAxesProvider(groupID: groupID));
     final hasCategories = axesAsync.maybeWhen(
         data: (axes) => axes.isNotEmpty, orElse: () => false);
     return AppBar(
