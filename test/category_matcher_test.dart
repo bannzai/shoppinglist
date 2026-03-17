@@ -1,25 +1,25 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category_keyword.dart';
+import 'package:shoppinglist/entity/group_category.dart';
+import 'package:shoppinglist/entity/group_category_keyword.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
 
 void main() {
   group('groupItemsByCategory', () {
     test('完全一致マッチング', () {
       final categories = [
-        GroupShoppingListItemCategory(
+        GroupCategory(
           id: 'cat1',
           groupID: 'group1',
           userID: 'user1',
-          groupShoppingListItemCategoryAxisID: 'axis1',
+          groupCategoryAxisID: 'axis1',
           name: '野菜',
           order: 0,
           keywords: [
-            const GroupShoppingListItemCategoryKeyword(
+            const GroupCategoryKeyword(
               keyword: 'にんじん',
               matchingType:
-                  GroupShoppingListItemCategoryKeywordMatchingType.exact,
+                  GroupCategoryKeywordMatchingType.exact,
             ),
           ],
         ),
@@ -55,18 +55,18 @@ void main() {
 
     test('部分一致マッチング', () {
       final categories = [
-        GroupShoppingListItemCategory(
+        GroupCategory(
           id: 'cat1',
           groupID: 'group1',
           userID: 'user1',
-          groupShoppingListItemCategoryAxisID: 'axis1',
+          groupCategoryAxisID: 'axis1',
           name: '野菜',
           order: 0,
           keywords: [
-            const GroupShoppingListItemCategoryKeyword(
+            const GroupCategoryKeyword(
               keyword: 'にんじん',
               matchingType:
-                  GroupShoppingListItemCategoryKeywordMatchingType.partial,
+                  GroupCategoryKeywordMatchingType.partial,
             ),
           ],
         ),
@@ -93,18 +93,18 @@ void main() {
 
     test('大文字小文字の区別なし', () {
       final categories = [
-        GroupShoppingListItemCategory(
+        GroupCategory(
           id: 'cat1',
           groupID: 'group1',
           userID: 'user1',
-          groupShoppingListItemCategoryAxisID: 'axis1',
+          groupCategoryAxisID: 'axis1',
           name: 'Drinks',
           order: 0,
           keywords: [
-            const GroupShoppingListItemCategoryKeyword(
+            const GroupCategoryKeyword(
               keyword: 'Milk',
               matchingType:
-                  GroupShoppingListItemCategoryKeywordMatchingType.exact,
+                  GroupCategoryKeywordMatchingType.exact,
             ),
           ],
         ),
@@ -130,33 +130,33 @@ void main() {
 
     test('複数カテゴリにマッチ時は先頭カテゴリに分類', () {
       final categories = [
-        GroupShoppingListItemCategory(
+        GroupCategory(
           id: 'cat1',
           groupID: 'group1',
           userID: 'user1',
-          groupShoppingListItemCategoryAxisID: 'axis1',
+          groupCategoryAxisID: 'axis1',
           name: '野菜',
           order: 0,
           keywords: [
-            const GroupShoppingListItemCategoryKeyword(
+            const GroupCategoryKeyword(
               keyword: 'トマト',
               matchingType:
-                  GroupShoppingListItemCategoryKeywordMatchingType.partial,
+                  GroupCategoryKeywordMatchingType.partial,
             ),
           ],
         ),
-        GroupShoppingListItemCategory(
+        GroupCategory(
           id: 'cat2',
           groupID: 'group1',
           userID: 'user1',
-          groupShoppingListItemCategoryAxisID: 'axis1',
+          groupCategoryAxisID: 'axis1',
           name: '果物',
           order: 1,
           keywords: [
-            const GroupShoppingListItemCategoryKeyword(
+            const GroupCategoryKeyword(
               keyword: 'トマト',
               matchingType:
-                  GroupShoppingListItemCategoryKeywordMatchingType.partial,
+                  GroupCategoryKeywordMatchingType.partial,
             ),
           ],
         ),
@@ -183,18 +183,18 @@ void main() {
 
     test('マッチしないアイテムは未分類', () {
       final categories = [
-        GroupShoppingListItemCategory(
+        GroupCategory(
           id: 'cat1',
           groupID: 'group1',
           userID: 'user1',
-          groupShoppingListItemCategoryAxisID: 'axis1',
+          groupCategoryAxisID: 'axis1',
           name: '野菜',
           order: 0,
           keywords: [
-            const GroupShoppingListItemCategoryKeyword(
+            const GroupCategoryKeyword(
               keyword: 'にんじん',
               matchingType:
-                  GroupShoppingListItemCategoryKeywordMatchingType.exact,
+                  GroupCategoryKeywordMatchingType.exact,
             ),
           ],
         ),
@@ -248,18 +248,18 @@ void main() {
 
     test('アイテムが空の場合は空マップ', () {
       final categories = [
-        GroupShoppingListItemCategory(
+        GroupCategory(
           id: 'cat1',
           groupID: 'group1',
           userID: 'user1',
-          groupShoppingListItemCategoryAxisID: 'axis1',
+          groupCategoryAxisID: 'axis1',
           name: '野菜',
           order: 0,
           keywords: [
-            const GroupShoppingListItemCategoryKeyword(
+            const GroupCategoryKeyword(
               keyword: 'にんじん',
               matchingType:
-                  GroupShoppingListItemCategoryKeywordMatchingType.exact,
+                  GroupCategoryKeywordMatchingType.exact,
             ),
           ],
         ),
