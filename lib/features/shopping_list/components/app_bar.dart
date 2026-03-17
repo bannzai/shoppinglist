@@ -43,8 +43,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final shoppingList = this.shoppingList;
     final shoppingListDelete =
         ref.watch(shoppingListDeleteProvider(groupID: groupID));
-    final axesAsync =
-        ref.watch(groupCategoryAxesProvider(groupID: groupID));
+    final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
     final hasCategories = axesAsync.maybeWhen(
         data: (axes) => axes.isNotEmpty, orElse: () => false);
     return AppBar(
@@ -297,7 +296,6 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
               shoppingListID: shoppingListID,
               message: e,
               order: shoppingListItems.nextOrder + i,
-
               description: null,
               color: null,
             );
@@ -323,7 +321,6 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
               shoppingListID: shoppingListID,
               message: line,
               order: shoppingListItems.nextOrder + index,
-
               description: null,
               color: null,
             );

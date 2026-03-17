@@ -30,8 +30,7 @@ class ShoppingListItems extends ConsumerWidget {
                 showChecked: true))
             .valueOrNull ??
         [];
-    final axesAsync =
-        ref.watch(groupCategoryAxesProvider(groupID: groupID));
+    final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
 
     return axesAsync.when(
       data: (axes) {

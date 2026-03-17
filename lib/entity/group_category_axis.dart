@@ -11,8 +11,7 @@ abstract class GroupCategoryAxisFirestoreKeys {
 }
 
 @freezed
-abstract class GroupCategoryAxis
-    with _$GroupCategoryAxis {
+abstract class GroupCategoryAxis with _$GroupCategoryAxis {
   const GroupCategoryAxis._();
 
   @JsonSerializable(explicitToJson: true)
@@ -28,18 +27,15 @@ abstract class GroupCategoryAxis
     @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
   }) = _GroupCategoryAxis;
 
-  factory GroupCategoryAxis.fromJson(
-          Map<String, dynamic> json) =>
+  factory GroupCategoryAxis.fromJson(Map<String, dynamic> json) =>
       _$GroupCategoryAxisFromJson(json);
 
   static GroupCategoryAxis fromFirestore(
           DocumentSnapshot<Map<String, dynamic>> snapshot,
           SnapshotOptions? options) =>
-      GroupCategoryAxis.fromJson(
-          snapshot.data()!..['id'] = snapshot.id);
+      GroupCategoryAxis.fromJson(snapshot.data()!..['id'] = snapshot.id);
 
   static Map<String, dynamic> toFirestore(
-          GroupCategoryAxis categoryAxis,
-          SetOptions? options) =>
+          GroupCategoryAxis categoryAxis, SetOptions? options) =>
       categoryAxis.toJson();
 }

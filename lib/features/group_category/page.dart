@@ -19,8 +19,7 @@ class GroupCategoryPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final axesAsync =
-        ref.watch(groupCategoryAxesProvider(groupID: groupID));
+    final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
 
     return axesAsync.when(
       data: (axes) {
@@ -119,8 +118,7 @@ class GroupCategoryPage extends ConsumerWidget {
               try {
                 final userID = ref.read(userDatabaseProvider).userID;
                 final category = await ref
-                    .read(groupCategoryAddProvider(
-                        groupID: groupID))
+                    .read(groupCategoryAddProvider(groupID: groupID))
                     .call(
                       groupID: groupID,
                       userID: userID,
@@ -132,8 +130,7 @@ class GroupCategoryPage extends ConsumerWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          GroupCategoryEditPage(
+                      builder: (context) => GroupCategoryEditPage(
                         groupID: groupID,
                         categoryAxisID: categoryAxisID,
                         categoryID: category.id,
@@ -179,8 +176,8 @@ class _CategoryListBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesAsync = ref.watch(groupCategoriesProvider(
-        groupID: groupID, categoryAxisID: axis.id));
+    final categoriesAsync = ref.watch(
+        groupCategoriesProvider(groupID: groupID, categoryAxisID: axis.id));
 
     return categoriesAsync.when(
       data: (categories) => Scaffold(
@@ -247,8 +244,7 @@ class _CategoryListBody extends ConsumerWidget {
               try {
                 final userID = ref.read(userDatabaseProvider).userID;
                 final category = await ref
-                    .read(groupCategoryAddProvider(
-                        groupID: groupID))
+                    .read(groupCategoryAddProvider(groupID: groupID))
                     .call(
                       groupID: groupID,
                       userID: userID,
@@ -260,8 +256,7 @@ class _CategoryListBody extends ConsumerWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          GroupCategoryEditPage(
+                      builder: (context) => GroupCategoryEditPage(
                         groupID: groupID,
                         categoryAxisID: categoryAxisID,
                         categoryID: category.id,
@@ -325,10 +320,7 @@ class _CategoryReorderableList extends ConsumerWidget {
             .map((entry) => entry.value.copyWith(order: entry.key))
             .toList();
 
-        ref
-            .read(groupCategoryBatchUpdateProvider(
-                groupID: groupID))
-            .call(
+        ref.read(groupCategoryBatchUpdateProvider(groupID: groupID)).call(
               categoryAxisID: categoryAxisID,
               categories: orderedCategories,
             );
@@ -359,8 +351,7 @@ class _CategoryReorderableList extends ConsumerWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          GroupCategoryEditPage(
+                      builder: (context) => GroupCategoryEditPage(
                         groupID: groupID,
                         categoryAxisID: categoryAxisID,
                         categoryID: category.id,
@@ -410,8 +401,7 @@ class _CategoryReorderableList extends ConsumerWidget {
               Navigator.pop(dialogContext);
               try {
                 await ref
-                    .read(groupCategoryDeleteProvider(
-                        groupID: groupID))
+                    .read(groupCategoryDeleteProvider(groupID: groupID))
                     .call(
                       categoryAxisID: categoryAxisID,
                       categoryID: category.id,

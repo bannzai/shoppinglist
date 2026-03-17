@@ -14,15 +14,13 @@ enum GroupCategoryKeywordMatchingType {
 }
 
 @freezed
-abstract class GroupCategoryKeyword
-    with _$GroupCategoryKeyword {
+abstract class GroupCategoryKeyword with _$GroupCategoryKeyword {
   @JsonSerializable(explicitToJson: true)
   const factory GroupCategoryKeyword({
     required String keyword,
     required GroupCategoryKeywordMatchingType matchingType,
   }) = _GroupCategoryKeyword;
 
-  factory GroupCategoryKeyword.fromJson(
-          Map<String, dynamic> json) =>
+  factory GroupCategoryKeyword.fromJson(Map<String, dynamic> json) =>
       _$GroupCategoryKeywordFromJson(json);
 }

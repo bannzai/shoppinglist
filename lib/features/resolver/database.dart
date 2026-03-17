@@ -179,8 +179,8 @@ class GroupDatabase {
             toFirestore: GroupShoppingLocation.toFirestore,
           );
 
-  CollectionReference<GroupCategoryAxis>
-      categoryAxesReference() => FirebaseFirestore.instance
+  CollectionReference<GroupCategoryAxis> categoryAxesReference() =>
+      FirebaseFirestore.instance
           .collection(_CollectionPath.userCategoryAxes(groupID: groupID))
           .withConverter(
             fromFirestore: GroupCategoryAxis.fromFirestore,
@@ -198,8 +198,8 @@ class GroupDatabase {
             toFirestore: GroupCategoryAxis.toFirestore,
           );
 
-  DocumentReference<GroupCategoryAxis>
-      newCategoryAxisReference() => FirebaseFirestore.instance
+  DocumentReference<GroupCategoryAxis> newCategoryAxisReference() =>
+      FirebaseFirestore.instance
           .collection(_CollectionPath.userCategoryAxes(groupID: groupID))
           .doc()
           .withConverter(

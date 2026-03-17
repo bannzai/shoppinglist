@@ -18,8 +18,7 @@ void main() {
           keywords: [
             const GroupCategoryKeyword(
               keyword: 'にんじん',
-              matchingType:
-                  GroupCategoryKeywordMatchingType.exact,
+              matchingType: GroupCategoryKeywordMatchingType.exact,
             ),
           ],
         ),
@@ -65,8 +64,7 @@ void main() {
           keywords: [
             const GroupCategoryKeyword(
               keyword: 'にんじん',
-              matchingType:
-                  GroupCategoryKeywordMatchingType.partial,
+              matchingType: GroupCategoryKeywordMatchingType.partial,
             ),
           ],
         ),
@@ -103,8 +101,7 @@ void main() {
           keywords: [
             const GroupCategoryKeyword(
               keyword: 'Milk',
-              matchingType:
-                  GroupCategoryKeywordMatchingType.exact,
+              matchingType: GroupCategoryKeywordMatchingType.exact,
             ),
           ],
         ),
@@ -140,8 +137,7 @@ void main() {
           keywords: [
             const GroupCategoryKeyword(
               keyword: 'トマト',
-              matchingType:
-                  GroupCategoryKeywordMatchingType.partial,
+              matchingType: GroupCategoryKeywordMatchingType.partial,
             ),
           ],
         ),
@@ -155,8 +151,7 @@ void main() {
           keywords: [
             const GroupCategoryKeyword(
               keyword: 'トマト',
-              matchingType:
-                  GroupCategoryKeywordMatchingType.partial,
+              matchingType: GroupCategoryKeywordMatchingType.partial,
             ),
           ],
         ),
@@ -193,8 +188,7 @@ void main() {
           keywords: [
             const GroupCategoryKeyword(
               keyword: 'にんじん',
-              matchingType:
-                  GroupCategoryKeywordMatchingType.exact,
+              matchingType: GroupCategoryKeywordMatchingType.exact,
             ),
           ],
         ),
@@ -258,8 +252,7 @@ void main() {
           keywords: [
             const GroupCategoryKeyword(
               keyword: 'にんじん',
-              matchingType:
-                  GroupCategoryKeywordMatchingType.exact,
+              matchingType: GroupCategoryKeywordMatchingType.exact,
             ),
           ],
         ),

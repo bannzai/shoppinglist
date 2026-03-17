@@ -11,8 +11,7 @@ abstract class GroupCategoryFirestoreKeys {
 }
 
 @freezed
-abstract class GroupCategory
-    with _$GroupCategory {
+abstract class GroupCategory with _$GroupCategory {
   const GroupCategory._();
 
   @JsonSerializable(explicitToJson: true)
@@ -20,7 +19,8 @@ abstract class GroupCategory
     required String id,
     required String groupID,
     required String userID,
-    @JsonKey(name: 'groupShoppingListItemCategoryAxisID') required String groupCategoryAxisID,
+    @JsonKey(name: 'groupShoppingListItemCategoryAxisID')
+    required String groupCategoryAxisID,
     required String name,
     required int order,
     @Default([]) List<GroupCategoryKeyword> keywords,
@@ -38,8 +38,7 @@ abstract class GroupCategory
   static GroupCategory fromFirestore(
           DocumentSnapshot<Map<String, dynamic>> snapshot,
           SnapshotOptions? options) =>
-      GroupCategory.fromJson(
-          snapshot.data()!..['id'] = snapshot.id);
+      GroupCategory.fromJson(snapshot.data()!..['id'] = snapshot.id);
 
   static Map<String, dynamic> toFirestore(
           GroupCategory category, SetOptions? options) =>

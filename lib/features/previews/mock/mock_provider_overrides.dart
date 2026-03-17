@@ -198,8 +198,7 @@ class _NoOpCategoryDelete extends GroupCategoryDelete {
   }) async {}
 }
 
-class _NoOpCategoryBatchUpdate
-    extends GroupCategoryBatchUpdate {
+class _NoOpCategoryBatchUpdate extends GroupCategoryBatchUpdate {
   _NoOpCategoryBatchUpdate()
       : super(database: GroupDatabase(groupID: mockGroupID));
 

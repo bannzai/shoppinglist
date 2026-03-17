@@ -10,8 +10,8 @@ part 'group_category.g.dart';
 // --- CategoryAxis Providers ---
 
 @Riverpod(dependencies: [groupDatabase, userDatabase])
-Stream<List<GroupCategoryAxis>>
-    groupCategoryAxes(Ref ref, {required String groupID}) {
+Stream<List<GroupCategoryAxis>> groupCategoryAxes(Ref ref,
+    {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   final userDatabase = ref.watch(userDatabaseProvider);
   return database
@@ -48,9 +48,7 @@ class GroupCategoryAxisAdd {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupCategoryAxisAdd groupCategoryAxisAdd(
-    Ref ref,
-    {required String groupID}) {
+GroupCategoryAxisAdd groupCategoryAxisAdd(Ref ref, {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupCategoryAxisAdd(database: database);
 }
@@ -68,8 +66,7 @@ class GroupCategoryAxisDelete {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupCategoryAxisDelete groupCategoryAxisDelete(
-    Ref ref,
+GroupCategoryAxisDelete groupCategoryAxisDelete(Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupCategoryAxisDelete(database: database);
@@ -78,10 +75,8 @@ GroupCategoryAxisDelete groupCategoryAxisDelete(
 // --- Category Providers ---
 
 @Riverpod(dependencies: [groupDatabase, userDatabase])
-Stream<List<GroupCategory>> groupCategories(
-    Ref ref,
-    {required String groupID,
-    required String categoryAxisID}) {
+Stream<List<GroupCategory>> groupCategories(Ref ref,
+    {required String groupID, required String categoryAxisID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return database
       .categoriesReference(categoryAxisID: categoryAxisID)
@@ -118,8 +113,7 @@ class GroupCategoryAdd {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupCategoryAdd groupCategoryAdd(Ref ref,
-    {required String groupID}) {
+GroupCategoryAdd groupCategoryAdd(Ref ref, {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupCategoryAdd(database: database);
 }
@@ -141,8 +135,7 @@ class GroupCategoryUpdate {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupCategoryUpdate groupCategoryUpdate(Ref ref,
-    {required String groupID}) {
+GroupCategoryUpdate groupCategoryUpdate(Ref ref, {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupCategoryUpdate(database: database);
 }
@@ -163,8 +156,7 @@ class GroupCategoryDelete {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupCategoryDelete groupCategoryDelete(Ref ref,
-    {required String groupID}) {
+GroupCategoryDelete groupCategoryDelete(Ref ref, {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupCategoryDelete(database: database);
 }
@@ -191,9 +183,8 @@ class GroupCategoryBatchUpdate {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupCategoryBatchUpdate
-    groupCategoryBatchUpdate(Ref ref,
-        {required String groupID}) {
+GroupCategoryBatchUpdate groupCategoryBatchUpdate(Ref ref,
+    {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupCategoryBatchUpdate(database: database);
 }

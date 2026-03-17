@@ -102,8 +102,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                     isSaving.value = true;
                     try {
                       await ref
-                          .read(groupCategoryUpdateProvider(
-                              groupID: groupID))
+                          .read(groupCategoryUpdateProvider(groupID: groupID))
                           .call(
                             categoryAxisID: categoryAxisID,
                             categoryID: category.id,
@@ -140,8 +139,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                     });
                     try {
                       await ref
-                          .read(groupCategoryUpdateProvider(
-                              groupID: groupID))
+                          .read(groupCategoryUpdateProvider(groupID: groupID))
                           .call(
                             categoryAxisID: categoryAxisID,
                             categoryID: category.id,
@@ -172,8 +170,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                     });
                     try {
                       await ref
-                          .read(groupCategoryUpdateProvider(
-                              groupID: groupID))
+                          .read(groupCategoryUpdateProvider(groupID: groupID))
                           .call(
                             categoryAxisID: categoryAxisID,
                             categoryID: category.id,
@@ -226,8 +223,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                       title: Text(keyword.keyword),
                       subtitle: Text(
                         keyword.matchingType ==
-                                GroupCategoryKeywordMatchingType
-                                    .exact
+                                GroupCategoryKeywordMatchingType.exact
                             ? '完全一致'
                             : '部分一致',
                         style: const TextStyle(fontSize: 12),
@@ -256,8 +252,7 @@ class _CategoryEditBody extends HookConsumerWidget {
     required WidgetRef ref,
   }) {
     final keywordController = TextEditingController();
-    var selectedMatchingType =
-        GroupCategoryKeywordMatchingType.partial;
+    var selectedMatchingType = GroupCategoryKeywordMatchingType.partial;
 
     showDialog(
       context: context,
@@ -281,8 +276,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                   ChoiceChip(
                     label: const Text('部分一致'),
                     selected: selectedMatchingType ==
-                        GroupCategoryKeywordMatchingType
-                            .partial,
+                        GroupCategoryKeywordMatchingType.partial,
                     onSelected: (selected) {
                       if (selected) {
                         analytics.logEvent(
@@ -293,8 +287,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                             });
                         setState(() {
                           selectedMatchingType =
-                              GroupCategoryKeywordMatchingType
-                                  .partial;
+                              GroupCategoryKeywordMatchingType.partial;
                         });
                       }
                     },
@@ -314,8 +307,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                             });
                         setState(() {
                           selectedMatchingType =
-                              GroupCategoryKeywordMatchingType
-                                  .exact;
+                              GroupCategoryKeywordMatchingType.exact;
                         });
                       }
                     },
@@ -347,8 +339,7 @@ class _CategoryEditBody extends HookConsumerWidget {
 
                 try {
                   await ref
-                      .read(groupCategoryUpdateProvider(
-                          groupID: groupID))
+                      .read(groupCategoryUpdateProvider(groupID: groupID))
                       .call(
                         categoryAxisID: categoryAxisID,
                         categoryID: category.id,
@@ -392,9 +383,7 @@ class _CategoryEditBody extends HookConsumerWidget {
     final updatedCategory = category.copyWith(keywords: updatedKeywords);
 
     try {
-      await ref
-          .read(groupCategoryUpdateProvider(groupID: groupID))
-          .call(
+      await ref.read(groupCategoryUpdateProvider(groupID: groupID)).call(
             categoryAxisID: categoryAxisID,
             categoryID: category.id,
             category: updatedCategory,

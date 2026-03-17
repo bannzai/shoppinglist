@@ -92,8 +92,7 @@ List<GroupShoppingListItem> mockShoppingListItems() => [
       ),
     ];
 
-GroupCategoryAxis mockCategoryAxis() =>
-    const GroupCategoryAxis(
+GroupCategoryAxis mockCategoryAxis() => const GroupCategoryAxis(
       id: mockCategoryAxisID,
       groupID: mockGroupID,
       userID: mockUserID,

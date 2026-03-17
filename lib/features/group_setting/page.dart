@@ -263,8 +263,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    GroupCategoryPage(
+                                builder: (context) => GroupCategoryPage(
                                   groupID: groupID,
                                 ),
                               ),
