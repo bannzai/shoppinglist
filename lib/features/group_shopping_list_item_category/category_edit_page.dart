@@ -196,6 +196,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                     IconButton(
+                      tooltip: 'キーワードを追加',
                       onPressed: () {
                         analytics.logEvent(
                             name: 'tap_add_keyword',
