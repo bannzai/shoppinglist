@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category_keyword.dart';
-import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
+import 'package:shoppinglist/entity/group_category.dart';
+import 'package:shoppinglist/entity/group_category_keyword.dart';
+import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
-class GroupShoppingListItemCategoryEditPage extends ConsumerWidget {
+class GroupCategoryEditPage extends ConsumerWidget {
   final String groupID;
   final String categoryAxisID;
   final String categoryID;
 
-  const GroupShoppingListItemCategoryEditPage({
+  const GroupCategoryEditPage({
     super.key,
     required this.groupID,
     required this.categoryAxisID,
@@ -22,7 +22,7 @@ class GroupShoppingListItemCategoryEditPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesAsync = ref.watch(groupShoppingListItemCategoriesProvider(
+    final categoriesAsync = ref.watch(groupCategoriesProvider(
         groupID: groupID, categoryAxisID: categoryAxisID));
 
     return categoriesAsync.when(
@@ -56,7 +56,7 @@ class GroupShoppingListItemCategoryEditPage extends ConsumerWidget {
 class _CategoryEditBody extends HookConsumerWidget {
   final String groupID;
   final String categoryAxisID;
-  final GroupShoppingListItemCategory category;
+  final GroupCategory category;
 
   const _CategoryEditBody({
     required this.groupID,
@@ -102,7 +102,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                     isSaving.value = true;
                     try {
                       await ref
-                          .read(groupShoppingListItemCategoryUpdateProvider(
+                          .read(groupCategoryUpdateProvider(
                               groupID: groupID))
                           .call(
                             categoryAxisID: categoryAxisID,
@@ -140,7 +140,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                     });
                     try {
                       await ref
-                          .read(groupShoppingListItemCategoryUpdateProvider(
+                          .read(groupCategoryUpdateProvider(
                               groupID: groupID))
                           .call(
                             categoryAxisID: categoryAxisID,
@@ -172,7 +172,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                     });
                     try {
                       await ref
-                          .read(groupShoppingListItemCategoryUpdateProvider(
+                          .read(groupCategoryUpdateProvider(
                               groupID: groupID))
                           .call(
                             categoryAxisID: categoryAxisID,
@@ -226,7 +226,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                       title: Text(keyword.keyword),
                       subtitle: Text(
                         keyword.matchingType ==
-                                GroupShoppingListItemCategoryKeywordMatchingType
+                                GroupCategoryKeywordMatchingType
                                     .exact
                             ? '完全一致'
                             : '部分一致',
@@ -257,7 +257,7 @@ class _CategoryEditBody extends HookConsumerWidget {
   }) {
     final keywordController = TextEditingController();
     var selectedMatchingType =
-        GroupShoppingListItemCategoryKeywordMatchingType.partial;
+        GroupCategoryKeywordMatchingType.partial;
 
     showDialog(
       context: context,
@@ -281,7 +281,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                   ChoiceChip(
                     label: const Text('部分一致'),
                     selected: selectedMatchingType ==
-                        GroupShoppingListItemCategoryKeywordMatchingType
+                        GroupCategoryKeywordMatchingType
                             .partial,
                     onSelected: (selected) {
                       if (selected) {
@@ -293,7 +293,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                             });
                         setState(() {
                           selectedMatchingType =
-                              GroupShoppingListItemCategoryKeywordMatchingType
+                              GroupCategoryKeywordMatchingType
                                   .partial;
                         });
                       }
@@ -303,7 +303,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                   ChoiceChip(
                     label: const Text('完全一致'),
                     selected: selectedMatchingType ==
-                        GroupShoppingListItemCategoryKeywordMatchingType.exact,
+                        GroupCategoryKeywordMatchingType.exact,
                     onSelected: (selected) {
                       if (selected) {
                         analytics.logEvent(
@@ -314,7 +314,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                             });
                         setState(() {
                           selectedMatchingType =
-                              GroupShoppingListItemCategoryKeywordMatchingType
+                              GroupCategoryKeywordMatchingType
                                   .exact;
                         });
                       }
@@ -337,7 +337,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                     });
                 Navigator.pop(dialogContext);
 
-                final newKeyword = GroupShoppingListItemCategoryKeyword(
+                final newKeyword = GroupCategoryKeyword(
                   keyword: keyword,
                   matchingType: selectedMatchingType,
                 );
@@ -347,7 +347,7 @@ class _CategoryEditBody extends HookConsumerWidget {
 
                 try {
                   await ref
-                      .read(groupShoppingListItemCategoryUpdateProvider(
+                      .read(groupCategoryUpdateProvider(
                           groupID: groupID))
                       .call(
                         categoryAxisID: categoryAxisID,
@@ -393,7 +393,7 @@ class _CategoryEditBody extends HookConsumerWidget {
 
     try {
       await ref
-          .read(groupShoppingListItemCategoryUpdateProvider(groupID: groupID))
+          .read(groupCategoryUpdateProvider(groupID: groupID))
           .call(
             categoryAxisID: categoryAxisID,
             categoryID: category.id,
