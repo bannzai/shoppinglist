@@ -102,7 +102,7 @@
   - message              # アイテム名
   - description?         # 補足説明
   - color?               # 色（hex値）
-  - groupShoppingListItemCategoryID?  # カテゴリID
+  - groupCategoryID?  # カテゴリID
   - order                # 並び順
   - status               # checked / unchecked
   - type                 # text / link
