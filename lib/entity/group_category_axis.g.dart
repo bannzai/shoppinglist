@@ -1,28 +1,18 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'group_shopping_list_item_category.dart';
+part of 'group_category_axis.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_GroupShoppingListItemCategory _$GroupShoppingListItemCategoryFromJson(
-        Map<String, dynamic> json) =>
-    _GroupShoppingListItemCategory(
+_GroupCategoryAxis _$GroupCategoryAxisFromJson(Map<String, dynamic> json) =>
+    _GroupCategoryAxis(
       id: json['id'] as String,
       groupID: json['groupID'] as String,
       userID: json['userID'] as String,
-      groupShoppingListItemCategoryAxisID:
-          json['groupShoppingListItemCategoryAxisID'] as String,
       name: json['name'] as String,
       order: (json['order'] as num).toInt(),
-      keywords: (json['keywords'] as List<dynamic>?)
-              ?.map((e) => GroupShoppingListItemCategoryKeyword.fromJson(
-                  e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-      color: json['color'] as String?,
-      iconName: json['iconName'] as String?,
       createdDateTime: const ClientCreatedTimestamp()
           .fromJson(json['createdDateTime'] as Timestamp?),
       updatedDateTime: const ClientUpdatedTimestamp()
@@ -33,19 +23,13 @@ _GroupShoppingListItemCategory _$GroupShoppingListItemCategoryFromJson(
           .fromJson(json['serverUpdatedDateTime']),
     );
 
-Map<String, dynamic> _$GroupShoppingListItemCategoryToJson(
-        _GroupShoppingListItemCategory instance) =>
+Map<String, dynamic> _$GroupCategoryAxisToJson(_GroupCategoryAxis instance) =>
     <String, dynamic>{
       'id': instance.id,
       'groupID': instance.groupID,
       'userID': instance.userID,
-      'groupShoppingListItemCategoryAxisID':
-          instance.groupShoppingListItemCategoryAxisID,
       'name': instance.name,
       'order': instance.order,
-      'keywords': instance.keywords.map((e) => e.toJson()).toList(),
-      'color': instance.color,
-      'iconName': instance.iconName,
       'createdDateTime':
           const ClientCreatedTimestamp().toJson(instance.createdDateTime),
       'updatedDateTime':
