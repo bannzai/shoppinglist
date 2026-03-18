@@ -9,6 +9,12 @@ abstract class GroupShoppingLocationFirestoreKeys {
   static const createdDateTime = 'createdDateTime';
 }
 
+/// [Group] 内の買い物場所（店舗等）を表すエンティティ。
+///
+/// [GroupShoppingList] に紐づけることで、どの店舗で買い物するかを管理する。
+///
+/// ## ユースケース
+/// - ユーザーがよく行く店舗を登録し、買い物リスト作成時に選択する
 @freezed
 abstract class GroupShoppingLocation with _$GroupShoppingLocation {
   const GroupShoppingLocation._();

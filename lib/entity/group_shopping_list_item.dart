@@ -15,6 +15,14 @@ abstract class GroupShoppingListItemFirestoreKeys {
   static const serverUpdatedDateTime = 'serverUpdatedDateTime';
 }
 
+/// [GroupShoppingList] 内の個別の買い物アイテムを表すエンティティ。
+///
+/// [GroupCategory] によるカテゴリ自動分類の対象となる。
+/// チェック状態（[GroupShoppingListItemStatus]）で買い物済みかどうかを管理する。
+///
+/// ## ユースケース
+/// - ユーザーが買い物リストにアイテムを追加する
+/// - 買い物中にアイテムをチェックして購入済みにする
 @freezed
 abstract class GroupShoppingListItem with _$GroupShoppingListItem {
   @JsonSerializable(explicitToJson: true)
@@ -54,6 +62,7 @@ extension GroupShoppingListItems on List<GroupShoppingListItem> {
   int get nextOrder => (lastOrNull?.order ?? -1) + 1;
 }
 
+/// [GroupShoppingListItem] のチェック状態。
 enum GroupShoppingListItemStatus {
   @JsonValue('checked')
   checked,

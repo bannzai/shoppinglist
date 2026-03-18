@@ -9,6 +9,15 @@ abstract class GroupShoppingListFirestoreKeys {
   static const createdDateTime = 'createdDateTime';
 }
 
+/// [Group] 内の買い物リストを表すエンティティ。
+///
+/// 複数の [GroupShoppingListItem] を含み、任意で [GroupShoppingLocation]（買い物場所）を
+/// 紐づけることができる。過去のリストを複製して新しいリストを作成する機能もある。
+///
+/// ## ユースケース
+/// - ユーザーが新しい買い物リストを作成し、アイテムを追加する
+/// - 買い物完了後にステータスを [GroupShoppingListStatus.done] に変更する
+/// - 過去のリストを複製して新しいリストを作成する
 @freezed
 abstract class GroupShoppingList with _$GroupShoppingList {
   const GroupShoppingList._();
@@ -42,6 +51,7 @@ abstract class GroupShoppingList with _$GroupShoppingList {
       shoppingList.toJson();
 }
 
+/// [GroupShoppingList] のステータス。
 enum GroupShoppingListStatus {
   @JsonValue('active')
   active,
