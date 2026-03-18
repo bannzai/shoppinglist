@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'group_shopping_list_item_category.dart';
+part of 'group_category_axis.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -13,16 +13,12 @@ part of 'group_shopping_list_item_category.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$GroupShoppingListItemCategory {
+mixin _$GroupCategoryAxis {
   String get id;
   String get groupID;
   String get userID;
-  String get groupShoppingListItemCategoryAxisID;
   String get name;
   int get order;
-  List<GroupShoppingListItemCategoryKeyword> get keywords;
-  String? get color;
-  String? get iconName;
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime;
   @ClientUpdatedTimestamp()
@@ -32,36 +28,27 @@ mixin _$GroupShoppingListItemCategory {
   @ServerUpdatedTimestamp()
   DateTime? get serverUpdatedDateTime;
 
-  /// Create a copy of GroupShoppingListItemCategory
+  /// Create a copy of GroupCategoryAxis
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $GroupShoppingListItemCategoryCopyWith<GroupShoppingListItemCategory>
-      get copyWith => _$GroupShoppingListItemCategoryCopyWithImpl<
-              GroupShoppingListItemCategory>(
-          this as GroupShoppingListItemCategory, _$identity);
+  $GroupCategoryAxisCopyWith<GroupCategoryAxis> get copyWith =>
+      _$GroupCategoryAxisCopyWithImpl<GroupCategoryAxis>(
+          this as GroupCategoryAxis, _$identity);
 
-  /// Serializes this GroupShoppingListItemCategory to a JSON map.
+  /// Serializes this GroupCategoryAxis to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is GroupShoppingListItemCategory &&
+            other is GroupCategoryAxis &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.userID, userID) || other.userID == userID) &&
-            (identical(other.groupShoppingListItemCategoryAxisID,
-                    groupShoppingListItemCategoryAxisID) ||
-                other.groupShoppingListItemCategoryAxisID ==
-                    groupShoppingListItemCategoryAxisID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.order, order) || other.order == order) &&
-            const DeepCollectionEquality().equals(other.keywords, keywords) &&
-            (identical(other.color, color) || other.color == color) &&
-            (identical(other.iconName, iconName) ||
-                other.iconName == iconName) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -79,12 +66,8 @@ mixin _$GroupShoppingListItemCategory {
       id,
       groupID,
       userID,
-      groupShoppingListItemCategoryAxisID,
       name,
       order,
-      const DeepCollectionEquality().hash(keywords),
-      color,
-      iconName,
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -92,27 +75,22 @@ mixin _$GroupShoppingListItemCategory {
 
   @override
   String toString() {
-    return 'GroupShoppingListItemCategory(id: $id, groupID: $groupID, userID: $userID, groupShoppingListItemCategoryAxisID: $groupShoppingListItemCategoryAxisID, name: $name, order: $order, keywords: $keywords, color: $color, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupCategoryAxis(id: $id, groupID: $groupID, userID: $userID, name: $name, order: $order, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
 /// @nodoc
-abstract mixin class $GroupShoppingListItemCategoryCopyWith<$Res> {
-  factory $GroupShoppingListItemCategoryCopyWith(
-          GroupShoppingListItemCategory value,
-          $Res Function(GroupShoppingListItemCategory) _then) =
-      _$GroupShoppingListItemCategoryCopyWithImpl;
+abstract mixin class $GroupCategoryAxisCopyWith<$Res> {
+  factory $GroupCategoryAxisCopyWith(
+          GroupCategoryAxis value, $Res Function(GroupCategoryAxis) _then) =
+      _$GroupCategoryAxisCopyWithImpl;
   @useResult
   $Res call(
       {String id,
       String groupID,
       String userID,
-      String groupShoppingListItemCategoryAxisID,
       String name,
       int order,
-      List<GroupShoppingListItemCategoryKeyword> keywords,
-      String? color,
-      String? iconName,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -120,14 +98,14 @@ abstract mixin class $GroupShoppingListItemCategoryCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$GroupShoppingListItemCategoryCopyWithImpl<$Res>
-    implements $GroupShoppingListItemCategoryCopyWith<$Res> {
-  _$GroupShoppingListItemCategoryCopyWithImpl(this._self, this._then);
+class _$GroupCategoryAxisCopyWithImpl<$Res>
+    implements $GroupCategoryAxisCopyWith<$Res> {
+  _$GroupCategoryAxisCopyWithImpl(this._self, this._then);
 
-  final GroupShoppingListItemCategory _self;
-  final $Res Function(GroupShoppingListItemCategory) _then;
+  final GroupCategoryAxis _self;
+  final $Res Function(GroupCategoryAxis) _then;
 
-  /// Create a copy of GroupShoppingListItemCategory
+  /// Create a copy of GroupCategoryAxis
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -135,12 +113,8 @@ class _$GroupShoppingListItemCategoryCopyWithImpl<$Res>
     Object? id = null,
     Object? groupID = null,
     Object? userID = null,
-    Object? groupShoppingListItemCategoryAxisID = null,
     Object? name = null,
     Object? order = null,
-    Object? keywords = null,
-    Object? color = freezed,
-    Object? iconName = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -159,11 +133,6 @@ class _$GroupShoppingListItemCategoryCopyWithImpl<$Res>
           ? _self.userID
           : userID // ignore: cast_nullable_to_non_nullable
               as String,
-      groupShoppingListItemCategoryAxisID: null ==
-              groupShoppingListItemCategoryAxisID
-          ? _self.groupShoppingListItemCategoryAxisID
-          : groupShoppingListItemCategoryAxisID // ignore: cast_nullable_to_non_nullable
-              as String,
       name: null == name
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -172,18 +141,6 @@ class _$GroupShoppingListItemCategoryCopyWithImpl<$Res>
           ? _self.order
           : order // ignore: cast_nullable_to_non_nullable
               as int,
-      keywords: null == keywords
-          ? _self.keywords
-          : keywords // ignore: cast_nullable_to_non_nullable
-              as List<GroupShoppingListItemCategoryKeyword>,
-      color: freezed == color
-          ? _self.color
-          : color // ignore: cast_nullable_to_non_nullable
-              as String?,
-      iconName: freezed == iconName
-          ? _self.iconName
-          : iconName // ignore: cast_nullable_to_non_nullable
-              as String?,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
           : createdDateTime // ignore: cast_nullable_to_non_nullable
@@ -204,9 +161,8 @@ class _$GroupShoppingListItemCategoryCopyWithImpl<$Res>
   }
 }
 
-/// Adds pattern-matching-related methods to [GroupShoppingListItemCategory].
-extension GroupShoppingListItemCategoryPatterns
-    on GroupShoppingListItemCategory {
+/// Adds pattern-matching-related methods to [GroupCategoryAxis].
+extension GroupCategoryAxisPatterns on GroupCategoryAxis {
   /// A variant of `map` that fallback to returning `orElse`.
   ///
   /// It is equivalent to doing:
@@ -221,12 +177,12 @@ extension GroupShoppingListItemCategoryPatterns
 
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>(
-    TResult Function(_GroupShoppingListItemCategory value)? $default, {
+    TResult Function(_GroupCategoryAxis value)? $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategory() when $default != null:
+      case _GroupCategoryAxis() when $default != null:
         return $default(_that);
       case _:
         return orElse();
@@ -248,11 +204,11 @@ extension GroupShoppingListItemCategoryPatterns
 
   @optionalTypeArgs
   TResult map<TResult extends Object?>(
-    TResult Function(_GroupShoppingListItemCategory value) $default,
+    TResult Function(_GroupCategoryAxis value) $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategory():
+      case _GroupCategoryAxis():
         return $default(_that);
       case _:
         throw StateError('Unexpected subclass');
@@ -273,11 +229,11 @@ extension GroupShoppingListItemCategoryPatterns
 
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_GroupShoppingListItemCategory value)? $default,
+    TResult? Function(_GroupCategoryAxis value)? $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategory() when $default != null:
+      case _GroupCategoryAxis() when $default != null:
         return $default(_that);
       case _:
         return null;
@@ -302,12 +258,8 @@ extension GroupShoppingListItemCategoryPatterns
             String id,
             String groupID,
             String userID,
-            String groupShoppingListItemCategoryAxisID,
             String name,
             int order,
-            List<GroupShoppingListItemCategoryKeyword> keywords,
-            String? color,
-            String? iconName,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -317,17 +269,13 @@ extension GroupShoppingListItemCategoryPatterns
   }) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategory() when $default != null:
+      case _GroupCategoryAxis() when $default != null:
         return $default(
             _that.id,
             _that.groupID,
             _that.userID,
-            _that.groupShoppingListItemCategoryAxisID,
             _that.name,
             _that.order,
-            _that.keywords,
-            _that.color,
-            _that.iconName,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -356,12 +304,8 @@ extension GroupShoppingListItemCategoryPatterns
             String id,
             String groupID,
             String userID,
-            String groupShoppingListItemCategoryAxisID,
             String name,
             int order,
-            List<GroupShoppingListItemCategoryKeyword> keywords,
-            String? color,
-            String? iconName,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -370,17 +314,13 @@ extension GroupShoppingListItemCategoryPatterns
   ) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategory():
+      case _GroupCategoryAxis():
         return $default(
             _that.id,
             _that.groupID,
             _that.userID,
-            _that.groupShoppingListItemCategoryAxisID,
             _that.name,
             _that.order,
-            _that.keywords,
-            _that.color,
-            _that.iconName,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -408,12 +348,8 @@ extension GroupShoppingListItemCategoryPatterns
             String id,
             String groupID,
             String userID,
-            String groupShoppingListItemCategoryAxisID,
             String name,
             int order,
-            List<GroupShoppingListItemCategoryKeyword> keywords,
-            String? color,
-            String? iconName,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -422,17 +358,13 @@ extension GroupShoppingListItemCategoryPatterns
   ) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategory() when $default != null:
+      case _GroupCategoryAxis() when $default != null:
         return $default(
             _that.id,
             _that.groupID,
             _that.userID,
-            _that.groupShoppingListItemCategoryAxisID,
             _that.name,
             _that.order,
-            _that.keywords,
-            _that.color,
-            _that.iconName,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -446,25 +378,20 @@ extension GroupShoppingListItemCategoryPatterns
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true)
-class _GroupShoppingListItemCategory extends GroupShoppingListItemCategory {
-  const _GroupShoppingListItemCategory(
+class _GroupCategoryAxis extends GroupCategoryAxis {
+  const _GroupCategoryAxis(
       {required this.id,
       required this.groupID,
       required this.userID,
-      required this.groupShoppingListItemCategoryAxisID,
       required this.name,
       required this.order,
-      final List<GroupShoppingListItemCategoryKeyword> keywords = const [],
-      this.color,
-      this.iconName,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
       @ServerUpdatedTimestamp() this.serverUpdatedDateTime})
-      : _keywords = keywords,
-        super._();
-  factory _GroupShoppingListItemCategory.fromJson(Map<String, dynamic> json) =>
-      _$GroupShoppingListItemCategoryFromJson(json);
+      : super._();
+  factory _GroupCategoryAxis.fromJson(Map<String, dynamic> json) =>
+      _$GroupCategoryAxisFromJson(json);
 
   @override
   final String id;
@@ -473,24 +400,9 @@ class _GroupShoppingListItemCategory extends GroupShoppingListItemCategory {
   @override
   final String userID;
   @override
-  final String groupShoppingListItemCategoryAxisID;
-  @override
   final String name;
   @override
   final int order;
-  final List<GroupShoppingListItemCategoryKeyword> _keywords;
-  @override
-  @JsonKey()
-  List<GroupShoppingListItemCategoryKeyword> get keywords {
-    if (_keywords is EqualUnmodifiableListView) return _keywords;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_keywords);
-  }
-
-  @override
-  final String? color;
-  @override
-  final String? iconName;
   @override
   @ClientCreatedTimestamp()
   final DateTime? createdDateTime;
@@ -504,18 +416,17 @@ class _GroupShoppingListItemCategory extends GroupShoppingListItemCategory {
   @ServerUpdatedTimestamp()
   final DateTime? serverUpdatedDateTime;
 
-  /// Create a copy of GroupShoppingListItemCategory
+  /// Create a copy of GroupCategoryAxis
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$GroupShoppingListItemCategoryCopyWith<_GroupShoppingListItemCategory>
-      get copyWith => __$GroupShoppingListItemCategoryCopyWithImpl<
-          _GroupShoppingListItemCategory>(this, _$identity);
+  _$GroupCategoryAxisCopyWith<_GroupCategoryAxis> get copyWith =>
+      __$GroupCategoryAxisCopyWithImpl<_GroupCategoryAxis>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$GroupShoppingListItemCategoryToJson(
+    return _$GroupCategoryAxisToJson(
       this,
     );
   }
@@ -524,20 +435,12 @@ class _GroupShoppingListItemCategory extends GroupShoppingListItemCategory {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _GroupShoppingListItemCategory &&
+            other is _GroupCategoryAxis &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.userID, userID) || other.userID == userID) &&
-            (identical(other.groupShoppingListItemCategoryAxisID,
-                    groupShoppingListItemCategoryAxisID) ||
-                other.groupShoppingListItemCategoryAxisID ==
-                    groupShoppingListItemCategoryAxisID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.order, order) || other.order == order) &&
-            const DeepCollectionEquality().equals(other._keywords, _keywords) &&
-            (identical(other.color, color) || other.color == color) &&
-            (identical(other.iconName, iconName) ||
-                other.iconName == iconName) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -555,12 +458,8 @@ class _GroupShoppingListItemCategory extends GroupShoppingListItemCategory {
       id,
       groupID,
       userID,
-      groupShoppingListItemCategoryAxisID,
       name,
       order,
-      const DeepCollectionEquality().hash(_keywords),
-      color,
-      iconName,
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -568,29 +467,24 @@ class _GroupShoppingListItemCategory extends GroupShoppingListItemCategory {
 
   @override
   String toString() {
-    return 'GroupShoppingListItemCategory(id: $id, groupID: $groupID, userID: $userID, groupShoppingListItemCategoryAxisID: $groupShoppingListItemCategoryAxisID, name: $name, order: $order, keywords: $keywords, color: $color, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupCategoryAxis(id: $id, groupID: $groupID, userID: $userID, name: $name, order: $order, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$GroupShoppingListItemCategoryCopyWith<$Res>
-    implements $GroupShoppingListItemCategoryCopyWith<$Res> {
-  factory _$GroupShoppingListItemCategoryCopyWith(
-          _GroupShoppingListItemCategory value,
-          $Res Function(_GroupShoppingListItemCategory) _then) =
-      __$GroupShoppingListItemCategoryCopyWithImpl;
+abstract mixin class _$GroupCategoryAxisCopyWith<$Res>
+    implements $GroupCategoryAxisCopyWith<$Res> {
+  factory _$GroupCategoryAxisCopyWith(
+          _GroupCategoryAxis value, $Res Function(_GroupCategoryAxis) _then) =
+      __$GroupCategoryAxisCopyWithImpl;
   @override
   @useResult
   $Res call(
       {String id,
       String groupID,
       String userID,
-      String groupShoppingListItemCategoryAxisID,
       String name,
       int order,
-      List<GroupShoppingListItemCategoryKeyword> keywords,
-      String? color,
-      String? iconName,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -598,14 +492,14 @@ abstract mixin class _$GroupShoppingListItemCategoryCopyWith<$Res>
 }
 
 /// @nodoc
-class __$GroupShoppingListItemCategoryCopyWithImpl<$Res>
-    implements _$GroupShoppingListItemCategoryCopyWith<$Res> {
-  __$GroupShoppingListItemCategoryCopyWithImpl(this._self, this._then);
+class __$GroupCategoryAxisCopyWithImpl<$Res>
+    implements _$GroupCategoryAxisCopyWith<$Res> {
+  __$GroupCategoryAxisCopyWithImpl(this._self, this._then);
 
-  final _GroupShoppingListItemCategory _self;
-  final $Res Function(_GroupShoppingListItemCategory) _then;
+  final _GroupCategoryAxis _self;
+  final $Res Function(_GroupCategoryAxis) _then;
 
-  /// Create a copy of GroupShoppingListItemCategory
+  /// Create a copy of GroupCategoryAxis
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -613,18 +507,14 @@ class __$GroupShoppingListItemCategoryCopyWithImpl<$Res>
     Object? id = null,
     Object? groupID = null,
     Object? userID = null,
-    Object? groupShoppingListItemCategoryAxisID = null,
     Object? name = null,
     Object? order = null,
-    Object? keywords = null,
-    Object? color = freezed,
-    Object? iconName = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
     Object? serverUpdatedDateTime = freezed,
   }) {
-    return _then(_GroupShoppingListItemCategory(
+    return _then(_GroupCategoryAxis(
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -637,11 +527,6 @@ class __$GroupShoppingListItemCategoryCopyWithImpl<$Res>
           ? _self.userID
           : userID // ignore: cast_nullable_to_non_nullable
               as String,
-      groupShoppingListItemCategoryAxisID: null ==
-              groupShoppingListItemCategoryAxisID
-          ? _self.groupShoppingListItemCategoryAxisID
-          : groupShoppingListItemCategoryAxisID // ignore: cast_nullable_to_non_nullable
-              as String,
       name: null == name
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -650,18 +535,6 @@ class __$GroupShoppingListItemCategoryCopyWithImpl<$Res>
           ? _self.order
           : order // ignore: cast_nullable_to_non_nullable
               as int,
-      keywords: null == keywords
-          ? _self._keywords
-          : keywords // ignore: cast_nullable_to_non_nullable
-              as List<GroupShoppingListItemCategoryKeyword>,
-      color: freezed == color
-          ? _self.color
-          : color // ignore: cast_nullable_to_non_nullable
-              as String?,
-      iconName: freezed == iconName
-          ? _self.iconName
-          : iconName // ignore: cast_nullable_to_non_nullable
-              as String?,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
           : createdDateTime // ignore: cast_nullable_to_non_nullable

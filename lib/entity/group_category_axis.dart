@@ -2,21 +2,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:shoppinglist/entity/timestamp.dart';
 
-part 'group_shopping_list_item_category_axis.g.dart';
-part 'group_shopping_list_item_category_axis.freezed.dart';
+part 'group_category_axis.g.dart';
+part 'group_category_axis.freezed.dart';
 
-abstract class GroupShoppingListItemCategoryAxisFirestoreKeys {
+abstract class GroupCategoryAxisFirestoreKeys {
   static const userID = 'userID';
   static const order = 'order';
 }
 
 @freezed
-abstract class GroupShoppingListItemCategoryAxis
-    with _$GroupShoppingListItemCategoryAxis {
-  const GroupShoppingListItemCategoryAxis._();
+abstract class GroupCategoryAxis with _$GroupCategoryAxis {
+  const GroupCategoryAxis._();
 
   @JsonSerializable(explicitToJson: true)
-  const factory GroupShoppingListItemCategoryAxis({
+  const factory GroupCategoryAxis({
     required String id,
     required String groupID,
     required String userID,
@@ -26,20 +25,17 @@ abstract class GroupShoppingListItemCategoryAxis
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
     @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
-  }) = _GroupShoppingListItemCategoryAxis;
+  }) = _GroupCategoryAxis;
 
-  factory GroupShoppingListItemCategoryAxis.fromJson(
-          Map<String, dynamic> json) =>
-      _$GroupShoppingListItemCategoryAxisFromJson(json);
+  factory GroupCategoryAxis.fromJson(Map<String, dynamic> json) =>
+      _$GroupCategoryAxisFromJson(json);
 
-  static GroupShoppingListItemCategoryAxis fromFirestore(
+  static GroupCategoryAxis fromFirestore(
           DocumentSnapshot<Map<String, dynamic>> snapshot,
           SnapshotOptions? options) =>
-      GroupShoppingListItemCategoryAxis.fromJson(
-          snapshot.data()!..['id'] = snapshot.id);
+      GroupCategoryAxis.fromJson(snapshot.data()!..['id'] = snapshot.id);
 
   static Map<String, dynamic> toFirestore(
-          GroupShoppingListItemCategoryAxis categoryAxis,
-          SetOptions? options) =>
+          GroupCategoryAxis categoryAxis, SetOptions? options) =>
       categoryAxis.toJson();
 }

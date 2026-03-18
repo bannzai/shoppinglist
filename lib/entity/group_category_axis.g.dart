@@ -1,14 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'group_shopping_list_item_category_axis.dart';
+part of 'group_category_axis.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_GroupShoppingListItemCategoryAxis _$GroupShoppingListItemCategoryAxisFromJson(
-        Map<String, dynamic> json) =>
-    _GroupShoppingListItemCategoryAxis(
+_GroupCategoryAxis _$GroupCategoryAxisFromJson(Map<String, dynamic> json) =>
+    _GroupCategoryAxis(
       id: json['id'] as String,
       groupID: json['groupID'] as String,
       userID: json['userID'] as String,
@@ -24,8 +23,7 @@ _GroupShoppingListItemCategoryAxis _$GroupShoppingListItemCategoryAxisFromJson(
           .fromJson(json['serverUpdatedDateTime']),
     );
 
-Map<String, dynamic> _$GroupShoppingListItemCategoryAxisToJson(
-        _GroupShoppingListItemCategoryAxis instance) =>
+Map<String, dynamic> _$GroupCategoryAxisToJson(_GroupCategoryAxis instance) =>
     <String, dynamic>{
       'id': instance.id,
       'groupID': instance.groupID,

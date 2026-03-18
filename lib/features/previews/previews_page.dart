@@ -4,8 +4,8 @@ import 'package:shoppinglist/features/group_create/page.dart';
 import 'package:shoppinglist/features/group_invitation/page.dart';
 import 'package:shoppinglist/features/group_list/page.dart';
 import 'package:shoppinglist/features/group_setting/page.dart';
-import 'package:shoppinglist/features/group_shopping_list_item_category/category_edit_page.dart';
-import 'package:shoppinglist/features/group_shopping_list_item_category/page.dart';
+import 'package:shoppinglist/features/group_category/category_edit_page.dart';
+import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/home/page.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_item_filter_preview.dart';
@@ -59,12 +59,12 @@ final _previewEntries = <_PreviewEntry>[
     builder: (_) => ShoppingLocationPage(groupID: mockGroupID),
   ),
   _PreviewEntry(
-    title: 'GroupShoppingListItemCategoryPage',
-    builder: (_) => GroupShoppingListItemCategoryPage(groupID: mockGroupID),
+    title: 'GroupCategoryPage',
+    builder: (_) => GroupCategoryPage(groupID: mockGroupID),
   ),
   _PreviewEntry(
-    title: 'GroupShoppingListItemCategoryEditPage',
-    builder: (_) => GroupShoppingListItemCategoryEditPage(
+    title: 'GroupCategoryEditPage',
+    builder: (_) => GroupCategoryEditPage(
       groupID: mockGroupID,
       categoryAxisID: mockCategoryAxisID,
       categoryID: mockCategoryID,

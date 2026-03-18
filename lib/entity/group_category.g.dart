@@ -1,24 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'group_shopping_list_item_category.dart';
+part of 'group_category.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_GroupShoppingListItemCategory _$GroupShoppingListItemCategoryFromJson(
-        Map<String, dynamic> json) =>
-    _GroupShoppingListItemCategory(
+_GroupCategory _$GroupCategoryFromJson(Map<String, dynamic> json) =>
+    _GroupCategory(
       id: json['id'] as String,
       groupID: json['groupID'] as String,
       userID: json['userID'] as String,
-      groupShoppingListItemCategoryAxisID:
-          json['groupShoppingListItemCategoryAxisID'] as String,
+      groupCategoryAxisID: json['groupCategoryAxisID'] as String,
       name: json['name'] as String,
       order: (json['order'] as num).toInt(),
       keywords: (json['keywords'] as List<dynamic>?)
-              ?.map((e) => GroupShoppingListItemCategoryKeyword.fromJson(
-                  e as Map<String, dynamic>))
+              ?.map((e) =>
+                  GroupCategoryKeyword.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       color: json['color'] as String?,
@@ -33,14 +31,12 @@ _GroupShoppingListItemCategory _$GroupShoppingListItemCategoryFromJson(
           .fromJson(json['serverUpdatedDateTime']),
     );
 
-Map<String, dynamic> _$GroupShoppingListItemCategoryToJson(
-        _GroupShoppingListItemCategory instance) =>
+Map<String, dynamic> _$GroupCategoryToJson(_GroupCategory instance) =>
     <String, dynamic>{
       'id': instance.id,
       'groupID': instance.groupID,
       'userID': instance.userID,
-      'groupShoppingListItemCategoryAxisID':
-          instance.groupShoppingListItemCategoryAxisID,
+      'groupCategoryAxisID': instance.groupCategoryAxisID,
       'name': instance.name,
       'order': instance.order,
       'keywords': instance.keywords.map((e) => e.toJson()).toList(),

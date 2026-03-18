@@ -2,8 +2,8 @@ import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category_axis.dart';
+import 'package:shoppinglist/entity/group_category.dart';
+import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 
@@ -92,8 +92,7 @@ List<GroupShoppingListItem> mockShoppingListItems() => [
       ),
     ];
 
-GroupShoppingListItemCategoryAxis mockCategoryAxis() =>
-    const GroupShoppingListItemCategoryAxis(
+GroupCategoryAxis mockCategoryAxis() => const GroupCategoryAxis(
       id: mockCategoryAxisID,
       groupID: mockGroupID,
       userID: mockUserID,
@@ -101,20 +100,20 @@ GroupShoppingListItemCategoryAxis mockCategoryAxis() =>
       order: 0,
     );
 
-List<GroupShoppingListItemCategory> mockCategories() => [
-      const GroupShoppingListItemCategory(
+List<GroupCategory> mockCategories() => [
+      const GroupCategory(
         id: mockCategoryID,
         groupID: mockGroupID,
         userID: mockUserID,
-        groupShoppingListItemCategoryAxisID: mockCategoryAxisID,
+        groupCategoryAxisID: mockCategoryAxisID,
         name: '食品',
         order: 0,
       ),
-      const GroupShoppingListItemCategory(
+      const GroupCategory(
         id: mockCategoryID2,
         groupID: mockGroupID,
         userID: mockUserID,
-        groupShoppingListItemCategoryAxisID: mockCategoryAxisID,
+        groupCategoryAxisID: mockCategoryAxisID,
         name: '日用品',
         order: 1,
       ),
