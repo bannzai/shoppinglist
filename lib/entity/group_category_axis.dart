@@ -10,6 +10,15 @@ abstract class GroupCategoryAxisFirestoreKeys {
   static const order = 'order';
 }
 
+/// [Group] 内でユーザーが定義するカテゴリの軸を表すエンティティ。
+///
+/// 1つの軸の下に複数の [GroupCategory] が属する。
+/// 各 [AppUser] が独自の軸を作成でき、Firestore 上では
+/// `/groups/{groupID}/userCategoryAxes/` コレクションに保存される。
+///
+/// ## ユースケース
+/// - ユーザーが「食品カテゴリ」「売り場」などの分類軸を作成する
+/// - 軸の中にカテゴリ（野菜、肉、飲料など）を追加する
 @freezed
 abstract class GroupCategoryAxis with _$GroupCategoryAxis {
   const GroupCategoryAxis._();
