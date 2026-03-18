@@ -24,32 +24,9 @@ run_maestro_screenshots.sh
 
 問題点を分析し、該当するソースファイルを修正する。修正後、再度スクリーンショットを撮影して確認する。
 
-## 画面 → ソースファイル対応表
+## ソースファイルの特定
 
-| # | スクリーンショット | ソースファイル |
-|---|---|---|
-| 1 | `01_auth_page.png` | `lib/features/auth/page.dart` |
-| 2 | `02_home_page.png` | `lib/features/home/page.dart` |
-| 3 | `03_shopping_list_page.png` | `lib/features/shopping_list/page.dart` |
-| 4 | `04_setting_page.png` | `lib/features/settings/page.dart` |
-| 5 | `05_group_list_page.png` | `lib/features/group_list/page.dart` |
-| 6 | `06_group_create_page.png` | `lib/features/group_create/page.dart` |
-| 7 | `07_group_setting_page.png` | `lib/features/group_setting/page.dart` |
-| 8 | `08_group_invitation_accept_page.png` | `lib/features/group_invitation/page.dart` |
-| 9 | `09_shopping_location_page.png` | `lib/features/shopping_location/page.dart` |
-| 10 | `10_group_category_page.png` | `lib/features/group_category/page.dart` |
-| 11 | `11_group_category_edit_page.png` | `lib/features/group_category/category_edit_page.dart` |
-| 12 | `12_shopping_list_item_filter_page.png` | `lib/features/shopping_list_item_filter/page.dart` |
-| 13 | `13_shopping_list_setting_page.png` | `lib/features/shopping_list_setting/page.dart` |
-
-## 関連コンポーネント
-
-- **ShoppingListAppBar**: `lib/features/shopping_list/components/app_bar.dart`
-- **ShoppingListItems**: `lib/features/shopping_list/components/shopping_list_items/shopping_list_items.dart`
-- **GroupSwitcher**: `lib/features/shopping_list/components/group_switcher.dart`
-- **スタイル定数**: `lib/style/color.dart`
-- **テーマ**: `lib/app.dart` (ThemeData)
-- **プレビューアプリテーマ**: `lib/features/previews/preview_app.dart`
+スクリーンショット名から対応するソースファイルを特定するには、`lib/features/` 配下を画面名で検索する。
 
 ## 注意事項
 
