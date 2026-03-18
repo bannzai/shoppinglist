@@ -56,10 +56,11 @@ class ClientCreatedTimestamp implements JsonConverter<DateTime?, Timestamp?> {
   }
 }
 
-/// クライアント側で更新日時を設定するコンバータ。
+/// クライアント側の更新日時フィールド用コンバータ。
 ///
 /// 読み込み時は [Timestamp] を [DateTime] に変換する。
-/// 書き込み時は null の場合はそのまま null を返す（初回作成時は更新日時なし）。
+/// 書き込み時は値をそのまま変換する。null の場合は null を返す。
+/// 更新時に呼び出し元が `copyWith(updatedDateTime: DateTime.now())` で明示的に設定する想定。
 class ClientUpdatedTimestamp implements JsonConverter<DateTime?, Timestamp?> {
   const ClientUpdatedTimestamp();
 
