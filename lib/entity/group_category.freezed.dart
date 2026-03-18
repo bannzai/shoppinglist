@@ -17,7 +17,6 @@ mixin _$GroupCategory {
   String get id;
   String get groupID;
   String get userID;
-  @JsonKey(name: 'groupShoppingListItemCategoryAxisID')
   String get groupCategoryAxisID;
   String get name;
   int get order;
@@ -104,7 +103,6 @@ abstract mixin class $GroupCategoryCopyWith<$Res> {
       {String id,
       String groupID,
       String userID,
-      @JsonKey(name: 'groupShoppingListItemCategoryAxisID')
       String groupCategoryAxisID,
       String name,
       int order,
@@ -298,7 +296,6 @@ extension GroupCategoryPatterns on GroupCategory {
             String id,
             String groupID,
             String userID,
-            @JsonKey(name: 'groupShoppingListItemCategoryAxisID')
             String groupCategoryAxisID,
             String name,
             int order,
@@ -353,7 +350,6 @@ extension GroupCategoryPatterns on GroupCategory {
             String id,
             String groupID,
             String userID,
-            @JsonKey(name: 'groupShoppingListItemCategoryAxisID')
             String groupCategoryAxisID,
             String name,
             int order,
@@ -406,7 +402,6 @@ extension GroupCategoryPatterns on GroupCategory {
             String id,
             String groupID,
             String userID,
-            @JsonKey(name: 'groupShoppingListItemCategoryAxisID')
             String groupCategoryAxisID,
             String name,
             int order,
@@ -450,7 +445,6 @@ class _GroupCategory extends GroupCategory {
       {required this.id,
       required this.groupID,
       required this.userID,
-      @JsonKey(name: 'groupShoppingListItemCategoryAxisID')
       required this.groupCategoryAxisID,
       required this.name,
       required this.order,
@@ -473,7 +467,6 @@ class _GroupCategory extends GroupCategory {
   @override
   final String userID;
   @override
-  @JsonKey(name: 'groupShoppingListItemCategoryAxisID')
   final String groupCategoryAxisID;
   @override
   final String name;
@@ -582,7 +575,6 @@ abstract mixin class _$GroupCategoryCopyWith<$Res>
       {String id,
       String groupID,
       String userID,
-      @JsonKey(name: 'groupShoppingListItemCategoryAxisID')
       String groupCategoryAxisID,
       String name,
       int order,

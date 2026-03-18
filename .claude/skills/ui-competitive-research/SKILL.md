@@ -174,8 +174,8 @@ mkdir -p .local/ui-research/analysis
 | `07_group_setting_page.png` | `lib/features/group_setting/page.dart` |
 | `08_group_invitation_accept_page.png` | `lib/features/group_invitation/page.dart` |
 | `09_shopping_location_page.png` | `lib/features/shopping_location/page.dart` |
-| `10_group_shopping_list_item_category_page.png` | `lib/features/group_shopping_list_item_category/page.dart` |
-| `11_group_shopping_list_item_category_edit_page.png` | `lib/features/group_shopping_list_item_category/category_edit_page.dart` |
+| `10_group_category_page.png` | `lib/features/group_category/page.dart` |
+| `11_group_category_edit_page.png` | `lib/features/group_category/category_edit_page.dart` |
 | `12_shopping_list_item_filter_page.png` | `lib/features/shopping_list_item_filter/page.dart` |
 | `13_shopping_list_setting_page.png` | `lib/features/shopping_list_setting/page.dart` |
 

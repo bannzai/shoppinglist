@@ -11,8 +11,7 @@ _GroupCategory _$GroupCategoryFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       groupID: json['groupID'] as String,
       userID: json['userID'] as String,
-      groupCategoryAxisID:
-          json['groupShoppingListItemCategoryAxisID'] as String,
+      groupCategoryAxisID: json['groupCategoryAxisID'] as String,
       name: json['name'] as String,
       order: (json['order'] as num).toInt(),
       keywords: (json['keywords'] as List<dynamic>?)
@@ -37,7 +36,7 @@ Map<String, dynamic> _$GroupCategoryToJson(_GroupCategory instance) =>
       'id': instance.id,
       'groupID': instance.groupID,
       'userID': instance.userID,
-      'groupShoppingListItemCategoryAxisID': instance.groupCategoryAxisID,
+      'groupCategoryAxisID': instance.groupCategoryAxisID,
       'name': instance.name,
       'order': instance.order,
       'keywords': instance.keywords.map((e) => e.toJson()).toList(),

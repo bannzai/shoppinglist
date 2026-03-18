@@ -19,7 +19,6 @@ abstract class GroupCategory with _$GroupCategory {
     required String id,
     required String groupID,
     required String userID,
-    @JsonKey(name: 'groupShoppingListItemCategoryAxisID')
     required String groupCategoryAxisID,
     required String name,
     required int order,

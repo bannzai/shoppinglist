@@ -37,8 +37,8 @@ run_maestro_screenshots.sh
 | 7 | `07_group_setting_page.png` | `lib/features/group_setting/page.dart` |
 | 8 | `08_group_invitation_accept_page.png` | `lib/features/group_invitation/page.dart` |
 | 9 | `09_shopping_location_page.png` | `lib/features/shopping_location/page.dart` |
-| 10 | `10_group_shopping_list_item_category_page.png` | `lib/features/group_shopping_list_item_category/page.dart` |
-| 11 | `11_group_shopping_list_item_category_edit_page.png` | `lib/features/group_shopping_list_item_category/category_edit_page.dart` |
+| 10 | `10_group_category_page.png` | `lib/features/group_category/page.dart` |
+| 11 | `11_group_category_edit_page.png` | `lib/features/group_category/category_edit_page.dart` |
 | 12 | `12_shopping_list_item_filter_page.png` | `lib/features/shopping_list_item_filter/page.dart` |
 | 13 | `13_shopping_list_setting_page.png` | `lib/features/shopping_list_setting/page.dart` |
 
