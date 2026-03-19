@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+/// Firestore の [Timestamp] と Dart の [DateTime] を相互変換するコンバータ。
+///
+/// 必須フィールド用。nullable な場合は [NullableTimestampConverter] を使用する。
 class TimestampConverter implements JsonConverter<DateTime, Timestamp> {
   const TimestampConverter();
 
@@ -15,6 +18,7 @@ class TimestampConverter implements JsonConverter<DateTime, Timestamp> {
   }
 }
 
+/// Firestore の [Timestamp] と Dart の [DateTime] を相互変換する nullable 版コンバータ。
 class NullableTimestampConverter
     implements JsonConverter<DateTime?, Timestamp?> {
   const NullableTimestampConverter();
@@ -33,6 +37,10 @@ class NullableTimestampConverter
   }
 }
 
+/// クライアント側で作成日時を設定するコンバータ。
+///
+/// 読み込み時は [Timestamp] を [DateTime] に変換する。
+/// 書き込み時は null の場合に `DateTime.now()` をデフォルト値として使用する。
 class ClientCreatedTimestamp implements JsonConverter<DateTime?, Timestamp?> {
   const ClientCreatedTimestamp();
 
@@ -48,6 +56,11 @@ class ClientCreatedTimestamp implements JsonConverter<DateTime?, Timestamp?> {
   }
 }
 
+/// クライアント側の更新日時フィールド用コンバータ。
+///
+/// 読み込み時は [Timestamp] を [DateTime] に変換する。
+/// 書き込み時は値をそのまま変換する。null の場合は null を返す。
+/// 更新時に呼び出し元が `copyWith(updatedDateTime: DateTime.now())` で明示的に設定する想定。
 class ClientUpdatedTimestamp implements JsonConverter<DateTime?, Timestamp?> {
   const ClientUpdatedTimestamp();
 
@@ -63,6 +76,10 @@ class ClientUpdatedTimestamp implements JsonConverter<DateTime?, Timestamp?> {
   }
 }
 
+/// サーバー側で作成日時を設定するコンバータ。
+///
+/// 書き込み時は null の場合に [FieldValue.serverTimestamp] を使用し、
+/// Firestore サーバーのタイムスタンプで記録する。
 class ServerCreatedTimestamp implements JsonConverter<DateTime?, dynamic> {
   const ServerCreatedTimestamp();
 
@@ -78,6 +95,10 @@ class ServerCreatedTimestamp implements JsonConverter<DateTime?, dynamic> {
   }
 }
 
+/// サーバー側で更新日時を設定するコンバータ。
+///
+/// 書き込み時は常に [FieldValue.serverTimestamp] を使用し、
+/// 書き込みのたびにサーバータイムスタンプで上書きする。
 class ServerUpdatedTimestamp implements JsonConverter<DateTime?, dynamic> {
   const ServerUpdatedTimestamp();
 

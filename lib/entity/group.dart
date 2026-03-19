@@ -5,6 +5,14 @@ import 'package:shoppinglist/entity/timestamp.dart';
 part 'group.g.dart';
 part 'group.freezed.dart';
 
+/// 買い物リストを共有するグループを表すエンティティ。
+///
+/// 複数の [AppUser] が所属し、[GroupShoppingList] や [GroupShoppingLocation]、
+/// [GroupCategoryAxis] などのリソースをグループ単位で管理する。
+///
+/// ## ユースケース
+/// - ユーザーがグループを作成し、他ユーザーを [GroupInvitation] で招待する
+/// - グループ内で買い物リストを作成・共有する
 @freezed
 abstract class Group with _$Group {
   const Group._();

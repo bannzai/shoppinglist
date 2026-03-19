@@ -5,6 +5,7 @@ import 'package:shoppinglist/entity/timestamp.dart';
 part 'group_invitation.g.dart';
 part 'group_invitation.freezed.dart';
 
+/// [GroupInvitation] のステータス。
 enum GroupInvitationStatus {
   @JsonValue('pending')
   pending,
@@ -14,6 +15,14 @@ enum GroupInvitationStatus {
   expired,
 }
 
+/// [Group] へのユーザー招待を管理するエンティティ。
+///
+/// 招待者（[AppUser]）が招待コードを発行し、被招待者がそのコードを入力して
+/// グループに参加する。招待には有効期限があり、期限切れは [GroupInvitationStatus.expired] となる。
+///
+/// ## ユースケース
+/// - グループのオーナーが招待コードを生成し、他ユーザーに共有する
+/// - 被招待者が招待コードを入力してグループに参加する
 @freezed
 abstract class GroupInvitation with _$GroupInvitation {
   const GroupInvitation._();

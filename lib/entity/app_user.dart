@@ -5,6 +5,14 @@ import 'package:shoppinglist/entity/timestamp.dart';
 part 'app_user.g.dart';
 part 'app_user.freezed.dart';
 
+/// アプリのユーザーを表すエンティティ。
+///
+/// Firebase Authentication のユーザー情報と紐づき、
+/// [Group] への所属や [GroupUserProfile] を通じたグループ内表示名の管理に使用される。
+///
+/// ## ユースケース
+/// - サインアップ時に作成され、Firebase Auth の displayName・photoURL をマッピングする
+/// - [defaultGroupID] でアプリ起動時に表示するグループを決定する
 @freezed
 abstract class AppUser with _$AppUser {
   const AppUser._();

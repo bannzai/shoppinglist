@@ -10,6 +10,15 @@ abstract class GroupCategoryFirestoreKeys {
   static const order = 'order';
 }
 
+/// [GroupCategoryAxis] に属する個別のカテゴリを表すエンティティ。
+///
+/// [GroupCategoryKeyword] を持ち、[GroupShoppingListItem] の自動分類に使用される。
+/// Firestore 上では `/groups/{groupID}/userCategoryAxes/{axisID}/categories/`
+/// サブコレクションに保存される。
+///
+/// ## ユースケース
+/// - ユーザーが「野菜」「肉」などのカテゴリを作成する
+/// - カテゴリにキーワードを設定し、買い物アイテムを自動分類する
 @freezed
 abstract class GroupCategory with _$GroupCategory {
   const GroupCategory._();
