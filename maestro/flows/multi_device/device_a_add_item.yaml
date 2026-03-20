@@ -1,0 +1,28 @@
+appId: com.bannzai.shoppinglist
+---
+# 招待コードダイアログを閉じる
+- tapOn: "閉じる"
+- waitForAnimationToEnd
+
+# グループ設定 → グループ管理 → 設定画面 の順に戻る
+# iOSではpressKey: backがFlutterアプリで機能しないためナビゲーションバーの戻るボタンをタップ
+- tapOn: "Back"
+- waitForAnimationToEnd
+- tapOn: "Back"
+- waitForAnimationToEnd
+
+# 買い物リストタブに切り替え
+- tapOn:
+    text: "買い物リスト"
+    index: 0
+
+# アイテム追加
+- tapOn: "アイテムを追加"
+- inputText: "同期テスト牛乳"
+- pressKey: enter
+# キーボードを閉じる（iOSではhideKeyboardが使えないため画面上部をタップ）
+- tapOn:
+    point: "50%,20%"
+- waitForAnimationToEnd
+- assertVisible: "同期テスト牛乳"
+- takeScreenshot: screenshots/multi_device/device_a_item_added
