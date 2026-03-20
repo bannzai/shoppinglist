@@ -57,11 +57,30 @@ if [ -z "$ANDROID_DEVICE_ID" ]; then
     echo "--- [Android] エミュレータが起動していません。起動します..."
     AVD_NAME=$(emulator -list-avds 2>/dev/null | head -1 || true)
     if [ -z "$AVD_NAME" ]; then
-        echo "ERROR: Android AVD が見つかりません。"
-        echo "以下のコマンドでAVDを作成してください:"
-        echo "  sdkmanager 'system-images;android-35;google_apis;arm64-v8a'"
-        echo "  avdmanager create avd -n test_device -k 'system-images;android-35;google_apis;arm64-v8a' -d pixel_6"
-        exit 1
+        echo "--- [Android] AVD が見つかりません。API 35 の AVD を自動作成します..."
+        SYSTEM_IMAGE="system-images;android-35;google_apis;arm64-v8a"
+        AVD_NAME="test_device_api35"
+
+        # システムイメージがなければダウンロード
+        if ! sdkmanager --list_installed 2>/dev/null | grep -q "$SYSTEM_IMAGE"; then
+            echo "--- [Android] システムイメージをダウンロード中: $SYSTEM_IMAGE"
+            yes | sdkmanager "$SYSTEM_IMAGE"
+        fi
+
+        # AVD作成
+        echo "--- [Android] AVD '$AVD_NAME' を作成中..."
+        echo "no" | avdmanager create avd -n "$AVD_NAME" -k "$SYSTEM_IMAGE" -d pixel_6
+        echo "--- [Android] AVD '$AVD_NAME' を作成しました"
+    fi
+
+    # 既存AVDがAPI 36の場合に警告
+    AVD_INI="$HOME/.android/avd/${AVD_NAME}.avd/config.ini"
+    if [ -f "$AVD_INI" ] && grep -q "android-36" "$AVD_INI" 2>/dev/null; then
+        echo ""
+        echo "WARNING: AVD '$AVD_NAME' は API 36 です。"
+        echo "  API 36 では Maestro inputText の既知バグ (GitHub #2718) があり、テストが失敗する可能性があります。"
+        echo "  API 35 以下の AVD を推奨します。"
+        echo ""
     fi
     echo "--- [Android] AVD: $AVD_NAME を起動中..."
     emulator -avd "$AVD_NAME" -no-snapshot-load &
@@ -94,8 +113,8 @@ echo "--- [Flutter] iOS Simulator用ビルド中..."
 flutter build ios --simulator
 
 echo ""
-echo "--- [Flutter] Android APK ビルド中..."
-flutter build apk
+echo "--- [Flutter] Android APK ビルド中（debugビルド）..."
+flutter build apk --debug
 
 # ===== アプリインストール =====
 echo ""
@@ -111,7 +130,7 @@ fi
 
 echo ""
 echo "--- [Android] アプリをインストール中..."
-ANDROID_APK_PATH="build/app/outputs/flutter-apk/app-release.apk"
+ANDROID_APK_PATH="build/app/outputs/flutter-apk/app-debug.apk"
 if [ -f "$ANDROID_APK_PATH" ]; then
     adb -s "$ANDROID_DEVICE_ID" install -r "$ANDROID_APK_PATH"
     echo "--- [Android] インストール完了"
