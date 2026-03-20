@@ -1,9 +1,9 @@
 ---
 name: multi-device-group-invite-test
 description: |
-  iOS SimulatorとAndroid Emulatorの2台で同時にMaestroテストを実行し、
+  iOS SimulatorとAndroid Emulatorの2台でMaestroテストを実行し、
   グループ招待→参加→データ同期をE2Eで検証するスキル。
-  mobile-mcpで招待コードの読み取り・入力を行い、デバイス間のデータ受け渡しを実現する。
+  mobile-mcpで招待コードの読み取り・アプリ再起動・同期確認を行う。
   使用例: "/multi-device-group-invite-test"
 allowed-tools:
   - mcp__mobile__mobile_list_available_devices
@@ -24,11 +24,13 @@ allowed-tools:
 # iOS・Android 同時 Maestro テスト（グループ招待→参加→同期）
 
 2台のデバイス（iOS Simulator + Android Emulator）でグループ招待・参加・データ同期をE2Eで検証する。
-Maestroで定型操作を実行し、mobile-mcpでデバイス間の招待コード受け渡しを行う。
+iOS/Android両方でMaestroを使い、mobile-mcpはデバイス間の招待コード受け渡しとアプリ再起動・同期確認に使用する。
 
 ## 前提条件
 
 - iOS Simulator と Android Emulator が利用可能であること
+- **Android APKはdebugビルドを使用する**（`匿名サインイン`ボタンが`kDebugMode`で囲まれているため）
+- **Android EmulatorはAPI 35以下を推奨**（API 36はMaestro `inputText`の既知バグあり: [#2718](https://github.com/mobile-dev-inc/Maestro/issues/2718)）
 - Flutter SDK がインストール済みであること
 - Maestro CLI がインストール済みであること
 - Firebase Emulator または本番環境に接続可能であること
@@ -45,7 +47,7 @@ bash .claude/skills/multi-device-group-invite-test/scripts/setup_devices.sh
 
 スクリプトが出力するデバイスID（iOS_DEVICE_ID, ANDROID_DEVICE_ID）を後続ステップで使用する。
 
-### Step 2: デバイスA（iOS）でサインイン＋グループ作成＋招待コード生成
+### Step 2: デバイスA（iOS/Maestro）でサインイン＋グループ作成＋招待コード生成
 
 Maestroフローを `--device` 指定で実行する。
 
@@ -60,30 +62,7 @@ maestro test --device <iOS_DEVICE_ID> maestro/flows/multi_device/device_a_setup_
 
 読み取ったコードをメモリ上に保持し、Step 4で使用する。
 
-### Step 3: デバイスB（Android）でサインイン
-
-Maestroフローを実行する。
-
-```bash
-maestro test --device <ANDROID_DEVICE_ID> maestro/flows/multi_device/device_b_sign_in.yaml
-```
-
-### Step 4: デバイスBで招待コード入力＋グループ参加
-
-mobile-mcpでAndroid Emulatorを操作する。以下の手順を順番に実行する。
-
-1. `list_elements_on_screen` で画面要素を確認
-2. 設定タブ（「設定」テキスト）をタップ
-3. 「招待コードでグループに参加」をタップ
-4. 「招待コードで参加」画面が表示されることを確認
-5. テキスト入力欄をタップし、Step 2で取得した招待コードを `type_keys` で入力
-6. 「参加する」ボタンをタップ
-7. ホーム画面（「アイテムを追加」が表示される画面）に遷移することを確認
-8. `take_screenshot` で確認用スクリーンショットを撮影
-
-**注意**: 参加処理はFirestoreへの書き込みを含むため、「参加する」タップ後に数秒待機してから画面遷移を確認する。
-
-### Step 5: デバイスAでアイテム追加
+### Step 3: デバイスA（iOS/Maestro）でグループ切り替え＋アイテム追加
 
 Maestroフローを実行する。
 
@@ -91,15 +70,43 @@ Maestroフローを実行する。
 maestro test --device <iOS_DEVICE_ID> maestro/flows/multi_device/device_a_add_item.yaml
 ```
 
-### Step 6: デバイスBで同期確認
+このフローは以下を実行する:
+- 招待コードダイアログを閉じ、設定画面から買い物リストタブに戻る
+- GroupSwitcherで「TestSyncGroup」に切り替え
+- shoppingListの自動作成を待機（`AppEntityPrepareResolver` が `defaultGroupID` 変更時に自動作成）
+- 「milk_sync_test」アイテムを追加
 
-Firestoreリアルタイム同期の遅延（1-3秒）を考慮し、5秒待機する。
-その後、mobile-mcpの `take_screenshot` でAndroid Emulatorの画面を撮影し、「同期テスト牛乳」が表示されていることを確認する。
+### Step 4: デバイスB（Android/Maestro）でサインイン＋招待コード入力＋グループ参加
+
+まず匿名サインインを実行する。
+
+```bash
+maestro test --device <ANDROID_DEVICE_ID> maestro/flows/multi_device/device_b_sign_in.yaml
+```
+
+次に、Step 2で取得した招待コードを環境変数で渡してグループ参加フローを実行する。
+
+```bash
+maestro test --device <ANDROID_DEVICE_ID> -e INVITATION_CODE=<招待コード> maestro/flows/multi_device/device_b_join_group.yaml
+```
+
+### Step 5: デバイスBでアプリ再起動＋同期確認
+
+グループ参加後、`HomePage` の `currentGroupID`（`useState` で保持）が旧グループのままのため、
+アプリを再起動して `defaultGroupID`（参加時に更新済み）を反映させる。
+
+Android debugビルドはDart VM + Impeller初期化が重く、通常の再起動では起動タイムアウト（10秒）で
+強制終了されることがある。以下の手順でクリーンに再起動する:
+
+1. `adb shell am force-stop com.bannzai.shoppinglist` で完全停止
+2. `adb shell pm clear --cache-only com.bannzai.shoppinglist` でキャッシュクリア（アプリデータは保持）
+3. mobile-mcpの `launch_app` でアプリを再起動
+4. `extendedWaitUntil` 相当で起動完了を待機（最大30秒）
+5. `take_screenshot` で画面を撮影し、「milk_sync_test」が表示されていることを確認
 
 表示されていない場合:
-1. さらに5秒待機してリトライ
+1. さらに5秒待機してリトライ（最大30秒）
 2. `list_elements_on_screen` で画面要素を詳細に確認
-3. アプリを再起動して確認
 
 ## 検証チェックリスト
 
@@ -107,22 +114,25 @@ Firestoreリアルタイム同期の遅延（1-3秒）を考慮し、5秒待機�
 
 1. [ ] `setup_devices.sh` でiOS SimulatorとAndroid Emulatorが起動する
 2. [ ] 両デバイスにアプリがインストールされる
-3. [ ] デバイスA: 匿名サインインが成功する
-4. [ ] デバイスA: グループ「テスト共有グループ」が作成される
+3. [ ] デバイスA (iOS/Maestro): 匿名サインインが成功する
+4. [ ] デバイスA: グループ「TestSyncGroup」が作成される
 5. [ ] デバイスA: 招待コードダイアログに8桁コードが表示される
 6. [ ] mobile-mcpで招待コードが正しく読み取れる
-7. [ ] デバイスB: 匿名サインインが成功する
-8. [ ] デバイスB: 招待コード入力画面に遷移できる
-9. [ ] デバイスB: コード入力後「参加する」でグループ参加成功
-10. [ ] デバイスA: 「同期テスト牛乳」アイテムが追加される
-11. [ ] デバイスB: 「同期テスト牛乳」がリストに表示される（Firestore同期確認）
+7. [ ] デバイスA: GroupSwitcherで「TestSyncGroup」切り替え成功
+8. [ ] デバイスA: shoppingList自動作成 →「アイテムを追加」表示
+9. [ ] デバイスA:「milk_sync_test」アイテムが追加される
+10. [ ] デバイスB (Android/Maestro): 匿名サインインが成功する
+11. [ ] デバイスB (Maestro): 招待コード入力→グループ参加成功
+12. [ ] デバイスB (mobile-mcp): アプリ再起動後、TestSyncGroupのリスト表示
+13. [ ] デバイスB:「milk_sync_test」が同期表示される
 
 ## 注意事項
 
-- `maestro/config.yaml` でテスト出力先が `maestro/test-results/` に設定されている。Maestroのテスト成果物（スクリーンショット、ログ、AIレポート）はそこに出力される
-- **MaestroとMobile-MCPの競合回避**: Maestroフローが完全に終了してからmobile-mcpで操作する。同時操作はしない。
-- **Android Emulator未作成時**: `setup_devices.sh` でAVDが見つからない場合はエラーメッセージが表示される。`sdkmanager` と `avdmanager` でAVDを作成してから再実行する。
-- **Maestroの `--device` オプション**: iOS SimulatorにはUDID、Android EmulatorにはEmulator名（例: `emulator-5554`）を指定する。
+- `maestro/config.yaml` でテスト出力先が `maestro/test-results/` に設定されている
+- **MaestroとMobile-MCPの競合回避**: Maestroフローが完全に終了してからmobile-mcpで操作する。同時操作はしない
+- **Android Emulator未作成時**: `setup_devices.sh` でAVDが見つからない場合はエラーメッセージが表示される。`sdkmanager` と `avdmanager` でAVDを作成してから再実行する
+- **Maestroの `--device` オプション**: iOS SimulatorにはUDID、Android EmulatorにはEmulator名（例: `emulator-5554`）を指定する
+- **テストデータは英数字のみ**: AndroidのMaestro `inputText` が日本語未対応のため、グループ名・アイテム名は英数字を使用する
 
 ## トラブルシューティング
 
@@ -138,3 +148,12 @@ xcrun simctl list devices booted  # iOS接続確認
 
 ### 同期が遅い
 Firebase Emulator使用時は同期が即座に行われるが、本番環境では1-3秒の遅延がある。最大30秒まで待機してリトライする。
+
+### Androidでアプリが白画面のまま
+`anonymous_sign_in.yaml` は `extendedWaitUntil` でサインイン画面の表示を最大15秒待機する。それでも表示されない場合はアプリの再インストールを試す。
+
+### Android API 36での問題
+API 36（Android 16）では以下の既知の問題がある:
+- **Maestro `inputText` が動作しない**: 1キーストロークに10-20秒かかるバグ（[GitHub #2718](https://github.com/mobile-dev-inc/Maestro/issues/2718)）
+- **debugビルドの起動タイムアウト**: ActivityManagerの`PROC_START_TIMEOUT = 10秒`がハードコードされており、Flutter debugビルドのDart VM + Impeller初期化がこれを超過する
+- **解決策**: API 35以下のエミュレータを使用する。`setup_devices.sh` がAVD未存在時にAPI 35のAVDを自動作成する
