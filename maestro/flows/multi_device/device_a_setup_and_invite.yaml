@@ -14,7 +14,7 @@ appId: com.bannzai.shoppinglist
 # グループ作成
 - tapOn: "グループ作成"
 - tapOn: "グループ名を入力"
-- inputText: "テスト共有グループ"
+- inputText: "TestSyncGroup"
 - tapOn:
     point: "50%,6%"
 - tapOn: "作成する"
@@ -24,11 +24,11 @@ appId: com.bannzai.shoppinglist
 # Maestroのテキストマッチングが効かないため、座標をスクロールで確認してタップ
 - scrollUntilVisible:
     element:
-      text: ".*テスト共有.*"
+      text: ".*TestSync.*"
     direction: DOWN
     timeout: 10000
 - tapOn:
-    text: ".*テスト共有.*"
+    text: ".*TestSync.*"
     index: 0
 - assertVisible: "グループ設定"
 

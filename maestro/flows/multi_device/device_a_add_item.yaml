@@ -1,28 +1,46 @@
 appId: com.bannzai.shoppinglist
 ---
-# 招待コードダイアログを閉じる
-- tapOn: "閉じる"
-- waitForAnimationToEnd
+# Maestroテスト間でアプリがバックグラウンドに移動するため、状態を維持したまま復帰
+- launchApp:
+    clearState: false
 
-# グループ設定 → グループ管理 → 設定画面 の順に戻る
-# iOSではpressKey: backがFlutterアプリで機能しないためナビゲーションバーの戻るボタンをタップ
-- tapOn: "Back"
-- waitForAnimationToEnd
-- tapOn: "Back"
-- waitForAnimationToEnd
+# 招待コードダイアログが表示されている場合は閉じて買い物リスト画面に戻る
+- runFlow:
+    when:
+      visible: "閉じる"
+    commands:
+      - tapOn: "閉じる"
+      - waitForAnimationToEnd
+      # グループ設定 → グループ管理 → 設定画面 の順に戻る
+      - tapOn: "Back"
+      - waitForAnimationToEnd
+      - tapOn: "Back"
+      - waitForAnimationToEnd
+      # 買い物リストタブに切り替え（NavigationBarの左側タブを座標でタップ）
+      - tapOn:
+          point: "25%,96%"
+      - waitForAnimationToEnd
 
-# 買い物リストタブに切り替え
-- tapOn:
-    text: "買い物リスト"
-    index: 0
+# GroupSwitcherでTestSyncGroupに切り替え（まだ選択されていない場合）
+- runFlow:
+    when:
+      notVisible: "買い物リストが空です"
+    commands:
+      - tapOn: "TestSyncGroup"
+      - waitForAnimationToEnd
+
+# shoppingListの自動作成を待機（AppEntityPrepareResolverがdefaultGroupIDのグループにリスト自動作成）
+- extendedWaitUntil:
+    visible: "アイテムを追加"
+    timeout: 15000
 
 # アイテム追加
 - tapOn: "アイテムを追加"
-- inputText: "同期テスト牛乳"
+- inputText: "milk_sync_test"
 - pressKey: enter
 # キーボードを閉じる（iOSではhideKeyboardが使えないため画面上部をタップ）
 - tapOn:
     point: "50%,20%"
 - waitForAnimationToEnd
-- assertVisible: "同期テスト牛乳"
+- assertVisible: "milk_sync_test"
 - takeScreenshot: screenshots/multi_device/device_a_item_added
