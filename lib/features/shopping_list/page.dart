@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
-import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list/components/app_bar.dart';
 
@@ -38,27 +37,6 @@ class ShoppingListPage extends HookConsumerWidget {
     final appUser = appUserAsync.asData?.value;
     useValueListenable(currentShoppingListID);
 
-    // 切り替え先のグループに買い物リストが0件の場合、デフォルトリストを自動作成
-    useEffect(() {
-      void f() async {
-        if (appUser != null &&
-            shoppingLists is AsyncData<List<GroupShoppingList>> &&
-            shoppingLists.value.isEmpty == true) {
-          final shoppingListAdd =
-              ref.read(shoppingListAddProvider(groupID: groupID));
-          await shoppingListAdd(
-            createUserID: appUser.id,
-            groupID: groupID,
-            shoppingLocationID: null,
-            duplicatedFromGroupShoppingListID: null,
-          );
-        }
-      }
-
-      f();
-      return null;
-    }, [shoppingLists]);
-
     return Retry(
       retry: () => ref.invalidate(shoppingListsProvider(groupID: groupID)),
       child: Column(
@@ -75,7 +53,65 @@ class ShoppingListPage extends HookConsumerWidget {
             child: shoppingLists.when(
               data: (shoppingLists) {
                 if (shoppingLists.isEmpty) {
-                  return const Loading();
+                  final colorScheme = Theme.of(context).colorScheme;
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.playlist_add,
+                            size: 80,
+                            color: colorScheme.onSurfaceVariant
+                                .withValues(alpha: 0.4),
+                          ),
+                          const SizedBox(height: 24),
+                          Text(
+                            '買い物リストがありません',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall
+                                ?.copyWith(
+                                  color: colorScheme.onSurface,
+                                ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '新しい買い物リストを作成しましょう',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 32),
+                          FilledButton.icon(
+                            onPressed: () {
+                              if (appUser == null) return;
+                              analytics.logEvent(
+                                  name: 'tap_create_first_shopping_list',
+                                  parameters: {
+                                    'groupID': groupID,
+                                  });
+                              final shoppingListAdd = ref.read(
+                                  shoppingListAddProvider(groupID: groupID));
+                              shoppingListAdd(
+                                createUserID: appUser.id,
+                                groupID: groupID,
+                                shoppingLocationID: null,
+                                duplicatedFromGroupShoppingListID: null,
+                              );
+                            },
+                            icon: const Icon(Icons.add),
+                            label: const Text('買い物リストを作成'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 }
                 final currentShoppingListIDValue = currentShoppingListID.value;
                 final resolvedShoppingListID =
