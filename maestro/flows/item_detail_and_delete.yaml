@@ -10,8 +10,7 @@ appId: com.bannzai.shoppinglist
 - pressKey: enter
 # hideKeyboardはスクリーン上のリンクを誤タップする可能性があるため、
 # AppBarタイトルの安全な領域をタップしてキーボードを閉じる
-- tapOn:
-    point: "50%,6%"
+- hideKeyboard
 - waitForAnimationToEnd
 
 # 詳細ボトムシートを開く（info アイコンに tooltip: 'アイテム詳細' を設定済み）
