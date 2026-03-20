@@ -119,6 +119,7 @@ Firestoreリアルタイム同期の遅延（1-3秒）を考慮し、5秒待機�
 
 ## 注意事項
 
+- `maestro/config.yaml` でテスト出力先が `maestro/test-results/` に設定されている。Maestroのテスト成果物（スクリーンショット、ログ、AIレポート）はそこに出力される
 - **MaestroとMobile-MCPの競合回避**: Maestroフローが完全に終了してからmobile-mcpで操作する。同時操作はしない。
 - **Android Emulator未作成時**: `setup_devices.sh` でAVDが見つからない場合はエラーメッセージが表示される。`sdkmanager` と `avdmanager` でAVDを作成してから再実行する。
 - **Maestroの `--device` オプション**: iOS SimulatorにはUDID、Android EmulatorにはEmulator名（例: `emulator-5554`）を指定する。
