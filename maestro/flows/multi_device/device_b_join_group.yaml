@@ -1,0 +1,26 @@
+appId: com.bannzai.shoppinglist
+env:
+  INVITATION_CODE: ""
+---
+# 設定タブに切り替え
+- tapOn:
+    text: "設定.*"
+    index: 0
+
+# 招待コードでグループに参加
+- tapOn: "招待コードでグループに参加"
+- extendedWaitUntil:
+    visible: "招待コードを入力してください"
+    timeout: 10000
+
+# TextFieldを座標タップでフォーカス（ヒントテキストのtapOnはAndroidで動作しない）
+- tapOn:
+    point: "50%,57%"
+- inputText: "${INVITATION_CODE}"
+
+# 参加する
+- tapOn: "参加する"
+- extendedWaitUntil:
+    visible: "アイテムを追加"
+    timeout: 30000
+- takeScreenshot: screenshots/multi_device/device_b_joined_group

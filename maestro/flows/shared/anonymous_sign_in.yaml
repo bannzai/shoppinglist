@@ -10,18 +10,29 @@ appId: com.bannzai.shoppinglist
 # サインイン処理の完了を待機（Retryか成功画面が出るまで待つ）
 - waitForAnimationToEnd
 # permission-deniedエラーでRetryボタンが表示される場合がある
+# when:visibleで進入後にRetryが消えるレース条件を回避するため、進入後に再確認する
 - runFlow:
     when:
       visible: "Retry"
     commands:
-      - tapOn: "Retry"
       - waitForAnimationToEnd
+      - runFlow:
+          when:
+            visible: "Retry"
+          commands:
+            - tapOn: "Retry"
+            - waitForAnimationToEnd
 - runFlow:
     when:
       visible: "Retry"
     commands:
-      - tapOn: "Retry"
       - waitForAnimationToEnd
+      - runFlow:
+          when:
+            visible: "Retry"
+          commands:
+            - tapOn: "Retry"
+            - waitForAnimationToEnd
 - extendedWaitUntil:
     visible: "アイテムを追加"
     timeout: 30000

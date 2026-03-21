@@ -40,7 +40,9 @@ appId: com.bannzai.shoppinglist
 - pressKey: enter
 # キーボードを閉じる（iOSではhideKeyboardが使えないため画面上部をタップ）
 - tapOn:
-    point: "50%,20%"
+    point: "50%,10%"
 - waitForAnimationToEnd
-- assertVisible: "milk_sync_test"
+- extendedWaitUntil:
+    visible: "milk_sync_test"
+    timeout: 10000
 - takeScreenshot: screenshots/multi_device/device_a_item_added
