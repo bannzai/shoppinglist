@@ -9,10 +9,7 @@ appId: com.bannzai.shoppinglist
 
 # グループ管理画面に遷移
 - tapOn: "グループ管理"
-- waitForAnimationToEnd
-- extendedWaitUntil:
-    visible: "グループ作成"
-    timeout: 10000
+- assertVisible: "グループ管理"
 
 # グループ作成
 - tapOn: "グループ作成"

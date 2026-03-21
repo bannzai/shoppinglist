@@ -69,7 +69,7 @@ if [ -z "$ANDROID_DEVICE_ID" ]; then
 
         # AVD作成
         echo "--- [Android] AVD '$AVD_NAME' を作成中..."
-        echo "no" | avdmanager create avd -n "$AVD_NAME" -k "$SYSTEM_IMAGE" -d pixel_5
+        echo "no" | avdmanager create avd -n "$AVD_NAME" -k "$SYSTEM_IMAGE" -d pixel_6
         echo "--- [Android] AVD '$AVD_NAME' を作成しました"
     fi
 
