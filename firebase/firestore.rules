@@ -6,17 +6,23 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == id;
     }
 
+    // デバッグユーザーID（{uid}_debug_1 等）を実ユーザーが操作できるかチェック
+    function isDebugUserOf(userDocID) {
+      return request.auth != null
+        && userDocID.matches(request.auth.uid + '_debug_[0-9]+');
+    }
+
     function isMember(memberUserIDs) {
       return request.auth != null && request.auth.uid in memberUserIDs;
     }
 
     match /users/{userID} {
-      allow read: if isUserAuth(userID);
-      allow create, update: if isUserAuth(userID);
+      allow read: if isUserAuth(userID) || isDebugUserOf(userID);
+      allow create, update: if isUserAuth(userID) || isDebugUserOf(userID);
 
       match /privates/{privateID} {
         allow read: if false;
-        allow create, update: if isUserAuth(userID);
+        allow create, update: if isUserAuth(userID) || isDebugUserOf(userID);
       }
     }
 
@@ -40,9 +46,12 @@ service cloud.firestore {
         // getAfter() はバッチ/トランザクション適用後の状態を参照する
         // - グループ新規作成時: 同一バッチ内で作成されるグループドキュメントを参照できる
         // - 既存グループへの参加時: 既に存在するグループドキュメントをそのまま参照する
-        allow create: if request.resource.data.userID == request.auth.uid
+        allow create: if (request.resource.data.userID == request.auth.uid
+                         || isDebugUserOf(request.resource.data.userID))
                       && isMember(getAfter(/databases/$(database)/documents/groups/$(groupID)).data.memberUserIDs);
-        allow update: if isGroupMember() && resource.data.userID == request.auth.uid;
+        allow update: if isGroupMember()
+                      && (resource.data.userID == request.auth.uid
+                          || isDebugUserOf(resource.data.userID));
       }
 
       match /shoppingLocations/{locationID} {
