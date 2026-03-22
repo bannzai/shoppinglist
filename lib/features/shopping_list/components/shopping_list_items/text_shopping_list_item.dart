@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -46,6 +45,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       return null;
     }, []);
 
+    final currentUserID = ref.watch(currentUserIDProvider)!;
     final isChecked =
         textShoppingListItem.status == GroupShoppingListItemStatus.checked;
     final colorScheme = Theme.of(context).colorScheme;
@@ -83,19 +83,13 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                           'itemID': textShoppingListItem.id
                         });
                     ref
-                        .read(groupDatabaseProvider(groupID: groupID))
-                        .shoppingListItemsReference(
-                          shoppingListID: textShoppingListItem.shoppingListID,
-                        )
-                        .doc(textShoppingListItem.id)
-                        .set(
-                          textShoppingListItem.copyWith(
-                            status: textShoppingListItem.status ==
-                                    GroupShoppingListItemStatus.checked
-                                ? GroupShoppingListItemStatus.unchecked
-                                : GroupShoppingListItemStatus.checked,
-                          ),
-                          SetOptions(merge: true),
+                        .read(toggleShoppingListItemCheckProvider(
+                            groupID: groupID))
+                        .call(
+                          shoppingListID:
+                              textShoppingListItem.shoppingListID,
+                          item: textShoppingListItem,
+                          userID: currentUserID,
                         );
                   },
                 ),
@@ -232,6 +226,7 @@ class TextShoppingListItemTextField extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentUserID = ref.watch(currentUserIDProvider)!;
     final addShoppingListItem =
         ref.watch(addShoppingListItemProvider(groupID: groupID));
 
@@ -300,19 +295,16 @@ class TextShoppingListItemTextField extends ConsumerWidget {
             }
           } else {
             ref
-                .read(groupDatabaseProvider(groupID: groupID))
-                .shoppingListItemsReference(
+                .read(updateShoppingListItemProvider(groupID: groupID))
+                .call(
                   shoppingListID: textShoppingListItem.shoppingListID,
-                )
-                .doc(textShoppingListItem.id)
-                .set(
-                  textShoppingListItem.copyWith(message: value),
-                  SetOptions(merge: true),
+                  item: textShoppingListItem.copyWith(message: value),
+                  editedByUserID: currentUserID,
                 );
 
             addShoppingListItem.call(
               shoppingListID: textShoppingListItem.shoppingListID,
-              userID: ref.read(currentUserIDProvider)!,
+              userID: currentUserID,
               message: '',
               order: shoppingListItems.nextOrder,
               description: null,
