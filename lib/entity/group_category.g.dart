@@ -14,6 +14,10 @@ _GroupCategory _$GroupCategoryFromJson(Map<String, dynamic> json) =>
       groupCategoryAxisID: json['groupCategoryAxisID'] as String,
       name: json['name'] as String,
       order: (json['order'] as num).toInt(),
+      locationOrders: (json['locationOrders'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(k, (e as num).toInt()),
+          ) ??
+          const {},
       keywords: (json['keywords'] as List<dynamic>?)
               ?.map((e) =>
                   GroupCategoryKeyword.fromJson(e as Map<String, dynamic>))
@@ -39,6 +43,7 @@ Map<String, dynamic> _$GroupCategoryToJson(_GroupCategory instance) =>
       'groupCategoryAxisID': instance.groupCategoryAxisID,
       'name': instance.name,
       'order': instance.order,
+      'locationOrders': instance.locationOrders,
       'keywords': instance.keywords.map((e) => e.toJson()).toList(),
       'color': instance.color,
       'iconName': instance.iconName,
