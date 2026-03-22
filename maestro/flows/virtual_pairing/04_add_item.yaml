@@ -4,21 +4,8 @@ appId: com.bannzai.shoppinglist
 - launchApp:
     clearState: false
 
-# 設定タブに切り替え
-- tapOn:
-    text: "設定.*"
-    index: 0
-- waitForAnimationToEnd
-
-# 開発者オプションは設定画面最下部にあるので十分にスクロール
-- swipe:
-    start: "50%,80%"
-    end: "50%,20%"
-- swipe:
-    start: "50%,80%"
-    end: "50%,20%"
-- tapOn: "開発者オプション"
-- waitForAnimationToEnd
+# 設定タブ → 開発者オプション画面へ遷移
+- runFlow: ../shared/open_developer_options.yaml
 
 # デフォルトのアイテムメッセージ "debug_item_test" をそのまま使用
 
