@@ -23,8 +23,12 @@ allowed-tools:
 
 # iOS Simulator + 仮想ペアリングによるグループ同期 E2E テスト
 
-**MaestroはiOS Simulatorで実行する。** Android Emulatorは使用しない（後述のリファレンス参照）。
+**MaestroはiOS Simulatorで実行する。** Android Emulatorは使用しない。
 仮想ペアリング機能（開発者オプション）を使い、1台のiOS Simulatorで「別ユーザーがアイテムを追加した」シナリオを検証する。
+
+## 方式
+
+設定画面に `kDebugMode` 限定の「開発者オプション」タイルを配置。Maestroから直接タップして開発者オプション画面に遷移し、各操作を実行する。各操作は同期的に実行され、結果（「完了」or「エラー:」）が画面上に表示される。
 
 ## 前提条件
 
@@ -38,59 +42,78 @@ allowed-tools:
 ### Step 1: デバイス準備・アプリビルド
 
 ```bash
-# iOS Simulatorを起動
-xcrun simctl boot "iPhone 16 Plus" || true
-
-# debugビルド・インストール
-flutter build ios --simulator --debug
-xcrun simctl install booted build/ios/iphonesimulator/Runner.app
+bash .claude/skills/multi-device-group-invite-test/scripts/setup_devices.sh
 ```
 
-### Step 2: Maestroで通常フロー実行（サインイン→グループ作成→アイテム追加）
+### Step 2: Maestro E2Eテスト実行
+
+6つの独立したMaestroフローを順次実行する。各フェーズは `launchApp: clearState: false` でアプリを再起動し、設定タブ→開発者オプションへ遷移して操作を実行する。
 
 ```bash
-maestro test maestro/flows/multi_device/device_a_setup_and_invite.yaml
+bash maestro/scripts/run_group_sync_test.sh
 ```
 
-### Step 3: 仮想ペアリング操作（シェイク→開発者オプション）
+### テストフェーズ概要
 
-iOS Simulatorでシェイクをトリガーして開発者オプションモーダルを開く:
+| Phase | 内容 | 検証ポイント |
+|---|---|---|
+| 1 | サインイン + グループ作成 | グループ「VirtualPairTestGroup」が作成される |
+| 2 | 設定→開発者オプション→デバッグユーザー作成 | Firestoreにデバッグユーザーが作成される |
+| 3 | 設定→開発者オプション→グループにデバッグユーザー追加 | memberUserIDsにデバッグユーザーが追加される |
+| 4 | 設定→開発者オプション→デバッグユーザーとしてアイテム追加 | アイテム「debug_item_test」が追加される |
+| 5 | 買い物リストタブでリアルタイム同期確認 | 画面にアイテムが反映される（核心テスト） |
+| 6 | 設定→開発者オプション→クリーンアップ | デバッグデータが削除される |
 
-```bash
-# Maestro runScript または直接実行
-xcrun simctl io booted shake
+### 各フローの共通パターン（設定画面→開発者オプション）
+
+```yaml
+# 設定タブに切り替え
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+# 設定画面下部までスクロールして「開発者オプション」をタップ
+- swipe:
+    start: "50%,80%"
+    end: "50%,20%"
+- swipe:
+    start: "50%,80%"
+    end: "50%,20%"
+- tapOn: "開発者オプション"
+- waitForAnimationToEnd
+# 操作を実行し「完了」テキストを待つ
+- extendedWaitUntil:
+    visible: ".*完了"
+    timeout: 15000
 ```
-
-モーダルが表示されたら:
-1. 「デバッグユーザー作成」をタップ
-2. 「グループにデバッグユーザーを追加」をタップ
-3. アイテムメッセージを入力（例: `milk_sync_test`）
-4. 「デバッグユーザーとしてアイテム追加」をタップ（遅延3秒）
-5. モーダルが閉じ、3秒後にアイテムがリアルタイム同期で画面に表示される
-
-### Step 4: 同期確認
-
-- `take_screenshot` で画面を撮影し、デバッグユーザーが追加したアイテムが表示されていることを確認
-
-### Step 5: クリーンアップ
-
-再度シェイクして開発者オプションを開き、「デバッグデータクリーンアップ」をタップ。
 
 ## 検証チェックリスト
 
 1. [ ] iOS Simulator でアプリがdebugビルドで起動する
-2. [ ] シェイクで開発者オプションモーダルが表示される
+2. [ ] 設定画面に「開発者オプション」タイルが表示される
 3. [ ] デバッグユーザー作成が成功する（Firestoreにドキュメント作成）
 4. [ ] グループへのデバッグユーザー追加が成功する（memberUserIDs更新）
-5. [ ] デバッグユーザーとしてのアイテム追加が遅延後に実行される
-6. [ ] 追加されたアイテムがリアルタイム同期で画面に反映される
+5. [ ] デバッグユーザーとしてのアイテム追加が成功する
+6. [ ] 追加されたアイテム「debug_item_test」がリアルタイム同期で画面に反映される
 7. [ ] クリーンアップでデバッグデータが削除される
+
+## トラブルシューティング
+
+| 問題 | 対策 |
+|---|---|
+| Maestroがテキストを検出しない | `Semantics(label:, excludeSemantics: true)` でListTileをラップ |
+| `launchApp: clearState: false` でアプリが再起動される | 期待動作。各操作は同期的に完了し結果を画面に表示するため、再起動後も問題なし |
+| 同期が間に合わない | `extendedWaitUntil` のtimeoutは15秒に設定済み |
+| `pressKey: back` がiOSで効かない | `tapOn: "Back"` でAppBarの戻るボタンをタップ |
+| BottomNavigationBarのラベルが検出不可 | 座標 `point: "25%,93%"` でタップ |
+| Maestroが前回のプロセスと衝突 | `pkill -f "maestro"` で事前にクリア |
 
 ## 注意事項
 
 - 開発者オプション機能は `kDebugMode` のみで有効。リリースビルドでは動作しない
 - デバッグユーザーID形式: `{実UID}_debug_1`
 - Firestoreセキュリティルールの `isDebugUserOf()` で `{uid}_debug_[0-9]+` パターンを許可
+- Firestoreルールにデバッグユーザー用の `allow delete` ルールが必要（`/users/{userID}` と `/userProfiles/{profileID}`）
 
 ## リファレンス: Android E2E テストの既知問題
 
@@ -102,4 +125,3 @@ xcrun simctl io booted shake
 | debugビルド起動タイムアウト | ActivityManagerの `PROC_START_TIMEOUT = 10秒` がハードコード。Flutter debugビルドのDart VM + Impeller初期化がこれを超過しANRが発生 |
 | Maestro `-e` 環境変数展開不具合 | `${VARIABLE}` 形式の展開が不安定 |
 | `hideKeyboard` iOS非対応 | Maestroの `hideKeyboard` コマンドがiOSで動作しない |
-| データ同期問題 | `AppEntityPrepareResolver` が新規ユーザーのために新しい `ShoppingList` を自動作成し、既存グループのデータと競合する |
