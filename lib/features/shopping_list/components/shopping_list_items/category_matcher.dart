@@ -16,10 +16,10 @@ List<GroupCategory> sortCategoriesByLocation({
     return [...categories]..sort((a, b) => a.order.compareTo(b.order));
   }
   return [...categories]..sort((a, b) {
-    final aOrder = a.locationOrders[shoppingLocationID] ?? a.order;
-    final bOrder = b.locationOrders[shoppingLocationID] ?? b.order;
-    return aOrder.compareTo(bOrder);
-  });
+      final aOrder = a.locationOrders[shoppingLocationID] ?? a.order;
+      final bOrder = b.locationOrders[shoppingLocationID] ?? b.order;
+      return aOrder.compareTo(bOrder);
+    });
 }
 
 /// アイテムのmessageとカテゴリのキーワードをマッチングし、

@@ -50,8 +50,7 @@ void main() {
       );
 
       // storeA の順序: vegetables(0) → fish(1) → meat(2)
-      expect(
-          sorted.map((c) => c.id).toList(), ['vegetables', 'fish', 'meat']);
+      expect(sorted.map((c) => c.id).toList(), ['vegetables', 'fish', 'meat']);
     });
 
     test('一部のカテゴリのみ locationOrders がある場合、ない分は order にフォールバック', () {
@@ -59,8 +58,7 @@ void main() {
         _makeCategory(
             id: 'vegetables', order: 0, locationOrders: {'storeA': 2}),
         _makeCategory(id: 'meat', order: 1), // locationOrders なし → order=1
-        _makeCategory(
-            id: 'fish', order: 2, locationOrders: {'storeA': 0}),
+        _makeCategory(id: 'fish', order: 2, locationOrders: {'storeA': 0}),
       ];
 
       final sorted = sortCategoriesByLocation(
@@ -69,18 +67,14 @@ void main() {
       );
 
       // fish(0) → meat(1, フォールバック) → vegetables(2)
-      expect(
-          sorted.map((c) => c.id).toList(), ['fish', 'meat', 'vegetables']);
+      expect(sorted.map((c) => c.id).toList(), ['fish', 'meat', 'vegetables']);
     });
 
     test('存在しない shoppingLocationID の場合、全てデフォルトの order にフォールバック', () {
       final categories = [
-        _makeCategory(
-            id: 'c1', order: 2, locationOrders: {'storeA': 0}),
-        _makeCategory(
-            id: 'c2', order: 0, locationOrders: {'storeA': 2}),
-        _makeCategory(
-            id: 'c3', order: 1, locationOrders: {'storeA': 1}),
+        _makeCategory(id: 'c1', order: 2, locationOrders: {'storeA': 0}),
+        _makeCategory(id: 'c2', order: 0, locationOrders: {'storeA': 2}),
+        _makeCategory(id: 'c3', order: 1, locationOrders: {'storeA': 1}),
       ];
 
       final sorted = sortCategoriesByLocation(
@@ -99,13 +93,9 @@ void main() {
             order: 0,
             locationOrders: {'storeA': 0, 'storeB': 2}),
         _makeCategory(
-            id: 'meat',
-            order: 1,
-            locationOrders: {'storeA': 2, 'storeB': 0}),
+            id: 'meat', order: 1, locationOrders: {'storeA': 2, 'storeB': 0}),
         _makeCategory(
-            id: 'fish',
-            order: 2,
-            locationOrders: {'storeA': 1, 'storeB': 1}),
+            id: 'fish', order: 2, locationOrders: {'storeA': 1, 'storeB': 1}),
       ];
 
       final sortedA = sortCategoriesByLocation(
@@ -118,11 +108,9 @@ void main() {
       );
 
       // storeA: vegetables(0) → fish(1) → meat(2)
-      expect(sortedA.map((c) => c.id).toList(),
-          ['vegetables', 'fish', 'meat']);
+      expect(sortedA.map((c) => c.id).toList(), ['vegetables', 'fish', 'meat']);
       // storeB: meat(0) → fish(1) → vegetables(2)
-      expect(sortedB.map((c) => c.id).toList(),
-          ['meat', 'fish', 'vegetables']);
+      expect(sortedB.map((c) => c.id).toList(), ['meat', 'fish', 'vegetables']);
     });
 
     test('空のカテゴリリストの場合、空リストが返される', () {

@@ -176,9 +176,7 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                   'itemID': textShoppingListItem.id
                 });
                 final description = descriptionController.text.trim();
-                ref
-                    .read(updateShoppingListItemProvider(groupID: groupID))
-                    .call(
+                ref.read(updateShoppingListItemProvider(groupID: groupID)).call(
                       shoppingListID: textShoppingListItem.shoppingListID,
                       item: textShoppingListItem.copyWith(
                         description: description.isEmpty ? null : description,

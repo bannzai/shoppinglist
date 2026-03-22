@@ -393,8 +393,7 @@ class _CategoryReorderableList extends ConsumerWidget {
             final updatedLocationOrders =
                 Map<String, int>.from(entry.value.locationOrders);
             updatedLocationOrders[selectedShoppingLocationID!] = entry.key;
-            return entry.value
-                .copyWith(locationOrders: updatedLocationOrders);
+            return entry.value.copyWith(locationOrders: updatedLocationOrders);
           }).toList();
 
           ref.read(groupCategoryBatchUpdateProvider(groupID: groupID)).call(

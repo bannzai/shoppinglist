@@ -86,8 +86,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                         .read(toggleShoppingListItemCheckProvider(
                             groupID: groupID))
                         .call(
-                          shoppingListID:
-                              textShoppingListItem.shoppingListID,
+                          shoppingListID: textShoppingListItem.shoppingListID,
                           item: textShoppingListItem,
                           userID: currentUserID,
                         );
@@ -294,9 +293,7 @@ class TextShoppingListItemTextField extends ConsumerWidget {
                   .delete();
             }
           } else {
-            ref
-                .read(updateShoppingListItemProvider(groupID: groupID))
-                .call(
+            ref.read(updateShoppingListItemProvider(groupID: groupID)).call(
                   shoppingListID: textShoppingListItem.shoppingListID,
                   item: textShoppingListItem.copyWith(message: value),
                   editedByUserID: currentUserID,
