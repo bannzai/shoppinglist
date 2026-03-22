@@ -1,0 +1,15 @@
+appId: com.bannzai.shoppinglist
+---
+# 設定タブ → 開発者オプション画面への共通ナビゲーション
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+- swipe:
+    start: "50%,80%"
+    end: "50%,20%"
+- swipe:
+    start: "50%,80%"
+    end: "50%,20%"
+- tapOn: "開発者オプション"
+- waitForAnimationToEnd
