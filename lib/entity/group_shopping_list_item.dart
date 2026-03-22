@@ -10,6 +10,10 @@ abstract class GroupShoppingListItemFirestoreKeys {
   static const userID = 'userID';
   static const status = 'status';
   static const order = 'order';
+  static const checkedByUserID = 'checkedByUserID';
+  static const lastCheckedDateTime = 'lastCheckedDateTime';
+  static const lastEditedByUserID = 'lastEditedByUserID';
+  static const lastEditedDateTime = 'lastEditedDateTime';
   static const createdDateTime = 'createdDateTime';
   static const updatedDateTime = 'updatedDateTime';
   static const serverCreatedDateTime = 'serverCreatedDateTime';
@@ -41,6 +45,10 @@ abstract class GroupShoppingListItem with _$GroupShoppingListItem {
     String? description,
     String? color,
     @NullableTimestampConverter() DateTime? reminderDateTime,
+    String? checkedByUserID,
+    @NullableTimestampConverter() DateTime? lastCheckedDateTime,
+    String? lastEditedByUserID,
+    @NullableTimestampConverter() DateTime? lastEditedDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,

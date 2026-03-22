@@ -22,6 +22,12 @@ _GroupShoppingListItem _$GroupShoppingListItemFromJson(
       color: json['color'] as String?,
       reminderDateTime: const NullableTimestampConverter()
           .fromJson(json['reminderDateTime'] as Timestamp?),
+      checkedByUserID: json['checkedByUserID'] as String?,
+      lastCheckedDateTime: const NullableTimestampConverter()
+          .fromJson(json['lastCheckedDateTime'] as Timestamp?),
+      lastEditedByUserID: json['lastEditedByUserID'] as String?,
+      lastEditedDateTime: const NullableTimestampConverter()
+          .fromJson(json['lastEditedDateTime'] as Timestamp?),
       createdDateTime: const ClientCreatedTimestamp()
           .fromJson(json['createdDateTime'] as Timestamp?),
       updatedDateTime: const ClientUpdatedTimestamp()
@@ -46,6 +52,12 @@ Map<String, dynamic> _$GroupShoppingListItemToJson(
       'color': instance.color,
       'reminderDateTime':
           const NullableTimestampConverter().toJson(instance.reminderDateTime),
+      'checkedByUserID': instance.checkedByUserID,
+      'lastCheckedDateTime': const NullableTimestampConverter()
+          .toJson(instance.lastCheckedDateTime),
+      'lastEditedByUserID': instance.lastEditedByUserID,
+      'lastEditedDateTime': const NullableTimestampConverter()
+          .toJson(instance.lastEditedDateTime),
       'createdDateTime':
           const ClientCreatedTimestamp().toJson(instance.createdDateTime),
       'updatedDateTime':
