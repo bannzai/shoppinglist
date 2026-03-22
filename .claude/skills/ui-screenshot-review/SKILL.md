@@ -30,6 +30,7 @@ run_maestro_screenshots.sh
 
 ## 注意事項
 
+- `maestro/config.yaml` でテスト出力先が `maestro/test-results/` に設定されている。Maestroのテスト成果物（スクリーンショット、ログ、AIレポート）はそこに出力される
 - プレビューではFirebaseが未初期化のため、`SettingPage`の一部機能（プロフィール保存など）は動作しない
 - モックデータは `lib/features/previews/mock/mock_data.dart` で定義
 - Maestroフローは `maestro/flows/capture_all_previews.yaml`
