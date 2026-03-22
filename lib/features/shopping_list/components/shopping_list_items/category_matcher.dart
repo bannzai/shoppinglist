@@ -5,6 +5,23 @@ import 'package:shoppinglist/entity/group_category_keyword.dart';
 /// 未分類アイテムのカテゴリIDとして使用する定数
 const uncategorizedCategoryID = '__uncategorized__';
 
+/// カテゴリリストをロケーション別順序でソートして返す。
+/// [shoppingLocationID] が指定されている場合、各カテゴリの [GroupCategory.locationOrders] から
+/// そのロケーションの順序を取得する。エントリがないカテゴリはデフォルトの [GroupCategory.order] にフォールバック。
+List<GroupCategory> sortCategoriesByLocation({
+  required List<GroupCategory> categories,
+  required String? shoppingLocationID,
+}) {
+  if (shoppingLocationID == null) {
+    return [...categories]..sort((a, b) => a.order.compareTo(b.order));
+  }
+  return [...categories]..sort((a, b) {
+      final aOrder = a.locationOrders[shoppingLocationID] ?? a.order;
+      final bOrder = b.locationOrders[shoppingLocationID] ?? b.order;
+      return aOrder.compareTo(bOrder);
+    });
+}
+
 /// アイテムのmessageとカテゴリのキーワードをマッチングし、
 /// カテゴリIDごとにアイテムをグルーピングする。
 /// 複数カテゴリにマッチした場合はorderが小さい（先頭の）カテゴリに分類。

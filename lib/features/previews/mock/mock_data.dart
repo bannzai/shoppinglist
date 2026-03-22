@@ -113,6 +113,8 @@ List<GroupCategory> mockCategories() => [
         groupCategoryAxisID: mockCategoryAxisID,
         name: '食品',
         order: 0,
+        locationOrders: {},
+        keywords: [],
       ),
       const GroupCategory(
         id: mockCategoryID2,
@@ -121,6 +123,8 @@ List<GroupCategory> mockCategories() => [
         groupCategoryAxisID: mockCategoryAxisID,
         name: '日用品',
         order: 1,
+        locationOrders: {},
+        keywords: [],
       ),
     ];
 

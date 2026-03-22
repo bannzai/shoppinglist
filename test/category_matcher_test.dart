@@ -15,6 +15,7 @@ void main() {
           groupCategoryAxisID: 'axis1',
           name: '野菜',
           order: 0,
+          locationOrders: {},
           keywords: [
             const GroupCategoryKeyword(
               keyword: 'にんじん',
@@ -63,6 +64,7 @@ void main() {
           groupCategoryAxisID: 'axis1',
           name: '野菜',
           order: 0,
+          locationOrders: {},
           keywords: [
             const GroupCategoryKeyword(
               keyword: 'にんじん',
@@ -101,6 +103,7 @@ void main() {
           groupCategoryAxisID: 'axis1',
           name: 'Drinks',
           order: 0,
+          locationOrders: {},
           keywords: [
             const GroupCategoryKeyword(
               keyword: 'Milk',
@@ -138,6 +141,7 @@ void main() {
           groupCategoryAxisID: 'axis1',
           name: '野菜',
           order: 0,
+          locationOrders: {},
           keywords: [
             const GroupCategoryKeyword(
               keyword: 'トマト',
@@ -152,6 +156,7 @@ void main() {
           groupCategoryAxisID: 'axis1',
           name: '果物',
           order: 1,
+          locationOrders: {},
           keywords: [
             const GroupCategoryKeyword(
               keyword: 'トマト',
@@ -190,6 +195,7 @@ void main() {
           groupCategoryAxisID: 'axis1',
           name: '野菜',
           order: 0,
+          locationOrders: {},
           keywords: [
             const GroupCategoryKeyword(
               keyword: 'にんじん',
@@ -257,6 +263,7 @@ void main() {
           groupCategoryAxisID: 'axis1',
           name: '野菜',
           order: 0,
+          locationOrders: {},
           keywords: [
             const GroupCategoryKeyword(
               keyword: 'にんじん',

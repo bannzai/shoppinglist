@@ -13,12 +13,14 @@ class ShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final bool sortByCategory;
+  final String? shoppingLocationID;
 
   const ShoppingListItems({
     super.key,
     required this.groupID,
     required this.shoppingListID,
     required this.sortByCategory,
+    required this.shoppingLocationID,
   });
 
   @override
@@ -48,6 +50,7 @@ class ShoppingListItems extends ConsumerWidget {
           shoppingListID: shoppingListID,
           shoppingListItems: shoppingListItems,
           categoryAxisID: axis.id,
+          shoppingLocationID: shoppingLocationID,
         );
       },
       error: (e, st) => Center(child: Text(e.toString())),
@@ -120,12 +123,14 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
   final String categoryAxisID;
+  final String? shoppingLocationID;
 
   const _CategorizedShoppingListItems({
     required this.groupID,
     required this.shoppingListID,
     required this.shoppingListItems,
     required this.categoryAxisID,
+    required this.shoppingLocationID,
   });
 
   @override
@@ -153,6 +158,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
           shoppingListID: shoppingListID,
           categories: categories,
           grouped: grouped,
+          shoppingLocationID: shoppingLocationID,
         );
       },
       error: (e, st) => Center(child: Text(e.toString())),
@@ -172,20 +178,26 @@ class _GroupedListView extends StatelessWidget {
   final String shoppingListID;
   final List<GroupCategory> categories;
   final Map<String, List<GroupShoppingListItem>> grouped;
+  final String? shoppingLocationID;
 
   const _GroupedListView({
     required this.groupID,
     required this.shoppingListID,
     required this.categories,
     required this.grouped,
+    required this.shoppingLocationID,
   });
 
   @override
   Widget build(BuildContext context) {
     final categoryMap = {for (final c in categories) c.id: c};
 
-    // カテゴリ順に表示（orderが小さいものから）
-    final sortedCategoryIDs = categories.map((c) => c.id).toList();
+    // ロケーション別順序でカテゴリをソート（orderが小さいものから）
+    final sortedCategories = sortCategoriesByLocation(
+      categories: categories,
+      shoppingLocationID: shoppingLocationID,
+    );
+    final sortedCategoryIDs = sortedCategories.map((c) => c.id).toList();
 
     final List<Widget> children = [];
 

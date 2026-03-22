@@ -105,128 +105,126 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
 
     return ListView(
       controller: scrollController,
-            children: [
-              Text(
-                '開発者オプション',
-                style: Theme.of(context).textTheme.headlineSmall,
+      children: [
+        Text(
+          '開発者オプション',
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
+        const SizedBox(height: 8),
+        Text('UID: ${currentUID ?? "不明"}',
+            style: Theme.of(context).textTheme.bodySmall),
+        Text('defaultGroupID: ${defaultGroupID ?? "なし"}',
+            style: Theme.of(context).textTheme.bodySmall),
+        Text('デバッグユーザーID: ${debugUID ?? "不明"}',
+            style: Theme.of(context).textTheme.bodySmall),
+        if (resultMessage.value.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Text(
+              resultMessage.value,
+              style: TextStyle(
+                color: resultMessage.value.contains('エラー')
+                    ? Colors.red
+                    : Colors.green,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 8),
-              Text('UID: ${currentUID ?? "不明"}',
-                  style: Theme.of(context).textTheme.bodySmall),
-              Text('defaultGroupID: ${defaultGroupID ?? "なし"}',
-                  style: Theme.of(context).textTheme.bodySmall),
-              Text('デバッグユーザーID: ${debugUID ?? "不明"}',
-                  style: Theme.of(context).textTheme.bodySmall),
-              if (resultMessage.value.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text(
-                    resultMessage.value,
-                    style: TextStyle(
-                      color: resultMessage.value.contains('エラー')
-                          ? Colors.red
-                          : Colors.green,
-                      fontWeight: FontWeight.bold,
+            ),
+          ),
+        const Divider(height: 24),
+
+        // デバッグユーザー作成
+        _ActionTile(
+          title: 'デバッグユーザー作成',
+          subtitle: 'Firestoreに /users/$debugUID を作成',
+          icon: Icons.person_add,
+          isProcessing: isProcessing.value,
+          onTap: () => _execute(
+            isProcessing: isProcessing,
+            resultMessage: resultMessage,
+            action: () => DebugUserCreate().call(debugUID: debugUID!),
+            actionName: 'デバッグユーザー作成',
+          ),
+        ),
+
+        // グループにデバッグユーザーを追加
+        _ActionTile(
+          title: 'グループにデバッグユーザーを追加',
+          subtitle: 'memberUserIDsに追加 + プロフィール作成',
+          icon: Icons.group_add,
+          isProcessing: isProcessing.value,
+          onTap: defaultGroupID == null
+              ? null
+              : () => _execute(
+                    isProcessing: isProcessing,
+                    resultMessage: resultMessage,
+                    action: () => DebugUserAddToGroup().call(
+                      debugUID: debugUID!,
+                      groupID: defaultGroupID,
                     ),
+                    actionName: 'グループ追加',
                   ),
-                ),
-              const Divider(height: 24),
+        ),
 
-              // デバッグユーザー作成
-              _ActionTile(
-                title: 'デバッグユーザー作成',
-                subtitle: 'Firestoreに /users/$debugUID を作成',
-                icon: Icons.person_add,
-                isProcessing: isProcessing.value,
-                onTap: () => _execute(
-                  isProcessing: isProcessing,
-                  resultMessage: resultMessage,
-                  action: () => DebugUserCreate().call(debugUID: debugUID!),
-                  actionName: 'デバッグユーザー作成',
-                ),
-              ),
+        const Divider(height: 24),
 
-              // グループにデバッグユーザーを追加
-              _ActionTile(
-                title: 'グループにデバッグユーザーを追加',
-                subtitle: 'memberUserIDsに追加 + プロフィール作成',
-                icon: Icons.group_add,
-                isProcessing: isProcessing.value,
-                onTap: defaultGroupID == null
-                    ? null
-                    : () => _execute(
-                          isProcessing: isProcessing,
-                          resultMessage: resultMessage,
-                          action: () => DebugUserAddToGroup().call(
-                            debugUID: debugUID!,
-                            groupID: defaultGroupID,
-                          ),
-                          actionName: 'グループ追加',
+        // アイテムメッセージ入力
+        TextField(
+          controller: TextEditingController(text: itemMessage.value),
+          onChanged: (v) => itemMessage.value = v,
+          decoration: const InputDecoration(
+            labelText: 'アイテムメッセージ',
+            isDense: true,
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        // デバッグユーザーとしてアイテム追加
+        _ActionTile(
+          title: 'デバッグユーザーとしてアイテム追加',
+          subtitle: 'アイテムを追加（リアルタイム同期で反映）',
+          icon: Icons.add_shopping_cart,
+          isProcessing: isProcessing.value,
+          onTap: (defaultGroupID == null || firstShoppingListID == null)
+              ? null
+              : () => _execute(
+                    isProcessing: isProcessing,
+                    resultMessage: resultMessage,
+                    action: () => ref
+                        .read(addShoppingListItemProvider(
+                            groupID: defaultGroupID))
+                        .call(
+                          shoppingListID: firstShoppingListID,
+                          userID: debugUID!,
+                          message: itemMessage.value,
+                          order: items.nextOrder,
+                          description: null,
+                          color: null,
                         ),
-              ),
+                    actionName: 'アイテム追加',
+                  ),
+        ),
 
-              const Divider(height: 24),
+        const Divider(height: 24),
 
-              // アイテムメッセージ入力
-              TextField(
-                controller:
-                    TextEditingController(text: itemMessage.value),
-                onChanged: (v) => itemMessage.value = v,
-                decoration: const InputDecoration(
-                  labelText: 'アイテムメッセージ',
-                  isDense: true,
-                ),
-              ),
-              const SizedBox(height: 8),
-
-              // デバッグユーザーとしてアイテム追加
-              _ActionTile(
-                title: 'デバッグユーザーとしてアイテム追加',
-                subtitle: 'アイテムを追加（リアルタイム同期で反映）',
-                icon: Icons.add_shopping_cart,
-                isProcessing: isProcessing.value,
-                onTap: (defaultGroupID == null || firstShoppingListID == null)
-                    ? null
-                    : () => _execute(
-                          isProcessing: isProcessing,
-                          resultMessage: resultMessage,
-                          action: () =>
-                              ref
-                                  .read(addShoppingListItemProvider(
-                                      groupID: defaultGroupID))
-                                  .call(
-                                    shoppingListID: firstShoppingListID,
-                                    userID: debugUID!,
-                                    message: itemMessage.value,
-                                    order: items.nextOrder,
-                                    description: null,
-                                    color: null,
-                                  ),
-                          actionName: 'アイテム追加',
-                        ),
-              ),
-
-              const Divider(height: 24),
-
-              // クリーンアップ
-              _ActionTile(
-                title: 'デバッグデータクリーンアップ',
-                subtitle: 'デバッグユーザー関連データを全て削除',
-                icon: Icons.cleaning_services,
-                isProcessing: isProcessing.value,
-                onTap: defaultGroupID == null
-                    ? null
-                    : () => _execute(
-                          isProcessing: isProcessing,
-                          resultMessage: resultMessage,
-                          action: () => DebugUserCleanup().call(
-                            debugUID: debugUID!,
-                            groupID: defaultGroupID,
-                          ),
-                          actionName: 'クリーンアップ',
-                        ),
-              ),
-            ],
+        // クリーンアップ
+        _ActionTile(
+          title: 'デバッグデータクリーンアップ',
+          subtitle: 'デバッグユーザー関連データを全て削除',
+          icon: Icons.cleaning_services,
+          isProcessing: isProcessing.value,
+          onTap: defaultGroupID == null
+              ? null
+              : () => _execute(
+                    isProcessing: isProcessing,
+                    resultMessage: resultMessage,
+                    action: () => DebugUserCleanup().call(
+                      debugUID: debugUID!,
+                      groupID: defaultGroupID,
+                    ),
+                    actionName: 'クリーンアップ',
+                  ),
+        ),
+      ],
     );
   }
 

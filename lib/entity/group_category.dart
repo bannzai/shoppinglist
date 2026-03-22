@@ -31,7 +31,12 @@ abstract class GroupCategory with _$GroupCategory {
     required String groupCategoryAxisID,
     required String name,
     required int order,
-    @Default([]) List<GroupCategoryKeyword> keywords,
+
+    /// 買い物場所ごとのカテゴリ表示順序。
+    /// key = shoppingLocationID、value = その場所での表示順序。
+    /// エントリがない場合は [order] にフォールバックする。
+    required Map<String, int> locationOrders,
+    required List<GroupCategoryKeyword> keywords,
     String? color,
     String? iconName,
     @ClientCreatedTimestamp() DateTime? createdDateTime,

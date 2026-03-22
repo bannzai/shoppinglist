@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/features/group_category/category_edit_page.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
 import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -163,7 +166,7 @@ class GroupCategoryPage extends ConsumerWidget {
   }
 }
 
-class _CategoryListBody extends ConsumerWidget {
+class _CategoryListBody extends HookConsumerWidget {
   final String groupID;
   final GroupCategoryAxis axis;
   final List<GroupCategoryAxis> axes;
@@ -178,16 +181,66 @@ class _CategoryListBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final categoriesAsync = ref.watch(
         groupCategoriesProvider(groupID: groupID, categoryAxisID: axis.id));
+    final locationsAsync =
+        ref.watch(shoppingLocationsProvider(groupID: groupID));
+    final selectedLocationID = useState<String?>(null);
 
     return categoriesAsync.when(
       data: (categories) => Scaffold(
         appBar: AppBar(title: const Text('カテゴリ')),
         body: categories.isEmpty
             ? const Center(child: Text('カテゴリがまだありません'))
-            : _CategoryReorderableList(
-                groupID: groupID,
-                categoryAxisID: axis.id,
-                categories: categories,
+            : Column(
+                children: [
+                  // ロケーション選択ドロップダウン
+                  locationsAsync.when(
+                    data: (locations) {
+                      if (locations.isEmpty) return const SizedBox.shrink();
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 8.0),
+                        child: DropdownButtonFormField<String?>(
+                          initialValue: selectedLocationID.value,
+                          decoration: const InputDecoration(
+                            labelText: '買い物する場所の並び順',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                          ),
+                          items: [
+                            const DropdownMenuItem<String?>(
+                              value: null,
+                              child: Text('デフォルト'),
+                            ),
+                            ...locations.map(
+                              (location) => DropdownMenuItem<String?>(
+                                value: location.id,
+                                child: Text(location.name),
+                              ),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            analytics.logEvent(
+                              name: 'select_category_location_order',
+                              parameters: {'groupID': groupID},
+                            );
+                            selectedLocationID.value = value;
+                          },
+                        ),
+                      );
+                    },
+                    error: (e, st) => const SizedBox.shrink(),
+                    loading: () => const SizedBox.shrink(),
+                  ),
+                  Expanded(
+                    child: _CategoryReorderableList(
+                      groupID: groupID,
+                      categoryAxisID: axis.id,
+                      categories: categories,
+                      selectedShoppingLocationID: selectedLocationID.value,
+                    ),
+                  ),
+                ],
               ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -293,15 +346,23 @@ class _CategoryReorderableList extends ConsumerWidget {
   final String groupID;
   final String categoryAxisID;
   final List<GroupCategory> categories;
+  final String? selectedShoppingLocationID;
 
   const _CategoryReorderableList({
     required this.groupID,
     required this.categoryAxisID,
     required this.categories,
+    required this.selectedShoppingLocationID,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // ロケーション別にソートしたカテゴリリストを表示
+    final sortedCategories = sortCategoriesByLocation(
+      categories: categories,
+      shoppingLocationID: selectedShoppingLocationID,
+    );
+
     return ReorderableListView.builder(
       onReorder: (oldIndex, newIndex) {
         analytics.logEvent(
@@ -310,24 +371,40 @@ class _CategoryReorderableList extends ConsumerWidget {
           newIndex -= 1;
         }
 
-        final reordered = [...categories];
+        final reordered = [...sortedCategories];
         final movedItem = reordered.removeAt(oldIndex);
         reordered.insert(newIndex, movedItem);
 
-        final orderedCategories = reordered
-            .asMap()
-            .entries
-            .map((entry) => entry.value.copyWith(order: entry.key))
-            .toList();
+        if (selectedShoppingLocationID == null) {
+          // デフォルト順序の更新（既存のorderフィールド）
+          final orderedCategories = reordered
+              .asMap()
+              .entries
+              .map((entry) => entry.value.copyWith(order: entry.key))
+              .toList();
 
-        ref.read(groupCategoryBatchUpdateProvider(groupID: groupID)).call(
-              categoryAxisID: categoryAxisID,
-              categories: orderedCategories,
-            );
+          ref.read(groupCategoryBatchUpdateProvider(groupID: groupID)).call(
+                categoryAxisID: categoryAxisID,
+                categories: orderedCategories,
+              );
+        } else {
+          // ロケーション別順序の更新（locationOrdersマップ）
+          final orderedCategories = reordered.asMap().entries.map((entry) {
+            final updatedLocationOrders =
+                Map<String, int>.from(entry.value.locationOrders);
+            updatedLocationOrders[selectedShoppingLocationID!] = entry.key;
+            return entry.value.copyWith(locationOrders: updatedLocationOrders);
+          }).toList();
+
+          ref.read(groupCategoryBatchUpdateProvider(groupID: groupID)).call(
+                categoryAxisID: categoryAxisID,
+                categories: orderedCategories,
+              );
+        }
       },
-      itemCount: categories.length,
+      itemCount: sortedCategories.length,
       itemBuilder: (context, index) {
-        final category = categories[index];
+        final category = sortedCategories[index];
         final categoryColor =
             category.color != null ? colorFromHex(category.color!) : null;
         return ListTile(

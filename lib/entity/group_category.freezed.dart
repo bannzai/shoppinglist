@@ -20,6 +20,11 @@ mixin _$GroupCategory {
   String get groupCategoryAxisID;
   String get name;
   int get order;
+
+  /// 買い物場所ごとのカテゴリ表示順序。
+  /// key = shoppingLocationID、value = その場所での表示順序。
+  /// エントリがない場合は [order] にフォールバックする。
+  Map<String, int> get locationOrders;
   List<GroupCategoryKeyword> get keywords;
   String? get color;
   String? get iconName;
@@ -55,6 +60,8 @@ mixin _$GroupCategory {
                 other.groupCategoryAxisID == groupCategoryAxisID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.order, order) || other.order == order) &&
+            const DeepCollectionEquality()
+                .equals(other.locationOrders, locationOrders) &&
             const DeepCollectionEquality().equals(other.keywords, keywords) &&
             (identical(other.color, color) || other.color == color) &&
             (identical(other.iconName, iconName) ||
@@ -79,6 +86,7 @@ mixin _$GroupCategory {
       groupCategoryAxisID,
       name,
       order,
+      const DeepCollectionEquality().hash(locationOrders),
       const DeepCollectionEquality().hash(keywords),
       color,
       iconName,
@@ -89,7 +97,7 @@ mixin _$GroupCategory {
 
   @override
   String toString() {
-    return 'GroupCategory(id: $id, groupID: $groupID, userID: $userID, groupCategoryAxisID: $groupCategoryAxisID, name: $name, order: $order, keywords: $keywords, color: $color, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupCategory(id: $id, groupID: $groupID, userID: $userID, groupCategoryAxisID: $groupCategoryAxisID, name: $name, order: $order, locationOrders: $locationOrders, keywords: $keywords, color: $color, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -106,6 +114,7 @@ abstract mixin class $GroupCategoryCopyWith<$Res> {
       String groupCategoryAxisID,
       String name,
       int order,
+      Map<String, int> locationOrders,
       List<GroupCategoryKeyword> keywords,
       String? color,
       String? iconName,
@@ -134,6 +143,7 @@ class _$GroupCategoryCopyWithImpl<$Res>
     Object? groupCategoryAxisID = null,
     Object? name = null,
     Object? order = null,
+    Object? locationOrders = null,
     Object? keywords = null,
     Object? color = freezed,
     Object? iconName = freezed,
@@ -167,6 +177,10 @@ class _$GroupCategoryCopyWithImpl<$Res>
           ? _self.order
           : order // ignore: cast_nullable_to_non_nullable
               as int,
+      locationOrders: null == locationOrders
+          ? _self.locationOrders
+          : locationOrders // ignore: cast_nullable_to_non_nullable
+              as Map<String, int>,
       keywords: null == keywords
           ? _self.keywords
           : keywords // ignore: cast_nullable_to_non_nullable
@@ -299,6 +313,7 @@ extension GroupCategoryPatterns on GroupCategory {
             String groupCategoryAxisID,
             String name,
             int order,
+            Map<String, int> locationOrders,
             List<GroupCategoryKeyword> keywords,
             String? color,
             String? iconName,
@@ -319,6 +334,7 @@ extension GroupCategoryPatterns on GroupCategory {
             _that.groupCategoryAxisID,
             _that.name,
             _that.order,
+            _that.locationOrders,
             _that.keywords,
             _that.color,
             _that.iconName,
@@ -353,6 +369,7 @@ extension GroupCategoryPatterns on GroupCategory {
             String groupCategoryAxisID,
             String name,
             int order,
+            Map<String, int> locationOrders,
             List<GroupCategoryKeyword> keywords,
             String? color,
             String? iconName,
@@ -372,6 +389,7 @@ extension GroupCategoryPatterns on GroupCategory {
             _that.groupCategoryAxisID,
             _that.name,
             _that.order,
+            _that.locationOrders,
             _that.keywords,
             _that.color,
             _that.iconName,
@@ -405,6 +423,7 @@ extension GroupCategoryPatterns on GroupCategory {
             String groupCategoryAxisID,
             String name,
             int order,
+            Map<String, int> locationOrders,
             List<GroupCategoryKeyword> keywords,
             String? color,
             String? iconName,
@@ -424,6 +443,7 @@ extension GroupCategoryPatterns on GroupCategory {
             _that.groupCategoryAxisID,
             _that.name,
             _that.order,
+            _that.locationOrders,
             _that.keywords,
             _that.color,
             _that.iconName,
@@ -448,14 +468,16 @@ class _GroupCategory extends GroupCategory {
       required this.groupCategoryAxisID,
       required this.name,
       required this.order,
-      final List<GroupCategoryKeyword> keywords = const [],
+      required final Map<String, int> locationOrders,
+      required final List<GroupCategoryKeyword> keywords,
       this.color,
       this.iconName,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
       @ServerUpdatedTimestamp() this.serverUpdatedDateTime})
-      : _keywords = keywords,
+      : _locationOrders = locationOrders,
+        _keywords = keywords,
         super._();
   factory _GroupCategory.fromJson(Map<String, dynamic> json) =>
       _$GroupCategoryFromJson(json);
@@ -472,9 +494,24 @@ class _GroupCategory extends GroupCategory {
   final String name;
   @override
   final int order;
+
+  /// 買い物場所ごとのカテゴリ表示順序。
+  /// key = shoppingLocationID、value = その場所での表示順序。
+  /// エントリがない場合は [order] にフォールバックする。
+  final Map<String, int> _locationOrders;
+
+  /// 買い物場所ごとのカテゴリ表示順序。
+  /// key = shoppingLocationID、value = その場所での表示順序。
+  /// エントリがない場合は [order] にフォールバックする。
+  @override
+  Map<String, int> get locationOrders {
+    if (_locationOrders is EqualUnmodifiableMapView) return _locationOrders;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_locationOrders);
+  }
+
   final List<GroupCategoryKeyword> _keywords;
   @override
-  @JsonKey()
   List<GroupCategoryKeyword> get keywords {
     if (_keywords is EqualUnmodifiableListView) return _keywords;
     // ignore: implicit_dynamic_type
@@ -525,6 +562,8 @@ class _GroupCategory extends GroupCategory {
                 other.groupCategoryAxisID == groupCategoryAxisID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.order, order) || other.order == order) &&
+            const DeepCollectionEquality()
+                .equals(other._locationOrders, _locationOrders) &&
             const DeepCollectionEquality().equals(other._keywords, _keywords) &&
             (identical(other.color, color) || other.color == color) &&
             (identical(other.iconName, iconName) ||
@@ -549,6 +588,7 @@ class _GroupCategory extends GroupCategory {
       groupCategoryAxisID,
       name,
       order,
+      const DeepCollectionEquality().hash(_locationOrders),
       const DeepCollectionEquality().hash(_keywords),
       color,
       iconName,
@@ -559,7 +599,7 @@ class _GroupCategory extends GroupCategory {
 
   @override
   String toString() {
-    return 'GroupCategory(id: $id, groupID: $groupID, userID: $userID, groupCategoryAxisID: $groupCategoryAxisID, name: $name, order: $order, keywords: $keywords, color: $color, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupCategory(id: $id, groupID: $groupID, userID: $userID, groupCategoryAxisID: $groupCategoryAxisID, name: $name, order: $order, locationOrders: $locationOrders, keywords: $keywords, color: $color, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -578,6 +618,7 @@ abstract mixin class _$GroupCategoryCopyWith<$Res>
       String groupCategoryAxisID,
       String name,
       int order,
+      Map<String, int> locationOrders,
       List<GroupCategoryKeyword> keywords,
       String? color,
       String? iconName,
@@ -606,6 +647,7 @@ class __$GroupCategoryCopyWithImpl<$Res>
     Object? groupCategoryAxisID = null,
     Object? name = null,
     Object? order = null,
+    Object? locationOrders = null,
     Object? keywords = null,
     Object? color = freezed,
     Object? iconName = freezed,
@@ -639,6 +681,10 @@ class __$GroupCategoryCopyWithImpl<$Res>
           ? _self.order
           : order // ignore: cast_nullable_to_non_nullable
               as int,
+      locationOrders: null == locationOrders
+          ? _self._locationOrders
+          : locationOrders // ignore: cast_nullable_to_non_nullable
+              as Map<String, int>,
       keywords: null == keywords
           ? _self._keywords
           : keywords // ignore: cast_nullable_to_non_nullable
