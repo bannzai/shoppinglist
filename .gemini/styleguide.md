@@ -25,13 +25,12 @@
 - つけてないと指定したフィールド以外消える。ちょっとしたコードの移動で意識せずに消える
 
 ### タイムスタンプの扱い
-- Entityには以下の4つのタイムスタンプフィールドを持たせる:
-  - `createdDateTime` (`@ClientCreatedTimestamp`) — クライアント側の作成日時。nullの場合は自動で`DateTime.now()`が設定される
-  - `updatedDateTime` (`@ClientUpdatedTimestamp`) — クライアント側の更新日時。自動設定されないため、必要に応じて呼び出し元が明示的に設定する
-  - `serverCreatedDateTime` (`@ServerCreatedTimestamp`) — サーバー側の作成日時。nullの場合は自動で`FieldValue.serverTimestamp()`が設定される
-  - `serverUpdatedDateTime` (`@ServerUpdatedTimestamp`) — サーバー側の更新日時。書き込みのたびに自動で`FieldValue.serverTimestamp()`が上書きされる
+- Entityには以下の4つのタイムスタンプフィールドを持たせる。すべてDartのコンバータにより自動で設定されるため、手動で設定する必要はない:
+  - `createdDateTime` (`@ClientCreatedTimestamp`) — クライアント側の作成日時
+  - `updatedDateTime` (`@ClientUpdatedTimestamp`) — クライアント側の更新日時
+  - `serverCreatedDateTime` (`@ServerCreatedTimestamp`) — サーバー側の作成日時
+  - `serverUpdatedDateTime` (`@ServerUpdatedTimestamp`) — サーバー側の更新日時
 - サーバータイムスタンプだけでなくクライアントタイムスタンプも保持する（デバッグやオフライン対応のため）
-- `serverUpdatedDateTime` と `serverCreatedDateTime` はコンバータにより自動付与されるため、手動で設定する必要はない
 
 ### Composite Document ID
 - 基本的にはFirestoreの自動生成IDを使用する
