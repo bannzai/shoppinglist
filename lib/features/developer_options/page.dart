@@ -13,12 +13,64 @@ void showDeveloperOptionsModal(BuildContext context) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    builder: (context) => const DeveloperOptionsPage(),
+    builder: (context) => const _DeveloperOptionsSheet(),
   );
 }
 
-class DeveloperOptionsPage extends HookConsumerWidget {
+/// 開発者オプションを全画面ページとして表示する。
+/// Maestro E2Eテストではモーダル内の要素を検出できないため、この関数を使用する。
+void navigateToDeveloperOptionsPage(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const DeveloperOptionsPage(),
+    ),
+  );
+}
+
+/// モーダル表示用のラッパー。DraggableScrollableSheet を使用。
+class _DeveloperOptionsSheet extends HookConsumerWidget {
+  const _DeveloperOptionsSheet();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.7,
+      minChildSize: 0.3,
+      maxChildSize: 0.9,
+      expand: false,
+      builder: (context, scrollController) {
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: _DeveloperOptionsContent(
+            scrollController: scrollController,
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// 全画面ページ表示用。Scaffold + AppBar を使用。
+class DeveloperOptionsPage extends StatelessWidget {
   const DeveloperOptionsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('開発者オプション')),
+      body: const Padding(
+        padding: EdgeInsets.all(16),
+        child: _DeveloperOptionsContent(),
+      ),
+    );
+  }
+}
+
+class _DeveloperOptionsContent extends HookConsumerWidget {
+  final ScrollController? scrollController;
+
+  const _DeveloperOptionsContent({this.scrollController});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,20 +81,30 @@ class DeveloperOptionsPage extends HookConsumerWidget {
         ? debugUserID(realUserID: currentUID, index: 1)
         : null;
 
-    final delaySeconds = useState(3);
     final itemMessage = useState('debug_item_test');
     final isProcessing = useState(false);
+    final resultMessage = useState('');
 
-    return DraggableScrollableSheet(
-      initialChildSize: 0.7,
-      minChildSize: 0.3,
-      maxChildSize: 0.9,
-      expand: false,
-      builder: (context, scrollController) {
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: ListView(
-            controller: scrollController,
+    // shoppingListsProviderをbuild内でwatchしてデータをロードする
+    // （ref.readではAutoDisposeのStreamProviderがAsyncLoadingを返すため）
+    final shoppingListsAsync = defaultGroupID != null
+        ? ref.watch(shoppingListsProvider(groupID: defaultGroupID))
+        : null;
+    final shoppingLists = shoppingListsAsync?.asData?.value ?? [];
+    final firstShoppingListID =
+        shoppingLists.isNotEmpty ? shoppingLists.first.id : null;
+
+    final itemsAsync = (defaultGroupID != null && firstShoppingListID != null)
+        ? ref.watch(textShoppingListItemsProvider(
+            groupID: defaultGroupID,
+            shoppingListID: firstShoppingListID,
+            showChecked: false,
+          ))
+        : null;
+    final items = itemsAsync?.asData?.value ?? <GroupShoppingListItem>[];
+
+    return ListView(
+      controller: scrollController,
             children: [
               Text(
                 '開発者オプション',
@@ -55,36 +117,20 @@ class DeveloperOptionsPage extends HookConsumerWidget {
                   style: Theme.of(context).textTheme.bodySmall),
               Text('デバッグユーザーID: ${debugUID ?? "不明"}',
                   style: Theme.of(context).textTheme.bodySmall),
-              const Divider(height: 24),
-
-              // 遅延秒数設定
-              Row(
-                children: [
-                  const Text('遅延秒数:'),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    width: 60,
-                    child: TextField(
-                      keyboardType: TextInputType.number,
-                      controller:
-                          TextEditingController(text: '${delaySeconds.value}'),
-                      onChanged: (v) {
-                        final parsed = int.tryParse(v);
-                        if (parsed != null && parsed >= 0) {
-                          delaySeconds.value = parsed;
-                        }
-                      },
-                      decoration: const InputDecoration(
-                        isDense: true,
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                      ),
+              if (resultMessage.value.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
+                    resultMessage.value,
+                    style: TextStyle(
+                      color: resultMessage.value.contains('エラー')
+                          ? Colors.red
+                          : Colors.green,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Text(' 秒'),
-                ],
-              ),
-              const SizedBox(height: 16),
+                ),
+              const Divider(height: 24),
 
               // デバッグユーザー作成
               _ActionTile(
@@ -92,10 +138,9 @@ class DeveloperOptionsPage extends HookConsumerWidget {
                 subtitle: 'Firestoreに /users/$debugUID を作成',
                 icon: Icons.person_add,
                 isProcessing: isProcessing.value,
-                onTap: () => _executeWithDelay(
-                  context: context,
-                  delaySeconds: delaySeconds.value,
+                onTap: () => _execute(
                   isProcessing: isProcessing,
+                  resultMessage: resultMessage,
                   action: () => DebugUserCreate().call(debugUID: debugUID!),
                   actionName: 'デバッグユーザー作成',
                 ),
@@ -109,10 +154,9 @@ class DeveloperOptionsPage extends HookConsumerWidget {
                 isProcessing: isProcessing.value,
                 onTap: defaultGroupID == null
                     ? null
-                    : () => _executeWithDelay(
-                          context: context,
-                          delaySeconds: delaySeconds.value,
+                    : () => _execute(
                           isProcessing: isProcessing,
+                          resultMessage: resultMessage,
                           action: () => DebugUserAddToGroup().call(
                             debugUID: debugUID!,
                             groupID: defaultGroupID,
@@ -138,19 +182,27 @@ class DeveloperOptionsPage extends HookConsumerWidget {
               // デバッグユーザーとしてアイテム追加
               _ActionTile(
                 title: 'デバッグユーザーとしてアイテム追加',
-                subtitle: '遅延後にアイテムを追加（リアルタイム同期で反映）',
+                subtitle: 'アイテムを追加（リアルタイム同期で反映）',
                 icon: Icons.add_shopping_cart,
                 isProcessing: isProcessing.value,
-                onTap: defaultGroupID == null
+                onTap: (defaultGroupID == null || firstShoppingListID == null)
                     ? null
-                    : () => _executeWithDelayAddItem(
-                          context: context,
-                          ref: ref,
-                          delaySeconds: delaySeconds.value,
+                    : () => _execute(
                           isProcessing: isProcessing,
-                          debugUID: debugUID!,
-                          groupID: defaultGroupID,
-                          message: itemMessage.value,
+                          resultMessage: resultMessage,
+                          action: () =>
+                              ref
+                                  .read(addShoppingListItemProvider(
+                                      groupID: defaultGroupID))
+                                  .call(
+                                    shoppingListID: firstShoppingListID,
+                                    userID: debugUID!,
+                                    message: itemMessage.value,
+                                    order: items.nextOrder,
+                                    description: null,
+                                    color: null,
+                                  ),
+                          actionName: 'アイテム追加',
                         ),
               ),
 
@@ -164,10 +216,9 @@ class DeveloperOptionsPage extends HookConsumerWidget {
                 isProcessing: isProcessing.value,
                 onTap: defaultGroupID == null
                     ? null
-                    : () => _executeWithDelay(
-                          context: context,
-                          delaySeconds: delaySeconds.value,
+                    : () => _execute(
                           isProcessing: isProcessing,
+                          resultMessage: resultMessage,
                           action: () => DebugUserCleanup().call(
                             debugUID: debugUID!,
                             groupID: defaultGroupID,
@@ -176,88 +227,29 @@ class DeveloperOptionsPage extends HookConsumerWidget {
                         ),
               ),
             ],
-          ),
-        );
-      },
     );
   }
 
-  void _executeWithDelay({
-    required BuildContext context,
-    required int delaySeconds,
+  /// 操作を即時実行し、結果をページ上に表示する。
+  /// ページは閉じない（Maestroが結果を確認してから手動で戻る）。
+  Future<void> _execute({
     required ValueNotifier<bool> isProcessing,
+    required ValueNotifier<String> resultMessage,
     required Future<void> Function() action,
     required String actionName,
-  }) {
-    // モーダルを閉じる
-    Navigator.of(context).pop();
-
-    // 遅延後に実行
-    Future.delayed(Duration(seconds: delaySeconds), () async {
-      isProcessing.value = true;
-      try {
-        await action();
-        debugPrint('[DeveloperOptions] $actionName 完了');
-      } catch (e) {
-        debugPrint('[DeveloperOptions] $actionName エラー: $e');
-      } finally {
-        isProcessing.value = false;
-      }
-    });
-  }
-
-  void _executeWithDelayAddItem({
-    required BuildContext context,
-    required WidgetRef ref,
-    required int delaySeconds,
-    required ValueNotifier<bool> isProcessing,
-    required String debugUID,
-    required String groupID,
-    required String message,
-  }) {
-    // モーダルを閉じる
-    Navigator.of(context).pop();
-
-    // 遅延後に実行
-    Future.delayed(Duration(seconds: delaySeconds), () async {
-      isProcessing.value = true;
-      try {
-        // 既存の AddShoppingListItem を再利用
-        final addItem = ref.read(addShoppingListItemProvider(groupID: groupID));
-        // 現在のshoppingListのIDを取得
-        final shoppingListsAsync =
-            ref.read(shoppingListsProvider(groupID: groupID));
-        final shoppingLists = shoppingListsAsync.asData?.value ?? [];
-        if (shoppingLists.isEmpty) {
-          debugPrint(
-              '[DeveloperOptions] shoppingListが見つかりません。先にリストを作成してください。');
-          return;
-        }
-        final shoppingListID = shoppingLists.first.id;
-
-        // 現在のアイテム数を取得してorder算出
-        final itemsAsync = ref.read(textShoppingListItemsProvider(
-          groupID: groupID,
-          shoppingListID: shoppingListID,
-          showChecked: false,
-        ));
-        final items = itemsAsync.asData?.value ?? <GroupShoppingListItem>[];
-
-        await addItem.call(
-          shoppingListID: shoppingListID,
-          userID: debugUID,
-          message: message,
-          order: items.nextOrder,
-          description: null,
-          color: null,
-        );
-        debugPrint('[DeveloperOptions] アイテム追加完了: $message (by $debugUID)');
-      } catch (e) {
-        debugPrint('[DeveloperOptions] アイテム追加エラー: $e');
-      } finally {
-        isProcessing.value = false;
-      }
-    });
+  }) async {
+    isProcessing.value = true;
+    resultMessage.value = '';
+    try {
+      await action();
+      resultMessage.value = '$actionName 完了';
+      debugPrint('[DeveloperOptions] $actionName 完了');
+    } catch (e) {
+      resultMessage.value = '$actionName エラー: $e';
+      debugPrint('[DeveloperOptions] $actionName エラー: $e');
+    } finally {
+      isProcessing.value = false;
+    }
   }
 }
 
@@ -278,18 +270,23 @@ class _ActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      subtitle: Text(subtitle),
-      trailing: isProcessing
-          ? const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          : const Icon(Icons.play_arrow),
-      onTap: isProcessing ? null : onTap,
+    // Maestro E2Eテストがテキストを検出できるようにセマンティクスラベルを明示設定
+    return Semantics(
+      label: title,
+      excludeSemantics: true,
+      child: ListTile(
+        leading: Icon(icon),
+        title: Text(title),
+        subtitle: Text(subtitle),
+        trailing: isProcessing
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Icon(Icons.play_arrow),
+        onTap: isProcessing ? null : onTap,
+      ),
     );
   }
 }
