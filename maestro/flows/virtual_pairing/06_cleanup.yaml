@@ -1,0 +1,31 @@
+appId: com.bannzai.shoppinglist
+---
+# Phase 6: クリーンアップ
+- launchApp:
+    clearState: false
+
+# 設定タブに切り替え
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+
+# 開発者オプションは設定画面最下部にあるので十分にスクロール
+- swipe:
+    start: "50%,80%"
+    end: "50%,20%"
+- swipe:
+    start: "50%,80%"
+    end: "50%,20%"
+- tapOn: "開発者オプション"
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "デバッグデータクリーンアップ"
+    timeout: 10000
+- tapOn: "デバッグデータクリーンアップ"
+
+# 操作完了を待つ
+- extendedWaitUntil:
+    visible: ".*完了"
+    timeout: 15000
+- takeScreenshot: screenshots/virtual_pairing/06_cleanup_done
