@@ -1,0 +1,16 @@
+appId: com.bannzai.shoppinglist
+---
+# Phase 5: リアルタイム同期確認（核心テスト）
+- launchApp:
+    clearState: false
+
+# 買い物リストタブに切り替え
+- tapOn:
+    point: "25%,93%"
+- waitForAnimationToEnd
+
+# Firestore同期を待つ
+- extendedWaitUntil:
+    visible: "debug_item_test"
+    timeout: 15000
+- takeScreenshot: screenshots/virtual_pairing/05_item_synced

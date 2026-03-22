@@ -7,6 +7,7 @@ part 'group_shopping_list_item.g.dart';
 
 abstract class GroupShoppingListItemFirestoreKeys {
   static const id = 'id';
+  static const userID = 'userID';
   static const status = 'status';
   static const order = 'order';
   static const createdDateTime = 'createdDateTime';
@@ -30,6 +31,7 @@ abstract class GroupShoppingListItem with _$GroupShoppingListItem {
     required String id,
     required String groupID,
     required String shoppingListID,
+    required String userID,
     required String message,
     // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
     // NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
