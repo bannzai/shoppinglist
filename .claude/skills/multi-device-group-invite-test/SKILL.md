@@ -1,9 +1,9 @@
 ---
 name: multi-device-group-invite-test
 description: |
-  iOS SimulatorとAndroid Emulatorの2台で同時にMaestroテストを実行し、
+  iOS SimulatorでMaestroテストを実行し、仮想ペアリング（開発者オプション）を使って
   グループ招待→参加→データ同期をE2Eで検証するスキル。
-  mobile-mcpで招待コードの読み取り・入力を行い、デバイス間のデータ受け渡しを実現する。
+  デバッグユーザー機能により1台のiOS Simulatorで「別ユーザーの操作」をシミュレーションする。
   使用例: "/multi-device-group-invite-test"
 allowed-tools:
   - mcp__mobile__mobile_list_available_devices
@@ -21,119 +21,107 @@ allowed-tools:
   - Read
 ---
 
-# iOS・Android 同時 Maestro テスト（グループ招待→参加→同期）
+# iOS Simulator + 仮想ペアリングによるグループ同期 E2E テスト
 
-2台のデバイス（iOS Simulator + Android Emulator）でグループ招待・参加・データ同期をE2Eで検証する。
-Maestroで定型操作を実行し、mobile-mcpでデバイス間の招待コード受け渡しを行う。
+**MaestroはiOS Simulatorで実行する。** Android Emulatorは使用しない。
+仮想ペアリング機能（開発者オプション）を使い、1台のiOS Simulatorで「別ユーザーがアイテムを追加した」シナリオを検証する。
+
+## 方式
+
+設定画面に `kDebugMode` 限定の「開発者オプション」タイルを配置。Maestroから直接タップして開発者オプション画面に遷移し、各操作を実行する。各操作は同期的に実行され、結果（「完了」or「エラー:」）が画面上に表示される。
 
 ## 前提条件
 
-- iOS Simulator と Android Emulator が利用可能であること
+- iOS Simulator が利用可能であること（iPhone 16 Plus推奨）
 - Flutter SDK がインストール済みであること
 - Maestro CLI がインストール済みであること
-- Firebase Emulator または本番環境に接続可能であること
+- アプリがdebugビルドでインストール済みであること（開発者オプション機能は `kDebugMode` のみ有効）
 
 ## ワークフロー
 
-### Step 1: デバイス準備
-
-`setup_devices.sh` を実行してiOS SimulatorとAndroid Emulatorを起動し、アプリをビルド・インストールする。
+### Step 1: デバイス準備・アプリビルド
 
 ```bash
 bash .claude/skills/multi-device-group-invite-test/scripts/setup_devices.sh
 ```
 
-スクリプトが出力するデバイスID（iOS_DEVICE_ID, ANDROID_DEVICE_ID）を後続ステップで使用する。
+### Step 2: Maestro E2Eテスト実行
 
-### Step 2: デバイスA（iOS）でサインイン＋グループ作成＋招待コード生成
-
-Maestroフローを `--device` 指定で実行する。
+6つの独立したMaestroフローを順次実行する。各フェーズは `launchApp: clearState: false` でアプリを再起動し、設定タブ→開発者オプションへ遷移して操作を実行する。
 
 ```bash
-maestro test --device <iOS_DEVICE_ID> maestro/flows/multi_device/device_a_setup_and_invite.yaml
+bash maestro/scripts/run_group_sync_test.sh
 ```
 
-フロー完了後、mobile-mcpの `list_elements_on_screen` で招待コードダイアログからコードを読み取る。
-- 招待コードは `SelectableText`（fontSize: 28、letterSpacing: 4）で表示される8桁の英数字
-- 文字セット: `ABCDEFGHJKMNPQRSTVWXY3456789`（紛らわしい文字は除外）
-- フォールバック: `take_screenshot` でスクリーンショットを撮影し、画像からコードを読み取る
+### テストフェーズ概要
 
-読み取ったコードをメモリ上に保持し、Step 4で使用する。
+| Phase | 内容 | 検証ポイント |
+|---|---|---|
+| 1 | サインイン + グループ作成 | グループ「VirtualPairTestGroup」が作成される |
+| 2 | 設定→開発者オプション→デバッグユーザー作成 | Firestoreにデバッグユーザーが作成される |
+| 3 | 設定→開発者オプション→グループにデバッグユーザー追加 | memberUserIDsにデバッグユーザーが追加される |
+| 4 | 設定→開発者オプション→デバッグユーザーとしてアイテム追加 | アイテム「debug_item_test」が追加される |
+| 5 | 買い物リストタブでリアルタイム同期確認 | 画面にアイテムが反映される（核心テスト） |
+| 6 | 設定→開発者オプション→クリーンアップ | デバッグデータが削除される |
 
-### Step 3: デバイスB（Android）でサインイン
+### 各フローの共通パターン（設定画面→開発者オプション）
 
-Maestroフローを実行する。
-
-```bash
-maestro test --device <ANDROID_DEVICE_ID> maestro/flows/multi_device/device_b_sign_in.yaml
+```yaml
+# 設定タブに切り替え
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+# 設定画面下部までスクロールして「開発者オプション」をタップ
+- swipe:
+    start: "50%,80%"
+    end: "50%,20%"
+- swipe:
+    start: "50%,80%"
+    end: "50%,20%"
+- tapOn: "開発者オプション"
+- waitForAnimationToEnd
+# 操作を実行し「完了」テキストを待つ
+- extendedWaitUntil:
+    visible: ".*完了"
+    timeout: 15000
 ```
-
-### Step 4: デバイスBで招待コード入力＋グループ参加
-
-mobile-mcpでAndroid Emulatorを操作する。以下の手順を順番に実行する。
-
-1. `list_elements_on_screen` で画面要素を確認
-2. 設定タブ（「設定」テキスト）をタップ
-3. 「招待コードでグループに参加」をタップ
-4. 「招待コードで参加」画面が表示されることを確認
-5. テキスト入力欄をタップし、Step 2で取得した招待コードを `type_keys` で入力
-6. 「参加する」ボタンをタップ
-7. ホーム画面（「アイテムを追加」が表示される画面）に遷移することを確認
-8. `take_screenshot` で確認用スクリーンショットを撮影
-
-**注意**: 参加処理はFirestoreへの書き込みを含むため、「参加する」タップ後に数秒待機してから画面遷移を確認する。
-
-### Step 5: デバイスAでアイテム追加
-
-Maestroフローを実行する。
-
-```bash
-maestro test --device <iOS_DEVICE_ID> maestro/flows/multi_device/device_a_add_item.yaml
-```
-
-### Step 6: デバイスBで同期確認
-
-Firestoreリアルタイム同期の遅延（1-3秒）を考慮し、5秒待機する。
-その後、mobile-mcpの `take_screenshot` でAndroid Emulatorの画面を撮影し、「同期テスト牛乳」が表示されていることを確認する。
-
-表示されていない場合:
-1. さらに5秒待機してリトライ
-2. `list_elements_on_screen` で画面要素を詳細に確認
-3. アプリを再起動して確認
 
 ## 検証チェックリスト
 
-各ステップでスクリーンショットを撮影し、以下を確認する:
-
-1. [ ] `setup_devices.sh` でiOS SimulatorとAndroid Emulatorが起動する
-2. [ ] 両デバイスにアプリがインストールされる
-3. [ ] デバイスA: 匿名サインインが成功する
-4. [ ] デバイスA: グループ「テスト共有グループ」が作成される
-5. [ ] デバイスA: 招待コードダイアログに8桁コードが表示される
-6. [ ] mobile-mcpで招待コードが正しく読み取れる
-7. [ ] デバイスB: 匿名サインインが成功する
-8. [ ] デバイスB: 招待コード入力画面に遷移できる
-9. [ ] デバイスB: コード入力後「参加する」でグループ参加成功
-10. [ ] デバイスA: 「同期テスト牛乳」アイテムが追加される
-11. [ ] デバイスB: 「同期テスト牛乳」がリストに表示される（Firestore同期確認）
-
-## 注意事項
-
-- **MaestroとMobile-MCPの競合回避**: Maestroフローが完全に終了してからmobile-mcpで操作する。同時操作はしない。
-- **Android Emulator未作成時**: `setup_devices.sh` でAVDが見つからない場合はエラーメッセージが表示される。`sdkmanager` と `avdmanager` でAVDを作成してから再実行する。
-- **Maestroの `--device` オプション**: iOS SimulatorにはUDID、Android EmulatorにはEmulator名（例: `emulator-5554`）を指定する。
+1. [ ] iOS Simulator でアプリがdebugビルドで起動する
+2. [ ] 設定画面に「開発者オプション」タイルが表示される
+3. [ ] デバッグユーザー作成が成功する（Firestoreにドキュメント作成）
+4. [ ] グループへのデバッグユーザー追加が成功する（memberUserIDs更新）
+5. [ ] デバッグユーザーとしてのアイテム追加が成功する
+6. [ ] 追加されたアイテム「debug_item_test」がリアルタイム同期で画面に反映される
+7. [ ] クリーンアップでデバッグデータが削除される
 
 ## トラブルシューティング
 
-### Maestroがデバイスを見つけられない
-```bash
-maestro hierarchy  # 接続確認
-adb devices        # Android接続確認
-xcrun simctl list devices booted  # iOS接続確認
-```
+| 問題 | 対策 |
+|---|---|
+| Maestroがテキストを検出しない | `Semantics(label:, excludeSemantics: true)` でListTileをラップ |
+| `launchApp: clearState: false` でアプリが再起動される | 期待動作。各操作は同期的に完了し結果を画面に表示するため、再起動後も問題なし |
+| 同期が間に合わない | `extendedWaitUntil` のtimeoutは15秒に設定済み |
+| `pressKey: back` がiOSで効かない | `tapOn: "Back"` でAppBarの戻るボタンをタップ |
+| BottomNavigationBarのラベルが検出不可 | 座標 `point: "25%,93%"` でタップ |
+| Maestroが前回のプロセスと衝突 | `pkill -f "maestro"` で事前にクリア |
 
-### 招待コードが読み取れない
-`take_screenshot` でスクリーンショットを撮影し、画像から直接読み取る。
+## 注意事項
 
-### 同期が遅い
-Firebase Emulator使用時は同期が即座に行われるが、本番環境では1-3秒の遅延がある。最大30秒まで待機してリトライする。
+- 開発者オプション機能は `kDebugMode` のみで有効。リリースビルドでは動作しない
+- デバッグユーザーID形式: `{実UID}_debug_1`
+- Firestoreセキュリティルールの `isDebugUserOf()` で `{uid}_debug_[0-9]+` パターンを許可
+- Firestoreルールにデバッグユーザー用の `allow delete` ルールが必要（`/users/{userID}` と `/userProfiles/{profileID}`）
+
+## リファレンス: Android E2E テストの既知問題
+
+以下の理由により、Android Emulatorでの Maestro E2E テストは現時点で安定しない:
+
+| 問題 | 詳細 |
+|---|---|
+| API 36 inputText不具合 | 1キーストロークに10-20秒かかる ([Maestro #2718](https://github.com/mobile-dev-inc/Maestro/issues/2718)) |
+| debugビルド起動タイムアウト | ActivityManagerの `PROC_START_TIMEOUT = 10秒` がハードコード。Flutter debugビルドのDart VM + Impeller初期化がこれを超過しANRが発生 |
+| Maestro `-e` 環境変数展開不具合 | `${VARIABLE}` 形式の展開が不安定 |
+| `hideKeyboard` iOS非対応 | Maestroの `hideKeyboard` コマンドがiOSで動作しない |

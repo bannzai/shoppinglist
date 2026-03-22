@@ -1,4 +1,0 @@
-appId: com.bannzai.shoppinglist
----
-- runFlow: ../shared/anonymous_sign_in.yaml
-- takeScreenshot: screenshots/multi_device/device_b_signed_in

@@ -12,6 +12,7 @@ _GroupShoppingListItem _$GroupShoppingListItemFromJson(
       id: json['id'] as String,
       groupID: json['groupID'] as String,
       shoppingListID: json['shoppingListID'] as String,
+      userID: json['userID'] as String,
       message: json['message'] as String,
       order: (json['order'] as num).toInt(),
       status: $enumDecodeNullable(
@@ -37,6 +38,7 @@ Map<String, dynamic> _$GroupShoppingListItemToJson(
       'id': instance.id,
       'groupID': instance.groupID,
       'shoppingListID': instance.shoppingListID,
+      'userID': instance.userID,
       'message': instance.message,
       'order': instance.order,
       'status': _$GroupShoppingListItemStatusEnumMap[instance.status]!,

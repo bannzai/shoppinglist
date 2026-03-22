@@ -84,6 +84,7 @@ class _NoOpAddShoppingListItem extends AddShoppingListItem {
   @override
   Future<GroupShoppingListItem> call({
     required String shoppingListID,
+    required String userID,
     required String message,
     required int order,
     required String? description,
