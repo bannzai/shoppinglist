@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Superseded by [0002](0002-settings-page-developer-options.md)
 
 ## Context
 

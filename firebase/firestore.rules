@@ -19,6 +19,7 @@ service cloud.firestore {
     match /users/{userID} {
       allow read: if isUserAuth(userID) || isDebugUserOf(userID);
       allow create, update: if isUserAuth(userID) || isDebugUserOf(userID);
+      allow delete: if isDebugUserOf(userID);
 
       match /privates/{privateID} {
         allow read: if false;
@@ -52,6 +53,8 @@ service cloud.firestore {
         allow update: if isGroupMember()
                       && (resource.data.userID == request.auth.uid
                           || isDebugUserOf(resource.data.userID));
+        allow delete: if isGroupMember()
+                      && isDebugUserOf(resource.data.userID);
       }
 
       match /shoppingLocations/{locationID} {
