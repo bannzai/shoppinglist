@@ -25,14 +25,12 @@
 - つけてないと指定したフィールド以外消える。ちょっとしたコードの移動で意識せずに消える
 
 ### タイムスタンプの扱い
-- Entityには以下の4つのタイムスタンプフィールドを持たせる:
+- Entityには以下の4つのタイムスタンプフィールドを持たせる。すべてDartのコンバータにより自動で設定されるため、手動で設定する必要はない:
   - `createdDateTime` (`@ClientCreatedTimestamp`) — クライアント側の作成日時
   - `updatedDateTime` (`@ClientUpdatedTimestamp`) — クライアント側の更新日時
   - `serverCreatedDateTime` (`@ServerCreatedTimestamp`) — サーバー側の作成日時
   - `serverUpdatedDateTime` (`@ServerUpdatedTimestamp`) — サーバー側の更新日時
 - サーバータイムスタンプだけでなくクライアントタイムスタンプも保持する（デバッグやオフライン対応のため）
-- Firestoreドキュメントの更新時は `serverUpdatedDateTime: FieldValue.serverTimestamp()` を必ず付与する
-- 新規作成時は `serverCreatedDateTime` と `serverUpdatedDateTime` の両方を付与する
 
 ### Composite Document ID
 - 基本的にはFirestoreの自動生成IDを使用する
@@ -56,9 +54,8 @@
 ## Riverpod
 
 ### ref.watch と ref.read の使い分け
-- `build` メソッド内では必ず `ref.watch` を使用する。`ref.read` を使うとProviderの値が変化してもWidgetが再ビルドされず、UIに反映されない
-- `ref.read` は `onPressed` 等のコールバックや非同期クロージャ内など、build外で一度だけ値を読む場合に使用する
-- firestoreのDBに書き込むProviderでは、`ref.read` を使用してクロージャの中で呼ぶ
+- `ref.watch` は状態の同期に使う（例: `currentUserIDProvider` 等のデータ/状態Provider）。`build` メソッド内で変数として取得し、callback内ではその変数を参照する
+- `ref.read` は機能・操作を提供するProvider（`call` クラス等、アプリの表示に関係ないもの）に限定する。callback内で `ref.read(xxxProvider).call(...)` のように使用する
 
 ## Flutter Hooks
 
