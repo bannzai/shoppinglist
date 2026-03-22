@@ -15,6 +15,7 @@ GroupCategory _makeCategory({
     name: 'カテゴリ $id',
     order: order,
     locationOrders: locationOrders,
+    keywords: [],
   );
 }
 

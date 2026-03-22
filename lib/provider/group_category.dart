@@ -106,6 +106,8 @@ class GroupCategoryAdd {
       groupCategoryAxisID: categoryAxisID,
       name: name,
       order: order,
+      locationOrders: {},
+      keywords: [],
     );
     await docRef.set(category, SetOptions(merge: true));
     return category;

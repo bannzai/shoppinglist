@@ -468,8 +468,8 @@ class _GroupCategory extends GroupCategory {
       required this.groupCategoryAxisID,
       required this.name,
       required this.order,
-      final Map<String, int> locationOrders = const {},
-      final List<GroupCategoryKeyword> keywords = const [],
+      required final Map<String, int> locationOrders,
+      required final List<GroupCategoryKeyword> keywords,
       this.color,
       this.iconName,
       @ClientCreatedTimestamp() this.createdDateTime,
@@ -504,7 +504,6 @@ class _GroupCategory extends GroupCategory {
   /// key = shoppingLocationID、value = その場所での表示順序。
   /// エントリがない場合は [order] にフォールバックする。
   @override
-  @JsonKey()
   Map<String, int> get locationOrders {
     if (_locationOrders is EqualUnmodifiableMapView) return _locationOrders;
     // ignore: implicit_dynamic_type
@@ -513,7 +512,6 @@ class _GroupCategory extends GroupCategory {
 
   final List<GroupCategoryKeyword> _keywords;
   @override
-  @JsonKey()
   List<GroupCategoryKeyword> get keywords {
     if (_keywords is EqualUnmodifiableListView) return _keywords;
     // ignore: implicit_dynamic_type

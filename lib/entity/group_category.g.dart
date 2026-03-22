@@ -14,15 +14,10 @@ _GroupCategory _$GroupCategoryFromJson(Map<String, dynamic> json) =>
       groupCategoryAxisID: json['groupCategoryAxisID'] as String,
       name: json['name'] as String,
       order: (json['order'] as num).toInt(),
-      locationOrders: (json['locationOrders'] as Map<String, dynamic>?)?.map(
-            (k, e) => MapEntry(k, (e as num).toInt()),
-          ) ??
-          const {},
-      keywords: (json['keywords'] as List<dynamic>?)
-              ?.map((e) =>
-                  GroupCategoryKeyword.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
+      locationOrders: Map<String, int>.from(json['locationOrders'] as Map),
+      keywords: (json['keywords'] as List<dynamic>)
+          .map((e) => GroupCategoryKeyword.fromJson(e as Map<String, dynamic>))
+          .toList(),
       color: json['color'] as String?,
       iconName: json['iconName'] as String?,
       createdDateTime: const ClientCreatedTimestamp()
