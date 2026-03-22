@@ -17,6 +17,7 @@ mixin _$GroupShoppingListItem {
   String get id;
   String get groupID;
   String get shoppingListID;
+  String get userID;
   String get message; // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
 // NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
   int get order;
@@ -54,6 +55,7 @@ mixin _$GroupShoppingListItem {
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.shoppingListID, shoppingListID) ||
                 other.shoppingListID == shoppingListID) &&
+            (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.order, order) || other.order == order) &&
             (identical(other.status, status) || other.status == status) &&
@@ -79,6 +81,7 @@ mixin _$GroupShoppingListItem {
       id,
       groupID,
       shoppingListID,
+      userID,
       message,
       order,
       status,
@@ -92,7 +95,7 @@ mixin _$GroupShoppingListItem {
 
   @override
   String toString() {
-    return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, message: $message, order: $order, status: $status, description: $description, color: $color, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, message: $message, order: $order, status: $status, description: $description, color: $color, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -106,6 +109,7 @@ abstract mixin class $GroupShoppingListItemCopyWith<$Res> {
       {String id,
       String groupID,
       String shoppingListID,
+      String userID,
       String message,
       int order,
       GroupShoppingListItemStatus status,
@@ -134,6 +138,7 @@ class _$GroupShoppingListItemCopyWithImpl<$Res>
     Object? id = null,
     Object? groupID = null,
     Object? shoppingListID = null,
+    Object? userID = null,
     Object? message = null,
     Object? order = null,
     Object? status = null,
@@ -157,6 +162,10 @@ class _$GroupShoppingListItemCopyWithImpl<$Res>
       shoppingListID: null == shoppingListID
           ? _self.shoppingListID
           : shoppingListID // ignore: cast_nullable_to_non_nullable
+              as String,
+      userID: null == userID
+          ? _self.userID
+          : userID // ignore: cast_nullable_to_non_nullable
               as String,
       message: null == message
           ? _self.message
@@ -299,6 +308,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             String id,
             String groupID,
             String shoppingListID,
+            String userID,
             String message,
             int order,
             GroupShoppingListItemStatus status,
@@ -319,6 +329,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             _that.id,
             _that.groupID,
             _that.shoppingListID,
+            _that.userID,
             _that.message,
             _that.order,
             _that.status,
@@ -353,6 +364,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             String id,
             String groupID,
             String shoppingListID,
+            String userID,
             String message,
             int order,
             GroupShoppingListItemStatus status,
@@ -372,6 +384,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             _that.id,
             _that.groupID,
             _that.shoppingListID,
+            _that.userID,
             _that.message,
             _that.order,
             _that.status,
@@ -405,6 +418,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             String id,
             String groupID,
             String shoppingListID,
+            String userID,
             String message,
             int order,
             GroupShoppingListItemStatus status,
@@ -424,6 +438,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             _that.id,
             _that.groupID,
             _that.shoppingListID,
+            _that.userID,
             _that.message,
             _that.order,
             _that.status,
@@ -448,6 +463,7 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
       {required this.id,
       required this.groupID,
       required this.shoppingListID,
+      required this.userID,
       required this.message,
       required this.order,
       this.status = GroupShoppingListItemStatus.unchecked,
@@ -467,6 +483,8 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
   final String groupID;
   @override
   final String shoppingListID;
+  @override
+  final String userID;
   @override
   final String message;
 // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
@@ -521,6 +539,7 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.shoppingListID, shoppingListID) ||
                 other.shoppingListID == shoppingListID) &&
+            (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.order, order) || other.order == order) &&
             (identical(other.status, status) || other.status == status) &&
@@ -546,6 +565,7 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
       id,
       groupID,
       shoppingListID,
+      userID,
       message,
       order,
       status,
@@ -559,7 +579,7 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
 
   @override
   String toString() {
-    return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, message: $message, order: $order, status: $status, description: $description, color: $color, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, message: $message, order: $order, status: $status, description: $description, color: $color, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -575,6 +595,7 @@ abstract mixin class _$GroupShoppingListItemCopyWith<$Res>
       {String id,
       String groupID,
       String shoppingListID,
+      String userID,
       String message,
       int order,
       GroupShoppingListItemStatus status,
@@ -603,6 +624,7 @@ class __$GroupShoppingListItemCopyWithImpl<$Res>
     Object? id = null,
     Object? groupID = null,
     Object? shoppingListID = null,
+    Object? userID = null,
     Object? message = null,
     Object? order = null,
     Object? status = null,
@@ -626,6 +648,10 @@ class __$GroupShoppingListItemCopyWithImpl<$Res>
       shoppingListID: null == shoppingListID
           ? _self.shoppingListID
           : shoppingListID // ignore: cast_nullable_to_non_nullable
+              as String,
+      userID: null == userID
+          ? _self.userID
+          : userID // ignore: cast_nullable_to_non_nullable
               as String,
       message: null == message
           ? _self.message

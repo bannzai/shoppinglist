@@ -1,0 +1,18 @@
+appId: com.bannzai.shoppinglist
+---
+# Phase 6: クリーンアップ
+- launchApp:
+    clearState: false
+
+# 設定タブ → 開発者オプション画面へ遷移
+- runFlow: ../shared/open_developer_options.yaml
+- extendedWaitUntil:
+    visible: "デバッグデータクリーンアップ"
+    timeout: 10000
+- tapOn: "デバッグデータクリーンアップ"
+
+# 操作完了を待つ
+- extendedWaitUntil:
+    visible: ".*完了"
+    timeout: 15000
+- takeScreenshot: screenshots/virtual_pairing/06_cleanup_done
