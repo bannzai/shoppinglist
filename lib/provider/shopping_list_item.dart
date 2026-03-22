@@ -37,6 +37,7 @@ class AddShoppingListItem {
 
   Future<GroupShoppingListItem> call({
     required String shoppingListID,
+    required String userID,
     required String message,
     required int order,
     required String? description,
@@ -51,6 +52,7 @@ class AddShoppingListItem {
         id: docRef.id,
         groupID: database.groupID,
         shoppingListID: shoppingListID,
+        userID: userID,
         message: message,
         order: order,
         description: description,

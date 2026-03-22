@@ -14,6 +14,7 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_items.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_sync.dart';
 import 'package:shoppinglist/provider/app_user.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
@@ -210,6 +211,7 @@ class _Body extends HookConsumerWidget {
             });
             ref.read(addShoppingListItemProvider(groupID: groupID)).call(
                   shoppingListID: shoppingListID,
+                  userID: ref.read(currentUserIDProvider)!,
                   message: '',
                   order: (shoppingListItemsAsync.asData?.value ?? []).nextOrder,
                   description: null,
