@@ -285,7 +285,8 @@ class _Body extends HookConsumerWidget {
                         child: ShoppingListItems(
                             groupID: groupID,
                             shoppingListID: shoppingListID,
-                            sortByCategory: sortByCategory.value)),
+                            sortByCategory: sortByCategory.value,
+                            shoppingLocationID: shoppingList?.shoppingLocationID)),
                     if (ttlExpiresDateTime != null)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
