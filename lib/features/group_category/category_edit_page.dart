@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -211,6 +212,18 @@ class _CategoryEditBody extends HookConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
+                if (kDebugMode && category.locationOrders.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    '[DEBUG] locationOrders: ${category.locationOrders}',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontFamily: 'monospace',
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
                 if (category.keywords.isEmpty)
                   const Text('キーワードがまだありません',
                       style: TextStyle(color: Colors.grey))
