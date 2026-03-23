@@ -21,6 +21,7 @@ abstract class AppUserPrivate with _$AppUserPrivate {
     required String id,
     required String userID,
     String? email,
+    required List<String> fcmTokens,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
