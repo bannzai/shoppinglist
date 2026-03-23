@@ -194,9 +194,11 @@ class _Body extends HookConsumerWidget {
         ref.watch(groupUserProfilesProvider(groupID: groupID));
     final memberProfiles = memberProfilesAsync.asData?.value ?? [];
 
-    // アイテムストリームの変更回数を追跡し、初回ロード以降の変更でSnackBarを表示
+    // アイテムストリームの変更回数を追跡し、初回ロード以降の変更でSnackBarを表示するためのカウンター
     final itemChangeCount = useState(0);
     final isInitialLoad = useState(true);
+    // アイテム変更検知: allItemsAsyncが更新されるたびに変更回数をインクリメント（初回ロードは除外）
+    // 依存配列: [allItemsAsync] — Firestoreストリームからアイテムデータが更新されるたびに実行
     useEffect(() {
       if (allItemsAsync is AsyncData) {
         if (isInitialLoad.value) {
