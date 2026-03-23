@@ -8,6 +8,8 @@ import {
   DataResponseSchema,
   ErrorResponseSchema,
 } from "../../entity/response";
+import { groupUserProfileDocumentID } from "../../entity/group_user_profile";
+import { appUserPrivateDocumentID } from "../../entity/app_user_private";
 
 const ResponseSchema = z.union([
   DataResponseSchema.extend({
@@ -77,7 +79,7 @@ const sendShoppingListUpdateNotificationFlow = ai.defineFlow(
         .collection("groups")
         .doc(groupID)
         .collection("userProfiles")
-        .doc(`group_${groupID}_userProfile_${uid}`)
+        .doc(groupUserProfileDocumentID({ groupID, userID: uid }))
         .get();
 
       interface UserProfileData {
@@ -96,12 +98,11 @@ const sendShoppingListUpdateNotificationFlow = ai.defineFlow(
         if (targetUserID === uid) continue;
         if (!memberUserIDs.includes(targetUserID)) continue;
 
-        const privateDocID = `user_${targetUserID}_private_${targetUserID}`;
         const privateDoc = await firestore
           .collection("users")
           .doc(targetUserID)
           .collection("privates")
-          .doc(privateDocID)
+          .doc(appUserPrivateDocumentID({ userID: targetUserID }))
           .get();
 
         if (!privateDoc.exists) continue;
@@ -164,12 +165,11 @@ const sendShoppingListUpdateNotificationFlow = ai.defineFlow(
 
       // 無効トークンを一括削除
       for (const [userID, tokens] of invalidTokens.entries()) {
-        const privateDocID = `user_${userID}_private_${userID}`;
         await firestore
           .collection("users")
           .doc(userID)
           .collection("privates")
-          .doc(privateDocID)
+          .doc(appUserPrivateDocumentID({ userID }))
           .update({
             fcmTokens: admin.firestore.FieldValue.arrayRemove(tokens),
             serverUpdatedDateTime:
