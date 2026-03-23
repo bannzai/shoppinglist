@@ -210,6 +210,8 @@ class _Body extends HookConsumerWidget {
       return null;
     }, [allItemsAsync]);
 
+    // 手動通知SnackBar表示: アイテム変更が検知されたらメンバーアイコン付きSnackBarを表示
+    // 依存配列: [itemChangeCount.value] — 変更回数が増えるたびに新しいSnackBarを表示
     useEffect(() {
       if (itemChangeCount.value > 0 && currentUserID != null) {
         // WidgetsBinding.instance.addPostFrameCallback でSnackBarをbuild完了後に表示
@@ -229,7 +231,8 @@ class _Body extends HookConsumerWidget {
       return null;
     }, [itemChangeCount.value]);
 
-    // 自動通知: 設定ONの場合、バックグラウンド移行時に自動送信
+    // 自動通知: 設定ONかつアイテム変更があった場合、バックグラウンド移行時にグループ全メンバーへ通知を自動送信
+    // 依存配列: [autoNotify, currentUserID, memberProfiles] — 設定変更・ユーザー変更・メンバー変更時にリスナーを再登録
     final autoNotify = ref.watch(autoNotifyShoppingListUpdateProvider);
     useEffect(() {
       if (!autoNotify || currentUserID == null) return null;
