@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/app_user.dart';
+import 'package:shoppinglist/provider/fcm_token.dart';
 import 'package:shoppinglist/provider/group_create.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 
@@ -27,6 +29,18 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
     final shoppingLists = appUserDefaultGroupID != null
         ? ref.watch(shoppingListsProvider(groupID: appUserDefaultGroupID))
         : null;
+
+    // FCMトークン登録
+    final userDatabase = ref.watch(userDatabaseProvider);
+    useEffect(() {
+      if (appUser != null) {
+        final fcmRegistration =
+            FcmTokenRegistration(userDatabase: userDatabase);
+        fcmRegistration.registerToken();
+        fcmRegistration.listenTokenRefresh();
+      }
+      return null;
+    }, [appUser]);
 
     // Group未作成の場合は作成してAppUserにセット
     useEffect(() {
