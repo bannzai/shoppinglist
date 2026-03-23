@@ -30,7 +30,8 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
         ? ref.watch(shoppingListsProvider(groupID: appUserDefaultGroupID))
         : null;
 
-    // FCMトークン登録
+    // FCMトークン登録: appUserが取得できたらFCMトークンをFirestoreに保存し、トークン更新を監視する
+    // 依存配列: [appUser] — appUserがnullから値に変わった時に1回実行
     final userDatabase = ref.watch(userDatabaseProvider);
     useEffect(() {
       if (appUser != null) {
