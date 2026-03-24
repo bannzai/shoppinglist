@@ -33,7 +33,6 @@ firebase/ ディレクトリ配下についてです。主にbackendで動くFir
 Firebase Functions の規約です
 - 原則: onDocumentCreated,onDocumentUpdated によるトリガーによる処理を禁止します。コードがトレースしにくくなり、思わぬタイミングで発動してしまうのでコントロールがむず痒いためです
 - 原則: クライアントから呼ぶ Functions は GenKit を使用して定義します
-- 原則: group配下のドキュメントでユーザーの同時書き込みによりデータが消える可能性がある場合は、`runTransaction` を使用する（batchではなくトランザクションでアトミック性を保証する）
 - Deployはユーザーが行うので禁止
 
 ### コーディング規約
@@ -44,6 +43,9 @@ Firebase Functions の規約です
 - firestoreのDBに書き込むProviderでは、ref.readを使用してClosureの中で呼ぶ
 - エラーメッセージについては、基本的にそのまま表示する（`e.toString()` の加工・プレフィックス除去等はしない）
 - Firestoreのサブコレクションに保存されるEntityは、親ドキュメントのIDをフィールドとして保持する（詳細: `documents/entity-parent-id-rules.md`）
+
+### テスト方針
+- 実装後は手動テスト前に必ず、ユニットテスト・MaestroによるE2Eテストを実行する。該当するものがなければテストを新規作成をする。作成・実行が難しい場合はユーザーに報告する
 
 ### プロジェクト構成・ドキュメント方針
 - 実装のことは全てコード上のコメントに記載する

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -84,63 +82,6 @@ class _GroupSettingBody extends HookConsumerWidget {
     final isCreatingInvitation = useState(false);
     final isRemovingMember = useState(false);
 
-    // Auto-save state
-    final isSavingName = useState(false);
-    final showSavedCheck = useState(false);
-    final lastSavedName = useState(group.name ?? '');
-
-    // Debounce auto-save for group name
-    useEffect(() {
-      if (!isOwner) return null;
-      Timer? debounceTimer;
-      Timer? checkTimer;
-
-      void listener() {
-        debounceTimer?.cancel();
-        checkTimer?.cancel();
-        showSavedCheck.value = false;
-
-        debounceTimer = Timer(const Duration(seconds: 1), () async {
-          final newName = groupNameController.text.trim();
-          if (newName.isEmpty || newName == lastSavedName.value) return;
-
-          isSavingName.value = true;
-          try {
-            await functions.updateGroupName(
-              groupID: groupID,
-              name: newName,
-            );
-            analytics.logEvent(
-                name: 'auto_save_group_name',
-                parameters: {'groupID': groupID});
-            if (!context.mounted) return;
-            lastSavedName.value = newName;
-            showSavedCheck.value = true;
-            checkTimer = Timer(const Duration(seconds: 2), () {
-              showSavedCheck.value = false;
-            });
-          } catch (e) {
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(e.toString())),
-              );
-            }
-          } finally {
-            if (context.mounted) {
-              isSavingName.value = false;
-            }
-          }
-        });
-      }
-
-      groupNameController.addListener(listener);
-      return () {
-        debounceTimer?.cancel();
-        checkTimer?.cancel();
-        groupNameController.removeListener(listener);
-      };
-    }, [isOwner]);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('グループ設定'),
@@ -165,24 +106,22 @@ class _GroupSettingBody extends HookConsumerWidget {
                       TextField(
                         controller: groupNameController,
                         readOnly: !isOwner,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'グループ名を入力',
-                          enabled: isOwner,
-                          suffixIcon: isSavingName.value
-                              ? const Padding(
-                                  padding: EdgeInsets.all(12.0),
-                                  child: SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                        strokeWidth: 2),
-                                  ),
-                                )
-                              : showSavedCheck.value
-                                  ? const Icon(Icons.check,
-                                      color: Colors.green)
-                                  : null,
                         ),
+                        onSubmitted: !isOwner
+                            ? null
+                            : (value) {
+                                final newName = value.trim();
+                                if (newName.isEmpty ||
+                                    newName == (group.name ?? '')) {
+                                  return;
+                                }
+                                ref
+                                    .read(groupNameUpdateProvider(
+                                        groupID: groupID))
+                                    .call(name: newName);
+                              },
                       ),
                     ],
                   ),
@@ -562,10 +501,7 @@ class _ShoppingLocationsSection extends ConsumerWidget {
               if (name.isEmpty) return;
               analytics.logEvent(
                   name: 'tap_save_location',
-                  parameters: {
-                    'groupID': groupID,
-                    'locationID': location.id
-                  });
+                  parameters: {'groupID': groupID, 'locationID': location.id});
               Navigator.pop(dialogContext);
               try {
                 await ref
@@ -588,10 +524,7 @@ class _ShoppingLocationsSection extends ConsumerWidget {
             onPressed: () {
               analytics.logEvent(
                   name: 'cancel_edit_location',
-                  parameters: {
-                    'groupID': groupID,
-                    'locationID': location.id
-                  });
+                  parameters: {'groupID': groupID, 'locationID': location.id});
               Navigator.pop(dialogContext);
             },
             child: const Text('キャンセル'),
@@ -616,10 +549,7 @@ class _ShoppingLocationsSection extends ConsumerWidget {
             onPressed: () async {
               analytics.logEvent(
                   name: 'tap_confirm_del_location',
-                  parameters: {
-                    'groupID': groupID,
-                    'locationID': location.id
-                  });
+                  parameters: {'groupID': groupID, 'locationID': location.id});
               Navigator.pop(dialogContext);
               try {
                 await ref
@@ -642,10 +572,7 @@ class _ShoppingLocationsSection extends ConsumerWidget {
             onPressed: () {
               analytics.logEvent(
                   name: 'cancel_del_location',
-                  parameters: {
-                    'groupID': groupID,
-                    'locationID': location.id
-                  });
+                  parameters: {'groupID': groupID, 'locationID': location.id});
               Navigator.pop(dialogContext);
             },
             child: const Text('キャンセル'),
@@ -700,8 +627,7 @@ void _showAddCategoryDialog({
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        GroupShoppingListItemCategoryEditPage(
+                    builder: (context) => GroupShoppingListItemCategoryEditPage(
                       groupID: groupID,
                       categoryAxisID: categoryAxisID,
                       categoryID: category.id,
@@ -722,8 +648,7 @@ void _showAddCategoryDialog({
         TextButton(
           onPressed: () {
             analytics.logEvent(
-                name: 'cancel_add_category',
-                parameters: {'groupID': groupID});
+                name: 'cancel_add_category', parameters: {'groupID': groupID});
             Navigator.pop(dialogContext);
           },
           child: const Text('キャンセル'),
@@ -742,8 +667,8 @@ class _CategoriesSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final axesAsync = ref.watch(
-        groupShoppingListItemCategoryAxesProvider(groupID: groupID));
+    final axesAsync =
+        ref.watch(groupShoppingListItemCategoryAxesProvider(groupID: groupID));
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
@@ -867,9 +792,8 @@ class _CategoryListContent extends ConsumerWidget {
         return Column(
           children: [
             ...categories.map((category) {
-              final categoryColor = category.color != null
-                  ? colorFromHex(category.color!)
-                  : null;
+              final categoryColor =
+                  category.color != null ? colorFromHex(category.color!) : null;
               return ListTile(
                 leading: Icon(
                   categoryIconFromName(category.iconName),
@@ -926,8 +850,7 @@ class _CategoryListContent extends ConsumerWidget {
             TextButton.icon(
               onPressed: () {
                 analytics.logEvent(
-                    name: 'tap_add_category',
-                    parameters: {'groupID': groupID});
+                    name: 'tap_add_category', parameters: {'groupID': groupID});
                 _showAddCategoryDialog(
                   context: context,
                   ref: ref,
@@ -962,10 +885,7 @@ class _CategoryListContent extends ConsumerWidget {
             onPressed: () async {
               analytics.logEvent(
                   name: 'tap_confirm_del_category',
-                  parameters: {
-                    'groupID': groupID,
-                    'categoryID': category.id
-                  });
+                  parameters: {'groupID': groupID, 'categoryID': category.id});
               Navigator.pop(dialogContext);
               try {
                 await ref
@@ -992,10 +912,7 @@ class _CategoryListContent extends ConsumerWidget {
             onPressed: () {
               analytics.logEvent(
                   name: 'cancel_del_category',
-                  parameters: {
-                    'groupID': groupID,
-                    'categoryID': category.id
-                  });
+                  parameters: {'groupID': groupID, 'categoryID': category.id});
               Navigator.pop(dialogContext);
             },
             child: const Text('キャンセル'),

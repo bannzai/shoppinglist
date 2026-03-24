@@ -17,25 +17,25 @@ appId: com.bannzai.shoppinglist
 - assertVisible: "グループ作成"
 - tapOn: "グループ名を入力"
 - inputText: "テストグループ"
-- tapOn:
-    point: "50%,6%"
+- pressKey: Enter
 - tapOn: "作成する"
-- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "グループ管理"
+    timeout: 15000
 
 # グループ設定画面に遷移（グループリストからタップ）
-- tapOn: "テストグループ"
+- extendedWaitUntil:
+    visible: ".*テストグループ.*"
+    timeout: 10000
+- tapOn: ".*テストグループ.*"
 - assertVisible: "グループ設定"
 - takeScreenshot: screenshots/group_setting_01_initial
 
-# グループ名編集 → 自動保存確認
-- tapOn: "グループ名を入力"
+# グループ名編集 → onSubmittedで保存
+- tapOn: "テストグループ"
 - eraseText: 7
 - inputText: "更新されたグループ"
-- tapOn:
-    point: "50%,6%"
-- extendedWaitUntil:
-    visible: ".*check.*"
-    timeout: 5000
+- pressKey: Enter
 - takeScreenshot: screenshots/group_setting_02_name_saved
 
 # 場所を追加
@@ -62,14 +62,13 @@ appId: com.bannzai.shoppinglist
 # カテゴリ追加後はカテゴリ編集画面に遷移する
 - assertVisible: "カテゴリ編集"
 - takeScreenshot: screenshots/group_setting_04_category_edit
-- pressKey: back
+- tapOn: "Back"
 
 # グループ設定画面に戻り、カテゴリが表示されていることを確認
 - assertVisible: "グループ設定"
-- scrollUntilVisible:
-    element: "野菜"
-    direction: DOWN
-- assertVisible: "野菜"
+- extendedWaitUntil:
+    visible: ".*野菜.*"
+    timeout: 10000
 - takeScreenshot: screenshots/group_setting_05_category_added
 
 # スクリーンショット（最終状態）
