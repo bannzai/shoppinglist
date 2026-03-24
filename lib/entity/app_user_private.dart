@@ -40,7 +40,7 @@ abstract class AppUserPrivate with _$AppUserPrivate {
           AppUserPrivate private, SetOptions? options) =>
       private.toJson();
 
-  /// composite ID: user_{userID}_private_{userID}
+  /// composite ID: UserPrivate_users_{userID}
   static String documentID({required String userID}) =>
-      'user_${userID}_private_$userID';
+      'UserPrivate_users_$userID';
 }

@@ -1,5 +1,5 @@
 /**
- * composite ID: group_{groupID}_userProfile_{userID}
+ * composite ID: UserProfile_groups_{groupID}_users_{userID}
  */
 export function groupUserProfileDocumentID({
   groupID,
@@ -8,5 +8,5 @@ export function groupUserProfileDocumentID({
   groupID: string;
   userID: string;
 }): string {
-  return `group_${groupID}_userProfile_${userID}`;
+  return `UserProfile_groups_${groupID}_users_${userID}`;
 }
