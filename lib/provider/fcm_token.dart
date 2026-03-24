@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -21,8 +23,9 @@ class FcmTokenRegistration {
     }
   }
 
-  void listenTokenRefresh() {
-    FirebaseMessaging.instance.onTokenRefresh.listen((token) async {
+  /// トークン更新を監視する。戻り値のStreamSubscriptionをキャンセルすることで監視を停止できる。
+  StreamSubscription<String> listenTokenRefresh() {
+    return FirebaseMessaging.instance.onTokenRefresh.listen((token) async {
       try {
         await _saveToken(token);
       } catch (e) {
