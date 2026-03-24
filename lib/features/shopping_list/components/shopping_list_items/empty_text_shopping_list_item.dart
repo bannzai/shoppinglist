@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -58,9 +59,9 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
                       .read(addShoppingListItemProvider(groupID: groupID))
                       .call(
                         shoppingListID: shoppingListID,
+                        userID: ref.read(currentUserIDProvider)!,
                         message: '',
                         order: nextOrder,
-                        groupShoppingListItemCategoryID: null,
                         description: null,
                         color: null,
                       );

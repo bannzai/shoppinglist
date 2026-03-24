@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'group_shopping_list_item_category_keyword.dart';
+part of 'group_category_keyword.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -13,28 +13,26 @@ part of 'group_shopping_list_item_category_keyword.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$GroupShoppingListItemCategoryKeyword {
+mixin _$GroupCategoryKeyword {
   String get keyword;
-  GroupShoppingListItemCategoryKeywordMatchingType get matchingType;
+  GroupCategoryKeywordMatchingType get matchingType;
 
-  /// Create a copy of GroupShoppingListItemCategoryKeyword
+  /// Create a copy of GroupCategoryKeyword
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $GroupShoppingListItemCategoryKeywordCopyWith<
-          GroupShoppingListItemCategoryKeyword>
-      get copyWith => _$GroupShoppingListItemCategoryKeywordCopyWithImpl<
-              GroupShoppingListItemCategoryKeyword>(
-          this as GroupShoppingListItemCategoryKeyword, _$identity);
+  $GroupCategoryKeywordCopyWith<GroupCategoryKeyword> get copyWith =>
+      _$GroupCategoryKeywordCopyWithImpl<GroupCategoryKeyword>(
+          this as GroupCategoryKeyword, _$identity);
 
-  /// Serializes this GroupShoppingListItemCategoryKeyword to a JSON map.
+  /// Serializes this GroupCategoryKeyword to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is GroupShoppingListItemCategoryKeyword &&
+            other is GroupCategoryKeyword &&
             (identical(other.keyword, keyword) || other.keyword == keyword) &&
             (identical(other.matchingType, matchingType) ||
                 other.matchingType == matchingType));
@@ -46,31 +44,28 @@ mixin _$GroupShoppingListItemCategoryKeyword {
 
   @override
   String toString() {
-    return 'GroupShoppingListItemCategoryKeyword(keyword: $keyword, matchingType: $matchingType)';
+    return 'GroupCategoryKeyword(keyword: $keyword, matchingType: $matchingType)';
   }
 }
 
 /// @nodoc
-abstract mixin class $GroupShoppingListItemCategoryKeywordCopyWith<$Res> {
-  factory $GroupShoppingListItemCategoryKeywordCopyWith(
-          GroupShoppingListItemCategoryKeyword value,
-          $Res Function(GroupShoppingListItemCategoryKeyword) _then) =
-      _$GroupShoppingListItemCategoryKeywordCopyWithImpl;
+abstract mixin class $GroupCategoryKeywordCopyWith<$Res> {
+  factory $GroupCategoryKeywordCopyWith(GroupCategoryKeyword value,
+          $Res Function(GroupCategoryKeyword) _then) =
+      _$GroupCategoryKeywordCopyWithImpl;
   @useResult
-  $Res call(
-      {String keyword,
-      GroupShoppingListItemCategoryKeywordMatchingType matchingType});
+  $Res call({String keyword, GroupCategoryKeywordMatchingType matchingType});
 }
 
 /// @nodoc
-class _$GroupShoppingListItemCategoryKeywordCopyWithImpl<$Res>
-    implements $GroupShoppingListItemCategoryKeywordCopyWith<$Res> {
-  _$GroupShoppingListItemCategoryKeywordCopyWithImpl(this._self, this._then);
+class _$GroupCategoryKeywordCopyWithImpl<$Res>
+    implements $GroupCategoryKeywordCopyWith<$Res> {
+  _$GroupCategoryKeywordCopyWithImpl(this._self, this._then);
 
-  final GroupShoppingListItemCategoryKeyword _self;
-  final $Res Function(GroupShoppingListItemCategoryKeyword) _then;
+  final GroupCategoryKeyword _self;
+  final $Res Function(GroupCategoryKeyword) _then;
 
-  /// Create a copy of GroupShoppingListItemCategoryKeyword
+  /// Create a copy of GroupCategoryKeyword
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -86,14 +81,13 @@ class _$GroupShoppingListItemCategoryKeywordCopyWithImpl<$Res>
       matchingType: null == matchingType
           ? _self.matchingType
           : matchingType // ignore: cast_nullable_to_non_nullable
-              as GroupShoppingListItemCategoryKeywordMatchingType,
+              as GroupCategoryKeywordMatchingType,
     ));
   }
 }
 
-/// Adds pattern-matching-related methods to [GroupShoppingListItemCategoryKeyword].
-extension GroupShoppingListItemCategoryKeywordPatterns
-    on GroupShoppingListItemCategoryKeyword {
+/// Adds pattern-matching-related methods to [GroupCategoryKeyword].
+extension GroupCategoryKeywordPatterns on GroupCategoryKeyword {
   /// A variant of `map` that fallback to returning `orElse`.
   ///
   /// It is equivalent to doing:
@@ -108,12 +102,12 @@ extension GroupShoppingListItemCategoryKeywordPatterns
 
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>(
-    TResult Function(_GroupShoppingListItemCategoryKeyword value)? $default, {
+    TResult Function(_GroupCategoryKeyword value)? $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategoryKeyword() when $default != null:
+      case _GroupCategoryKeyword() when $default != null:
         return $default(_that);
       case _:
         return orElse();
@@ -135,11 +129,11 @@ extension GroupShoppingListItemCategoryKeywordPatterns
 
   @optionalTypeArgs
   TResult map<TResult extends Object?>(
-    TResult Function(_GroupShoppingListItemCategoryKeyword value) $default,
+    TResult Function(_GroupCategoryKeyword value) $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategoryKeyword():
+      case _GroupCategoryKeyword():
         return $default(_that);
       case _:
         throw StateError('Unexpected subclass');
@@ -160,11 +154,11 @@ extension GroupShoppingListItemCategoryKeywordPatterns
 
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_GroupShoppingListItemCategoryKeyword value)? $default,
+    TResult? Function(_GroupCategoryKeyword value)? $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategoryKeyword() when $default != null:
+      case _GroupCategoryKeyword() when $default != null:
         return $default(_that);
       case _:
         return null;
@@ -185,14 +179,14 @@ extension GroupShoppingListItemCategoryKeywordPatterns
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String keyword,
-            GroupShoppingListItemCategoryKeywordMatchingType matchingType)?
+    TResult Function(
+            String keyword, GroupCategoryKeywordMatchingType matchingType)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategoryKeyword() when $default != null:
+      case _GroupCategoryKeyword() when $default != null:
         return $default(_that.keyword, _that.matchingType);
       case _:
         return orElse();
@@ -214,13 +208,13 @@ extension GroupShoppingListItemCategoryKeywordPatterns
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(String keyword,
-            GroupShoppingListItemCategoryKeywordMatchingType matchingType)
+    TResult Function(
+            String keyword, GroupCategoryKeywordMatchingType matchingType)
         $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategoryKeyword():
+      case _GroupCategoryKeyword():
         return $default(_that.keyword, _that.matchingType);
       case _:
         throw StateError('Unexpected subclass');
@@ -241,13 +235,13 @@ extension GroupShoppingListItemCategoryKeywordPatterns
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String keyword,
-            GroupShoppingListItemCategoryKeywordMatchingType matchingType)?
+    TResult? Function(
+            String keyword, GroupCategoryKeywordMatchingType matchingType)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategoryKeyword() when $default != null:
+      case _GroupCategoryKeyword() when $default != null:
         return $default(_that.keyword, _that.matchingType);
       case _:
         return null;
@@ -258,32 +252,29 @@ extension GroupShoppingListItemCategoryKeywordPatterns
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true)
-class _GroupShoppingListItemCategoryKeyword
-    implements GroupShoppingListItemCategoryKeyword {
-  const _GroupShoppingListItemCategoryKeyword(
+class _GroupCategoryKeyword implements GroupCategoryKeyword {
+  const _GroupCategoryKeyword(
       {required this.keyword, required this.matchingType});
-  factory _GroupShoppingListItemCategoryKeyword.fromJson(
-          Map<String, dynamic> json) =>
-      _$GroupShoppingListItemCategoryKeywordFromJson(json);
+  factory _GroupCategoryKeyword.fromJson(Map<String, dynamic> json) =>
+      _$GroupCategoryKeywordFromJson(json);
 
   @override
   final String keyword;
   @override
-  final GroupShoppingListItemCategoryKeywordMatchingType matchingType;
+  final GroupCategoryKeywordMatchingType matchingType;
 
-  /// Create a copy of GroupShoppingListItemCategoryKeyword
+  /// Create a copy of GroupCategoryKeyword
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$GroupShoppingListItemCategoryKeywordCopyWith<
-          _GroupShoppingListItemCategoryKeyword>
-      get copyWith => __$GroupShoppingListItemCategoryKeywordCopyWithImpl<
-          _GroupShoppingListItemCategoryKeyword>(this, _$identity);
+  _$GroupCategoryKeywordCopyWith<_GroupCategoryKeyword> get copyWith =>
+      __$GroupCategoryKeywordCopyWithImpl<_GroupCategoryKeyword>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$GroupShoppingListItemCategoryKeywordToJson(
+    return _$GroupCategoryKeywordToJson(
       this,
     );
   }
@@ -292,7 +283,7 @@ class _GroupShoppingListItemCategoryKeyword
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _GroupShoppingListItemCategoryKeyword &&
+            other is _GroupCategoryKeyword &&
             (identical(other.keyword, keyword) || other.keyword == keyword) &&
             (identical(other.matchingType, matchingType) ||
                 other.matchingType == matchingType));
@@ -304,33 +295,30 @@ class _GroupShoppingListItemCategoryKeyword
 
   @override
   String toString() {
-    return 'GroupShoppingListItemCategoryKeyword(keyword: $keyword, matchingType: $matchingType)';
+    return 'GroupCategoryKeyword(keyword: $keyword, matchingType: $matchingType)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$GroupShoppingListItemCategoryKeywordCopyWith<$Res>
-    implements $GroupShoppingListItemCategoryKeywordCopyWith<$Res> {
-  factory _$GroupShoppingListItemCategoryKeywordCopyWith(
-          _GroupShoppingListItemCategoryKeyword value,
-          $Res Function(_GroupShoppingListItemCategoryKeyword) _then) =
-      __$GroupShoppingListItemCategoryKeywordCopyWithImpl;
+abstract mixin class _$GroupCategoryKeywordCopyWith<$Res>
+    implements $GroupCategoryKeywordCopyWith<$Res> {
+  factory _$GroupCategoryKeywordCopyWith(_GroupCategoryKeyword value,
+          $Res Function(_GroupCategoryKeyword) _then) =
+      __$GroupCategoryKeywordCopyWithImpl;
   @override
   @useResult
-  $Res call(
-      {String keyword,
-      GroupShoppingListItemCategoryKeywordMatchingType matchingType});
+  $Res call({String keyword, GroupCategoryKeywordMatchingType matchingType});
 }
 
 /// @nodoc
-class __$GroupShoppingListItemCategoryKeywordCopyWithImpl<$Res>
-    implements _$GroupShoppingListItemCategoryKeywordCopyWith<$Res> {
-  __$GroupShoppingListItemCategoryKeywordCopyWithImpl(this._self, this._then);
+class __$GroupCategoryKeywordCopyWithImpl<$Res>
+    implements _$GroupCategoryKeywordCopyWith<$Res> {
+  __$GroupCategoryKeywordCopyWithImpl(this._self, this._then);
 
-  final _GroupShoppingListItemCategoryKeyword _self;
-  final $Res Function(_GroupShoppingListItemCategoryKeyword) _then;
+  final _GroupCategoryKeyword _self;
+  final $Res Function(_GroupCategoryKeyword) _then;
 
-  /// Create a copy of GroupShoppingListItemCategoryKeyword
+  /// Create a copy of GroupCategoryKeyword
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -338,7 +326,7 @@ class __$GroupShoppingListItemCategoryKeywordCopyWithImpl<$Res>
     Object? keyword = null,
     Object? matchingType = null,
   }) {
-    return _then(_GroupShoppingListItemCategoryKeyword(
+    return _then(_GroupCategoryKeyword(
       keyword: null == keyword
           ? _self.keyword
           : keyword // ignore: cast_nullable_to_non_nullable
@@ -346,7 +334,7 @@ class __$GroupShoppingListItemCategoryKeywordCopyWithImpl<$Res>
       matchingType: null == matchingType
           ? _self.matchingType
           : matchingType // ignore: cast_nullable_to_non_nullable
-              as GroupShoppingListItemCategoryKeywordMatchingType,
+              as GroupCategoryKeywordMatchingType,
     ));
   }
 }

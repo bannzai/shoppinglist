@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/image/image.dart';
@@ -129,9 +130,9 @@ class ImagePickerButton extends ConsumerWidget {
       try {
         await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
               shoppingListID: shoppingListID,
+              userID: ref.read(currentUserIDProvider)!,
               message: e,
               order: shoppingListItems.nextOrder + i,
-              groupShoppingListItemCategoryID: null,
               description: null,
               color: null,
             );

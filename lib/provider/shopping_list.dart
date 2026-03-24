@@ -119,9 +119,9 @@ class ShoppingListDuplicate {
     for (final item in shoppingListItems) {
       await addShoppingListItem(
         shoppingListID: newShoppingList.id,
+        userID: createUserID,
         message: item.message,
         order: item.order,
-        groupShoppingListItemCategoryID: item.groupShoppingListItemCategoryID,
         description: item.description,
         color: item.color,
       );

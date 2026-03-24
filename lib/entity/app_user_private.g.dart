@@ -11,6 +11,8 @@ _AppUserPrivate _$AppUserPrivateFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       userID: json['userID'] as String,
       email: json['email'] as String?,
+      fcmTokens:
+          (json['fcmTokens'] as List<dynamic>).map((e) => e as String).toList(),
       createdDateTime: const ClientCreatedTimestamp()
           .fromJson(json['createdDateTime'] as Timestamp?),
       updatedDateTime: const ClientUpdatedTimestamp()
@@ -26,6 +28,7 @@ Map<String, dynamic> _$AppUserPrivateToJson(_AppUserPrivate instance) =>
       'id': instance.id,
       'userID': instance.userID,
       'email': instance.email,
+      'fcmTokens': instance.fcmTokens,
       'createdDateTime':
           const ClientCreatedTimestamp().toJson(instance.createdDateTime),
       'updatedDateTime':

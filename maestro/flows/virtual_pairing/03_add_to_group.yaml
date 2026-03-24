@@ -1,0 +1,30 @@
+appId: com.bannzai.shoppinglist
+---
+# Phase 3: グループにデバッグユーザー追加
+- launchApp:
+    clearState: false
+
+# 設定タブ → 開発者オプション画面へ遷移
+- runFlow: ../shared/open_developer_options.yaml
+- extendedWaitUntil:
+    visible: "グループにデバッグユーザーを追加"
+    timeout: 10000
+- tapOn: "グループにデバッグユーザーを追加"
+
+# 操作完了を待つ
+- extendedWaitUntil:
+    visible: ".*完了"
+    timeout: 15000
+
+# 開発者オプションページから戻る
+- tapOn: "Back"
+- waitForAnimationToEnd
+
+# 買い物リストタブに戻る
+- tapOn:
+    point: "25%,93%"
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "アイテムを追加"
+    timeout: 10000
+- takeScreenshot: screenshots/virtual_pairing/03_debug_user_added

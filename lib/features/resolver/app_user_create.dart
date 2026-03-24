@@ -37,6 +37,7 @@ class AppUserCreate {
         id: AppUserPrivate.documentID(userID: userDatabase.userID),
         userID: userDatabase.userID,
         email: firebaseUser.email,
+        fcmTokens: [],
       ),
       SetOptions(merge: true),
     );

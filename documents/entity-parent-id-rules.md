@@ -8,6 +8,6 @@ Firestoreのサブコレクションに保存されるEntityは、親ドキュ�
 - Entity単体で完結した情報を持つことで、UIやロジックでの取り回しが容易になる
 
 ## 例
-`groups/{groupID}/categoryAxes/{axisID}` に保存される `GroupShoppingListItemCategoryAxis` は `groupID` フィールドを持つ。
+`groups/{groupID}/categoryAxes/{axisID}` に保存される `GroupCategoryAxis` は `groupID` フィールドを持つ。
 
 対象は `lib/entity/` 配下の各Entityを参照すること。

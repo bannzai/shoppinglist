@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -33,9 +34,9 @@ class CopyMultilineTextButton extends ConsumerWidget {
             }
             await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
                   shoppingListID: shoppingListID,
+                  userID: ref.read(currentUserIDProvider)!,
                   message: line,
                   order: shoppingListItems.nextOrder + index,
-                  groupShoppingListItemCategoryID: null,
                   description: null,
                   color: null,
                 );

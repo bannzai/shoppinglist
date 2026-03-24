@@ -76,6 +76,29 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     }
   }
 
+  Future<void> sendShoppingListUpdateNotification({
+    required String groupID,
+    required String shoppingListID,
+    required String? shoppingListName,
+    required List<String> targetUserIDs,
+  }) async {
+    final result =
+        await httpsCallable('sendShoppingListUpdateNotification').call(
+      {
+        'groupID': groupID,
+        'shoppingListID': shoppingListID,
+        'shoppingListName': shoppingListName,
+        'targetUserIDs': targetUserIDs,
+      },
+    );
+    debugPrint(
+        'sendShoppingListUpdateNotification.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+  }
+
   Future<void> updateGroupName({
     required String groupID,
     required String name,

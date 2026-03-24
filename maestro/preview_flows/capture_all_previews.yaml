@@ -98,21 +98,21 @@ appId: com.bannzai.shoppinglist
     end: "90%,50%"
 - waitForAnimationToEnd
 
-# 10. GroupShoppingListItemCategoryPage
+# 10. GroupCategoryPage
 - assertVisible: "Previews"
-- tapOn: "GroupShoppingListItemCategoryPage"
+- tapOn: "GroupCategoryPage"
 - waitForAnimationToEnd
-- takeScreenshot: screenshots/10_group_shopping_list_item_category_page
+- takeScreenshot: screenshots/10_group_category_page
 - swipe:
     start: "1%,50%"
     end: "90%,50%"
 - waitForAnimationToEnd
 
-# 11. GroupShoppingListItemCategoryEditPage
+# 11. GroupCategoryEditPage
 - assertVisible: "Previews"
-- tapOn: "GroupShoppingListItemCategoryEditPage"
+- tapOn: "GroupCategoryEditPage"
 - waitForAnimationToEnd
-- takeScreenshot: screenshots/11_group_shopping_list_item_category_edit_page
+- takeScreenshot: screenshots/11_group_category_edit_page
 - swipe:
     start: "1%,50%"
     end: "90%,50%"

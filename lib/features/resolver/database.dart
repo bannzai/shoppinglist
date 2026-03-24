@@ -9,8 +9,8 @@ import 'package:shoppinglist/entity/app_user_private.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category_axis.dart';
+import 'package:shoppinglist/entity/group_category.dart';
+import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/resolver/auth.dart';
@@ -28,11 +28,11 @@ abstract class _CollectionPath {
       '/groups/$groupID/shoppingLists/$shoppingListID/items';
   static String shoppingLocations({required String groupID}) =>
       '/groups/$groupID/shoppingLocations';
-  static String categoryAxes({required String groupID}) =>
-      '/groups/$groupID/categoryAxes';
+  static String userCategoryAxes({required String groupID}) =>
+      '/groups/$groupID/userCategoryAxes';
   static String categories(
           {required String groupID, required String categoryAxisID}) =>
-      '/groups/$groupID/categoryAxes/$categoryAxisID/categories';
+      '/groups/$groupID/userCategoryAxes/$categoryAxisID/categories';
   static String privates({required String userID}) => '/users/$userID/privates';
   static String userProfiles({required String groupID}) =>
       '/groups/$groupID/userProfiles';
@@ -179,46 +179,46 @@ class GroupDatabase {
             toFirestore: GroupShoppingLocation.toFirestore,
           );
 
-  CollectionReference<GroupShoppingListItemCategoryAxis>
-      categoryAxesReference() => FirebaseFirestore.instance
-          .collection(_CollectionPath.categoryAxes(groupID: groupID))
+  CollectionReference<GroupCategoryAxis> categoryAxesReference() =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.userCategoryAxes(groupID: groupID))
           .withConverter(
-            fromFirestore: GroupShoppingListItemCategoryAxis.fromFirestore,
-            toFirestore: GroupShoppingListItemCategoryAxis.toFirestore,
+            fromFirestore: GroupCategoryAxis.fromFirestore,
+            toFirestore: GroupCategoryAxis.toFirestore,
           );
 
-  DocumentReference<GroupShoppingListItemCategoryAxis> categoryAxisReference({
+  DocumentReference<GroupCategoryAxis> categoryAxisReference({
     required String categoryAxisID,
   }) =>
       FirebaseFirestore.instance
-          .collection(_CollectionPath.categoryAxes(groupID: groupID))
+          .collection(_CollectionPath.userCategoryAxes(groupID: groupID))
           .doc(categoryAxisID)
           .withConverter(
-            fromFirestore: GroupShoppingListItemCategoryAxis.fromFirestore,
-            toFirestore: GroupShoppingListItemCategoryAxis.toFirestore,
+            fromFirestore: GroupCategoryAxis.fromFirestore,
+            toFirestore: GroupCategoryAxis.toFirestore,
           );
 
-  DocumentReference<GroupShoppingListItemCategoryAxis>
-      newCategoryAxisReference() => FirebaseFirestore.instance
-          .collection(_CollectionPath.categoryAxes(groupID: groupID))
+  DocumentReference<GroupCategoryAxis> newCategoryAxisReference() =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.userCategoryAxes(groupID: groupID))
           .doc()
           .withConverter(
-            fromFirestore: GroupShoppingListItemCategoryAxis.fromFirestore,
-            toFirestore: GroupShoppingListItemCategoryAxis.toFirestore,
+            fromFirestore: GroupCategoryAxis.fromFirestore,
+            toFirestore: GroupCategoryAxis.toFirestore,
           );
 
-  CollectionReference<GroupShoppingListItemCategory> categoriesReference({
+  CollectionReference<GroupCategory> categoriesReference({
     required String categoryAxisID,
   }) =>
       FirebaseFirestore.instance
           .collection(_CollectionPath.categories(
               groupID: groupID, categoryAxisID: categoryAxisID))
           .withConverter(
-            fromFirestore: GroupShoppingListItemCategory.fromFirestore,
-            toFirestore: GroupShoppingListItemCategory.toFirestore,
+            fromFirestore: GroupCategory.fromFirestore,
+            toFirestore: GroupCategory.toFirestore,
           );
 
-  DocumentReference<GroupShoppingListItemCategory> categoryReference({
+  DocumentReference<GroupCategory> categoryReference({
     required String categoryAxisID,
     required String categoryID,
   }) =>
@@ -227,11 +227,11 @@ class GroupDatabase {
               groupID: groupID, categoryAxisID: categoryAxisID))
           .doc(categoryID)
           .withConverter(
-            fromFirestore: GroupShoppingListItemCategory.fromFirestore,
-            toFirestore: GroupShoppingListItemCategory.toFirestore,
+            fromFirestore: GroupCategory.fromFirestore,
+            toFirestore: GroupCategory.toFirestore,
           );
 
-  DocumentReference<GroupShoppingListItemCategory> newCategoryReference({
+  DocumentReference<GroupCategory> newCategoryReference({
     required String categoryAxisID,
   }) =>
       FirebaseFirestore.instance
@@ -239,8 +239,8 @@ class GroupDatabase {
               groupID: groupID, categoryAxisID: categoryAxisID))
           .doc()
           .withConverter(
-            fromFirestore: GroupShoppingListItemCategory.fromFirestore,
-            toFirestore: GroupShoppingListItemCategory.toFirestore,
+            fromFirestore: GroupCategory.fromFirestore,
+            toFirestore: GroupCategory.toFirestore,
           );
 
   CollectionReference<GroupUserProfile> userProfilesReference() =>

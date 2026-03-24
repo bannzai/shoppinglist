@@ -22,6 +22,7 @@ void main() {
       id: 'item-id',
       groupID: 'group-id',
       shoppingListID: 'shopping-list-id',
+      userID: 'user-id',
       message: 'Buy milk',
       order: 0,
     );
@@ -35,12 +36,14 @@ void main() {
           id: '1',
           groupID: 'group-id',
           shoppingListID: 'shopping-list-id',
+          userID: 'user-id',
           message: 'Item 1',
           order: 0),
       GroupShoppingListItem(
           id: '2',
           groupID: 'group-id',
           shoppingListID: 'shopping-list-id',
+          userID: 'user-id',
           message: 'Item 2',
           order: 1),
     ];
@@ -53,12 +56,12 @@ void main() {
         id: 'item-1',
         groupID: 'group-1',
         shoppingListID: 'list-1',
+        userID: 'user-1',
         message: 'Buy eggs',
         order: 0,
         status: GroupShoppingListItemStatus.unchecked,
         description: 'organic eggs',
         color: '#FF0000',
-        groupShoppingListItemCategoryID: 'cat-1',
       );
     }
 
@@ -79,6 +82,7 @@ void main() {
         'id': 'item-2',
         'groupID': 'group-1',
         'shoppingListID': 'list-1',
+        'userID': 'user-1',
         'message': 'Buy bread',
         'order': 1,
         'status': 'unchecked',
@@ -95,6 +99,7 @@ void main() {
         'id': 'item-3',
         'groupID': 'group-1',
         'shoppingListID': 'list-1',
+        'userID': 'user-1',
         'message': 'Buy butter',
         'order': 2,
         'status': 'checked',
@@ -124,8 +129,6 @@ void main() {
       expect(restored.status, original.status);
       expect(restored.description, original.description);
       expect(restored.color, original.color);
-      expect(restored.groupShoppingListItemCategoryID,
-          original.groupShoppingListItemCategoryID);
     });
   });
 }

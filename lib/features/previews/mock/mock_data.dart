@@ -2,8 +2,8 @@ import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category_axis.dart';
+import 'package:shoppinglist/entity/group_category.dart';
+import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 
@@ -53,6 +53,7 @@ List<GroupShoppingListItem> mockShoppingListItems() => [
         id: 'preview-item-001',
         groupID: mockGroupID,
         shoppingListID: mockShoppingListID,
+        userID: mockUserID,
         message: '牛乳',
         order: 0,
         status: GroupShoppingListItemStatus.unchecked,
@@ -61,6 +62,7 @@ List<GroupShoppingListItem> mockShoppingListItems() => [
         id: 'preview-item-002',
         groupID: mockGroupID,
         shoppingListID: mockShoppingListID,
+        userID: mockUserID,
         message: '卵',
         order: 1,
         status: GroupShoppingListItemStatus.checked,
@@ -69,15 +71,16 @@ List<GroupShoppingListItem> mockShoppingListItems() => [
         id: 'preview-item-003',
         groupID: mockGroupID,
         shoppingListID: mockShoppingListID,
+        userID: mockUserID,
         message: '食パン',
         order: 2,
         status: GroupShoppingListItemStatus.unchecked,
-        groupShoppingListItemCategoryID: mockCategoryID,
       ),
       const GroupShoppingListItem(
         id: 'preview-item-004',
         groupID: mockGroupID,
         shoppingListID: mockShoppingListID,
+        userID: mockUserID,
         message: 'バナナ',
         order: 3,
         status: GroupShoppingListItemStatus.unchecked,
@@ -87,34 +90,41 @@ List<GroupShoppingListItem> mockShoppingListItems() => [
         id: 'preview-item-005',
         groupID: mockGroupID,
         shoppingListID: mockShoppingListID,
+        userID: mockUserID,
         message: 'トイレットペーパー',
         order: 4,
         status: GroupShoppingListItemStatus.checked,
       ),
     ];
 
-GroupShoppingListItemCategoryAxis mockCategoryAxis() =>
-    const GroupShoppingListItemCategoryAxis(
+GroupCategoryAxis mockCategoryAxis() => const GroupCategoryAxis(
       id: mockCategoryAxisID,
       groupID: mockGroupID,
+      userID: mockUserID,
       name: '売り場',
       order: 0,
     );
 
-List<GroupShoppingListItemCategory> mockCategories() => [
-      const GroupShoppingListItemCategory(
+List<GroupCategory> mockCategories() => [
+      const GroupCategory(
         id: mockCategoryID,
         groupID: mockGroupID,
-        groupShoppingListItemCategoryAxisID: mockCategoryAxisID,
+        userID: mockUserID,
+        groupCategoryAxisID: mockCategoryAxisID,
         name: '食品',
         order: 0,
+        locationOrders: {},
+        keywords: [],
       ),
-      const GroupShoppingListItemCategory(
+      const GroupCategory(
         id: mockCategoryID2,
         groupID: mockGroupID,
-        groupShoppingListItemCategoryAxisID: mockCategoryAxisID,
+        userID: mockUserID,
+        groupCategoryAxisID: mockCategoryAxisID,
         name: '日用品',
         order: 1,
+        locationOrders: {},
+        keywords: [],
       ),
     ];
 

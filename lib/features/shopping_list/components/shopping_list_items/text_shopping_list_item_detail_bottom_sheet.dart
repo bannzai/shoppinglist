@@ -1,9 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -37,6 +38,7 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentUserID = ref.watch(currentUserIDProvider)!;
     final descriptionController = useTextEditingController(
       text: textShoppingListItem.description ?? '',
     );
@@ -174,20 +176,14 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                   'itemID': textShoppingListItem.id
                 });
                 final description = descriptionController.text.trim();
-                final docRef = ref
-                    .read(groupDatabaseProvider(groupID: groupID))
-                    .shoppingListItemsReference(
+                ref.read(updateShoppingListItemProvider(groupID: groupID)).call(
                       shoppingListID: textShoppingListItem.shoppingListID,
-                    )
-                    .doc(textShoppingListItem.id);
-
-                docRef.set(
-                  textShoppingListItem.copyWith(
-                    description: description.isEmpty ? null : description,
-                    color: selectedColor.value,
-                  ),
-                  SetOptions(merge: true),
-                );
+                      item: textShoppingListItem.copyWith(
+                        description: description.isEmpty ? null : description,
+                        color: selectedColor.value,
+                      ),
+                      editedByUserID: currentUserID,
+                    );
 
                 Navigator.pop(context);
               },

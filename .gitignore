@@ -49,6 +49,7 @@ GoogleService-Info.plist
 lib/secret/secret.dart
 
 maestro/screenshots/
+maestro/test-results/
 screenshots/
 
 # UI research artifacts

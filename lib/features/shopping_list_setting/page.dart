@@ -51,335 +51,321 @@ class ShoppingListSettingPage extends HookConsumerWidget {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('買い物リスト名',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold)),
-                            SizedBox(
-                              width: double.infinity,
-                              child: TextField(
-                                key: const ValueKey('shopping_list_name_field'),
-                                controller: textEditingController,
-                                onChanged: (value) {
-                                  shoppingList.value =
-                                      shoppingList.value.copyWith(name: value);
-                                },
-                                onSubmitted: (value) {
-                                  analytics.logEvent(
-                                    name: 'submit_list_name',
-                                    parameters: {
-                                      'groupID': groupID,
-                                      'shoppingListID': shoppingListID,
-                                    },
-                                  );
-                                  autoSave(
-                                      shoppingList.value.copyWith(name: value));
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Divider(),
-                      // 買い物する場所セクション
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('買い物する場所',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 8),
-                            () {
-                              final locationsAsync = ref.watch(
-                                  shoppingLocationsProvider(groupID: groupID));
-                              return locationsAsync.when(
-                                data: (locations) =>
-                                    DropdownButtonFormField<String?>(
-                                  initialValue: locations.any((l) =>
-                                          l.id ==
-                                          shoppingList.value.shoppingLocationID)
-                                      ? shoppingList.value.shoppingLocationID
-                                      : null,
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                  ),
-                                  items: [
-                                    const DropdownMenuItem<String?>(
-                                      value: null,
-                                      child: Text('なし'),
-                                    ),
-                                    ...locations.map(
-                                        (location) => DropdownMenuItem<String?>(
-                                              value: location.id,
-                                              child: Text(location.name),
-                                            )),
-                                  ],
-                                  onChanged: (value) {
-                                    analytics.logEvent(
-                                      name: 'select_list_location',
-                                      parameters: {
-                                        'groupID': groupID,
-                                        'shoppingListID': shoppingListID,
-                                      },
-                                    );
-                                    autoSave(shoppingList.value
-                                        .copyWith(shoppingLocationID: value));
-                                  },
-                                ),
-                                error: (e, st) => Text(e.toString()),
-                                loading: () =>
-                                    const CircularProgressIndicator(),
-                              );
-                            }(),
-                          ],
-                        ),
-                      ),
-                      const Divider(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('買い物リストの保存期間',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 8),
-                            TextButton.icon(
-                              onPressed: () async {
-                                analytics.logEvent(
-                                  name: 'tap_set_list_expiration',
-                                  parameters: {
-                                    'groupID': groupID,
-                                    'shoppingListID': shoppingListID,
-                                  },
-                                );
-                                final date = await showDatePicker(
-                                    context: context,
-                                    firstDate: DateTime.now(),
-                                    lastDate: DateTime.now()
-                                        .add(const Duration(days: 30)));
-                                if (date != null) {
-                                  autoSave(shoppingList.value
-                                      .copyWith(ttlExpiresDateTime: date));
-                                }
+                      const Text('買い物リスト名',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      SizedBox(
+                        width: double.infinity,
+                        child: TextField(
+                          key: const ValueKey('shopping_list_name_field'),
+                          controller: textEditingController,
+                          onChanged: (value) {
+                            shoppingList.value =
+                                shoppingList.value.copyWith(name: value);
+                          },
+                          onSubmitted: (value) {
+                            analytics.logEvent(
+                              name: 'submit_list_name',
+                              parameters: {
+                                'groupID': groupID,
+                                'shoppingListID': shoppingListID,
                               },
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                              ),
-                              icon: const Icon(Icons.calendar_month),
-                              iconAlignment: IconAlignment.start,
-                              label: () {
-                                if (ttlExpiresDateTimeValue != null) {
-                                  return Text(
-                                    '${DateFormat.MEd().format(ttlExpiresDateTimeValue)}まで保存されてます',
-                                    style: const TextStyle(),
-                                  );
-                                } else {
-                                  return const Text('有効期限を設定');
-                                }
-                              }(),
-                            ),
-                          ],
+                            );
+                            autoSave(shoppingList.value.copyWith(name: value));
+                          },
                         ),
                       ),
-                      const Divider(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('グループ招待',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 8),
-                            SizedBox(
-                              width: double.infinity,
-                              child: OutlinedButton.icon(
-                                onPressed: isCreatingInvitation.value
-                                    ? null
-                                    : () async {
-                                        analytics.logEvent(
-                                          name: 'tap_create_list_invitation',
-                                          parameters: {'groupID': groupID},
-                                        );
-                                        isCreatingInvitation.value = true;
-                                        try {
-                                          final invitationCode = await ref
-                                              .read(
-                                                  createGroupInvitationProvider)
-                                              .call(groupID: groupID);
-                                          if (context.mounted) {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) =>
-                                                  _InvitationCodeDialog(
-                                                      invitationCode:
-                                                          invitationCode),
-                                            );
-                                          }
-                                        } catch (e) {
-                                          if (context.mounted) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content: Text(e.toString()),
-                                              ),
-                                            );
-                                          }
-                                        } finally {
-                                          isCreatingInvitation.value = false;
-                                        }
-                                      },
-                                icon: isCreatingInvitation.value
-                                    ? const SizedBox(
-                                        width: 16,
-                                        height: 16,
-                                        child: CircularProgressIndicator(
-                                            strokeWidth: 2),
-                                      )
-                                    : const Icon(Icons.person_add),
-                                label: const Text('グループに招待'),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Divider(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('グループ管理',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 8),
-                            SizedBox(
-                              width: double.infinity,
-                              child: OutlinedButton.icon(
-                                onPressed: () {
-                                  analytics.logEvent(
-                                    name: 'tap_navigate_grp_setting',
-                                    parameters: {'groupID': groupID},
-                                  );
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => GroupSettingPage(
-                                        groupID: groupID,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.settings),
-                                label: const Text('グループ設定'),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Divider(),
                     ],
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 48,
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: elevatedButtonStyle.merge(
-                          const ButtonStyle(
-                              backgroundColor:
-                                  WidgetStatePropertyAll(Colors.red)),
-                        ),
-                        onPressed: () {
+                const Divider(),
+                // 買い物する場所セクション
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('買い物する場所',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      () {
+                        final locationsAsync = ref
+                            .watch(shoppingLocationsProvider(groupID: groupID));
+                        return locationsAsync.when(
+                          data: (locations) => DropdownButtonFormField<String?>(
+                            initialValue: locations.any((l) =>
+                                    l.id ==
+                                    shoppingList.value.shoppingLocationID)
+                                ? shoppingList.value.shoppingLocationID
+                                : null,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                            ),
+                            items: [
+                              const DropdownMenuItem<String?>(
+                                value: null,
+                                child: Text('なし'),
+                              ),
+                              ...locations
+                                  .map((location) => DropdownMenuItem<String?>(
+                                        value: location.id,
+                                        child: Text(location.name),
+                                      )),
+                            ],
+                            onChanged: (value) {
+                              analytics.logEvent(
+                                name: 'select_list_location',
+                                parameters: {
+                                  'groupID': groupID,
+                                  'shoppingListID': shoppingListID,
+                                },
+                              );
+                              autoSave(shoppingList.value
+                                  .copyWith(shoppingLocationID: value));
+                            },
+                          ),
+                          error: (e, st) => Text(e.toString()),
+                          loading: () => const CircularProgressIndicator(),
+                        );
+                      }(),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('買い物リストの保存期間',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      TextButton.icon(
+                        onPressed: () async {
                           analytics.logEvent(
-                            name: 'tap_delete_list',
+                            name: 'tap_set_list_expiration',
                             parameters: {
                               'groupID': groupID,
                               'shoppingListID': shoppingListID,
                             },
                           );
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('買い物リストを削除しますか？'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    analytics.logEvent(
-                                      name: 'tap_confirm_delete_list',
-                                      parameters: {
-                                        'groupID': groupID,
-                                        'shoppingListID': shoppingListID,
-                                      },
-                                    );
-                                    onDelete();
-                                  },
-                                  child: Text(
-                                    '削除',
-                                    style: TextStyle(
-                                      color:
-                                          Theme.of(context).colorScheme.error,
-                                    ),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    analytics.logEvent(
-                                      name: 'cancel_delete_list',
-                                      parameters: {
-                                        'groupID': groupID,
-                                        'shoppingListID': shoppingListID,
-                                      },
-                                    );
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('キャンセル'),
-                                ),
-                              ],
-                            ),
-                          );
+                          final date = await showDatePicker(
+                              context: context,
+                              firstDate: DateTime.now(),
+                              lastDate:
+                                  DateTime.now().add(const Duration(days: 30)));
+                          if (date != null) {
+                            autoSave(shoppingList.value
+                                .copyWith(ttlExpiresDateTime: date));
+                          }
                         },
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.delete),
-                            SizedBox(width: 8),
-                            Text('買い物リストを削除'),
-                          ],
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                        ),
+                        icon: const Icon(Icons.calendar_month),
+                        iconAlignment: IconAlignment.start,
+                        label: () {
+                          if (ttlExpiresDateTimeValue != null) {
+                            return Text(
+                              '${DateFormat.MEd().format(ttlExpiresDateTimeValue)}まで保存されてます',
+                              style: const TextStyle(),
+                            );
+                          } else {
+                            return const Text('有効期限を設定');
+                          }
+                        }(),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('グループ招待',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: isCreatingInvitation.value
+                              ? null
+                              : () async {
+                                  analytics.logEvent(
+                                    name: 'tap_create_list_invitation',
+                                    parameters: {'groupID': groupID},
+                                  );
+                                  isCreatingInvitation.value = true;
+                                  try {
+                                    final invitationCode = await ref
+                                        .read(createGroupInvitationProvider)
+                                        .call(groupID: groupID);
+                                    if (context.mounted) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            _InvitationCodeDialog(
+                                                invitationCode: invitationCode),
+                                      );
+                                    }
+                                  } catch (e) {
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(e.toString()),
+                                        ),
+                                      );
+                                    }
+                                  } finally {
+                                    isCreatingInvitation.value = false;
+                                  }
+                                },
+                          icon: isCreatingInvitation.value
+                              ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : const Icon(Icons.person_add),
+                          label: const Text('グループに招待'),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('グループ管理',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            analytics.logEvent(
+                              name: 'tap_navigate_grp_setting',
+                              parameters: {'groupID': groupID},
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => GroupSettingPage(
+                                  groupID: groupID,
+                                ),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.settings),
+                          label: const Text('グループ設定'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: SizedBox(
+                    height: 48,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: elevatedButtonStyle.merge(
+                        const ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(Colors.red)),
+                      ),
+                      onPressed: () {
+                        analytics.logEvent(
+                          name: 'tap_delete_list',
+                          parameters: {
+                            'groupID': groupID,
+                            'shoppingListID': shoppingListID,
+                          },
+                        );
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('買い物リストを削除しますか？'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  analytics.logEvent(
+                                    name: 'tap_confirm_delete_list',
+                                    parameters: {
+                                      'groupID': groupID,
+                                      'shoppingListID': shoppingListID,
+                                    },
+                                  );
+                                  onDelete();
+                                },
+                                child: Text(
+                                  '削除',
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  analytics.logEvent(
+                                    name: 'cancel_delete_list',
+                                    parameters: {
+                                      'groupID': groupID,
+                                      'shoppingListID': shoppingListID,
+                                    },
+                                  );
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('キャンセル'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.delete),
+                          SizedBox(width: 8),
+                          Text('買い物リストを削除'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+              ],
+            ),
           ),
         ),
       ),

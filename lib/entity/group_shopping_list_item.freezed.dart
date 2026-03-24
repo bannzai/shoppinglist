@@ -17,15 +17,21 @@ mixin _$GroupShoppingListItem {
   String get id;
   String get groupID;
   String get shoppingListID;
+  String get userID;
   String get message; // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
 // NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
   int get order;
   GroupShoppingListItemStatus get status;
   String? get description;
   String? get color;
-  String? get groupShoppingListItemCategoryID;
   @NullableTimestampConverter()
   DateTime? get reminderDateTime;
+  String? get checkedByUserID;
+  @NullableTimestampConverter()
+  DateTime? get lastCheckedDateTime;
+  String? get lastEditedByUserID;
+  @NullableTimestampConverter()
+  DateTime? get lastEditedDateTime;
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime;
   @ClientUpdatedTimestamp()
@@ -55,18 +61,23 @@ mixin _$GroupShoppingListItem {
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.shoppingListID, shoppingListID) ||
                 other.shoppingListID == shoppingListID) &&
+            (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.order, order) || other.order == order) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.color, color) || other.color == color) &&
-            (identical(other.groupShoppingListItemCategoryID,
-                    groupShoppingListItemCategoryID) ||
-                other.groupShoppingListItemCategoryID ==
-                    groupShoppingListItemCategoryID) &&
             (identical(other.reminderDateTime, reminderDateTime) ||
                 other.reminderDateTime == reminderDateTime) &&
+            (identical(other.checkedByUserID, checkedByUserID) ||
+                other.checkedByUserID == checkedByUserID) &&
+            (identical(other.lastCheckedDateTime, lastCheckedDateTime) ||
+                other.lastCheckedDateTime == lastCheckedDateTime) &&
+            (identical(other.lastEditedByUserID, lastEditedByUserID) ||
+                other.lastEditedByUserID == lastEditedByUserID) &&
+            (identical(other.lastEditedDateTime, lastEditedDateTime) ||
+                other.lastEditedDateTime == lastEditedDateTime) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -84,13 +95,17 @@ mixin _$GroupShoppingListItem {
       id,
       groupID,
       shoppingListID,
+      userID,
       message,
       order,
       status,
       description,
       color,
-      groupShoppingListItemCategoryID,
       reminderDateTime,
+      checkedByUserID,
+      lastCheckedDateTime,
+      lastEditedByUserID,
+      lastEditedDateTime,
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -98,7 +113,7 @@ mixin _$GroupShoppingListItem {
 
   @override
   String toString() {
-    return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, message: $message, order: $order, status: $status, description: $description, color: $color, groupShoppingListItemCategoryID: $groupShoppingListItemCategoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, message: $message, order: $order, status: $status, description: $description, color: $color, reminderDateTime: $reminderDateTime, checkedByUserID: $checkedByUserID, lastCheckedDateTime: $lastCheckedDateTime, lastEditedByUserID: $lastEditedByUserID, lastEditedDateTime: $lastEditedDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -112,13 +127,17 @@ abstract mixin class $GroupShoppingListItemCopyWith<$Res> {
       {String id,
       String groupID,
       String shoppingListID,
+      String userID,
       String message,
       int order,
       GroupShoppingListItemStatus status,
       String? description,
       String? color,
-      String? groupShoppingListItemCategoryID,
       @NullableTimestampConverter() DateTime? reminderDateTime,
+      String? checkedByUserID,
+      @NullableTimestampConverter() DateTime? lastCheckedDateTime,
+      String? lastEditedByUserID,
+      @NullableTimestampConverter() DateTime? lastEditedDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -141,13 +160,17 @@ class _$GroupShoppingListItemCopyWithImpl<$Res>
     Object? id = null,
     Object? groupID = null,
     Object? shoppingListID = null,
+    Object? userID = null,
     Object? message = null,
     Object? order = null,
     Object? status = null,
     Object? description = freezed,
     Object? color = freezed,
-    Object? groupShoppingListItemCategoryID = freezed,
     Object? reminderDateTime = freezed,
+    Object? checkedByUserID = freezed,
+    Object? lastCheckedDateTime = freezed,
+    Object? lastEditedByUserID = freezed,
+    Object? lastEditedDateTime = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -165,6 +188,10 @@ class _$GroupShoppingListItemCopyWithImpl<$Res>
       shoppingListID: null == shoppingListID
           ? _self.shoppingListID
           : shoppingListID // ignore: cast_nullable_to_non_nullable
+              as String,
+      userID: null == userID
+          ? _self.userID
+          : userID // ignore: cast_nullable_to_non_nullable
               as String,
       message: null == message
           ? _self.message
@@ -186,14 +213,25 @@ class _$GroupShoppingListItemCopyWithImpl<$Res>
           ? _self.color
           : color // ignore: cast_nullable_to_non_nullable
               as String?,
-      groupShoppingListItemCategoryID: freezed ==
-              groupShoppingListItemCategoryID
-          ? _self.groupShoppingListItemCategoryID
-          : groupShoppingListItemCategoryID // ignore: cast_nullable_to_non_nullable
-              as String?,
       reminderDateTime: freezed == reminderDateTime
           ? _self.reminderDateTime
           : reminderDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      checkedByUserID: freezed == checkedByUserID
+          ? _self.checkedByUserID
+          : checkedByUserID // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastCheckedDateTime: freezed == lastCheckedDateTime
+          ? _self.lastCheckedDateTime
+          : lastCheckedDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      lastEditedByUserID: freezed == lastEditedByUserID
+          ? _self.lastEditedByUserID
+          : lastEditedByUserID // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastEditedDateTime: freezed == lastEditedDateTime
+          ? _self.lastEditedDateTime
+          : lastEditedDateTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
@@ -312,13 +350,17 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             String id,
             String groupID,
             String shoppingListID,
+            String userID,
             String message,
             int order,
             GroupShoppingListItemStatus status,
             String? description,
             String? color,
-            String? groupShoppingListItemCategoryID,
             @NullableTimestampConverter() DateTime? reminderDateTime,
+            String? checkedByUserID,
+            @NullableTimestampConverter() DateTime? lastCheckedDateTime,
+            String? lastEditedByUserID,
+            @NullableTimestampConverter() DateTime? lastEditedDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -333,13 +375,17 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             _that.id,
             _that.groupID,
             _that.shoppingListID,
+            _that.userID,
             _that.message,
             _that.order,
             _that.status,
             _that.description,
             _that.color,
-            _that.groupShoppingListItemCategoryID,
             _that.reminderDateTime,
+            _that.checkedByUserID,
+            _that.lastCheckedDateTime,
+            _that.lastEditedByUserID,
+            _that.lastEditedDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -368,13 +414,17 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             String id,
             String groupID,
             String shoppingListID,
+            String userID,
             String message,
             int order,
             GroupShoppingListItemStatus status,
             String? description,
             String? color,
-            String? groupShoppingListItemCategoryID,
             @NullableTimestampConverter() DateTime? reminderDateTime,
+            String? checkedByUserID,
+            @NullableTimestampConverter() DateTime? lastCheckedDateTime,
+            String? lastEditedByUserID,
+            @NullableTimestampConverter() DateTime? lastEditedDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -388,13 +438,17 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             _that.id,
             _that.groupID,
             _that.shoppingListID,
+            _that.userID,
             _that.message,
             _that.order,
             _that.status,
             _that.description,
             _that.color,
-            _that.groupShoppingListItemCategoryID,
             _that.reminderDateTime,
+            _that.checkedByUserID,
+            _that.lastCheckedDateTime,
+            _that.lastEditedByUserID,
+            _that.lastEditedDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -422,13 +476,17 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             String id,
             String groupID,
             String shoppingListID,
+            String userID,
             String message,
             int order,
             GroupShoppingListItemStatus status,
             String? description,
             String? color,
-            String? groupShoppingListItemCategoryID,
             @NullableTimestampConverter() DateTime? reminderDateTime,
+            String? checkedByUserID,
+            @NullableTimestampConverter() DateTime? lastCheckedDateTime,
+            String? lastEditedByUserID,
+            @NullableTimestampConverter() DateTime? lastEditedDateTime,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -442,13 +500,17 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             _that.id,
             _that.groupID,
             _that.shoppingListID,
+            _that.userID,
             _that.message,
             _that.order,
             _that.status,
             _that.description,
             _that.color,
-            _that.groupShoppingListItemCategoryID,
             _that.reminderDateTime,
+            _that.checkedByUserID,
+            _that.lastCheckedDateTime,
+            _that.lastEditedByUserID,
+            _that.lastEditedDateTime,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -467,13 +529,17 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
       {required this.id,
       required this.groupID,
       required this.shoppingListID,
+      required this.userID,
       required this.message,
       required this.order,
       this.status = GroupShoppingListItemStatus.unchecked,
       this.description,
       this.color,
-      this.groupShoppingListItemCategoryID,
       @NullableTimestampConverter() this.reminderDateTime,
+      this.checkedByUserID,
+      @NullableTimestampConverter() this.lastCheckedDateTime,
+      this.lastEditedByUserID,
+      @NullableTimestampConverter() this.lastEditedDateTime,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
@@ -488,6 +554,8 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
   @override
   final String shoppingListID;
   @override
+  final String userID;
+  @override
   final String message;
 // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
 // NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
@@ -501,10 +569,18 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
   @override
   final String? color;
   @override
-  final String? groupShoppingListItemCategoryID;
-  @override
   @NullableTimestampConverter()
   final DateTime? reminderDateTime;
+  @override
+  final String? checkedByUserID;
+  @override
+  @NullableTimestampConverter()
+  final DateTime? lastCheckedDateTime;
+  @override
+  final String? lastEditedByUserID;
+  @override
+  @NullableTimestampConverter()
+  final DateTime? lastEditedDateTime;
   @override
   @ClientCreatedTimestamp()
   final DateTime? createdDateTime;
@@ -543,18 +619,23 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.shoppingListID, shoppingListID) ||
                 other.shoppingListID == shoppingListID) &&
+            (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.order, order) || other.order == order) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.color, color) || other.color == color) &&
-            (identical(other.groupShoppingListItemCategoryID,
-                    groupShoppingListItemCategoryID) ||
-                other.groupShoppingListItemCategoryID ==
-                    groupShoppingListItemCategoryID) &&
             (identical(other.reminderDateTime, reminderDateTime) ||
                 other.reminderDateTime == reminderDateTime) &&
+            (identical(other.checkedByUserID, checkedByUserID) ||
+                other.checkedByUserID == checkedByUserID) &&
+            (identical(other.lastCheckedDateTime, lastCheckedDateTime) ||
+                other.lastCheckedDateTime == lastCheckedDateTime) &&
+            (identical(other.lastEditedByUserID, lastEditedByUserID) ||
+                other.lastEditedByUserID == lastEditedByUserID) &&
+            (identical(other.lastEditedDateTime, lastEditedDateTime) ||
+                other.lastEditedDateTime == lastEditedDateTime) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -572,13 +653,17 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
       id,
       groupID,
       shoppingListID,
+      userID,
       message,
       order,
       status,
       description,
       color,
-      groupShoppingListItemCategoryID,
       reminderDateTime,
+      checkedByUserID,
+      lastCheckedDateTime,
+      lastEditedByUserID,
+      lastEditedDateTime,
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -586,7 +671,7 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
 
   @override
   String toString() {
-    return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, message: $message, order: $order, status: $status, description: $description, color: $color, groupShoppingListItemCategoryID: $groupShoppingListItemCategoryID, reminderDateTime: $reminderDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, message: $message, order: $order, status: $status, description: $description, color: $color, reminderDateTime: $reminderDateTime, checkedByUserID: $checkedByUserID, lastCheckedDateTime: $lastCheckedDateTime, lastEditedByUserID: $lastEditedByUserID, lastEditedDateTime: $lastEditedDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -602,13 +687,17 @@ abstract mixin class _$GroupShoppingListItemCopyWith<$Res>
       {String id,
       String groupID,
       String shoppingListID,
+      String userID,
       String message,
       int order,
       GroupShoppingListItemStatus status,
       String? description,
       String? color,
-      String? groupShoppingListItemCategoryID,
       @NullableTimestampConverter() DateTime? reminderDateTime,
+      String? checkedByUserID,
+      @NullableTimestampConverter() DateTime? lastCheckedDateTime,
+      String? lastEditedByUserID,
+      @NullableTimestampConverter() DateTime? lastEditedDateTime,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -631,13 +720,17 @@ class __$GroupShoppingListItemCopyWithImpl<$Res>
     Object? id = null,
     Object? groupID = null,
     Object? shoppingListID = null,
+    Object? userID = null,
     Object? message = null,
     Object? order = null,
     Object? status = null,
     Object? description = freezed,
     Object? color = freezed,
-    Object? groupShoppingListItemCategoryID = freezed,
     Object? reminderDateTime = freezed,
+    Object? checkedByUserID = freezed,
+    Object? lastCheckedDateTime = freezed,
+    Object? lastEditedByUserID = freezed,
+    Object? lastEditedDateTime = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -655,6 +748,10 @@ class __$GroupShoppingListItemCopyWithImpl<$Res>
       shoppingListID: null == shoppingListID
           ? _self.shoppingListID
           : shoppingListID // ignore: cast_nullable_to_non_nullable
+              as String,
+      userID: null == userID
+          ? _self.userID
+          : userID // ignore: cast_nullable_to_non_nullable
               as String,
       message: null == message
           ? _self.message
@@ -676,14 +773,25 @@ class __$GroupShoppingListItemCopyWithImpl<$Res>
           ? _self.color
           : color // ignore: cast_nullable_to_non_nullable
               as String?,
-      groupShoppingListItemCategoryID: freezed ==
-              groupShoppingListItemCategoryID
-          ? _self.groupShoppingListItemCategoryID
-          : groupShoppingListItemCategoryID // ignore: cast_nullable_to_non_nullable
-              as String?,
       reminderDateTime: freezed == reminderDateTime
           ? _self.reminderDateTime
           : reminderDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      checkedByUserID: freezed == checkedByUserID
+          ? _self.checkedByUserID
+          : checkedByUserID // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastCheckedDateTime: freezed == lastCheckedDateTime
+          ? _self.lastCheckedDateTime
+          : lastCheckedDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      lastEditedByUserID: freezed == lastEditedByUserID
+          ? _self.lastEditedByUserID
+          : lastEditedByUserID // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastEditedDateTime: freezed == lastEditedDateTime
+          ? _self.lastEditedDateTime
+          : lastEditedDateTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime

@@ -1,0 +1,226 @@
+appId: com.bannzai.shoppinglist
+---
+# ロケーション別カテゴリ並べ替えのE2Eテスト
+# 1. 買い物場所を作成
+# 2. カテゴリを3つ作成（キーワード付き）
+# 3. カテゴリ管理画面でロケーション別並べ替え
+# 4. 買い物リストにロケーション設定
+# 5. アイテム追加＆カテゴリ表示順を確認
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# --- 買い物場所の作成 ---
+
+# リスト設定を開く
+- tapOn: "リスト設定"
+- assertVisible: "買い物リスト設定"
+# TextFieldのフォーカスを外す
+- tapOn:
+    point: "50%,12%"
+- waitForAnimationToEnd
+
+# グループ設定へ
+- tapOn: "グループ設定"
+- waitForAnimationToEnd
+- assertVisible: "グループ設定"
+
+# 場所を管理を開く
+- tapOn: "場所を管理"
+- waitForAnimationToEnd
+- assertVisible: "買い物する場所"
+
+# 場所を追加（FAB）
+- tapOn:
+    point: "90%,90%"
+- assertVisible: "場所を追加"
+- tapOn: "場所の名前（例: スーパー）"
+- inputText: "近所のスーパー"
+- tapOn:
+    text: "追加"
+    index: 0
+- waitForAnimationToEnd
+- assertVisible: "近所のスーパー"
+- takeScreenshot: screenshots/category_location_01_location_created
+
+# グループ設定に戻る
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+- assertVisible: "グループ設定"
+
+# --- カテゴリを3つ作成 ---
+
+# カテゴリ管理を開く
+- tapOn: "カテゴリを管理"
+- waitForAnimationToEnd
+- assertVisible: "カテゴリ"
+
+# カテゴリ1: 野菜
+- tapOn: "カテゴリを追加"
+- assertVisible: "カテゴリを追加"
+- tapOn: "カテゴリ名（例: 野菜）"
+- inputText: "野菜"
+- tapOn:
+    text: "追加"
+    index: 0
+- waitForAnimationToEnd
+- assertVisible: "カテゴリ名"
+
+# キーワード追加: にんじん
+- tapOn: "キーワードを追加"
+- assertVisible: "キーワードを追加"
+- inputText: "にんじん"
+- tapOn:
+    text: "追加"
+    index: 0
+- waitForAnimationToEnd
+
+# カテゴリ一覧に戻る
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+- assertVisible: "カテゴリ"
+
+# カテゴリ2: 肉（FABから追加）
+- tapOn:
+    point: "90%,90%"
+- assertVisible: "カテゴリを追加"
+- tapOn: "カテゴリ名（例: 野菜）"
+- inputText: "肉"
+- tapOn:
+    text: "追加"
+    index: 0
+- waitForAnimationToEnd
+- assertVisible: "カテゴリ名"
+
+# キーワード追加: 鶏肉
+- tapOn: "キーワードを追加"
+- assertVisible: "キーワードを追加"
+- inputText: "鶏肉"
+- tapOn:
+    text: "追加"
+    index: 0
+- waitForAnimationToEnd
+
+# カテゴリ一覧に戻る
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+- assertVisible: "カテゴリ"
+
+# カテゴリ3: 魚（FABから追加）
+- tapOn:
+    point: "90%,90%"
+- assertVisible: "カテゴリを追加"
+- tapOn: "カテゴリ名（例: 野菜）"
+- inputText: "魚"
+- tapOn:
+    text: "追加"
+    index: 0
+- waitForAnimationToEnd
+- assertVisible: "カテゴリ名"
+
+# キーワード追加: サーモン
+- tapOn: "キーワードを追加"
+- assertVisible: "キーワードを追加"
+- inputText: "サーモン"
+- tapOn:
+    text: "追加"
+    index: 0
+- waitForAnimationToEnd
+
+# カテゴリ一覧に戻る
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+- assertVisible: "カテゴリ"
+
+# 3つのカテゴリが作成されたことを確認
+- assertVisible: "野菜"
+- assertVisible: "肉"
+- assertVisible: "魚"
+- takeScreenshot: screenshots/category_location_02_categories_created
+
+# --- ロケーション別並べ替え ---
+
+# ロケーション選択ドロップダウンで「近所のスーパー」を選択
+- tapOn: "デフォルト"
+- waitForAnimationToEnd
+- tapOn: "近所のスーパー"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/category_location_03_location_selected
+
+# 「魚」を先頭にドラッグ（3番目 → 1番目）
+# ReorderableListViewはlongPressAndDragで操作
+- longPressAndDrag:
+    from:
+        text: "魚"
+    to:
+        text: "野菜"
+    duration: 1500
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/category_location_04_reordered
+
+# --- 買い物リストにロケーション設定＆アイテム追加 ---
+
+# グループ設定に戻る
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+- assertVisible: "グループ設定"
+
+# リスト設定に戻る
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+- assertVisible: "買い物リスト設定"
+
+# TextFieldのフォーカスを外す
+- tapOn:
+    point: "50%,12%"
+- waitForAnimationToEnd
+
+# 買い物する場所で「近所のスーパー」を選択
+- tapOn: "なし"
+- waitForAnimationToEnd
+- tapOn: "近所のスーパー"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/category_location_05_list_location_set
+
+# BottomSheetを閉じる
+- tapOn:
+    point: "5%,12%"
+- waitForAnimationToEnd
+
+# アイテム追加: にんじん（野菜カテゴリ）
+- tapOn: "アイテムを追加"
+- inputText: "にんじん"
+- pressKey: enter
+
+# アイテム追加: 鶏肉（肉カテゴリ）
+- inputText: "鶏肉"
+- pressKey: enter
+
+# アイテム追加: サーモン（魚カテゴリ）
+- inputText: "サーモン"
+- pressKey: enter
+
+# 空アイテム削除
+- pressKey: enter
+
+# キーボード閉じてフォーカス解除
+- tapOn:
+    point: "50%,6%"
+- waitForAnimationToEnd
+
+# Firestoreデータ同期待ち＆カテゴリヘッダー表示確認
+- extendedWaitUntil:
+    visible: "野菜"
+    timeout: 10000
+- extendedWaitUntil:
+    visible: "肉"
+    timeout: 5000
+- extendedWaitUntil:
+    visible: "魚"
+    timeout: 5000
+- takeScreenshot: screenshots/category_location_06_final_categorized

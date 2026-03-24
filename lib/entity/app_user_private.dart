@@ -5,6 +5,13 @@ import 'package:shoppinglist/entity/timestamp.dart';
 part 'app_user_private.g.dart';
 part 'app_user_private.freezed.dart';
 
+/// [AppUser] の非公開情報を保持するエンティティ。
+///
+/// メールアドレスなど、他ユーザーに公開しないデータを分離して管理する。
+/// Firestore 上では `/users/{userID}/privates/` サブコレクションに保存される。
+///
+/// ## ユースケース
+/// - ユーザーのメールアドレスをセキュアに保存・取得する
 @freezed
 abstract class AppUserPrivate with _$AppUserPrivate {
   const AppUserPrivate._();
@@ -14,6 +21,7 @@ abstract class AppUserPrivate with _$AppUserPrivate {
     required String id,
     required String userID,
     String? email,
+    required List<String> fcmTokens,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -32,7 +40,7 @@ abstract class AppUserPrivate with _$AppUserPrivate {
           AppUserPrivate private, SetOptions? options) =>
       private.toJson();
 
-  /// composite ID: user_{userID}_private_{userID}
+  /// composite ID: UserPrivate_users_{userID}
   static String documentID({required String userID}) =>
-      'user_${userID}_private_$userID';
+      'UserPrivate_users_$userID';
 }

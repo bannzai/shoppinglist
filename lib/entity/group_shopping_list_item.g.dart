@@ -12,6 +12,7 @@ _GroupShoppingListItem _$GroupShoppingListItemFromJson(
       id: json['id'] as String,
       groupID: json['groupID'] as String,
       shoppingListID: json['shoppingListID'] as String,
+      userID: json['userID'] as String,
       message: json['message'] as String,
       order: (json['order'] as num).toInt(),
       status: $enumDecodeNullable(
@@ -19,10 +20,14 @@ _GroupShoppingListItem _$GroupShoppingListItemFromJson(
           GroupShoppingListItemStatus.unchecked,
       description: json['description'] as String?,
       color: json['color'] as String?,
-      groupShoppingListItemCategoryID:
-          json['groupShoppingListItemCategoryID'] as String?,
       reminderDateTime: const NullableTimestampConverter()
           .fromJson(json['reminderDateTime'] as Timestamp?),
+      checkedByUserID: json['checkedByUserID'] as String?,
+      lastCheckedDateTime: const NullableTimestampConverter()
+          .fromJson(json['lastCheckedDateTime'] as Timestamp?),
+      lastEditedByUserID: json['lastEditedByUserID'] as String?,
+      lastEditedDateTime: const NullableTimestampConverter()
+          .fromJson(json['lastEditedDateTime'] as Timestamp?),
       createdDateTime: const ClientCreatedTimestamp()
           .fromJson(json['createdDateTime'] as Timestamp?),
       updatedDateTime: const ClientUpdatedTimestamp()
@@ -39,15 +44,20 @@ Map<String, dynamic> _$GroupShoppingListItemToJson(
       'id': instance.id,
       'groupID': instance.groupID,
       'shoppingListID': instance.shoppingListID,
+      'userID': instance.userID,
       'message': instance.message,
       'order': instance.order,
       'status': _$GroupShoppingListItemStatusEnumMap[instance.status]!,
       'description': instance.description,
       'color': instance.color,
-      'groupShoppingListItemCategoryID':
-          instance.groupShoppingListItemCategoryID,
       'reminderDateTime':
           const NullableTimestampConverter().toJson(instance.reminderDateTime),
+      'checkedByUserID': instance.checkedByUserID,
+      'lastCheckedDateTime': const NullableTimestampConverter()
+          .toJson(instance.lastCheckedDateTime),
+      'lastEditedByUserID': instance.lastEditedByUserID,
+      'lastEditedDateTime': const NullableTimestampConverter()
+          .toJson(instance.lastEditedDateTime),
       'createdDateTime':
           const ClientCreatedTimestamp().toJson(instance.createdDateTime),
       'updatedDateTime':
