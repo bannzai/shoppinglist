@@ -34,6 +34,7 @@ class FcmTokenRegistration {
   Future<void> _saveToken(String token) async {
     await userDatabase.privateReference().update({
       'fcmTokens': FieldValue.arrayUnion([token]),
+      'updatedDateTime': FieldValue.serverTimestamp(),
       'serverUpdatedDateTime': FieldValue.serverTimestamp(),
     });
     debugPrint('[FCM] トークン保存完了: ${token.substring(0, 10)}...');
