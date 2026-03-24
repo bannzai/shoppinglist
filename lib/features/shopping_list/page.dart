@@ -253,6 +253,7 @@ class _Body extends HookConsumerWidget {
               shoppingListName: shoppingList?.name,
               targetUserIDs: otherMemberIDs,
             );
+            itemChangeCount.value = 0;
             debugPrint('[AutoNotify] バックグラウンド移行時に自動通知送信');
           }
         },
