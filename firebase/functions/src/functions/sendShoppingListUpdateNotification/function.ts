@@ -90,26 +90,32 @@ const sendShoppingListUpdateNotificationFlow = ai.defineFlow(
         | undefined;
       const senderName = senderProfile?.displayName ?? "メンバー";
 
-      // 対象ユーザーのFCMトークンを取得
+      // 対象ユーザーのFCMトークンを並列取得
       const allTokens: string[] = [];
       const tokenToUserMap: Map<string, string> = new Map();
 
-      for (const targetUserID of targetUserIDs) {
-        if (targetUserID === uid) continue;
-        if (!memberUserIDs.includes(targetUserID)) continue;
+      const validTargetUserIDs = targetUserIDs.filter(
+        (id) => id !== uid && memberUserIDs.includes(id)
+      );
 
-        const privateDoc = await firestore
-          .collection("users")
-          .doc(targetUserID)
-          .collection("privates")
-          .doc(appUserPrivateDocumentID({ userID: targetUserID }))
-          .get();
+      const privateDocsSnapshots = await Promise.all(
+        validTargetUserIDs.map((targetUserID) =>
+          firestore
+            .collection("users")
+            .doc(targetUserID)
+            .collection("privates")
+            .doc(appUserPrivateDocumentID({ userID: targetUserID }))
+            .get()
+        )
+      );
 
-        if (!privateDoc.exists) continue;
+      interface UserPrivateData {
+        fcmTokens: string[];
+      }
+      privateDocsSnapshots.forEach((privateDoc, index) => {
+        if (!privateDoc.exists) return;
 
-        interface UserPrivateData {
-          fcmTokens: string[];
-        }
+        const targetUserID = validTargetUserIDs[index];
         const privateData = privateDoc.data() as UserPrivateData | undefined;
         const tokens = privateData?.fcmTokens ?? [];
 
@@ -117,7 +123,7 @@ const sendShoppingListUpdateNotificationFlow = ai.defineFlow(
           allTokens.push(token);
           tokenToUserMap.set(token, targetUserID);
         }
-      }
+      });
 
       if (allTokens.length === 0) {
         return {
@@ -163,21 +169,29 @@ const sendShoppingListUpdateNotificationFlow = ai.defineFlow(
         }
       });
 
-      // 無効トークンを一括削除
-      for (const [userID, tokens] of invalidTokens.entries()) {
-        await firestore
-          .collection("users")
-          .doc(userID)
-          .collection("privates")
-          .doc(appUserPrivateDocumentID({ userID }))
-          .update({
-            fcmTokens: admin.firestore.FieldValue.arrayRemove(tokens),
-            serverUpdatedDateTime:
-              admin.firestore.FieldValue.serverTimestamp(),
-          });
-        logger.info(
-          `Removed ${tokens.length} invalid FCM tokens for user ${userID}`
-        );
+      // 無効トークンを並列削除（個別の失敗は無視して継続）
+      const cleanupResults = await Promise.allSettled(
+        Array.from(invalidTokens.entries()).map(([userID, tokens]) => {
+          logger.info(
+            `Queued removal of ${tokens.length} invalid FCM tokens for user ${userID}`
+          );
+          return firestore
+            .collection("users")
+            .doc(userID)
+            .collection("privates")
+            .doc(appUserPrivateDocumentID({ userID }))
+            .update({
+              fcmTokens: admin.firestore.FieldValue.arrayRemove(...tokens),
+              updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+              serverUpdatedDateTime:
+                admin.firestore.FieldValue.serverTimestamp(),
+            });
+        })
+      );
+      for (const result of cleanupResults) {
+        if (result.status === "rejected") {
+          logger.warn(`Failed to cleanup invalid tokens: ${result.reason}`);
+        }
       }
 
       logger.info(
