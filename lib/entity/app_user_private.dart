@@ -21,6 +21,7 @@ abstract class AppUserPrivate with _$AppUserPrivate {
     required String id,
     required String userID,
     String? email,
+    required List<String> fcmTokens,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -39,7 +40,7 @@ abstract class AppUserPrivate with _$AppUserPrivate {
           AppUserPrivate private, SetOptions? options) =>
       private.toJson();
 
-  /// composite ID: user_{userID}_private_{userID}
+  /// composite ID: UserPrivate_users_{userID}
   static String documentID({required String userID}) =>
-      'user_${userID}_private_$userID';
+      'UserPrivate_users_$userID';
 }

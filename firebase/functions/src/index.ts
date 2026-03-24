@@ -54,3 +54,10 @@ if (
 ) {
   exports.updateGroupName = require("./functions/updateGroupName/function");
 }
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "sendShoppingListUpdateNotification"
+) {
+  exports.sendShoppingListUpdateNotification = require("./functions/sendShoppingListUpdateNotification/function");
+}

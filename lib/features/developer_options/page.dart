@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/features/developer_options/firestore_viewer_page.dart';
 import 'package:shoppinglist/features/developer_options/provider.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
@@ -110,6 +111,24 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
           '開発者オプション',
           style: Theme.of(context).textTheme.headlineSmall,
         ),
+        const SizedBox(height: 8),
+
+        // Firestoreデータ確認
+        _ActionTile(
+          title: 'Firestoreデータ確認',
+          subtitle: '自分に関連するFirestoreデータをJSON形式で閲覧',
+          icon: Icons.storage,
+          isProcessing: false,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const FirestoreViewerPage(),
+              ),
+            );
+          },
+        ),
+        const Divider(height: 24),
         const SizedBox(height: 8),
         Text('UID: ${currentUID ?? "不明"}',
             style: Theme.of(context).textTheme.bodySmall),

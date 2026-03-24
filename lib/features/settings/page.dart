@@ -11,6 +11,7 @@ import 'package:shoppinglist/features/settings/components/section.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
+import 'package:shoppinglist/provider/notification_setting.dart';
 
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -157,6 +158,9 @@ class SettingPage extends HookConsumerWidget {
                   },
                 ),
               ]),
+              SettingSectionTitle(text: '通知', children: [
+                _AutoNotifyToggle(),
+              ]),
               SettingSectionTitle(text: 'アプリについて', children: [
                 ListTile(
                     title: const Text(
@@ -233,6 +237,28 @@ class SettingPage extends HookConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _AutoNotifyToggle extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isEnabled = ref.watch(autoNotifyShoppingListUpdateProvider);
+
+    return SwitchListTile(
+      title: const Text('買い物リストの更新を通知する'),
+      subtitle: const Text('画面を離れた時にグループメンバーへ自動通知'),
+      value: isEnabled,
+      onChanged: (_) {
+        analytics.logEvent(
+          name: 'tap_toggle_auto_notify',
+          parameters: {'enabled': (!isEnabled).toString()},
+        );
+        ref
+            .read(autoNotifyShoppingListUpdateProvider.notifier)
+            .toggle();
+      },
     );
   }
 }
