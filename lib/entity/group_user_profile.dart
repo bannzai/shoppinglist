@@ -40,7 +40,7 @@ abstract class GroupUserProfile with _$GroupUserProfile {
           GroupUserProfile profile, SetOptions? options) =>
       profile.toJson();
 
-  /// composite ID: group_{groupID}_userProfile_{userID}
+  /// composite ID: GroupUserProfile_groups_{groupID}_users_{userID}
   static String documentID({required String groupID, required String userID}) =>
-      'group_${groupID}_userProfile_$userID';
+      'GroupUserProfile_groups_${groupID}_users_$userID';
 }

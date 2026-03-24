@@ -17,6 +17,7 @@ mixin _$AppUserPrivate {
   String get id;
   String get userID;
   String? get email;
+  List<String> get fcmTokens;
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime;
   @ClientUpdatedTimestamp()
@@ -45,6 +46,7 @@ mixin _$AppUserPrivate {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.email, email) || other.email == email) &&
+            const DeepCollectionEquality().equals(other.fcmTokens, fcmTokens) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -62,6 +64,7 @@ mixin _$AppUserPrivate {
       id,
       userID,
       email,
+      const DeepCollectionEquality().hash(fcmTokens),
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -69,7 +72,7 @@ mixin _$AppUserPrivate {
 
   @override
   String toString() {
-    return 'AppUserPrivate(id: $id, userID: $userID, email: $email, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'AppUserPrivate(id: $id, userID: $userID, email: $email, fcmTokens: $fcmTokens, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -83,6 +86,7 @@ abstract mixin class $AppUserPrivateCopyWith<$Res> {
       {String id,
       String userID,
       String? email,
+      List<String> fcmTokens,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -105,6 +109,7 @@ class _$AppUserPrivateCopyWithImpl<$Res>
     Object? id = null,
     Object? userID = null,
     Object? email = freezed,
+    Object? fcmTokens = null,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -123,6 +128,10 @@ class _$AppUserPrivateCopyWithImpl<$Res>
           ? _self.email
           : email // ignore: cast_nullable_to_non_nullable
               as String?,
+      fcmTokens: null == fcmTokens
+          ? _self.fcmTokens
+          : fcmTokens // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
           : createdDateTime // ignore: cast_nullable_to_non_nullable
@@ -240,6 +249,7 @@ extension AppUserPrivatePatterns on AppUserPrivate {
             String id,
             String userID,
             String? email,
+            List<String> fcmTokens,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -254,6 +264,7 @@ extension AppUserPrivatePatterns on AppUserPrivate {
             _that.id,
             _that.userID,
             _that.email,
+            _that.fcmTokens,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -282,6 +293,7 @@ extension AppUserPrivatePatterns on AppUserPrivate {
             String id,
             String userID,
             String? email,
+            List<String> fcmTokens,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -295,6 +307,7 @@ extension AppUserPrivatePatterns on AppUserPrivate {
             _that.id,
             _that.userID,
             _that.email,
+            _that.fcmTokens,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -322,6 +335,7 @@ extension AppUserPrivatePatterns on AppUserPrivate {
             String id,
             String userID,
             String? email,
+            List<String> fcmTokens,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -335,6 +349,7 @@ extension AppUserPrivatePatterns on AppUserPrivate {
             _that.id,
             _that.userID,
             _that.email,
+            _that.fcmTokens,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -353,11 +368,13 @@ class _AppUserPrivate extends AppUserPrivate {
       {required this.id,
       required this.userID,
       this.email,
+      required final List<String> fcmTokens,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
       @ServerUpdatedTimestamp() this.serverUpdatedDateTime})
-      : super._();
+      : _fcmTokens = fcmTokens,
+        super._();
   factory _AppUserPrivate.fromJson(Map<String, dynamic> json) =>
       _$AppUserPrivateFromJson(json);
 
@@ -367,6 +384,14 @@ class _AppUserPrivate extends AppUserPrivate {
   final String userID;
   @override
   final String? email;
+  final List<String> _fcmTokens;
+  @override
+  List<String> get fcmTokens {
+    if (_fcmTokens is EqualUnmodifiableListView) return _fcmTokens;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_fcmTokens);
+  }
+
   @override
   @ClientCreatedTimestamp()
   final DateTime? createdDateTime;
@@ -403,6 +428,8 @@ class _AppUserPrivate extends AppUserPrivate {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.email, email) || other.email == email) &&
+            const DeepCollectionEquality()
+                .equals(other._fcmTokens, _fcmTokens) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -420,6 +447,7 @@ class _AppUserPrivate extends AppUserPrivate {
       id,
       userID,
       email,
+      const DeepCollectionEquality().hash(_fcmTokens),
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -427,7 +455,7 @@ class _AppUserPrivate extends AppUserPrivate {
 
   @override
   String toString() {
-    return 'AppUserPrivate(id: $id, userID: $userID, email: $email, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'AppUserPrivate(id: $id, userID: $userID, email: $email, fcmTokens: $fcmTokens, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -443,6 +471,7 @@ abstract mixin class _$AppUserPrivateCopyWith<$Res>
       {String id,
       String userID,
       String? email,
+      List<String> fcmTokens,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -465,6 +494,7 @@ class __$AppUserPrivateCopyWithImpl<$Res>
     Object? id = null,
     Object? userID = null,
     Object? email = freezed,
+    Object? fcmTokens = null,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -483,6 +513,10 @@ class __$AppUserPrivateCopyWithImpl<$Res>
           ? _self.email
           : email // ignore: cast_nullable_to_non_nullable
               as String?,
+      fcmTokens: null == fcmTokens
+          ? _self._fcmTokens
+          : fcmTokens // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
           : createdDateTime // ignore: cast_nullable_to_non_nullable

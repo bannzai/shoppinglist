@@ -92,7 +92,7 @@ describe("removeGroupMember", () => {
         }),
       }),
       collection: jest.fn().mockReturnValue({
-        doc: jest.fn().mockReturnValue({ id: "group_group-1_userProfile_target-user" }),
+        doc: jest.fn().mockReturnValue({ id: "GroupUserProfile_groups_group-1_users_target-user" }),
       }),
     };
 
