@@ -16,64 +16,24 @@
 
 ### サインイン
 - [ ] **Apple サインイン**: Apple IDでサインイン完了 → ホーム画面遷移。DB: `/users/{uid}` 作成、`defaultGroupID` 設定、ソログループ + 初期リスト自動作成
-  - スキップ: OAuth認証フローをiOS Simulatorで自動実行不可
 - [ ] **Google サインイン**: Googleアカウントでサインイン完了 → ホーム画面遷移。DB: 上記と同様
-  - スキップ: OAuth認証フローをiOS Simulatorで自動実行不可
-- [x] **匿名サインイン（デバッグのみ）**: デバッグビルドで匿名サインインボタン表示 → タップでサインイン
+- [ ] **匿名サインイン（デバッグのみ）**: デバッグビルドで匿名サインインボタン表示 → タップでサインイン
 - [ ] **リリースビルドで匿名サインインボタン非表示**: `kDebugMode=false` 時にApple/Googleのみ表示
-  - スキップ: kDebugMode=false のリリースビルドが必要
 
 ### 初回ログインフロー
-- [x] **自動エンティティ作成**: 新規ユーザー → AppUser、ソログループ、初期買い物リスト（名前=`yyyy-MM-dd`、TTL=30日後）が自動作成。DB: `/users/{uid}`, `/groups/{defaultGroupID}`, shoppingLists 確認
-- [x] **2回目以降のログインで二重作成されない**: 既存ユーザー再ログイン → データ数変わらない（冪等性）
+- [ ] **自動エンティティ作成**: 新規ユーザー → AppUser、ソログループ、初期買い物リスト（名前=`yyyy-MM-dd`、TTL=30日後）が自動作成。DB: `/users/{uid}`, `/groups/{defaultGroupID}`, shoppingLists 確認
+- [ ] **2回目以降のログインで二重作成されない**: 既存ユーザー再ログイン → データ数変わらない（冪等性）
 
 ### 外部リンク
-- [x] **プライバシーポリシー**: タップ → 外部ブラウザで開く
-- [ ] **利用規約**: タップ → 外部ブラウザで開く → **Fail: 404エラー** (`https://bannzai.github.io/shoppinglist/TermsOfService` が存在しない)
+- [ ] **プライバシーポリシー**: タップ → 外部ブラウザで開く
+- [ ] **利用規約**: タップ → 外部ブラウザで開く
 
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-**テスト実施日**: 2026-03-25
-**テスト環境**: iPhone 16 Plus (iOS 18.5 Simulator), デバッグビルド
-
-##### 1. 匿名サインイン（Pass）
-認証画面に「匿名サインイン（デバッグ用）」ボタンが表示され、タップでホーム画面に遷移。
-
-![認証画面](tmp/01_auth_page.png)
-![匿名サインイン後ホーム画面](tmp/02_home_after_anonymous_signin.png)
-
-##### 2. 初回ログインフロー - 自動エンティティ作成（Pass）
-Firestoreダンプで以下を確認:
-- `/users/{uid}` 作成、`defaultGroupID: OfWmSUHIsqk7vDUoEL4L` 設定
-- ソログループ `/groups/OfWmSUHIsqk7vDUoEL4L` 作成
-- 初期買い物リスト: 名前=`2026-03-25`（yyyy-MM-dd形式）、TTL=`2026-04-24`（30日後）
-
-![AppUser Firestoreダンプ](tmp/03_firestore_appuser.png)
-![Groups一覧](tmp/04_firestore_groups.png)
-![買い物リスト詳細（TTL確認）](tmp/05_firestore_shopping_list_detail.png)
-
-##### 3. 冪等性テスト（Pass）
-アプリ再起動後（サインアウトなし）、Firestoreダンプでグループ数・リスト数が変わっていないことを確認。
-
-![再起動後Firestoreダンプ](tmp/06_firestore_after_restart_idempotency.png)
-
-##### 4. プライバシーポリシー（Pass）
-タップで外部ブラウザ（Safari）が開き、`bannzai.github.io` のプライバシーポリシーページが正しく表示。httpsスキーム確認済み。
-
-![プライバシーポリシー](tmp/07_privacy_policy_browser.png)
-
-##### 5. 利用規約（Fail）
-タップで外部ブラウザが開くが、`https://bannzai.github.io/shoppinglist/TermsOfService` が **404 File not found**。ページが未デプロイまたはパスが誤っている。
-
-![利用規約404エラー](tmp/08_terms_of_service_404.png)
-
-##### 発見したバグ
-1. **Firestoreデータ確認のTimestampシリアライズエラー**: `Timestamp`オブジェクトのJSON変換に失敗していた → 修正済み（`JsonEncoder`の`toEncodable`でTimestamp→ISO8601変換を追加）
-2. **利用規約ページ404**: `https://bannzai.github.io/shoppinglist/TermsOfService` が存在しない
-3. **ビルドエラー**: `GroupShoppingListItemCategory`→`GroupCategory`のリネームマージ不整合 → 修正済み
+（スクリーンショット・結果をここに埋め込む）
 
 </details>
 

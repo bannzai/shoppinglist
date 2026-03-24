@@ -499,12 +499,7 @@ class _JsonText extends StatelessWidget {
         child: Text('データなし'),
       );
     }
-    final jsonString = JsonEncoder.withIndent('  ', (object) {
-      if (object is Timestamp) {
-        return object.toDate().toIso8601String();
-      }
-      return object.toString();
-    }).convert(data);
+    final jsonString = const JsonEncoder.withIndent('  ').convert(data);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
