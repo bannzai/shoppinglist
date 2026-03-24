@@ -10,7 +10,7 @@ Composite IDは、特定のリレーションを明示する必要がある場�
 
 ### 使用するケース
 - Userと紐づく1:1の情報を、mapではなくcollection/documentとして格納したい場合
-- 例: UserProfileはUser:Group間で1:1の関係 → `UserProfile_groups_{groupID}_users_{userID}`
+- 例: GroupUserProfileはUser:Group間で1:1の関係 → `GroupUserProfile_groups_{groupID}_users_{userID}`
 
 ### 使用しないケース
 - 1:N の通常のサブコレクション（場所、買い物リスト、アイテム等）
@@ -27,7 +27,7 @@ Composite IDは、特定のリレーションを明示する必要がある場�
 
 ### 例
 - `UserPrivate_users_{userID}` — `/users/{userID}/privates/` 内のシングルトン
-- `UserProfile_groups_{groupID}_users_{userID}` — `/groups/{groupID}/userProfiles/` 内のUser別ドキュメント
+- `GroupUserProfile_groups_{groupID}_users_{userID}` — `/groups/{groupID}/userProfiles/` 内のUser別ドキュメント
 
 ### 理由
 - エンティティ名が先頭にあるため、IDだけで何のエンティティか判別できる
@@ -40,7 +40,7 @@ Composite IDを使用する場合、エンティティクラスにstaticメソ�
 ```dart
 class GroupUserProfile {
   static String documentID({required String groupID, required String userID}) =>
-      'UserProfile_groups_${groupID}_users_$userID';
+      'GroupUserProfile_groups_${groupID}_users_$userID';
 }
 ```
 
