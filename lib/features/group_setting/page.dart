@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category_axis.dart';
+import 'package:shoppinglist/entity/group_category.dart';
+import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/group_shopping_list_item_category/category_edit_page.dart';
@@ -619,6 +619,7 @@ void _showAddCategoryDialog({
                       groupID: groupID))
                   .call(
                     groupID: groupID,
+                    userID: ref.read(currentUserIDProvider)!,
                     categoryAxisID: categoryAxisID,
                     name: name,
                     order: currentCategoryCount,
@@ -722,13 +723,13 @@ class _CategoriesSection extends ConsumerWidget {
   void _addCategoryWithAutoAxis({
     required BuildContext context,
     required WidgetRef ref,
-    required List<GroupShoppingListItemCategoryAxis> existingAxes,
+    required List<GroupCategoryAxis> existingAxes,
   }) async {
-    GroupShoppingListItemCategoryAxis axis;
+    GroupCategoryAxis axis;
     if (existingAxes.isEmpty) {
       axis = await ref
           .read(groupShoppingListItemCategoryAxisAddProvider(groupID: groupID))
-          .call(groupID: groupID, name: 'デフォルト', order: 0);
+          .call(groupID: groupID, userID: ref.read(currentUserIDProvider)!, name: 'デフォルト', order: 0);
     } else {
       axis = existingAxes.first;
     }
@@ -747,7 +748,7 @@ class _CategoriesSection extends ConsumerWidget {
 
 class _CategoryListContent extends ConsumerWidget {
   final String groupID;
-  final GroupShoppingListItemCategoryAxis axis;
+  final GroupCategoryAxis axis;
 
   const _CategoryListContent({
     required this.groupID,
@@ -873,7 +874,7 @@ class _CategoryListContent extends ConsumerWidget {
   void _showDeleteDialog({
     required BuildContext context,
     required WidgetRef ref,
-    required GroupShoppingListItemCategory category,
+    required GroupCategory category,
   }) {
     showDialog(
       context: context,
