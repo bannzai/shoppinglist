@@ -16,24 +16,72 @@
 
 ### サインイン
 - [ ] **Apple サインイン**: Apple IDでサインイン完了 → ホーム画面遷移。DB: `/users/{uid}` 作成、`defaultGroupID` 設定、ソログループ + 初期リスト自動作成
+  - スキップ: OAuth認証フローをiOS Simulatorで自動実行不可
 - [ ] **Google サインイン**: Googleアカウントでサインイン完了 → ホーム画面遷移。DB: 上記と同様
-- [ ] **匿名サインイン（デバッグのみ）**: デバッグビルドで匿名サインインボタン表示 → タップでサインイン
+  - スキップ: OAuth認証フローをiOS Simulatorで自動実行不可
+- [x] **匿名サインイン（デバッグのみ）**: デバッグビルドで匿名サインインボタン表示 → タップでサインイン
 - [ ] **リリースビルドで匿名サインインボタン非表示**: `kDebugMode=false` 時にApple/Googleのみ表示
+  - スキップ: kDebugMode=false のリリースビルドが必要
 
 ### 初回ログインフロー
-- [ ] **自動エンティティ作成**: 新規ユーザー → AppUser、ソログループ、初期買い物リスト（名前=`yyyy-MM-dd`、TTL=30日後）が自動作成。DB: `/users/{uid}`, `/groups/{defaultGroupID}`, shoppingLists 確認
-- [ ] **2回目以降のログインで二重作成されない**: 既存ユーザー再ログイン → データ数変わらない（冪等性）
+- [x] **自動エンティティ作成**: 新規ユーザー → AppUser、ソログループ、初期買い物リスト（名前=`yyyy-MM-dd`、TTL=30日後）が自動作成。DB: `/users/{uid}`, `/groups/{defaultGroupID}`, shoppingLists 確認
+- [x] **2回目以降のログインで二重作成されない**: 既存ユーザー再ログイン → データ数変わらない（冪等性）
 
 ### 外部リンク
-- [ ] **プライバシーポリシー**: タップ → 外部ブラウザで開く
-- [ ] **利用規約**: タップ → 外部ブラウザで開く
+- [x] **プライバシーポリシー**: タップ → 外部ブラウザで開く
+- [x] **利用規約**: タップ → 外部ブラウザで開く
 
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-（スクリーンショット・結果をここに埋め込む）
+**テスト環境**: iPhone 16 Plus (iOS 18.5) / デバッグビルド / Maestro E2E
+
+**1. 認証画面表示確認**
+- デバッグビルドで匿名サインインボタン（「匿名サインイン（デバッグ用）」）が表示されている
+- Apple/Googleサインインボタンも表示
+- プライバシーポリシー・利用規約のリンクテキストが画面下部に表示
+
+![認証画面](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/efe9fb48-c72a-4f54-bc97-b9b7351ad44b.png)
+
+**2. プライバシーポリシー**
+- 「プライバシーポリシー」テキストタップ → Safari で `bannzai.github.io/shoppinglist/PrivacyPolicy` が開いた (https)
+- 「プライバシーポリシー」のタイトルと本文が正常表示
+
+![プライバシーポリシー](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/647bc865-a645-41f6-a8c9-9418a7d7f809.png)
+
+**3. 利用規約**
+- 「利用規約」テキストタップ → Safari で `bannzai.github.io/shoppinglist/Terms` が開いた (https)
+- 「買い物リスト利用規約」のタイトルと本文が正常表示
+
+![利用規約](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/4906e6b6-e346-44d7-8ae3-596d201d7de6.png)
+
+**4. 匿名サインイン → ホーム画面遷移**
+- 「匿名サインイン（デバッグ用）」タップ → ホーム画面に遷移
+- 初期買い物リスト「2026-03-25」(yyyy-MM-dd形式) が自動作成されて表示
+- 「買い物リストが空です」「アイテムを追加」が表示
+
+![ホーム画面](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/cb676558-5a29-4834-b488-b9aecfd8db04.png)
+
+**5. 自動エンティティ作成の確認 (開発者オプション)**
+- 開発者オプションページで以下を確認:
+  - UID: 設定済み（`uid=***`）
+  - defaultGroupID: 設定済み（`groupID=***`）
+- Firestoreデータ確認ページでAppUserを展開した際、Timestampシリアライズのバグを検出 → 修正コード作成済み（別PR予定）
+
+![開発者オプション](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/5b1203f3-2e6f-464b-8174-a7b0cb563f7d.png)
+
+**6. 冪等性確認（2回目ログイン）**
+- アプリ再起動後（state保持）、自動ログイン → ホーム画面表示
+- 買い物リストが「2026-03-25」の1つのみ（二重作成なし）
+- 開発者オプションでUID/defaultGroupIDが初回と同一
+
+![再起動後ホーム](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/6796b4ab-a58c-4767-a6d6-109c0fc71c2d.png)
+![再起動後開発者オプション](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/3cdc8ddb-d476-4643-a7f8-b8ab693093a4.png)
+
+**発見したバグ**
+- Firestoreデータ確認ページの `_JsonText` ウィジェットで、`toJson()` が返す `Timestamp` オブジェクトを `JsonEncoder` がシリアライズできないエラー（`Converting object to an encodable object failed: Instance of 'Timestamp'`）。修正済み（`firestore_viewer_page.dart`）、別PR予定
 
 </details>
 
