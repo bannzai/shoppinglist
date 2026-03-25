@@ -1,0 +1,69 @@
+appId: com.bannzai.shoppinglist
+---
+- launchApp:
+    clearState: true
+    clearKeychain: true
+
+# 通知許可ダイアログが表示された場合は許可する
+- runFlow:
+    when:
+      visible: "許可"
+    commands:
+      - tapOn:
+          text: "許可"
+          retryTapIfNoChange: false
+      - waitForAnimationToEnd
+
+- extendedWaitUntil:
+    visible: "サインイン"
+    timeout: 30000
+- tapOn: "匿名サインイン（デバッグ用）"
+- waitForAnimationToEnd
+# permission-deniedエラーでRetryボタンが表示される場合がある
+- runFlow:
+    when:
+      visible: "Retry"
+    commands:
+      - tapOn: "Retry"
+      - waitForAnimationToEnd
+- runFlow:
+    when:
+      visible: "Retry"
+    commands:
+      - tapOn: "Retry"
+      - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "アイテムを追加"
+    timeout: 30000
+
+# 確認1: 買い物リストタブがデフォルト選択（起動後ShoppingListPage表示）
+- assertVisible: "アイテムを追加"
+- takeScreenshot: screenshots/home_01_default_shopping_list_tab
+
+# 確認2: 設定タブ遷移（下部ナビバーで「設定」タップ → SettingPage表示）
+- tapOn:
+    text: "設定.*"
+    index: 0
+- assertVisible: "設定.*"
+- takeScreenshot: screenshots/home_02_settings_tab
+
+# 確認3a: 設定タブで横スワイプしてもタブが切り替わらない
+- swipe:
+    direction: LEFT
+    duration: 500
+- assertVisible: "設定.*"
+- takeScreenshot: screenshots/home_03_swipe_on_settings_no_change
+
+# 買い物リストタブに戻る（ナビバーの左側エリアをタップ）
+- tapOn:
+    point: "25%,93%"
+- extendedWaitUntil:
+    visible: "アイテムを追加"
+    timeout: 5000
+
+# 確認3b: 買い物リストタブで横スワイプしてもタブが切り替わらない
+- swipe:
+    direction: RIGHT
+    duration: 500
+- assertVisible: "アイテムを追加"
+- takeScreenshot: screenshots/home_04_swipe_on_shopping_list_no_change
