@@ -16,24 +16,60 @@
 
 ### サインイン
 - [ ] **Apple サインイン**: Apple IDでサインイン完了 → ホーム画面遷移。DB: `/users/{uid}` 作成、`defaultGroupID` 設定、ソログループ + 初期リスト自動作成
+  - スキップ: OAuth認証フローをiOS Simulatorで自動実行不可
 - [ ] **Google サインイン**: Googleアカウントでサインイン完了 → ホーム画面遷移。DB: 上記と同様
-- [ ] **匿名サインイン（デバッグのみ）**: デバッグビルドで匿名サインインボタン表示 → タップでサインイン
+  - スキップ: OAuth認証フローをiOS Simulatorで自動実行不可
+- [x] **匿名サインイン（デバッグのみ）**: デバッグビルドで匿名サインインボタン表示 → タップでサインイン
 - [ ] **リリースビルドで匿名サインインボタン非表示**: `kDebugMode=false` 時にApple/Googleのみ表示
+  - スキップ: kDebugMode=falseのリリースビルドが必要
 
 ### 初回ログインフロー
-- [ ] **自動エンティティ作成**: 新規ユーザー → AppUser、ソログループ、初期買い物リスト（名前=`yyyy-MM-dd`、TTL=30日後）が自動作成。DB: `/users/{uid}`, `/groups/{defaultGroupID}`, shoppingLists 確認
-- [ ] **2回目以降のログインで二重作成されない**: 既存ユーザー再ログイン → データ数変わらない（冪等性）
+- [x] **自動エンティティ作成**: 新規ユーザー → AppUser、ソログループ、初期買い物リスト（名前=`yyyy-MM-dd`、TTL=30日後）が自動作成。DB: `/users/{uid}`, `/groups/{defaultGroupID}`, shoppingLists 確認
+- [x] **2回目以降のログインで二重作成されない**: 既存ユーザー再ログイン → データ数変わらない（冪等性）
 
 ### 外部リンク
-- [ ] **プライバシーポリシー**: タップ → 外部ブラウザで開く
-- [ ] **利用規約**: タップ → 外部ブラウザで開く
-
+- [x] **プライバシーポリシー**: タップ → 外部ブラウザで開く
+- [x] **利用規約**: タップ → 外部ブラウザで開く
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-（スクリーンショット・結果をここに埋め込む）
+**テスト実施日**: 2026-03-25
+
+**1. 匿名サインイン（デバッグのみ）**
+- デバッグビルドで認証画面に「匿名サインイン（デバッグ用）」ボタンが表示されることを確認
+- タップ後、ホーム画面（買い物リスト画面）に正常に遷移
+
+**2. 自動エンティティ作成（初回ログインフロー）**
+- Firestoreダンプで以下を確認:
+  - AppUser: `id=YQyh2Bds...`, `defaultGroupID=gsHASzQVPtdVvMqU0o83`
+  - ソログループ: `Group: 名前未設定 (gsHASzQVPtdVvMqU0o83)`
+  - 初期買い物リスト: `name=2026-03-25`, `ttlExpiresDateTime=2026-04-24T15:37:50`（約30日後）, `status=active`
+
+**3. 冪等性確認（2回目以降のログインで二重作成されない）**
+- アプリ再起動後、Firestoreダンプでグループ数・リスト数が初回と同一であることを確認
+  - グループ: 2件（変化なし）
+  - デフォルトグループのShoppingLists: 1件（`CUUXnkk7l4OPJcjBKMBH`, 変化なし）
+
+**4. プライバシーポリシー**
+- 設定画面から「プライバシーポリシー」タップ → Safariで `bannzai.github.io` のプライバシーポリシーページが正常に表示
+
+**5. 利用規約**
+- 設定画面から「利用規約」タップ → Safariで `bannzai.github.io` に遷移するが **404エラー** が表示
+- 注意: リンク機能自体は正常に動作（外部ブラウザで開く）。コンテンツが未配置の可能性あり
+
+**スクリーンショット** (ローカル `tmp/` に保存済み、R2アップロード保留):
+- `auth_01_signin_page.png` - 認証画面
+- `auth_02_home_after_signin.png` - サインイン後のホーム画面
+- `auth_03_firestore_appuser.png` - Firestore AppUserデータ
+- `auth_04_firestore_groups.png` - Firestoreグループデータ
+- `auth_05_firestore_shopping_list.png` - Firestoreショッピングリスト
+- `auth_06_firestore_list_detail.png` - リスト詳細（TTL確認）
+- `auth_07_home_after_restart.png` - 再起動後のホーム画面
+- `auth_08_firestore_after_restart.png` - 再起動後のFirestoreデータ（冪等性確認）
+- `auth_09_privacy_policy.png` - プライバシーポリシーページ
+- `auth_10_terms_of_service.png` - 利用規約ページ（404）
 
 </details>
 
