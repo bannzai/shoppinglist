@@ -44,8 +44,11 @@ class ShoppingListPage extends HookConsumerWidget {
 
     return Retry(
       retry: () => ref.invalidate(shoppingListsProvider(groupID: groupID)),
-      child: Column(
-        children: [
+      // SafeAreaでGroupSwitcherをステータスバー/ノッチ領域の下に配置する
+      child: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
           if (userGroupsAsync.asData?.value != null)
             GroupSwitcher(
               groups: userGroupsAsync.asData!.value,
@@ -145,6 +148,7 @@ class ShoppingListPage extends HookConsumerWidget {
             ),
           ),
         ],
+        ),
       ),
     );
   }
