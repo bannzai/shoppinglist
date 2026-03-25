@@ -67,11 +67,6 @@ run_section() {
   git add PLAN.md || true
   git commit -m "QA: セクション${num} 動作確認完了" || true
 
-  # ベースブランチにマージしてPLAN.mdの変更を蓄積
-  echo "ベースブランチ ${BASE_BRANCH} にマージ中..."
-  git checkout "$BASE_BRANCH" || true
-  git merge "$branch_name" --no-edit || true
-
   echo "セクション ${num} 完了"
   echo ""
 }
