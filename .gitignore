@@ -56,3 +56,8 @@ screenshots/
 .local/
 
 ios/build
+
+# QA temporary files
+tmp_*
+pr_body*.md
+.pr_body*.md
