@@ -250,24 +250,54 @@
 
 ## 9. 設定画面 (SettingPage)
 
-- [ ] **プロフィール表示名編集**: 表示名入力→「保存」→SnackBar「表示名を更新しました」。DB: userProfile.displayName更新
-- [ ] **グループ管理遷移**: 「グループ管理」→GroupListPage
-- [ ] **招待コード入力画面遷移**: 「招待コードでグループに参加」→GroupInvitationAcceptPage
-- [ ] **利用規約リンク**: タップ→外部ブラウザ
-- [ ] **プライバシーポリシーリンク**: タップ→外部ブラウザ
-- [ ] **特定商法取引法に基づく表記リンク**: タップ→外部ブラウザ
+- [x] **プロフィール表示名編集**: 表示名入力→「保存」→SnackBar「表示名を更新しました」。DB: userProfile.displayName更新
+  - 表示名「テストユーザー」を入力後保存。アプリ再起動後もFirestoreから復元されることを確認。SnackBarはmobile-mcpのスクリーンショットタイミングでキャプチャ困難だが、コードレビューで表示ロジック確認済み（lib/features/settings/page.dart:94-99）
+- [x] **グループ管理遷移**: 「グループ管理」→GroupListPage
+- [x] **招待コード入力画面遷移**: 「招待コードでグループに参加」→GroupInvitationAcceptPage
+- [x] **利用規約リンク**: タップ→外部ブラウザ
+- [x] **プライバシーポリシーリンク**: タップ→外部ブラウザ
+- [x] **特定商法取引法に基づく表記リンク**: タップ→外部ブラウザ
 - [ ] **お問い合わせ**: タップ→問い合わせ機能起動
+  - スキップ: 問い合わせ機能の外部サービス起動確認が自動テスト困難
 - [ ] **アカウント削除**: 「アカウントを削除する」→確認ダイアログ→「削除する」→Firebase Authユーザー削除→「アプリを終了しますか？」ダイアログ
-- [ ] **アカウント削除キャンセル**: 確認ダイアログ「キャンセル」→削除されない
+  - スキップ: 実行するとユーザーが削除されテスト継続不可
+- [x] **アカウント削除キャンセル**: 確認ダイアログ「キャンセル」→削除されない
 - [ ] **アカウント削除時の再認証要求**: セッション古い場合→requires-recent-login→再認証ダイアログ→再認証後削除完了
-- [ ] **デバッグモードで開発者オプション表示**: デバッグビルド→「開発者オプション」ListTile表示→タップでDeveloperOptionsPage遷移
+  - スキップ: セッション古い状態を再現困難
+- [x] **デバッグモードで開発者オプション表示**: デバッグビルド→「開発者オプション」ListTile表示→タップでDeveloperOptionsPage遷移
 
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-（スクリーンショット・結果をここに埋め込む）
+**プロフィール表示名編集（保存後アプリ再起動で復元確認）:**
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/3b867076-17fb-435a-a026-06e4587b14f1.png)
+
+**グループ管理遷移:**
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/5ca9b24f-7cc0-4381-87ad-2378009e7054.png)
+
+**招待コード入力画面遷移:**
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/d951affc-2d1c-419b-b87f-bb36d999d733.png)
+
+**利用規約リンク（外部ブラウザ起動）:**
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/45ecdd01-b0ec-4266-a7e8-90a803b76991.png)
+
+**プライバシーポリシーリンク（外部ブラウザ起動）:**
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/b0e09766-cb58-444b-9b62-1213ab61439b.png)
+
+**特定商法取引法に基づく表記リンク（外部ブラウザ起動）:**
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/8a09b19d-3273-48d3-8e73-388add8fe897.png)
+
+**アカウント削除キャンセル（確認ダイアログ表示→キャンセル）:**
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/a1d9ad2a-fe9d-4ef1-93ce-52a16b4e4d32.png)
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/7b479611-6b7b-4b91-9076-4481fb743ff6.png)
+
+**デバッグモードで開発者オプション表示（設定画面下部にListTile表示）:**
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/c28df47a-7171-4cdb-8d4d-a6ca1cc02a66.png)
+
+**開発者オプションページ遷移:**
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/54a1361b-ad51-41e5-aa25-1fdf16b48f5f.png)
 
 </details>
 
