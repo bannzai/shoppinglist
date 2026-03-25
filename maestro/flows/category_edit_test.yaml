@@ -1,0 +1,52 @@
+appId: com.bannzai.shoppinglist
+---
+# カテゴリ編集のテスト（カラー設定・カラー解除・アイコン設定）
+# 前提: category_location_orderの後、アプリはカテゴリ付き買い物リスト画面
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# グループ設定画面を開く
+- tapOn: "リスト設定"
+- assertVisible: "買い物リスト設定"
+- tapOn:
+    point: "50%,12%"
+- waitForAnimationToEnd
+
+- tapOn: "グループ設定"
+- waitForAnimationToEnd
+- assertVisible: "グループ設定"
+
+# カテゴリ「カテゴリを追加」→カテゴリ作成
+- tapOn: "カテゴリを追加"
+- assertVisible: "カテゴリを追加"
+- tapOn: "カテゴリ名（例: 野菜）"
+- inputText: "テスト用"
+- tapOn:
+    text: "追加"
+    index: 0
+- waitForAnimationToEnd
+
+# カテゴリ編集画面
+- assertVisible: "カテゴリ名"
+
+# --- カラー設定テスト ---
+# 赤色（2番目のカラーサークル）をタップ
+# Wrap内: spacing=12, circle=40x40. "カテゴリカラー"の下の行
+- tapOn:
+    point: "20%,34%"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/category_edit_color_set
+
+# --- カラー解除テスト ---
+# 色なし（1番目のサークル、⊘アイコン）をタップ
+- tapOn:
+    point: "8%,34%"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/category_edit_color_unset
+
+# --- アイコン設定テスト ---
+# カートアイコン（2番目のアイコン）をタップ
+- tapOn:
+    point: "20%,50%"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/category_edit_icon_set

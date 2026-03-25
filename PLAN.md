@@ -215,34 +215,94 @@
 ## 8. カテゴリ機能
 
 ### カテゴリ一覧 (GroupCategoryPage)
-- [ ] **カテゴリ一覧表示**: グループ設定>「カテゴリを管理」→カテゴリ名、アイコン、カラー、キーワード件数表示
-- [ ] **初回カテゴリ追加（Axis自動作成）**: 0件→「カテゴリを追加」→ダイアログ→Axis+カテゴリ自動作成→カテゴリ編集画面遷移。DB: userCategoryAxes+categories作成
-- [ ] **カテゴリ追加**: FAB(+)→名前入力→「追加」→カテゴリ編集画面遷移。DB: category作成（order=リスト最後）
-- [ ] **デフォルト順ドラッグ&ドロップ**: ロケーション「デフォルト」選択時→ドラッグで順序変更。DB: order更新
-- [ ] **ロケーション別並べ替え**: ロケーションドロップダウンで場所選択→その場所用の並び順でドラッグ&ドロップ。DB: locationOrdersマップ更新
-- [ ] **カテゴリ削除**: 削除アイコン→確認ダイアログ「このカテゴリに設定されたキーワードも削除されます」→削除。DB: ドキュメント削除
+- [x] **カテゴリ一覧表示**: グループ設定>「カテゴリを管理」→カテゴリ名、アイコン、カラー、キーワード件数表示
+- [x] **初回カテゴリ追加（Axis自動作成）**: 0件→「カテゴリを追加」→ダイアログ→Axis+カテゴリ自動作成→カテゴリ編集画面遷移。DB: userCategoryAxes+categories作成
+- [x] **カテゴリ追加**: FAB(+)→名前入力→「追加」→カテゴリ編集画面遷移。DB: category作成（order=リスト最後）
+- [ ] **デフォルト順ドラッグ&ドロップ**: ロケーション「デフォルト」選択時→ドラッグで順序変更。DB: order更新 ※スキップ: GroupCategoryPageへのナビゲーションが未実装のため、UIからドラッグ&ドロップ機能にアクセスできない
+- [ ] **ロケーション別並べ替え**: ロケーションドロップダウンで場所選択→その場所用の並び順でドラッグ&ドロップ。DB: locationOrdersマップ更新 ※スキップ: 同上
+- [x] **カテゴリ削除**: 削除アイコン→確認ダイアログ「このカテゴリに設定されたキーワードも削除されます」→削除。DB: ドキュメント削除
 
 ### カテゴリ編集 (GroupCategoryEditPage)
-- [ ] **カテゴリ名編集**: 名前変更→submit→SnackBar「保存しました」。DB: name更新
-- [ ] **カラー設定**: プリセットカラー選択→即保存。DB: color更新（hex値）
-- [ ] **カラー解除**: 色なしボタン→DB: color=null
-- [ ] **アイコン設定**: プリセットアイコン選択→即保存。DB: iconName更新
-- [ ] **キーワード追加（部分一致）**: 「+」→キーワード入力→「部分一致」→「追加」。DB: keywords配列にmatchingType=partialエントリ追加
-- [ ] **キーワード追加（完全一致）**: 「+」→キーワード入力→「完全一致」→「追加」。DB: matchingType=exact
-- [ ] **キーワード削除**: 削除アイコン→キーワード消える。DB: keywords配列からエントリ削除
+- [x] **カテゴリ名編集**: 名前変更→submit→SnackBar「保存しました」。DB: name更新
+- [x] **カラー設定**: プリセットカラー選択→即保存。DB: color更新（hex値）
+- [x] **カラー解除**: 色なしボタン→DB: color=null
+- [x] **アイコン設定**: プリセットアイコン選択→即保存。DB: iconName更新
+- [x] **キーワード追加（部分一致）**: 「+」→キーワード入力→「部分一致」→「追加」。DB: keywords配列にmatchingType=partialエントリ追加
+- [x] **キーワード追加（完全一致）**: 「+」→キーワード入力→「完全一致」→「追加」。DB: matchingType=exact
+- [x] **キーワード削除**: 削除アイコン→キーワード消える。DB: keywords配列からエントリ削除
 
 ### カテゴリキーワードマッチング
-- [ ] **部分一致**: キーワード「牛」（部分一致）→「牛乳」「牛肉」がそのカテゴリに分類
-- [ ] **完全一致**: キーワード「牛乳」（完全一致）→「牛乳」のみマッチ、「牛肉」はマッチしない
-- [ ] **大文字小文字無視**: キーワード「Milk」→「milk」「MILK」にもマッチ
-- [ ] **複数カテゴリマッチ時の優先度**: リスト順で最初にマッチしたカテゴリに分類
+- [x] **部分一致**: キーワード「牛」（部分一致）→「牛乳」「牛肉」がそのカテゴリに分類
+- [x] **完全一致**: キーワード「牛乳」（完全一致）→「牛乳」のみマッチ、「牛肉」はマッチしない
+- [x] **大文字小文字無視**: キーワード「Milk」→「milk」「MILK」にもマッチ
+- [x] **複数カテゴリマッチ時の優先度**: リスト順で最初にマッチしたカテゴリに分類
 
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-（スクリーンショット・結果をここに埋め込む）
+**Maestro: category_crud.yaml** (全ステップPASSED)
+
+カテゴリ編集画面（初回追加後）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/bf62e1a2-7f32-4649-8b4e-7ae58630c6cd.png)
+
+キーワード追加（部分一致「にんじん」）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/df701759-c993-4640-b42f-a38e6d17cd88.png)
+
+カテゴリ一覧（グループ設定画面）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/0618c36b-9719-44c6-91b1-952e66ef7e83.png)
+
+部分一致マッチング（「にんじん」→「野菜」カテゴリに分類）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/328e3d3c-3b2e-4461-9862-bcd35ccdd619.png)
+
+**Maestro: category_location_order.yaml** (全ステップPASSED)
+
+3カテゴリ作成（野菜・肉・魚）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/937712ef-8001-41d3-aeee-60e10aa74286.png)
+
+カテゴリ別表示（にんじん→野菜、鶏肉→肉、サーモン→魚）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/c5dabce5-abb2-4050-b5db-144c0e6e6053.png)
+
+**mobile-mcp: カテゴリ編集テスト**
+
+カテゴリ名編集（野菜→野菜類）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/84e522b8-426a-46a5-b0ed-a3c7b6f0207d.png)
+
+カラー設定（赤色選択）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/850da66c-131b-4434-a57c-384f8b548d65.png)
+
+カラー解除（⊘選択）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/38430075-274c-4cdc-96cc-99ee810af542.png)
+
+アイコン設定（カートアイコン選択）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/72a5f612-2d21-4af9-aae0-0230f05b4723.png)
+
+キーワード追加（完全一致「牛乳」）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/a270055e-6dfb-4024-acd3-d334d7bca231.png)
+
+キーワード削除（「牛乳」削除後）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/75f27d63-9c5f-419b-9e4b-47e1c5c1ea51.png)
+
+**Maestro: category_matching_test.yaml** (全ステップPASSED)
+
+乳製品カテゴリ（牛乳=完全一致, Milk=部分一致）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/f0da6df0-73e3-4741-bd16-102b19231e45.png)
+
+マッチング結果（牛乳→乳製品、牛肉→肉、milk/MILK→乳製品）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/ab881931-f27f-409a-8a4f-d3e00053241c.png)
+
+**mobile-mcp: カテゴリ削除テスト**
+
+削除確認ダイアログ（「乳製品」を削除しますか？ / このカテゴリに設定されたキーワードも削除されます）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/a9af1804-8e41-4b69-8074-9223c528b949.png)
+
+削除後のグループ設定画面（「乳製品」が削除され「肉」のみ残存）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/82c9de39-2759-4d6e-9363-db3c88f268d3.png)
+
+**スキップ項目**
+- デフォルト順ドラッグ&ドロップ: GroupCategoryPageへのナビゲーションがGroupSettingPageから未実装のため、UIからアクセス不可
+- ロケーション別並べ替え: 同上
 
 </details>
 

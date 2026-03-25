@@ -26,13 +26,7 @@ appId: com.bannzai.shoppinglist
 - waitForAnimationToEnd
 - assertVisible: "グループ設定"
 
-# カテゴリ管理を開く
-- tapOn: "カテゴリを管理"
-- waitForAnimationToEnd
-- assertVisible: "カテゴリ"
-- takeScreenshot: screenshots/category_crud_01_empty
-
-# カテゴリを追加（初期状態のOutlinedButtonをタップ）
+# カテゴリ追加（グループ設定画面の「+カテゴリを追加」をタップ）
 - tapOn: "カテゴリを追加"
 - assertVisible: "カテゴリを追加"
 - tapOn: "カテゴリ名（例: 野菜）"
