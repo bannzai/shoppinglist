@@ -141,14 +141,24 @@
 ## 5. グループ切り替え (GroupSwitcher)
 
 - [ ] **グループ1つの場合非表示**: ソログループのみ→ChoiceChip非表示
-- [ ] **複数グループ切り替え**: ChoiceChipでグループ切り替え→そのグループのリスト表示。DB: defaultGroupID更新
+  - スキップ: テストアカウントに既に2グループ存在し、グループ削除機能がスコープ外のため直接確認不可。コードレビューで `groups.length <= 1` の場合 `SizedBox.shrink()` を返すロジックを確認済み (`group_switcher.dart:21-22`)
+- [x] **複数グループ切り替え**: ChoiceChipでグループ切り替え→そのグループのリスト表示。DB: defaultGroupID更新
+  - group-B選択時に「test-item-B」が表示され、group-Aに切り替えると空リストに変わることを確認。group-Bに戻すと「test-item-B」が再表示される
+  - **発見したバグ**: GroupSwitcherがSafeArea外（ステータスバー領域 y:8）に描画されタップ不可だった → SafeAreaを追加して修正
 
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-（スクリーンショット・結果をここに埋め込む）
+**切り替え前（group-B選択、test-item-B表示）:**
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/a8868382-5ede-492b-9c91-7ccfe886b702.png)
+
+**group-Aに切り替え後（空リスト表示）:**
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/b1dd88c2-f34d-42c5-8fe9-17e3143ff5a8.png)
+
+**group-Bに切り替え戻し（test-item-B再表示）:**
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/7f7b67c3-1543-4d68-ba67-2e79cc3f1308.png)
 
 </details>
 
