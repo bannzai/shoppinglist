@@ -16,24 +16,50 @@
 
 ### サインイン
 - [ ] **Apple サインイン**: Apple IDでサインイン完了 → ホーム画面遷移。DB: `/users/{uid}` 作成、`defaultGroupID` 設定、ソログループ + 初期リスト自動作成
+  - スキップ: OAuth認証フローをiOS Simulatorで自動実行不可
 - [ ] **Google サインイン**: Googleアカウントでサインイン完了 → ホーム画面遷移。DB: 上記と同様
-- [ ] **匿名サインイン（デバッグのみ）**: デバッグビルドで匿名サインインボタン表示 → タップでサインイン
+  - スキップ: OAuth認証フローをiOS Simulatorで自動実行不可
+- [x] **匿名サインイン（デバッグのみ）**: デバッグビルドで匿名サインインボタン表示 → タップでサインイン
 - [ ] **リリースビルドで匿名サインインボタン非表示**: `kDebugMode=false` 時にApple/Googleのみ表示
+  - スキップ: kDebugMode=false のリリースビルドが必要
 
 ### 初回ログインフロー
-- [ ] **自動エンティティ作成**: 新規ユーザー → AppUser、ソログループ、初期買い物リスト（名前=`yyyy-MM-dd`、TTL=30日後）が自動作成。DB: `/users/{uid}`, `/groups/{defaultGroupID}`, shoppingLists 確認
-- [ ] **2回目以降のログインで二重作成されない**: 既存ユーザー再ログイン → データ数変わらない（冪等性）
+- [x] **自動エンティティ作成**: 新規ユーザー → AppUser、ソログループ、初期買い物リスト（名前=`yyyy-MM-dd`、TTL=30日後）が自動作成。DB: `/users/{uid}`, `/groups/{defaultGroupID}`, shoppingLists 確認
+- [x] **2回目以降のログインで二重作成されない**: 既存ユーザー再ログイン → データ数変わらない（冪等性）
 
 ### 外部リンク
-- [ ] **プライバシーポリシー**: タップ → 外部ブラウザで開く
-- [ ] **利用規約**: タップ → 外部ブラウザで開く
+- [x] **プライバシーポリシー**: タップ → 外部ブラウザで開く
+- [x] **利用規約**: タップ → 外部ブラウザで開く
 
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-（スクリーンショット・結果をここに埋め込む）
+**テスト実施日**: 2026-03-25
+**テスト環境**: iPhone 16 Plus (iOS 18.5) - Simulator, デバッグビルド
+**テストツール**: Maestro E2E
+
+##### 匿名サインイン
+- サインイン画面で「匿名サインイン（デバッグ用）」ボタンが表示されることを確認
+- タップ後、ホーム画面（買い物リスト）に遷移することを確認
+- スクリーンショット: `tmp/auth_test_01_signin_page.png`, `tmp/auth_test_02_home_after_signin.png`
+
+##### 自動エンティティ作成（Firestoreダンプ）
+- **AppUser**: `id=9bZsZyvyzKbdx7b9s9kMMU4WBsR2`, `defaultGroupID=ZI6V7ao7qjZP9Kpycgob`, `createdDateTime=2026-03-25T12:05:11`
+- **Groups**: デフォルトグループ(ZI6V7ao7qjZP9Kpycgob)配下にShoppingList作成確認
+- **ShoppingList**: `name=2026-03-25`(yyyy-MM-dd), `ttlExpiresDateTime=2026-04-24`(30日後), `status=active`
+- スクリーンショット: `tmp/auth_test_04_firestore_appuser.png`, `tmp/auth_test_05_firestore_groups.png`, `tmp/auth_test_10_firestore_list_detail_scroll.png`
+
+##### 冪等性確認（2回目ログイン）
+- アプリ再起動後（clearStateなし）、Firestoreダンプで同一データを確認
+- グループ数: 2（変化なし）、ShoppingList: 1件（kxInUKbBgwGQWmkQvnM4、変化なし）
+- スクリーンショット: `tmp/auth_test_12_firestore_groups_after_restart.png`, `tmp/auth_test_13_firestore_lists_after_restart.png`
+
+##### 外部リンク
+- **プライバシーポリシー**: タップ → `bannzai.github.io` で「プライバシーポリシー」ページが正常表示
+- **利用規約**: タップ → `bannzai.github.io` で「買い物リスト利用規約」ページが正常表示
+- スクリーンショット: `tmp/auth_test_14_privacy_policy.png`, `tmp/auth_test_15_terms_of_service.png`
 
 </details>
 
