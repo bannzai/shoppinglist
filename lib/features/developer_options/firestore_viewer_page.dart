@@ -486,7 +486,8 @@ class _JsonExpansionTile extends StatelessWidget {
   }
 }
 
-/// JSONデータをフォーマットして表示するウィジェット
+/// JSONデータをフォーマットして表示するウィジェット。
+/// Firestore の Timestamp や FieldValue など JSON 非対応オブジェクトを文字列に変換して表示する。
 class _JsonText extends StatelessWidget {
   final Map<String, dynamic>? data;
   const _JsonText({required this.data});
@@ -499,7 +500,9 @@ class _JsonText extends StatelessWidget {
         child: Text('データなし'),
       );
     }
-    final jsonString = const JsonEncoder.withIndent('  ').convert(data);
+    final jsonString = const JsonEncoder.withIndent('  ').convert(
+      _convertForDisplay(data),
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
@@ -518,5 +521,29 @@ class _JsonText extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// Timestamp や FieldValue など JSON 非対応オブジェクトを再帰的に文字列に変換する
+  static dynamic _convertForDisplay(dynamic value) {
+    if (value is Timestamp) {
+      return value.toDate().toIso8601String();
+    }
+    if (value is DateTime) {
+      return value.toIso8601String();
+    }
+    if (value is Map) {
+      return value.map((k, v) => MapEntry(k.toString(), _convertForDisplay(v)));
+    }
+    if (value is List) {
+      return value.map(_convertForDisplay).toList();
+    }
+    // FieldValue 等その他の非プリミティブは toString() で表示
+    if (value != null &&
+        value is! String &&
+        value is! num &&
+        value is! bool) {
+      return value.toString();
+    }
+    return value;
   }
 }
