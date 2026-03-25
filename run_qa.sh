@@ -60,17 +60,7 @@ run_section() {
   local log_file="${log_dir}/section_${num}_${timestamp}.log"
   mkdir -p "$log_dir"
 
-  ccnipre -f "$prompt_path" 2>&1 | tee "$log_file"
-
-  # PLAN.md の変更をコミット（失敗しても続行）
-  echo "PLAN.md をコミット中..."
-  git add PLAN.md || true
-  git commit -m "QA: セクション${num} 動作確認完了" || true
-
-  # push して PR を作成
-  echo "ブランチ ${branch_name} を push して PR を作成中..."
-  git push -u origin "$branch_name" || true
-  gh pr create --base "$BASE_BRANCH" --title "QA: セクション${num} 動作確認" --body "セクション${num}のQA動作確認結果" || true
+  ccnipre -P -f "$prompt_path" 2>&1 | tee "$log_file"
 
   echo "セクション ${num} 完了"
   echo ""
