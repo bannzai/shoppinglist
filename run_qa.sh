@@ -33,7 +33,7 @@ SECTIONS=(
   "19:section_19_platform_specific.txt"
 )
 
-BASE_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+BASE_BRANCH="manual-testing-for-first-release"
 
 run_section() {
   local num="$1"
@@ -66,6 +66,11 @@ run_section() {
   echo "PLAN.md をコミット中..."
   git add PLAN.md || true
   git commit -m "QA: セクション${num} 動作確認完了" || true
+
+  # push して PR を作成
+  echo "ブランチ ${branch_name} を push して PR を作成中..."
+  git push -u origin "$branch_name" || true
+  gh pr create --base "$BASE_BRANCH" --title "QA: セクション${num} 動作確認" --body "セクション${num}のQA動作確認結果" || true
 
   echo "セクション ${num} 完了"
   echo ""
