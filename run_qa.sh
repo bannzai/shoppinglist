@@ -55,17 +55,17 @@ run_section() {
   git checkout "$BASE_BRANCH" || true
   git checkout -b "$branch_name" || git checkout "$branch_name" || true
 
-  ccnipre -f "$prompt_path"
+  local timestamp=$(date +"%Y%m%d_%H%M%S")
+  local log_dir="./tmp/logs"
+  local log_file="${log_dir}/section_${num}_${timestamp}.log"
+  mkdir -p "$log_dir"
+
+  ccnipre -f "$prompt_path" 2>&1 | tee "$log_file"
 
   # PLAN.md の変更をコミット（失敗しても続行）
   echo "PLAN.md をコミット中..."
   git add PLAN.md || true
   git commit -m "QA: セクション${num} 動作確認完了" || true
-
-  # ベースブランチにマージしてPLAN.mdの変更を蓄積
-  echo "ベースブランチ ${BASE_BRANCH} にマージ中..."
-  git checkout "$BASE_BRANCH" || true
-  git merge "$branch_name" --no-edit || true
 
   echo "セクション ${num} 完了"
   echo ""
