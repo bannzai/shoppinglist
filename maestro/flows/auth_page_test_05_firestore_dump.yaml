@@ -1,0 +1,58 @@
+appId: com.bannzai.shoppinglist
+---
+- launchApp:
+    clearState: true
+    clearKeychain: true
+# 通知許可ダイアログが表示される場合は許可する
+- runFlow:
+    when:
+      visible: "許可"
+    commands:
+      - tapOn: "許可"
+      - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "匿名サインイン（デバッグ用）"
+    timeout: 30000
+# 匿名サインイン
+- tapOn: "匿名サインイン（デバッグ用）"
+- waitForAnimationToEnd
+- runFlow:
+    when:
+      visible: "Retry"
+    commands:
+      - tapOn: "Retry"
+      - waitForAnimationToEnd
+- runFlow:
+    when:
+      visible: "Retry"
+    commands:
+      - tapOn: "Retry"
+      - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "アイテムを追加"
+    timeout: 30000
+# 設定タブへ移動
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+# 下にスクロールして開発者オプションを見つける
+- swipe:
+    start: "50%,80%"
+    end: "50%,20%"
+- swipe:
+    start: "50%,80%"
+    end: "50%,20%"
+# 開発者オプションをタップ
+- tapOn: "開発者オプション"
+- waitForAnimationToEnd
+# Firestoreデータ確認をタップ
+- tapOn: "Firestoreデータ確認"
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "AppUser"
+    timeout: 10000
+# AppUserを展開
+- tapOn: "AppUser"
+- waitForAnimationToEnd
+- takeScreenshot: maestro/test-results/auth_page_05_firestore_appuser
