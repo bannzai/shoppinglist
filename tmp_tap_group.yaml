@@ -1,7 +1,0 @@
-appId: com.bannzai.shoppinglist
----
-- pressKey: Enter
-- tapOn:
-    text: "チェック済み表示"
-- tapOn:
-    text: "group-A"
