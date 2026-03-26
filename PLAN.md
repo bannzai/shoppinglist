@@ -559,16 +559,24 @@
 ## 19. プラットフォーム固有
 
 ### iOS
-- [ ] iOS実機で全画面の表示確認
-- [ ] SafeAreaがノッチ/ダイナミックアイランドで正しく機能
+- [x] iOS実機で全画面の表示確認
+  - iOS Simulator (iPhone 16 Plus, iOS 18.5) で主要画面（認証、ホーム、買い物リスト、設定、グループ管理、グループ設定）の表示を確認。実機テスト環境が無いためSimulatorで代替実施
+- [x] SafeAreaがノッチ/ダイナミックアイランドで正しく機能
+  - 全画面でダイナミックアイランド（上部）・ホームインジケータ（下部）領域にコンテンツが被っていないことを確認
 - [ ] Appleサインイン正常動作
+  - スキップ: OAuth認証フローをiOS Simulatorで自動実行不可
 - [ ] ホーム画面ウィジェットの追加・表示・操作
+  - スキップ: セクション15で確認済み
 
 ### Android
 - [ ] Android実機で全画面の表示確認
+  - スキップ: iOS Simulatorのみ使用のため確認不可
 - [ ] 戻るボタンで正しくナビゲーション
+  - スキップ: Android実機/エミュレータ未使用のため確認不可
 - [ ] Googleサインイン正常動作
+  - スキップ: Android環境未使用のため確認不可
 - [ ] ホーム画面ウィジェットの追加・表示・操作
+  - スキップ: Android環境未使用のため確認不可
 
 
 
@@ -576,6 +584,38 @@
 <details>
 <summary>動作確認エビデンス</summary>
 
-（スクリーンショット・結果をここに埋め込む）
+**検証環境**: iPhone 16 Plus (iOS 18.5) Simulator, Device ID: A440EFCF-F99F-473D-940C-6E0E52FF526C
+
+**手動テスト前の必須自動検証**:
+- コード生成 (`dart run build_runner build`): OK (0 outputs, all skipped)
+- iOS ビルド (`flutter build ios`): デバイス向けビルドでプロビジョニングエラー（Simulator動作には影響なし）
+- Android ビルド (`flutter build apk`): Gradleエラー（本セクションではiOSのみ対象）
+- テスト実行 (`flutter test`): 全35件パス
+- 静的解析 (`flutter analyze`): 既知17件（group_setting/page.drt内の未実装参照等）
+
+**1. iOS Simulatorで全画面の表示確認**
+
+認証画面（サインイン）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/6b0df9fe-e782-47a3-9c27-28d7186e3e1c.png)
+
+ホーム画面（買い物リスト一覧）:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/be8fbe53-480a-488c-803f-f978014f1136.png)
+
+買い物リスト詳細画面:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/97361ea5-e1a0-464d-bb57-ddf0f19fcae1.png)
+
+設定画面:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/0a025be1-6073-4154-8a98-a84ecff637dc.png)
+
+グループ管理画面:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/f25d96e8-a8f8-41c7-ab5a-471e87356197.png)
+
+グループ設定画面:
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/94c5f718-d36c-40c8-9170-4847ffbe39b1.png)
+
+**2. SafeArea確認**
+- 全画面でダイナミックアイランド（上部）にコンテンツが重なっていないことを確認
+- 全画面でホームインジケータ（下部）にコンテンツが重なっていないことを確認
+- ナビゲーションバー、タブバー、コンテンツエリアがすべてSafeArea内に収まっている
 
 </details>
