@@ -56,3 +56,6 @@ screenshots/
 .local/
 
 ios/build
+
+# Temporary PR body files
+.pr_body_tmp_*
