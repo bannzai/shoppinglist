@@ -1,0 +1,9 @@
+appId: com.bannzai.shoppinglist
+---
+# 削除確認ダイアログの「削除」ボタンをタップ
+# 削除ボタン座標: x=199, y=496, width=65, height=49
+# 中心: x=231, y=520
+- tapOn:
+    point: "54%,53%"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/virtual_pairing/12_after_list_delete

@@ -1,0 +1,12 @@
+appId: com.bannzai.shoppinglist
+---
+# 赤いマイナスボタン付近をタップしてダイアログを出す
+- tapOn:
+    point: "88%,37%"
+- waitForAnimationToEnd
+# 削除確認ダイアログの「削除」ボタンをポイントでタップ
+# ダイアログの削除ボタンは左下付近
+- tapOn:
+    point: "48%,58%"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/virtual_pairing/09_member_removed
