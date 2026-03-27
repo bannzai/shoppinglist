@@ -1,0 +1,16 @@
+共通ルール:
+- RELEASE_TEST_PLAN.md を読んで該当セクションのチェック項目を確認する
+- maestro flow がある場合はそれを実行してスクリーンショットを撮る
+- maestro flow がない場合は mobile-mcp で iOS Simulator (iPhone 16 Plus) を操作する
+- mobile-mcp でもスクリーンショットを撮ること。撮ったスクリーンショットは必ず確認して動作確認の証拠として成立しているかを考えること
+- 【画像エビデンスのルール】スクリーンショットを撮影したら、RELEASE_TEST_PLAN.mdに書く前に必ず gh-r2-image コマンドを実行してR2にアップロードせよ。RELEASE_TEST_PLAN.mdには gh-r2-image が返したURLのみを書くこと。ローカルパス（tmp/ 等）をRELEASE_TEST_PLAN.mdに書くのは絶対に禁止
+- スクリーンショット1枚ごとに「撮影 → gh-r2-image 実行 → 返されたURLをRELEASE_TEST_PLAN.mdに記載」をセットで行うこと。まとめて後からアップロードしようとしないこと
+- RELEASE_TEST_PLAN.mdに画像を埋め込む際は `<img src="URL" width="320">` タグを使用すること（heightは指定しない）
+- テスト通過した項目は - [x] にチェックを入れる
+- mobile-mcp/maestro で確認が困難な項目は、チェックボックスの下の行に入れ子で「なぜ困難か」の理由を明記してスキップする。代替手段がある場合はそれを利用し、ない場合は代替手段を実装すること
+- 【maestro E2Eテスト作成】mobile-mcp で操作した結果をもとに、maestro の E2E テストファイルを作成すること。操作手順を再現可能なフロー定義として maestro/flows/ に保存する
+- 動作確認中にバグやコード修正が必要な箇所を発見した場合は、修正を行い /commit-create-pr で PR を作成すること
+- このセッションの最大実行ループ数は「該当セクションのチェック項目数 × 3」までとする。それを超えたら残りの項目はスキップ理由を書いて終了すること
+- コマンドを && や & や || で繋げないこと
+- チェック済み項目は都度 RELEASE_TEST_PLAN.md を更新すること
+- 【コミット・PR】作業完了後、全変更を git add -A でステージし git commit すること。git push して gh pr create --base {{BASE_BRANCH}} でPRを作成すること
