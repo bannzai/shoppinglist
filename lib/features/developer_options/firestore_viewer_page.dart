@@ -109,9 +109,8 @@ class _GroupsSection extends StatelessWidget {
           );
         }
         return Column(
-          children: groups
-              .map((group) => _GroupDetailSection(group: group))
-              .toList(),
+          children:
+              groups.map((group) => _GroupDetailSection(group: group)).toList(),
         );
       },
     );
@@ -386,8 +385,7 @@ class _UserProfilesSection extends StatelessWidget {
         return Column(
           children: profiles
               .map((p) => _JsonExpansionTile(
-                    title:
-                        '${p.displayName ?? '名前未設定'} (${p.userID})',
+                    title: '${p.displayName ?? '名前未設定'} (${p.userID})',
                     icon: Icons.person_outline,
                     data: p.toJson(),
                   ))
@@ -414,8 +412,7 @@ class _AsyncExpansionTile<T> extends StatefulWidget {
   });
 
   @override
-  State<_AsyncExpansionTile<T>> createState() =>
-      _AsyncExpansionTileState<T>();
+  State<_AsyncExpansionTile<T>> createState() => _AsyncExpansionTileState<T>();
 }
 
 class _AsyncExpansionTileState<T> extends State<_AsyncExpansionTile<T>> {
@@ -443,8 +440,8 @@ class _AsyncExpansionTileState<T> extends State<_AsyncExpansionTile<T>> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Padding(
                   padding: EdgeInsets.all(16),
-                  child: Center(
-                      child: CircularProgressIndicator(strokeWidth: 2)),
+                  child:
+                      Center(child: CircularProgressIndicator(strokeWidth: 2)),
                 );
               }
               if (snapshot.hasError) {
