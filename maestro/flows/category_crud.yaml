@@ -1,0 +1,90 @@
+appId: com.bannzai.shoppinglist
+---
+- runFlow: shared/anonymous_sign_in.yaml
+
+# アイテムを追加
+- tapOn: "アイテムを追加"
+- inputText: "にんじん"
+- pressKey: enter
+# 空アイテム削除
+- pressKey: enter
+# キーボード閉じてフォーカス解除
+- tapOn:
+    point: "50%,6%"
+- waitForAnimationToEnd
+
+# リスト設定を開く
+- tapOn: "リスト設定"
+- assertVisible: "買い物リスト設定"
+# TextFieldのフォーカスを外す（iOS 26でアクセシビリティツリーがブロックされるのを防ぐ）
+- tapOn:
+    point: "50%,12%"
+- waitForAnimationToEnd
+
+# グループ設定へ
+- tapOn: "グループ設定"
+- waitForAnimationToEnd
+- assertVisible: "グループ設定"
+
+# カテゴリ管理を開く
+- tapOn: "カテゴリを管理"
+- waitForAnimationToEnd
+- assertVisible: "カテゴリ"
+- takeScreenshot: screenshots/category_crud_01_empty
+
+# カテゴリを追加（初期状態のOutlinedButtonをタップ）
+- tapOn: "カテゴリを追加"
+- assertVisible: "カテゴリを追加"
+- tapOn: "カテゴリ名（例: 野菜）"
+- inputText: "野菜"
+- tapOn: "追加"
+- waitForAnimationToEnd
+
+# カテゴリ編集画面に遷移
+- assertVisible: "カテゴリ名"
+- takeScreenshot: screenshots/category_crud_02_edit
+
+# キーワードを追加
+- tapOn: "キーワードを追加"
+- assertVisible: "キーワードを追加"
+- inputText: "にんじん"
+# 部分一致はデフォルトなのでそのまま
+- tapOn:
+    text: "追加"
+    index: 0
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/category_crud_03_keyword_added
+
+# カテゴリ一覧に戻る（AppBar戻るボタン）
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+- assertVisible: "カテゴリ"
+- takeScreenshot: screenshots/category_crud_04_category_list
+
+# グループ設定に戻る（AppBar戻るボタン）
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+- assertVisible: "グループ設定"
+
+# リスト設定BottomSheetに戻る（AppBar戻るボタン）
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+- assertVisible: "買い物リスト設定"
+
+# BottomSheetを閉じる（×ボタン）
+- tapOn:
+    point: "5%,12%"
+- waitForAnimationToEnd
+
+# 買い物リスト画面に戻ったことを確認
+- assertVisible: "にんじん"
+
+# カテゴリヘッダー「野菜」が表示されることを確認
+# sortByCategory はデフォルトで true なのでトグル不要。Firestoreデータ同期待ち
+- extendedWaitUntil:
+    visible: "野菜"
+    timeout: 10000
+- takeScreenshot: screenshots/category_crud_05_categorized

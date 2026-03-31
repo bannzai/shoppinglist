@@ -10,7 +10,7 @@ Composite IDは、特定のリレーションを明示する必要がある場�
 
 ### 使用するケース
 - Userと紐づく1:1の情報を、mapではなくcollection/documentとして格納したい場合
-- 例: UserProfileはUser:Group間で1:1の関係 → `group_{groupID}_userProfile_{userID}`
+- 例: GroupUserProfileはUser:Group間で1:1の関係 → `GroupUserProfile_groups_{groupID}_users_{userID}`
 
 ### 使用しないケース
 - 1:N の通常のサブコレクション（場所、買い物リスト、アイテム等）
@@ -18,16 +18,21 @@ Composite IDは、特定のリレーションを明示する必要がある場�
 
 ### フォーマット
 ```
-{parentCollection}_{parentDocID}_{childCollection}_{childDocID}
+{EntityName}_{parentCollectionName}_{parentDocID}[_{additionalCollectionName}_{additionalDocID}]
 ```
 
+- `{EntityName}`: PascalCaseのエンティティ名（先頭に来ることでIDの種類が一目で分かる）
+- `{parentCollectionName}_{parentDocID}`: 親コレクション名とドキュメントIDのペア
+- 複数キーが必要な場合は `_{collectionName}_{docID}` を連結
+
 ### 例
-- `group_{groupID}_userProfile_{userID}`
+- `UserPrivate_users_{userID}` — `/users/{userID}/privates/` 内のシングルトン
+- `GroupUserProfile_groups_{groupID}_users_{userID}` — `/groups/{groupID}/userProfiles/` 内のUser別ドキュメント
 
 ### 理由
-- ドキュメントIDだけで親子関係が一意に特定できる
-- デバッグ時にIDから所属グループを即座に判別できる
-- 将来的にcollectionGroup queryを使う際にIDの衝突を防げる
+- エンティティ名が先頭にあるため、IDだけで何のエンティティか判別できる
+- collectionGroup queryでIDの衝突を防げる
+- デバッグ時にIDから所属リソースを即座に判別できる
 
 ### 実装
 Composite IDを使用する場合、エンティティクラスにstaticメソッドとしてID生成ロジックを集約する。
@@ -35,7 +40,7 @@ Composite IDを使用する場合、エンティティクラスにstaticメソ�
 ```dart
 class GroupUserProfile {
   static String documentID({required String groupID, required String userID}) =>
-      'group_${groupID}_userProfile_$userID';
+      'GroupUserProfile_groups_${groupID}_users_$userID';
 }
 ```
 

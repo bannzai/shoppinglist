@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'group_shopping_list_item_category_axis.dart';
+part of 'group_category_axis.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -13,9 +13,10 @@ part of 'group_shopping_list_item_category_axis.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$GroupShoppingListItemCategoryAxis {
+mixin _$GroupCategoryAxis {
   String get id;
   String get groupID;
+  String get userID;
   String get name;
   int get order;
   @ClientCreatedTimestamp()
@@ -27,25 +28,25 @@ mixin _$GroupShoppingListItemCategoryAxis {
   @ServerUpdatedTimestamp()
   DateTime? get serverUpdatedDateTime;
 
-  /// Create a copy of GroupShoppingListItemCategoryAxis
+  /// Create a copy of GroupCategoryAxis
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $GroupShoppingListItemCategoryAxisCopyWith<GroupShoppingListItemCategoryAxis>
-      get copyWith => _$GroupShoppingListItemCategoryAxisCopyWithImpl<
-              GroupShoppingListItemCategoryAxis>(
-          this as GroupShoppingListItemCategoryAxis, _$identity);
+  $GroupCategoryAxisCopyWith<GroupCategoryAxis> get copyWith =>
+      _$GroupCategoryAxisCopyWithImpl<GroupCategoryAxis>(
+          this as GroupCategoryAxis, _$identity);
 
-  /// Serializes this GroupShoppingListItemCategoryAxis to a JSON map.
+  /// Serializes this GroupCategoryAxis to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is GroupShoppingListItemCategoryAxis &&
+            other is GroupCategoryAxis &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
+            (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.order, order) || other.order == order) &&
             (identical(other.createdDateTime, createdDateTime) ||
@@ -64,6 +65,7 @@ mixin _$GroupShoppingListItemCategoryAxis {
       runtimeType,
       id,
       groupID,
+      userID,
       name,
       order,
       createdDateTime,
@@ -73,20 +75,20 @@ mixin _$GroupShoppingListItemCategoryAxis {
 
   @override
   String toString() {
-    return 'GroupShoppingListItemCategoryAxis(id: $id, groupID: $groupID, name: $name, order: $order, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupCategoryAxis(id: $id, groupID: $groupID, userID: $userID, name: $name, order: $order, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
 /// @nodoc
-abstract mixin class $GroupShoppingListItemCategoryAxisCopyWith<$Res> {
-  factory $GroupShoppingListItemCategoryAxisCopyWith(
-          GroupShoppingListItemCategoryAxis value,
-          $Res Function(GroupShoppingListItemCategoryAxis) _then) =
-      _$GroupShoppingListItemCategoryAxisCopyWithImpl;
+abstract mixin class $GroupCategoryAxisCopyWith<$Res> {
+  factory $GroupCategoryAxisCopyWith(
+          GroupCategoryAxis value, $Res Function(GroupCategoryAxis) _then) =
+      _$GroupCategoryAxisCopyWithImpl;
   @useResult
   $Res call(
       {String id,
       String groupID,
+      String userID,
       String name,
       int order,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -96,20 +98,21 @@ abstract mixin class $GroupShoppingListItemCategoryAxisCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$GroupShoppingListItemCategoryAxisCopyWithImpl<$Res>
-    implements $GroupShoppingListItemCategoryAxisCopyWith<$Res> {
-  _$GroupShoppingListItemCategoryAxisCopyWithImpl(this._self, this._then);
+class _$GroupCategoryAxisCopyWithImpl<$Res>
+    implements $GroupCategoryAxisCopyWith<$Res> {
+  _$GroupCategoryAxisCopyWithImpl(this._self, this._then);
 
-  final GroupShoppingListItemCategoryAxis _self;
-  final $Res Function(GroupShoppingListItemCategoryAxis) _then;
+  final GroupCategoryAxis _self;
+  final $Res Function(GroupCategoryAxis) _then;
 
-  /// Create a copy of GroupShoppingListItemCategoryAxis
+  /// Create a copy of GroupCategoryAxis
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? id = null,
     Object? groupID = null,
+    Object? userID = null,
     Object? name = null,
     Object? order = null,
     Object? createdDateTime = freezed,
@@ -125,6 +128,10 @@ class _$GroupShoppingListItemCategoryAxisCopyWithImpl<$Res>
       groupID: null == groupID
           ? _self.groupID
           : groupID // ignore: cast_nullable_to_non_nullable
+              as String,
+      userID: null == userID
+          ? _self.userID
+          : userID // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _self.name
@@ -154,9 +161,8 @@ class _$GroupShoppingListItemCategoryAxisCopyWithImpl<$Res>
   }
 }
 
-/// Adds pattern-matching-related methods to [GroupShoppingListItemCategoryAxis].
-extension GroupShoppingListItemCategoryAxisPatterns
-    on GroupShoppingListItemCategoryAxis {
+/// Adds pattern-matching-related methods to [GroupCategoryAxis].
+extension GroupCategoryAxisPatterns on GroupCategoryAxis {
   /// A variant of `map` that fallback to returning `orElse`.
   ///
   /// It is equivalent to doing:
@@ -171,12 +177,12 @@ extension GroupShoppingListItemCategoryAxisPatterns
 
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>(
-    TResult Function(_GroupShoppingListItemCategoryAxis value)? $default, {
+    TResult Function(_GroupCategoryAxis value)? $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategoryAxis() when $default != null:
+      case _GroupCategoryAxis() when $default != null:
         return $default(_that);
       case _:
         return orElse();
@@ -198,11 +204,11 @@ extension GroupShoppingListItemCategoryAxisPatterns
 
   @optionalTypeArgs
   TResult map<TResult extends Object?>(
-    TResult Function(_GroupShoppingListItemCategoryAxis value) $default,
+    TResult Function(_GroupCategoryAxis value) $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategoryAxis():
+      case _GroupCategoryAxis():
         return $default(_that);
       case _:
         throw StateError('Unexpected subclass');
@@ -223,11 +229,11 @@ extension GroupShoppingListItemCategoryAxisPatterns
 
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_GroupShoppingListItemCategoryAxis value)? $default,
+    TResult? Function(_GroupCategoryAxis value)? $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategoryAxis() when $default != null:
+      case _GroupCategoryAxis() when $default != null:
         return $default(_that);
       case _:
         return null;
@@ -251,6 +257,7 @@ extension GroupShoppingListItemCategoryAxisPatterns
     TResult Function(
             String id,
             String groupID,
+            String userID,
             String name,
             int order,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -262,10 +269,11 @@ extension GroupShoppingListItemCategoryAxisPatterns
   }) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategoryAxis() when $default != null:
+      case _GroupCategoryAxis() when $default != null:
         return $default(
             _that.id,
             _that.groupID,
+            _that.userID,
             _that.name,
             _that.order,
             _that.createdDateTime,
@@ -295,6 +303,7 @@ extension GroupShoppingListItemCategoryAxisPatterns
     TResult Function(
             String id,
             String groupID,
+            String userID,
             String name,
             int order,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -305,10 +314,11 @@ extension GroupShoppingListItemCategoryAxisPatterns
   ) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategoryAxis():
+      case _GroupCategoryAxis():
         return $default(
             _that.id,
             _that.groupID,
+            _that.userID,
             _that.name,
             _that.order,
             _that.createdDateTime,
@@ -337,6 +347,7 @@ extension GroupShoppingListItemCategoryAxisPatterns
     TResult? Function(
             String id,
             String groupID,
+            String userID,
             String name,
             int order,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -347,10 +358,11 @@ extension GroupShoppingListItemCategoryAxisPatterns
   ) {
     final _that = this;
     switch (_that) {
-      case _GroupShoppingListItemCategoryAxis() when $default != null:
+      case _GroupCategoryAxis() when $default != null:
         return $default(
             _that.id,
             _that.groupID,
+            _that.userID,
             _that.name,
             _that.order,
             _that.createdDateTime,
@@ -366,11 +378,11 @@ extension GroupShoppingListItemCategoryAxisPatterns
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true)
-class _GroupShoppingListItemCategoryAxis
-    extends GroupShoppingListItemCategoryAxis {
-  const _GroupShoppingListItemCategoryAxis(
+class _GroupCategoryAxis extends GroupCategoryAxis {
+  const _GroupCategoryAxis(
       {required this.id,
       required this.groupID,
+      required this.userID,
       required this.name,
       required this.order,
       @ClientCreatedTimestamp() this.createdDateTime,
@@ -378,14 +390,15 @@ class _GroupShoppingListItemCategoryAxis
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
       @ServerUpdatedTimestamp() this.serverUpdatedDateTime})
       : super._();
-  factory _GroupShoppingListItemCategoryAxis.fromJson(
-          Map<String, dynamic> json) =>
-      _$GroupShoppingListItemCategoryAxisFromJson(json);
+  factory _GroupCategoryAxis.fromJson(Map<String, dynamic> json) =>
+      _$GroupCategoryAxisFromJson(json);
 
   @override
   final String id;
   @override
   final String groupID;
+  @override
+  final String userID;
   @override
   final String name;
   @override
@@ -403,19 +416,17 @@ class _GroupShoppingListItemCategoryAxis
   @ServerUpdatedTimestamp()
   final DateTime? serverUpdatedDateTime;
 
-  /// Create a copy of GroupShoppingListItemCategoryAxis
+  /// Create a copy of GroupCategoryAxis
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$GroupShoppingListItemCategoryAxisCopyWith<
-          _GroupShoppingListItemCategoryAxis>
-      get copyWith => __$GroupShoppingListItemCategoryAxisCopyWithImpl<
-          _GroupShoppingListItemCategoryAxis>(this, _$identity);
+  _$GroupCategoryAxisCopyWith<_GroupCategoryAxis> get copyWith =>
+      __$GroupCategoryAxisCopyWithImpl<_GroupCategoryAxis>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$GroupShoppingListItemCategoryAxisToJson(
+    return _$GroupCategoryAxisToJson(
       this,
     );
   }
@@ -424,9 +435,10 @@ class _GroupShoppingListItemCategoryAxis
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _GroupShoppingListItemCategoryAxis &&
+            other is _GroupCategoryAxis &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
+            (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.order, order) || other.order == order) &&
             (identical(other.createdDateTime, createdDateTime) ||
@@ -445,6 +457,7 @@ class _GroupShoppingListItemCategoryAxis
       runtimeType,
       id,
       groupID,
+      userID,
       name,
       order,
       createdDateTime,
@@ -454,22 +467,22 @@ class _GroupShoppingListItemCategoryAxis
 
   @override
   String toString() {
-    return 'GroupShoppingListItemCategoryAxis(id: $id, groupID: $groupID, name: $name, order: $order, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupCategoryAxis(id: $id, groupID: $groupID, userID: $userID, name: $name, order: $order, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$GroupShoppingListItemCategoryAxisCopyWith<$Res>
-    implements $GroupShoppingListItemCategoryAxisCopyWith<$Res> {
-  factory _$GroupShoppingListItemCategoryAxisCopyWith(
-          _GroupShoppingListItemCategoryAxis value,
-          $Res Function(_GroupShoppingListItemCategoryAxis) _then) =
-      __$GroupShoppingListItemCategoryAxisCopyWithImpl;
+abstract mixin class _$GroupCategoryAxisCopyWith<$Res>
+    implements $GroupCategoryAxisCopyWith<$Res> {
+  factory _$GroupCategoryAxisCopyWith(
+          _GroupCategoryAxis value, $Res Function(_GroupCategoryAxis) _then) =
+      __$GroupCategoryAxisCopyWithImpl;
   @override
   @useResult
   $Res call(
       {String id,
       String groupID,
+      String userID,
       String name,
       int order,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -479,20 +492,21 @@ abstract mixin class _$GroupShoppingListItemCategoryAxisCopyWith<$Res>
 }
 
 /// @nodoc
-class __$GroupShoppingListItemCategoryAxisCopyWithImpl<$Res>
-    implements _$GroupShoppingListItemCategoryAxisCopyWith<$Res> {
-  __$GroupShoppingListItemCategoryAxisCopyWithImpl(this._self, this._then);
+class __$GroupCategoryAxisCopyWithImpl<$Res>
+    implements _$GroupCategoryAxisCopyWith<$Res> {
+  __$GroupCategoryAxisCopyWithImpl(this._self, this._then);
 
-  final _GroupShoppingListItemCategoryAxis _self;
-  final $Res Function(_GroupShoppingListItemCategoryAxis) _then;
+  final _GroupCategoryAxis _self;
+  final $Res Function(_GroupCategoryAxis) _then;
 
-  /// Create a copy of GroupShoppingListItemCategoryAxis
+  /// Create a copy of GroupCategoryAxis
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $Res call({
     Object? id = null,
     Object? groupID = null,
+    Object? userID = null,
     Object? name = null,
     Object? order = null,
     Object? createdDateTime = freezed,
@@ -500,7 +514,7 @@ class __$GroupShoppingListItemCategoryAxisCopyWithImpl<$Res>
     Object? serverCreatedDateTime = freezed,
     Object? serverUpdatedDateTime = freezed,
   }) {
-    return _then(_GroupShoppingListItemCategoryAxis(
+    return _then(_GroupCategoryAxis(
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -508,6 +522,10 @@ class __$GroupShoppingListItemCategoryAxisCopyWithImpl<$Res>
       groupID: null == groupID
           ? _self.groupID
           : groupID // ignore: cast_nullable_to_non_nullable
+              as String,
+      userID: null == userID
+          ? _self.userID
+          : userID // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _self.name

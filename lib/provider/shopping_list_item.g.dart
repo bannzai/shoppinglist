@@ -344,6 +344,290 @@ class _AddShoppingListItemProviderElement
   String get groupID => (origin as AddShoppingListItemProvider).groupID;
 }
 
+String _$toggleShoppingListItemCheckHash() =>
+    r'290724efc9feef517e22306a335a6c6c7b874227';
+
+/// See also [toggleShoppingListItemCheck].
+@ProviderFor(toggleShoppingListItemCheck)
+const toggleShoppingListItemCheckProvider = ToggleShoppingListItemCheckFamily();
+
+/// See also [toggleShoppingListItemCheck].
+class ToggleShoppingListItemCheckFamily
+    extends Family<ToggleShoppingListItemCheck> {
+  /// See also [toggleShoppingListItemCheck].
+  const ToggleShoppingListItemCheckFamily();
+
+  /// See also [toggleShoppingListItemCheck].
+  ToggleShoppingListItemCheckProvider call({
+    required String groupID,
+  }) {
+    return ToggleShoppingListItemCheckProvider(
+      groupID: groupID,
+    );
+  }
+
+  @override
+  ToggleShoppingListItemCheckProvider getProviderOverride(
+    covariant ToggleShoppingListItemCheckProvider provider,
+  ) {
+    return call(
+      groupID: provider.groupID,
+    );
+  }
+
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    groupDatabaseProvider
+  ];
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
+    groupDatabaseProvider,
+    ...?groupDatabaseProvider.allTransitiveDependencies
+  };
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'toggleShoppingListItemCheckProvider';
+}
+
+/// See also [toggleShoppingListItemCheck].
+class ToggleShoppingListItemCheckProvider
+    extends AutoDisposeProvider<ToggleShoppingListItemCheck> {
+  /// See also [toggleShoppingListItemCheck].
+  ToggleShoppingListItemCheckProvider({
+    required String groupID,
+  }) : this._internal(
+          (ref) => toggleShoppingListItemCheck(
+            ref as ToggleShoppingListItemCheckRef,
+            groupID: groupID,
+          ),
+          from: toggleShoppingListItemCheckProvider,
+          name: r'toggleShoppingListItemCheckProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$toggleShoppingListItemCheckHash,
+          dependencies: ToggleShoppingListItemCheckFamily._dependencies,
+          allTransitiveDependencies:
+              ToggleShoppingListItemCheckFamily._allTransitiveDependencies,
+          groupID: groupID,
+        );
+
+  ToggleShoppingListItemCheckProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.groupID,
+  }) : super.internal();
+
+  final String groupID;
+
+  @override
+  Override overrideWith(
+    ToggleShoppingListItemCheck Function(
+            ToggleShoppingListItemCheckRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ToggleShoppingListItemCheckProvider._internal(
+        (ref) => create(ref as ToggleShoppingListItemCheckRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        groupID: groupID,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<ToggleShoppingListItemCheck> createElement() {
+    return _ToggleShoppingListItemCheckProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ToggleShoppingListItemCheckProvider &&
+        other.groupID == groupID;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, groupID.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin ToggleShoppingListItemCheckRef
+    on AutoDisposeProviderRef<ToggleShoppingListItemCheck> {
+  /// The parameter `groupID` of this provider.
+  String get groupID;
+}
+
+class _ToggleShoppingListItemCheckProviderElement
+    extends AutoDisposeProviderElement<ToggleShoppingListItemCheck>
+    with ToggleShoppingListItemCheckRef {
+  _ToggleShoppingListItemCheckProviderElement(super.provider);
+
+  @override
+  String get groupID => (origin as ToggleShoppingListItemCheckProvider).groupID;
+}
+
+String _$updateShoppingListItemHash() =>
+    r'e077a910ba5656f7ba0b1e5bc43a48a4908e63a1';
+
+/// See also [updateShoppingListItem].
+@ProviderFor(updateShoppingListItem)
+const updateShoppingListItemProvider = UpdateShoppingListItemFamily();
+
+/// See also [updateShoppingListItem].
+class UpdateShoppingListItemFamily extends Family<UpdateShoppingListItem> {
+  /// See also [updateShoppingListItem].
+  const UpdateShoppingListItemFamily();
+
+  /// See also [updateShoppingListItem].
+  UpdateShoppingListItemProvider call({
+    required String groupID,
+  }) {
+    return UpdateShoppingListItemProvider(
+      groupID: groupID,
+    );
+  }
+
+  @override
+  UpdateShoppingListItemProvider getProviderOverride(
+    covariant UpdateShoppingListItemProvider provider,
+  ) {
+    return call(
+      groupID: provider.groupID,
+    );
+  }
+
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    groupDatabaseProvider
+  ];
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
+    groupDatabaseProvider,
+    ...?groupDatabaseProvider.allTransitiveDependencies
+  };
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'updateShoppingListItemProvider';
+}
+
+/// See also [updateShoppingListItem].
+class UpdateShoppingListItemProvider
+    extends AutoDisposeProvider<UpdateShoppingListItem> {
+  /// See also [updateShoppingListItem].
+  UpdateShoppingListItemProvider({
+    required String groupID,
+  }) : this._internal(
+          (ref) => updateShoppingListItem(
+            ref as UpdateShoppingListItemRef,
+            groupID: groupID,
+          ),
+          from: updateShoppingListItemProvider,
+          name: r'updateShoppingListItemProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$updateShoppingListItemHash,
+          dependencies: UpdateShoppingListItemFamily._dependencies,
+          allTransitiveDependencies:
+              UpdateShoppingListItemFamily._allTransitiveDependencies,
+          groupID: groupID,
+        );
+
+  UpdateShoppingListItemProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.groupID,
+  }) : super.internal();
+
+  final String groupID;
+
+  @override
+  Override overrideWith(
+    UpdateShoppingListItem Function(UpdateShoppingListItemRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: UpdateShoppingListItemProvider._internal(
+        (ref) => create(ref as UpdateShoppingListItemRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        groupID: groupID,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<UpdateShoppingListItem> createElement() {
+    return _UpdateShoppingListItemProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is UpdateShoppingListItemProvider && other.groupID == groupID;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, groupID.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin UpdateShoppingListItemRef
+    on AutoDisposeProviderRef<UpdateShoppingListItem> {
+  /// The parameter `groupID` of this provider.
+  String get groupID;
+}
+
+class _UpdateShoppingListItemProviderElement
+    extends AutoDisposeProviderElement<UpdateShoppingListItem>
+    with UpdateShoppingListItemRef {
+  _UpdateShoppingListItemProviderElement(super.provider);
+
+  @override
+  String get groupID => (origin as UpdateShoppingListItemProvider).groupID;
+}
+
 String _$shoppingListItemBatchUpdateHash() =>
     r'd1d20f2dc3ac6e9a43e79e02e7d3d6d2e4f2ca09';
 

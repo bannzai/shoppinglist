@@ -8,8 +8,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
-import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
+import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
@@ -43,8 +44,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final shoppingList = this.shoppingList;
     final shoppingListDelete =
         ref.watch(shoppingListDeleteProvider(groupID: groupID));
-    final axesAsync =
-        ref.watch(groupShoppingListItemCategoryAxesProvider(groupID: groupID));
+    final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
     final hasCategories = axesAsync.maybeWhen(
         data: (axes) => axes.isNotEmpty, orElse: () => false);
     return AppBar(
@@ -295,9 +295,9 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
       try {
         await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
               shoppingListID: shoppingListID,
+              userID: ref.read(currentUserIDProvider)!,
               message: e,
               order: shoppingListItems.nextOrder + i,
-              groupShoppingListItemCategoryID: null,
               description: null,
               color: null,
             );
@@ -321,9 +321,9 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
         }
         await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
               shoppingListID: shoppingListID,
+              userID: ref.read(currentUserIDProvider)!,
               message: line,
               order: shoppingListItems.nextOrder + index,
-              groupShoppingListItemCategoryID: null,
               description: null,
               color: null,
             );

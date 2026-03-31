@@ -1,14 +1,17 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/button/inquiry.dart';
 import 'package:shoppinglist/components/button/user_delete.dart';
 import 'package:shoppinglist/features/group_invitation/page.dart';
+import 'package:shoppinglist/features/developer_options/page.dart';
 import 'package:shoppinglist/features/group_list/page.dart';
 import 'package:shoppinglist/features/settings/components/section.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
+import 'package:shoppinglist/provider/notification_setting.dart';
 
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -155,6 +158,9 @@ class SettingPage extends HookConsumerWidget {
                   },
                 ),
               ]),
+              SettingSectionTitle(text: '通知', children: [
+                _AutoNotifyToggle(),
+              ]),
               SettingSectionTitle(text: 'アプリについて', children: [
                 ListTile(
                     title: const Text(
@@ -215,11 +221,42 @@ class SettingPage extends HookConsumerWidget {
                   },
                 ),
               ]),
+              // E2Eテストでシェイクが使えないSimulator向けの代替入口
+              if (kDebugMode)
+                SettingSectionTitle(text: 'デバッグ', children: [
+                  ListTile(
+                    title: const Text('開発者オプション'),
+                    leading: const Icon(Icons.developer_mode),
+                    onTap: () {
+                      navigateToDeveloperOptionsPage(context);
+                    },
+                  ),
+                ]),
               const DeleteUserButton(),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _AutoNotifyToggle extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isEnabled = ref.watch(autoNotifyShoppingListUpdateProvider);
+
+    return SwitchListTile(
+      title: const Text('買い物リストの更新を通知する'),
+      subtitle: const Text('画面を離れた時にグループメンバーへ自動通知'),
+      value: isEnabled,
+      onChanged: (_) {
+        analytics.logEvent(
+          name: 'tap_toggle_auto_notify',
+          parameters: {'enabled': (!isEnabled).toString()},
+        );
+        ref.read(autoNotifyShoppingListUpdateProvider.notifier).toggle();
+      },
     );
   }
 }

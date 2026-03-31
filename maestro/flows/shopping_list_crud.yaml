@@ -22,12 +22,14 @@ appId: com.bannzai.shoppinglist
 - eraseText
 - inputText: "週末の買い物"
 - pressKey: enter
+- hideKeyboard
+# AppBarタイトルをタップしてTextFieldのフォーカスを外す
+- tapOn:
+    point: "50%,12%"
+- waitForAnimationToEnd
 - takeScreenshot: screenshots/list_crud_02_renamed
 
-# 同じボトムシート内でスクロールして削除ボタンを見つける
-- scrollUntilVisible:
-    element: "買い物リストを削除"
-    direction: DOWN
+# 削除ボタンをタップ
 - tapOn: "買い物リストを削除"
 - assertVisible: "買い物リストを削除しますか？"
 - tapOn:

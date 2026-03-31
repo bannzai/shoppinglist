@@ -37,9 +37,9 @@ class AddShoppingListItem {
 
   Future<GroupShoppingListItem> call({
     required String shoppingListID,
+    required String userID,
     required String message,
     required int order,
-    required String? groupShoppingListItemCategoryID,
     required String? description,
     required String? color,
   }) async {
@@ -52,9 +52,9 @@ class AddShoppingListItem {
         id: docRef.id,
         groupID: database.groupID,
         shoppingListID: shoppingListID,
+        userID: userID,
         message: message,
         order: order,
-        groupShoppingListItemCategoryID: groupShoppingListItemCategoryID,
         description: description,
         color: color);
     await docRef.set(item, SetOptions(merge: true));
@@ -66,6 +66,70 @@ class AddShoppingListItem {
 @Riverpod(dependencies: [groupDatabase])
 AddShoppingListItem addShoppingListItem(Ref ref, {required String groupID}) {
   return AddShoppingListItem(
+      database: ref.watch(groupDatabaseProvider(groupID: groupID)));
+}
+
+class ToggleShoppingListItemCheck {
+  final GroupDatabase database;
+
+  ToggleShoppingListItemCheck({required this.database});
+
+  Future<void> call({
+    required String shoppingListID,
+    required GroupShoppingListItem item,
+    required String userID,
+  }) async {
+    final isChecking = item.status == GroupShoppingListItemStatus.unchecked;
+    final updated = isChecking
+        ? item.copyWith(
+            status: GroupShoppingListItemStatus.checked,
+            checkedByUserID: userID,
+            lastCheckedDateTime: DateTime.now(),
+          )
+        : item.copyWith(
+            status: GroupShoppingListItemStatus.unchecked,
+          );
+    await database
+        .shoppingListItemsReference(shoppingListID: shoppingListID)
+        .doc(item.id)
+        .set(updated, SetOptions(merge: true));
+  }
+}
+
+@Riverpod(dependencies: [groupDatabase])
+ToggleShoppingListItemCheck toggleShoppingListItemCheck(Ref ref,
+    {required String groupID}) {
+  return ToggleShoppingListItemCheck(
+      database: ref.watch(groupDatabaseProvider(groupID: groupID)));
+}
+
+class UpdateShoppingListItem {
+  final GroupDatabase database;
+
+  UpdateShoppingListItem({required this.database});
+
+  Future<void> call({
+    required String shoppingListID,
+    required GroupShoppingListItem item,
+    required String editedByUserID,
+  }) async {
+    await database
+        .shoppingListItemsReference(shoppingListID: shoppingListID)
+        .doc(item.id)
+        .set(
+          item.copyWith(
+            lastEditedByUserID: editedByUserID,
+            lastEditedDateTime: DateTime.now(),
+          ),
+          SetOptions(merge: true),
+        );
+  }
+}
+
+@Riverpod(dependencies: [groupDatabase])
+UpdateShoppingListItem updateShoppingListItem(Ref ref,
+    {required String groupID}) {
+  return UpdateShoppingListItem(
       database: ref.watch(groupDatabaseProvider(groupID: groupID)));
 }
 

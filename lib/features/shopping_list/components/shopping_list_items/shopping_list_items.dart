@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
+import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
-import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
+import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
@@ -13,12 +13,14 @@ class ShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final bool sortByCategory;
+  final String? shoppingLocationID;
 
   const ShoppingListItems({
     super.key,
     required this.groupID,
     required this.shoppingListID,
     required this.sortByCategory,
+    required this.shoppingLocationID,
   });
 
   @override
@@ -30,8 +32,7 @@ class ShoppingListItems extends ConsumerWidget {
                 showChecked: true))
             .valueOrNull ??
         [];
-    final axesAsync =
-        ref.watch(groupShoppingListItemCategoryAxesProvider(groupID: groupID));
+    final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
 
     return axesAsync.when(
       data: (axes) {
@@ -49,6 +50,7 @@ class ShoppingListItems extends ConsumerWidget {
           shoppingListID: shoppingListID,
           shoppingListItems: shoppingListItems,
           categoryAxisID: axis.id,
+          shoppingLocationID: shoppingLocationID,
         );
       },
       error: (e, st) => Center(child: Text(e.toString())),
@@ -121,17 +123,19 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
   final String categoryAxisID;
+  final String? shoppingLocationID;
 
   const _CategorizedShoppingListItems({
     required this.groupID,
     required this.shoppingListID,
     required this.shoppingListItems,
     required this.categoryAxisID,
+    required this.shoppingLocationID,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesAsync = ref.watch(groupShoppingListItemCategoriesProvider(
+    final categoriesAsync = ref.watch(groupCategoriesProvider(
         groupID: groupID, categoryAxisID: categoryAxisID));
 
     return categoriesAsync.when(
@@ -154,6 +158,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
           shoppingListID: shoppingListID,
           categories: categories,
           grouped: grouped,
+          shoppingLocationID: shoppingLocationID,
         );
       },
       error: (e, st) => Center(child: Text(e.toString())),
@@ -171,22 +176,28 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
 class _GroupedListView extends StatelessWidget {
   final String groupID;
   final String shoppingListID;
-  final List<GroupShoppingListItemCategory> categories;
+  final List<GroupCategory> categories;
   final Map<String, List<GroupShoppingListItem>> grouped;
+  final String? shoppingLocationID;
 
   const _GroupedListView({
     required this.groupID,
     required this.shoppingListID,
     required this.categories,
     required this.grouped,
+    required this.shoppingLocationID,
   });
 
   @override
   Widget build(BuildContext context) {
     final categoryMap = {for (final c in categories) c.id: c};
 
-    // カテゴリ順に表示（orderが小さいものから）
-    final sortedCategoryIDs = categories.map((c) => c.id).toList();
+    // ロケーション別順序でカテゴリをソート（orderが小さいものから）
+    final sortedCategories = sortCategoriesByLocation(
+      categories: categories,
+      shoppingLocationID: shoppingLocationID,
+    );
+    final sortedCategoryIDs = sortedCategories.map((c) => c.id).toList();
 
     final List<Widget> children = [];
 

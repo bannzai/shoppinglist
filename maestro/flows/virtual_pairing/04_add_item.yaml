@@ -1,0 +1,26 @@
+appId: com.bannzai.shoppinglist
+---
+# Phase 4: デバッグユーザーとしてアイテム追加
+- launchApp:
+    clearState: false
+
+# 設定タブ → 開発者オプション画面へ遷移
+- runFlow: ../shared/open_developer_options.yaml
+
+# デフォルトのアイテムメッセージ "debug_item_test" をそのまま使用
+
+# アイテム追加ボタンをタップ
+- extendedWaitUntil:
+    visible: "デバッグユーザーとしてアイテム追加"
+    timeout: 10000
+- tapOn: "デバッグユーザーとしてアイテム追加"
+
+# 操作完了を待つ
+- extendedWaitUntil:
+    visible: ".*完了"
+    timeout: 15000
+
+# 開発者オプションページから戻る
+- tapOn: "Back"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/virtual_pairing/04_item_added

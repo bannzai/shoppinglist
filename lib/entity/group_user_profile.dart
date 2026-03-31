@@ -5,6 +5,13 @@ import 'package:shoppinglist/entity/timestamp.dart';
 part 'group_user_profile.g.dart';
 part 'group_user_profile.freezed.dart';
 
+/// [Group] 内での [AppUser] のプロファイルを表すエンティティ。
+///
+/// グループごとに異なる表示名を設定できる。
+/// Firestore 上では `/groups/{groupID}/userProfiles/` サブコレクションに保存される。
+///
+/// ## ユースケース
+/// - グループ参加時にプロファイルが作成され、グループ内での表示名を管理する
 @freezed
 abstract class GroupUserProfile with _$GroupUserProfile {
   const GroupUserProfile._();
@@ -33,7 +40,7 @@ abstract class GroupUserProfile with _$GroupUserProfile {
           GroupUserProfile profile, SetOptions? options) =>
       profile.toJson();
 
-  /// composite ID: group_{groupID}_userProfile_{userID}
+  /// composite ID: GroupUserProfile_groups_{groupID}_users_{userID}
   static String documentID({required String groupID, required String userID}) =>
-      'group_${groupID}_userProfile_$userID';
+      'GroupUserProfile_groups_${groupID}_users_$userID';
 }

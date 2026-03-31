@@ -7,14 +7,27 @@ part 'group_shopping_list_item.g.dart';
 
 abstract class GroupShoppingListItemFirestoreKeys {
   static const id = 'id';
+  static const userID = 'userID';
   static const status = 'status';
   static const order = 'order';
+  static const checkedByUserID = 'checkedByUserID';
+  static const lastCheckedDateTime = 'lastCheckedDateTime';
+  static const lastEditedByUserID = 'lastEditedByUserID';
+  static const lastEditedDateTime = 'lastEditedDateTime';
   static const createdDateTime = 'createdDateTime';
   static const updatedDateTime = 'updatedDateTime';
   static const serverCreatedDateTime = 'serverCreatedDateTime';
   static const serverUpdatedDateTime = 'serverUpdatedDateTime';
 }
 
+/// [GroupShoppingList] 内の個別の買い物アイテムを表すエンティティ。
+///
+/// [GroupCategory] によるカテゴリ自動分類の対象となる。
+/// チェック状態（[GroupShoppingListItemStatus]）で買い物済みかどうかを管理する。
+///
+/// ## ユースケース
+/// - ユーザーが買い物リストにアイテムを追加する
+/// - 買い物中にアイテムをチェックして購入済みにする
 @freezed
 abstract class GroupShoppingListItem with _$GroupShoppingListItem {
   @JsonSerializable(explicitToJson: true)
@@ -22,6 +35,7 @@ abstract class GroupShoppingListItem with _$GroupShoppingListItem {
     required String id,
     required String groupID,
     required String shoppingListID,
+    required String userID,
     required String message,
     // NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
     // NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
@@ -30,8 +44,11 @@ abstract class GroupShoppingListItem with _$GroupShoppingListItem {
     GroupShoppingListItemStatus status,
     String? description,
     String? color,
-    String? groupShoppingListItemCategoryID,
     @NullableTimestampConverter() DateTime? reminderDateTime,
+    String? checkedByUserID,
+    @NullableTimestampConverter() DateTime? lastCheckedDateTime,
+    String? lastEditedByUserID,
+    @NullableTimestampConverter() DateTime? lastEditedDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -55,6 +72,7 @@ extension GroupShoppingListItems on List<GroupShoppingListItem> {
   int get nextOrder => (lastOrNull?.order ?? -1) + 1;
 }
 
+/// [GroupShoppingListItem] のチェック状態。
 enum GroupShoppingListItemStatus {
   @JsonValue('checked')
   checked,

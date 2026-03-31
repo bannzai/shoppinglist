@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category_axis.dart';
-import 'package:shoppinglist/features/group_shopping_list_item_category/category_edit_page.dart';
-import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
+import 'package:shoppinglist/entity/group_category.dart';
+import 'package:shoppinglist/entity/group_category_axis.dart';
+import 'package:shoppinglist/features/group_category/category_edit_page.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
+import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
-class GroupShoppingListItemCategoryPage extends ConsumerWidget {
+class GroupCategoryPage extends ConsumerWidget {
   final String groupID;
 
-  const GroupShoppingListItemCategoryPage({
+  const GroupCategoryPage({
     super.key,
     required this.groupID,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final axesAsync =
-        ref.watch(groupShoppingListItemCategoryAxesProvider(groupID: groupID));
+    final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
 
     return axesAsync.when(
       data: (axes) {
@@ -67,14 +70,15 @@ class GroupShoppingListItemCategoryPage extends ConsumerWidget {
   void _addCategoryWithAutoAxis({
     required BuildContext context,
     required WidgetRef ref,
-    required List<GroupShoppingListItemCategoryAxis> existingAxes,
+    required List<GroupCategoryAxis> existingAxes,
   }) async {
     // Axisがなければ自動作成
-    GroupShoppingListItemCategoryAxis axis;
+    GroupCategoryAxis axis;
     if (existingAxes.isEmpty) {
+      final userID = ref.read(userDatabaseProvider).userID;
       axis = await ref
-          .read(groupShoppingListItemCategoryAxisAddProvider(groupID: groupID))
-          .call(groupID: groupID, name: 'デフォルト', order: 0);
+          .read(groupCategoryAxisAddProvider(groupID: groupID))
+          .call(groupID: groupID, userID: userID, name: 'デフォルト', order: 0);
     } else {
       axis = existingAxes.first;
     }
@@ -115,11 +119,12 @@ class GroupShoppingListItemCategoryPage extends ConsumerWidget {
                   parameters: {'groupID': groupID});
               Navigator.pop(dialogContext);
               try {
+                final userID = ref.read(userDatabaseProvider).userID;
                 final category = await ref
-                    .read(groupShoppingListItemCategoryAddProvider(
-                        groupID: groupID))
+                    .read(groupCategoryAddProvider(groupID: groupID))
                     .call(
                       groupID: groupID,
+                      userID: userID,
                       categoryAxisID: categoryAxisID,
                       name: name,
                       order: 0,
@@ -128,8 +133,7 @@ class GroupShoppingListItemCategoryPage extends ConsumerWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          GroupShoppingListItemCategoryEditPage(
+                      builder: (context) => GroupCategoryEditPage(
                         groupID: groupID,
                         categoryAxisID: categoryAxisID,
                         categoryID: category.id,
@@ -162,10 +166,10 @@ class GroupShoppingListItemCategoryPage extends ConsumerWidget {
   }
 }
 
-class _CategoryListBody extends ConsumerWidget {
+class _CategoryListBody extends HookConsumerWidget {
   final String groupID;
-  final GroupShoppingListItemCategoryAxis axis;
-  final List<GroupShoppingListItemCategoryAxis> axes;
+  final GroupCategoryAxis axis;
+  final List<GroupCategoryAxis> axes;
 
   const _CategoryListBody({
     required this.groupID,
@@ -175,18 +179,68 @@ class _CategoryListBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesAsync = ref.watch(groupShoppingListItemCategoriesProvider(
-        groupID: groupID, categoryAxisID: axis.id));
+    final categoriesAsync = ref.watch(
+        groupCategoriesProvider(groupID: groupID, categoryAxisID: axis.id));
+    final locationsAsync =
+        ref.watch(shoppingLocationsProvider(groupID: groupID));
+    final selectedLocationID = useState<String?>(null);
 
     return categoriesAsync.when(
       data: (categories) => Scaffold(
         appBar: AppBar(title: const Text('カテゴリ')),
         body: categories.isEmpty
             ? const Center(child: Text('カテゴリがまだありません'))
-            : _CategoryReorderableList(
-                groupID: groupID,
-                categoryAxisID: axis.id,
-                categories: categories,
+            : Column(
+                children: [
+                  // ロケーション選択ドロップダウン
+                  locationsAsync.when(
+                    data: (locations) {
+                      if (locations.isEmpty) return const SizedBox.shrink();
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 8.0),
+                        child: DropdownButtonFormField<String?>(
+                          initialValue: selectedLocationID.value,
+                          decoration: const InputDecoration(
+                            labelText: '買い物する場所の並び順',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                          ),
+                          items: [
+                            const DropdownMenuItem<String?>(
+                              value: null,
+                              child: Text('デフォルト'),
+                            ),
+                            ...locations.map(
+                              (location) => DropdownMenuItem<String?>(
+                                value: location.id,
+                                child: Text(location.name),
+                              ),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            analytics.logEvent(
+                              name: 'select_category_location_order',
+                              parameters: {'groupID': groupID},
+                            );
+                            selectedLocationID.value = value;
+                          },
+                        ),
+                      );
+                    },
+                    error: (e, st) => const SizedBox.shrink(),
+                    loading: () => const SizedBox.shrink(),
+                  ),
+                  Expanded(
+                    child: _CategoryReorderableList(
+                      groupID: groupID,
+                      categoryAxisID: axis.id,
+                      categories: categories,
+                      selectedShoppingLocationID: selectedLocationID.value,
+                    ),
+                  ),
+                ],
               ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -241,11 +295,12 @@ class _CategoryListBody extends ConsumerWidget {
                   parameters: {'groupID': groupID});
               Navigator.pop(dialogContext);
               try {
+                final userID = ref.read(userDatabaseProvider).userID;
                 final category = await ref
-                    .read(groupShoppingListItemCategoryAddProvider(
-                        groupID: groupID))
+                    .read(groupCategoryAddProvider(groupID: groupID))
                     .call(
                       groupID: groupID,
+                      userID: userID,
                       categoryAxisID: categoryAxisID,
                       name: name,
                       order: currentCategoryCount,
@@ -254,8 +309,7 @@ class _CategoryListBody extends ConsumerWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          GroupShoppingListItemCategoryEditPage(
+                      builder: (context) => GroupCategoryEditPage(
                         groupID: groupID,
                         categoryAxisID: categoryAxisID,
                         categoryID: category.id,
@@ -291,16 +345,24 @@ class _CategoryListBody extends ConsumerWidget {
 class _CategoryReorderableList extends ConsumerWidget {
   final String groupID;
   final String categoryAxisID;
-  final List<GroupShoppingListItemCategory> categories;
+  final List<GroupCategory> categories;
+  final String? selectedShoppingLocationID;
 
   const _CategoryReorderableList({
     required this.groupID,
     required this.categoryAxisID,
     required this.categories,
+    required this.selectedShoppingLocationID,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // ロケーション別にソートしたカテゴリリストを表示
+    final sortedCategories = sortCategoriesByLocation(
+      categories: categories,
+      shoppingLocationID: selectedShoppingLocationID,
+    );
+
     return ReorderableListView.builder(
       onReorder: (oldIndex, newIndex) {
         analytics.logEvent(
@@ -309,27 +371,40 @@ class _CategoryReorderableList extends ConsumerWidget {
           newIndex -= 1;
         }
 
-        final reordered = [...categories];
+        final reordered = [...sortedCategories];
         final movedItem = reordered.removeAt(oldIndex);
         reordered.insert(newIndex, movedItem);
 
-        final orderedCategories = reordered
-            .asMap()
-            .entries
-            .map((entry) => entry.value.copyWith(order: entry.key))
-            .toList();
+        if (selectedShoppingLocationID == null) {
+          // デフォルト順序の更新（既存のorderフィールド）
+          final orderedCategories = reordered
+              .asMap()
+              .entries
+              .map((entry) => entry.value.copyWith(order: entry.key))
+              .toList();
 
-        ref
-            .read(groupShoppingListItemCategoryBatchUpdateProvider(
-                groupID: groupID))
-            .call(
-              categoryAxisID: categoryAxisID,
-              categories: orderedCategories,
-            );
+          ref.read(groupCategoryBatchUpdateProvider(groupID: groupID)).call(
+                categoryAxisID: categoryAxisID,
+                categories: orderedCategories,
+              );
+        } else {
+          // ロケーション別順序の更新（locationOrdersマップ）
+          final orderedCategories = reordered.asMap().entries.map((entry) {
+            final updatedLocationOrders =
+                Map<String, int>.from(entry.value.locationOrders);
+            updatedLocationOrders[selectedShoppingLocationID!] = entry.key;
+            return entry.value.copyWith(locationOrders: updatedLocationOrders);
+          }).toList();
+
+          ref.read(groupCategoryBatchUpdateProvider(groupID: groupID)).call(
+                categoryAxisID: categoryAxisID,
+                categories: orderedCategories,
+              );
+        }
       },
-      itemCount: categories.length,
+      itemCount: sortedCategories.length,
       itemBuilder: (context, index) {
-        final category = categories[index];
+        final category = sortedCategories[index];
         final categoryColor =
             category.color != null ? colorFromHex(category.color!) : null;
         return ListTile(
@@ -353,8 +428,7 @@ class _CategoryReorderableList extends ConsumerWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          GroupShoppingListItemCategoryEditPage(
+                      builder: (context) => GroupCategoryEditPage(
                         groupID: groupID,
                         categoryAxisID: categoryAxisID,
                         categoryID: category.id,
@@ -388,7 +462,7 @@ class _CategoryReorderableList extends ConsumerWidget {
   void _showDeleteDialog({
     required BuildContext context,
     required WidgetRef ref,
-    required GroupShoppingListItemCategory category,
+    required GroupCategory category,
   }) {
     showDialog(
       context: context,
@@ -404,8 +478,7 @@ class _CategoryReorderableList extends ConsumerWidget {
               Navigator.pop(dialogContext);
               try {
                 await ref
-                    .read(groupShoppingListItemCategoryDeleteProvider(
-                        groupID: groupID))
+                    .read(groupCategoryDeleteProvider(groupID: groupID))
                     .call(
                       categoryAxisID: categoryAxisID,
                       categoryID: category.id,
