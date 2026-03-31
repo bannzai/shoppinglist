@@ -104,16 +104,36 @@
 
 ## 2. ホーム画面 (HomePage)
 
-- [ ] **買い物リストタブがデフォルト選択**: 起動後ShoppingListPage表示
-- [ ] **設定タブ遷移**: 下部ナビバーで「設定」タップ → SettingPage表示
-- [ ] **タブ間スワイプ無効**: 横スワイプでタブ切り替わらない（NeverScrollableScrollPhysics）
+- [x] **買い物リストタブがデフォルト選択**: 起動後ShoppingListPage表示
+- [x] **設定タブ遷移**: 下部ナビバーで「設定」タップ → SettingPage表示
+- [x] **タブ間スワイプ無効**: 横スワイプでタブ切り替わらない（NeverScrollableScrollPhysics）
 
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-（スクリーンショット・結果をここに埋め込む）
+**自動検証結果（2026-03-25 再検証）**
+- `dart run build_runner build`: ✅ PASS（0 outputs, all skipped）
+- `flutter test`: ✅ PASS（35/35 テスト通過）
+- `flutter analyze`: ⚠️ 15 errors（すべて `group_setting/page.dart` のカテゴリ関連。ホーム画面とは無関係の開発中機能）、2 info
+- Maestro E2E (`maestro/flows/home_page_test.yaml`): ✅ ALL PASSED（iPhone 16 Plus）
+
+**1. 買い物リストタブがデフォルト選択**
+起動直後にShoppingListPageが表示され、下部ナビバーの「買い物リスト」タブが選択状態。
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/2446a0e1-27d7-4cf7-ac23-ebfc810281fc.png)
+
+**2. 設定タブ遷移**
+下部ナビバーの「設定」タップ → SettingPageが表示される。
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/4126c049-042d-4059-8941-982d22521466.png)
+
+**3a. タブ間スワイプ無効（設定タブで左スワイプ）**
+設定タブ表示中に左スワイプしても設定画面のまま変わらない。
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/3bb0efcb-cfae-4fcc-8e8c-0f922094a82f.png)
+
+**3b. タブ間スワイプ無効（買い物リストタブで右スワイプ）**
+買い物リストタブ表示中に右スワイプしても買い物リスト画面のまま変わらない。
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/4e210d4b-bbb3-483f-af01-2a89ef0d1137.png)
 
 </details>
 
