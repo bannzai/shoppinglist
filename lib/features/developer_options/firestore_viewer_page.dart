@@ -109,9 +109,8 @@ class _GroupsSection extends StatelessWidget {
           );
         }
         return Column(
-          children: groups
-              .map((group) => _GroupDetailSection(group: group))
-              .toList(),
+          children:
+              groups.map((group) => _GroupDetailSection(group: group)).toList(),
         );
       },
     );
@@ -386,8 +385,7 @@ class _UserProfilesSection extends StatelessWidget {
         return Column(
           children: profiles
               .map((p) => _JsonExpansionTile(
-                    title:
-                        '${p.displayName ?? '名前未設定'} (${p.userID})',
+                    title: '${p.displayName ?? '名前未設定'} (${p.userID})',
                     icon: Icons.person_outline,
                     data: p.toJson(),
                   ))
@@ -414,8 +412,7 @@ class _AsyncExpansionTile<T> extends StatefulWidget {
   });
 
   @override
-  State<_AsyncExpansionTile<T>> createState() =>
-      _AsyncExpansionTileState<T>();
+  State<_AsyncExpansionTile<T>> createState() => _AsyncExpansionTileState<T>();
 }
 
 class _AsyncExpansionTileState<T> extends State<_AsyncExpansionTile<T>> {
@@ -443,8 +440,8 @@ class _AsyncExpansionTileState<T> extends State<_AsyncExpansionTile<T>> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Padding(
                   padding: EdgeInsets.all(16),
-                  child: Center(
-                      child: CircularProgressIndicator(strokeWidth: 2)),
+                  child:
+                      Center(child: CircularProgressIndicator(strokeWidth: 2)),
                 );
               }
               if (snapshot.hasError) {
@@ -486,8 +483,7 @@ class _JsonExpansionTile extends StatelessWidget {
   }
 }
 
-/// JSONデータをフォーマットして表示するウィジェット。
-/// Firestore の Timestamp や FieldValue など JSON 非対応オブジェクトを文字列に変換して表示する。
+/// JSONデータをフォーマットして表示するウィジェット
 class _JsonText extends StatelessWidget {
   final Map<String, dynamic>? data;
   const _JsonText({required this.data});
@@ -500,9 +496,13 @@ class _JsonText extends StatelessWidget {
         child: Text('データなし'),
       );
     }
-    final jsonString = const JsonEncoder.withIndent('  ').convert(
-      _convertForDisplay(data),
-    );
+    // Timestamp等のFirestoreオブジェクトをJSON文字列に変換するためカスタムエンコーダーを使用
+    final jsonString = JsonEncoder.withIndent('  ', (object) {
+      if (object is Timestamp) {
+        return object.toDate().toIso8601String();
+      }
+      return object.toString();
+    }).convert(data);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
@@ -521,29 +521,5 @@ class _JsonText extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  /// Timestamp や FieldValue など JSON 非対応オブジェクトを再帰的に文字列に変換する
-  static dynamic _convertForDisplay(dynamic value) {
-    if (value is Timestamp) {
-      return value.toDate().toIso8601String();
-    }
-    if (value is DateTime) {
-      return value.toIso8601String();
-    }
-    if (value is Map) {
-      return value.map((k, v) => MapEntry(k.toString(), _convertForDisplay(v)));
-    }
-    if (value is List) {
-      return value.map(_convertForDisplay).toList();
-    }
-    // FieldValue 等その他の非プリミティブは toString() で表示
-    if (value != null &&
-        value is! String &&
-        value is! num &&
-        value is! bool) {
-      return value.toString();
-    }
-    return value;
   }
 }

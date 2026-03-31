@@ -36,52 +36,67 @@
 <details>
 <summary>動作確認エビデンス</summary>
 
-**テスト環境**: iPhone 16 Plus (iOS 18.5) / デバッグビルド / Maestro E2E
+**テスト環境**: iPhone 16 Plus (iOS 18.5) / デバッグビルド / mobile-mcp
+
+**事前チェック結果**:
+- `dart run build_runner build`: ✅ 成功（0 outputs）
+- `flutter analyze`: ⚠️ `group_setting/page.dart` の既存エラー15件（カテゴリ機能リネーム不整合、認証無関係）→ 本PR内で修正済み
+- `flutter test`: ✅ 全35テスト通過
+- `maestro test`: ⚠️ `clearState`/`clearKeychain` による通知許可ダイアログが認証画面より先に表示され「サインイン」アサーション失敗。mobile-mcpで代替検証
+- `flutter build ios`: ⚠️ `group_setting/page.dart` のエラーで失敗 → 本PR内で修正済み
+- `flutter build apk`: 同上の理由でスキップ
 
 **1. 認証画面表示確認**
 - デバッグビルドで匿名サインインボタン（「匿名サインイン（デバッグ用）」）が表示されている
 - Apple/Googleサインインボタンも表示
 - プライバシーポリシー・利用規約のリンクテキストが画面下部に表示
 
-![認証画面](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/efe9fb48-c72a-4f54-bc97-b9b7351ad44b.png)
+![認証画面](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/54dae020-0d4e-4f6b-bca7-bf805b90bee8.png)
 
 **2. プライバシーポリシー**
 - 「プライバシーポリシー」テキストタップ → Safari で `bannzai.github.io/shoppinglist/PrivacyPolicy` が開いた (https)
 - 「プライバシーポリシー」のタイトルと本文が正常表示
 
-![プライバシーポリシー](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/647bc865-a645-41f6-a8c9-9418a7d7f809.png)
+![プライバシーポリシー](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/44389ff7-8fb7-4597-9578-2590c588d811.png)
 
 **3. 利用規約**
 - 「利用規約」テキストタップ → Safari で `bannzai.github.io/shoppinglist/Terms` が開いた (https)
 - 「買い物リスト利用規約」のタイトルと本文が正常表示
 
-![利用規約](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/4906e6b6-e346-44d7-8ae3-596d201d7de6.png)
+![利用規約](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/99e9bef3-f600-484e-ab10-8e9106838857.png)
 
 **4. 匿名サインイン → ホーム画面遷移**
 - 「匿名サインイン（デバッグ用）」タップ → ホーム画面に遷移
 - 初期買い物リスト「2026-03-25」(yyyy-MM-dd形式) が自動作成されて表示
 - 「買い物リストが空です」「アイテムを追加」が表示
 
-![ホーム画面](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/cb676558-5a29-4834-b488-b9aecfd8db04.png)
+![ホーム画面](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/c63a722d-1fd3-4f04-9654-a8c778f35faa.png)
 
-**5. 自動エンティティ作成の確認 (開発者オプション)**
-- 開発者オプションページで以下を確認:
-  - UID: 設定済み（`uid=***`）
-  - defaultGroupID: 設定済み（`groupID=***`）
-- Firestoreデータ確認ページでAppUserを展開した際、Timestampシリアライズのバグを検出 → 修正コード作成済み（別PR予定）
+**5. 自動エンティティ作成の確認 (Firestoreデータダンプ)**
+- AppUser: `id`, `defaultGroupID` が設定済み、`createdDateTime` = `2026-03-25T23:09:43`
+- Groups: ソログループ `bT1hG1NE5AxzsX1AUsEr` が作成済み
+- ShoppingLists: 初期買い物リスト `2026-03-25` が作成済み
+  - `ttlExpiresAt` = `2026-04-24T23:09:43`（約30日後 ✓）
 
-![開発者オプション](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/5b1203f3-2e6f-464b-8174-a7b0cb563f7d.png)
+![AppUser データ](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/5d39e567-ca3c-47ec-b8ed-1e0b1a799fcf.png)
+![Groups 構造](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/65a5d198-50d4-4830-9f07-c2d388f8706c.png)
+![ShoppingList データ](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/35e19744-f22c-4cd3-b048-fd164f2bf032.png)
 
 **6. 冪等性確認（2回目ログイン）**
 - アプリ再起動後（state保持）、自動ログイン → ホーム画面表示
 - 買い物リストが「2026-03-25」の1つのみ（二重作成なし）
 - 開発者オプションでUID/defaultGroupIDが初回と同一
 
-![再起動後ホーム](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/6796b4ab-a58c-4767-a6d6-109c0fc71c2d.png)
-![再起動後開発者オプション](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/3cdc8ddb-d476-4643-a7f8-b8ab693093a4.png)
+![再起動後ホーム](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/cfb10cdb-5fc5-4fb5-b9e4-fb28a2017456.png)
+![再起動後開発者オプション](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/7f29f55e-8921-4ed5-8b90-3bdc47a912f0.png)
 
-**発見したバグ**
-- Firestoreデータ確認ページの `_JsonText` ウィジェットで、`toJson()` が返す `Timestamp` オブジェクトを `JsonEncoder` がシリアライズできないエラー（`Converting object to an encodable object failed: Instance of 'Timestamp'`）。修正済み（`firestore_viewer_page.dart`）、別PR予定
+**コードレビューで発見した問題（リリース前に修正必要）**
+1. **[Critical] Apple Sign-In nonce未対策** (`lib/components/auth/apple.dart`): `generateNonce()` が `getAppleIDCredential` の後に呼ばれており、ハッシュ化したnonceが Apple に渡されていない。本番で認証失敗する。修正: 事前にrawNonce生成 → SHA-256ハッシュ → `getAppleIDCredential(nonce: hashedNonce)` → Firebase credential に rawNonce を渡す
+2. **[Critical] Google Sign-In v7 initialize() 未呼び出し** (`lib/components/auth/google.dart`, `lib/main.dart`): `google_sign_in: ^7.2.0` を使用しているが `GoogleSignIn.instance.initialize()` がプロジェクト全体で呼ばれていない。v7必須の初期化処理が不足
+
+**修正したバグ（本PR内）**
+- `group_setting/page.dart`: カテゴリEntityリネーム（`GroupShoppingListItemCategory` → `GroupCategory`）後のimport/参照不整合を修正
+- `firestore_viewer_page.dart`: `_JsonText` の `JsonEncoder` が `Timestamp` オブジェクトをシリアライズできないエラーを修正（カスタムエンコーダーでISO8601文字列に変換）
 
 </details>
 
