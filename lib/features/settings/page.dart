@@ -255,9 +255,7 @@ class _AutoNotifyToggle extends ConsumerWidget {
           name: 'tap_toggle_auto_notify',
           parameters: {'enabled': (!isEnabled).toString()},
         );
-        ref
-            .read(autoNotifyShoppingListUpdateProvider.notifier)
-            .toggle();
+        ref.read(autoNotifyShoppingListUpdateProvider.notifier).toggle();
       },
     );
   }
