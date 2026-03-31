@@ -108,7 +108,8 @@ if [[ ${#SECTIONS_TO_RUN[@]} -eq 0 ]]; then
     RUN_TARGETS=("${DETECTED_SECTIONS[@]}")
 else
     for target in "${SECTIONS_TO_RUN[@]}"; do
-        padded=$(printf "%02d" "$target")
+        # 0始まりの値を8進数として解釈させないよう10進数に正規化してからゼロ埋め
+        padded=$(printf "%02d" "$((10#$target))")
         found=0
         for detected in "${DETECTED_SECTIONS[@]}"; do
             if [[ "$detected" == "$padded" ]]; then
@@ -152,11 +153,17 @@ run_section() {
     echo "=========================================="
 
     # ベースブランチに戻る
-    git checkout "$BASE_BRANCH" || true
+    if ! git checkout "$BASE_BRANCH"; then
+        echo "エラー: ベースブランチ ${BASE_BRANCH} への切り替えに失敗しました" >&2
+        return 1
+    fi
 
     # セクション用ブランチを作成（既存なら切り替え）
     echo "ブランチ ${branch_name} を作成中..."
-    git checkout -b "$branch_name" 2>/dev/null || git checkout "$branch_name" || true
+    if ! git checkout -b "$branch_name" 2>/dev/null && ! git checkout "$branch_name"; then
+        echo "エラー: ブランチ ${branch_name} の作成・切り替えに失敗しました" >&2
+        return 1
+    fi
 
     # ログファイル準備
     local timestamp
