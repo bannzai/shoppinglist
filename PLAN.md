@@ -51,26 +51,26 @@
 - Apple/Googleサインインボタンも表示
 - プライバシーポリシー・利用規約のリンクテキストが画面下部に表示
 
-![認証画面](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/54dae020-0d4e-4f6b-bca7-bf805b90bee8.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/54dae020-0d4e-4f6b-bca7-bf805b90bee8.png" alt="認証画面" width="320">
 
 **2. プライバシーポリシー**
 - 「プライバシーポリシー」テキストタップ → Safari で `bannzai.github.io/shoppinglist/PrivacyPolicy` が開いた (https)
 - 「プライバシーポリシー」のタイトルと本文が正常表示
 
-![プライバシーポリシー](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/44389ff7-8fb7-4597-9578-2590c588d811.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/44389ff7-8fb7-4597-9578-2590c588d811.png" alt="プライバシーポリシー" width="320">
 
 **3. 利用規約**
 - 「利用規約」テキストタップ → Safari で `bannzai.github.io/shoppinglist/Terms` が開いた (https)
 - 「買い物リスト利用規約」のタイトルと本文が正常表示
 
-![利用規約](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/99e9bef3-f600-484e-ab10-8e9106838857.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/99e9bef3-f600-484e-ab10-8e9106838857.png" alt="利用規約" width="320">
 
 **4. 匿名サインイン → ホーム画面遷移**
 - 「匿名サインイン（デバッグ用）」タップ → ホーム画面に遷移
 - 初期買い物リスト「2026-03-25」(yyyy-MM-dd形式) が自動作成されて表示
 - 「買い物リストが空です」「アイテムを追加」が表示
 
-![ホーム画面](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/c63a722d-1fd3-4f04-9654-a8c778f35faa.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/c63a722d-1fd3-4f04-9654-a8c778f35faa.png" alt="ホーム画面" width="320">
 
 **5. 自動エンティティ作成の確認 (Firestoreデータダンプ)**
 - AppUser: `id`, `defaultGroupID` が設定済み、`createdDateTime` = `2026-03-25T23:09:43`
@@ -78,17 +78,17 @@
 - ShoppingLists: 初期買い物リスト `2026-03-25` が作成済み
   - `ttlExpiresAt` = `2026-04-24T23:09:43`（約30日後 ✓）
 
-![AppUser データ](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/5d39e567-ca3c-47ec-b8ed-1e0b1a799fcf.png)
-![Groups 構造](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/65a5d198-50d4-4830-9f07-c2d388f8706c.png)
-![ShoppingList データ](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/35e19744-f22c-4cd3-b048-fd164f2bf032.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/5d39e567-ca3c-47ec-b8ed-1e0b1a799fcf.png" alt="AppUser データ" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/65a5d198-50d4-4830-9f07-c2d388f8706c.png" alt="Groups 構造" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/35e19744-f22c-4cd3-b048-fd164f2bf032.png" alt="ShoppingList データ" width="320">
 
 **6. 冪等性確認（2回目ログイン）**
 - アプリ再起動後（state保持）、自動ログイン → ホーム画面表示
 - 買い物リストが「2026-03-25」の1つのみ（二重作成なし）
 - 開発者オプションでUID/defaultGroupIDが初回と同一
 
-![再起動後ホーム](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/cfb10cdb-5fc5-4fb5-b9e4-fb28a2017456.png)
-![再起動後開発者オプション](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/7f29f55e-8921-4ed5-8b90-3bdc47a912f0.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/cfb10cdb-5fc5-4fb5-b9e4-fb28a2017456.png" alt="再起動後ホーム" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/7f29f55e-8921-4ed5-8b90-3bdc47a912f0.png" alt="再起動後開発者オプション" width="320">
 
 **コードレビューで発見した問題（リリース前に修正必要）**
 1. **[Critical] Apple Sign-In nonce未対策** (`lib/components/auth/apple.dart`): `generateNonce()` が `getAppleIDCredential` の後に呼ばれており、ハッシュ化したnonceが Apple に渡されていない。本番で認証失敗する。修正: 事前にrawNonce生成 → SHA-256ハッシュ → `getAppleIDCredential(nonce: hashedNonce)` → Firebase credential に rawNonce を渡す
@@ -121,19 +121,19 @@
 
 **1. 買い物リストタブがデフォルト選択**
 起動直後にShoppingListPageが表示され、下部ナビバーの「買い物リスト」タブが選択状態。
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/2446a0e1-27d7-4cf7-ac23-ebfc810281fc.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/2446a0e1-27d7-4cf7-ac23-ebfc810281fc.png" alt="" width="320">
 
 **2. 設定タブ遷移**
 下部ナビバーの「設定」タップ → SettingPageが表示される。
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/4126c049-042d-4059-8941-982d22521466.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/4126c049-042d-4059-8941-982d22521466.png" alt="" width="320">
 
 **3a. タブ間スワイプ無効（設定タブで左スワイプ）**
 設定タブ表示中に左スワイプしても設定画面のまま変わらない。
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/3bb0efcb-cfae-4fcc-8e8c-0f922094a82f.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/3bb0efcb-cfae-4fcc-8e8c-0f922094a82f.png" alt="" width="320">
 
 **3b. タブ間スワイプ無効（買い物リストタブで右スワイプ）**
 買い物リストタブ表示中に右スワイプしても買い物リスト画面のまま変わらない。
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/4e210d4b-bbb3-483f-af01-2a89ef0d1137.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260325/4e210d4b-bbb3-483f-af01-2a89ef0d1137.png" alt="" width="320">
 
 </details>
 
@@ -202,62 +202,62 @@
 
 **Maestro: add_and_check_item.yaml** (PASS)
 - 空リスト → FAB+でアイテム追加 → テキスト入力・保存 → チェック/アンチェック → チェック済み表示切り替え
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/6064ac3c-25d6-4f86-be1b-1b933b45a9e5.png)
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/ad85151f-60d1-45dc-bc7a-c5abcbf62c09.png)
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/0561e1dc-0491-446f-afd7-457436071af2.png)
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/0a9039ff-cd5c-4ece-ba2c-af53c805b60e.png)
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/629a157c-e2a2-43a4-93c4-f843873ad815.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/6064ac3c-25d6-4f86-be1b-1b933b45a9e5.png" alt="" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/ad85151f-60d1-45dc-bc7a-c5abcbf62c09.png" alt="" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/0561e1dc-0491-446f-afd7-457436071af2.png" alt="" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/0a9039ff-cd5c-4ece-ba2c-af53c805b60e.png" alt="" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/629a157c-e2a2-43a4-93c4-f843873ad815.png" alt="" width="320">
 
 **Maestro: shopping_list_crud.yaml** (PASS)
 - 新しいリスト追加 → リスト名変更 → リスト削除
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/6c2ae790-c16f-451d-a64e-c561b1cfbb3f.png)
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/b893644b-a24c-4746-816b-55f6c4ce23c6.png)
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/86a2573f-a987-4b6e-92c8-5805e3e3f801.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/6c2ae790-c16f-451d-a64e-c561b1cfbb3f.png" alt="" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/b893644b-a24c-4746-816b-55f6c4ce23c6.png" alt="" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/86a2573f-a987-4b6e-92c8-5805e3e3f801.png" alt="" width="320">
 
 **Maestro: swipe_delete_item.yaml** (PASS)
 - スワイプ削除
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/1b3f1ecf-d587-44b4-bf5a-75fd4674f221.png)
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/90aeb607-611d-4b95-98c9-89c2fd3abf82.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/1b3f1ecf-d587-44b4-bf5a-75fd4674f221.png" alt="" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/90aeb607-611d-4b95-98c9-89c2fd3abf82.png" alt="" width="320">
 
 **Maestro: empty_shopping_list_create.yaml** (PASS)
 - 別グループ作成 → グループ切り替え → アイテム追加
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/20f9dc10-de94-4dc1-b29b-a291208b3eff.png)
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/f49bb78b-08dd-4084-9476-667a241d55ca.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/20f9dc10-de94-4dc1-b29b-a291208b3eff.png" alt="" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/f49bb78b-08dd-4084-9476-667a241d55ca.png" alt="" width="320">
 
 **Maestro: item_detail_and_delete.yaml** (PASS)
 - 詳細BottomSheet → メモ追加 → カラー設定 → BottomSheetから削除
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/3936629e-e52c-4f7d-b389-351f47468a32.png)
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/3b25487d-4917-4b21-b44a-a263d4cce5ce.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/3936629e-e52c-4f7d-b389-351f47468a32.png" alt="" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/3b25487d-4917-4b21-b44a-a263d4cce5ce.png" alt="" width="320">
 
 **mobile-mcp: リスト一覧・切り替え** (PASS)
 - ドロップダウンでリスト一覧表示、別リスト選択で切り替え確認
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/c9b4e3a5-28f4-4f6d-bc2c-195fb06fc00e.png)
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/7857b07c-7eb4-4b9d-829f-ed46823e7651.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/c9b4e3a5-28f4-4f6d-bc2c-195fb06fc00e.png" alt="" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/7857b07c-7eb4-4b9d-829f-ed46823e7651.png" alt="" width="320">
 
 **mobile-mcp: リスト複製・複製元リンク** (PASS)
 - 複製でアイテム全コピー、複製元リンクタップで元リストに切り替え
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/57d9217d-c008-4b7e-b118-f9a43e9276c7.png)
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/1b2fd777-3461-4339-a479-408bdb3e64e4.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/57d9217d-c008-4b7e-b118-f9a43e9276c7.png" alt="" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/1b2fd777-3461-4339-a479-408bdb3e64e4.png" alt="" width="320">
 
 **mobile-mcp: カラー解除** (PASS)
 - 赤色設定→色なしで解除、デフォルト背景に戻る
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/a449af73-a7e3-4cfe-8703-334461733098.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/a449af73-a7e3-4cfe-8703-334461733098.png" alt="" width="320">
 
 **mobile-mcp: クリップボード複数行テキスト** (PASS)
 - 4行テキスト（重複1行含む）→ 3件追加、重複スキップ確認
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/5ca6e424-7d1b-4808-b88a-38e9860c5e7e.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/5ca6e424-7d1b-4808-b88a-38e9860c5e7e.png" alt="" width="320">
 
 **mobile-mcp: カテゴリ未設定時FilterChip無効化** (PASS)
 - カテゴリ0件でカテゴリ順FilterChipタップ→状態変化なし（無効化）
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/96ec0b32-7fe6-45ac-8cc3-6fc34420d10b.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/96ec0b32-7fe6-45ac-8cc3-6fc34420d10b.png" alt="" width="320">
 
 **mobile-mcp: 別グループへのリスト追加** (PASS)
 - グループ選択→別グループに新リスト作成
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/4a24b472-efc8-4237-bc2c-20d9c5c0b88d.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/4a24b472-efc8-4237-bc2c-20d9c5c0b88d.png" alt="" width="320">
 
 **mobile-mcp: フォトライブラリから追加** (PASS)
 - フォトピッカーUIが正常に表示、写真選択可能
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/74008ca1-a7bf-42b8-addc-5e4fe5a91608.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/74008ca1-a7bf-42b8-addc-5e4fe5a91608.png" alt="" width="320">
 
 </details>
 
@@ -300,13 +300,13 @@
 <summary>動作確認エビデンス</summary>
 
 **切り替え前（group-B選択、test-item-B表示）:**
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/a8868382-5ede-492b-9c91-7ccfe886b702.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/a8868382-5ede-492b-9c91-7ccfe886b702.png" alt="" width="320">
 
 **group-Aに切り替え後（空リスト表示）:**
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/b1dd88c2-f34d-42c5-8fe9-17e3143ff5a8.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/b1dd88c2-f34d-42c5-8fe9-17e3143ff5a8.png" alt="" width="320">
 
 **group-Bに切り替え戻し（test-item-B再表示）:**
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/7f7b67c3-1543-4d68-ba67-2e79cc3f1308.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/7f7b67c3-1543-4d68-ba67-2e79cc3f1308.png" alt="" width="320">
 
 </details>
 
@@ -372,31 +372,31 @@
 **Step 1: 場所一覧表示（0件時の空状態）**
 - 0件時に説明テキスト「場所を登録すると、買い物リストのアイテムにお店を設定でき、お店ごとにリストを絞り込めるようになります」と「+ 場所を追加」ボタンが表示される
 
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/823570cb-a85e-43cf-b714-665364b929f0.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/823570cb-a85e-43cf-b714-665364b929f0.png" alt="" width="320">
 
 **Step 2: 場所追加**
 - FAB(+)→ダイアログ→「テストスーパー」入力→「追加」→リストに表示される
 
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/d9544026-2ef6-43e5-a914-f78af99c5c96.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/d9544026-2ef6-43e5-a914-f78af99c5c96.png" alt="" width="320">
 
 **Step 3: 空文字で追加無効**
 - 空文字で「追加」をタップしてもダイアログが閉じず、場所が追加されない
 
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/a5b25d29-3871-48be-8d3e-ceaa490588cd.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/a5b25d29-3871-48be-8d3e-ceaa490588cd.png" alt="" width="320">
 
 **Step 4: 場所編集**
 - 編集アイコン→ダイアログで「テストスーパー」→「編集済みスーパー」に変更→「保存」→リストに反映
 
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/5ca82580-0a8f-4267-8f2c-2ecda6f417ae.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/5ca82580-0a8f-4267-8f2c-2ecda6f417ae.png" alt="" width="320">
 
 **Step 5: 場所削除**
 - 削除アイコン→確認ダイアログ「『編集済みスーパー』を削除しますか？」表示→削除→リストから消えて0件の空状態に戻る
 
 削除確認ダイアログ:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/66aa4b30-9b1b-4038-8e1e-86f824e13b2c.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/66aa4b30-9b1b-4038-8e1e-86f824e13b2c.png" alt="" width="320">
 
 削除後:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/6d046eba-260f-4457-bc29-f50f43bc793b.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/6d046eba-260f-4457-bc29-f50f43bc793b.png" alt="" width="320">
 
 </details>
 
@@ -435,60 +435,60 @@
 **Maestro: category_crud.yaml** (全ステップPASSED)
 
 カテゴリ編集画面（初回追加後）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/bf62e1a2-7f32-4649-8b4e-7ae58630c6cd.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/bf62e1a2-7f32-4649-8b4e-7ae58630c6cd.png" alt="" width="320">
 
 キーワード追加（部分一致「にんじん」）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/df701759-c993-4640-b42f-a38e6d17cd88.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/df701759-c993-4640-b42f-a38e6d17cd88.png" alt="" width="320">
 
 カテゴリ一覧（グループ設定画面）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/0618c36b-9719-44c6-91b1-952e66ef7e83.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/0618c36b-9719-44c6-91b1-952e66ef7e83.png" alt="" width="320">
 
 部分一致マッチング（「にんじん」→「野菜」カテゴリに分類）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/328e3d3c-3b2e-4461-9862-bcd35ccdd619.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/328e3d3c-3b2e-4461-9862-bcd35ccdd619.png" alt="" width="320">
 
 **Maestro: category_location_order.yaml** (全ステップPASSED)
 
 3カテゴリ作成（野菜・肉・魚）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/937712ef-8001-41d3-aeee-60e10aa74286.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/937712ef-8001-41d3-aeee-60e10aa74286.png" alt="" width="320">
 
 カテゴリ別表示（にんじん→野菜、鶏肉→肉、サーモン→魚）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/c5dabce5-abb2-4050-b5db-144c0e6e6053.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/c5dabce5-abb2-4050-b5db-144c0e6e6053.png" alt="" width="320">
 
 **mobile-mcp: カテゴリ編集テスト**
 
 カテゴリ名編集（野菜→野菜類）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/84e522b8-426a-46a5-b0ed-a3c7b6f0207d.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/84e522b8-426a-46a5-b0ed-a3c7b6f0207d.png" alt="" width="320">
 
 カラー設定（赤色選択）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/850da66c-131b-4434-a57c-384f8b548d65.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/850da66c-131b-4434-a57c-384f8b548d65.png" alt="" width="320">
 
 カラー解除（⊘選択）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/38430075-274c-4cdc-96cc-99ee810af542.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/38430075-274c-4cdc-96cc-99ee810af542.png" alt="" width="320">
 
 アイコン設定（カートアイコン選択）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/72a5f612-2d21-4af9-aae0-0230f05b4723.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/72a5f612-2d21-4af9-aae0-0230f05b4723.png" alt="" width="320">
 
 キーワード追加（完全一致「牛乳」）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/a270055e-6dfb-4024-acd3-d334d7bca231.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/a270055e-6dfb-4024-acd3-d334d7bca231.png" alt="" width="320">
 
 キーワード削除（「牛乳」削除後）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/75f27d63-9c5f-419b-9e4b-47e1c5c1ea51.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/75f27d63-9c5f-419b-9e4b-47e1c5c1ea51.png" alt="" width="320">
 
 **Maestro: category_matching_test.yaml** (全ステップPASSED)
 
 乳製品カテゴリ（牛乳=完全一致, Milk=部分一致）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/f0da6df0-73e3-4741-bd16-102b19231e45.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/f0da6df0-73e3-4741-bd16-102b19231e45.png" alt="" width="320">
 
 マッチング結果（牛乳→乳製品、牛肉→肉、milk/MILK→乳製品）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/ab881931-f27f-409a-8a4f-d3e00053241c.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/ab881931-f27f-409a-8a4f-d3e00053241c.png" alt="" width="320">
 
 **mobile-mcp: カテゴリ削除テスト**
 
 削除確認ダイアログ（「乳製品」を削除しますか？ / このカテゴリに設定されたキーワードも削除されます）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/a9af1804-8e41-4b69-8074-9223c528b949.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/a9af1804-8e41-4b69-8074-9223c528b949.png" alt="" width="320">
 
 削除後のグループ設定画面（「乳製品」が削除され「肉」のみ残存）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/82c9de39-2759-4d6e-9363-db3c88f268d3.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/82c9de39-2759-4d6e-9363-db3c88f268d3.png" alt="" width="320">
 
 **スキップ項目**
 - デフォルト順ドラッグ&ドロップ: GroupCategoryPageへのナビゲーションがGroupSettingPageから未実装のため、UIからアクセス不可
@@ -522,32 +522,32 @@
 <summary>動作確認エビデンス</summary>
 
 **プロフィール表示名編集（保存後アプリ再起動で復元確認）:**
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/3b867076-17fb-435a-a026-06e4587b14f1.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/3b867076-17fb-435a-a026-06e4587b14f1.png" alt="" width="320">
 
 **グループ管理遷移:**
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/5ca9b24f-7cc0-4381-87ad-2378009e7054.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/5ca9b24f-7cc0-4381-87ad-2378009e7054.png" alt="" width="320">
 
 **招待コード入力画面遷移:**
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/d951affc-2d1c-419b-b87f-bb36d999d733.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/d951affc-2d1c-419b-b87f-bb36d999d733.png" alt="" width="320">
 
 **利用規約リンク（外部ブラウザ起動）:**
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/45ecdd01-b0ec-4266-a7e8-90a803b76991.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/45ecdd01-b0ec-4266-a7e8-90a803b76991.png" alt="" width="320">
 
 **プライバシーポリシーリンク（外部ブラウザ起動）:**
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/b0e09766-cb58-444b-9b62-1213ab61439b.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/b0e09766-cb58-444b-9b62-1213ab61439b.png" alt="" width="320">
 
 **特定商法取引法に基づく表記リンク（外部ブラウザ起動）:**
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/8a09b19d-3273-48d3-8e73-388add8fe897.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/8a09b19d-3273-48d3-8e73-388add8fe897.png" alt="" width="320">
 
 **アカウント削除キャンセル（確認ダイアログ表示→キャンセル）:**
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/a1d9ad2a-fe9d-4ef1-93ce-52a16b4e4d32.png)
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/7b479611-6b7b-4b91-9076-4481fb743ff6.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/a1d9ad2a-fe9d-4ef1-93ce-52a16b4e4d32.png" alt="" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/7b479611-6b7b-4b91-9076-4481fb743ff6.png" alt="" width="320">
 
 **デバッグモードで開発者オプション表示（設定画面下部にListTile表示）:**
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/c28df47a-7171-4cdb-8d4d-a6ca1cc02a66.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/c28df47a-7171-4cdb-8d4d-a6ca1cc02a66.png" alt="" width="320">
 
 **開発者オプションページ遷移:**
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/54a1361b-ad51-41e5-aa25-1fdf16b48f5f.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/54a1361b-ad51-41e5-aa25-1fdf16b48f5f.png" alt="" width="320">
 
 </details>
 
@@ -655,7 +655,7 @@
 
 **Jest テスト結果 (5 suites, 37 tests, all passed)**
 
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/973fc661-dd71-4fed-afab-0dce355daab4.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/973fc661-dd71-4fed-afab-0dce355daab4.png" alt="" width="320">
 
 **テストカバレッジ照合:**
 - `createGroupInvitation`: 3/4通過（「複数回生成→毎回異なるコード」テスト未実装）
@@ -745,43 +745,43 @@
 Maestroフロー（01〜05）で仮想ペアリングを使用して検証。デバッグユーザーがアイテム「debug_item_test」を追加し、メインユーザーのリストにリアルタイムで反映されることを確認。
 
 - グループ作成（VirtualPairTestGroup）
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/6cfe48cd-7d93-49ad-9de9-b3c51e2c4e37.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/6cfe48cd-7d93-49ad-9de9-b3c51e2c4e37.png" alt="" width="320">
 
 - デバッグユーザーとしてアイテム追加（開発者オプション画面）
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/7df34160-afd2-4bec-8369-f22aea683bd3.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/7df34160-afd2-4bec-8369-f22aea683bd3.png" alt="" width="320">
 
 - メインユーザーのリストにdebug_item_testがリアルタイム反映
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/f2f0a40d-e0f5-46ae-be64-c840bd524f14.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/f2f0a40d-e0f5-46ae-be64-c840bd524f14.png" alt="" width="320">
 
 ###### 2. アイテムチェックの同期 ✅
 mobile-mcpでチェックボックスをタップし、Firestoreリアルタイムリスナーによる即時反映を確認。
 
 - チェック前（未チェック状態、0/1 完了）
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/d9b3276e-f2be-4626-8147-cc6eac81c519.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/d9b3276e-f2be-4626-8147-cc6eac81c519.png" alt="" width="320">
 
 - チェック後（チェック済み、1/1 完了!）
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/862df43f-ab2a-42b6-89d2-81611ea5daeb.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/862df43f-ab2a-42b6-89d2-81611ea5daeb.png" alt="" width="320">
 
 ###### 3. グループメンバー変更の同期 ✅
 Maestroフロー（03）でデバッグユーザーをグループに追加後、グループ設定画面でメンバー一覧にリアルタイム反映されることを確認。クリーンアップ後はメンバーが削除され、UIに即座に反映。
 
 - メンバー追加後（名前未設定 + Debug User の2名）
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/756f8a64-c4bb-4ee7-936a-3946fcb40310.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/756f8a64-c4bb-4ee7-936a-3946fcb40310.png" alt="" width="320">
 
 - クリーンアップ実行（デバッグデータクリーンアップ完了）
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/b7d2c5c5-ad6c-4880-9982-c83130aea896.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/b7d2c5c5-ad6c-4880-9982-c83130aea896.png" alt="" width="320">
 
 - メンバー削除後（名前未設定のみ、Debug Userが消えている）
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/718578fe-571d-493f-ba6f-23d92f5853f8.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/718578fe-571d-493f-ba6f-23d92f5853f8.png" alt="" width="320">
 
 ###### 4. リスト削除の同期 ✅
 買い物リスト設定から「買い物リストを削除」を実行し、UIがリアルタイムで更新されることを確認。
 
 - 削除前（2026-03-26リストにdebug_item_testが表示）
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/7541693f-92fd-47a8-b43c-4f92bd8549c6.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/7541693f-92fd-47a8-b43c-4f92bd8549c6.png" alt="" width="320">
 
 - 削除後（新しい空リスト「2026-03-26 (1)」が自動生成され、元のリストは消失）
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/4628e8c3-213e-43ad-a375-4701e525a55b.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/4628e8c3-213e-43ad-a375-4701e525a55b.png" alt="" width="320">
 
 </details>
 
@@ -979,22 +979,22 @@ Maestroフロー（03）でデバッグユーザーをグループに追加後�
 **1. iOS Simulatorで全画面の表示確認**
 
 認証画面（サインイン）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/6b0df9fe-e782-47a3-9c27-28d7186e3e1c.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/6b0df9fe-e782-47a3-9c27-28d7186e3e1c.png" alt="" width="320">
 
 ホーム画面（買い物リスト一覧）:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/be8fbe53-480a-488c-803f-f978014f1136.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/be8fbe53-480a-488c-803f-f978014f1136.png" alt="" width="320">
 
 買い物リスト詳細画面:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/97361ea5-e1a0-464d-bb57-ddf0f19fcae1.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/97361ea5-e1a0-464d-bb57-ddf0f19fcae1.png" alt="" width="320">
 
 設定画面:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/0a025be1-6073-4154-8a98-a84ecff637dc.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/0a025be1-6073-4154-8a98-a84ecff637dc.png" alt="" width="320">
 
 グループ管理画面:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/f25d96e8-a8f8-41c7-ab5a-471e87356197.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/f25d96e8-a8f8-41c7-ab5a-471e87356197.png" alt="" width="320">
 
 グループ設定画面:
-![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/94c5f718-d36c-40c8-9170-4847ffbe39b1.png)
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/94c5f718-d36c-40c8-9170-4847ffbe39b1.png" alt="" width="320">
 
 **2. SafeArea確認**
 - 全画面でダイナミックアイランド（上部）にコンテンツが重なっていないことを確認

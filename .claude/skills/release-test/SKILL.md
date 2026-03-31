@@ -107,7 +107,7 @@ Phase 2 の分析結果をもとに、プロジェクトルートに `RELEASE_TE
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
-（テスト実行時にスクリーンショット・結果を埋め込む）
+<img src="（gh-r2-imageでアップロードしたURL）" width="320">
 </details>
 
 ---
@@ -123,7 +123,7 @@ Phase 2 の分析結果をもとに、プロジェクトルートに `RELEASE_TE
 - セクション間は `---` で区切り
 
 ### 動作確認セクションのルール
-- 画像は `<img src="URL" width="320">` タグで埋め込む（heightは指定しない）
+- 画像は `<img src="URL" width="320">` タグで埋め込む（heightは指定しない）。Markdown画像形式 `![](url)` は使用禁止
 - mobile-mcp/maestroで確認困難な項目は **「なぜ困難か」を明記** すること
   - 例: `Googleサインイン: OAuthフローをiOS Simulatorで自動化不可`
 - 困難な項目には **代替手段を提示・実装** する:
