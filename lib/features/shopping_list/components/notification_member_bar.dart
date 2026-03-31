@@ -24,9 +24,8 @@ class NotificationMemberBar extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final otherMembers = memberProfiles
-        .where((p) => p.userID != currentUserID)
-        .toList();
+    final otherMembers =
+        memberProfiles.where((p) => p.userID != currentUserID).toList();
 
     if (otherMembers.isEmpty) {
       return const SizedBox.shrink();
@@ -123,10 +122,10 @@ class _SendAllButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final allSent = otherMembers.every(
-        (m) => sentUserIDs.value.contains(m.userID));
-    final anySending = otherMembers.any(
-        (m) => sendingUserIDs.value.contains(m.userID));
+    final allSent =
+        otherMembers.every((m) => sentUserIDs.value.contains(m.userID));
+    final anySending =
+        otherMembers.any((m) => sendingUserIDs.value.contains(m.userID));
 
     return InkWell(
       onTap: allSent || anySending ? null : onSendAll,
@@ -234,9 +233,8 @@ void showNotificationSnackBar({
   required String currentUserID,
   required List<GroupUserProfile> memberProfiles,
 }) {
-  final otherMembers = memberProfiles
-      .where((p) => p.userID != currentUserID)
-      .toList();
+  final otherMembers =
+      memberProfiles.where((p) => p.userID != currentUserID).toList();
 
   if (otherMembers.isEmpty) return;
 
