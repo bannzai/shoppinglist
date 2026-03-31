@@ -479,42 +479,59 @@
 
 ### generateShoppingListItemsFromImage
 - [ ] **正常系**: base64画像+mimeType送信→文字列配列が返る
+  - テストファイルが存在しない（AI連携のため外部依存が大きくユニットテスト未作成）。GenKit Dev Serverでの手動検証が必要
 - [ ] **異常系: 画像なし**: 必須パラメータ欠落→エラーレスポンス
+  - テストファイルが存在しない（同上）
 - [ ] **異常系: 未認証**: 認証なし→認証エラー
+  - テストファイルが存在しない（同上）
 
 ### createGroupInvitation
-- [ ] **正常系**: groupID指定→8桁招待コード。DB: groupInvitation作成（token, expiresDateTime=7日後, status=pending）
+- [x] **正常系**: groupID指定→8桁招待コード。DB: groupInvitation作成（token, expiresDateTime=7日後, status=pending）
 - [ ] **正常系: 複数回生成**: 同一グループで複数回→毎回異なるコード
-- [ ] **異常系: 未認証**: 認証なし→エラー
-- [ ] **異常系: 非メンバー**: 非所属ユーザー→エラー
+  - 該当するJestテストケースが存在しない。招待コードはcrypto.randomBytesで生成されるため実質的に毎回異なるが、テストでの明示的な検証は未実装
+- [x] **異常系: 未認証**: 認証なし→エラー
+- [x] **異常系: 非メンバー**: 非所属ユーザー→エラー
 
 ### acceptGroupInvitation
-- [ ] **正常系**: 有効コード→グループ参加。DB: memberUserIDs追加、userProfile作成
-- [ ] **異常系: 無効コード**: 存在しないコード→エラー
-- [ ] **異常系: 期限切れ**: 7日超過→エラー
-- [ ] **異常系: 既に参加済み**: 冪等処理またはエラー
-- [ ] **異常系: 未認証**: 認証なし→エラー
+- [x] **正常系**: 有効コード→グループ参加。DB: memberUserIDs追加、userProfile作成
+- [x] **異常系: 無効コード**: 存在しないコード→エラー
+- [x] **異常系: 期限切れ**: 7日超過→エラー
+- [x] **異常系: 既に参加済み**: 冪等処理またはエラー
+- [x] **異常系: 未認証**: 認証なし→エラー
 
 ### removeGroupMember
-- [ ] **正常系**: オーナーがgroupID+targetUserID指定→メンバー削除。DB: memberUserIDsから除去
-- [ ] **異常系: 非オーナー**: 非オーナー→エラー
-- [ ] **異常系: 自分自身削除**: オーナーが自分→エラー
-- [ ] **異常系: 存在しないユーザー**: memberUserIDsにないUID→冪等処理
-- [ ] **異常系: 未認証**: 認証なし→エラー
-- [ ] **異常系: 存在しないグループ**: 無効groupID→エラー
+- [x] **正常系**: オーナーがgroupID+targetUserID指定→メンバー削除。DB: memberUserIDsから除去
+- [x] **異常系: 非オーナー**: 非オーナー→エラー
+- [x] **異常系: 自分自身削除**: オーナーが自分→エラー
+- [x] **異常系: 存在しないユーザー**: memberUserIDsにないUID→冪等処理
+- [x] **異常系: 未認証**: 認証なし→エラー
+- [x] **異常系: 存在しないグループ**: 無効groupID→エラー
 
 ### updateGroupName
-- [ ] **正常系**: オーナーがgroupID+name→グループ名更新。DB: name更新
-- [ ] **異常系: 非オーナー**: 非オーナー→エラー
-- [ ] **異常系: 未認証**: 認証なし→エラー
-- [ ] **異常系: 存在しないグループ**: 無効groupID→エラー
+- [x] **正常系**: オーナーがgroupID+name→グループ名更新。DB: name更新
+- [x] **異常系: 非オーナー**: 非オーナー→エラー
+- [x] **異常系: 未認証**: 認証なし→エラー
+- [x] **異常系: 存在しないグループ**: 無効groupID→エラー
 
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-（スクリーンショット・結果をここに埋め込む）
+**Jest テスト結果 (5 suites, 37 tests, all passed)**
+
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/973fc661-dd71-4fed-afab-0dce355daab4.png)
+
+**テストカバレッジ照合:**
+- `createGroupInvitation`: 3/4通過（「複数回生成→毎回異なるコード」テスト未実装）
+- `acceptGroupInvitation`: 5/5通過
+- `removeGroupMember`: 6/6通過
+- `updateGroupName`: 4/4通過
+- `generateShoppingListItemsFromImage`: テストファイル未作成（AI連携のため外部依存大）
+
+**lint/build:**
+- `npm run lint`: 通過（ESLint エラーなし）
+- `npm run build`: 通過（tsc エラーなし）
 
 </details>
 
