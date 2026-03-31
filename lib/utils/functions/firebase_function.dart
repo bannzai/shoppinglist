@@ -91,8 +91,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
         'targetUserIDs': targetUserIDs,
       },
     );
-    debugPrint(
-        'sendShoppingListUpdateNotification.result: ${result.data}');
+    debugPrint('sendShoppingListUpdateNotification.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
       throw Exception(response['error']['message']);
