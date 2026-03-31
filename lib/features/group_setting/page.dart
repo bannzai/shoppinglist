@@ -614,12 +614,12 @@ void _showAddCategoryDialog({
                 parameters: {'groupID': groupID});
             Navigator.pop(dialogContext);
             try {
+              final currentUserID = ref.read(currentUserIDProvider)!;
               final category = await ref
-                  .read(groupCategoryAddProvider(
-                      groupID: groupID))
+                  .read(groupCategoryAddProvider(groupID: groupID))
                   .call(
                     groupID: groupID,
-                    userID: ref.read(currentUserIDProvider)!,
+                    userID: currentUserID,
                     categoryAxisID: categoryAxisID,
                     name: name,
                     order: currentCategoryCount,
@@ -668,8 +668,7 @@ class _CategoriesSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final axesAsync =
-        ref.watch(groupCategoryAxesProvider(groupID: groupID));
+    final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
@@ -727,9 +726,11 @@ class _CategoriesSection extends ConsumerWidget {
   }) async {
     GroupCategoryAxis axis;
     if (existingAxes.isEmpty) {
+      final currentUserID = ref.read(currentUserIDProvider)!;
       axis = await ref
           .read(groupCategoryAxisAddProvider(groupID: groupID))
-          .call(groupID: groupID, userID: ref.read(currentUserIDProvider)!, name: 'デフォルト', order: 0);
+          .call(
+              groupID: groupID, userID: currentUserID, name: 'デフォルト', order: 0);
     } else {
       axis = existingAxes.first;
     }
@@ -757,8 +758,8 @@ class _CategoryListContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesAsync = ref.watch(groupCategoriesProvider(
-        groupID: groupID, categoryAxisID: axis.id));
+    final categoriesAsync = ref.watch(
+        groupCategoriesProvider(groupID: groupID, categoryAxisID: axis.id));
 
     return categoriesAsync.when(
       data: (categories) {
@@ -817,8 +818,7 @@ class _CategoryListContent extends ConsumerWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                GroupCategoryEditPage(
+                            builder: (context) => GroupCategoryEditPage(
                               groupID: groupID,
                               categoryAxisID: axis.id,
                               categoryID: category.id,
@@ -890,8 +890,7 @@ class _CategoryListContent extends ConsumerWidget {
               Navigator.pop(dialogContext);
               try {
                 await ref
-                    .read(groupCategoryDeleteProvider(
-                        groupID: groupID))
+                    .read(groupCategoryDeleteProvider(groupID: groupID))
                     .call(
                       categoryAxisID: axis.id,
                       categoryID: category.id,
