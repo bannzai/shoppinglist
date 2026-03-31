@@ -1,0 +1,30 @@
+appId: com.bannzai.shoppinglist
+---
+# アプリをstateを保持したまま再起動（clearState: false）
+- launchApp:
+    clearState: false
+    clearKeychain: false
+- waitForAnimationToEnd
+# ホーム画面が表示されるまで待機（既にログイン済み）
+- extendedWaitUntil:
+    visible: "アイテムを追加"
+    timeout: 30000
+# ホーム画面を確認（リストが2026-03-25の1つだけであること）
+- takeScreenshot: maestro/test-results/auth_page_06_relaunch_home
+# 設定タブへ移動
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+# 下にスクロールして開発者オプションを見つける
+- swipe:
+    start: "50%,80%"
+    end: "50%,20%"
+- swipe:
+    start: "50%,80%"
+    end: "50%,20%"
+# 開発者オプションをタップ
+- tapOn: "開発者オプション"
+- waitForAnimationToEnd
+# 開発者オプションページでUID/defaultGroupIDが同じことを確認
+- takeScreenshot: maestro/test-results/auth_page_06_relaunch_devopt

@@ -3,7 +3,7 @@ appId: com.bannzai.shoppinglist
 - launchApp:
     clearState: true
     clearKeychain: true
-# 通知許可ダイアログが表示される場合がある（clearStateでリセットされるため）
+# clearState後に通知許可ダイアログが出るので先に処理する
 - runFlow:
     when:
       visible: "許可"
