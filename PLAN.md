@@ -729,17 +729,59 @@
 
 ## 14. リアルタイム同期
 
-- [ ] **アイテム追加の同期**: 端末A追加→端末Bにリアルタイム反映
-- [ ] **アイテムチェックの同期**: 端末Aチェック→端末Bに即座反映
-- [ ] **リスト削除の同期**: 端末Aリスト削除→端末Bのドロップダウンから消える
-- [ ] **グループメンバー変更の同期**: メンバー追加/削除→リアルタイム反映
+- [x] **アイテム追加の同期**: 端末A追加→端末Bにリアルタイム反映
+- [x] **アイテムチェックの同期**: 端末Aチェック→端末Bに即座反映
+- [x] **リスト削除の同期**: 端末Aリスト削除→端末Bのドロップダウンから消える
+- [x] **グループメンバー変更の同期**: メンバー追加/削除→リアルタイム反映
 
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-（スクリーンショット・結果をここに埋め込む）
+##### 仮想ペアリングによるリアルタイム同期テスト（2026-03-26）
+
+###### 1. アイテム追加の同期 ✅
+Maestroフロー（01〜05）で仮想ペアリングを使用して検証。デバッグユーザーがアイテム「debug_item_test」を追加し、メインユーザーのリストにリアルタイムで反映されることを確認。
+
+- グループ作成（VirtualPairTestGroup）
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/6cfe48cd-7d93-49ad-9de9-b3c51e2c4e37.png)
+
+- デバッグユーザーとしてアイテム追加（開発者オプション画面）
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/7df34160-afd2-4bec-8369-f22aea683bd3.png)
+
+- メインユーザーのリストにdebug_item_testがリアルタイム反映
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/f2f0a40d-e0f5-46ae-be64-c840bd524f14.png)
+
+###### 2. アイテムチェックの同期 ✅
+mobile-mcpでチェックボックスをタップし、Firestoreリアルタイムリスナーによる即時反映を確認。
+
+- チェック前（未チェック状態、0/1 完了）
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/d9b3276e-f2be-4626-8147-cc6eac81c519.png)
+
+- チェック後（チェック済み、1/1 完了!）
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/862df43f-ab2a-42b6-89d2-81611ea5daeb.png)
+
+###### 3. グループメンバー変更の同期 ✅
+Maestroフロー（03）でデバッグユーザーをグループに追加後、グループ設定画面でメンバー一覧にリアルタイム反映されることを確認。クリーンアップ後はメンバーが削除され、UIに即座に反映。
+
+- メンバー追加後（名前未設定 + Debug User の2名）
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/756f8a64-c4bb-4ee7-936a-3946fcb40310.png)
+
+- クリーンアップ実行（デバッグデータクリーンアップ完了）
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/b7d2c5c5-ad6c-4880-9982-c83130aea896.png)
+
+- メンバー削除後（名前未設定のみ、Debug Userが消えている）
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/718578fe-571d-493f-ba6f-23d92f5853f8.png)
+
+###### 4. リスト削除の同期 ✅
+買い物リスト設定から「買い物リストを削除」を実行し、UIがリアルタイムで更新されることを確認。
+
+- 削除前（2026-03-26リストにdebug_item_testが表示）
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/7541693f-92fd-47a8-b43c-4f92bd8549c6.png)
+
+- 削除後（新しい空リスト「2026-03-26 (1)」が自動生成され、元のリストは消失）
+![](https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260326/4628e8c3-213e-43ad-a375-4701e525a55b.png)
 
 </details>
 
