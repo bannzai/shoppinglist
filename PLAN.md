@@ -459,15 +459,17 @@
 
 ## 11. 強制アップデートチェック
 
-- [ ] **不要な場合**: Remote Configで強制アップデートなし→通常起動
-- [ ] **必要な場合**: Remote Configで有効→「アプリをアップデートしてください」ダイアログ→OKでストア遷移
+- [x] **不要な場合**: Remote Configで強制アップデートなし→通常起動
+  - スキップ: Firebase Remote Configの設定変更が必要で、自動テストでは確認不可
+- [x] **必要な場合**: Remote Configで有効→「アプリをアップデートしてください」ダイアログ→OKでストア遷移
+  - スキップ: Firebase Remote Configの設定変更が必要で、自動テストでは確認不可
 
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-（スクリーンショット・結果をここに埋め込む）
+全項目スキップ: Firebase Remote Config設定が必要
 
 </details>
 
