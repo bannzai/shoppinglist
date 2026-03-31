@@ -667,37 +667,48 @@
 ## 17. 実装漏れチェック
 
 ### 未使用スタブ画面
-- [ ] **CheckListPageがスタブ**: ユーザーがアクセスできない状態であること（ナビゲーションパスなし）
-- [ ] **ECItemsPageが全コメントアウト**: HomePageTabTypeからecItemsが除外されていること
+- [x] **CheckListPageがスタブ**: ユーザーがアクセスできない状態であること（ナビゲーションパスなし）
+  - `lib/features/checlist/page.dart`: スタブ実装（テキスト表示のみ）、他ファイルからの参照なし
+  - `lib/features/home/page.dart`: TabBarViewにはShoppingListPageとSettingPageのみ → アクセス不可
+- [x] **ECItemsPageが全コメントアウト**: HomePageTabTypeからecItemsが除外されていること
+  - `lib/features/ec_items/page.dart`: 全行コメントアウト
+  - `lib/features/home/page.dart:12-16`: `HomePageTabType`でecItemsはコメントアウト、NavigationDestinationsは2つのみ
 
 ### PROJECT.md記載機能の実装確認
-- [ ] リスト作成 → 実装済み
-- [ ] アイテム追加（テキスト） → 実装済み
-- [ ] チェック → 実装済み
-- [ ] 並べ替え（ドラッグ&ドロップ） → 実装済み
-- [ ] 複製 → 実装済み
-- [ ] 補足説明 → 実装済み
-- [ ] 色分け → 実装済み
-- [ ] ソログループ → 実装済み
-- [ ] グループ作成 → 実装済み
-- [ ] 招待（コード方式） → 実装済み
-- [ ] メンバー管理 → 実装済み
-- [ ] デフォルトグループ → 実装済み
-- [ ] 買い物する場所 → 実装済み
-- [ ] 商品カテゴリ → 実装済み
-- [ ] カテゴリソート → 実装済み
-- [ ] プッシュ通知 → **要実装**
+- [x] リスト作成 → 実装済み（`ShoppingListAdd` in `lib/provider/shopping_list.dart`）
+- [x] アイテム追加（テキスト） → 実装済み（`AddShoppingListItem` in `lib/provider/shopping_list_item.dart`）
+- [x] チェック → 実装済み（`ToggleShoppingListItemCheck` in `lib/provider/shopping_list_item.dart`）
+- [x] 並べ替え（ドラッグ&ドロップ） → 実装済み（`ReorderableList` in `lib/features/shopping_list/components/shopping_list_items/shopping_list_items.dart`）
+- [x] 複製 → 実装済み（`ShoppingListDuplicate` in `lib/provider/shopping_list.dart`）
+- [x] 補足説明 → 実装済み（メモセクション in `text_shopping_list_item_detail_bottom_sheet.dart`）
+- [x] 色分け → 実装済み（カラー選択 in `text_shopping_list_item_detail_bottom_sheet.dart`）
+- [x] ソログループ → 実装済み（`AppEntityPrepareResolver` in `lib/features/resolver/app_entntiy_prepare.dart:47-53` でdefaultGroupID未設定時に自動作成）
+- [x] グループ作成 → 実装済み（`GroupCreatePage` in `lib/features/group_create/page.dart`）
+- [x] 招待（コード方式） → 実装済み（`CreateGroupInvitation` in `lib/provider/group_invitation.dart` + Firebase Function）
+- [x] メンバー管理 → 実装済み（`lib/features/group_setting/page.dart` + `removeGroupMember` Function）
+- [x] デフォルトグループ → 実装済み（`DefaultGroupUpdate` in `lib/provider/default_group_update.dart`）
+- [x] 買い物する場所 → 実装済み（`lib/features/shopping_location/page.dart`）
+- [x] 商品カテゴリ → 実装済み（`lib/features/group_category/page.dart`）
+- [x] カテゴリソート → 実装済み（ドラッグ&ドロップ in `GroupCategoryPage`）
+- [x] プッシュ通知 → 実装済み
+  - Firebase Function: `sendShoppingListUpdateNotification` in `firebase/functions/src/functions/sendShoppingListUpdateNotification/function.ts`
+  - クライアント: `NotificationMemberBar`（手動）+ `AppLifecycleListener`（自動）
+  - FCMトークン管理: `FcmTokenRegistration` in `lib/provider/fcm_token.dart`
+  - 受信ハンドリング: `FcmNotificationHandler` in `lib/provider/fcm_notification.dart`
+  - 自動通知設定: `AutoNotifyShoppingListUpdate` in `lib/provider/notification_setting.dart`
 
 ### 潜在的リスク（確認事項）
-- [ ] **groupのdeleteルール未定義**: セキュリティルールでgroup削除が許可されていない → グループ削除機能がスコープ外であることの確認
-- [ ] **userCategoryAxes/categoriesのuserIDベースルール**: 各ユーザーが独自のカテゴリ軸を持つ設計であることの確認（グループ共有ではない）
+- [x] **groupのdeleteルール未定義**: セキュリティルールでgroup削除が許可されていない → グループ削除機能がスコープ外であることの確認
+  - `firebase/firestore.rules:37-39`: groupsコレクションはread/update/createのみ、deleteルールなし → OK
+- [x] **userCategoryAxes/categoriesのuserIDベースルール**: 各ユーザーが独自のカテゴリ軸を持つ設計であることの確認（グループ共有ではない）
+  - `firebase/firestore.rules:64-73`: create/update/deleteは`request.resource.data.userID == request.auth.uid`（create）/ `resource.data.userID == request.auth.uid`（update/delete）で制御 → OK
 
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-（スクリーンショット・結果をここに埋め込む）
+コード確認（grep、ファイル読み取り）による静的検証で全20項目を確認。UIテスト不要。
 
 </details>
 
