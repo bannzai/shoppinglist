@@ -85,8 +85,8 @@ if [[ ! -f "$COMMON_RULES_FILE" ]]; then
     exit 1
 fi
 
-# {{BASE_BRANCH}} を実際のブランチ名で置換
-COMMON_RULES=$(sed "s/{{BASE_BRANCH}}/${BASE_BRANCH}/g" "$COMMON_RULES_FILE")
+# {{BASE_BRANCH}} を実際のブランチ名で置換（ブランチ名に / を含む場合に備え区切り文字に | を使用）
+COMMON_RULES=$(sed "s|{{BASE_BRANCH}}|${BASE_BRANCH}|g" "$COMMON_RULES_FILE")
 
 # --- セクションプロンプトテンプレート読み込み ---
 TEMPLATE_FILE="${REFERENCES_DIR}/section_prompt_template.md"
