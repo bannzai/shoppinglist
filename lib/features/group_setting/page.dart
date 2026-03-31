@@ -3,15 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item_category_axis.dart';
+import 'package:shoppinglist/entity/group_category.dart';
+import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
-import 'package:shoppinglist/features/group_shopping_list_item_category/category_edit_page.dart';
+import 'package:shoppinglist/features/group_category/category_edit_page.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
-import 'package:shoppinglist/provider/group_shopping_list_item_category.dart';
+import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/category_presets.dart';
@@ -614,11 +614,12 @@ void _showAddCategoryDialog({
                 parameters: {'groupID': groupID});
             Navigator.pop(dialogContext);
             try {
+              final currentUserID = ref.read(currentUserIDProvider)!;
               final category = await ref
-                  .read(groupShoppingListItemCategoryAddProvider(
-                      groupID: groupID))
+                  .read(groupCategoryAddProvider(groupID: groupID))
                   .call(
                     groupID: groupID,
+                    userID: currentUserID,
                     categoryAxisID: categoryAxisID,
                     name: name,
                     order: currentCategoryCount,
@@ -627,7 +628,7 @@ void _showAddCategoryDialog({
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => GroupShoppingListItemCategoryEditPage(
+                    builder: (context) => GroupCategoryEditPage(
                       groupID: groupID,
                       categoryAxisID: categoryAxisID,
                       categoryID: category.id,
@@ -667,8 +668,7 @@ class _CategoriesSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final axesAsync =
-        ref.watch(groupShoppingListItemCategoryAxesProvider(groupID: groupID));
+    final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
@@ -722,13 +722,15 @@ class _CategoriesSection extends ConsumerWidget {
   void _addCategoryWithAutoAxis({
     required BuildContext context,
     required WidgetRef ref,
-    required List<GroupShoppingListItemCategoryAxis> existingAxes,
+    required List<GroupCategoryAxis> existingAxes,
   }) async {
-    GroupShoppingListItemCategoryAxis axis;
+    GroupCategoryAxis axis;
     if (existingAxes.isEmpty) {
+      final currentUserID = ref.read(currentUserIDProvider)!;
       axis = await ref
-          .read(groupShoppingListItemCategoryAxisAddProvider(groupID: groupID))
-          .call(groupID: groupID, name: 'デフォルト', order: 0);
+          .read(groupCategoryAxisAddProvider(groupID: groupID))
+          .call(
+              groupID: groupID, userID: currentUserID, name: 'デフォルト', order: 0);
     } else {
       axis = existingAxes.first;
     }
@@ -747,7 +749,7 @@ class _CategoriesSection extends ConsumerWidget {
 
 class _CategoryListContent extends ConsumerWidget {
   final String groupID;
-  final GroupShoppingListItemCategoryAxis axis;
+  final GroupCategoryAxis axis;
 
   const _CategoryListContent({
     required this.groupID,
@@ -756,8 +758,8 @@ class _CategoryListContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesAsync = ref.watch(groupShoppingListItemCategoriesProvider(
-        groupID: groupID, categoryAxisID: axis.id));
+    final categoriesAsync = ref.watch(
+        groupCategoriesProvider(groupID: groupID, categoryAxisID: axis.id));
 
     return categoriesAsync.when(
       data: (categories) {
@@ -816,8 +818,7 @@ class _CategoryListContent extends ConsumerWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                GroupShoppingListItemCategoryEditPage(
+                            builder: (context) => GroupCategoryEditPage(
                               groupID: groupID,
                               categoryAxisID: axis.id,
                               categoryID: category.id,
@@ -873,7 +874,7 @@ class _CategoryListContent extends ConsumerWidget {
   void _showDeleteDialog({
     required BuildContext context,
     required WidgetRef ref,
-    required GroupShoppingListItemCategory category,
+    required GroupCategory category,
   }) {
     showDialog(
       context: context,
@@ -889,8 +890,7 @@ class _CategoryListContent extends ConsumerWidget {
               Navigator.pop(dialogContext);
               try {
                 await ref
-                    .read(groupShoppingListItemCategoryDeleteProvider(
-                        groupID: groupID))
+                    .read(groupCategoryDeleteProvider(groupID: groupID))
                     .call(
                       categoryAxisID: axis.id,
                       categoryID: category.id,
