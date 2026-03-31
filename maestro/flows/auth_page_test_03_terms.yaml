@@ -1,0 +1,22 @@
+appId: com.bannzai.shoppinglist
+---
+- launchApp:
+    clearState: true
+    clearKeychain: true
+# 通知許可ダイアログが表示される場合は許可する
+- runFlow:
+    when:
+      visible: "許可"
+    commands:
+      - tapOn: "許可"
+      - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "匿名サインイン（デバッグ用）"
+    timeout: 30000
+# 利用規約リンクをタップ
+- tapOn: "利用規約"
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    notVisible: "匿名サインイン（デバッグ用）"
+    timeout: 10000
+- takeScreenshot: maestro/test-results/auth_page_03_terms

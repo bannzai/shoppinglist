@@ -26,7 +26,10 @@ appId: com.bannzai.shoppinglist
 - waitForAnimationToEnd
 - assertVisible: "グループ設定"
 
-# カテゴリ追加（グループ設定画面の「+カテゴリを追加」をタップ）
+# カテゴリセクションがグループ設定画面内に表示されている
+- takeScreenshot: screenshots/category_crud_01_empty
+
+# カテゴリを追加（グループ設定画面内の「+ カテゴリを追加」をタップ）
 - tapOn: "カテゴリを追加"
 - assertVisible: "カテゴリを追加"
 - tapOn: "カテゴリ名（例: 野菜）"
@@ -49,18 +52,12 @@ appId: com.bannzai.shoppinglist
 - waitForAnimationToEnd
 - takeScreenshot: screenshots/category_crud_03_keyword_added
 
-# カテゴリ一覧に戻る（AppBar戻るボタン）
-- tapOn:
-    point: "5%,10%"
-- waitForAnimationToEnd
-- assertVisible: "カテゴリ"
-- takeScreenshot: screenshots/category_crud_04_category_list
-
 # グループ設定に戻る（AppBar戻るボタン）
 - tapOn:
     point: "5%,10%"
 - waitForAnimationToEnd
 - assertVisible: "グループ設定"
+- takeScreenshot: screenshots/category_crud_04_category_list
 
 # リスト設定BottomSheetに戻る（AppBar戻るボタン）
 - tapOn:

@@ -1,17 +1,16 @@
 appId: com.bannzai.shoppinglist
 ---
-# ロケーション別カテゴリのE2Eテスト
+# ロケーション別カテゴリ並べ替えのE2Eテスト
 # 1. 買い物場所を作成
 # 2. カテゴリを3つ作成（キーワード付き）
 # 3. 買い物リストにロケーション設定
 # 4. アイテム追加＆カテゴリ表示順を確認
-# NOTE: GroupCategoryPageへのナビゲーションが未実装のため、ロケーション別並べ替えテストはスキップ
+# NOTE: longPressAndDragはMaestro未サポートのため並べ替え操作はスキップ
 
 - runFlow: shared/anonymous_sign_in.yaml
 
-# --- 買い物場所の作成 ---
+# --- リスト設定→グループ設定を開く ---
 
-# リスト設定を開く
 - tapOn: "リスト設定"
 - assertVisible: "買い物リスト設定"
 # TextFieldのフォーカスを外す
@@ -19,12 +18,12 @@ appId: com.bannzai.shoppinglist
     point: "50%,12%"
 - waitForAnimationToEnd
 
-# グループ設定へ
 - tapOn: "グループ設定"
 - waitForAnimationToEnd
 - assertVisible: "グループ設定"
 
-# 場所を追加（グループ設定画面のインラインボタン）
+# --- 買い物場所の作成（グループ設定画面内のインライン追加） ---
+
 - tapOn: "場所を追加"
 - assertVisible: "場所を追加"
 - tapOn: "場所の名前（例: スーパー）"
@@ -36,7 +35,7 @@ appId: com.bannzai.shoppinglist
 - assertVisible: "近所のスーパー"
 - takeScreenshot: screenshots/category_location_01_location_created
 
-# --- カテゴリを3つ作成（グループ設定画面から） ---
+# --- カテゴリを3つ作成（グループ設定画面内のインライン追加） ---
 
 # カテゴリ1: 野菜
 - tapOn: "カテゴリを追加"
@@ -47,7 +46,7 @@ appId: com.bannzai.shoppinglist
     text: "追加"
     index: 0
 - waitForAnimationToEnd
-- assertVisible: "カテゴリ名"
+- assertVisible: "カテゴリ編集"
 
 # キーワード追加: にんじん
 - tapOn: "キーワードを追加"
@@ -76,7 +75,7 @@ appId: com.bannzai.shoppinglist
     text: "追加"
     index: 0
 - waitForAnimationToEnd
-- assertVisible: "カテゴリ名"
+- assertVisible: "カテゴリ編集"
 
 # キーワード追加: 鶏肉
 - tapOn: "キーワードを追加"
@@ -105,7 +104,7 @@ appId: com.bannzai.shoppinglist
     text: "追加"
     index: 0
 - waitForAnimationToEnd
-- assertVisible: "カテゴリ名"
+- assertVisible: "カテゴリ編集"
 
 # キーワード追加: サーモン
 - tapOn: "キーワードを追加"
@@ -122,16 +121,13 @@ appId: com.bannzai.shoppinglist
 - waitForAnimationToEnd
 - assertVisible: "グループ設定"
 
-# 3つのカテゴリが作成されたことを確認
-# Maestroのアクセシビリティツリー更新のため画面タップ
-- tapOn:
-    point: "50%,50%"
-- waitForAnimationToEnd
+# 3つのカテゴリが作成されたことをスクリーンショットで確認
+# NOTE: カテゴリ名はFlutterアクセシビリティツリーに公開されないためassertVisibleは使用しない
 - takeScreenshot: screenshots/category_location_02_categories_created
 
-# --- 買い物リストにロケーション設定＆アイテム追加 ---
+# NOTE: ロケーション別並べ替え（ドラッグ操作）はMaestroのlongPressAndDrag未サポートのためスキップ
 
-# リスト設定に戻る
+# --- リスト設定に戻る ---
 - tapOn:
     point: "5%,10%"
 - waitForAnimationToEnd
