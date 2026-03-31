@@ -243,8 +243,7 @@ class _Body extends HookConsumerWidget {
 
       final listener = AppLifecycleListener(
         onStateChange: (state) {
-          if (state == AppLifecycleState.paused &&
-              itemChangeCount.value > 0) {
+          if (state == AppLifecycleState.paused && itemChangeCount.value > 0) {
             final otherMemberIDs = memberProfiles
                 .where((p) => p.userID != currentUserID)
                 .map((p) => p.userID)
