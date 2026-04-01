@@ -10,3 +10,12 @@ Stream<AppUser> appUser(Ref ref) {
   final database = ref.watch(userDatabaseProvider);
   return database.userReference().snapshots().map((event) => event.data()!);
 }
+
+/// AppUserドキュメントが存在しない場合は null を返す。
+/// AppUserCreateResolver で使用する。ドキュメント作成前のストリーム発火時に
+/// エラーにならず null として扱える。
+@Riverpod(dependencies: [userDatabase])
+Stream<AppUser?> optionalAppUser(Ref ref) {
+  final database = ref.watch(userDatabaseProvider);
+  return database.userReference().snapshots().map((event) => event.data());
+}

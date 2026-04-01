@@ -11,6 +11,7 @@ import 'package:shoppinglist/entity/app_user_private.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 
+
 class AppUserCreate {
   final UserDatabase userDatabase;
 
@@ -45,6 +46,10 @@ class AppUserCreate {
   }
 }
 
+/// AppUserドキュメントの作成を担当するResolver。
+/// appUserProvider（data()!）はここでは使用しない。初回ログイン時にドキュメントが
+/// まだ存在しない状態でストリームが発火すると Null check エラーになるため、
+/// optionalAppUserProvider（data()、nullable）を使用する。
 class AppUserCreateResolver extends HookConsumerWidget {
   final User firebaseUser;
   final Widget Function(BuildContext) builder;
@@ -57,7 +62,7 @@ class AppUserCreateResolver extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appUser = ref.watch(appUserProvider);
+    final optionalAppUser = ref.watch(optionalAppUserProvider);
     final appUserCreate =
         AppUserCreate(userDatabase: ref.watch(userDatabaseProvider));
 
@@ -68,18 +73,15 @@ class AppUserCreateResolver extends HookConsumerWidget {
       return null;
     }, []);
 
-    return Retry(
-      retry: () => ref.invalidate(appUserProvider),
-      child: () {
-        return appUser.when(
-          data: (appUser) => builder(context),
-          error: (e, st) => RetryPage(
-            exception: e,
-            stackTrace: st,
-          ),
-          loading: () => const Loading(),
-        );
-      }(),
+    return optionalAppUser.when(
+      data: (appUser) {
+        if (appUser == null) {
+          return const Loading();
+        }
+        return builder(context);
+      },
+      error: (e, st) => RetryPage(exception: e, stackTrace: st),
+      loading: () => const Loading(),
     );
   }
 }
