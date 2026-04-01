@@ -72,7 +72,7 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
     }, [shoppingLists]);
 
     if (appUser == null) {
-      throw StateError('AppUser is not available');
+      return const Loading();
     }
 
     if (appUserDefaultGroupID == null) {
