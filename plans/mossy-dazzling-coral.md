@@ -113,7 +113,7 @@ GitHub Issue の仕様を読み取り、実装→検証→PR作成までを実�
 
 ## Phase 3: プラン作成
 
-1. ブランチ `feature/premium-issue-{$ARGUMENTS}` を `main` から作成
+1. ブランチ `feature/premium-issue-{$ARGUMENTS}` をベースブランチ（`implement_issues.json` の `base_branch`）から作成
 2. `plans/` にプランファイル作成
 3. プランには以下を含める:
    - 変更対象ファイル一覧
@@ -132,6 +132,7 @@ GitHub Issue の仕様を読み取り、実装→検証→PR作成までを実�
    - `flutter analyze`
    - `flutter test`
    - `flutter build ios`
+   - `flutter build apk`
    - `maestro test maestro/flows/`
    - Firebase変更がある場合: `firebase/functions/functions/` で `npm run lint`, `npm run build`, `npm test`
 4. エラーがあれば修正して再検証
@@ -172,7 +173,7 @@ GitHub Issue の仕様を読み取り、実装→検証→PR作成までを実�
 
 1. 変更を論理単位で git commit する（git add と git commit は別コマンドで実行）
 2. `git push -u origin feature/premium-issue-{$ARGUMENTS}`
-3. `gh pr create --base main --title "{Issue タイトル}" --body "..."` で PR 作成
+3. `gh pr create --base {ベースブランチ} --title "{Issue タイトル}" --body "..."` で PR 作成
    - body に `Closes #{$ARGUMENTS}` を含める
    - body に実装内容の説明を記載
 ```
@@ -215,7 +216,8 @@ Flutter 変更がある場合:
 2. `flutter analyze`
 3. `flutter test`
 4. `flutter build ios`
-5. `maestro test maestro/flows/`
+5. `flutter build apk`
+6. `maestro test maestro/flows/`
 
 Firebase 変更がある場合（`firebase/functions/functions/` で実行）:
 1. `npm run lint`
@@ -261,6 +263,7 @@ GitHub Issue #{{ISSUE_NUMBER}} の仕様を実装してください。
     - flutter analyze
     - flutter test
     - flutter build ios
+    - flutter build apk
     - maestro test maestro/flows/
     - (Firebase変更がある場合) firebase/functions/functions/ で npm run lint, npm run build, npm test
 11. 検証エラーがあれば修正
@@ -280,9 +283,11 @@ GitHub Issue #{{ISSUE_NUMBER}} の仕様を実装してください。
 
 スクリプトにIssue情報をハードコードせず、JSON設定ファイルから読み込む。
 
+`base_branch` は `run_implement_issues.sh` の初回実行時に `implement-issue-{YYYYMMDD_HHMMSS}` 形式で `main` から自動作成され、JSONに書き戻される。全featureブランチはこのベースブランチから分岐し、PRもここにマージする。最終的にベースブランチを `main` にマージする。
+
 ```json
 {
-  "base_branch": "main",
+  "base_branch": "",
   "issues": [
     { "number": 76,  "priority": "P0", "slug": "theme_color",       "title": "テーマカラー変更" },
     { "number": 151, "priority": "P1", "slug": "ai_image_limit",    "title": "AI画像認識の回数制限" },
@@ -335,11 +340,16 @@ fi
 BASE_BRANCH=$(jq -r '.base_branch' "$CONFIG_FILE")
 ISSUE_COUNT=$(jq '.issues | length' "$CONFIG_FILE")
 
+if [ -z "$BASE_BRANCH" ] || [ "$BASE_BRANCH" = "null" ]; then
+  echo "エラー: base_branch が未設定です。先に run_implement_issues.sh を実行してベースブランチを作成してください" >&2
+  exit 1
+fi
+
 mkdir -p "$OUTPUT_DIR"
 
 TEMPLATE=$(cat "${SKILL_DIR}/references/prompt_template.md")
-COMMON_RULES=$(cat "${SKILL_DIR}/references/common_rules.md")
-COMMON_RULES="${COMMON_RULES//\{\{BASE_BRANCH\}\}/$BASE_BRANCH}"
+COMMON_RULES_TEMPLATE=$(cat "${SKILL_DIR}/references/common_rules.md")
+COMMON_RULES_TEMPLATE="${COMMON_RULES_TEMPLATE//\{\{BASE_BRANCH\}\}/$BASE_BRANCH}"
 
 for i in $(seq 0 $((ISSUE_COUNT - 1))); do
   num=$(jq -r ".issues[$i].number" "$CONFIG_FILE")
@@ -347,12 +357,15 @@ for i in $(seq 0 $((ISSUE_COUNT - 1))); do
   slug=$(jq -r ".issues[$i].slug" "$CONFIG_FILE")
   title=$(jq -r ".issues[$i].title" "$CONFIG_FILE")
 
+  # COMMON_RULES内の{{ISSUE_NUMBER}}もIssueごとに置換する
+  common_rules="${COMMON_RULES_TEMPLATE//\{\{ISSUE_NUMBER\}\}/$num}"
+
   prompt="$TEMPLATE"
   prompt="${prompt//\{\{ISSUE_NUMBER\}\}/$num}"
   prompt="${prompt//\{\{ISSUE_TITLE\}\}/$title}"
   prompt="${prompt//\{\{PRIORITY\}\}/$priority}"
   prompt="${prompt//\{\{BASE_BRANCH\}\}/$BASE_BRANCH}"
-  prompt="${prompt//\{\{COMMON_RULES\}\}/$COMMON_RULES}"
+  prompt="${prompt//\{\{COMMON_RULES\}\}/$common_rules}"
 
   output_file="${OUTPUT_DIR}/issue_${num}_${slug}.txt"
   echo "$prompt" > "$output_file"
@@ -397,13 +410,33 @@ if [ -z "$CONFIG_FILE" ] || [ ! -f "$CONFIG_FILE" ]; then
   exit 1
 fi
 
-BASE_BRANCH=$(jq -r '.base_branch' "$CONFIG_FILE")
 ISSUE_COUNT=$(jq '.issues | length' "$CONFIG_FILE")
 
 mkdir -p "$LOG_DIR"
 
 if [ ! -f "$STATUS_FILE" ]; then
   echo '{}' > "$STATUS_FILE"
+fi
+
+# ベースブランチの作成または復元
+BASE_BRANCH=$(jq -r '.base_branch' "$CONFIG_FILE")
+if [ -z "$BASE_BRANCH" ] || [ "$BASE_BRANCH" = "null" ]; then
+  BASE_BRANCH="implement-issue-$(date +"%Y%m%d_%H%M%S")"
+  echo "ベースブランチを作成: $BASE_BRANCH"
+  git checkout main
+  git pull origin main
+  git checkout -b "$BASE_BRANCH"
+  git push -u origin "$BASE_BRANCH"
+
+  # JSONに書き戻し
+  tmp_json=$(mktemp)
+  jq --arg b "$BASE_BRANCH" '.base_branch = $b' "$CONFIG_FILE" > "$tmp_json"
+  mv "$tmp_json" "$CONFIG_FILE"
+  echo "implement_issues.json を更新: base_branch=$BASE_BRANCH"
+else
+  echo "既存ベースブランチを使用: $BASE_BRANCH"
+  git checkout "$BASE_BRANCH"
+  git pull origin "$BASE_BRANCH"
 fi
 
 get_status() {
@@ -463,9 +496,11 @@ run_issue() {
 
   git checkout "$BASE_BRANCH"
 
+  local stashed=false
   if [ -n "$(git status --porcelain)" ]; then
     echo "Warning: dirty working tree. Stashing..."
     git stash
+    stashed=true
   fi
 
   update_status "$num" "in_progress"
@@ -484,14 +519,31 @@ run_issue() {
     pr_url=$(gh pr list --repo bannzai/shoppinglist --head "feature/premium-issue-${num}" --json url --jq '.[0].url' 2>/dev/null || echo "")
     update_status "$num" "completed" "$pr_url"
     echo "Issue #${num}: 完了 ${pr_url}"
+
+    # PRをベースブランチにマージ（次のIssueが前のIssueのコードを参照できるようにする）
+    echo "Issue #${num}: ベースブランチにマージ中..."
+    git checkout "$BASE_BRANCH"
+    git merge "feature/premium-issue-${num}" --no-edit
+    git push origin "$BASE_BRANCH"
+    echo "Issue #${num}: ベースブランチへのマージ完了"
   else
     update_status "$num" "failed"
     echo "Issue #${num}: 失敗（ログ: ${log_file}）"
+    git checkout "$BASE_BRANCH" 2>/dev/null || true
   fi
 
-  git checkout "$BASE_BRANCH" 2>/dev/null || true
+  if [ "$stashed" = true ]; then
+    echo "Restoring stashed changes..."
+    git stash pop || echo "Warning: git stash pop failed"
+  fi
+
   echo ""
 }
+
+# プロンプト生成（base_branchが確定した状態で実行）
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+echo "プロンプトを生成中..."
+bash "${SCRIPT_DIR}/generate_issue_prompts.sh" --config "$CONFIG_FILE" --output "$PROMPT_DIR"
 
 # メインループ: JSONからIssueを読み込み
 for i in $(seq 0 $((ISSUE_COUNT - 1))); do
@@ -513,17 +565,20 @@ echo "=========================================="
 ## 実行フロー
 
 ```bash
-# Step 1: プロンプト生成（JSONから）
-bash .claude/skills/implement-issue/scripts/generate_issue_prompts.sh --config ./implement_issues.json
-
-# Step 2: 全Issue実装（JSONの順序で順次実行）
+# Step 1: ベースブランチ作成 & 全Issue実装（初回実行時にブランチ自動作成 → JSONに書き戻し）
 bash .claude/skills/implement-issue/scripts/run_implement_issues.sh --config ./implement_issues.json
+
+# Step 1.5: プロンプトのみ生成したい場合（base_branch が設定済みであること）
+bash .claude/skills/implement-issue/scripts/generate_issue_prompts.sh --config ./implement_issues.json
 
 # 特定Issueのみ
 bash .claude/skills/implement-issue/scripts/run_implement_issues.sh --config ./implement_issues.json 76 151
 
 # 単独実行（インタラクティブ）
 /implement-issue 76
+
+# 全Issue完了後: ベースブランチ → main へPR作成（手動）
+gh pr create --base main --head implement-issue-{datetime} --title "プレミアム機能一括実装"
 ```
 
 ---
@@ -532,15 +587,19 @@ bash .claude/skills/implement-issue/scripts/run_implement_issues.sh --config ./i
 
 ```
 main
- ├── feature/premium-issue-76   → PR (Closes #76)
- ├── feature/premium-issue-151  → PR (Closes #151)
- ├── feature/premium-issue-152  → PR (Closes #152)
- └── ...
+ └── implement-issue-{datetime}  ← ベースブランチ（mainから作成）
+      ├── feature/premium-issue-76   → PR → マージ → ベースブランチ
+      ├── feature/premium-issue-151  → PR → マージ → ベースブランチ
+      ├── feature/premium-issue-152  → PR → マージ → ベースブランチ
+      └── ...
+      最終的に implement-issue-{datetime} → main へマージ
 ```
 
-- 各IssueはP0→P1→P2→P3の優先度順に実行
-- P0のPR（#76）がマージされてから P1 を実行する想定
+- `run_implement_issues.sh` 初回実行時に `implement-issue-{YYYYMMDD_HHMMSS}` ブランチを `main` から作成
+- 各featureブランチはベースブランチから分岐し、PRもベースブランチに向けて作成
+- Issue完了後、スクリプトが自動でベースブランチにマージ（次のIssueが前のコードを参照可能）
 - `status.json` でレジューム可能（完了済みIssueはスキップ）
+- 全Issue完了後、ユーザーが `implement-issue-{datetime}` → `main` へPRを作成・マージ
 
 ---
 
