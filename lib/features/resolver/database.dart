@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shoppinglist/entity/ai_usage.dart';
 import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/app_user_private.dart';
 import 'package:shoppinglist/entity/group.dart';
@@ -36,6 +37,7 @@ abstract class _CollectionPath {
   static String privates({required String userID}) => '/users/$userID/privates';
   static String userProfiles({required String groupID}) =>
       '/groups/$groupID/userProfiles';
+  static String aiUsage({required String userID}) => '/users/$userID/aiUsage';
 }
 
 @Riverpod(keepAlive: true, dependencies: [firebaseUserChanges])
@@ -70,6 +72,18 @@ class UserDatabase {
           .withConverter(
             fromFirestore: AppUserPrivate.fromFirestore,
             toFirestore: AppUserPrivate.toFirestore,
+          );
+
+  /// 指定月のAI利用回数ドキュメントへの参照。
+  DocumentReference<AIUsage> aiUsageDocumentReference({
+    required String yearMonth,
+  }) =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.aiUsage(userID: userID))
+          .doc(yearMonth)
+          .withConverter(
+            fromFirestore: AIUsage.fromFirestore,
+            toFirestore: AIUsage.toFirestore,
           );
 }
 

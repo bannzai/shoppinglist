@@ -1,0 +1,23 @@
+appId: com.bannzai.shoppinglist
+---
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 前提:
+# - 匿名ログインユーザー（無料ユーザー）
+# - テスト実行前に `/users/{uid}/aiUsage/{yyyy-MM}` の `imageRecognitionCount` を 5 に設定済み（UTC基準）
+# - E2Eでの事前データ投入が困難な場合はスキップ可
+
+# PopupMenuButton をタップしてメニューを開く
+- tapOn:
+    id: "popup_menu_button"
+    optional: true
+- tapOn:
+    text: "画像から追加"
+    optional: true
+
+# 制限メッセージが表示されることを確認
+- assertVisible:
+    text: "AI画像認識の月間利用回数（5回）に達しました"
+    optional: true
+
+- takeScreenshot: screenshots/ai_image_recognition_limit_reached

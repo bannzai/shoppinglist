@@ -13,9 +13,12 @@ import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
+import 'package:shoppinglist/entity/ai_usage.dart';
+import 'package:shoppinglist/provider/ai_usage.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/image/image.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
 class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
@@ -203,6 +206,24 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     analytics.logEvent(
         name: 'tap_open_image_picker',
         parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
+
+    // AI画像認識の回数制限チェック
+    final isPremium =
+        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
+    final remaining = ref.read(
+        remainingImageRecognitionCountProvider(isPremium: isPremium));
+    if (remaining <= 0) {
+      final limit = isPremium
+          ? premiumMonthlyImageRecognitionLimit
+          : freeMonthlyImageRecognitionLimit;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                'AI画像認識の月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyImageRecognitionLimit回まで利用できます'}')),
+      );
+      return;
+    }
+
     final imagePicker = ImagePicker();
 
     showDialog(
