@@ -19,6 +19,8 @@ import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/image/image.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:shoppinglist/features/shopping_list/utils/export_text_formatter.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
 class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
@@ -131,6 +133,9 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 case 'paste':
                   _pasteFromClipboard(context, ref);
                   break;
+                case 'export':
+                  _exportShoppingList(context: context, ref: ref);
+                  break;
               }
             },
             itemBuilder: (context) => const [
@@ -160,6 +165,13 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 child: ListTile(
                   leading: Icon(Icons.content_paste_go),
                   title: Text('テキスト貼り付け'),
+                ),
+              ),
+              PopupMenuItem(
+                value: 'export',
+                child: ListTile(
+                  leading: Icon(Icons.ios_share),
+                  title: Text('リストをエクスポート'),
                 ),
               ),
             ],
@@ -392,6 +404,51 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
               color: null,
             );
       }
+    }
+  }
+
+  /// 買い物リストをテキスト形式でOS標準の共有シートに送信する。
+  Future<void> _exportShoppingList({
+    required BuildContext context,
+    required WidgetRef ref,
+  }) async {
+    // ユーザー操作ごとに共有シート表示と分析送信を行うため、この処理は非冪等。
+    final isPremium =
+        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
+    if (!isPremium) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                'リストのエクスポートはプレミアム機能です。プレミアムにアップグレードすると利用できます')),
+      );
+      return;
+    }
+
+    analytics.logEvent(name: 'tap_export_shopping_list', parameters: {
+      'groupID': groupID,
+      'shoppingListID': shoppingListID,
+    });
+
+    try {
+      final box = context.findRenderObject() as RenderBox?;
+      if (box == null) {
+        throw StateError('共有シートの表示位置を取得できませんでした');
+      }
+
+      await SharePlus.instance.share(
+        ShareParams(
+          text: buildShoppingListExportText(
+            shoppingListName: shoppingList?.name ?? '',
+            shoppingListItems: shoppingListItems,
+          ),
+          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
     }
   }
 
