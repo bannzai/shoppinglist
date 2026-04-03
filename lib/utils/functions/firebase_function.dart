@@ -141,6 +141,26 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     return response['data']['shoppingListID'] as String;
   }
 
+  /// サーバー側で上限チェックを行った上でグループを作成する。
+  Future<void> createGroup({
+    required String createUserID,
+    required String? name,
+    required bool setAsDefault,
+  }) async {
+    final result = await httpsCallable('createGroup').call(
+      {
+        'createUserID': createUserID,
+        'name': name,
+        'setAsDefault': setAsDefault,
+      },
+    );
+    debugPrint('createGroup.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+  }
+
   Future<void> updateGroupName({
     required String groupID,
     required String name,
