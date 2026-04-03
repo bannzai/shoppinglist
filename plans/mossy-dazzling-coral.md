@@ -83,6 +83,10 @@ allowed-tools:
   - Bash(npm run lint:*)
   - Bash(npm run build:*)
   - Bash(npm test:*)
+  - Bash(maestro test:*)
+  - Bash(git stash:*)
+  - Bash(git merge:*)
+  - Bash(git pull:*)
   - Bash(mkdir:*)
   - Bash(ls:*)
   - Read
@@ -113,7 +117,7 @@ GitHub Issue の仕様を読み取り、実装→検証→PR作成までを実�
 
 ## Phase 3: プラン作成
 
-1. ブランチ `feature/premium-issue-{$ARGUMENTS}` をベースブランチ（`implement_issues.json` の `base_branch`）から作成
+1. ブランチ `feature/premium-issue-$ARGUMENTS` をベースブランチ（`implement_issues.json` の `base_branch`）から作成
 2. `plans/` にプランファイル作成
 3. プランには以下を含める:
    - 変更対象ファイル一覧
@@ -139,11 +143,11 @@ GitHub Issue の仕様を読み取り、実装→検証→PR作成までを実�
 
 ## Phase 4.5: 動作確認チェックリスト作成
 
-実装完了後、`tmp/implement-issue/checklists/issue_{$ARGUMENTS}_checklist.md` に動作確認チェックリストを作成する。
+実装完了後、`tmp/implement-issue/checklists/issue_$ARGUMENTS_checklist.md` に動作確認チェックリストを作成する。
 
 フォーマット（PLAN.md準拠）:
 ```markdown
-# Issue #{$ARGUMENTS} 動作確認チェックリスト
+# Issue #$ARGUMENTS 動作確認チェックリスト
 
 ## 前提
 - テスト環境: {環境情報}
@@ -172,9 +176,9 @@ GitHub Issue の仕様を読み取り、実装→検証→PR作成までを実�
 ## Phase 5: Commit & PR
 
 1. 変更を論理単位で git commit する（git add と git commit は別コマンドで実行）
-2. `git push -u origin feature/premium-issue-{$ARGUMENTS}`
+2. `git push -u origin feature/premium-issue-$ARGUMENTS`
 3. `gh pr create --base {ベースブランチ} --title "{Issue タイトル}" --body "..."` で PR 作成
-   - body に `Closes #{$ARGUMENTS}` を含める
+   - body に `Closes #$ARGUMENTS` を含める
    - body に実装内容の説明を記載
 ```
 
@@ -351,7 +355,7 @@ TEMPLATE=$(cat "${SKILL_DIR}/references/prompt_template.md")
 COMMON_RULES_TEMPLATE=$(cat "${SKILL_DIR}/references/common_rules.md")
 COMMON_RULES_TEMPLATE="${COMMON_RULES_TEMPLATE//\{\{BASE_BRANCH\}\}/$BASE_BRANCH}"
 
-for i in $(seq 0 $((ISSUE_COUNT - 1))); do
+for ((i=0; i<ISSUE_COUNT; i++)); do
   num=$(jq -r ".issues[$i].number" "$CONFIG_FILE")
   priority=$(jq -r ".issues[$i].priority" "$CONFIG_FILE")
   slug=$(jq -r ".issues[$i].slug" "$CONFIG_FILE")
@@ -368,7 +372,7 @@ for i in $(seq 0 $((ISSUE_COUNT - 1))); do
   prompt="${prompt//\{\{COMMON_RULES\}\}/$common_rules}"
 
   output_file="${OUTPUT_DIR}/issue_${num}_${slug}.txt"
-  echo "$prompt" > "$output_file"
+  printf '%s\n' "$prompt" > "$output_file"
   echo "Generated: $output_file"
 done
 
@@ -384,7 +388,7 @@ echo "全 ${ISSUE_COUNT} 件のプロンプトを生成しました: $OUTPUT_DIR
 
 ```bash
 #!/usr/bin/env bash
-set -uo pipefail
+set -euo pipefail
 
 # run_implement_issues.sh - Issue一括実装スクリプト
 #
@@ -401,12 +405,13 @@ TARGETS=()
 while [[ $# -gt 0 ]]; do
   case $1 in
     --config) CONFIG_FILE="$2"; shift 2 ;;
+    --prompt-dir) PROMPT_DIR="$2"; shift 2 ;;
     *) TARGETS+=("$1"); shift ;;
   esac
 done
 
 if [ -z "$CONFIG_FILE" ] || [ ! -f "$CONFIG_FILE" ]; then
-  echo "Usage: $0 --config <json_file> [issue_numbers...]" >&2
+  echo "Usage: $0 --config <json_file> [--prompt-dir <dir>] [issue_numbers...]" >&2
   exit 1
 fi
 
@@ -484,8 +489,10 @@ run_issue() {
     return 0
   fi
 
-  if gh pr list --repo bannzai/shoppinglist --head "feature/premium-issue-${num}" --json state --jq '.[0].state' 2>/dev/null | grep -q "OPEN"; then
-    echo "Issue #${num}: PR既存、スキップ"
+  local pr_state
+  pr_state=$(gh pr list --repo bannzai/shoppinglist --head "feature/premium-issue-${num}" --state all --json state --jq '.[0].state' 2>/dev/null || echo "")
+  if [ "$pr_state" = "OPEN" ] || [ "$pr_state" = "MERGED" ]; then
+    echo "Issue #${num}: PR既存 (${pr_state})、スキップ"
     update_status "$num" "completed"
     return 0
   fi
@@ -499,7 +506,7 @@ run_issue() {
   local stashed=false
   if [ -n "$(git status --porcelain)" ]; then
     echo "Warning: dirty working tree. Stashing..."
-    git stash
+    git stash push -u -m "implement-issue: before issue #${num}"
     stashed=true
   fi
 
@@ -509,10 +516,8 @@ run_issue() {
   ts=$(date +"%Y%m%d_%H%M%S")
   local log_file="${LOG_DIR}/issue_${num}_${ts}.log"
 
-  set +e
-  ccnipre -P -f "$prompt_path" 2>&1 | tee "$log_file"
-  local exit_code=$?
-  set -e
+  local exit_code=0
+  ccnipre -P -f "$prompt_path" 2>&1 | tee "$log_file" || exit_code=$?
 
   if [ $exit_code -eq 0 ]; then
     local pr_url
@@ -529,12 +534,13 @@ run_issue() {
   else
     update_status "$num" "failed"
     echo "Issue #${num}: 失敗（ログ: ${log_file}）"
-    git checkout "$BASE_BRANCH" 2>/dev/null || true
   fi
+
+  git checkout "$BASE_BRANCH" 2>/dev/null || true
 
   if [ "$stashed" = true ]; then
     echo "Restoring stashed changes..."
-    git stash pop || echo "Warning: git stash pop failed"
+    git stash pop || echo "Warning: git stash pop failed. Run 'git stash list' to check."
   fi
 
   echo ""
@@ -546,7 +552,7 @@ echo "プロンプトを生成中..."
 bash "${SCRIPT_DIR}/generate_issue_prompts.sh" --config "$CONFIG_FILE" --output "$PROMPT_DIR"
 
 # メインループ: JSONからIssueを読み込み
-for i in $(seq 0 $((ISSUE_COUNT - 1))); do
+for ((i=0; i<ISSUE_COUNT; i++)); do
   num=$(jq -r ".issues[$i].number" "$CONFIG_FILE")
   slug=$(jq -r ".issues[$i].slug" "$CONFIG_FILE")
 
@@ -613,3 +619,14 @@ main
 | ブランチ | `qa/section-{NN}` | `feature/premium-issue-{N}` |
 | レジューム | セクション番号指定 | `status.json` |
 | PR内容 | QAエビデンス | 実装コード |
+
+---
+
+## チェックリスト
+
+### 実装内容
+- [ ] 変更対象ファイルごとに具体的なコード提案をコードブロックで記載している
+- [ ] 既存コードのパターン・構成を確認し、同じパターンで実装している
+
+### 共通
+- [ ] エラーメッセージはそのまま表示（加工・プレフィックス除去なし）
