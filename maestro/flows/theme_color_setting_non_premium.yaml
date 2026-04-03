@@ -1,0 +1,22 @@
+appId: com.bannzai.shoppinglist
+---
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 設定タブに切り替え
+- tapOn:
+    text: "設定.*"
+    index: 0
+- assertVisible: "設定.*"
+- takeScreenshot: screenshots/theme_color_01_settings
+
+# テーマカラー項目が表示されていること
+- assertVisible: "テーマカラー"
+- takeScreenshot: screenshots/theme_color_02_tile_visible
+
+# テーマカラーをタップ（非プレミアムユーザー）
+- tapOn: "テーマカラー"
+- waitForAnimationToEnd
+
+# プレミアム機能の SnackBar が表示されること
+- assertVisible: "テーマカラーの変更はプレミアム機能です"
+- takeScreenshot: screenshots/theme_color_03_non_premium_snackbar
