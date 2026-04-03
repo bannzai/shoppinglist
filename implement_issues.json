@@ -1,0 +1,16 @@
+{
+  "base_branch": "main",
+  "issues": [
+    { "number": 76,  "priority": "P0", "slug": "theme_color",       "title": "テーマカラー変更" },
+    { "number": 151, "priority": "P1", "slug": "ai_image_limit",    "title": "AI画像認識の回数制限" },
+    { "number": 152, "priority": "P1", "slug": "url_shopping_list",  "title": "URLから買い物リスト生成（AI）" },
+    { "number": 153, "priority": "P1", "slug": "display_period",     "title": "買い物リストの表示期間制限解除" },
+    { "number": 155, "priority": "P2", "slug": "list_limit",         "title": "リスト作成数の上限緩和" },
+    { "number": 156, "priority": "P2", "slug": "group_limit",        "title": "グループ作成数の上限緩和" },
+    { "number": 159, "priority": "P2", "slug": "export",             "title": "リストのエクスポート" },
+    { "number": 160, "priority": "P2", "slug": "category_sort",      "title": "買い物場所ごとのカテゴリ並び替え" },
+    { "number": 154, "priority": "P3", "slug": "photo_attachment",    "title": "アイテムへの写真添付" },
+    { "number": 157, "priority": "P3", "slug": "location_reminder",   "title": "位置情報リマインダー" },
+    { "number": 158, "priority": "P3", "slug": "home_widget",         "title": "ホームウィジェット拡張" }
+  ]
+}
