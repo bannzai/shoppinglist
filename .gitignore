@@ -59,3 +59,6 @@ ios/build
 
 # Temporary PR body files
 .pr_body_tmp_*
+
+# implement-issue skill temp files
+tmp/implement-issue/
