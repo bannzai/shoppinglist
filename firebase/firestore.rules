@@ -75,7 +75,14 @@ service cloud.firestore {
         match /categories/{categoryID} {
           allow read: if isGroupMember();
           allow create: if isGroupMember() && request.resource.data.userID == request.auth.uid;
-          allow update, delete: if isGroupMember() && resource.data.userID == request.auth.uid;
+          allow update: if isGroupMember()
+                        && resource.data.userID == request.auth.uid
+                        && (!request.resource.data
+                                .diff(resource.data)
+                                .changedKeys()
+                                .hasAny(['locationOrders'])
+                            || isPremiumFromClaim());
+          allow delete: if isGroupMember() && resource.data.userID == request.auth.uid;
         }
       }
 
