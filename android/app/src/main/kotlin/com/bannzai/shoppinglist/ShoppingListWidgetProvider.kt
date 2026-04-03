@@ -88,11 +88,24 @@ class ShoppingListWidgetProvider : HomeWidgetProvider() {
         appWidgetIds: IntArray,
         widgetData: SharedPreferences
     ) {
+        val defaultThemeColorHex = "#673AB7"
+        val isPremium = widgetData.getBoolean("widget_is_premium", false)
+        val rawThemeColorHex = widgetData.getString("widget_theme_color_hex", defaultThemeColorHex) ?: defaultThemeColorHex
+        val hexPattern = Regex("^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$")
+        val themeColorHex = if (isPremium && hexPattern.matches(rawThemeColorHex.trim())) {
+            rawThemeColorHex.trim().uppercase()
+        } else {
+            defaultThemeColorHex
+        }
+        val themeColor = runCatching { android.graphics.Color.parseColor(themeColorHex) }
+            .getOrDefault(android.graphics.Color.parseColor(defaultThemeColorHex))
+
         appWidgetIds.forEach { widgetId ->
             val views = RemoteViews(context.packageName, R.layout.shopping_list_widget)
 
             val shoppingListName = widgetData.getString("widget_current_shopping_list_name", "買い物リスト") ?: "買い物リスト"
             views.setTextViewText(R.id.widget_title, shoppingListName)
+            views.setTextColor(R.id.widget_title, themeColor)
 
             val groupID = widgetData.getString("widget_current_group_id", "") ?: ""
             val shoppingListID = widgetData.getString("widget_current_shopping_list_id", "") ?: ""
