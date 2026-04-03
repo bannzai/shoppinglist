@@ -29,7 +29,11 @@ import 'package:shoppinglist/provider/user_groups.dart';
 // --- No-Op操作クラス ---
 
 class _NoOpShoppingListAdd extends ShoppingListAdd {
-  _NoOpShoppingListAdd() : super(database: GroupDatabase(groupID: mockGroupID));
+  _NoOpShoppingListAdd()
+      : super(
+          database: GroupDatabase(groupID: mockGroupID),
+          isPremiumResolver: () => false,
+        );
 
   @override
   Future<GroupShoppingList> call({

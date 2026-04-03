@@ -119,6 +119,19 @@ class GroupDatabase {
     return aggregated.count ?? 0;
   }
 
+  /// グループ内のアクティブ状態の買い物リスト数を返す。
+  Future<int> countOfActiveGroupShoppingLists() async {
+    final aggregated = await FirebaseFirestore.instance
+        .collection(_CollectionPath.shoppingLists(groupID: groupID))
+        .where(
+          GroupShoppingListFirestoreKeys.status,
+          isEqualTo: GroupShoppingListStatus.active.name,
+        )
+        .count()
+        .get();
+    return aggregated.count ?? 0;
+  }
+
   DocumentReference<GroupShoppingList> shoppingListReference({
     required String shoppingListID,
   }) =>

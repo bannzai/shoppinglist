@@ -91,10 +91,17 @@ service cloud.firestore {
 
       match /shoppingLists/{shoppingListID} {
         allow read: if isGroupMember() && (isPremiumFromClaim() || isReadableFreeShoppingList());
-        allow write: if isGroupMember();
+        allow create: if isGroupMember()
+                      && request.resource.data.groupID == groupID
+                      && (request.resource.data.createUserID == request.auth.uid
+                          || isDebugUserOf(request.resource.data.createUserID));
+        allow update, delete: if isGroupMember();
 
         match /items/{itemID} {
-          allow read, write: if isGroupMember();
+          allow read, update, delete: if isGroupMember();
+          allow create: if isGroupMember()
+                        && (request.resource.data.userID == request.auth.uid
+                            || isDebugUserOf(request.resource.data.userID));
         }
       }
     }
