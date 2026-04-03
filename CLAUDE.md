@@ -9,6 +9,8 @@
 
 ## Plan時に考慮すること
 - 必ず実装修正内容の動作確認のチェックリストを作ってください。それを確認するテストも後述する検証方法を参考に用意して検証完了までを行ってください
+- プランファイルには必ず具体的な実装コード提案（コードブロック）を含めること。説明のみのプランは不可
+- プランファイル末尾に `.claude/rules/plan-checklist.md` のチェックリストを追記すること
 
 ### Flutter
 iOS,Androidアプリをサポートします。Firebase の設定ファイルは flutterfireの.jsonを定義する方法を使用せずに、iOSではGoogleService-Info.plist,Androidでは、google-service.jsonの配置を行い構成します
