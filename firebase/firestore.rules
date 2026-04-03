@@ -78,8 +78,20 @@ service cloud.firestore {
         }
       }
 
+      // プレミアムユーザーはCustom ClaimsのisPremiumで判定
+      function isPremiumFromClaim() {
+        return request.auth != null && request.auth.token.isPremium == true;
+      }
+
+      // 無料ユーザーはcreatedDateTimeが30日以内のリストのみ読み取り可能
+      function isReadableFreeShoppingList() {
+        return resource.data.createdDateTime is timestamp
+          && resource.data.createdDateTime >= request.time - duration.value(30, 'd');
+      }
+
       match /shoppingLists/{shoppingListID} {
-        allow read, write: if isGroupMember();
+        allow read: if isGroupMember() && (isPremiumFromClaim() || isReadableFreeShoppingList());
+        allow write: if isGroupMember();
 
         match /items/{itemID} {
           allow read, write: if isGroupMember();

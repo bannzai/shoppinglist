@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
@@ -16,6 +15,7 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_items.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_sync.dart';
 import 'package:shoppinglist/provider/app_user.dart';
+import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/notification_setting.dart';
@@ -36,14 +36,18 @@ class ShoppingListPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shoppingLists = ref.watch(shoppingListsProvider(groupID: groupID));
+    final isPremium =
+        ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
+    final shoppingLists = ref.watch(
+        shoppingListsProvider(groupID: groupID, isPremium: isPremium));
     final userGroupsAsync = ref.watch(userGroupsProvider);
     final appUserAsync = ref.watch(appUserProvider);
     final appUser = appUserAsync.asData?.value;
     useValueListenable(currentShoppingListID);
 
     return Retry(
-      retry: () => ref.invalidate(shoppingListsProvider(groupID: groupID)),
+      retry: () => ref.invalidate(
+          shoppingListsProvider(groupID: groupID, isPremium: isPremium)),
       // SafeAreaでGroupSwitcherをステータスバー/ノッチ領域の下に配置する
       child: SafeArea(
         bottom: false,
@@ -168,8 +172,13 @@ class _Body extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shoppingLists =
-        ref.watch(shoppingListsProvider(groupID: groupID)).valueOrNull ?? [];
+    final isPremium =
+        ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
+    final shoppingLists = ref
+            .watch(shoppingListsProvider(
+                groupID: groupID, isPremium: isPremium))
+            .valueOrNull ??
+        [];
     final retry = Retry.of(context).retry;
     final showChecked = useState(true);
     final sortByCategory = useState(true);
@@ -190,7 +199,6 @@ class _Body extends HookConsumerWidget {
     final totalCount = allItems.length;
     final shoppingList =
         shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID);
-    final ttlExpiresDateTime = shoppingList?.ttlExpiresDateTime;
 
     // 手動通知用: メンバープロフィールとアイテム変更検知
     final currentUserID = ref.watch(currentUserIDProvider);
@@ -368,11 +376,11 @@ class _Body extends HookConsumerWidget {
                             sortByCategory: sortByCategory.value,
                             shoppingLocationID:
                                 shoppingList?.shoppingLocationID)),
-                    if (ttlExpiresDateTime != null)
+                    if (!isPremium)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
-                          '${DateFormat('M/d').format(ttlExpiresDateTime)}になるとこのリストは削除されます',
+                          '無料プランでは過去30日以内のリストのみ表示されます',
                           style: TextStyle(
                             color:
                                 Theme.of(context).colorScheme.onSurfaceVariant,

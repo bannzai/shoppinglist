@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/features/group_setting/page.dart';
+import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
@@ -30,7 +30,8 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     final textEditingController =
         useTextEditingController(text: shoppingList.value.name);
     final isCreatingInvitation = useState(false);
-    final ttlExpiresDateTimeValue = shoppingList.value.ttlExpiresDateTime;
+    final isPremium =
+        ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
 
     void autoSave(GroupShoppingList updated) {
       shoppingList.value = updated;
@@ -155,41 +156,22 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
-                      TextButton.icon(
-                        onPressed: () async {
-                          analytics.logEvent(
-                            name: 'tap_set_list_expiration',
-                            parameters: {
-                              'groupID': groupID,
-                              'shoppingListID': shoppingListID,
-                            },
-                          );
-                          final date = await showDatePicker(
-                              context: context,
-                              firstDate: DateTime.now(),
-                              lastDate:
-                                  DateTime.now().add(const Duration(days: 30)));
-                          if (date != null) {
-                            autoSave(shoppingList.value
-                                .copyWith(ttlExpiresDateTime: date));
-                          }
-                        },
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
+                      if (isPremium)
+                        const Row(
+                          children: [
+                            Icon(Icons.all_inclusive, size: 16),
+                            SizedBox(width: 4),
+                            Text('プレミアム: 無制限'),
+                          ],
+                        )
+                      else
+                        const Row(
+                          children: [
+                            Icon(Icons.calendar_month, size: 16),
+                            SizedBox(width: 4),
+                            Text('作成から30日間表示されます'),
+                          ],
                         ),
-                        icon: const Icon(Icons.calendar_month),
-                        iconAlignment: IconAlignment.start,
-                        label: () {
-                          if (ttlExpiresDateTimeValue != null) {
-                            return Text(
-                              '${DateFormat.MEd().format(ttlExpiresDateTimeValue)}まで保存されてます',
-                              style: const TextStyle(),
-                            );
-                          } else {
-                            return const Text('有効期限を設定');
-                          }
-                        }(),
-                      ),
                     ],
                   ),
                 ),
