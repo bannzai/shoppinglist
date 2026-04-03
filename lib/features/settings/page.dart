@@ -13,7 +13,10 @@ import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/notification_setting.dart';
 
+import 'package:shoppinglist/features/settings/theme_color_selection_page.dart';
+import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingPage extends HookConsumerWidget {
@@ -158,6 +161,9 @@ class SettingPage extends HookConsumerWidget {
                   },
                 ),
               ]),
+              SettingSectionTitle(text: '外観', children: [
+                _ThemeColorTile(),
+              ]),
               SettingSectionTitle(text: '通知', children: [
                 _AutoNotifyToggle(),
               ]),
@@ -237,6 +243,58 @@ class SettingPage extends HookConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ThemeColorTile extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
+
+    return ListTile(
+      title: const Text('テーマカラー'),
+      leading: const Icon(Icons.palette),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: resolveThemeColor(
+                  ref.watch(appUserProvider).asData?.value.themeColorHex),
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 8),
+          if (!isPremium)
+            Icon(
+              Icons.lock,
+              size: 16,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+        ],
+      ),
+      onTap: () {
+        analytics.logEvent(
+          name: 'tap_theme_color_setting',
+          parameters: {'isPremium': isPremium.toString()},
+        );
+        if (isPremium) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ThemeColorSelectionPage(),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('テーマカラーの変更はプレミアム機能です')),
+          );
+        }
+      },
     );
   }
 }
