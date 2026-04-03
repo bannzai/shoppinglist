@@ -1,11 +1,15 @@
 import SwiftUI
 import WidgetKit
 
+private let defaultThemeColorHex = "#673AB7"
+
 struct ShoppingListEntry: TimelineEntry {
     let date: Date
     let shoppingListName: String
     let items: [ShoppingListItemData]
     let showCheckedItems: Bool
+    /// ウィジェットのアクセントカラー。無料ユーザーは常にデフォルト色。
+    let themeColorHex: String
 }
 
 struct ShoppingListItemData: Identifiable, Codable {
@@ -34,7 +38,8 @@ struct Provider: AppIntentTimelineProvider {
                 ShoppingListItemData(id: "1", groupID: "", shoppingListID: "", message: "牛乳", status: "unchecked", order: 0, color: nil),
                 ShoppingListItemData(id: "2", groupID: "", shoppingListID: "", message: "卵", status: "checked", order: 1, color: nil),
             ],
-            showCheckedItems: true
+            showCheckedItems: true,
+            themeColorHex: defaultThemeColorHex
         )
     }
 
@@ -50,17 +55,21 @@ struct Provider: AppIntentTimelineProvider {
 
     private func loadEntry(for configuration: ShoppingListConfigurationIntent) async -> ShoppingListEntry {
         let showChecked = configuration.showCheckedItems
+        let userDefaults = UserDefaults(suiteName: widgetAppGroupId)
+        let isPremium = userDefaults?.bool(forKey: "widget_is_premium") ?? false
+
+        let syncedThemeColorHex = normalizeThemeColorHex(userDefaults?.string(forKey: "widget_theme_color_hex"))
+        let themeColorHex = isPremium ? syncedThemeColorHex : defaultThemeColorHex
 
         let groupID: String
         let shoppingListID: String
         let shoppingListName: String
 
-        if let selectedList = configuration.shoppingList {
+        if isPremium, let selectedList = configuration.shoppingList {
             groupID = selectedList.groupID
             shoppingListID = selectedList.id
             shoppingListName = selectedList.name
         } else {
-            let userDefaults = UserDefaults(suiteName: widgetAppGroupId)
             groupID = userDefaults?.string(forKey: "widget_current_group_id") ?? ""
             shoppingListID = userDefaults?.string(forKey: "widget_current_shopping_list_id") ?? ""
             shoppingListName = userDefaults?.string(forKey: "widget_current_shopping_list_name") ?? "買い物リスト"
@@ -82,8 +91,19 @@ struct Provider: AppIntentTimelineProvider {
             date: Date(),
             shoppingListName: shoppingListName,
             items: items,
-            showCheckedItems: showChecked
+            showCheckedItems: showChecked,
+            themeColorHex: themeColorHex
         )
+    }
+
+    /// HEX値を正規化する。不正値はデフォルトカラーにフォールバックする。
+    private func normalizeThemeColorHex(_ value: String?) -> String {
+        guard let value else { return defaultThemeColorHex }
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.range(of: "^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$", options: .regularExpression) != nil {
+            return trimmed.uppercased()
+        }
+        return defaultThemeColorHex
     }
 
     private func loadItemsFromUserDefaults(groupID: String, shoppingListID: String) -> [ShoppingListItemData] {

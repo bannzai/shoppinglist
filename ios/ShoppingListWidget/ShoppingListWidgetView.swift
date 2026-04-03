@@ -6,14 +6,19 @@ struct ShoppingListWidgetView: View {
 
     @Environment(\.widgetFamily) var widgetFamily
 
+    private var themeColor: Color {
+        Color(hex: entry.themeColorHex)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Image(systemName: "cart.fill")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(themeColor)
                 Text(entry.shoppingListName)
                     .font(.headline)
+                    .foregroundStyle(themeColor)
                     .lineLimit(1)
                 Spacer()
             }
