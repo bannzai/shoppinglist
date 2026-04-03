@@ -17,6 +17,15 @@ mixin _$GroupShoppingLocation {
   String get id;
   String get groupID;
   String get name;
+
+  /// 店舗の緯度。nullの場合はジオフェンス対象外。
+  double? get latitude;
+
+  /// 店舗の経度。nullの場合はジオフェンス対象外。
+  double? get longitude;
+
+  /// ジオフェンスの半径（メートル単位）。nullの場合はデフォルト値を使用する。
+  double? get geofenceRadiusMeters;
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime;
   @ClientUpdatedTimestamp()
@@ -45,6 +54,12 @@ mixin _$GroupShoppingLocation {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.latitude, latitude) ||
+                other.latitude == latitude) &&
+            (identical(other.longitude, longitude) ||
+                other.longitude == longitude) &&
+            (identical(other.geofenceRadiusMeters, geofenceRadiusMeters) ||
+                other.geofenceRadiusMeters == geofenceRadiusMeters) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -62,6 +77,9 @@ mixin _$GroupShoppingLocation {
       id,
       groupID,
       name,
+      latitude,
+      longitude,
+      geofenceRadiusMeters,
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -69,7 +87,7 @@ mixin _$GroupShoppingLocation {
 
   @override
   String toString() {
-    return 'GroupShoppingLocation(id: $id, groupID: $groupID, name: $name, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingLocation(id: $id, groupID: $groupID, name: $name, latitude: $latitude, longitude: $longitude, geofenceRadiusMeters: $geofenceRadiusMeters, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -83,6 +101,9 @@ abstract mixin class $GroupShoppingLocationCopyWith<$Res> {
       {String id,
       String groupID,
       String name,
+      double? latitude,
+      double? longitude,
+      double? geofenceRadiusMeters,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -105,6 +126,9 @@ class _$GroupShoppingLocationCopyWithImpl<$Res>
     Object? id = null,
     Object? groupID = null,
     Object? name = null,
+    Object? latitude = freezed,
+    Object? longitude = freezed,
+    Object? geofenceRadiusMeters = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -123,6 +147,18 @@ class _$GroupShoppingLocationCopyWithImpl<$Res>
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      latitude: freezed == latitude
+          ? _self.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
+              as double?,
+      longitude: freezed == longitude
+          ? _self.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as double?,
+      geofenceRadiusMeters: freezed == geofenceRadiusMeters
+          ? _self.geofenceRadiusMeters
+          : geofenceRadiusMeters // ignore: cast_nullable_to_non_nullable
+              as double?,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
           : createdDateTime // ignore: cast_nullable_to_non_nullable
@@ -240,6 +276,9 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
             String id,
             String groupID,
             String name,
+            double? latitude,
+            double? longitude,
+            double? geofenceRadiusMeters,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -254,6 +293,9 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
             _that.id,
             _that.groupID,
             _that.name,
+            _that.latitude,
+            _that.longitude,
+            _that.geofenceRadiusMeters,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -282,6 +324,9 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
             String id,
             String groupID,
             String name,
+            double? latitude,
+            double? longitude,
+            double? geofenceRadiusMeters,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -295,6 +340,9 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
             _that.id,
             _that.groupID,
             _that.name,
+            _that.latitude,
+            _that.longitude,
+            _that.geofenceRadiusMeters,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -322,6 +370,9 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
             String id,
             String groupID,
             String name,
+            double? latitude,
+            double? longitude,
+            double? geofenceRadiusMeters,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -335,6 +386,9 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
             _that.id,
             _that.groupID,
             _that.name,
+            _that.latitude,
+            _that.longitude,
+            _that.geofenceRadiusMeters,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -353,6 +407,9 @@ class _GroupShoppingLocation extends GroupShoppingLocation {
       {required this.id,
       required this.groupID,
       required this.name,
+      required this.latitude,
+      required this.longitude,
+      required this.geofenceRadiusMeters,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
@@ -367,6 +424,18 @@ class _GroupShoppingLocation extends GroupShoppingLocation {
   final String groupID;
   @override
   final String name;
+
+  /// 店舗の緯度。nullの場合はジオフェンス対象外。
+  @override
+  final double? latitude;
+
+  /// 店舗の経度。nullの場合はジオフェンス対象外。
+  @override
+  final double? longitude;
+
+  /// ジオフェンスの半径（メートル単位）。nullの場合はデフォルト値を使用する。
+  @override
+  final double? geofenceRadiusMeters;
   @override
   @ClientCreatedTimestamp()
   final DateTime? createdDateTime;
@@ -404,6 +473,12 @@ class _GroupShoppingLocation extends GroupShoppingLocation {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.latitude, latitude) ||
+                other.latitude == latitude) &&
+            (identical(other.longitude, longitude) ||
+                other.longitude == longitude) &&
+            (identical(other.geofenceRadiusMeters, geofenceRadiusMeters) ||
+                other.geofenceRadiusMeters == geofenceRadiusMeters) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -421,6 +496,9 @@ class _GroupShoppingLocation extends GroupShoppingLocation {
       id,
       groupID,
       name,
+      latitude,
+      longitude,
+      geofenceRadiusMeters,
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -428,7 +506,7 @@ class _GroupShoppingLocation extends GroupShoppingLocation {
 
   @override
   String toString() {
-    return 'GroupShoppingLocation(id: $id, groupID: $groupID, name: $name, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingLocation(id: $id, groupID: $groupID, name: $name, latitude: $latitude, longitude: $longitude, geofenceRadiusMeters: $geofenceRadiusMeters, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -444,6 +522,9 @@ abstract mixin class _$GroupShoppingLocationCopyWith<$Res>
       {String id,
       String groupID,
       String name,
+      double? latitude,
+      double? longitude,
+      double? geofenceRadiusMeters,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -466,6 +547,9 @@ class __$GroupShoppingLocationCopyWithImpl<$Res>
     Object? id = null,
     Object? groupID = null,
     Object? name = null,
+    Object? latitude = freezed,
+    Object? longitude = freezed,
+    Object? geofenceRadiusMeters = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -484,6 +568,18 @@ class __$GroupShoppingLocationCopyWithImpl<$Res>
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      latitude: freezed == latitude
+          ? _self.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
+              as double?,
+      longitude: freezed == longitude
+          ? _self.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as double?,
+      geofenceRadiusMeters: freezed == geofenceRadiusMeters
+          ? _self.geofenceRadiusMeters
+          : geofenceRadiusMeters // ignore: cast_nullable_to_non_nullable
+              as double?,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
           : createdDateTime // ignore: cast_nullable_to_non_nullable

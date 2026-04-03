@@ -229,7 +229,12 @@ class _NoOpShoppingLocationAdd extends ShoppingLocationAdd {
       : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
-  Future<GroupShoppingLocation> call({required String name}) async {
+  Future<GroupShoppingLocation> call({
+    required String name,
+    required double? latitude,
+    required double? longitude,
+    required double? geofenceRadiusMeters,
+  }) async {
     return mockShoppingLocation();
   }
 }

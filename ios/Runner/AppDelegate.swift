@@ -1,6 +1,7 @@
 import Flutter
 import UIKit
 import home_widget
+import GoogleMaps
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
@@ -8,6 +9,11 @@ import home_widget
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    if let mapsApiKey = Bundle.main.object(forInfoDictionaryKey: "GMSApiKey") as? String,
+       !mapsApiKey.isEmpty {
+      GMSServices.provideAPIKey(mapsApiKey)
+    }
+
     if #available(iOS 17.0, *) {
       HomeWidgetPlugin.setConfigurationLookup(to: [
         "ShoppingListWidget": ShoppingListConfigurationIntent.self
