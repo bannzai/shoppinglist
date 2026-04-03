@@ -20,7 +20,9 @@ mixin _$AppUser {
       get defaultGroupID; // NOTE: Firebase Auth の displayName からマッピング。匿名ユーザーや既存ユーザーでは null になりうる
   String?
       get name; // NOTE: Firebase Auth の photoURL からマッピング。匿名ユーザーや既存ユーザーでは null になりうる
-  String? get iconImageURL;
+  String?
+      get iconImageURL; // NOTE: テーマカラーのHEX値。プレミアムユーザーのみ変更可能。nullの場合はデフォルト(deepPurple=#673AB7)を使用する
+  String? get themeColorHex;
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime;
   @ClientUpdatedTimestamp()
@@ -51,6 +53,8 @@ mixin _$AppUser {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.iconImageURL, iconImageURL) ||
                 other.iconImageURL == iconImageURL) &&
+            (identical(other.themeColorHex, themeColorHex) ||
+                other.themeColorHex == themeColorHex) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -69,6 +73,7 @@ mixin _$AppUser {
       defaultGroupID,
       name,
       iconImageURL,
+      themeColorHex,
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -76,7 +81,7 @@ mixin _$AppUser {
 
   @override
   String toString() {
-    return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, name: $name, iconImageURL: $iconImageURL, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, name: $name, iconImageURL: $iconImageURL, themeColorHex: $themeColorHex, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -90,6 +95,7 @@ abstract mixin class $AppUserCopyWith<$Res> {
       String? defaultGroupID,
       String? name,
       String? iconImageURL,
+      String? themeColorHex,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -112,6 +118,7 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
     Object? defaultGroupID = freezed,
     Object? name = freezed,
     Object? iconImageURL = freezed,
+    Object? themeColorHex = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -133,6 +140,10 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
       iconImageURL: freezed == iconImageURL
           ? _self.iconImageURL
           : iconImageURL // ignore: cast_nullable_to_non_nullable
+              as String?,
+      themeColorHex: freezed == themeColorHex
+          ? _self.themeColorHex
+          : themeColorHex // ignore: cast_nullable_to_non_nullable
               as String?,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
@@ -252,6 +263,7 @@ extension AppUserPatterns on AppUser {
             String? defaultGroupID,
             String? name,
             String? iconImageURL,
+            String? themeColorHex,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -267,6 +279,7 @@ extension AppUserPatterns on AppUser {
             _that.defaultGroupID,
             _that.name,
             _that.iconImageURL,
+            _that.themeColorHex,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -296,6 +309,7 @@ extension AppUserPatterns on AppUser {
             String? defaultGroupID,
             String? name,
             String? iconImageURL,
+            String? themeColorHex,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -310,6 +324,7 @@ extension AppUserPatterns on AppUser {
             _that.defaultGroupID,
             _that.name,
             _that.iconImageURL,
+            _that.themeColorHex,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -338,6 +353,7 @@ extension AppUserPatterns on AppUser {
             String? defaultGroupID,
             String? name,
             String? iconImageURL,
+            String? themeColorHex,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -352,6 +368,7 @@ extension AppUserPatterns on AppUser {
             _that.defaultGroupID,
             _that.name,
             _that.iconImageURL,
+            _that.themeColorHex,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -371,6 +388,7 @@ class _AppUser extends AppUser {
       this.defaultGroupID,
       this.name,
       this.iconImageURL,
+      this.themeColorHex,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
@@ -390,6 +408,9 @@ class _AppUser extends AppUser {
 // NOTE: Firebase Auth の photoURL からマッピング。匿名ユーザーや既存ユーザーでは null になりうる
   @override
   final String? iconImageURL;
+// NOTE: テーマカラーのHEX値。プレミアムユーザーのみ変更可能。nullの場合はデフォルト(deepPurple=#673AB7)を使用する
+  @override
+  final String? themeColorHex;
   @override
   @ClientCreatedTimestamp()
   final DateTime? createdDateTime;
@@ -429,6 +450,8 @@ class _AppUser extends AppUser {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.iconImageURL, iconImageURL) ||
                 other.iconImageURL == iconImageURL) &&
+            (identical(other.themeColorHex, themeColorHex) ||
+                other.themeColorHex == themeColorHex) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -447,6 +470,7 @@ class _AppUser extends AppUser {
       defaultGroupID,
       name,
       iconImageURL,
+      themeColorHex,
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -454,7 +478,7 @@ class _AppUser extends AppUser {
 
   @override
   String toString() {
-    return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, name: $name, iconImageURL: $iconImageURL, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, name: $name, iconImageURL: $iconImageURL, themeColorHex: $themeColorHex, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -469,6 +493,7 @@ abstract mixin class _$AppUserCopyWith<$Res> implements $AppUserCopyWith<$Res> {
       String? defaultGroupID,
       String? name,
       String? iconImageURL,
+      String? themeColorHex,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -491,6 +516,7 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
     Object? defaultGroupID = freezed,
     Object? name = freezed,
     Object? iconImageURL = freezed,
+    Object? themeColorHex = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -512,6 +538,10 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
       iconImageURL: freezed == iconImageURL
           ? _self.iconImageURL
           : iconImageURL // ignore: cast_nullable_to_non_nullable
+              as String?,
+      themeColorHex: freezed == themeColorHex
+          ? _self.themeColorHex
+          : themeColorHex // ignore: cast_nullable_to_non_nullable
               as String?,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
