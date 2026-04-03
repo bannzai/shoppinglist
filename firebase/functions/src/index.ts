@@ -61,3 +61,10 @@ if (
 ) {
   exports.sendShoppingListUpdateNotification = require("./functions/sendShoppingListUpdateNotification/function");
 }
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "generateShoppingListItemsFromURL"
+) {
+  exports.generateShoppingListItemsFromURL = require("./functions/generateShoppingListItemsFromURL/function");
+}

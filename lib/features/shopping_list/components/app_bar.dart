@@ -125,6 +125,9 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 case 'image':
                   _showImagePicker(context, ref);
                   break;
+                case 'url':
+                  _showURLInputDialog(context, ref);
+                  break;
                 case 'paste':
                   _pasteFromClipboard(context, ref);
                   break;
@@ -143,6 +146,13 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 child: ListTile(
                   leading: Icon(Icons.photo_camera),
                   title: Text('画像から追加'),
+                ),
+              ),
+              PopupMenuItem(
+                value: 'url',
+                child: ListTile(
+                  leading: Icon(Icons.link),
+                  title: Text('URLから追加'),
                 ),
               ),
               PopupMenuItem(
@@ -328,6 +338,39 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     }
   }
 
+  void _showURLInputDialog(BuildContext context, WidgetRef ref) {
+    analytics.logEvent(
+        name: 'tap_open_url_input',
+        parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
+
+    final isPremium =
+        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
+    final remaining = ref.read(
+        remainingURLRecognitionCountProvider(isPremium: isPremium));
+    if (remaining <= 0) {
+      final limit = isPremium
+          ? premiumMonthlyURLRecognitionLimit
+          : freeMonthlyURLRecognitionLimit;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                'URL読み取りの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyURLRecognitionLimit回まで利用できます'}')),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return _URLInputDialog(
+          groupID: groupID,
+          shoppingListID: shoppingListID,
+          shoppingListItems: shoppingListItems,
+        );
+      },
+    );
+  }
+
   Future<void> _pasteFromClipboard(BuildContext context, WidgetRef ref) async {
     analytics.logEvent(
         name: 'tap_paste_multiline',
@@ -458,6 +501,141 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// URLを入力してAIで買い物リストアイテムを生成するダイアログ。
+class _URLInputDialog extends HookConsumerWidget {
+  final String groupID;
+  final String shoppingListID;
+  final List<GroupShoppingListItem> shoppingListItems;
+
+  const _URLInputDialog({
+    required this.groupID,
+    required this.shoppingListID,
+    required this.shoppingListItems,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final urlController = useTextEditingController();
+    final isLoading = useState(false);
+
+    return AlertDialog(
+      title: const Text('URLから買い物リストを生成'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: urlController,
+            keyboardType: TextInputType.url,
+            autofocus: true,
+            decoration: const InputDecoration(
+              hintText: 'https://example.com/recipe',
+              labelText: 'URL',
+            ),
+            enabled: !isLoading.value,
+          ),
+          if (isLoading.value) ...[
+            const SizedBox(height: 16),
+            const CircularProgressIndicator(),
+          ],
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: isLoading.value
+              ? null
+              : () {
+                  analytics.logEvent(
+                      name: 'cancel_url_input',
+                      parameters: {
+                        'groupID': groupID,
+                        'shoppingListID': shoppingListID
+                      });
+                  Navigator.pop(context);
+                },
+          child: const Text('キャンセル'),
+        ),
+        TextButton(
+          onPressed: isLoading.value
+              ? null
+              : () async {
+                  final normalizedURL = urlController.text.trim();
+                  if (normalizedURL.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('URLを入力してください')),
+                    );
+                    return;
+                  }
+                  final parsedURL = Uri.tryParse(normalizedURL);
+                  if (parsedURL == null ||
+                      parsedURL.scheme != 'https' ||
+                      parsedURL.host.isEmpty ||
+                      parsedURL.userInfo.isNotEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('有効なHTTPS URLを入力してください')),
+                    );
+                    return;
+                  }
+                  analytics.logEvent(
+                      name: 'tap_submit_url',
+                      parameters: {
+                        'groupID': groupID,
+                        'shoppingListID': shoppingListID,
+                      });
+                  isLoading.value = true;
+                  try {
+                    final rawItems =
+                        await functions.generateShoppingListItemsFromURL(
+                      url: normalizedURL,
+                    );
+                    final distincted = rawItems.toSet().toList();
+                    for (var (i, e) in distincted.indexed) {
+                      final item = e.trim();
+                      if (item.isEmpty || item.length > 100) {
+                        continue;
+                      }
+                      if (shoppingListItems
+                          .any((existing) => existing.message == item)) {
+                        continue;
+                      }
+                      try {
+                        await ref
+                            .read(addShoppingListItemProvider(
+                                groupID: groupID))
+                            .call(
+                              shoppingListID: shoppingListID,
+                              userID: ref.read(currentUserIDProvider)!,
+                              message: item,
+                              order: shoppingListItems.nextOrder + i,
+                              description: null,
+                              color: null,
+                            );
+                      } catch (e) {
+                        debugPrint('Error: $e');
+                      }
+                    }
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
+                    }
+                  } finally {
+                    if (context.mounted) {
+                      isLoading.value = false;
+                    }
+                  }
+                },
+          child: const Text('生成'),
+        ),
+      ],
     );
   }
 }

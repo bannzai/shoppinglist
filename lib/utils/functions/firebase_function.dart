@@ -59,6 +59,26 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     return list.map((e) => e.toString()).toList();
   }
 
+  /// URLからWebページを取得し、AIで買い物リストアイテムを生成する。
+  Future<List<String>> generateShoppingListItemsFromURL({
+    required String url,
+  }) async {
+    final result =
+        await httpsCallable('generateShoppingListItemsFromURL').call(
+      {
+        'url': url,
+      },
+    );
+    debugPrint('generateShoppingListItemsFromURL.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+
+    final list = response['data']['shoppingListItems'] as List<dynamic>;
+    return list.map((e) => e.toString()).toList();
+  }
+
   Future<void> removeGroupMember({
     required String groupID,
     required String targetUserID,
