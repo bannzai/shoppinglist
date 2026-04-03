@@ -136,8 +136,6 @@ class _NoOpDefaultGroupUpdate extends DefaultGroupUpdate {
 }
 
 class _NoOpCreateGroup extends CreateGroup {
-  _NoOpCreateGroup() : super(userDatabase: UserDatabase(userID: mockUserID));
-
   @override
   Future<void> call({
     required AppUser appUser,

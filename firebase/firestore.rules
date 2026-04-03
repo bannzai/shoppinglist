@@ -41,7 +41,8 @@ service cloud.firestore {
     // カップル
     match /groups/{groupID} {
       allow read, update: if isMember(resource.data.memberUserIDs);
-      allow create: if isMember(request.resource.data.memberUserIDs);
+      // グループ作成はCloud Functions (createGroup) 経由でのみ許可する
+      allow create: if false;
 
       function isGroupMember() {
         return isMember(get(/databases/$(database)/documents/groups/$(groupID)).data.memberUserIDs);
