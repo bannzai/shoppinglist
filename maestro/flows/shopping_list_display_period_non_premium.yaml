@@ -1,0 +1,21 @@
+appId: com.bannzai.shoppinglist
+---
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 買い物リストページが表示されること
+- assertVisible: ".*"
+- takeScreenshot: screenshots/display_period_01_home
+
+# 無料ユーザー向けの表示制限メッセージが表示されること
+- assertVisible: "無料プランでは過去30日以内のリストのみ表示されます"
+- takeScreenshot: screenshots/display_period_02_free_user_message
+
+# 設定を開いて保存期間の表示を確認
+- tapOn: "リスト設定"
+- assertVisible: "買い物リスト設定"
+- assertVisible: "買い物リストの保存期間"
+- assertVisible: "作成から30日間表示されます"
+- takeScreenshot: screenshots/display_period_03_setting_free_user
+
+# 設定を閉じる
+- back
