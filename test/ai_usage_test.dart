@@ -61,13 +61,54 @@ void main() {
     });
   });
 
-  group('月次制限定数', () {
+  group('urlRecognitionCount', () {
+    test('fromJsonでurlRecognitionCountが正しくデシリアライズされる', () {
+      final json = {
+        'id': '2026-04',
+        'userID': 'user-1',
+        'imageRecognitionCount': 3,
+        'urlRecognitionCount': 2,
+      };
+      expect(AIUsage.fromJson(json).urlRecognitionCount, 2);
+    });
+
+    test('fromJsonでurlRecognitionCountが未設定の場合デフォルト0になる', () {
+      final json = {
+        'id': '2026-04',
+        'userID': 'user-1',
+        'imageRecognitionCount': 3,
+      };
+      expect(AIUsage.fromJson(json).urlRecognitionCount, 0);
+    });
+
+    test('toJsonでurlRecognitionCountが正しくシリアライズされる', () {
+      const aiUsage = AIUsage(
+        id: '2026-04',
+        userID: 'user-1',
+        imageRecognitionCount: 5,
+        urlRecognitionCount: 3,
+      );
+      expect(aiUsage.toJson()['urlRecognitionCount'], 3);
+    });
+  });
+
+  group('画像認識月次制限定数', () {
     test('無料ユーザーの月次上限は5回', () {
       expect(freeMonthlyImageRecognitionLimit, 5);
     });
 
     test('プレミアムユーザーの月次上限は50回', () {
       expect(premiumMonthlyImageRecognitionLimit, 50);
+    });
+  });
+
+  group('URL認識月次制限定数', () {
+    test('無料ユーザーの月次上限は5回', () {
+      expect(freeMonthlyURLRecognitionLimit, 5);
+    });
+
+    test('プレミアムユーザーの月次上限は50回', () {
+      expect(premiumMonthlyURLRecognitionLimit, 50);
     });
   });
 }

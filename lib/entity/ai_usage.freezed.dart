@@ -22,6 +22,9 @@ mixin _$AIUsage {
 
   /// AI画像認識の利用回数
   int get imageRecognitionCount;
+
+  /// URLからの買い物リスト生成の利用回数
+  int get urlRecognitionCount;
   @ServerCreatedTimestamp()
   DateTime? get serverCreatedDateTime;
   @ServerUpdatedTimestamp()
@@ -46,6 +49,8 @@ mixin _$AIUsage {
             (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.imageRecognitionCount, imageRecognitionCount) ||
                 other.imageRecognitionCount == imageRecognitionCount) &&
+            (identical(other.urlRecognitionCount, urlRecognitionCount) ||
+                other.urlRecognitionCount == urlRecognitionCount) &&
             (identical(other.serverCreatedDateTime, serverCreatedDateTime) ||
                 other.serverCreatedDateTime == serverCreatedDateTime) &&
             (identical(other.serverUpdatedDateTime, serverUpdatedDateTime) ||
@@ -54,12 +59,18 @@ mixin _$AIUsage {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, userID,
-      imageRecognitionCount, serverCreatedDateTime, serverUpdatedDateTime);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      userID,
+      imageRecognitionCount,
+      urlRecognitionCount,
+      serverCreatedDateTime,
+      serverUpdatedDateTime);
 
   @override
   String toString() {
-    return 'AIUsage(id: $id, userID: $userID, imageRecognitionCount: $imageRecognitionCount, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'AIUsage(id: $id, userID: $userID, imageRecognitionCount: $imageRecognitionCount, urlRecognitionCount: $urlRecognitionCount, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -72,6 +83,7 @@ abstract mixin class $AIUsageCopyWith<$Res> {
       {String id,
       String userID,
       int imageRecognitionCount,
+      int urlRecognitionCount,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
       @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime});
 }
@@ -91,6 +103,7 @@ class _$AIUsageCopyWithImpl<$Res> implements $AIUsageCopyWith<$Res> {
     Object? id = null,
     Object? userID = null,
     Object? imageRecognitionCount = null,
+    Object? urlRecognitionCount = null,
     Object? serverCreatedDateTime = freezed,
     Object? serverUpdatedDateTime = freezed,
   }) {
@@ -106,6 +119,10 @@ class _$AIUsageCopyWithImpl<$Res> implements $AIUsageCopyWith<$Res> {
       imageRecognitionCount: null == imageRecognitionCount
           ? _self.imageRecognitionCount
           : imageRecognitionCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      urlRecognitionCount: null == urlRecognitionCount
+          ? _self.urlRecognitionCount
+          : urlRecognitionCount // ignore: cast_nullable_to_non_nullable
               as int,
       serverCreatedDateTime: freezed == serverCreatedDateTime
           ? _self.serverCreatedDateTime
@@ -216,6 +233,7 @@ extension AIUsagePatterns on AIUsage {
             String id,
             String userID,
             int imageRecognitionCount,
+            int urlRecognitionCount,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)?
         $default, {
@@ -224,8 +242,13 @@ extension AIUsagePatterns on AIUsage {
     final _that = this;
     switch (_that) {
       case _AIUsage() when $default != null:
-        return $default(_that.id, _that.userID, _that.imageRecognitionCount,
-            _that.serverCreatedDateTime, _that.serverUpdatedDateTime);
+        return $default(
+            _that.id,
+            _that.userID,
+            _that.imageRecognitionCount,
+            _that.urlRecognitionCount,
+            _that.serverCreatedDateTime,
+            _that.serverUpdatedDateTime);
       case _:
         return orElse();
     }
@@ -250,6 +273,7 @@ extension AIUsagePatterns on AIUsage {
             String id,
             String userID,
             int imageRecognitionCount,
+            int urlRecognitionCount,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)
         $default,
@@ -257,8 +281,13 @@ extension AIUsagePatterns on AIUsage {
     final _that = this;
     switch (_that) {
       case _AIUsage():
-        return $default(_that.id, _that.userID, _that.imageRecognitionCount,
-            _that.serverCreatedDateTime, _that.serverUpdatedDateTime);
+        return $default(
+            _that.id,
+            _that.userID,
+            _that.imageRecognitionCount,
+            _that.urlRecognitionCount,
+            _that.serverCreatedDateTime,
+            _that.serverUpdatedDateTime);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -282,6 +311,7 @@ extension AIUsagePatterns on AIUsage {
             String id,
             String userID,
             int imageRecognitionCount,
+            int urlRecognitionCount,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
             @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime)?
         $default,
@@ -289,8 +319,13 @@ extension AIUsagePatterns on AIUsage {
     final _that = this;
     switch (_that) {
       case _AIUsage() when $default != null:
-        return $default(_that.id, _that.userID, _that.imageRecognitionCount,
-            _that.serverCreatedDateTime, _that.serverUpdatedDateTime);
+        return $default(
+            _that.id,
+            _that.userID,
+            _that.imageRecognitionCount,
+            _that.urlRecognitionCount,
+            _that.serverCreatedDateTime,
+            _that.serverUpdatedDateTime);
       case _:
         return null;
     }
@@ -305,6 +340,7 @@ class _AIUsage extends AIUsage {
       {required this.id,
       required this.userID,
       required this.imageRecognitionCount,
+      this.urlRecognitionCount = 0,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
       @ServerUpdatedTimestamp() this.serverUpdatedDateTime})
       : super._();
@@ -322,6 +358,11 @@ class _AIUsage extends AIUsage {
   /// AI画像認識の利用回数
   @override
   final int imageRecognitionCount;
+
+  /// URLからの買い物リスト生成の利用回数
+  @override
+  @JsonKey()
+  final int urlRecognitionCount;
   @override
   @ServerCreatedTimestamp()
   final DateTime? serverCreatedDateTime;
@@ -353,6 +394,8 @@ class _AIUsage extends AIUsage {
             (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.imageRecognitionCount, imageRecognitionCount) ||
                 other.imageRecognitionCount == imageRecognitionCount) &&
+            (identical(other.urlRecognitionCount, urlRecognitionCount) ||
+                other.urlRecognitionCount == urlRecognitionCount) &&
             (identical(other.serverCreatedDateTime, serverCreatedDateTime) ||
                 other.serverCreatedDateTime == serverCreatedDateTime) &&
             (identical(other.serverUpdatedDateTime, serverUpdatedDateTime) ||
@@ -361,12 +404,18 @@ class _AIUsage extends AIUsage {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, userID,
-      imageRecognitionCount, serverCreatedDateTime, serverUpdatedDateTime);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      userID,
+      imageRecognitionCount,
+      urlRecognitionCount,
+      serverCreatedDateTime,
+      serverUpdatedDateTime);
 
   @override
   String toString() {
-    return 'AIUsage(id: $id, userID: $userID, imageRecognitionCount: $imageRecognitionCount, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'AIUsage(id: $id, userID: $userID, imageRecognitionCount: $imageRecognitionCount, urlRecognitionCount: $urlRecognitionCount, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -380,6 +429,7 @@ abstract mixin class _$AIUsageCopyWith<$Res> implements $AIUsageCopyWith<$Res> {
       {String id,
       String userID,
       int imageRecognitionCount,
+      int urlRecognitionCount,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
       @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime});
 }
@@ -399,6 +449,7 @@ class __$AIUsageCopyWithImpl<$Res> implements _$AIUsageCopyWith<$Res> {
     Object? id = null,
     Object? userID = null,
     Object? imageRecognitionCount = null,
+    Object? urlRecognitionCount = null,
     Object? serverCreatedDateTime = freezed,
     Object? serverUpdatedDateTime = freezed,
   }) {
@@ -414,6 +465,10 @@ class __$AIUsageCopyWithImpl<$Res> implements _$AIUsageCopyWith<$Res> {
       imageRecognitionCount: null == imageRecognitionCount
           ? _self.imageRecognitionCount
           : imageRecognitionCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      urlRecognitionCount: null == urlRecognitionCount
+          ? _self.urlRecognitionCount
+          : urlRecognitionCount // ignore: cast_nullable_to_non_nullable
               as int,
       serverCreatedDateTime: freezed == serverCreatedDateTime
           ? _self.serverCreatedDateTime
