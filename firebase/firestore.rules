@@ -25,6 +25,11 @@ service cloud.firestore {
         allow read: if false;
         allow create, update: if isUserAuth(userID) || isDebugUserOf(userID);
       }
+
+      match /aiUsage/{yearMonth} {
+        allow read: if isUserAuth(userID) || isDebugUserOf(userID);
+        allow write: if false;
+      }
     }
 
     // グループ招待: 読み書きともにクライアントからは不可。Functions Admin SDK 経由でのみ操作する
