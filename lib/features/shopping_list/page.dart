@@ -101,21 +101,38 @@ class ShoppingListPage extends HookConsumerWidget {
                           ),
                           const SizedBox(height: 32),
                           FilledButton.icon(
-                            onPressed: () {
+                            onPressed: () async {
                               if (appUser == null) return;
                               analytics.logEvent(
                                   name: 'tap_create_first_shopping_list',
                                   parameters: {
                                     'groupID': groupID,
                                   });
-                              final shoppingListAdd = ref.read(
-                                  shoppingListAddProvider(groupID: groupID));
-                              shoppingListAdd(
-                                createUserID: appUser.id,
-                                groupID: groupID,
-                                shoppingLocationID: null,
-                                duplicatedFromGroupShoppingListID: null,
-                              );
+                              try {
+                                await ref
+                                    .read(shoppingListAddProvider(
+                                        groupID: groupID))
+                                    .call(
+                                      createUserID: appUser.id,
+                                      groupID: groupID,
+                                      shoppingLocationID: null,
+                                      duplicatedFromGroupShoppingListID: null,
+                                    );
+                              } on ShoppingListLimitExceededException catch (e) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(e.toString())),
+                                  );
+                                }
+                              } catch (_) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content:
+                                            Text('買い物リストの作成に失敗しました')),
+                                  );
+                                }
+                              }
                             },
                             icon: const Icon(Icons.add),
                             label: const Text('買い物リストを作成'),

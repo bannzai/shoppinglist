@@ -456,20 +456,36 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
                 'groupID': groupID,
                 'selectedGroupID': selectedGroupID.value
               });
-              final addProvider = ref.read(
-                  shoppingListAddProvider(groupID: selectedGroupID.value));
-              final newShoppingList = await addProvider(
-                createUserID: shoppingList.createUserID,
-                groupID: selectedGroupID.value,
-                shoppingLocationID: null,
-                duplicatedFromGroupShoppingListID: null,
-              );
-              if (selectedGroupID.value == groupID) {
-                onShoppingListIDChanged(newShoppingList.id);
-              }
-
-              if (context.mounted) {
-                Navigator.pop(context);
+              try {
+                final newShoppingList = await ref
+                    .read(shoppingListAddProvider(
+                        groupID: selectedGroupID.value))
+                    .call(
+                      createUserID: shoppingList.createUserID,
+                      groupID: selectedGroupID.value,
+                      shoppingLocationID: null,
+                      duplicatedFromGroupShoppingListID: null,
+                    );
+                if (selectedGroupID.value == groupID) {
+                  onShoppingListIDChanged(newShoppingList.id);
+                }
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              } on ShoppingListLimitExceededException catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(e.toString())),
+                  );
+                  Navigator.pop(context);
+                }
+              } catch (_) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('買い物リストの作成に失敗しました')),
+                  );
+                }
               }
             },
           ),
@@ -481,21 +497,36 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
                 'selectedGroupID': selectedGroupID.value,
                 'sourceShoppingListID': shoppingList.id
               });
-              final shoppingListDuplicate = ref.read(
-                  shoppingListDuplicateProvider(
-                      groupID: selectedGroupID.value));
-              final newShoppingList = await shoppingListDuplicate(
-                createUserID: shoppingList.createUserID,
-                groupID: selectedGroupID.value,
-                sourceShoppingList: shoppingList,
-                shoppingListItems: shoppingListItems,
-              );
-              if (selectedGroupID.value == groupID) {
-                onShoppingListIDChanged(newShoppingList.id);
-              }
-
-              if (context.mounted) {
-                Navigator.pop(context);
+              try {
+                final newShoppingList = await ref
+                    .read(shoppingListDuplicateProvider(
+                        groupID: selectedGroupID.value))
+                    .call(
+                      createUserID: shoppingList.createUserID,
+                      groupID: selectedGroupID.value,
+                      sourceShoppingList: shoppingList,
+                      shoppingListItems: shoppingListItems,
+                    );
+                if (selectedGroupID.value == groupID) {
+                  onShoppingListIDChanged(newShoppingList.id);
+                }
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              } on ShoppingListLimitExceededException catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(e.toString())),
+                  );
+                  Navigator.pop(context);
+                }
+              } catch (_) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('買い物リストの複製に失敗しました')),
+                  );
+                }
               }
             },
           ),
