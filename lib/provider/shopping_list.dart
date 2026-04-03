@@ -9,13 +9,30 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 
 part 'shopping_list.g.dart';
 
+/// 買い物リスト一覧を取得するプロバイダー。
+/// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
+/// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
 @Riverpod(dependencies: [groupDatabase])
 Stream<List<GroupShoppingList>> shoppingLists(Ref ref,
-    {required String groupID}) {
+    {required String groupID, required bool isPremium}) {
+  if (groupID.trim().isEmpty) {
+    throw ArgumentError.value(groupID, 'groupID', 'must not be empty');
+  }
+
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
-  return database
+  var query = database
       .shoppingListsReference()
-      .orderBy(GroupShoppingListFirestoreKeys.createdDateTime, descending: true)
+      .orderBy(GroupShoppingListFirestoreKeys.createdDateTime, descending: true);
+
+  if (!isPremium) {
+    query = query.where(
+      GroupShoppingListFirestoreKeys.createdDateTime,
+      isGreaterThanOrEqualTo: Timestamp.fromDate(
+          DateTime.now().subtract(const Duration(days: 30))),
+    );
+  }
+
+  return query
       .snapshots()
       .map((event) => event.docs.map((doc) => doc.data()).toList());
 }
@@ -41,7 +58,7 @@ class ShoppingListAdd {
           ? DateFormat('yyyy-MM-dd').format(DateTime.now())
           : '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ($count)',
       status: GroupShoppingListStatus.active,
-      ttlExpiresDateTime: DateTime.now().add(const Duration(days: 30)),
+      ttlExpiresDateTime: null,
       shoppingLocationID: shoppingLocationID,
       duplicatedFromGroupShoppingListID: duplicatedFromGroupShoppingListID,
     );
