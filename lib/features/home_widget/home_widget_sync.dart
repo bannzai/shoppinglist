@@ -25,7 +25,7 @@ class HomeWidgetSync extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isPremium =
+    final firestoreIsPremium =
         ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
 
     // 初回同期（WidgetRef.listen は fireImmediately 非対応）
@@ -35,7 +35,7 @@ class HomeWidgetSync extends ConsumerWidget {
         themeColorHex: currentAppUser.themeColorHex ?? defaultThemeColorHex,
       );
     }
-    HomeWidgetDataSync.syncPremiumStatus(isPremium: isPremium);
+    HomeWidgetDataSync.syncPremiumStatus(isPremium: firestoreIsPremium);
 
     // テーマカラーの変更を検知して同期
     ref.listen(appUserProvider, (prev, next) {
@@ -64,8 +64,9 @@ class HomeWidgetSync extends ConsumerWidget {
     });
 
     // 買い物リスト一覧の変更を検知して同期
-    ref.listen(shoppingListsProvider(groupID: groupID, isPremium: isPremium),
-        (prev, next) {
+    ref.listen(
+        shoppingListsProvider(
+            groupID: groupID, isPremium: firestoreIsPremium), (prev, next) {
       final lists = next.valueOrNull;
       if (lists != null && lists.isNotEmpty) {
         final groups = ref.read(userGroupsProvider).valueOrNull ?? [];
@@ -89,7 +90,7 @@ class HomeWidgetSync extends ConsumerWidget {
       if (items != null) {
         final lists = ref
                 .read(shoppingListsProvider(
-                    groupID: groupID, isPremium: isPremium))
+                    groupID: groupID, isPremium: firestoreIsPremium))
                 .valueOrNull ??
             [];
         final list = lists.firstWhereOrNull((sl) => sl.id == shoppingListID);

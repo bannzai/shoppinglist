@@ -36,10 +36,10 @@ class ShoppingListPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isPremium =
+    final firestoreIsPremium =
         ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
-    final shoppingLists = ref
-        .watch(shoppingListsProvider(groupID: groupID, isPremium: isPremium));
+    final shoppingLists = ref.watch(
+        shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium));
     final userGroupsAsync = ref.watch(userGroupsProvider);
     final appUserAsync = ref.watch(appUserProvider);
     final appUser = appUserAsync.asData?.value;
@@ -47,7 +47,7 @@ class ShoppingListPage extends HookConsumerWidget {
 
     return Retry(
       retry: () => ref.invalidate(
-          shoppingListsProvider(groupID: groupID, isPremium: isPremium)),
+          shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium)),
       // SafeAreaでGroupSwitcherをステータスバー/ノッチ領域の下に配置する
       child: SafeArea(
         bottom: false,
@@ -189,11 +189,11 @@ class _Body extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isPremium =
+    final firestoreIsPremium =
         ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
     final shoppingLists = ref
-            .watch(
-                shoppingListsProvider(groupID: groupID, isPremium: isPremium))
+            .watch(shoppingListsProvider(
+                groupID: groupID, isPremium: firestoreIsPremium))
             .valueOrNull ??
         [];
     final retry = Retry.of(context).retry;
@@ -393,7 +393,7 @@ class _Body extends HookConsumerWidget {
                             sortByCategory: sortByCategory.value,
                             shoppingLocationID:
                                 shoppingList?.shoppingLocationID)),
-                    if (!isPremium)
+                    if (!firestoreIsPremium)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
