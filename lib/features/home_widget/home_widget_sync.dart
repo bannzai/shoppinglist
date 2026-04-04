@@ -64,8 +64,7 @@ class HomeWidgetSync extends ConsumerWidget {
     });
 
     // 買い物リスト一覧の変更を検知して同期
-    ref.listen(
-        shoppingListsProvider(groupID: groupID, isPremium: isPremium),
+    ref.listen(shoppingListsProvider(groupID: groupID, isPremium: isPremium),
         (prev, next) {
       final lists = next.valueOrNull;
       if (lists != null && lists.isNotEmpty) {

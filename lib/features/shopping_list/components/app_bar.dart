@@ -361,8 +361,8 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
     final isPremium =
         ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
-    final remaining = ref.read(
-        remainingURLRecognitionCountProvider(isPremium: isPremium));
+    final remaining =
+        ref.read(remainingURLRecognitionCountProvider(isPremium: isPremium));
     if (remaining <= 0) {
       final limit = isPremium
           ? premiumMonthlyURLRecognitionLimit
@@ -422,8 +422,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     if (!isPremium) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text(
-                'リストのエクスポートはプレミアム機能です。プレミアムにアップグレードすると利用できます')),
+            content: Text('リストのエクスポートはプレミアム機能です。プレミアムにアップグレードすると利用できます')),
       );
       return;
     }
@@ -519,8 +518,8 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
               });
               try {
                 final newShoppingList = await ref
-                    .read(shoppingListAddProvider(
-                        groupID: selectedGroupID.value))
+                    .read(
+                        shoppingListAddProvider(groupID: selectedGroupID.value))
                     .call(
                       createUserID: shoppingList.createUserID,
                       groupID: selectedGroupID.value,
@@ -543,8 +542,7 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
               } catch (_) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('買い物リストの作成に失敗しました')),
+                    const SnackBar(content: Text('買い物リストの作成に失敗しました')),
                   );
                 }
               }
@@ -584,8 +582,7 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
               } catch (_) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('買い物リストの複製に失敗しました')),
+                    const SnackBar(content: Text('買い物リストの複製に失敗しました')),
                   );
                 }
               }
@@ -640,12 +637,10 @@ class _URLInputDialog extends HookConsumerWidget {
           onPressed: isLoading.value
               ? null
               : () {
-                  analytics.logEvent(
-                      name: 'cancel_url_input',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': shoppingListID
-                      });
+                  analytics.logEvent(name: 'cancel_url_input', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID
+                  });
                   Navigator.pop(context);
                 },
           child: const Text('キャンセル'),
@@ -667,17 +662,14 @@ class _URLInputDialog extends HookConsumerWidget {
                       parsedURL.host.isEmpty ||
                       parsedURL.userInfo.isNotEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('有効なHTTPS URLを入力してください')),
+                      const SnackBar(content: Text('有効なHTTPS URLを入力してください')),
                     );
                     return;
                   }
-                  analytics.logEvent(
-                      name: 'tap_submit_url',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': shoppingListID,
-                      });
+                  analytics.logEvent(name: 'tap_submit_url', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                  });
                   isLoading.value = true;
                   try {
                     final rawItems =
@@ -696,8 +688,7 @@ class _URLInputDialog extends HookConsumerWidget {
                       }
                       try {
                         await ref
-                            .read(addShoppingListItemProvider(
-                                groupID: groupID))
+                            .read(addShoppingListItemProvider(groupID: groupID))
                             .call(
                               shoppingListID: shoppingListID,
                               userID: ref.read(currentUserIDProvider)!,

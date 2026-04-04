@@ -27,10 +27,13 @@ abstract class GroupShoppingLocation with _$GroupShoppingLocation {
     required String id,
     required String groupID,
     required String name,
+
     /// 店舗の緯度。nullの場合はジオフェンス対象外。
     required double? latitude,
+
     /// 店舗の経度。nullの場合はジオフェンス対象外。
     required double? longitude,
+
     /// ジオフェンスの半径（メートル単位）。nullの場合はデフォルト値を使用する。
     required double? geofenceRadiusMeters,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
