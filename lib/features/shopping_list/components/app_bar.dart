@@ -649,6 +649,10 @@ class _URLInputDialog extends HookConsumerWidget {
           onPressed: isLoading.value
               ? null
               : () async {
+                  analytics.logEvent(name: 'tap_submit_url', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                  });
                   final normalizedURL = urlController.text.trim();
                   if (normalizedURL.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -666,10 +670,6 @@ class _URLInputDialog extends HookConsumerWidget {
                     );
                     return;
                   }
-                  analytics.logEvent(name: 'tap_submit_url', parameters: {
-                    'groupID': groupID,
-                    'shoppingListID': shoppingListID,
-                  });
                   isLoading.value = true;
                   try {
                     final rawItems =
