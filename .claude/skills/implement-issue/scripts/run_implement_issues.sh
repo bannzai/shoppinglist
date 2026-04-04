@@ -8,14 +8,13 @@ set -uo pipefail
 #   bash run_implement_issues.sh --config ./implement_issues.json 76 151  # 指定Issueのみ
 #
 # 環境変数:
-#   GEMINI_REVIEW_MAX_ROUNDS  Geminiレビュー反映の最大ラウンド数（デフォルト: 5）
+#   MAX_ROUNDS      fix-ai-review-loop の最大ラウンド数（デフォルト: 5）
 
 PROMPT_DIR="./tmp/implement-issue/prompts"
 LOG_DIR="./tmp/implement-issue/logs"
 STATUS_FILE="./tmp/implement-issue/status.json"
 CONFIG_FILE=""
 TARGETS=()
-GEMINI_REVIEW_MAX_ROUNDS="${GEMINI_REVIEW_MAX_ROUNDS:-5}"
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -140,62 +139,6 @@ run_coding_review() {
   ccnipre -f <(echo "$review_prompt")
 }
 
-# [改善4] Gemini Code Assistantレビュー反映（デフォルト5ラウンド）
-run_gemini_review() {
-  local issue_num="$1"
-  local feature_branch="feature/premium-issue-${issue_num}"
-
-  echo "Geminiレビュー反映: Issue #${issue_num} (最大${GEMINI_REVIEW_MAX_ROUNDS}ラウンド)"
-
-  local pr_number
-  pr_number=$(gh pr list --repo bannzai/shoppinglist --head "$feature_branch" --json number --jq '.[0].number' 2>/dev/null || echo "")
-  if [ -z "$pr_number" ]; then
-    echo "Issue #${issue_num}: PRが見つかりません、スキップ"
-    return 0
-  fi
-
-  local skill_dir
-  skill_dir="$(dirname "$SCRIPT_DIR")"
-
-  local round=1
-  while [ $round -le "$GEMINI_REVIEW_MAX_ROUNDS" ]; do
-    echo "Issue #${issue_num}: Geminiレビュー ラウンド ${round}/${GEMINI_REVIEW_MAX_ROUNDS}"
-
-    # Geminiレビュー待機（最大3分、30秒間隔）
-    local gemini_count=0
-    local wait_count=0
-    while [ $wait_count -lt 6 ]; do
-      gemini_count=$(gh api "repos/bannzai/shoppinglist/pulls/${pr_number}/comments" \
-        --jq '[.[] | select(.user.login == "gemini-code-assist[bot]")] | length' 2>/dev/null || echo "0")
-      if [ "$gemini_count" -gt 0 ]; then
-        break
-      fi
-      echo "Geminiレビュー待機中... (${wait_count}/6)"
-      sleep 30
-      wait_count=$((wait_count + 1))
-    done
-
-    if [ "$gemini_count" -eq 0 ]; then
-      echo "Issue #${issue_num}: Geminiレビューコメントなし、終了"
-      return 0
-    fi
-
-    echo "Issue #${issue_num}: Geminiレビューコメント ${gemini_count} 件"
-    git checkout "$feature_branch"
-
-    local review_prompt
-    review_prompt=$(cat "${skill_dir}/references/gemini_review_prompt.md")
-    review_prompt="${review_prompt//\{\{ISSUE_NUMBER\}\}/$issue_num}"
-    review_prompt="${review_prompt//\{\{PR_NUMBER\}\}/$pr_number}"
-
-    ccnipre -f <(echo "$review_prompt")
-
-    round=$((round + 1))
-  done
-
-  echo "Issue #${issue_num}: Geminiレビュー ${GEMINI_REVIEW_MAX_ROUNDS} ラウンド完了"
-}
-
 run_issue() {
   local num="$1"
   local slug="$2"
@@ -252,8 +195,10 @@ run_issue() {
   # Phase B: コーディング規約レビュー
   run_coding_review "$num" "$BASE_BRANCH"
 
-  # Phase C: Geminiレビュー反映
-  run_gemini_review "$num"
+  # Phase C: Geminiレビュー反映（fix-ai-review-loop スクリプト使用）
+  echo "Geminiレビュー反映: Issue #${num}"
+  git checkout "feature/premium-issue-${num}"
+  fix-ai-review-loop gemini || echo "Issue #${num}: Geminiレビュー反映が最大ラウンドに達しました"
 
   # Phase D: ベースブランチにマージ
   echo "Issue #${num}: ベースブランチ ($BASE_BRANCH) にマージ中..."
