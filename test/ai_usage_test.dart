@@ -34,21 +34,21 @@ void main() {
     });
   });
 
-  group('UserUserAIUsage', () {
+  group('UserAIUsage', () {
     test('fromJsonで正しくデシリアライズされる', () {
       final json = {
         'id': '2026-04',
         'userID': 'user-1',
         'imageRecognitionCount': 3,
       };
-      final aiUsage = UserUserAIUsage.fromJson(json);
+      final aiUsage = UserAIUsage.fromJson(json);
       expect(aiUsage.id, '2026-04');
       expect(aiUsage.userID, 'user-1');
       expect(aiUsage.imageRecognitionCount, 3);
     });
 
     test('toJsonで正しくシリアライズされる', () {
-      const aiUsage = UserUserAIUsage(
+      const aiUsage = UserAIUsage(
         id: '2026-04',
         userID: 'user-1',
         imageRecognitionCount: 5,
