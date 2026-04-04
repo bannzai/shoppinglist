@@ -30,7 +30,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     final textEditingController =
         useTextEditingController(text: shoppingList.value.name);
     final isCreatingInvitation = useState(false);
-    final isPremium =
+    final firestoreIsPremium =
         ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
 
     void autoSave(GroupShoppingList updated) {
@@ -156,7 +156,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
-                      if (isPremium)
+                      if (firestoreIsPremium)
                         const Row(
                           children: [
                             Icon(Icons.all_inclusive, size: 16),

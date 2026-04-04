@@ -23,11 +23,11 @@ class HomeWidgetSync extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isPremium =
+    final firestoreIsPremium =
         ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
     // 買い物リスト一覧の変更を検知して同期
     ref.listen(
-        shoppingListsProvider(groupID: groupID, isPremium: isPremium),
+        shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium),
         (prev, next) {
       final lists = next.valueOrNull;
       if (lists != null && lists.isNotEmpty) {
@@ -52,7 +52,7 @@ class HomeWidgetSync extends ConsumerWidget {
       if (items != null) {
         final lists = ref
                 .read(shoppingListsProvider(
-                    groupID: groupID, isPremium: isPremium))
+                    groupID: groupID, isPremium: firestoreIsPremium))
                 .valueOrNull ??
             [];
         final list = lists.firstWhereOrNull((sl) => sl.id == shoppingListID);
