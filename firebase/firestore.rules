@@ -41,7 +41,8 @@ service cloud.firestore {
     // カップル
     match /groups/{groupID} {
       allow read, update: if isMember(resource.data.memberUserIDs);
-      allow create: if isMember(request.resource.data.memberUserIDs);
+      // グループ作成はCloud Functions (createGroup) 経由でのみ許可する
+      allow create: if false;
 
       function isGroupMember() {
         return isMember(get(/databases/$(database)/documents/groups/$(groupID)).data.memberUserIDs);
@@ -74,15 +75,41 @@ service cloud.firestore {
         match /categories/{categoryID} {
           allow read: if isGroupMember();
           allow create: if isGroupMember() && request.resource.data.userID == request.auth.uid;
-          allow update, delete: if isGroupMember() && resource.data.userID == request.auth.uid;
+          allow update: if isGroupMember()
+                        && resource.data.userID == request.auth.uid
+                        && (!request.resource.data
+                                .diff(resource.data)
+                                .changedKeys()
+                                .hasAny(['locationOrders'])
+                            || isPremiumFromClaim());
+          allow delete: if isGroupMember() && resource.data.userID == request.auth.uid;
         }
       }
 
+      // プレミアムユーザーはCustom ClaimsのisPremiumで判定
+      function isPremiumFromClaim() {
+        return request.auth != null && request.auth.token.isPremium == true;
+      }
+
+      // 無料ユーザーはcreatedDateTimeが30日以内のリストのみ読み取り可能
+      function isReadableFreeShoppingList() {
+        return resource.data.createdDateTime is timestamp
+          && resource.data.createdDateTime >= request.time - duration.value(30, 'd');
+      }
+
       match /shoppingLists/{shoppingListID} {
-        allow read, write: if isGroupMember();
+        allow read: if isGroupMember() && (isPremiumFromClaim() || isReadableFreeShoppingList());
+        allow create: if isGroupMember()
+                      && request.resource.data.groupID == groupID
+                      && (request.resource.data.createUserID == request.auth.uid
+                          || isDebugUserOf(request.resource.data.createUserID));
+        allow update, delete: if isGroupMember();
 
         match /items/{itemID} {
-          allow read, write: if isGroupMember();
+          allow read, update, delete: if isGroupMember();
+          allow create: if isGroupMember()
+                        && (request.resource.data.userID == request.auth.uid
+                            || isDebugUserOf(request.resource.data.userID));
         }
       }
     }

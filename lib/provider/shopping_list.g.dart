@@ -6,7 +6,7 @@ part of 'shopping_list.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$shoppingListsHash() => r'6d2679957616ece54f3043c04a0fc7e04adc42c8';
+String _$shoppingListsHash() => r'53312788b93f21bd91e920e53cd41d38da4b6051';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,21 +29,39 @@ class _SystemHash {
   }
 }
 
-/// See also [shoppingLists].
+/// 買い物リスト一覧を取得するプロバイダー。
+/// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
+/// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
+///
+/// Copied from [shoppingLists].
 @ProviderFor(shoppingLists)
 const shoppingListsProvider = ShoppingListsFamily();
 
-/// See also [shoppingLists].
+/// 買い物リスト一覧を取得するプロバイダー。
+/// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
+/// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
+///
+/// Copied from [shoppingLists].
 class ShoppingListsFamily extends Family<AsyncValue<List<GroupShoppingList>>> {
-  /// See also [shoppingLists].
+  /// 買い物リスト一覧を取得するプロバイダー。
+  /// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
+  /// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
+  ///
+  /// Copied from [shoppingLists].
   const ShoppingListsFamily();
 
-  /// See also [shoppingLists].
+  /// 買い物リスト一覧を取得するプロバイダー。
+  /// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
+  /// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
+  ///
+  /// Copied from [shoppingLists].
   ShoppingListsProvider call({
     required String groupID,
+    required bool isPremium,
   }) {
     return ShoppingListsProvider(
       groupID: groupID,
+      isPremium: isPremium,
     );
   }
 
@@ -53,6 +71,7 @@ class ShoppingListsFamily extends Family<AsyncValue<List<GroupShoppingList>>> {
   ) {
     return call(
       groupID: provider.groupID,
+      isPremium: provider.isPremium,
     );
   }
 
@@ -77,16 +96,26 @@ class ShoppingListsFamily extends Family<AsyncValue<List<GroupShoppingList>>> {
   String? get name => r'shoppingListsProvider';
 }
 
-/// See also [shoppingLists].
+/// 買い物リスト一覧を取得するプロバイダー。
+/// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
+/// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
+///
+/// Copied from [shoppingLists].
 class ShoppingListsProvider
     extends AutoDisposeStreamProvider<List<GroupShoppingList>> {
-  /// See also [shoppingLists].
+  /// 買い物リスト一覧を取得するプロバイダー。
+  /// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
+  /// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
+  ///
+  /// Copied from [shoppingLists].
   ShoppingListsProvider({
     required String groupID,
+    required bool isPremium,
   }) : this._internal(
           (ref) => shoppingLists(
             ref as ShoppingListsRef,
             groupID: groupID,
+            isPremium: isPremium,
           ),
           from: shoppingListsProvider,
           name: r'shoppingListsProvider',
@@ -98,6 +127,7 @@ class ShoppingListsProvider
           allTransitiveDependencies:
               ShoppingListsFamily._allTransitiveDependencies,
           groupID: groupID,
+          isPremium: isPremium,
         );
 
   ShoppingListsProvider._internal(
@@ -108,9 +138,11 @@ class ShoppingListsProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.groupID,
+    required this.isPremium,
   }) : super.internal();
 
   final String groupID;
+  final bool isPremium;
 
   @override
   Override overrideWith(
@@ -126,6 +158,7 @@ class ShoppingListsProvider
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         groupID: groupID,
+        isPremium: isPremium,
       ),
     );
   }
@@ -137,13 +170,16 @@ class ShoppingListsProvider
 
   @override
   bool operator ==(Object other) {
-    return other is ShoppingListsProvider && other.groupID == groupID;
+    return other is ShoppingListsProvider &&
+        other.groupID == groupID &&
+        other.isPremium == isPremium;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, groupID.hashCode);
+    hash = _SystemHash.combine(hash, isPremium.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -155,6 +191,9 @@ mixin ShoppingListsRef
     on AutoDisposeStreamProviderRef<List<GroupShoppingList>> {
   /// The parameter `groupID` of this provider.
   String get groupID;
+
+  /// The parameter `isPremium` of this provider.
+  bool get isPremium;
 }
 
 class _ShoppingListsProviderElement
@@ -164,9 +203,11 @@ class _ShoppingListsProviderElement
 
   @override
   String get groupID => (origin as ShoppingListsProvider).groupID;
+  @override
+  bool get isPremium => (origin as ShoppingListsProvider).isPremium;
 }
 
-String _$shoppingListAddHash() => r'36207893c21f77fd46ad8760207a52933eaa5869';
+String _$shoppingListAddHash() => r'd5fae19930c027d97c9feff05a2081b5cd85e984';
 
 /// See also [shoppingListAdd].
 @ProviderFor(shoppingListAdd)
@@ -196,7 +237,8 @@ class ShoppingListAddFamily extends Family<ShoppingListAdd> {
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
+    firestoreIsPremiumProvider
   ];
 
   @override
@@ -205,7 +247,9 @@ class ShoppingListAddFamily extends Family<ShoppingListAdd> {
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
     groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
+    ...?groupDatabaseProvider.allTransitiveDependencies,
+    firestoreIsPremiumProvider,
+    ...?firestoreIsPremiumProvider.allTransitiveDependencies
   };
 
   @override

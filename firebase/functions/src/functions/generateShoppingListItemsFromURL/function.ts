@@ -5,7 +5,7 @@ import * as z from "zod";
 import { ai } from "../utils/genkit";
 import { appAuthPolicy } from "../utils/authPolicy";
 import { DataResponseSchema, ErrorResponseSchema } from "../../entity/response";
-import { AIUsageData } from "../../entity/ai_usage";
+import { UserAIUsageData } from "../../entity/ai_usage";
 import { defineSecret } from "firebase-functions/params";
 import { lookup } from "node:dns/promises";
 import { isIP } from "node:net";
@@ -188,7 +188,7 @@ const generateShoppingListItemsFromURLFlow = ai.defineFlow(
     // 冪等にしない理由: 月次利用上限を正確に適用するため、上限判定を通過したリクエストごとに1回だけ加算する必要がある。
     const limitCheckResult = await firestore.runTransaction(async (tx) => {
       const aiUsageDoc = await tx.get(aiUsageRef);
-      const aiUsageData = aiUsageDoc.data() as AIUsageData | undefined;
+      const aiUsageData = aiUsageDoc.data() as UserAIUsageData | undefined;
       if ((aiUsageData?.urlRecognitionCount ?? 0) >= monthlyLimit) {
         return { isLimitReached: true as const };
       }

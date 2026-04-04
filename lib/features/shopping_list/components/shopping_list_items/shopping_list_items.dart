@@ -6,6 +6,7 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
 
@@ -135,6 +136,8 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
     final categoriesAsync = ref.watch(groupCategoriesProvider(
         groupID: groupID, categoryAxisID: categoryAxisID));
 
@@ -158,7 +161,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
           shoppingListID: shoppingListID,
           categories: categories,
           grouped: grouped,
-          shoppingLocationID: shoppingLocationID,
+          shoppingLocationID: isPremium ? shoppingLocationID : null,
         );
       },
       error: (e, st) => Center(child: Text(e.toString())),

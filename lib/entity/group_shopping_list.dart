@@ -5,8 +5,12 @@ import 'package:shoppinglist/entity/timestamp.dart';
 part 'group_shopping_list.g.dart';
 part 'group_shopping_list.freezed.dart';
 
+/// 無料ユーザーのグループあたりアクティブリスト数上限。
+const int freeGroupActiveShoppingListLimit = 5;
+
 abstract class GroupShoppingListFirestoreKeys {
   static const createdDateTime = 'createdDateTime';
+  static const status = 'status';
 }
 
 /// [Group] 内の買い物リストを表すエンティティ。

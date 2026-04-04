@@ -75,15 +75,15 @@ class UserDatabase {
           );
 
   /// 指定月のAI利用回数ドキュメントへの参照。
-  DocumentReference<AIUsage> aiUsageDocumentReference({
+  DocumentReference<UserAIUsage> aiUsageDocumentReference({
     required String yearMonth,
   }) =>
       FirebaseFirestore.instance
           .collection(_CollectionPath.aiUsage(userID: userID))
           .doc(yearMonth)
           .withConverter(
-            fromFirestore: AIUsage.fromFirestore,
-            toFirestore: AIUsage.toFirestore,
+            fromFirestore: UserAIUsage.fromFirestore,
+            toFirestore: UserAIUsage.toFirestore,
           );
 }
 
@@ -114,6 +114,19 @@ class GroupDatabase {
   Future<int> countOfGroupShoppingLists() async {
     final aggregated = await FirebaseFirestore.instance
         .collection(_CollectionPath.shoppingLists(groupID: groupID))
+        .count()
+        .get();
+    return aggregated.count ?? 0;
+  }
+
+  /// グループ内のアクティブ状態の買い物リスト数を返す。
+  Future<int> countOfActiveGroupShoppingLists() async {
+    final aggregated = await FirebaseFirestore.instance
+        .collection(_CollectionPath.shoppingLists(groupID: groupID))
+        .where(
+          GroupShoppingListFirestoreKeys.status,
+          isEqualTo: GroupShoppingListStatus.active.name,
+        )
         .count()
         .get();
     return aggregated.count ?? 0;

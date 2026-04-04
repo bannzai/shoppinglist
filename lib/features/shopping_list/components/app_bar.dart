@@ -19,6 +19,8 @@ import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/image/image.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:shoppinglist/features/shopping_list/utils/export_text_formatter.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
 class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
@@ -50,6 +52,10 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
     final hasCategories = axesAsync.maybeWhen(
         data: (axes) => axes.isNotEmpty, orElse: () => false);
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
+    final remainingImageRecognitionCount =
+        ref.watch(remainingImageRecognitionCountProvider(isPremium: isPremium));
     return AppBar(
       title: DropdownButton<String>(
         value: shoppingListID,
@@ -123,13 +129,19 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   );
                   break;
                 case 'image':
-                  _showImagePicker(context, ref);
+                  _showImagePicker(context, ref,
+                      isPremium: isPremium,
+                      remainingImageRecognitionCount:
+                          remainingImageRecognitionCount);
                   break;
                 case 'url':
                   _showURLInputDialog(context, ref);
                   break;
                 case 'paste':
                   _pasteFromClipboard(context, ref);
+                  break;
+                case 'export':
+                  _exportShoppingList(context: context, ref: ref);
                   break;
               }
             },
@@ -160,6 +172,13 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 child: ListTile(
                   leading: Icon(Icons.content_paste_go),
                   title: Text('テキスト貼り付け'),
+                ),
+              ),
+              PopupMenuItem(
+                value: 'export',
+                child: ListTile(
+                  leading: Icon(Icons.ios_share),
+                  title: Text('リストをエクスポート'),
                 ),
               ),
             ],
@@ -212,17 +231,14 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     );
   }
 
-  void _showImagePicker(BuildContext context, WidgetRef ref) {
+  void _showImagePicker(BuildContext context, WidgetRef ref,
+      {required bool isPremium, required int remainingImageRecognitionCount}) {
     analytics.logEvent(
         name: 'tap_open_image_picker',
         parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
 
     // AI画像認識の回数制限チェック
-    final isPremium =
-        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
-    final remaining =
-        ref.read(remainingImageRecognitionCountProvider(isPremium: isPremium));
-    if (remaining <= 0) {
+    if (remainingImageRecognitionCount <= 0) {
       final limit = isPremium
           ? premiumMonthlyImageRecognitionLimit
           : freeMonthlyImageRecognitionLimit;
@@ -395,6 +411,50 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     }
   }
 
+  /// 買い物リストをテキスト形式でOS標準の共有シートに送信する。
+  Future<void> _exportShoppingList({
+    required BuildContext context,
+    required WidgetRef ref,
+  }) async {
+    // ユーザー操作ごとに共有シート表示と分析送信を行うため、この処理は非冪等。
+    final isPremium =
+        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
+    if (!isPremium) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('リストのエクスポートはプレミアム機能です。プレミアムにアップグレードすると利用できます')),
+      );
+      return;
+    }
+
+    analytics.logEvent(name: 'tap_export_shopping_list', parameters: {
+      'groupID': groupID,
+      'shoppingListID': shoppingListID,
+    });
+
+    try {
+      final box = context.findRenderObject() as RenderBox?;
+      if (box == null) {
+        throw StateError('共有シートの表示位置を取得できませんでした');
+      }
+
+      await SharePlus.instance.share(
+        ShareParams(
+          text: buildShoppingListExportText(
+            shoppingListName: shoppingList?.name ?? '',
+            shoppingListItems: shoppingListItems,
+          ),
+          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
+  }
+
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight + 48);
 }
@@ -456,20 +516,35 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
                 'groupID': groupID,
                 'selectedGroupID': selectedGroupID.value
               });
-              final addProvider = ref.read(
-                  shoppingListAddProvider(groupID: selectedGroupID.value));
-              final newShoppingList = await addProvider(
-                createUserID: shoppingList.createUserID,
-                groupID: selectedGroupID.value,
-                shoppingLocationID: null,
-                duplicatedFromGroupShoppingListID: null,
-              );
-              if (selectedGroupID.value == groupID) {
-                onShoppingListIDChanged(newShoppingList.id);
-              }
-
-              if (context.mounted) {
-                Navigator.pop(context);
+              try {
+                final newShoppingList = await ref
+                    .read(
+                        shoppingListAddProvider(groupID: selectedGroupID.value))
+                    .call(
+                      createUserID: shoppingList.createUserID,
+                      groupID: selectedGroupID.value,
+                      shoppingLocationID: null,
+                      duplicatedFromGroupShoppingListID: null,
+                    );
+                if (selectedGroupID.value == groupID) {
+                  onShoppingListIDChanged(newShoppingList.id);
+                }
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              } on ShoppingListLimitExceededException catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(e.toString())),
+                  );
+                  Navigator.pop(context);
+                }
+              } catch (_) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('買い物リストの作成に失敗しました')),
+                  );
+                }
               }
             },
           ),
@@ -481,21 +556,35 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
                 'selectedGroupID': selectedGroupID.value,
                 'sourceShoppingListID': shoppingList.id
               });
-              final shoppingListDuplicate = ref.read(
-                  shoppingListDuplicateProvider(
-                      groupID: selectedGroupID.value));
-              final newShoppingList = await shoppingListDuplicate(
-                createUserID: shoppingList.createUserID,
-                groupID: selectedGroupID.value,
-                sourceShoppingList: shoppingList,
-                shoppingListItems: shoppingListItems,
-              );
-              if (selectedGroupID.value == groupID) {
-                onShoppingListIDChanged(newShoppingList.id);
-              }
-
-              if (context.mounted) {
-                Navigator.pop(context);
+              try {
+                final newShoppingList = await ref
+                    .read(shoppingListDuplicateProvider(
+                        groupID: selectedGroupID.value))
+                    .call(
+                      createUserID: shoppingList.createUserID,
+                      groupID: selectedGroupID.value,
+                      sourceShoppingList: shoppingList,
+                      shoppingListItems: shoppingListItems,
+                    );
+                if (selectedGroupID.value == groupID) {
+                  onShoppingListIDChanged(newShoppingList.id);
+                }
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              } on ShoppingListLimitExceededException catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(e.toString())),
+                  );
+                  Navigator.pop(context);
+                }
+              } catch (_) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('買い物リストの複製に失敗しました')),
+                  );
+                }
               }
             },
           ),

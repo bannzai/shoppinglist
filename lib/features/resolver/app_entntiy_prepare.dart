@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/app_user.dart';
+import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/fcm_token.dart';
 import 'package:shoppinglist/provider/group_create.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
@@ -22,12 +23,17 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
     final appUser = appUserAsync.asData?.value;
     final appUserDefaultGroupID = appUser?.defaultGroupID;
     final createGroup = ref.watch(createGroupProvider);
+    final firestoreIsPremiumAsync = ref.watch(firestoreIsPremiumProvider);
+    final isPremium = firestoreIsPremiumAsync.asData?.value;
 
     final shoppingListAdd = appUserDefaultGroupID != null
         ? ref.watch(shoppingListAddProvider(groupID: appUserDefaultGroupID))
         : null;
-    final shoppingLists = appUserDefaultGroupID != null
-        ? ref.watch(shoppingListsProvider(groupID: appUserDefaultGroupID))
+    final shoppingLists = (appUserDefaultGroupID != null && isPremium != null)
+        ? ref.watch(shoppingListsProvider(
+            groupID: appUserDefaultGroupID,
+            isPremium: isPremium,
+          ))
         : null;
 
     // FCMトークン登録: appUserが取得できたらFCMトークンをFirestoreに保存し、トークン更新を監視する
@@ -72,6 +78,11 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
     }, [shoppingLists]);
 
     if (appUser == null) {
+      return const Loading();
+    }
+
+    // isPremium未解決時は初期リスト自動作成判定を実行しない
+    if (firestoreIsPremiumAsync.isLoading) {
       return const Loading();
     }
 

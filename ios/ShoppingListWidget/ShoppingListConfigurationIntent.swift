@@ -42,19 +42,39 @@ struct ShoppingListEntityQuery: EntityQuery {
     private let appGroupId = widgetAppGroupId
 
     func entities(for identifiers: [ShoppingListEntity.ID]) async throws -> [ShoppingListEntity] {
-        let allEntities = await loadEntities()
-        return allEntities.filter { identifiers.contains($0.id) }
+        return await availableEntities().filter { identifiers.contains($0.id) }
     }
 
     func suggestedEntities() async throws -> [ShoppingListEntity] {
-        await loadEntities()
+        await availableEntities()
     }
 
     func defaultResult() async -> ShoppingListEntity? {
-        await loadEntities().first
+        await availableEntities().first
     }
 
-    private func loadEntities() async -> [ShoppingListEntity] {
+    /// プレミアム状態に応じて返却するエンティティをフィルタリングする。
+    /// 無料ユーザーは現在選択中のリスト1件のみ返却する。
+    private func availableEntities() async -> [ShoppingListEntity] {
+        let allEntities = await loadAllEntities()
+        let userDefaults = UserDefaults(suiteName: appGroupId)
+        let isPremium = userDefaults?.bool(forKey: "widget_is_premium") ?? false
+        if isPremium {
+            return allEntities
+        }
+
+        let defaultListID = userDefaults?.string(forKey: "widget_current_shopping_list_id")
+        if let defaultListID,
+           let matched = allEntities.first(where: { $0.id == defaultListID }) {
+            return [matched]
+        }
+        if let first = allEntities.first {
+            return [first]
+        }
+        return []
+    }
+
+    private func loadAllEntities() async -> [ShoppingListEntity] {
         #if WIDGET_EXTENSION
         let firestoreEntities = await fetchFirestoreShoppingLists()
         if !firestoreEntities.isEmpty {

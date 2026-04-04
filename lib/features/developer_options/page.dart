@@ -5,6 +5,7 @@ import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/developer_options/firestore_viewer_page.dart';
 import 'package:shoppinglist/features/developer_options/provider.dart';
 import 'package:shoppinglist/provider/app_user.dart';
+import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -86,10 +87,13 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
     final isProcessing = useState(false);
     final resultMessage = useState('');
 
+    final isPremium =
+        ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
     // shoppingListsProviderをbuild内でwatchしてデータをロードする
     // （ref.readではAutoDisposeのStreamProviderがAsyncLoadingを返すため）
     final shoppingListsAsync = defaultGroupID != null
-        ? ref.watch(shoppingListsProvider(groupID: defaultGroupID))
+        ? ref.watch(shoppingListsProvider(
+            groupID: defaultGroupID, isPremium: isPremium))
         : null;
     final shoppingLists = shoppingListsAsync?.asData?.value ?? [];
     final firstShoppingListID =
