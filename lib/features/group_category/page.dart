@@ -11,6 +11,7 @@ import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 class GroupCategoryPage extends ConsumerWidget {
   final String groupID;
@@ -184,6 +185,8 @@ class _CategoryListBody extends HookConsumerWidget {
     final locationsAsync =
         ref.watch(shoppingLocationsProvider(groupID: groupID));
     final selectedLocationID = useState<String?>(null);
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
 
     return categoriesAsync.when(
       data: (categories) => Scaffold(
@@ -201,11 +204,18 @@ class _CategoryListBody extends HookConsumerWidget {
                             horizontal: 16.0, vertical: 8.0),
                         child: DropdownButtonFormField<String?>(
                           initialValue: selectedLocationID.value,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: '買い物する場所の並び順',
-                            border: OutlineInputBorder(),
-                            contentPadding: EdgeInsets.symmetric(
+                            border: const OutlineInputBorder(),
+                            contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 8),
+                            suffixIcon: !isPremium
+                                ? Icon(Icons.lock,
+                                    size: 16,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant)
+                                : null,
                           ),
                           items: [
                             const DropdownMenuItem<String?>(
@@ -224,6 +234,14 @@ class _CategoryListBody extends HookConsumerWidget {
                               name: 'select_category_location_order',
                               parameters: {'groupID': groupID},
                             );
+                            if (value != null && !isPremium) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
+                                ),
+                              );
+                              return;
+                            }
                             selectedLocationID.value = value;
                           },
                         ),
@@ -367,6 +385,18 @@ class _CategoryReorderableList extends ConsumerWidget {
       onReorder: (oldIndex, newIndex) {
         analytics.logEvent(
             name: 'reorder_category', parameters: {'groupID': groupID});
+        if (selectedShoppingLocationID != null) {
+          final isPremium =
+              ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
+          if (!isPremium) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
+              ),
+            );
+            return;
+          }
+        }
         if (oldIndex < newIndex) {
           newIndex -= 1;
         }

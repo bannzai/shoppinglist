@@ -13,7 +13,7 @@ part of 'ai_usage.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$AIUsage {
+mixin _$UserAIUsage {
   /// ドキュメントID（yearMonth形式、例: "2026-04"）
   String get id;
 
@@ -30,21 +30,21 @@ mixin _$AIUsage {
   @ServerUpdatedTimestamp()
   DateTime? get serverUpdatedDateTime;
 
-  /// Create a copy of AIUsage
+  /// Create a copy of UserAIUsage
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $AIUsageCopyWith<AIUsage> get copyWith =>
-      _$AIUsageCopyWithImpl<AIUsage>(this as AIUsage, _$identity);
+  $UserAIUsageCopyWith<UserAIUsage> get copyWith =>
+      _$UserAIUsageCopyWithImpl<UserAIUsage>(this as UserAIUsage, _$identity);
 
-  /// Serializes this AIUsage to a JSON map.
+  /// Serializes this UserAIUsage to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is AIUsage &&
+            other is UserAIUsage &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.imageRecognitionCount, imageRecognitionCount) ||
@@ -70,14 +70,15 @@ mixin _$AIUsage {
 
   @override
   String toString() {
-    return 'AIUsage(id: $id, userID: $userID, imageRecognitionCount: $imageRecognitionCount, urlRecognitionCount: $urlRecognitionCount, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'UserAIUsage(id: $id, userID: $userID, imageRecognitionCount: $imageRecognitionCount, urlRecognitionCount: $urlRecognitionCount, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
 /// @nodoc
-abstract mixin class $AIUsageCopyWith<$Res> {
-  factory $AIUsageCopyWith(AIUsage value, $Res Function(AIUsage) _then) =
-      _$AIUsageCopyWithImpl;
+abstract mixin class $UserAIUsageCopyWith<$Res> {
+  factory $UserAIUsageCopyWith(
+          UserAIUsage value, $Res Function(UserAIUsage) _then) =
+      _$UserAIUsageCopyWithImpl;
   @useResult
   $Res call(
       {String id,
@@ -89,13 +90,13 @@ abstract mixin class $AIUsageCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$AIUsageCopyWithImpl<$Res> implements $AIUsageCopyWith<$Res> {
-  _$AIUsageCopyWithImpl(this._self, this._then);
+class _$UserAIUsageCopyWithImpl<$Res> implements $UserAIUsageCopyWith<$Res> {
+  _$UserAIUsageCopyWithImpl(this._self, this._then);
 
-  final AIUsage _self;
-  final $Res Function(AIUsage) _then;
+  final UserAIUsage _self;
+  final $Res Function(UserAIUsage) _then;
 
-  /// Create a copy of AIUsage
+  /// Create a copy of UserAIUsage
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -136,8 +137,8 @@ class _$AIUsageCopyWithImpl<$Res> implements $AIUsageCopyWith<$Res> {
   }
 }
 
-/// Adds pattern-matching-related methods to [AIUsage].
-extension AIUsagePatterns on AIUsage {
+/// Adds pattern-matching-related methods to [UserAIUsage].
+extension UserAIUsagePatterns on UserAIUsage {
   /// A variant of `map` that fallback to returning `orElse`.
   ///
   /// It is equivalent to doing:
@@ -152,12 +153,12 @@ extension AIUsagePatterns on AIUsage {
 
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>(
-    TResult Function(_AIUsage value)? $default, {
+    TResult Function(_UserAIUsage value)? $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case _AIUsage() when $default != null:
+      case _UserAIUsage() when $default != null:
         return $default(_that);
       case _:
         return orElse();
@@ -179,11 +180,11 @@ extension AIUsagePatterns on AIUsage {
 
   @optionalTypeArgs
   TResult map<TResult extends Object?>(
-    TResult Function(_AIUsage value) $default,
+    TResult Function(_UserAIUsage value) $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _AIUsage():
+      case _UserAIUsage():
         return $default(_that);
       case _:
         throw StateError('Unexpected subclass');
@@ -204,11 +205,11 @@ extension AIUsagePatterns on AIUsage {
 
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_AIUsage value)? $default,
+    TResult? Function(_UserAIUsage value)? $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _AIUsage() when $default != null:
+      case _UserAIUsage() when $default != null:
         return $default(_that);
       case _:
         return null;
@@ -241,7 +242,7 @@ extension AIUsagePatterns on AIUsage {
   }) {
     final _that = this;
     switch (_that) {
-      case _AIUsage() when $default != null:
+      case _UserAIUsage() when $default != null:
         return $default(
             _that.id,
             _that.userID,
@@ -280,7 +281,7 @@ extension AIUsagePatterns on AIUsage {
   ) {
     final _that = this;
     switch (_that) {
-      case _AIUsage():
+      case _UserAIUsage():
         return $default(
             _that.id,
             _that.userID,
@@ -318,7 +319,7 @@ extension AIUsagePatterns on AIUsage {
   ) {
     final _that = this;
     switch (_that) {
-      case _AIUsage() when $default != null:
+      case _UserAIUsage() when $default != null:
         return $default(
             _that.id,
             _that.userID,
@@ -335,8 +336,8 @@ extension AIUsagePatterns on AIUsage {
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true)
-class _AIUsage extends AIUsage {
-  const _AIUsage(
+class _UserAIUsage extends UserAIUsage {
+  const _UserAIUsage(
       {required this.id,
       required this.userID,
       required this.imageRecognitionCount,
@@ -344,8 +345,8 @@ class _AIUsage extends AIUsage {
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
       @ServerUpdatedTimestamp() this.serverUpdatedDateTime})
       : super._();
-  factory _AIUsage.fromJson(Map<String, dynamic> json) =>
-      _$AIUsageFromJson(json);
+  factory _UserAIUsage.fromJson(Map<String, dynamic> json) =>
+      _$UserAIUsageFromJson(json);
 
   /// ドキュメントID（yearMonth形式、例: "2026-04"）
   @override
@@ -370,17 +371,17 @@ class _AIUsage extends AIUsage {
   @ServerUpdatedTimestamp()
   final DateTime? serverUpdatedDateTime;
 
-  /// Create a copy of AIUsage
+  /// Create a copy of UserAIUsage
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$AIUsageCopyWith<_AIUsage> get copyWith =>
-      __$AIUsageCopyWithImpl<_AIUsage>(this, _$identity);
+  _$UserAIUsageCopyWith<_UserAIUsage> get copyWith =>
+      __$UserAIUsageCopyWithImpl<_UserAIUsage>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$AIUsageToJson(
+    return _$UserAIUsageToJson(
       this,
     );
   }
@@ -389,7 +390,7 @@ class _AIUsage extends AIUsage {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _AIUsage &&
+            other is _UserAIUsage &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.imageRecognitionCount, imageRecognitionCount) ||
@@ -415,14 +416,16 @@ class _AIUsage extends AIUsage {
 
   @override
   String toString() {
-    return 'AIUsage(id: $id, userID: $userID, imageRecognitionCount: $imageRecognitionCount, urlRecognitionCount: $urlRecognitionCount, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'UserAIUsage(id: $id, userID: $userID, imageRecognitionCount: $imageRecognitionCount, urlRecognitionCount: $urlRecognitionCount, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$AIUsageCopyWith<$Res> implements $AIUsageCopyWith<$Res> {
-  factory _$AIUsageCopyWith(_AIUsage value, $Res Function(_AIUsage) _then) =
-      __$AIUsageCopyWithImpl;
+abstract mixin class _$UserAIUsageCopyWith<$Res>
+    implements $UserAIUsageCopyWith<$Res> {
+  factory _$UserAIUsageCopyWith(
+          _UserAIUsage value, $Res Function(_UserAIUsage) _then) =
+      __$UserAIUsageCopyWithImpl;
   @override
   @useResult
   $Res call(
@@ -435,13 +438,13 @@ abstract mixin class _$AIUsageCopyWith<$Res> implements $AIUsageCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$AIUsageCopyWithImpl<$Res> implements _$AIUsageCopyWith<$Res> {
-  __$AIUsageCopyWithImpl(this._self, this._then);
+class __$UserAIUsageCopyWithImpl<$Res> implements _$UserAIUsageCopyWith<$Res> {
+  __$UserAIUsageCopyWithImpl(this._self, this._then);
 
-  final _AIUsage _self;
-  final $Res Function(_AIUsage) _then;
+  final _UserAIUsage _self;
+  final $Res Function(_UserAIUsage) _then;
 
-  /// Create a copy of AIUsage
+  /// Create a copy of UserAIUsage
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -453,7 +456,7 @@ class __$AIUsageCopyWithImpl<$Res> implements _$AIUsageCopyWith<$Res> {
     Object? serverCreatedDateTime = freezed,
     Object? serverUpdatedDateTime = freezed,
   }) {
-    return _then(_AIUsage(
+    return _then(_UserAIUsage(
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable

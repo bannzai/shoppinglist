@@ -5,6 +5,9 @@ import 'package:shoppinglist/entity/timestamp.dart';
 part 'group.g.dart';
 part 'group.freezed.dart';
 
+/// 無料ユーザーがソログループに加えて作成できるグループ数の上限。
+const int freeAdditionalGroupCreationLimit = 1;
+
 /// 買い物リストを共有するグループを表すエンティティ。
 ///
 /// 複数の [AppUser] が所属し、[GroupShoppingList] や [GroupShoppingLocation]、

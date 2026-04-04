@@ -63,8 +63,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
   Future<List<String>> generateShoppingListItemsFromURL({
     required String url,
   }) async {
-    final result =
-        await httpsCallable('generateShoppingListItemsFromURL').call(
+    final result = await httpsCallable('generateShoppingListItemsFromURL').call(
       {
         'url': url,
       },
@@ -112,6 +111,49 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
       },
     );
     debugPrint('sendShoppingListUpdateNotification.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+  }
+
+  /// サーバー側で上限チェックを行った上で買い物リストを作成する。
+  Future<String> createShoppingList({
+    required String groupID,
+    required String createUserID,
+    required String? shoppingLocationID,
+    required String? duplicatedFromGroupShoppingListID,
+  }) async {
+    final result = await httpsCallable('createShoppingList').call(
+      {
+        'groupID': groupID,
+        'createUserID': createUserID,
+        'shoppingLocationID': shoppingLocationID,
+        'duplicatedFromGroupShoppingListID': duplicatedFromGroupShoppingListID,
+      },
+    );
+    debugPrint('createShoppingList.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+    return response['data']['shoppingListID'] as String;
+  }
+
+  /// サーバー側で上限チェックを行った上でグループを作成する。
+  Future<void> createGroup({
+    required String createUserID,
+    required String? name,
+    required bool setAsDefault,
+  }) async {
+    final result = await httpsCallable('createGroup').call(
+      {
+        'createUserID': createUserID,
+        'name': name,
+        'setAsDefault': setAsDefault,
+      },
+    );
+    debugPrint('createGroup.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
       throw Exception(response['error']['message']);

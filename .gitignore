@@ -48,6 +48,9 @@ GoogleService-Info.plist
 
 lib/secret/secret.dart
 
+# iOS のローカルシークレット（APIキー実値）
+ios/Flutter/Secret.xcconfig
+
 maestro/screenshots/
 maestro/test-results/
 screenshots/

@@ -2,6 +2,11 @@
   <!-- https://qiita.com/kirinukkii/items/5c6bd1da2b38138ad821#android%E3%81%A8ios%E3%81%AE%E8%A8%AD%E5%AE%9A -->
   <uses-permission android:name="android.permission.CAMERA"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+  <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:label="shoppinglist"
@@ -34,6 +39,10 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${GOOGLE_MAPS_API_KEY}"/>
 
         <receiver
             android:name=".ShoppingListWidgetProvider"

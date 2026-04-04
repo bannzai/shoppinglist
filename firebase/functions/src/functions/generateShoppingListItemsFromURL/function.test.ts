@@ -71,6 +71,15 @@ jest.mock("node:dns/promises", () => ({
   lookup: (...args: unknown[]) => mockLookup(...args),
 }));
 
+// node:https のモック（safeFetchHTML で使用）
+const mockHttpsRequest = jest.fn();
+jest.mock("node:https", () => ({
+  Agent: jest.fn().mockImplementation(() => ({
+    destroy: jest.fn(),
+  })),
+  request: (...args: unknown[]) => mockHttpsRequest(...args),
+}));
+
 require("./function");
 
 /** aiUsageRefのモックを構築するヘルパー。 */
@@ -89,18 +98,43 @@ function setupFirestoreMocks(aiUsageRef: any) {
   });
 }
 
-/** fetch のモックを設定するヘルパー。 */
-function setupFetchMock(overrides: Partial<Response> = {}) {
-  global.fetch = jest.fn().mockResolvedValue({
-    ok: true,
-    status: 200,
-    headers: new Headers({
-      "content-type": "text/html; charset=utf-8",
-      "content-length": "100",
-    }),
-    text: async () => "<html><body>牛乳 卵</body></html>",
-    ...overrides,
-  } as unknown as Response);
+import { EventEmitter } from "node:events";
+
+/** node:https.request のモックレスポンスを構築するヘルパー。 */
+function setupHttpsRequestMock(overrides: {
+  statusCode?: number;
+  headers?: Record<string, string>;
+  body?: string;
+  error?: Error;
+} = {}) {
+  const statusCode = overrides.statusCode ?? 200;
+  const headers = overrides.headers ?? {
+    "content-type": "text/html; charset=utf-8",
+    "content-length": "100",
+  };
+  const body = overrides.body ?? "<html><body>牛乳 卵</body></html>";
+
+  mockHttpsRequest.mockImplementation((_url: string, _opts: any, callback: (res: any) => void) => {
+    const res = new EventEmitter() as any;
+    res.statusCode = statusCode;
+    res.headers = headers;
+
+    // レスポンスを非同期で発火
+    process.nextTick(() => {
+      callback(res);
+      if (overrides.error) {
+        res.emit("error", overrides.error);
+      } else {
+        res.emit("data", Buffer.from(body, "utf8"));
+        res.emit("end");
+      }
+    });
+
+    const req = new EventEmitter() as any;
+    req.end = jest.fn();
+    req.destroy = jest.fn();
+    return req;
+  });
 }
 
 /** トランザクションモックを設定するヘルパー。 */
@@ -132,12 +166,8 @@ describe("generateShoppingListItemsFromURL", () => {
     mockGenerate.mockResolvedValue({
       output: { shoppingListItems: ["牛乳", "卵"] },
     });
-    // デフォルト: fetch
-    setupFetchMock();
-  });
-
-  afterEach(() => {
-    delete (global as any).fetch;
+    // デフォルト: node:https.request
+    setupHttpsRequestMock();
   });
 
   test("正常系: 既存ドキュメントで urlRecognitionCount がインクリメントされる", async () => {
@@ -357,7 +387,7 @@ describe("generateShoppingListItemsFromURL", () => {
       data: { urlRecognitionCount: 0 },
     });
 
-    setupFetchMock({ ok: false, status: 404 });
+    setupHttpsRequestMock({ statusCode: 404 });
 
     const result = await capturedFlowFn({
       url: "https://example.com/not-found",
@@ -376,14 +406,14 @@ describe("generateShoppingListItemsFromURL", () => {
       data: { urlRecognitionCount: 0 },
     });
 
-    global.fetch = jest.fn().mockRejectedValue(new TypeError("redirect error"));
+    setupHttpsRequestMock({ statusCode: 301 });
 
     const result = await capturedFlowFn({
       url: "https://example.com/redirect",
     });
 
     expect(result.result).toBe("NG");
-    expect(result.error.message).toBe("redirect error");
+    expect(result.error.message).toBe("リダイレクトは許可されていません");
   });
 
   test("異常系: content-type が text/html 以外", async () => {
@@ -395,9 +425,9 @@ describe("generateShoppingListItemsFromURL", () => {
       data: { urlRecognitionCount: 0 },
     });
 
-    setupFetchMock({
-      headers: new Headers({ "content-type": "application/json" }),
-    } as any);
+    setupHttpsRequestMock({
+      headers: { "content-type": "application/json" },
+    });
 
     const result = await capturedFlowFn({
       url: "https://example.com/api.json",
@@ -416,12 +446,12 @@ describe("generateShoppingListItemsFromURL", () => {
       data: { urlRecognitionCount: 0 },
     });
 
-    setupFetchMock({
-      headers: new Headers({
+    setupHttpsRequestMock({
+      headers: {
         "content-type": "text/html",
         "content-length": String(6 * 1024 * 1024),
-      }),
-    } as any);
+      },
+    });
 
     const result = await capturedFlowFn({
       url: "https://example.com/large-page",

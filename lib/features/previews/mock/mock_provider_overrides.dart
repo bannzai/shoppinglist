@@ -29,7 +29,11 @@ import 'package:shoppinglist/provider/user_groups.dart';
 // --- No-Op操作クラス ---
 
 class _NoOpShoppingListAdd extends ShoppingListAdd {
-  _NoOpShoppingListAdd() : super(database: GroupDatabase(groupID: mockGroupID));
+  _NoOpShoppingListAdd()
+      : super(
+          database: GroupDatabase(groupID: mockGroupID),
+          isPremiumResolver: () => false,
+        );
 
   @override
   Future<GroupShoppingList> call({
@@ -132,8 +136,6 @@ class _NoOpDefaultGroupUpdate extends DefaultGroupUpdate {
 }
 
 class _NoOpCreateGroup extends CreateGroup {
-  _NoOpCreateGroup() : super(userDatabase: UserDatabase(userID: mockUserID));
-
   @override
   Future<void> call({
     required AppUser appUser,
@@ -227,7 +229,12 @@ class _NoOpShoppingLocationAdd extends ShoppingLocationAdd {
       : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
-  Future<GroupShoppingLocation> call({required String name}) async {
+  Future<GroupShoppingLocation> call({
+    required String name,
+    required double? latitude,
+    required double? longitude,
+    required double? geofenceRadiusMeters,
+  }) async {
     return mockShoppingLocation();
   }
 }

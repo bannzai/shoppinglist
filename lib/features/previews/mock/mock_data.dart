@@ -132,6 +132,9 @@ GroupShoppingLocation mockShoppingLocation() => const GroupShoppingLocation(
       id: mockShoppingLocationID,
       groupID: mockGroupID,
       name: '近所のスーパー',
+      latitude: null,
+      longitude: null,
+      geofenceRadiusMeters: null,
     );
 
 List<GroupUserProfile> mockUserProfiles() => [
