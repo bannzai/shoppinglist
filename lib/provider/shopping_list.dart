@@ -35,15 +35,15 @@ Stream<List<GroupShoppingList>> shoppingLists(Ref ref,
   }
 
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
-  var query = database
-      .shoppingListsReference()
-      .orderBy(GroupShoppingListFirestoreKeys.createdDateTime, descending: true);
+  var query = database.shoppingListsReference().orderBy(
+      GroupShoppingListFirestoreKeys.createdDateTime,
+      descending: true);
 
   if (!isPremium) {
     query = query.where(
       GroupShoppingListFirestoreKeys.createdDateTime,
-      isGreaterThanOrEqualTo: Timestamp.fromDate(
-          DateTime.now().subtract(const Duration(days: 30))),
+      isGreaterThanOrEqualTo:
+          Timestamp.fromDate(DateTime.now().subtract(const Duration(days: 30))),
     );
   }
 
