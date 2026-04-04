@@ -9,6 +9,7 @@ import { UserAIUsageData } from "../../entity/ai_usage";
 import { defineSecret } from "firebase-functions/params";
 import { lookup } from "node:dns/promises";
 import { isIP } from "node:net";
+import * as https from "node:https";
 
 const ResponseSchema = z.union([
   DataResponseSchema.extend({
@@ -79,20 +80,118 @@ function isPrivateIPAddress(ipAddress: string): boolean {
   return false;
 }
 
-/** 公開Web向けURLのみ許可する。SSRF対策。 */
-async function isSafePublicURL(url: URL): Promise<boolean> {
+/** 公開Web向けURLのみ許可し、解決済みIPアドレスを返す。DNS Rebinding対策のため、ここで解決したIPをfetchでも使用する。 */
+async function resolveToSafeIP(url: URL): Promise<string | null> {
   const hostname = url.hostname.toLowerCase();
-  if (blockedHostnames.has(hostname)) return false;
+  if (blockedHostnames.has(hostname)) return null;
 
   if (isIP(hostname)) {
-    return !isPrivateIPAddress(hostname);
+    return isPrivateIPAddress(hostname) ? null : hostname;
   }
 
   try {
-    return !isPrivateIPAddress((await lookup(hostname)).address);
+    const resolvedAddress = (await lookup(hostname)).address;
+    return isPrivateIPAddress(resolvedAddress) ? null : resolvedAddress;
   } catch {
-    return false;
+    return null;
   }
+}
+
+/**
+ * DNS Rebinding・OOM対策を施したHTMLフェッチ。
+ * lookupコールバックで事前解決済みIPを強制し、ストリームでバイト数を制限する。
+ */
+async function safeFetchHTML({
+  targetURL,
+  resolvedIP,
+}: {
+  targetURL: URL;
+  resolvedIP: string;
+}): Promise<{ ok: true; html: string } | { ok: false; error: string }> {
+  return new Promise((resolve) => {
+    const agent = new https.Agent({
+      lookup: (_hostname, _options, callback) => {
+        // DNS Rebinding対策: 事前解決済みIPを強制使用し、再度の名前解決を防ぐ
+        callback(null, resolvedIP, resolvedIP.includes(":") ? 6 : 4);
+      },
+    });
+
+    const req = https.request(
+      targetURL.toString(),
+      {
+        method: "GET",
+        agent,
+        timeout: fetchTimeoutMs,
+        headers: { "User-Agent": "ShoppingListBot/1.0" },
+      },
+      (res) => {
+        if (res.statusCode && (res.statusCode >= 300 && res.statusCode < 400)) {
+          req.destroy();
+          agent.destroy();
+          resolve({ ok: false, error: "リダイレクトは許可されていません" });
+          return;
+        }
+        if (!res.statusCode || res.statusCode < 200 || res.statusCode >= 300) {
+          req.destroy();
+          agent.destroy();
+          resolve({
+            ok: false,
+            error: `ページの取得に失敗しました（HTTP ${res.statusCode}）`,
+          });
+          return;
+        }
+        const contentType = (
+          res.headers["content-type"] ?? ""
+        ).toLowerCase();
+        if (!contentType.includes("text/html")) {
+          req.destroy();
+          agent.destroy();
+          resolve({ ok: false, error: "HTMLページのみ対応しています" });
+          return;
+        }
+        const contentLength = Number(res.headers["content-length"] ?? "0");
+        if (contentLength > maxHTMLBytes) {
+          req.destroy();
+          agent.destroy();
+          resolve({ ok: false, error: "ページサイズが大きすぎます" });
+          return;
+        }
+
+        // OOM対策: ストリームでバイト数を制限しながら読み取る
+        const chunks: Buffer[] = [];
+        let totalBytes = 0;
+        res.on("data", (chunk: Buffer) => {
+          totalBytes += chunk.length;
+          if (totalBytes > maxHTMLBytes) {
+            req.destroy();
+            agent.destroy();
+            resolve({ ok: false, error: "ページサイズが大きすぎます" });
+            return;
+          }
+          chunks.push(chunk);
+        });
+        res.on("end", () => {
+          agent.destroy();
+          resolve({ ok: true, html: Buffer.concat(chunks).toString("utf8") });
+        });
+        res.on("error", (err) => {
+          agent.destroy();
+          resolve({ ok: false, error: err.message });
+        });
+      }
+    );
+
+    req.on("timeout", () => {
+      req.destroy();
+      agent.destroy();
+      resolve({ ok: false, error: "タイムアウトしました" });
+    });
+    req.on("error", (err) => {
+      agent.destroy();
+      resolve({ ok: false, error: err.message });
+    });
+    req.end();
+  });
 }
 
 /** Firebase Auth Custom Claimsからプレミアム判定を行う。 */
@@ -162,7 +261,9 @@ const generateShoppingListItemsFromURLFlow = ai.defineFlow(
     if (parsedURL.username || parsedURL.password) {
       return { result: "NG" as const, error: { message: "URLが無効です" } };
     }
-    if (!(await isSafePublicURL(parsedURL))) {
+    // DNS Rebinding対策: 名前解決を1回だけ行い、そのIPアドレスをfetchでも使用する
+    const resolvedIP = await resolveToSafeIP(parsedURL);
+    if (!resolvedIP) {
       return {
         result: "NG" as const,
         error: { message: "指定されたURLにはアクセスできません" },
@@ -221,45 +322,18 @@ const generateShoppingListItemsFromURLFlow = ai.defineFlow(
     }
 
     try {
-      // HTML取得
-      const response = await fetch(parsedURL.toString(), {
-        signal: AbortSignal.timeout(fetchTimeoutMs),
-        headers: { "User-Agent": "ShoppingListBot/1.0" },
-        redirect: "error",
+      // HTML取得（DNS Rebinding対策 + OOM対策: safeFetchHTMLで解決済みIPを使用し、ストリームでバイト数を制限）
+      const fetchResult = await safeFetchHTML({
+        targetURL: parsedURL,
+        resolvedIP,
       });
-      if (!response.ok) {
+      if (!fetchResult.ok) {
         return {
           result: "NG" as const,
-          error: {
-            message: `ページの取得に失敗しました（HTTP ${response.status}）`,
-          },
+          error: { message: fetchResult.error },
         };
       }
-      const contentType = (
-        response.headers.get("content-type") ?? ""
-      ).toLowerCase();
-      if (!contentType.includes("text/html")) {
-        return {
-          result: "NG" as const,
-          error: { message: "HTMLページのみ対応しています" },
-        };
-      }
-      const contentLength = Number(
-        response.headers.get("content-length") ?? "0"
-      );
-      if (contentLength > maxHTMLBytes) {
-        return {
-          result: "NG" as const,
-          error: { message: "ページサイズが大きすぎます" },
-        };
-      }
-      const htmlTextRaw = await response.text();
-      if (Buffer.byteLength(htmlTextRaw, "utf8") > maxHTMLBytes) {
-        return {
-          result: "NG" as const,
-          error: { message: "ページサイズが大きすぎます" },
-        };
-      }
+      const htmlTextRaw = fetchResult.html;
 
       // Genkitで構造化出力としてアイテム抽出
       const generation = await ai.generate({
