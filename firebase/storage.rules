@@ -1,0 +1,10 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Cloud Function (Admin SDK) 経由でのみアクセスさせるため、クライアントSDK経由の read/write は不可
+    match /groups/{groupID}/shoppingLists/{shoppingListID}/items/{itemID}/{fileName} {
+      allow read: if false;
+      allow write: if false;
+    }
+  }
+}
