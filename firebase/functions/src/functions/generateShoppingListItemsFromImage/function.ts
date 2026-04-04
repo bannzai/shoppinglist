@@ -7,7 +7,7 @@ import * as z from "zod";
 import { ai } from "../utils/genkit";
 import { appAuthPolicy } from "../utils/authPolicy";
 import { DataResponseSchema, ErrorResponseSchema } from "../../entity/response";
-import { AIUsageData } from "../../entity/ai_usage";
+import { UserAIUsageData } from "../../entity/ai_usage";
 import fs from "fs";
 import { defineString } from "firebase-functions/params";
 
@@ -127,7 +127,7 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
 
     const firestore = admin.firestore();
     const now = new Date();
-    const yearMonth = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
+    const yearMonth = now.toISOString().slice(0, 7);
     const aiUsageRef = firestore
       .collection("users")
       .doc(uid)
@@ -138,7 +138,7 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
     // 冪等にしない理由: 月次利用上限を正確に適用するため、成功リクエストごとに1回だけ加算する必要がある。
     const limitCheckResult = await firestore.runTransaction(async (tx) => {
       const aiUsageDoc = await tx.get(aiUsageRef);
-      const aiUsageData = aiUsageDoc.data() as AIUsageData | undefined;
+      const aiUsageData = aiUsageDoc.data() as UserAIUsageData | undefined;
       const used = aiUsageData?.imageRecognitionCount ?? 0;
       if (used >= monthlyLimit) {
         return { isLimitReached: true as const };
@@ -237,6 +237,7 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
         uid,
         yearMonth,
         errorName: error instanceof Error ? error.name : "unknown",
+        errorMessage: error instanceof Error ? error.message : String(error),
       });
       return {
         result: "NG",

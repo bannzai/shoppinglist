@@ -25,8 +25,7 @@ void main() {
 
   group('currentYearMonth', () {
     test('yyyy-MM形式で返される', () {
-      expect(
-          currentYearMonth(now: DateTime.utc(2026, 4, 1)),
+      expect(currentYearMonth(now: DateTime.utc(2026, 4, 1)),
           matches(RegExp(r'^\d{4}-\d{2}$')));
     });
 
@@ -35,21 +34,21 @@ void main() {
     });
   });
 
-  group('AIUsage', () {
+  group('UserAIUsage', () {
     test('fromJsonで正しくデシリアライズされる', () {
       final json = {
         'id': '2026-04',
         'userID': 'user-1',
         'imageRecognitionCount': 3,
       };
-      final aiUsage = AIUsage.fromJson(json);
+      final aiUsage = UserAIUsage.fromJson(json);
       expect(aiUsage.id, '2026-04');
       expect(aiUsage.userID, 'user-1');
       expect(aiUsage.imageRecognitionCount, 3);
     });
 
     test('toJsonで正しくシリアライズされる', () {
-      const aiUsage = AIUsage(
+      const aiUsage = UserAIUsage(
         id: '2026-04',
         userID: 'user-1',
         imageRecognitionCount: 5,

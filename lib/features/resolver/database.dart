@@ -75,15 +75,15 @@ class UserDatabase {
           );
 
   /// 指定月のAI利用回数ドキュメントへの参照。
-  DocumentReference<AIUsage> aiUsageDocumentReference({
+  DocumentReference<UserAIUsage> aiUsageDocumentReference({
     required String yearMonth,
   }) =>
       FirebaseFirestore.instance
           .collection(_CollectionPath.aiUsage(userID: userID))
           .doc(yearMonth)
           .withConverter(
-            fromFirestore: AIUsage.fromFirestore,
-            toFirestore: AIUsage.toFirestore,
+            fromFirestore: UserAIUsage.fromFirestore,
+            toFirestore: UserAIUsage.toFirestore,
           );
 }
 

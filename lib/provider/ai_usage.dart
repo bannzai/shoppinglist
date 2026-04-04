@@ -7,7 +7,7 @@ part 'ai_usage.g.dart';
 
 /// 現在月のAI利用回数をリアルタイム購読するProvider。
 @Riverpod(dependencies: [userDatabase])
-Stream<AIUsage?> currentMonthAIUsage(Ref ref) {
+Stream<UserAIUsage?> currentMonthAIUsage(Ref ref) {
   final database = ref.watch(userDatabaseProvider);
   return database
       .aiUsageDocumentReference(

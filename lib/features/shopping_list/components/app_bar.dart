@@ -50,6 +50,10 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
     final hasCategories = axesAsync.maybeWhen(
         data: (axes) => axes.isNotEmpty, orElse: () => false);
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
+    final remainingImageRecognitionCount =
+        ref.watch(remainingImageRecognitionCountProvider(isPremium: isPremium));
     return AppBar(
       title: DropdownButton<String>(
         value: shoppingListID,
@@ -123,7 +127,10 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   );
                   break;
                 case 'image':
-                  _showImagePicker(context, ref);
+                  _showImagePicker(context, ref,
+                      isPremium: isPremium,
+                      remainingImageRecognitionCount:
+                          remainingImageRecognitionCount);
                   break;
                 case 'paste':
                   _pasteFromClipboard(context, ref);
@@ -202,17 +209,14 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     );
   }
 
-  void _showImagePicker(BuildContext context, WidgetRef ref) {
+  void _showImagePicker(BuildContext context, WidgetRef ref,
+      {required bool isPremium, required int remainingImageRecognitionCount}) {
     analytics.logEvent(
         name: 'tap_open_image_picker',
         parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
 
     // AI画像認識の回数制限チェック
-    final isPremium =
-        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
-    final remaining = ref.read(
-        remainingImageRecognitionCountProvider(isPremium: isPremium));
-    if (remaining <= 0) {
+    if (remainingImageRecognitionCount <= 0) {
       final limit = isPremium
           ? premiumMonthlyImageRecognitionLimit
           : freeMonthlyImageRecognitionLimit;
