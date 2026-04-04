@@ -107,8 +107,7 @@ class _NoOpCategoryAdd extends GroupCategoryAdd {
 }
 
 class _NoOpCategoryDelete extends GroupCategoryDelete {
-  _NoOpCategoryDelete()
-      : super(database: GroupDatabase(groupID: _testGroupID));
+  _NoOpCategoryDelete() : super(database: GroupDatabase(groupID: _testGroupID));
 
   @override
   Future<void> call({

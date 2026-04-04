@@ -36,17 +36,14 @@ class ShoppingLocationPage extends ConsumerWidget {
               final location = locations[index];
               return ListTile(
                 leading: Icon(
-                  location.latitude != null
-                      ? Icons.location_on
-                      : Icons.store,
+                  location.latitude != null ? Icons.location_on : Icons.store,
                   color: location.latitude != null
                       ? Theme.of(context).colorScheme.primary
                       : null,
                 ),
                 title: Text(location.name),
-                subtitle: location.latitude != null
-                    ? const Text('位置情報設定済み')
-                    : null,
+                subtitle:
+                    location.latitude != null ? const Text('位置情報設定済み') : null,
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -132,15 +129,11 @@ class ShoppingLocationPage extends ConsumerWidget {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.map),
-                title: Text(selectedLatitude != null
-                    ? '位置設定済み'
-                    : '地図で場所を設定'),
+                title: Text(selectedLatitude != null ? '位置設定済み' : '地図で場所を設定'),
                 trailing: !isPremium
                     ? Icon(Icons.lock,
                         size: 16,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurfaceVariant)
+                        color: Theme.of(context).colorScheme.onSurfaceVariant)
                     : (selectedLatitude != null
                         ? const Icon(Icons.check, color: Colors.green)
                         : null),

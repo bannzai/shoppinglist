@@ -237,8 +237,7 @@ class _CategoryListBody extends HookConsumerWidget {
                             if (value != null && !isPremium) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text(
-                                      '買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
+                                  content: Text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
                                 ),
                               );
                               return;
@@ -387,17 +386,12 @@ class _CategoryReorderableList extends ConsumerWidget {
         analytics.logEvent(
             name: 'reorder_category', parameters: {'groupID': groupID});
         if (selectedShoppingLocationID != null) {
-          final isPremium = ref
-                  .read(customerInfoProvider)
-                  .asData
-                  ?.value
-                  .isPremium ??
-              false;
+          final isPremium =
+              ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
           if (!isPremium) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text(
-                    '買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
+                content: Text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
               ),
             );
             return;

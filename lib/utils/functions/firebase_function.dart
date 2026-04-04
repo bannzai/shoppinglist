@@ -63,8 +63,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
   Future<List<String>> generateShoppingListItemsFromURL({
     required String url,
   }) async {
-    final result =
-        await httpsCallable('generateShoppingListItemsFromURL').call(
+    final result = await httpsCallable('generateShoppingListItemsFromURL').call(
       {
         'url': url,
       },
