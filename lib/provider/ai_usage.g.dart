@@ -203,5 +203,158 @@ class _RemainingImageRecognitionCountProviderElement
   bool get isPremium =>
       (origin as RemainingImageRecognitionCountProvider).isPremium;
 }
+
+String _$remainingURLRecognitionCountHash() =>
+    r'42983c98457de1831d18a9efef262310643eaa80';
+
+/// 現在月のURL認識の残り回数を返すProvider。
+///
+/// Copied from [remainingURLRecognitionCount].
+@ProviderFor(remainingURLRecognitionCount)
+const remainingURLRecognitionCountProvider =
+    RemainingURLRecognitionCountFamily();
+
+/// 現在月のURL認識の残り回数を返すProvider。
+///
+/// Copied from [remainingURLRecognitionCount].
+class RemainingURLRecognitionCountFamily extends Family<int> {
+  /// 現在月のURL認識の残り回数を返すProvider。
+  ///
+  /// Copied from [remainingURLRecognitionCount].
+  const RemainingURLRecognitionCountFamily();
+
+  /// 現在月のURL認識の残り回数を返すProvider。
+  ///
+  /// Copied from [remainingURLRecognitionCount].
+  RemainingURLRecognitionCountProvider call({
+    required bool isPremium,
+  }) {
+    return RemainingURLRecognitionCountProvider(
+      isPremium: isPremium,
+    );
+  }
+
+  @override
+  RemainingURLRecognitionCountProvider getProviderOverride(
+    covariant RemainingURLRecognitionCountProvider provider,
+  ) {
+    return call(
+      isPremium: provider.isPremium,
+    );
+  }
+
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    currentMonthAIUsageProvider
+  ];
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
+    currentMonthAIUsageProvider,
+    ...?currentMonthAIUsageProvider.allTransitiveDependencies
+  };
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'remainingURLRecognitionCountProvider';
+}
+
+/// 現在月のURL認識の残り回数を返すProvider。
+///
+/// Copied from [remainingURLRecognitionCount].
+class RemainingURLRecognitionCountProvider extends AutoDisposeProvider<int> {
+  /// 現在月のURL認識の残り回数を返すProvider。
+  ///
+  /// Copied from [remainingURLRecognitionCount].
+  RemainingURLRecognitionCountProvider({
+    required bool isPremium,
+  }) : this._internal(
+          (ref) => remainingURLRecognitionCount(
+            ref as RemainingURLRecognitionCountRef,
+            isPremium: isPremium,
+          ),
+          from: remainingURLRecognitionCountProvider,
+          name: r'remainingURLRecognitionCountProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$remainingURLRecognitionCountHash,
+          dependencies: RemainingURLRecognitionCountFamily._dependencies,
+          allTransitiveDependencies:
+              RemainingURLRecognitionCountFamily._allTransitiveDependencies,
+          isPremium: isPremium,
+        );
+
+  RemainingURLRecognitionCountProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.isPremium,
+  }) : super.internal();
+
+  final bool isPremium;
+
+  @override
+  Override overrideWith(
+    int Function(RemainingURLRecognitionCountRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: RemainingURLRecognitionCountProvider._internal(
+        (ref) => create(ref as RemainingURLRecognitionCountRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        isPremium: isPremium,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<int> createElement() {
+    return _RemainingURLRecognitionCountProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is RemainingURLRecognitionCountProvider &&
+        other.isPremium == isPremium;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, isPremium.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin RemainingURLRecognitionCountRef on AutoDisposeProviderRef<int> {
+  /// The parameter `isPremium` of this provider.
+  bool get isPremium;
+}
+
+class _RemainingURLRecognitionCountProviderElement
+    extends AutoDisposeProviderElement<int>
+    with RemainingURLRecognitionCountRef {
+  _RemainingURLRecognitionCountProviderElement(super.provider);
+
+  @override
+  bool get isPremium =>
+      (origin as RemainingURLRecognitionCountProvider).isPremium;
+}
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

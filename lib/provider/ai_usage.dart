@@ -26,3 +26,14 @@ int remainingImageRecognitionCount(Ref ref, {required bool isPremium}) {
   final used = aiUsage?.imageRecognitionCount ?? 0;
   return (limit - used).clamp(0, limit);
 }
+
+/// 現在月のURL認識の残り回数を返すProvider。
+@Riverpod(dependencies: [currentMonthAIUsage])
+int remainingURLRecognitionCount(Ref ref, {required bool isPremium}) {
+  final aiUsage = ref.watch(currentMonthAIUsageProvider).valueOrNull;
+  final limit = isPremium
+      ? premiumMonthlyURLRecognitionLimit
+      : freeMonthlyURLRecognitionLimit;
+  final used = aiUsage?.urlRecognitionCount ?? 0;
+  return (limit - used).clamp(0, limit);
+}

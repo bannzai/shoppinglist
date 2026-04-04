@@ -23,6 +23,9 @@ abstract class UserAIUsage with _$UserAIUsage {
 
     /// AI画像認識の利用回数
     required int imageRecognitionCount,
+
+    /// URLからの買い物リスト生成の利用回数
+    @Default(0) int urlRecognitionCount,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
     @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
   }) = _UserAIUsage;
@@ -57,3 +60,9 @@ const int freeMonthlyImageRecognitionLimit = 5;
 
 /// プレミアムユーザーのAI画像認識月次上限。
 const int premiumMonthlyImageRecognitionLimit = 50;
+
+/// 無料ユーザーのURL認識月次上限。
+const int freeMonthlyURLRecognitionLimit = 5;
+
+/// プレミアムユーザーのURL認識月次上限。
+const int premiumMonthlyURLRecognitionLimit = 50;

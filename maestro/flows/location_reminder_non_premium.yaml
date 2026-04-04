@@ -1,0 +1,22 @@
+appId: com.bannzai.shoppinglist
+---
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 設定タブに切り替え
+- tapOn: "設定"
+- waitForAnimationToEnd
+
+# 位置情報リマインダートグルが表示されていること
+- scrollUntilVisible:
+    element: "位置情報リマインダー"
+    direction: DOWN
+- assertVisible: "位置情報リマインダー"
+- takeScreenshot: screenshots/location_reminder_01_setting_visible
+
+# 非プレミアムユーザーがトグルをタップ
+- tapOn: "位置情報リマインダー"
+- waitForAnimationToEnd
+
+# プレミアム機能の SnackBar が表示されること
+- assertVisible: "位置情報リマインダーはプレミアム機能です"
+- takeScreenshot: screenshots/location_reminder_02_non_premium_snackbar

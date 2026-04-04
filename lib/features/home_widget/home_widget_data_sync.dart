@@ -10,6 +10,40 @@ class HomeWidgetDataSync {
   static const iOSWidgetName = 'ShoppingListWidget';
   static const androidWidgetName = 'ShoppingListWidgetProvider';
 
+  static final _hexColorRegExp =
+      RegExp(r'^#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$');
+  static const _defaultThemeColorHex = '#673AB7';
+
+  /// HEX値を正規化する。不正値はデフォルトカラーにフォールバックする。
+  static String _normalizeThemeColorHex(String value) {
+    final normalized = value.trim();
+    if (_hexColorRegExp.hasMatch(normalized)) {
+      return normalized.toUpperCase();
+    }
+    return _defaultThemeColorHex;
+  }
+
+  /// ユーザーのテーマカラーHEXをウィジェットストレージに同期する。
+  static Future<void> syncThemeColor({
+    required String themeColorHex,
+  }) async {
+    await HomeWidget.saveWidgetData(
+      'widget_theme_color_hex',
+      _normalizeThemeColorHex(themeColorHex),
+    );
+    debugPrint('[HomeWidgetDataSync] syncThemeColor');
+    await updateWidget();
+  }
+
+  /// プレミアム状態をウィジェットストレージに同期する。
+  static Future<void> syncPremiumStatus({
+    required bool isPremium,
+  }) async {
+    await HomeWidget.saveWidgetData('widget_is_premium', isPremium);
+    debugPrint('[HomeWidgetDataSync] syncPremiumStatus');
+    await updateWidget();
+  }
+
   static Future<void> syncShoppingLists({
     required List<GroupShoppingList> shoppingLists,
     required String groupID,

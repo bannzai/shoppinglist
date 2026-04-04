@@ -19,6 +19,8 @@ import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/image/image.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:shoppinglist/features/shopping_list/utils/export_text_formatter.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
 class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
@@ -132,8 +134,14 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                       remainingImageRecognitionCount:
                           remainingImageRecognitionCount);
                   break;
+                case 'url':
+                  _showURLInputDialog(context, ref);
+                  break;
                 case 'paste':
                   _pasteFromClipboard(context, ref);
+                  break;
+                case 'export':
+                  _exportShoppingList(context: context, ref: ref);
                   break;
               }
             },
@@ -153,10 +161,24 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 ),
               ),
               PopupMenuItem(
+                value: 'url',
+                child: ListTile(
+                  leading: Icon(Icons.link),
+                  title: Text('URLから追加'),
+                ),
+              ),
+              PopupMenuItem(
                 value: 'paste',
                 child: ListTile(
                   leading: Icon(Icons.content_paste_go),
                   title: Text('テキスト貼り付け'),
+                ),
+              ),
+              PopupMenuItem(
+                value: 'export',
+                child: ListTile(
+                  leading: Icon(Icons.ios_share),
+                  title: Text('リストをエクスポート'),
                 ),
               ),
             ],
@@ -332,6 +354,39 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     }
   }
 
+  void _showURLInputDialog(BuildContext context, WidgetRef ref) {
+    analytics.logEvent(
+        name: 'tap_open_url_input',
+        parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
+
+    final isPremium =
+        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
+    final remaining = ref.read(
+        remainingURLRecognitionCountProvider(isPremium: isPremium));
+    if (remaining <= 0) {
+      final limit = isPremium
+          ? premiumMonthlyURLRecognitionLimit
+          : freeMonthlyURLRecognitionLimit;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                'URL読み取りの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyURLRecognitionLimit回まで利用できます'}')),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return _URLInputDialog(
+          groupID: groupID,
+          shoppingListID: shoppingListID,
+          shoppingListItems: shoppingListItems,
+        );
+      },
+    );
+  }
+
   Future<void> _pasteFromClipboard(BuildContext context, WidgetRef ref) async {
     analytics.logEvent(
         name: 'tap_paste_multiline',
@@ -353,6 +408,51 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
               color: null,
             );
       }
+    }
+  }
+
+  /// 買い物リストをテキスト形式でOS標準の共有シートに送信する。
+  Future<void> _exportShoppingList({
+    required BuildContext context,
+    required WidgetRef ref,
+  }) async {
+    // ユーザー操作ごとに共有シート表示と分析送信を行うため、この処理は非冪等。
+    final isPremium =
+        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
+    if (!isPremium) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                'リストのエクスポートはプレミアム機能です。プレミアムにアップグレードすると利用できます')),
+      );
+      return;
+    }
+
+    analytics.logEvent(name: 'tap_export_shopping_list', parameters: {
+      'groupID': groupID,
+      'shoppingListID': shoppingListID,
+    });
+
+    try {
+      final box = context.findRenderObject() as RenderBox?;
+      if (box == null) {
+        throw StateError('共有シートの表示位置を取得できませんでした');
+      }
+
+      await SharePlus.instance.share(
+        ShareParams(
+          text: buildShoppingListExportText(
+            shoppingListName: shoppingList?.name ?? '',
+            shoppingListItems: shoppingListItems,
+          ),
+          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
     }
   }
 
@@ -417,20 +517,36 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
                 'groupID': groupID,
                 'selectedGroupID': selectedGroupID.value
               });
-              final addProvider = ref.read(
-                  shoppingListAddProvider(groupID: selectedGroupID.value));
-              final newShoppingList = await addProvider(
-                createUserID: shoppingList.createUserID,
-                groupID: selectedGroupID.value,
-                shoppingLocationID: null,
-                duplicatedFromGroupShoppingListID: null,
-              );
-              if (selectedGroupID.value == groupID) {
-                onShoppingListIDChanged(newShoppingList.id);
-              }
-
-              if (context.mounted) {
-                Navigator.pop(context);
+              try {
+                final newShoppingList = await ref
+                    .read(shoppingListAddProvider(
+                        groupID: selectedGroupID.value))
+                    .call(
+                      createUserID: shoppingList.createUserID,
+                      groupID: selectedGroupID.value,
+                      shoppingLocationID: null,
+                      duplicatedFromGroupShoppingListID: null,
+                    );
+                if (selectedGroupID.value == groupID) {
+                  onShoppingListIDChanged(newShoppingList.id);
+                }
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              } on ShoppingListLimitExceededException catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(e.toString())),
+                  );
+                  Navigator.pop(context);
+                }
+              } catch (_) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('買い物リストの作成に失敗しました')),
+                  );
+                }
               }
             },
           ),
@@ -442,26 +558,176 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
                 'selectedGroupID': selectedGroupID.value,
                 'sourceShoppingListID': shoppingList.id
               });
-              final shoppingListDuplicate = ref.read(
-                  shoppingListDuplicateProvider(
-                      groupID: selectedGroupID.value));
-              final newShoppingList = await shoppingListDuplicate(
-                createUserID: shoppingList.createUserID,
-                groupID: selectedGroupID.value,
-                sourceShoppingList: shoppingList,
-                shoppingListItems: shoppingListItems,
-              );
-              if (selectedGroupID.value == groupID) {
-                onShoppingListIDChanged(newShoppingList.id);
-              }
-
-              if (context.mounted) {
-                Navigator.pop(context);
+              try {
+                final newShoppingList = await ref
+                    .read(shoppingListDuplicateProvider(
+                        groupID: selectedGroupID.value))
+                    .call(
+                      createUserID: shoppingList.createUserID,
+                      groupID: selectedGroupID.value,
+                      sourceShoppingList: shoppingList,
+                      shoppingListItems: shoppingListItems,
+                    );
+                if (selectedGroupID.value == groupID) {
+                  onShoppingListIDChanged(newShoppingList.id);
+                }
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              } on ShoppingListLimitExceededException catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(e.toString())),
+                  );
+                  Navigator.pop(context);
+                }
+              } catch (_) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('買い物リストの複製に失敗しました')),
+                  );
+                }
               }
             },
           ),
         ],
       ),
+    );
+  }
+}
+
+/// URLを入力してAIで買い物リストアイテムを生成するダイアログ。
+class _URLInputDialog extends HookConsumerWidget {
+  final String groupID;
+  final String shoppingListID;
+  final List<GroupShoppingListItem> shoppingListItems;
+
+  const _URLInputDialog({
+    required this.groupID,
+    required this.shoppingListID,
+    required this.shoppingListItems,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final urlController = useTextEditingController();
+    final isLoading = useState(false);
+
+    return AlertDialog(
+      title: const Text('URLから買い物リストを生成'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: urlController,
+            keyboardType: TextInputType.url,
+            autofocus: true,
+            decoration: const InputDecoration(
+              hintText: 'https://example.com/recipe',
+              labelText: 'URL',
+            ),
+            enabled: !isLoading.value,
+          ),
+          if (isLoading.value) ...[
+            const SizedBox(height: 16),
+            const CircularProgressIndicator(),
+          ],
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: isLoading.value
+              ? null
+              : () {
+                  analytics.logEvent(
+                      name: 'cancel_url_input',
+                      parameters: {
+                        'groupID': groupID,
+                        'shoppingListID': shoppingListID
+                      });
+                  Navigator.pop(context);
+                },
+          child: const Text('キャンセル'),
+        ),
+        TextButton(
+          onPressed: isLoading.value
+              ? null
+              : () async {
+                  final normalizedURL = urlController.text.trim();
+                  if (normalizedURL.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('URLを入力してください')),
+                    );
+                    return;
+                  }
+                  final parsedURL = Uri.tryParse(normalizedURL);
+                  if (parsedURL == null ||
+                      parsedURL.scheme != 'https' ||
+                      parsedURL.host.isEmpty ||
+                      parsedURL.userInfo.isNotEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('有効なHTTPS URLを入力してください')),
+                    );
+                    return;
+                  }
+                  analytics.logEvent(
+                      name: 'tap_submit_url',
+                      parameters: {
+                        'groupID': groupID,
+                        'shoppingListID': shoppingListID,
+                      });
+                  isLoading.value = true;
+                  try {
+                    final rawItems =
+                        await functions.generateShoppingListItemsFromURL(
+                      url: normalizedURL,
+                    );
+                    final distincted = rawItems.toSet().toList();
+                    for (var (i, e) in distincted.indexed) {
+                      final item = e.trim();
+                      if (item.isEmpty || item.length > 100) {
+                        continue;
+                      }
+                      if (shoppingListItems
+                          .any((existing) => existing.message == item)) {
+                        continue;
+                      }
+                      try {
+                        await ref
+                            .read(addShoppingListItemProvider(
+                                groupID: groupID))
+                            .call(
+                              shoppingListID: shoppingListID,
+                              userID: ref.read(currentUserIDProvider)!,
+                              message: item,
+                              order: shoppingListItems.nextOrder + i,
+                              description: null,
+                              color: null,
+                            );
+                      } catch (e) {
+                        debugPrint('Error: $e');
+                      }
+                    }
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
+                    }
+                  } finally {
+                    if (context.mounted) {
+                      isLoading.value = false;
+                    }
+                  }
+                },
+          child: const Text('生成'),
+        ),
+      ],
     );
   }
 }

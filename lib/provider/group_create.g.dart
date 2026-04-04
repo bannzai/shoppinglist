@@ -6,7 +6,7 @@ part of 'group_create.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$createGroupHash() => r'7a4bf417b885228a75cf7cc205475e07e4c52d34';
+String _$createGroupHash() => r'53cd59127c72786125dfa64df1629f68b4b184a9';
 
 /// See also [createGroup].
 @ProviderFor(createGroup)
@@ -15,11 +15,8 @@ final createGroupProvider = AutoDisposeProvider<CreateGroup>.internal(
   name: r'createGroupProvider',
   debugGetCreateSourceHash:
       const bool.fromEnvironment('dart.vm.product') ? null : _$createGroupHash,
-  dependencies: <ProviderOrFamily>[userDatabaseProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    userDatabaseProvider,
-    ...?userDatabaseProvider.allTransitiveDependencies
-  },
+  dependencies: null,
+  allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')

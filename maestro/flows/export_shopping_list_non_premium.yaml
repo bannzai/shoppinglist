@@ -1,0 +1,12 @@
+appId: com.bannzai.shoppinglist
+---
+- runFlow: shared/anonymous_sign_in.yaml
+
+# メニューからエクスポートをタップ
+- tapOn: "メニュー"
+- tapOn: "リストをエクスポート"
+- waitForAnimationToEnd
+
+# 無料ユーザーの場合、SnackBarが表示される
+- assertVisible: "リストのエクスポートはプレミアム機能です"
+- takeScreenshot: screenshots/export_01_non_premium_snackbar

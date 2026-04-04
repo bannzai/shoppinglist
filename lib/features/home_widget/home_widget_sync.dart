@@ -2,8 +2,11 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_data_sync.dart';
+import 'package:shoppinglist/provider/app_user.dart';
+import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
 
 /// RootPage の Resolver パターンに倣い、builder で子ウィジェットをラップする。
@@ -22,8 +25,48 @@ class HomeWidgetSync extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isPremium =
+        ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
+
+    // 初回同期（WidgetRef.listen は fireImmediately 非対応）
+    final currentAppUser = ref.read(appUserProvider).valueOrNull;
+    if (currentAppUser != null) {
+      HomeWidgetDataSync.syncThemeColor(
+        themeColorHex: currentAppUser.themeColorHex ?? defaultThemeColorHex,
+      );
+    }
+    HomeWidgetDataSync.syncPremiumStatus(isPremium: isPremium);
+
+    // テーマカラーの変更を検知して同期
+    ref.listen(appUserProvider, (prev, next) {
+      final prevThemeColorHex =
+          prev?.valueOrNull?.themeColorHex ?? defaultThemeColorHex;
+      final nextThemeColorHex =
+          next.valueOrNull?.themeColorHex ?? defaultThemeColorHex;
+      if (prevThemeColorHex == nextThemeColorHex) {
+        return;
+      }
+      HomeWidgetDataSync.syncThemeColor(
+        themeColorHex: nextThemeColorHex,
+      );
+    });
+
+    // プレミアム状態の変更を検知して同期
+    ref.listen(firestoreIsPremiumProvider, (prev, next) {
+      final prevPremiumValue = prev?.valueOrNull;
+      final nextPremiumValue = next.valueOrNull;
+      if (prevPremiumValue == nextPremiumValue) {
+        return;
+      }
+      if (nextPremiumValue != null) {
+        HomeWidgetDataSync.syncPremiumStatus(isPremium: nextPremiumValue);
+      }
+    });
+
     // 買い物リスト一覧の変更を検知して同期
-    ref.listen(shoppingListsProvider(groupID: groupID), (prev, next) {
+    ref.listen(
+        shoppingListsProvider(groupID: groupID, isPremium: isPremium),
+        (prev, next) {
       final lists = next.valueOrNull;
       if (lists != null && lists.isNotEmpty) {
         final groups = ref.read(userGroupsProvider).valueOrNull ?? [];
@@ -45,8 +88,11 @@ class HomeWidgetSync extends ConsumerWidget {
         ), (prev, next) {
       final items = next.valueOrNull;
       if (items != null) {
-        final lists =
-            ref.read(shoppingListsProvider(groupID: groupID)).valueOrNull ?? [];
+        final lists = ref
+                .read(shoppingListsProvider(
+                    groupID: groupID, isPremium: isPremium))
+                .valueOrNull ??
+            [];
         final list = lists.firstWhereOrNull((sl) => sl.id == shoppingListID);
         HomeWidgetDataSync.syncCurrentShoppingListItems(
           groupID: groupID,
