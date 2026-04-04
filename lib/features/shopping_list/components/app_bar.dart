@@ -220,8 +220,8 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     // AI画像認識の回数制限チェック
     final isPremium =
         ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
-    final remaining = ref.read(
-        remainingImageRecognitionCountProvider(isPremium: isPremium));
+    final remaining =
+        ref.read(remainingImageRecognitionCountProvider(isPremium: isPremium));
     if (remaining <= 0) {
       final limit = isPremium
           ? premiumMonthlyImageRecognitionLimit
@@ -345,8 +345,8 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
     final isPremium =
         ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
-    final remaining = ref.read(
-        remainingURLRecognitionCountProvider(isPremium: isPremium));
+    final remaining =
+        ref.read(remainingURLRecognitionCountProvider(isPremium: isPremium));
     if (remaining <= 0) {
       final limit = isPremium
           ? premiumMonthlyURLRecognitionLimit
@@ -548,12 +548,10 @@ class _URLInputDialog extends HookConsumerWidget {
           onPressed: isLoading.value
               ? null
               : () {
-                  analytics.logEvent(
-                      name: 'cancel_url_input',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': shoppingListID
-                      });
+                  analytics.logEvent(name: 'cancel_url_input', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID
+                  });
                   Navigator.pop(context);
                 },
           child: const Text('キャンセル'),
@@ -562,6 +560,10 @@ class _URLInputDialog extends HookConsumerWidget {
           onPressed: isLoading.value
               ? null
               : () async {
+                  analytics.logEvent(name: 'tap_submit_url', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                  });
                   final normalizedURL = urlController.text.trim();
                   if (normalizedURL.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -575,17 +577,10 @@ class _URLInputDialog extends HookConsumerWidget {
                       parsedURL.host.isEmpty ||
                       parsedURL.userInfo.isNotEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('有効なHTTPS URLを入力してください')),
+                      const SnackBar(content: Text('有効なHTTPS URLを入力してください')),
                     );
                     return;
                   }
-                  analytics.logEvent(
-                      name: 'tap_submit_url',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': shoppingListID,
-                      });
                   isLoading.value = true;
                   try {
                     final rawItems =
@@ -604,8 +599,7 @@ class _URLInputDialog extends HookConsumerWidget {
                       }
                       try {
                         await ref
-                            .read(addShoppingListItemProvider(
-                                groupID: groupID))
+                            .read(addShoppingListItemProvider(groupID: groupID))
                             .call(
                               shoppingListID: shoppingListID,
                               userID: ref.read(currentUserIDProvider)!,
