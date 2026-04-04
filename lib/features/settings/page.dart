@@ -252,6 +252,7 @@ class SettingPage extends HookConsumerWidget {
   }
 }
 
+/// テーマカラー設定のListTile。プレミアムユーザーのみ選択画面へ遷移可能。
 class _ThemeColorTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
