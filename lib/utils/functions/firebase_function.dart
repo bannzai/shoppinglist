@@ -176,6 +176,51 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
       throw Exception(response['error']['message']);
     }
   }
+
+  /// 商品写真をFirebase Storageにアップロードし、ダウンロードURLを返す。
+  Future<String> uploadShoppingListItemImage({
+    required String groupID,
+    required String shoppingListID,
+    required String itemID,
+    required String mimeType,
+    required String base64Image,
+  }) async {
+    final result = await httpsCallable('uploadShoppingListItemImage').call(
+      {
+        'groupID': groupID,
+        'shoppingListID': shoppingListID,
+        'itemID': itemID,
+        'mimeType': mimeType,
+        'base64Image': base64Image,
+      },
+    );
+    // token付きURLを含む可能性があるためresult.dataはログ出力しない
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+    return response['data']['imageURL'] as String;
+  }
+
+  /// 商品写真をFirebase Storageから削除する。
+  Future<void> deleteShoppingListItemImage({
+    required String groupID,
+    required String shoppingListID,
+    required String itemID,
+  }) async {
+    final result = await httpsCallable('deleteShoppingListItemImage').call(
+      {
+        'groupID': groupID,
+        'shoppingListID': shoppingListID,
+        'itemID': itemID,
+      },
+    );
+    debugPrint('deleteShoppingListItemImage.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+  }
 }
 
 // Map<String, dynamic>.fromだけだとネストした子要素が_Map<Object? Object?>のままになる

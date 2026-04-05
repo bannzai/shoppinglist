@@ -20,6 +20,7 @@ _GroupShoppingListItem _$GroupShoppingListItemFromJson(
           GroupShoppingListItemStatus.unchecked,
       description: json['description'] as String?,
       color: json['color'] as String?,
+      imageURL: json['imageURL'] as String?,
       reminderDateTime: const NullableTimestampConverter()
           .fromJson(json['reminderDateTime'] as Timestamp?),
       checkedByUserID: json['checkedByUserID'] as String?,
@@ -50,6 +51,7 @@ Map<String, dynamic> _$GroupShoppingListItemToJson(
       'status': _$GroupShoppingListItemStatusEnumMap[instance.status]!,
       'description': instance.description,
       'color': instance.color,
+      'imageURL': instance.imageURL,
       'reminderDateTime':
           const NullableTimestampConverter().toJson(instance.reminderDateTime),
       'checkedByUserID': instance.checkedByUserID,
