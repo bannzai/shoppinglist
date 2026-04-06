@@ -4,14 +4,9 @@ set -uo pipefail
 # run_quality_checks.sh - PR品質チェックバッチ実行スクリプト
 #
 # 使い方:
-#   bash run_quality_checks.sh --config ./pr_quality_checks.json          # 全PR実行
-#   bash run_quality_checks.sh --config ./pr_quality_checks.json 177 178  # 指定PRのみ
-#
-# 設定JSON形式:
-#   {
-#     "pr_numbers": [177, 178, 179],
-#     "skills": ["check-coding-conventions", "fix-pr-reviews"]
-#   }
+#   bash run_quality_checks.sh 177 178 179                                  # 全スキル実行
+#   bash run_quality_checks.sh --skills check-coding-conventions 177 178    # 規約チェックのみ
+#   bash run_quality_checks.sh --skills fix-pr-reviews 177                  # レビュー対応のみ
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SKILLS_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
@@ -20,22 +15,27 @@ FIX_REVIEWS_SCRIPT="${SKILLS_ROOT}/fix-pr-reviews/scripts/run_fix_reviews.sh"
 
 LOG_DIR="./tmp/pr-quality-checks/logs"
 STATUS_FILE="./tmp/pr-quality-checks/status.json"
-CONFIG_FILE=""
-TARGETS=()
+SKILLS_FILTER=""
+PR_NUMBERS=()
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --config) CONFIG_FILE="$2"; shift 2 ;;
+    --skills) SKILLS_FILTER="$2"; shift 2 ;;
     -h|--help)
-      echo "使い方: $0 --config <json_file> [pr_numbers...]"
+      echo "使い方: $0 [--skills <skill_name>] <pr_numbers...>"
+      echo ""
+      echo "オプション:"
+      echo "  --skills <name>  実行するスキル (check-coding-conventions / fix-pr-reviews)"
+      echo "                   省略時: 両方実行"
       exit 0
       ;;
-    *) TARGETS+=("$1"); shift ;;
+    *) PR_NUMBERS+=("$1"); shift ;;
   esac
 done
 
-if [ -z "$CONFIG_FILE" ] || [ ! -f "$CONFIG_FILE" ]; then
-  echo "エラー: --config <json_file> を指定してください" >&2
+if [ ${#PR_NUMBERS[@]} -eq 0 ]; then
+  echo "エラー: PR番号を1つ以上指定してください" >&2
+  echo "使い方: $0 [--skills <skill_name>] <pr_numbers...>" >&2
   exit 1
 fi
 
@@ -46,10 +46,6 @@ for script in "$CHECK_CONVENTIONS_SCRIPT" "$FIX_REVIEWS_SCRIPT"; do
     exit 1
   fi
 done
-
-# 設定読み込み
-PR_COUNT=$(jq '.pr_numbers | length' "$CONFIG_FILE")
-SKILLS=$(jq -r '.skills // ["check-coding-conventions", "fix-pr-reviews"] | .[]' "$CONFIG_FILE")
 
 mkdir -p "$LOG_DIR"
 
@@ -73,21 +69,8 @@ update_status() {
   mv "$tmp" "$STATUS_FILE"
 }
 
-should_run() {
-  local num="$1"
-  if [ ${#TARGETS[@]} -eq 0 ]; then
-    return 0
-  fi
-  for t in "${TARGETS[@]}"; do
-    if [ "$t" = "$num" ]; then
-      return 0
-    fi
-  done
-  return 1
-}
-
 skill_enabled() {
-  echo "$SKILLS" | grep -q "$1"
+  [ -z "$SKILLS_FILTER" ] || [ "$SKILLS_FILTER" = "$1" ]
 }
 
 run_check_conventions() {
@@ -141,11 +124,7 @@ run_fix_reviews() {
 }
 
 # メインループ
-for i in $(seq 0 $((PR_COUNT - 1))); do
-  pr_num=$(jq -r ".pr_numbers[$i]" "$CONFIG_FILE")
-
-  should_run "$pr_num" || continue
-
+for pr_num in "${PR_NUMBERS[@]}"; do
   echo "=========================================="
   echo "PR #${pr_num} の品質チェック開始"
   echo "=========================================="
