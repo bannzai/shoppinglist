@@ -29,6 +29,6 @@ PR #{{PR_NUMBER}} ({{PR_URL}}) のコーディング規約チェックと違反�
 19. `gh pr checks` で CI の状態を確認。失敗していれば修正して再 push
 20. CI が通ったら: `gh pr merge --squash --delete-branch`
 21. `git checkout {{HEAD_BRANCH}}` && `git pull origin {{HEAD_BRANCH}}`
-22. `gh pr list --base main --head {{HEAD_BRANCH}} --json number --jq '.[0].number'` でベースブランチの PR 番号を取得し、取得できた場合は `/update-pr-body {ベースブランチPR番号}` を実行
+22. `gh pr list --base {{BASE_BRANCH}} --head {{HEAD_BRANCH}} --json number --jq '.[0].number'` でベースブランチの PR 番号を取得し、取得できた場合は `/update-pr-body {ベースブランチPR番号}` を実行
 
 {{COMMON_RULES}}
