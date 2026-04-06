@@ -54,7 +54,7 @@ void main() {
 
   group('AppUser themeColorHex フィールド', () {
     test('themeColorHex が null の場合に正しくシリアライズされる', () {
-      const appUser = AppUser(id: 'test-user');
+      const appUser = AppUser(id: 'test-user', themeColorHex: null);
       final json = appUser.toJson();
       expect(json['themeColorHex'], isNull);
     });

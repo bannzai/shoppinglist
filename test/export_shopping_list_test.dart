@@ -14,6 +14,7 @@ void main() {
           message: '牛乳',
           order: 0,
           status: GroupShoppingListItemStatus.unchecked,
+          imageURL: null,
         ),
         GroupShoppingListItem(
           id: '2',
@@ -23,6 +24,7 @@ void main() {
           message: 'パン',
           order: 1,
           status: GroupShoppingListItemStatus.checked,
+          imageURL: null,
         ),
       ];
 
@@ -55,6 +57,7 @@ void main() {
           message: '牛乳\n2本\t特売',
           order: 0,
           status: GroupShoppingListItemStatus.unchecked,
+          imageURL: null,
         ),
       ];
 

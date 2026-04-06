@@ -33,6 +33,7 @@ void main() {
           userID: 'user1',
           message: 'にんじん',
           order: 0,
+          imageURL: null,
         ),
         const GroupShoppingListItem(
           id: 'item2',
@@ -41,6 +42,7 @@ void main() {
           userID: 'user1',
           message: 'にんじんジュース',
           order: 1,
+          imageURL: null,
         ),
       ];
 
@@ -82,6 +84,7 @@ void main() {
           userID: 'user1',
           message: 'にんじんジュース',
           order: 0,
+          imageURL: null,
         ),
       ];
 
@@ -121,6 +124,7 @@ void main() {
           userID: 'user1',
           message: 'milk',
           order: 0,
+          imageURL: null,
         ),
       ];
 
@@ -174,6 +178,7 @@ void main() {
           userID: 'user1',
           message: 'トマト',
           order: 0,
+          imageURL: null,
         ),
       ];
 
@@ -213,6 +218,7 @@ void main() {
           userID: 'user1',
           message: '牛乳',
           order: 0,
+          imageURL: null,
         ),
       ];
 
@@ -234,6 +240,7 @@ void main() {
           userID: 'user1',
           message: 'にんじん',
           order: 0,
+          imageURL: null,
         ),
         const GroupShoppingListItem(
           id: 'item2',
@@ -242,6 +249,7 @@ void main() {
           userID: 'user1',
           message: '牛乳',
           order: 1,
+          imageURL: null,
         ),
       ];
 

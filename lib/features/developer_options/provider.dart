@@ -18,6 +18,7 @@ class DebugUserCreate {
     final user = AppUser(
       id: debugUID,
       name: 'Debug User ($debugUID)',
+      themeColorHex: null,
     );
     await userDB.userReference().set(user);
     debugPrint('[DebugUserCreate] ユーザー作成完了: $debugUID');

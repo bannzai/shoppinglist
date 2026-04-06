@@ -29,7 +29,7 @@ class HomeWidgetSync extends ConsumerWidget {
         ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
 
     // 初回同期（WidgetRef.listen は fireImmediately 非対応）
-    final currentAppUser = ref.read(appUserProvider).valueOrNull;
+    final currentAppUser = ref.watch(appUserProvider).valueOrNull;
     if (currentAppUser != null) {
       HomeWidgetDataSync.syncThemeColor(
         themeColorHex: currentAppUser.themeColorHex ?? defaultThemeColorHex,
@@ -65,8 +65,8 @@ class HomeWidgetSync extends ConsumerWidget {
 
     // 買い物リスト一覧の変更を検知して同期
     ref.listen(
-        shoppingListsProvider(
-            groupID: groupID, isPremium: firestoreIsPremium), (prev, next) {
+        shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium),
+        (prev, next) {
       final lists = next.valueOrNull;
       if (lists != null && lists.isNotEmpty) {
         final groups = ref.read(userGroupsProvider).valueOrNull ?? [];

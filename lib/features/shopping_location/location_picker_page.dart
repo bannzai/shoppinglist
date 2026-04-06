@@ -36,6 +36,7 @@ class LocationPickerPage extends HookConsumerWidget {
     final mapController = useState<GoogleMapController?>(null);
 
     // 初回: 現在地を取得して地図を移動（既存座標がない場合のみ）
+    // 依存配列が空: マウント時に一度だけ実行する。initialLatitudeはWidgetのフィールドで不変のため依存不要。
     useEffect(() {
       if (initialLatitude != null) return null;
       () async {

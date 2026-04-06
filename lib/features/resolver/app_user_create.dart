@@ -28,6 +28,7 @@ class AppUserCreate {
         id: userDatabase.userID,
         name: firebaseUser.displayName,
         iconImageURL: firebaseUser.photoURL,
+        themeColorHex: null,
       ),
       SetOptions(merge: true),
     );

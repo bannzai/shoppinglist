@@ -554,7 +554,7 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
       this.status = GroupShoppingListItemStatus.unchecked,
       this.description,
       this.color,
-      this.imageURL,
+      required this.imageURL,
       @NullableTimestampConverter() this.reminderDateTime,
       this.checkedByUserID,
       @NullableTimestampConverter() this.lastCheckedDateTime,

@@ -54,6 +54,7 @@ void main() {
         userID: 'user-1',
         message: '牛乳',
         order: 0,
+        imageURL: null,
       );
       final updated = item.copyWith(imageURL: 'https://example.com/photo.jpg');
       expect(updated.imageURL, 'https://example.com/photo.jpg');

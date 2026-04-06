@@ -25,6 +25,7 @@ void main() {
       userID: 'user-id',
       message: 'Buy milk',
       order: 0,
+      imageURL: null,
     );
     expect(item.id, 'item-id');
     expect(item.order, 0);
@@ -38,14 +39,16 @@ void main() {
           shoppingListID: 'shopping-list-id',
           userID: 'user-id',
           message: 'Item 1',
-          order: 0),
+          order: 0,
+          imageURL: null),
       GroupShoppingListItem(
           id: '2',
           groupID: 'group-id',
           shoppingListID: 'shopping-list-id',
           userID: 'user-id',
           message: 'Item 2',
-          order: 1),
+          order: 1,
+          imageURL: null),
     ];
     expect(items.nextOrder, 2);
   });
@@ -62,6 +65,7 @@ void main() {
         status: GroupShoppingListItemStatus.unchecked,
         description: 'organic eggs',
         color: '#FF0000',
+        imageURL: null,
       );
     }
 

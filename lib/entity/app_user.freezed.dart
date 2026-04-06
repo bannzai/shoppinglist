@@ -388,7 +388,7 @@ class _AppUser extends AppUser {
       this.defaultGroupID,
       this.name,
       this.iconImageURL,
-      this.themeColorHex,
+      required this.themeColorHex,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,

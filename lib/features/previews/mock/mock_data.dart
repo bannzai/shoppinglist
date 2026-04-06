@@ -20,6 +20,7 @@ const mockShoppingLocationID = 'preview-location-001';
 AppUser mockAppUser() => const AppUser(
       id: mockUserID,
       defaultGroupID: mockGroupID,
+      themeColorHex: null,
     );
 
 Group mockGroup() => const Group(
@@ -57,6 +58,7 @@ List<GroupShoppingListItem> mockShoppingListItems() => [
         message: '牛乳',
         order: 0,
         status: GroupShoppingListItemStatus.unchecked,
+        imageURL: null,
       ),
       const GroupShoppingListItem(
         id: 'preview-item-002',
@@ -66,6 +68,7 @@ List<GroupShoppingListItem> mockShoppingListItems() => [
         message: '卵',
         order: 1,
         status: GroupShoppingListItemStatus.checked,
+        imageURL: null,
       ),
       const GroupShoppingListItem(
         id: 'preview-item-003',
@@ -75,6 +78,7 @@ List<GroupShoppingListItem> mockShoppingListItems() => [
         message: '食パン',
         order: 2,
         status: GroupShoppingListItemStatus.unchecked,
+        imageURL: null,
       ),
       const GroupShoppingListItem(
         id: 'preview-item-004',
@@ -85,6 +89,7 @@ List<GroupShoppingListItem> mockShoppingListItems() => [
         order: 3,
         status: GroupShoppingListItemStatus.unchecked,
         description: '3本入り',
+        imageURL: null,
       ),
       const GroupShoppingListItem(
         id: 'preview-item-005',
@@ -94,6 +99,7 @@ List<GroupShoppingListItem> mockShoppingListItems() => [
         message: 'トイレットペーパー',
         order: 4,
         status: GroupShoppingListItemStatus.checked,
+        imageURL: null,
       ),
     ];
 
