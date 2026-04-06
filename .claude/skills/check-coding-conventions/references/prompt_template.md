@@ -25,10 +25,10 @@ PR #{{PR_NUMBER}} ({{PR_URL}}) のコーディング規約チェックと違反�
 15. `git diff --cached` で差分を確認し、修正がなければ「規約違反なし」と報告して終了
 16. `git commit -m "fix: コーディング規約違反の修正 (PR #{{PR_NUMBER}})"`
 17. `git push -u origin fix/coding-conventions-pr-{{PR_NUMBER}}`
-18. `gh pr create --base {{BASE_BRANCH}} --head fix/coding-conventions-pr-{{PR_NUMBER}} --title "fix: コーディング規約違反の修正 (PR #{{PR_NUMBER}})"` で fix PR を作成。body に対象PR `#{{PR_NUMBER}}` へのリンクと違反一覧・修正内容を記載
+18. `gh pr create --base {{HEAD_BRANCH}} --head fix/coding-conventions-pr-{{PR_NUMBER}} --title "fix: コーディング規約違反の修正 (PR #{{PR_NUMBER}})"` で fix PR を作成。body に対象PR `#{{PR_NUMBER}}` へのリンクと違反一覧・修正内容を記載
 19. `gh pr checks` で CI の状態を確認。失敗していれば修正して再 push
 20. CI が通ったら: `gh pr merge --squash --delete-branch`
-21. `git checkout {{BASE_BRANCH}}` && `git pull origin {{BASE_BRANCH}}`
-22. `gh pr list --base main --head {{BASE_BRANCH}} --json number --jq '.[0].number'` でベースブランチの PR 番号を取得し、取得できた場合は `/update-pr-body {ベースブランチPR番号}` を実行
+21. `git checkout {{HEAD_BRANCH}}` && `git pull origin {{HEAD_BRANCH}}`
+22. `gh pr list --base main --head {{HEAD_BRANCH}} --json number --jq '.[0].number'` でベースブランチの PR 番号を取得し、取得できた場合は `/update-pr-body {ベースブランチPR番号}` を実行
 
 {{COMMON_RULES}}
