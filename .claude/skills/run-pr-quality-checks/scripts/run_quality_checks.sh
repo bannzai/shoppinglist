@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -uo pipefail
+set -euo pipefail
 
 # run_quality_checks.sh - PR品質チェックバッチ実行スクリプト
 #
@@ -134,7 +134,7 @@ for pr_num in "${PR_NUMBERS[@]}"; do
     if [ "$current_status" = "completed" ]; then
       echo "PR #${pr_num}: check_conventions 完了済み、スキップ"
     else
-      run_check_conventions "$pr_num"
+      run_check_conventions "$pr_num" || true
     fi
   fi
 
@@ -143,7 +143,7 @@ for pr_num in "${PR_NUMBERS[@]}"; do
     if [ "$current_status" = "completed" ]; then
       echo "PR #${pr_num}: fix_reviews 完了済み、スキップ"
     else
-      run_fix_reviews "$pr_num"
+      run_fix_reviews "$pr_num" || true
     fi
   fi
 
