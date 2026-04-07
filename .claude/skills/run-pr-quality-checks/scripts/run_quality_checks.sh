@@ -62,8 +62,9 @@ if [ -n "$BASE_BRANCH" ]; then
   echo "$pr_json" | jq -r '.[] | "  #\(.number) \(.title)"'
   echo ""
 
-  # ベースブランチ用ステータスファイル
-  STATUS_FILE="./tmp/pr-quality-checks/status_${BASE_BRANCH}.json"
+  # ベースブランチ用ステータスファイル（スラッシュをアンダースコアに変換）
+  SAFE_BRANCH_NAME=$(echo "$BASE_BRANCH" | tr '/' '_')
+  STATUS_FILE="./tmp/pr-quality-checks/status_${SAFE_BRANCH_NAME}.json"
 elif [ ${#PR_NUMBERS[@]} -eq 0 ]; then
   echo "エラー: PR番号を1つ以上指定するか --base <branch> を指定してください" >&2
   echo "使い方: $0 [--skills <skill_name>] [--base <branch> | <pr_numbers...>] [--dry-run]" >&2
