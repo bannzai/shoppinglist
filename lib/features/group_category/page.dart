@@ -256,6 +256,7 @@ class _CategoryListBody extends HookConsumerWidget {
                       categoryAxisID: axis.id,
                       categories: categories,
                       selectedShoppingLocationID: selectedLocationID.value,
+                      isPremium: isPremium,
                     ),
                   ),
                 ],
@@ -365,12 +366,14 @@ class _CategoryReorderableList extends ConsumerWidget {
   final String categoryAxisID;
   final List<GroupCategory> categories;
   final String? selectedShoppingLocationID;
+  final bool isPremium;
 
   const _CategoryReorderableList({
     required this.groupID,
     required this.categoryAxisID,
     required this.categories,
     required this.selectedShoppingLocationID,
+    required this.isPremium,
   });
 
   @override
@@ -386,8 +389,6 @@ class _CategoryReorderableList extends ConsumerWidget {
         analytics.logEvent(
             name: 'reorder_category', parameters: {'groupID': groupID});
         if (selectedShoppingLocationID != null) {
-          final isPremium =
-              ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
           if (!isPremium) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
