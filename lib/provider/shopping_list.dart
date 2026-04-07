@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
@@ -8,6 +10,17 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 
 part 'shopping_list.g.dart';
+
+/// 1時間ごとに自身を無効化して現在時刻を更新するプロバイダー。
+/// 無料ユーザーの30日間表示制限でアプリ長時間起動時のDateTime.now()の古さを防ぐ。
+@riverpod
+DateTime hourlyTrigger(Ref ref) {
+  final timer = Timer.periodic(const Duration(hours: 1), (_) {
+    ref.invalidateSelf();
+  });
+  ref.onDispose(() => timer.cancel());
+  return DateTime.now();
+}
 
 /// 買い物リスト一覧を取得するプロバイダー。
 /// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
@@ -20,15 +33,15 @@ Stream<List<GroupShoppingList>> shoppingLists(Ref ref,
   }
 
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
-  var query = database
-      .shoppingListsReference()
-      .orderBy(GroupShoppingListFirestoreKeys.createdDateTime, descending: true);
+  var query = database.shoppingListsReference().orderBy(
+      GroupShoppingListFirestoreKeys.createdDateTime,
+      descending: true);
 
   if (!isPremium) {
     query = query.where(
       GroupShoppingListFirestoreKeys.createdDateTime,
       isGreaterThanOrEqualTo: Timestamp.fromDate(
-          DateTime.now().subtract(const Duration(days: 30))),
+          ref.watch(hourlyTriggerProvider).subtract(const Duration(days: 30))),
     );
   }
 
