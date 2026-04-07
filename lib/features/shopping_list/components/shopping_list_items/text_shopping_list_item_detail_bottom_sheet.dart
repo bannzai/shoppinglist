@@ -358,6 +358,7 @@ class _PhotoSection extends HookConsumerWidget {
       return _buildImagePreview(
         context: context,
         colorScheme: colorScheme,
+        ref: ref,
         child: Image.file(
           File(selectedPhoto.value!.path),
           width: double.infinity,
@@ -372,6 +373,7 @@ class _PhotoSection extends HookConsumerWidget {
       return _buildImagePreview(
         context: context,
         colorScheme: colorScheme,
+        ref: ref,
         child: CachedNetworkImage(
           imageUrl: imageURL.value!,
           width: double.infinity,
@@ -403,6 +405,7 @@ class _PhotoSection extends HookConsumerWidget {
   Widget _buildImagePreview({
     required BuildContext context,
     required ColorScheme colorScheme,
+    required WidgetRef ref,
     required Widget child,
   }) {
     return Stack(
@@ -420,8 +423,7 @@ class _PhotoSection extends HookConsumerWidget {
               _CircleIconButton(
                 icon: Icons.edit,
                 colorScheme: colorScheme,
-                onTap: () =>
-                    _showImageSourceDialog(context: context, ref: null),
+                onTap: () => _showImageSourceDialog(context: context, ref: ref),
               ),
               const SizedBox(width: 8),
               // 写真を削除
@@ -446,22 +448,18 @@ class _PhotoSection extends HookConsumerWidget {
 
   void _showImageSourceDialog({
     required BuildContext context,
-    // refがnullの場合はプレミアムチェックをスキップ（既に画像がある状態での変更操作）
-    required WidgetRef? ref,
+    required WidgetRef ref,
   }) {
-    // プレミアムチェック: 新規追加時のみ（ref != null の場合）
-    if (ref != null) {
-      final isPremium =
-          ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
-      if (!isPremium) {
-        analytics.logEvent(
-            name: 'tap_item_photo_non_premium',
-            parameters: {'groupID': groupID, 'itemID': itemID});
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('商品写真の添付はプレミアム機能です')),
-        );
-        return;
-      }
+    final isPremium =
+        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
+    if (!isPremium) {
+      analytics.logEvent(
+          name: 'tap_item_photo_non_premium',
+          parameters: {'groupID': groupID, 'itemID': itemID});
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('商品写真の添付はプレミアム機能です')),
+      );
+      return;
     }
 
     analytics.logEvent(
