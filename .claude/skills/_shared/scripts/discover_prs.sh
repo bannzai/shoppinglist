@@ -36,7 +36,7 @@ REPO_OWNER=$(gh repo view --json owner -q '.owner.login')
 REPO_NAME=$(gh repo view --json name -q '.name')
 
 # マージ済みPR取得 + fix:/chore: タイトル除外
-pr_json=$(gh pr list --search "base:${BASE_BRANCH}" --state merged \
+pr_json=$(gh pr list --search "base:\"${BASE_BRANCH}\"" --state merged \
   --json number,title,headRefName --limit 100 \
   | jq '[.[] | select(.title | test("^(fix|chore):"; "i") | not)]')
 
