@@ -10,6 +10,7 @@ import {
 } from "../../entity/response";
 
 /// 無料ユーザーがソログループに加えて作成できるグループ数の上限。
+/// NOTE: クライアント側(lib/entity/group.dart の freeAdditionalGroupCreationLimit)と同じ値を維持すること。
 const FREE_ADDITIONAL_GROUP_CREATION_LIMIT = 1;
 
 /// グループ名の最大文字数。
