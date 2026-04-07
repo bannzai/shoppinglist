@@ -147,8 +147,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                             width: 32,
                             height: 32,
                             child: Center(
-                              child:
-                                  CircularProgressIndicator(strokeWidth: 2),
+                              child: CircularProgressIndicator(strokeWidth: 2),
                             ),
                           ),
                           errorWidget: (context, url, error) =>

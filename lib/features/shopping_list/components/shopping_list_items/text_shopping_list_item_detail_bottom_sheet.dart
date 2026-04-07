@@ -223,8 +223,7 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                           nextImageURL =
                               await functions.uploadShoppingListItemImage(
                             groupID: groupID,
-                            shoppingListID:
-                                textShoppingListItem.shoppingListID,
+                            shoppingListID: textShoppingListItem.shoppingListID,
                             itemID: textShoppingListItem.id,
                             mimeType: mimeType(file),
                             base64Image: await base64CompressImage(file),
@@ -233,15 +232,13 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                             originalImageURL != null) {
                           await functions.deleteShoppingListItemImage(
                             groupID: groupID,
-                            shoppingListID:
-                                textShoppingListItem.shoppingListID,
+                            shoppingListID: textShoppingListItem.shoppingListID,
                             itemID: textShoppingListItem.id,
                           );
                           nextImageURL = null;
                         }
 
-                        final description =
-                            descriptionController.text.trim();
+                        final description = descriptionController.text.trim();
                         ref
                             .read(updateShoppingListItemProvider(
                                 groupID: groupID))
@@ -249,9 +246,8 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                               shoppingListID:
                                   textShoppingListItem.shoppingListID,
                               item: textShoppingListItem.copyWith(
-                                description: description.isEmpty
-                                    ? null
-                                    : description,
+                                description:
+                                    description.isEmpty ? null : description,
                                 color: selectedColor.value,
                                 imageURL: nextImageURL,
                               ),
