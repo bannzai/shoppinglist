@@ -17,6 +17,8 @@ import es.antonborri.home_widget.HomeWidgetProvider
 class ShoppingListWidgetProvider : HomeWidgetProvider() {
     companion object {
         const val ACTION_TOGGLE_ITEM = "com.bannzai.shoppinglist.ACTION_TOGGLE_ITEM"
+        /** テーマカラーの16進カラーコードバリデーション用パターン */
+        private val HEX_COLOR_PATTERN = Regex("^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$")
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -91,8 +93,7 @@ class ShoppingListWidgetProvider : HomeWidgetProvider() {
         val defaultThemeColorHex = "#673AB7"
         val isPremium = widgetData.getBoolean("widget_is_premium", false)
         val rawThemeColorHex = widgetData.getString("widget_theme_color_hex", defaultThemeColorHex) ?: defaultThemeColorHex
-        val hexPattern = Regex("^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$")
-        val themeColorHex = if (isPremium && hexPattern.matches(rawThemeColorHex.trim())) {
+        val themeColorHex = if (isPremium && HEX_COLOR_PATTERN.matches(rawThemeColorHex.trim())) {
             rawThemeColorHex.trim().uppercase()
         } else {
             defaultThemeColorHex
