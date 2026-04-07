@@ -4,7 +4,6 @@ import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
 import { ai } from "../utils/genkit";
-import { appAuthPolicy } from "../utils/authPolicy";
 import {
   DataResponseSchema,
   ErrorResponseSchema,
@@ -44,7 +43,7 @@ const base64Pattern =
 /** Firebase Auth Custom Claimsからプレミアム判定を行う。 */
 async function hasPremiumEntitlement(uid: string): Promise<boolean> {
   try {
-    return (await admin.auth().getUser(uid)).customClaims?.["premium"] === true;
+    return (await admin.auth().getUser(uid)).customClaims?.["isPremium"] === true;
   } catch (error) {
     logger.error("hasPremiumEntitlement failed", {
       uid,
@@ -195,9 +194,4 @@ const uploadShoppingListItemImageFlow = ai.defineFlow(
   }
 );
 
-module.exports = onCallGenkit(
-  {
-    authPolicy: appAuthPolicy("uploadShoppingListItemImage"),
-  },
-  uploadShoppingListItemImageFlow
-);
+module.exports = onCallGenkit(uploadShoppingListItemImageFlow);
