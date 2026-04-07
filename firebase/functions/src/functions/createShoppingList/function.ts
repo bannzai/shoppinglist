@@ -94,47 +94,48 @@ const createShoppingListFlow = ai.defineFlow(
 
       const isPremium = context?.auth?.token?.isPremium === true;
 
-      if (!isPremium) {
-        const activeSnapshot = await firestore
-          .collection(`groups/${groupID}/shoppingLists`)
-          .where("status", "==", "active")
-          .count()
-          .get();
-        const activeCount = activeSnapshot.data().count;
-        if (activeCount >= FREE_GROUP_ACTIVE_SHOPPING_LIST_LIMIT) {
-          return {
-            result: "NG" as const,
-            error: {
-              message: `無料プランでは1グループあたり${FREE_GROUP_ACTIVE_SHOPPING_LIST_LIMIT}個までリストを作成できます。プレミアムにアップグレードすると無制限に作成できます`,
-            },
-          };
-        }
-      }
-
       const shoppingListsRef = firestore.collection(
         `groups/${groupID}/shoppingLists`
       );
-      const allCountSnapshot = await shoppingListsRef.count().get();
-      const allCount = allCountSnapshot.data().count;
-      const now = new Date();
-      const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-      const name = allCount === 0 ? dateStr : `${dateStr} (${allCount})`;
-
       const newDocRef = shoppingListsRef.doc();
-      await newDocRef.set({
-        id: newDocRef.id,
-        createUserID,
-        groupID,
-        name,
-        status: "active",
-        shoppingLocationID: shoppingLocationID ?? null,
-        duplicatedFromGroupShoppingListID:
-          duplicatedFromGroupShoppingListID ?? null,
-        ttlExpiresDateTime: null,
-        createdDateTime: admin.firestore.FieldValue.serverTimestamp(),
-        updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-        serverCreatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-        serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+
+      // 上限チェックとリスト作成をトランザクションで囲み、レースコンディションを防止する
+      await firestore.runTransaction(async (transaction) => {
+        if (!isPremium) {
+          // トランザクション内では .count().get() が使えないため、クエリでドキュメントを取得して .size で件数を数える
+          const activeListsQuery = shoppingListsRef.where(
+            "status",
+            "==",
+            "active"
+          );
+          const activeSnapshot = await transaction.get(activeListsQuery);
+          if (activeSnapshot.size >= FREE_GROUP_ACTIVE_SHOPPING_LIST_LIMIT) {
+            throw new Error(
+              `無料プランでは1グループあたり${FREE_GROUP_ACTIVE_SHOPPING_LIST_LIMIT}個までリストを作成できます。プレミアムにアップグレードすると無制限に作成できます`
+            );
+          }
+        }
+
+        const allSnapshot = await transaction.get(shoppingListsRef);
+        const allCount = allSnapshot.size;
+        const now = new Date();
+        const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+        const name = allCount === 0 ? dateStr : `${dateStr} (${allCount})`;
+
+        // createdDateTime / updatedDateTime はクライアント側タイムスタンプのため、サーバーでは設定しない
+        transaction.set(newDocRef, {
+          id: newDocRef.id,
+          createUserID,
+          groupID,
+          name,
+          status: "active",
+          shoppingLocationID: shoppingLocationID ?? null,
+          duplicatedFromGroupShoppingListID:
+            duplicatedFromGroupShoppingListID ?? null,
+          ttlExpiresDateTime: null,
+          serverCreatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+        });
       });
 
       logger.info(

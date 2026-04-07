@@ -103,7 +103,11 @@ service cloud.firestore {
                       && request.resource.data.groupID == groupID
                       && (request.resource.data.createUserID == request.auth.uid
                           || isDebugUserOf(request.resource.data.createUserID));
-        allow update, delete: if isGroupMember();
+        // groupID と createUserID は不変フィールドのため、update 時に変更されないことを保証する
+        allow update: if isGroupMember()
+                      && request.resource.data.groupID == groupID
+                      && request.resource.data.createUserID == resource.data.createUserID;
+        allow delete: if isGroupMember();
 
         match /items/{itemID} {
           allow read, delete: if isGroupMember();

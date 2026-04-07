@@ -1,7 +1,23 @@
 // firebase-admin のモック
 const mockCollection = jest.fn();
+const mockSet = jest.fn();
+
+// トランザクション内で使われるモック
+const mockTransactionGet = jest.fn();
+const mockTransactionSet = jest.fn();
+const mockTransaction = {
+  get: mockTransactionGet,
+  set: mockTransactionSet,
+};
+
+// runTransaction: コールバックに mockTransaction を渡して実行する
+const mockRunTransaction = jest.fn(async (fn: any) => {
+  return await fn(mockTransaction);
+});
+
 const mockFirestoreInstance = {
   collection: mockCollection,
+  runTransaction: mockRunTransaction,
 };
 
 const mockServerTimestamp = jest.fn(() => "SERVER_TIMESTAMP");
@@ -77,7 +93,7 @@ describe("createShoppingList", () => {
     jest.clearAllMocks();
   });
 
-  test("正常系: メンバーが買い物リストを作成できる", async () => {
+  test("正常系: メンバーが買い物リストを作成できる（トランザクション使用）", async () => {
     mockCurrentContext.mockReturnValue({
       auth: { uid: "user-1", token: {} },
     });
@@ -89,7 +105,13 @@ describe("createShoppingList", () => {
 
     const mockNewDocRef = {
       id: "new-shopping-list-id",
-      set: jest.fn().mockResolvedValue(undefined),
+    };
+
+    const mockActiveQuery = { _tag: "activeQuery" };
+    const mockShoppingListsRef = {
+      where: jest.fn().mockReturnValue(mockActiveQuery),
+      doc: jest.fn(() => mockNewDocRef),
+      _tag: "shoppingListsRef",
     };
 
     mockCollection.mockImplementation((path: string) => {
@@ -101,28 +123,29 @@ describe("createShoppingList", () => {
         };
       }
       if (path === "groups/group-1/shoppingLists") {
-        return {
-          where: jest.fn().mockReturnValue({
-            count: jest.fn().mockReturnValue({
-              get: jest
-                .fn()
-                .mockResolvedValue({ data: () => ({ count: 0 }) }),
-            }),
-          }),
-          count: jest.fn().mockReturnValue({
-            get: jest.fn().mockResolvedValue({ data: () => ({ count: 0 }) }),
-          }),
-          doc: jest.fn(() => mockNewDocRef),
-        };
+        return mockShoppingListsRef;
       }
       return {};
+    });
+
+    // transaction.get の振る舞い: activeリスト0件、全リスト0件
+    mockTransactionGet.mockImplementation((queryOrRef: any) => {
+      if (queryOrRef === mockActiveQuery) {
+        return Promise.resolve({ size: 0 });
+      }
+      if (queryOrRef === mockShoppingListsRef) {
+        return Promise.resolve({ size: 0 });
+      }
+      return Promise.resolve({ size: 0 });
     });
 
     const result = await capturedFlowFn(defaultInput);
 
     expect(result.result).toBe("OK");
     expect(result.data.shoppingListID).toBe("new-shopping-list-id");
-    expect(mockNewDocRef.set).toHaveBeenCalledWith(
+    expect(mockRunTransaction).toHaveBeenCalledTimes(1);
+    expect(mockTransactionSet).toHaveBeenCalledWith(
+      mockNewDocRef,
       expect.objectContaining({
         id: "new-shopping-list-id",
         createUserID: "user-1",
@@ -130,6 +153,12 @@ describe("createShoppingList", () => {
         status: "active",
       })
     );
+    // createdDateTime / updatedDateTime はサーバーで設定しない
+    const setArgs = mockTransactionSet.mock.calls[0][1];
+    expect(setArgs).not.toHaveProperty("createdDateTime");
+    expect(setArgs).not.toHaveProperty("updatedDateTime");
+    expect(setArgs).toHaveProperty("serverCreatedDateTime");
+    expect(setArgs).toHaveProperty("serverUpdatedDateTime");
   });
 
   test("異常系: 未認証ユーザーがエラーになる", async () => {
@@ -181,7 +210,7 @@ describe("createShoppingList", () => {
     expect(result.error.message).toBe("グループのメンバーではありません");
   });
 
-  test("異常系: 無料ユーザーで上限超過時にエラーになる", async () => {
+  test("異常系: 無料ユーザーで上限超過時にエラーになる（トランザクション内で検証）", async () => {
     mockCurrentContext.mockReturnValue({
       auth: { uid: "user-1", token: {} },
     });
@@ -189,6 +218,13 @@ describe("createShoppingList", () => {
     const mockGroupDoc = {
       exists: true,
       data: () => ({ memberUserIDs: ["user-1"] }),
+    };
+
+    const mockActiveQuery = { _tag: "activeQuery" };
+    const mockShoppingListsRef = {
+      where: jest.fn().mockReturnValue(mockActiveQuery),
+      doc: jest.fn(() => ({ id: "dummy" })),
+      _tag: "shoppingListsRef",
     };
 
     mockCollection.mockImplementation((path: string) => {
@@ -200,17 +236,17 @@ describe("createShoppingList", () => {
         };
       }
       if (path === "groups/group-1/shoppingLists") {
-        return {
-          where: jest.fn().mockReturnValue({
-            count: jest.fn().mockReturnValue({
-              get: jest
-                .fn()
-                .mockResolvedValue({ data: () => ({ count: 5 }) }),
-            }),
-          }),
-        };
+        return mockShoppingListsRef;
       }
       return {};
+    });
+
+    // transaction.get: activeリスト5件（上限到達）
+    mockTransactionGet.mockImplementation((queryOrRef: any) => {
+      if (queryOrRef === mockActiveQuery) {
+        return Promise.resolve({ size: 5 });
+      }
+      return Promise.resolve({ size: 0 });
     });
 
     const result = await capturedFlowFn(defaultInput);
@@ -231,7 +267,12 @@ describe("createShoppingList", () => {
 
     const mockNewDocRef = {
       id: "premium-list-id",
-      set: jest.fn().mockResolvedValue(undefined),
+    };
+
+    const mockShoppingListsRef = {
+      where: jest.fn(),
+      doc: jest.fn(() => mockNewDocRef),
+      _tag: "shoppingListsRef",
     };
 
     mockCollection.mockImplementation((path: string) => {
@@ -243,16 +284,17 @@ describe("createShoppingList", () => {
         };
       }
       if (path === "groups/group-1/shoppingLists") {
-        return {
-          count: jest.fn().mockReturnValue({
-            get: jest
-              .fn()
-              .mockResolvedValue({ data: () => ({ count: 10 }) }),
-          }),
-          doc: jest.fn(() => mockNewDocRef),
-        };
+        return mockShoppingListsRef;
       }
       return {};
+    });
+
+    // プレミアムユーザーはactiveリストのチェックをスキップするため、allSnapshot のみ
+    mockTransactionGet.mockImplementation((queryOrRef: any) => {
+      if (queryOrRef === mockShoppingListsRef) {
+        return Promise.resolve({ size: 10 });
+      }
+      return Promise.resolve({ size: 0 });
     });
 
     const result = await capturedFlowFn(defaultInput);
