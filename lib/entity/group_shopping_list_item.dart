@@ -45,6 +45,7 @@ abstract class GroupShoppingListItem with _$GroupShoppingListItem {
     GroupShoppingListItemStatus status,
     String? description,
     String? color,
+
     /// Firebase Storage上の商品写真のダウンロードURL。プレミアム機能。
     String? imageURL,
     @NullableTimestampConverter() DateTime? reminderDateTime,

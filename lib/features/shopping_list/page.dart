@@ -46,8 +46,8 @@ class ShoppingListPage extends HookConsumerWidget {
     useValueListenable(currentShoppingListID);
 
     return Retry(
-      retry: () => ref.invalidate(
-          shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium)),
+      retry: () => ref.invalidate(shoppingListsProvider(
+          groupID: groupID, isPremium: firestoreIsPremium)),
       // SafeAreaでGroupSwitcherをステータスバー/ノッチ領域の下に配置する
       child: SafeArea(
         bottom: false,
