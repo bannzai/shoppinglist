@@ -7,14 +7,14 @@ part of 'ai_usage.dart';
 // **************************************************************************
 
 String _$currentMonthAIUsageHash() =>
-    r'588c0776a687e8bb596459de6411af549e28d26a';
+    r'3d8355d9a3949fc1cc7c962144e0108db902cfde';
 
 /// 現在月のAI利用回数をリアルタイム購読するProvider。
 ///
 /// Copied from [currentMonthAIUsage].
 @ProviderFor(currentMonthAIUsage)
 final currentMonthAIUsageProvider =
-    AutoDisposeStreamProvider<AIUsage?>.internal(
+    AutoDisposeStreamProvider<UserAIUsage?>.internal(
   currentMonthAIUsage,
   name: r'currentMonthAIUsageProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -29,7 +29,7 @@ final currentMonthAIUsageProvider =
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef CurrentMonthAIUsageRef = AutoDisposeStreamProviderRef<AIUsage?>;
+typedef CurrentMonthAIUsageRef = AutoDisposeStreamProviderRef<UserAIUsage?>;
 String _$remainingImageRecognitionCountHash() =>
     r'c3cf4729e2a50d7d66c6779309b687ce8c802dc3';
 

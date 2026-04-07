@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
+import 'package:shoppinglist/features/shopping_location/location_picker_page.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 class ShoppingLocationPage extends ConsumerWidget {
   final String groupID;
@@ -33,8 +35,15 @@ class ShoppingLocationPage extends ConsumerWidget {
             itemBuilder: (context, index) {
               final location = locations[index];
               return ListTile(
-                leading: const Icon(Icons.store),
+                leading: Icon(
+                  location.latitude != null ? Icons.location_on : Icons.store,
+                  color: location.latitude != null
+                      ? Theme.of(context).colorScheme.primary
+                      : null,
+                ),
                 title: Text(location.name),
+                subtitle:
+                    location.latitude != null ? const Text('位置情報設定済み') : null,
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -96,50 +105,109 @@ class ShoppingLocationPage extends ConsumerWidget {
     required WidgetRef ref,
   }) {
     final controller = TextEditingController();
+    double? selectedLatitude;
+    double? selectedLongitude;
+    final isPremium =
+        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
+
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('場所を追加'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: const InputDecoration(
-            hintText: '場所の名前（例: スーパー）',
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              final name = controller.text.trim();
-              if (name.isEmpty) return;
-              analytics.logEvent(
-                  name: 'tap_confirm_add_location',
-                  parameters: {'groupID': groupID});
-              Navigator.pop(dialogContext);
-              try {
-                await ref
-                    .read(shoppingLocationAddProvider(groupID: groupID))
-                    .call(name: name);
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString())),
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setDialogState) => AlertDialog(
+          title: const Text('場所を追加'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: controller,
+                autofocus: true,
+                decoration: const InputDecoration(
+                  hintText: '場所の名前（例: スーパー）',
+                ),
+              ),
+              const SizedBox(height: 12),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.map),
+                title: Text(selectedLatitude != null ? '位置設定済み' : '地図で場所を設定'),
+                trailing: !isPremium
+                    ? Icon(Icons.lock,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant)
+                    : (selectedLatitude != null
+                        ? const Icon(Icons.check, color: Colors.green)
+                        : null),
+                onTap: () async {
+                  analytics.logEvent(
+                    name: 'tap_set_location_on_map',
                   );
+                  if (!isPremium) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('位置情報リマインダーはプレミアム機能です'),
+                      ),
+                    );
+                    return;
+                  }
+                  final result = await Navigator.push<
+                      ({double latitude, double longitude})>(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LocationPickerPage(
+                        initialLatitude: null,
+                        initialLongitude: null,
+                      ),
+                    ),
+                  );
+                  if (result != null) {
+                    setDialogState(() {
+                      selectedLatitude = result.latitude;
+                      selectedLongitude = result.longitude;
+                    });
+                  }
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                final name = controller.text.trim();
+                if (name.isEmpty) return;
+                analytics.logEvent(
+                    name: 'tap_confirm_add_location',
+                    parameters: {'groupID': groupID});
+                Navigator.pop(dialogContext);
+                try {
+                  await ref
+                      .read(shoppingLocationAddProvider(groupID: groupID))
+                      .call(
+                        name: name,
+                        latitude: selectedLatitude,
+                        longitude: selectedLongitude,
+                        geofenceRadiusMeters: null,
+                      );
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.toString())),
+                    );
+                  }
                 }
-              }
-            },
-            child: const Text('追加'),
-          ),
-          TextButton(
-            onPressed: () {
-              analytics.logEvent(
-                  name: 'cancel_add_location',
-                  parameters: {'groupID': groupID});
-              Navigator.pop(dialogContext);
-            },
-            child: const Text('キャンセル'),
-          ),
-        ],
+              },
+              child: const Text('追加'),
+            ),
+            TextButton(
+              onPressed: () {
+                analytics.logEvent(
+                    name: 'cancel_add_location',
+                    parameters: {'groupID': groupID});
+                Navigator.pop(dialogContext);
+              },
+              child: const Text('キャンセル'),
+            ),
+          ],
+        ),
       ),
     );
   }

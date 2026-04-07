@@ -54,8 +54,7 @@ class ThemeColorSelectionPage extends ConsumerWidget {
                                 );
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('テーマカラーを変更しました')),
+                                const SnackBar(content: Text('テーマカラーを変更しました')),
                               );
                             }
                           } catch (e) {

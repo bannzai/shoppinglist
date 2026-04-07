@@ -227,7 +227,7 @@ class _ShoppingListsProviderElement
   bool get isPremium => (origin as ShoppingListsProvider).isPremium;
 }
 
-String _$shoppingListAddHash() => r'36207893c21f77fd46ad8760207a52933eaa5869';
+String _$shoppingListAddHash() => r'd5fae19930c027d97c9feff05a2081b5cd85e984';
 
 /// See also [shoppingListAdd].
 @ProviderFor(shoppingListAdd)
@@ -257,7 +257,8 @@ class ShoppingListAddFamily extends Family<ShoppingListAdd> {
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
+    firestoreIsPremiumProvider
   ];
 
   @override
@@ -266,7 +267,9 @@ class ShoppingListAddFamily extends Family<ShoppingListAdd> {
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
     groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
+    ...?groupDatabaseProvider.allTransitiveDependencies,
+    firestoreIsPremiumProvider,
+    ...?firestoreIsPremiumProvider.allTransitiveDependencies
   };
 
   @override

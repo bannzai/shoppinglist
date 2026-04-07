@@ -29,13 +29,12 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
     final shoppingListAdd = appUserDefaultGroupID != null
         ? ref.watch(shoppingListAddProvider(groupID: appUserDefaultGroupID))
         : null;
-    final shoppingLists =
-        (appUserDefaultGroupID != null && isPremium != null)
-            ? ref.watch(shoppingListsProvider(
-                groupID: appUserDefaultGroupID,
-                isPremium: isPremium,
-              ))
-            : null;
+    final shoppingLists = (appUserDefaultGroupID != null && isPremium != null)
+        ? ref.watch(shoppingListsProvider(
+            groupID: appUserDefaultGroupID,
+            isPremium: isPremium,
+          ))
+        : null;
 
     // FCMトークン登録: appUserが取得できたらFCMトークンをFirestoreに保存し、トークン更新を監視する
     // 依存配列: [appUser] — appUserがnullから値に変わった時に実行。再実行時は前回のリフレッシュリスナーをキャンセル

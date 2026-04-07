@@ -1,0 +1,33 @@
+appId: com.bannzai.shoppinglist
+---
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 設定タブに切り替え
+- tapOn:
+    text: "設定.*"
+    index: 0
+- assertVisible: "設定.*"
+
+# グループ管理画面に遷移
+- tapOn: "グループ管理"
+- assertVisible: "グループ管理"
+
+# 1つ目の追加グループ作成（成功するはず）
+- tapOn: "グループ作成"
+- assertVisible: "グループ作成"
+- tapOn: "グループ名を入力"
+- inputText: "テストグループ"
+- pressKey: Enter
+- tapOn: "作成する"
+- extendedWaitUntil:
+    visible: "グループ管理"
+    timeout: 15000
+
+# 2つ目の追加グループ作成を試みる（上限超過）
+- extendedWaitUntil:
+    visible: ".*テストグループ.*"
+    timeout: 10000
+- tapOn: "グループ作成"
+- waitForAnimationToEnd
+- assertVisible: "無料プランではソログループ"
+- takeScreenshot: screenshots/group_creation_limit_01_exceeded

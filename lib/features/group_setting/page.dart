@@ -452,7 +452,12 @@ class _ShoppingLocationsSection extends ConsumerWidget {
               try {
                 await ref
                     .read(shoppingLocationAddProvider(groupID: groupID))
-                    .call(name: name);
+                    .call(
+                      name: name,
+                      latitude: null,
+                      longitude: null,
+                      geofenceRadiusMeters: null,
+                    );
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(

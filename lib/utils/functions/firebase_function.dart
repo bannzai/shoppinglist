@@ -63,8 +63,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
   Future<List<String>> generateShoppingListItemsFromURL({
     required String url,
   }) async {
-    final result =
-        await httpsCallable('generateShoppingListItemsFromURL').call(
+    final result = await httpsCallable('generateShoppingListItemsFromURL').call(
       {
         'url': url,
       },
@@ -118,6 +117,49 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     }
   }
 
+  /// サーバー側で上限チェックを行った上で買い物リストを作成する。
+  Future<String> createShoppingList({
+    required String groupID,
+    required String createUserID,
+    required String? shoppingLocationID,
+    required String? duplicatedFromGroupShoppingListID,
+  }) async {
+    final result = await httpsCallable('createShoppingList').call(
+      {
+        'groupID': groupID,
+        'createUserID': createUserID,
+        'shoppingLocationID': shoppingLocationID,
+        'duplicatedFromGroupShoppingListID': duplicatedFromGroupShoppingListID,
+      },
+    );
+    debugPrint('createShoppingList.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+    return response['data']['shoppingListID'] as String;
+  }
+
+  /// サーバー側で上限チェックを行った上でグループを作成する。
+  Future<void> createGroup({
+    required String createUserID,
+    required String? name,
+    required bool setAsDefault,
+  }) async {
+    final result = await httpsCallable('createGroup').call(
+      {
+        'createUserID': createUserID,
+        'name': name,
+        'setAsDefault': setAsDefault,
+      },
+    );
+    debugPrint('createGroup.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+  }
+
   Future<void> updateGroupName({
     required String groupID,
     required String name,
@@ -129,6 +171,51 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
       },
     );
     debugPrint('updateGroupName.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+  }
+
+  /// 商品写真をFirebase Storageにアップロードし、ダウンロードURLを返す。
+  Future<String> uploadShoppingListItemImage({
+    required String groupID,
+    required String shoppingListID,
+    required String itemID,
+    required String mimeType,
+    required String base64Image,
+  }) async {
+    final result = await httpsCallable('uploadShoppingListItemImage').call(
+      {
+        'groupID': groupID,
+        'shoppingListID': shoppingListID,
+        'itemID': itemID,
+        'mimeType': mimeType,
+        'base64Image': base64Image,
+      },
+    );
+    // token付きURLを含む可能性があるためresult.dataはログ出力しない
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+    return response['data']['imageURL'] as String;
+  }
+
+  /// 商品写真をFirebase Storageから削除する。
+  Future<void> deleteShoppingListItemImage({
+    required String groupID,
+    required String shoppingListID,
+    required String itemID,
+  }) async {
+    final result = await httpsCallable('deleteShoppingListItemImage').call(
+      {
+        'groupID': groupID,
+        'shoppingListID': shoppingListID,
+        'itemID': itemID,
+      },
+    );
+    debugPrint('deleteShoppingListItemImage.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
       throw Exception(response['error']['message']);

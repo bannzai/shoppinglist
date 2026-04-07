@@ -6,7 +6,7 @@ part of 'ai_usage.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_AIUsage _$AIUsageFromJson(Map<String, dynamic> json) => _AIUsage(
+_UserAIUsage _$UserAIUsageFromJson(Map<String, dynamic> json) => _UserAIUsage(
       id: json['id'] as String,
       userID: json['userID'] as String,
       imageRecognitionCount: (json['imageRecognitionCount'] as num).toInt(),
@@ -17,7 +17,8 @@ _AIUsage _$AIUsageFromJson(Map<String, dynamic> json) => _AIUsage(
           .fromJson(json['serverUpdatedDateTime']),
     );
 
-Map<String, dynamic> _$AIUsageToJson(_AIUsage instance) => <String, dynamic>{
+Map<String, dynamic> _$UserAIUsageToJson(_UserAIUsage instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'userID': instance.userID,
       'imageRecognitionCount': instance.imageRecognitionCount,

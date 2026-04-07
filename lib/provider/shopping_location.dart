@@ -22,12 +22,33 @@ class ShoppingLocationAdd {
 
   ShoppingLocationAdd({required this.database});
 
-  Future<GroupShoppingLocation> call({required String name}) async {
+  Future<GroupShoppingLocation> call({
+    required String name,
+    required double? latitude,
+    required double? longitude,
+    required double? geofenceRadiusMeters,
+  }) async {
+    if ((latitude != null && (latitude < -90 || latitude > 90)) ||
+        (longitude != null && (longitude < -180 || longitude > 180))) {
+      throw ArgumentError('latitude/longitude is out of range');
+    }
+    if (geofenceRadiusMeters != null &&
+        (geofenceRadiusMeters < 50 || geofenceRadiusMeters > 2000)) {
+      throw ArgumentError.value(
+        geofenceRadiusMeters,
+        'geofenceRadiusMeters',
+        '50〜2000mの範囲で指定してください',
+      );
+    }
+
     final docRef = database.newShoppingLocationReference();
     final shoppingLocation = GroupShoppingLocation(
       id: docRef.id,
       groupID: database.groupID,
       name: name,
+      latitude: latitude,
+      longitude: longitude,
+      geofenceRadiusMeters: geofenceRadiusMeters,
     );
     await docRef.set(shoppingLocation, SetOptions(merge: true));
     return shoppingLocation;
