@@ -141,7 +141,10 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   _pasteFromClipboard(context, ref);
                   break;
                 case 'export':
-                  _exportShoppingList(context: context, ref: ref);
+                  _exportShoppingList(
+                      context: context,
+                      ref: ref,
+                      isPremium: isPremium);
                   break;
               }
             },
@@ -415,10 +418,9 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
   Future<void> _exportShoppingList({
     required BuildContext context,
     required WidgetRef ref,
+    required bool isPremium,
   }) async {
     // ユーザー操作ごとに共有シート表示と分析送信を行うため、この処理は非冪等。
-    final isPremium =
-        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
     if (!isPremium) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
