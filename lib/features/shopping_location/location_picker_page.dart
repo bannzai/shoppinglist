@@ -36,6 +36,7 @@ class LocationPickerPage extends HookConsumerWidget {
     final mapController = useState<GoogleMapController?>(null);
 
     // 初回: 現在地を取得して地図を移動（既存座標がない場合のみ）
+    // 依存配列: 初回マウント時のみ実行するため空配列を指定
     useEffect(() {
       if (initialLatitude != null) return null;
       () async {
@@ -45,8 +46,7 @@ class LocationPickerPage extends HookConsumerWidget {
             permission = await Geolocator.requestPermission();
           }
           final position = await Geolocator.getCurrentPosition();
-          selectedLatLng.value =
-              LatLng(position.latitude, position.longitude);
+          selectedLatLng.value = LatLng(position.latitude, position.longitude);
           mapController.value?.animateCamera(
             CameraUpdate.newLatLng(selectedLatLng.value),
           );
@@ -142,8 +142,7 @@ class LocationPickerPage extends HookConsumerWidget {
                     width: double.infinity,
                     child: FilledButton(
                       onPressed: () {
-                        analytics.logEvent(
-                            name: 'tap_confirm_map_location');
+                        analytics.logEvent(name: 'tap_confirm_map_location');
                         Navigator.pop(context, (
                           latitude: selectedLatLng.value.latitude,
                           longitude: selectedLatLng.value.longitude,

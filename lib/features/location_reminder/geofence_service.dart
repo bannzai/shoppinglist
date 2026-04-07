@@ -46,7 +46,7 @@ class GeofenceService {
     _positionSubscription = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.medium,
-        distanceFilter: 100, // 100m移動ごとに更新（バッテリー節約）
+        distanceFilter: 30, // 30m移動ごとに更新（バッテリーと精度のバランス）
       ),
     ).listen(_onPositionUpdate);
 
@@ -76,8 +76,7 @@ class GeofenceService {
         final radius =
             location.geofenceRadiusMeters ?? defaultGeofenceRadiusMeters;
 
-        if (distance <= radius &&
-            !_notifiedLocationIDs.contains(location.id)) {
+        if (distance <= radius && !_notifiedLocationIDs.contains(location.id)) {
           _triggerNotification(location: location);
           _notifiedLocationIDs.add(location.id);
         } else if (distance > radius * 2 &&
@@ -105,7 +104,7 @@ class GeofenceService {
     await notificationsPlugin.show(
       id: location.id.hashCode,
       title: '「${location.name}」の近くにいます',
-      body: '買い物リストを確認しましょう',
+      body: '${lists.length}件の買い物リストがあります。確認しましょう',
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           'location_reminder',
@@ -117,6 +116,7 @@ class GeofenceService {
         ),
         iOS: DarwinNotificationDetails(),
       ),
+      payload: location.id,
     );
   }
 
