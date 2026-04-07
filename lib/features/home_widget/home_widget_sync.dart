@@ -35,7 +35,8 @@ class HomeWidgetSync extends HookConsumerWidget {
     final shoppingListsAsync = ref.watch(
         shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium));
 
-    // 初回マウント時のみ同期を実行
+    // 初回マウント時にテーマカラーとプレミアム状態を同期する。
+    // 以降の変更は ref.listen で検知して同期するため、依存配列は空にしている。
     useEffect(() {
       HomeWidgetDataSync.syncThemeColor(themeColorHex: themeColorHex);
       HomeWidgetDataSync.syncPremiumStatus(isPremium: firestoreIsPremium);
