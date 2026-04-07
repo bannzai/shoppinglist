@@ -27,6 +27,9 @@ class HomeWidgetSync extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final firestoreIsPremium =
         ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
+    final groups = ref.watch(userGroupsProvider).valueOrNull ?? [];
+    final shoppingListsAsync = ref.watch(
+        shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium));
 
     // 初回同期（WidgetRef.listen は fireImmediately 非対応）
     final currentAppUser = ref.read(appUserProvider).valueOrNull;
@@ -65,11 +68,10 @@ class HomeWidgetSync extends ConsumerWidget {
 
     // 買い物リスト一覧の変更を検知して同期
     ref.listen(
-        shoppingListsProvider(
-            groupID: groupID, isPremium: firestoreIsPremium), (prev, next) {
+        shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium),
+        (prev, next) {
       final lists = next.valueOrNull;
       if (lists != null && lists.isNotEmpty) {
-        final groups = ref.read(userGroupsProvider).valueOrNull ?? [];
         final group = groups.firstWhereOrNull((g) => g.id == groupID);
         HomeWidgetDataSync.syncShoppingLists(
           shoppingLists: lists,
@@ -88,11 +90,7 @@ class HomeWidgetSync extends ConsumerWidget {
         ), (prev, next) {
       final items = next.valueOrNull;
       if (items != null) {
-        final lists = ref
-                .read(shoppingListsProvider(
-                    groupID: groupID, isPremium: firestoreIsPremium))
-                .valueOrNull ??
-            [];
+        final lists = shoppingListsAsync.valueOrNull ?? [];
         final list = lists.firstWhereOrNull((sl) => sl.id == shoppingListID);
         HomeWidgetDataSync.syncCurrentShoppingListItems(
           groupID: groupID,
