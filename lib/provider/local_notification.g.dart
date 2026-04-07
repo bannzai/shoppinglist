@@ -29,7 +29,7 @@ final localNotificationsPluginProvider =
 typedef LocalNotificationsPluginRef
     = ProviderRef<FlutterLocalNotificationsPlugin>;
 String _$localNotificationsInitializedHash() =>
-    r'f738a9b814b17e536f1f7891388078af1288a83d';
+    r'b73b7108e471e7f007d1f874a62b1ff28c8576a6';
 
 /// アプリ起動時にローカル通知プラグインを初期化する。
 ///

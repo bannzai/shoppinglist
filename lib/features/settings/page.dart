@@ -252,6 +252,7 @@ class SettingPage extends HookConsumerWidget {
   }
 }
 
+/// テーマカラー設定のListTile。プレミアムユーザーのみ選択画面へ遷移可能。
 class _ThemeColorTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -337,9 +338,8 @@ class _LocationReminderToggle extends ConsumerWidget {
       subtitle: const Text('店舗の近くに来たら買い物リストを通知'),
       secondary: Icon(
         Icons.location_on,
-        color: !isPremium
-            ? Theme.of(context).colorScheme.onSurfaceVariant
-            : null,
+        color:
+            !isPremium ? Theme.of(context).colorScheme.onSurfaceVariant : null,
       ),
       value: isPremium && isEnabled,
       onChanged: isPremium

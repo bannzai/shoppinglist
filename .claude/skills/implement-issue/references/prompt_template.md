@@ -13,7 +13,7 @@ GitHub Issue #{{ISSUE_NUMBER}} の仕様を実装してください。
 4. 関連する既存実装（lib/features/ 配下）を探索してパターンを把握
 5. lib/utils/purchase/purchase.dart の isPremium 判定パターンを確認
 6. ブランチ `feature/premium-issue-{{ISSUE_NUMBER}}` を `{{BASE_BRANCH}}` から作成
-7. plans/ にプランファイルを作成（plan-checklist.md のチェックリスト付き）
+7. プランファイルを作成（plan-checklist.md のチェックリスト付き）
 8. プランに沿って実装
 9. テストを作成:
    - Widget Test: 新規・変更Widgetに対して積極的に書く（isPremium分岐、UI表示条件等）

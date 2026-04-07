@@ -106,10 +106,14 @@ service cloud.firestore {
         allow update, delete: if isGroupMember();
 
         match /items/{itemID} {
-          allow read, update, delete: if isGroupMember();
+          allow read, delete: if isGroupMember();
           allow create: if isGroupMember()
                         && (request.resource.data.userID == request.auth.uid
-                            || isDebugUserOf(request.resource.data.userID));
+                            || isDebugUserOf(request.resource.data.userID))
+                        && (!request.resource.data.keys().hasAny(['imageURL']) || isPremiumFromClaim());
+          allow update: if isGroupMember()
+                        && (!request.resource.data.diff(resource.data).changedKeys().hasAny(['imageURL'])
+                            || isPremiumFromClaim());
         }
       }
     }

@@ -52,6 +52,10 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
     final hasCategories = axesAsync.maybeWhen(
         data: (axes) => axes.isNotEmpty, orElse: () => false);
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
+    final remainingImageRecognitionCount =
+        ref.watch(remainingImageRecognitionCountProvider(isPremium: isPremium));
     return AppBar(
       title: DropdownButton<String>(
         value: shoppingListID,
@@ -125,7 +129,10 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   );
                   break;
                 case 'image':
-                  _showImagePicker(context, ref);
+                  _showImagePicker(context, ref,
+                      isPremium: isPremium,
+                      remainingImageRecognitionCount:
+                          remainingImageRecognitionCount);
                   break;
                 case 'url':
                   _showURLInputDialog(context, ref);
@@ -224,17 +231,14 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     );
   }
 
-  void _showImagePicker(BuildContext context, WidgetRef ref) {
+  void _showImagePicker(BuildContext context, WidgetRef ref,
+      {required bool isPremium, required int remainingImageRecognitionCount}) {
     analytics.logEvent(
         name: 'tap_open_image_picker',
         parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
 
     // AI画像認識の回数制限チェック
-    final isPremium =
-        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
-    final remaining = ref.read(
-        remainingImageRecognitionCountProvider(isPremium: isPremium));
-    if (remaining <= 0) {
+    if (remainingImageRecognitionCount <= 0) {
       final limit = isPremium
           ? premiumMonthlyImageRecognitionLimit
           : freeMonthlyImageRecognitionLimit;
@@ -357,8 +361,8 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
     final isPremium =
         ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
-    final remaining = ref.read(
-        remainingURLRecognitionCountProvider(isPremium: isPremium));
+    final remaining =
+        ref.read(remainingURLRecognitionCountProvider(isPremium: isPremium));
     if (remaining <= 0) {
       final limit = isPremium
           ? premiumMonthlyURLRecognitionLimit
@@ -418,8 +422,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     if (!isPremium) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text(
-                'リストのエクスポートはプレミアム機能です。プレミアムにアップグレードすると利用できます')),
+            content: Text('リストのエクスポートはプレミアム機能です。プレミアムにアップグレードすると利用できます')),
       );
       return;
     }
@@ -515,8 +518,8 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
               });
               try {
                 final newShoppingList = await ref
-                    .read(shoppingListAddProvider(
-                        groupID: selectedGroupID.value))
+                    .read(
+                        shoppingListAddProvider(groupID: selectedGroupID.value))
                     .call(
                       createUserID: shoppingList.createUserID,
                       groupID: selectedGroupID.value,
@@ -539,8 +542,7 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
               } catch (_) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('買い物リストの作成に失敗しました')),
+                    const SnackBar(content: Text('買い物リストの作成に失敗しました')),
                   );
                 }
               }
@@ -580,8 +582,7 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
               } catch (_) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('買い物リストの複製に失敗しました')),
+                    const SnackBar(content: Text('買い物リストの複製に失敗しました')),
                   );
                 }
               }
@@ -636,12 +637,10 @@ class _URLInputDialog extends HookConsumerWidget {
           onPressed: isLoading.value
               ? null
               : () {
-                  analytics.logEvent(
-                      name: 'cancel_url_input',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': shoppingListID
-                      });
+                  analytics.logEvent(name: 'cancel_url_input', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID
+                  });
                   Navigator.pop(context);
                 },
           child: const Text('キャンセル'),
@@ -650,6 +649,10 @@ class _URLInputDialog extends HookConsumerWidget {
           onPressed: isLoading.value
               ? null
               : () async {
+                  analytics.logEvent(name: 'tap_submit_url', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                  });
                   final normalizedURL = urlController.text.trim();
                   if (normalizedURL.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -663,17 +666,10 @@ class _URLInputDialog extends HookConsumerWidget {
                       parsedURL.host.isEmpty ||
                       parsedURL.userInfo.isNotEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('有効なHTTPS URLを入力してください')),
+                      const SnackBar(content: Text('有効なHTTPS URLを入力してください')),
                     );
                     return;
                   }
-                  analytics.logEvent(
-                      name: 'tap_submit_url',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': shoppingListID,
-                      });
                   isLoading.value = true;
                   try {
                     final rawItems =
@@ -692,8 +688,7 @@ class _URLInputDialog extends HookConsumerWidget {
                       }
                       try {
                         await ref
-                            .read(addShoppingListItemProvider(
-                                groupID: groupID))
+                            .read(addShoppingListItemProvider(groupID: groupID))
                             .call(
                               shoppingListID: shoppingListID,
                               userID: ref.read(currentUserIDProvider)!,

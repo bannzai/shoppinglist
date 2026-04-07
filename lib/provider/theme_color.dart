@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -54,6 +55,8 @@ class ThemeColorUpdate {
     }
     await userDatabase.userReference().update({
       'themeColorHex': themeColorHex,
+      'updatedDateTime': FieldValue.serverTimestamp(),
+      'serverUpdatedDateTime': FieldValue.serverTimestamp(),
     });
   }
 }

@@ -76,8 +76,7 @@ class GeofenceService {
         final radius =
             location.geofenceRadiusMeters ?? defaultGeofenceRadiusMeters;
 
-        if (distance <= radius &&
-            !_notifiedLocationIDs.contains(location.id)) {
+        if (distance <= radius && !_notifiedLocationIDs.contains(location.id)) {
           _triggerNotification(location: location);
           _notifiedLocationIDs.add(location.id);
         } else if (distance > radius * 2 &&

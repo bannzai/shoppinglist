@@ -1,5 +1,5 @@
 /** AI機能の月次利用回数データの型定義。 */
-export interface AIUsageData {
+export interface UserAIUsageData {
   /** ドキュメントID（yearMonth形式、例: "2026-04"） */
   id: string;
   /** このドキュメントの所有ユーザーID */

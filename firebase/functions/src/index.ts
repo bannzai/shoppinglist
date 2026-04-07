@@ -82,3 +82,17 @@ if (
 ) {
   exports.createGroup = require("./functions/createGroup/function");
 }
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "uploadShoppingListItemImage"
+) {
+  exports.uploadShoppingListItemImage = require("./functions/uploadShoppingListItemImage/function");
+}
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "deleteShoppingListItemImage"
+) {
+  exports.deleteShoppingListItemImage = require("./functions/deleteShoppingListItemImage/function");
+}

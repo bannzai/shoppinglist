@@ -87,13 +87,13 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
     final isProcessing = useState(false);
     final resultMessage = useState('');
 
-    final isPremium =
+    final firestoreIsPremium =
         ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
     // shoppingListsProviderをbuild内でwatchしてデータをロードする
     // （ref.readではAutoDisposeのStreamProviderがAsyncLoadingを返すため）
     final shoppingListsAsync = defaultGroupID != null
         ? ref.watch(shoppingListsProvider(
-            groupID: defaultGroupID, isPremium: isPremium))
+            groupID: defaultGroupID, isPremium: firestoreIsPremium))
         : null;
     final shoppingLists = shoppingListsAsync?.asData?.value ?? [];
     final firstShoppingListID =

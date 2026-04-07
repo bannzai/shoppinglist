@@ -26,16 +26,19 @@ class HomeWidgetSync extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isPremium =
+    final firestoreIsPremium =
         ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
     final themeColorHex =
         ref.watch(appUserProvider).valueOrNull?.themeColorHex ??
             defaultThemeColorHex;
+    final groups = ref.watch(userGroupsProvider).valueOrNull ?? [];
+    final shoppingListsAsync = ref.watch(
+        shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium));
 
     // 初回マウント時のみ同期を実行
     useEffect(() {
       HomeWidgetDataSync.syncThemeColor(themeColorHex: themeColorHex);
-      HomeWidgetDataSync.syncPremiumStatus(isPremium: isPremium);
+      HomeWidgetDataSync.syncPremiumStatus(isPremium: firestoreIsPremium);
       return null;
     }, const []);
 
@@ -66,11 +69,11 @@ class HomeWidgetSync extends HookConsumerWidget {
     });
 
     // 買い物リスト一覧の変更を検知して同期
-    ref.listen(shoppingListsProvider(groupID: groupID, isPremium: isPremium),
+    ref.listen(
+        shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium),
         (prev, next) {
       final lists = next.valueOrNull;
       if (lists != null && lists.isNotEmpty) {
-        final groups = ref.read(userGroupsProvider).valueOrNull ?? [];
         final group = groups.firstWhereOrNull((g) => g.id == groupID);
         HomeWidgetDataSync.syncShoppingLists(
           shoppingLists: lists,
@@ -89,11 +92,7 @@ class HomeWidgetSync extends HookConsumerWidget {
         ), (prev, next) {
       final items = next.valueOrNull;
       if (items != null) {
-        final lists = ref
-                .read(shoppingListsProvider(
-                    groupID: groupID, isPremium: isPremium))
-                .valueOrNull ??
-            [];
+        final lists = shoppingListsAsync.valueOrNull ?? [];
         final list = lists.firstWhereOrNull((sl) => sl.id == shoppingListID);
         HomeWidgetDataSync.syncCurrentShoppingListItems(
           groupID: groupID,
