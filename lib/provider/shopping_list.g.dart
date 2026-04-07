@@ -6,7 +6,27 @@ part of 'shopping_list.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$shoppingListsHash() => r'53312788b93f21bd91e920e53cd41d38da4b6051';
+String _$hourlyTriggerHash() => r'c683fce521c33003f53f9a37eec905706d1627ac';
+
+/// 1時間ごとに自身を無効化して現在時刻を更新するプロバイダー。
+/// 無料ユーザーの30日間表示制限でアプリ長時間起動時のDateTime.now()の古さを防ぐ。
+///
+/// Copied from [hourlyTrigger].
+@ProviderFor(hourlyTrigger)
+final hourlyTriggerProvider = AutoDisposeProvider<DateTime>.internal(
+  hourlyTrigger,
+  name: r'hourlyTriggerProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$hourlyTriggerHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef HourlyTriggerRef = AutoDisposeProviderRef<DateTime>;
+String _$shoppingListsHash() => r'0f5a6cd35ff5e30fcae92e7582ecf1f0de3784fb';
 
 /// Copied from Dart SDK
 class _SystemHash {

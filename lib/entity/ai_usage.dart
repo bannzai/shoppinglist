@@ -10,11 +10,11 @@ part 'ai_usage.freezed.dart';
 /// Firestore 上では `/users/{userID}/aiUsage/{yearMonth}` に保存される。
 /// yearMonth はドキュメントID（例: "2026-04"）。
 @freezed
-abstract class AIUsage with _$AIUsage {
-  const AIUsage._();
+abstract class UserAIUsage with _$UserAIUsage {
+  const UserAIUsage._();
 
   @JsonSerializable(explicitToJson: true)
-  const factory AIUsage({
+  const factory UserAIUsage({
     /// ドキュメントID（yearMonth形式、例: "2026-04"）
     required String id,
 
@@ -28,21 +28,21 @@ abstract class AIUsage with _$AIUsage {
     @Default(0) int urlRecognitionCount,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
     @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
-  }) = _AIUsage;
+  }) = _UserAIUsage;
 
-  factory AIUsage.fromJson(Map<String, dynamic> json) =>
-      _$AIUsageFromJson(json);
+  factory UserAIUsage.fromJson(Map<String, dynamic> json) =>
+      _$UserAIUsageFromJson(json);
 
   /// Firestoreからの読み込み用コンバータ。
-  static AIUsage fromFirestore(
+  static UserAIUsage fromFirestore(
           DocumentSnapshot<Map<String, dynamic>> snapshot,
           SnapshotOptions? options) =>
-      AIUsage.fromJson(snapshot.data()!..['id'] = snapshot.id);
+      UserAIUsage.fromJson(snapshot.data()!..['id'] = snapshot.id);
 
   /// Firestoreへの書き込み用コンバータ。
   static Map<String, dynamic> toFirestore(
-          AIUsage aiUsage, SetOptions? options) =>
-      aiUsage.toJson();
+          UserAIUsage userAIUsage, SetOptions? options) =>
+      userAIUsage.toJson();
 }
 
 /// 指定日時をUTC基準の "yyyy-MM" 形式へ変換する。

@@ -11,7 +11,6 @@ import 'package:shoppinglist/entity/app_user_private.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 
-
 class AppUserCreate {
   final UserDatabase userDatabase;
 

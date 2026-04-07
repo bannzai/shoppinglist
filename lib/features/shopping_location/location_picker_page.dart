@@ -45,8 +45,7 @@ class LocationPickerPage extends HookConsumerWidget {
             permission = await Geolocator.requestPermission();
           }
           final position = await Geolocator.getCurrentPosition();
-          selectedLatLng.value =
-              LatLng(position.latitude, position.longitude);
+          selectedLatLng.value = LatLng(position.latitude, position.longitude);
           mapController.value?.animateCamera(
             CameraUpdate.newLatLng(selectedLatLng.value),
           );
@@ -142,8 +141,7 @@ class LocationPickerPage extends HookConsumerWidget {
                     width: double.infinity,
                     child: FilledButton(
                       onPressed: () {
-                        analytics.logEvent(
-                            name: 'tap_confirm_map_location');
+                        analytics.logEvent(name: 'tap_confirm_map_location');
                         Navigator.pop(context, (
                           latitude: selectedLatLng.value.latitude,
                           longitude: selectedLatLng.value.longitude,
