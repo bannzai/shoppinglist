@@ -7,35 +7,67 @@ set -euo pipefail
 #   bash run_quality_checks.sh 177 178 179                                  # 全スキル実行
 #   bash run_quality_checks.sh --skills check-coding-conventions 177 178    # 規約チェックのみ
 #   bash run_quality_checks.sh --skills fix-pr-reviews 177                  # レビュー対応のみ
+#   bash run_quality_checks.sh --base <branch>                              # ベースブランチ指定
+#   bash run_quality_checks.sh --base <branch> --dry-run                    # 対象確認のみ
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SKILLS_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
+SHARED_SCRIPTS="${SKILLS_ROOT}/_shared/scripts"
 CHECK_CONVENTIONS_SCRIPT="${SKILLS_ROOT}/check-coding-conventions/scripts/run_check_conventions.sh"
 FIX_REVIEWS_SCRIPT="${SKILLS_ROOT}/fix-pr-reviews/scripts/run_fix_reviews.sh"
 
 LOG_DIR="./tmp/pr-quality-checks/logs"
 STATUS_FILE="./tmp/pr-quality-checks/status.json"
 SKILLS_FILTER=""
+BASE_BRANCH=""
+DRY_RUN=false
 PR_NUMBERS=()
 
 while [[ $# -gt 0 ]]; do
   case $1 in
     --skills) SKILLS_FILTER="$2"; shift 2 ;;
+    --base) BASE_BRANCH="$2"; shift 2 ;;
+    --dry-run) DRY_RUN=true; shift ;;
     -h|--help)
-      echo "使い方: $0 [--skills <skill_name>] <pr_numbers...>"
+      echo "使い方: $0 [--skills <skill_name>] [--base <branch> | <pr_numbers...>] [--dry-run]"
       echo ""
       echo "オプション:"
       echo "  --skills <name>  実行するスキル (check-coding-conventions / fix-pr-reviews)"
       echo "                   省略時: 両方実行"
+      echo "  --base <branch>  ベースブランチ指定でマージ済みPRを自動検出"
+      echo "  --dry-run        対象PRの一覧を表示して終了"
       exit 0
       ;;
     *) PR_NUMBERS+=("$1"); shift ;;
   esac
 done
 
-if [ ${#PR_NUMBERS[@]} -eq 0 ]; then
-  echo "エラー: PR番号を1つ以上指定してください" >&2
-  echo "使い方: $0 [--skills <skill_name>] <pr_numbers...>" >&2
+if [ -n "$BASE_BRANCH" ]; then
+  discover_args=(--base "$BASE_BRANCH")
+  if [ "$DRY_RUN" = true ]; then
+    discover_args+=(--dry-run)
+    bash "$SHARED_SCRIPTS/discover_prs.sh" "${discover_args[@]}"
+    exit 0
+  fi
+
+  pr_json=$(bash "$SHARED_SCRIPTS/discover_prs.sh" "${discover_args[@]}")
+  mapfile -t PR_NUMBERS < <(echo "$pr_json" | jq -r '.[].number')
+
+  if [ ${#PR_NUMBERS[@]} -eq 0 ]; then
+    echo "対象PRが見つかりませんでした (base: $BASE_BRANCH)"
+    exit 0
+  fi
+
+  echo "ベースブランチ $BASE_BRANCH から ${#PR_NUMBERS[@]} 件のPRを検出:"
+  echo "$pr_json" | jq -r '.[] | "  #\(.number) \(.title)"'
+  echo ""
+
+  # ベースブランチ用ステータスファイル（スラッシュをアンダースコアに変換）
+  SAFE_BRANCH_NAME=$(echo "$BASE_BRANCH" | tr '/' '_')
+  STATUS_FILE="./tmp/pr-quality-checks/status_${SAFE_BRANCH_NAME}.json"
+elif [ ${#PR_NUMBERS[@]} -eq 0 ]; then
+  echo "エラー: PR番号を1つ以上指定するか --base <branch> を指定してください" >&2
+  echo "使い方: $0 [--skills <skill_name>] [--base <branch> | <pr_numbers...>] [--dry-run]" >&2
   exit 1
 fi
 
