@@ -17,6 +17,7 @@ allowed-tools:
   - mcp__mobile__mobile_swipe_on_screen
   - mcp__mobile__mobile_type_keys
   - mcp__mobile__mobile_terminate_app
+  - "Bash(bash ${CLAUDE_SKILL_DIR}/scripts/setup_devices.sh:*)"
   - Bash
   - Read
 ---
@@ -42,7 +43,7 @@ allowed-tools:
 ### Step 1: デバイス準備・アプリビルド
 
 ```bash
-bash .claude/skills/multi-device-group-invite-test/scripts/setup_devices.sh
+bash ${CLAUDE_SKILL_DIR}/scripts/setup_devices.sh
 ```
 
 ### Step 2: Maestro E2Eテスト実行
@@ -125,3 +126,9 @@ bash maestro/scripts/run_group_sync_test.sh
 | debugビルド起動タイムアウト | ActivityManagerの `PROC_START_TIMEOUT = 10秒` がハードコード。Flutter debugビルドのDart VM + Impeller初期化がこれを超過しANRが発生 |
 | Maestro `-e` 環境変数展開不具合 | `${VARIABLE}` 形式の展開が不安定 |
 | `hideKeyboard` iOS非対応 | Maestroの `hideKeyboard` コマンドがiOSで動作しない |
+
+## 検証方法
+
+1. `bash ${CLAUDE_SKILL_DIR}/scripts/setup_devices.sh` を実行し、iOS Simulatorの起動・アプリインストールが完了することを確認
+2. `bash maestro/scripts/run_group_sync_test.sh` を実行し、全6フェーズが順次実行されることを確認
+3. テスト完了後、Maestroのテスト結果ログで全フェーズがPASSしていることを確認
