@@ -23,6 +23,7 @@ allowed-tools:
   - Bash(chmod:*)
   - Bash(bash ${CLAUDE_SKILL_DIR}/scripts/generate_section_prompts.sh:*)
   - Bash(bash ${CLAUDE_SKILL_DIR}/scripts/run_qa.sh:*)
+  - Bash(bash ${CLAUDE_SKILL_DIR}/scripts/test_skill.sh:*)
   - Read
   - Write
   - Edit
@@ -161,3 +162,21 @@ bash ${CLAUDE_SKILL_DIR}/scripts/run_qa.sh --base {ベースブランチ} 1 3 5
 - RELEASE_TEST_PLAN.md はgit管理対象。テスト完了後もリポジトリに残す
 - tmp/prompts/, tmp/logs/ は .gitignore に追加する
 - 各セクションの実行は qa/section-{NN} ブランチで行われ、完了後にベースブランチへのPRが作成される
+
+## 参照ファイル
+
+- `references/common_rules.md` — RELEASE_TEST_PLAN.mdの形式・テスト検証・エラーハンドリング
+- `references/section_prompt_template.md` — セクション別テスト実行プロンプトテンプレート
+
+## エラーハンドリング
+
+- ベースブランチが存在しない場合: `git branch -a` で利用可能なブランチを表示して再入力を促す
+- PR差分が取得できない場合: PR番号が正しいか `gh pr view` で確認
+- ccnipreが失敗した場合: `tmp/logs/` のログを確認し、プロンプト内容を調査
+- Maestroテストが失敗した場合: `maestro/test-results/` のログを確認し、フロー定義の問題を調査
+
+## 検証方法
+
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/test_skill.sh
+```

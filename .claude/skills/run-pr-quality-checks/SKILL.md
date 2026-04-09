@@ -9,6 +9,7 @@ context: fork
 argument-hint: "<pr_numbers...> | --base <branch> [--dry-run]"
 allowed-tools:
   - Bash(bash ${CLAUDE_SKILL_DIR}/scripts/run_quality_checks.sh:*)
+  - Bash(bash ${CLAUDE_SKILL_DIR}/scripts/test_skill.sh:*)
   - Bash(ls:*)
   - Read
   - Glob
@@ -40,3 +41,15 @@ bash ${CLAUDE_SKILL_DIR}/scripts/run_quality_checks.sh $ARGUMENTS
 - `--skills fix-pr-reviews`: レビュー対応のみ実行
 - `--dry-run`: 対象PRの一覧を表示して終了（`--base` と併用）
 - 省略時: 両方実行
+
+## エラーハンドリング
+
+- PR番号が不正な場合: `gh pr view` の終了コードを確認しエラーメッセージを表示
+- `--base` で対象PRが0件の場合: 「対象PRが見つかりません」と表示して終了
+- check-coding-conventionsまたはfix-pr-reviewsの実行中にエラーが発生した場合: status.jsonにエラーステータスを記録し、次のPRに進む
+
+## 検証方法
+
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/test_skill.sh
+```
