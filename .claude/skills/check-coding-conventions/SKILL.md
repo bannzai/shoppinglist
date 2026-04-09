@@ -11,6 +11,7 @@ argument-hint: "<PR number> | --base <branch> [--dry-run]"
 allowed-tools:
   - Bash(bash ${CLAUDE_SKILL_DIR}/scripts/generate_check_prompt.sh:*)
   - Bash(bash ${CLAUDE_SKILL_DIR}/scripts/run_check_conventions.sh:*)
+  - Bash(bash ${CLAUDE_SKILL_DIR}/scripts/test_skill.sh:*)
   - Bash(ls:*)
   - Read
   - Glob
@@ -41,3 +42,21 @@ bash ${CLAUDE_SKILL_DIR}/scripts/run_check_conventions.sh $ARGUMENTS
 - `--dry-run`: 対象PRの一覧を表示して終了（`--base` と併用）
 
 詳細な指示は `references/prompt_template.md` を参照。
+
+## スクリプト
+
+- `scripts/run_check_conventions.sh` — PR番号またはベースブランチ指定でコーディング規約チェックを実行
+- `scripts/generate_check_prompt.sh` — PR情報からプロンプトテンプレートのプレースホルダを置換してプロンプトファイルを生成
+- `scripts/test_skill.sh` — スキルの動作確認テスト
+
+## エラーハンドリング
+
+- PRが存在しない場合: `gh pr view` の終了コードを確認しエラーメッセージを表示
+- ccnipreが失敗した場合: ログ出力を確認し、プロンプトテンプレートの問題を調査
+- `--base` で対象PRが0件の場合: 「対象PRが見つかりません」と表示して終了
+
+## 検証方法
+
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/test_skill.sh
+```
