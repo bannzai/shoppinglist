@@ -7,6 +7,7 @@ import * as z from "zod";
 import { ai } from "../utils/genkit";
 import { appAuthPolicy } from "../utils/authPolicy";
 import { DataResponseSchema, ErrorResponseSchema } from "../../entity/response";
+import { UserAIUsageData } from "../../entity/ai_usage";
 import fs from "fs";
 import { defineString } from "firebase-functions/params";
 
@@ -19,6 +20,38 @@ const ResponseSchema = z.union([
   ErrorResponseSchema,
 ]);
 
+/** サポートする画像MIME typeの集合。 */
+const allowedMimeTypes = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  "image/heif",
+]);
+
+/** 画像の最大バイトサイズ（10MB）。 */
+const maxImageBytes = 10 * 1024 * 1024;
+
+/** 無料ユーザーのAI画像認識月次上限。 */
+const freeMonthlyImageRecognitionLimit = 5;
+
+/** プレミアムユーザーのAI画像認識月次上限。 */
+const premiumMonthlyImageRecognitionLimit = 50;
+
+/** Firebase Auth Custom Claimsからプレミアム判定を行う。 */
+async function hasPremiumEntitlement(uid: string): Promise<boolean> {
+  try {
+    const userRecord = await admin.auth().getUser(uid);
+    return userRecord.customClaims?.["premium"] === true;
+  } catch (error) {
+    logger.error("hasPremiumEntitlement failed", {
+      uid,
+      errorName: error instanceof Error ? error.name : "unknown",
+    });
+    return false;
+  }
+}
+
 // 一時ファイルを削除する関数
 async function cleanupTemporaryImage(filePath: string): Promise<void> {
   try {
@@ -30,6 +63,22 @@ async function cleanupTemporaryImage(filePath: string): Promise<void> {
   }
 }
 
+/**
+ * 手書きメモ画像から買い物リストアイテムを生成するFunction。
+ *
+ * ## 検証用パラメータ例
+ * ```json
+ * {
+ *   "mimeType": "image/jpeg",
+ *   "base64Image": "<base64エンコードされた画像データ>"
+ * }
+ * ```
+ *
+ * ## 制限
+ * - 認証必須
+ * - 画像: JPEG/PNG/WebP/HEIC/HEIF、10MB以下
+ * - 月次利用上限: 無料5回、プレミアム50回（UTC基準）
+ */
 const generateShoppingListItemsFromImageFlow = ai.defineFlow(
   {
     name: "generateShoppingListItemsFromImage",
@@ -42,6 +91,84 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
   async (input: { mimeType: string; base64Image: string }) => {
     const { mimeType, base64Image } = input;
     const tempFilePath: string | null = null;
+
+    // 認証チェック（クライアントからの回避を防ぐため Function 側で強制）
+    const context = ai.currentContext();
+    const uid = context?.auth?.uid;
+    if (!uid) {
+      return {
+        result: "NG" as const,
+        error: { message: "認証されていません" },
+      };
+    }
+
+    // 入力検証: MIME type
+    if (!allowedMimeTypes.has(mimeType)) {
+      return {
+        result: "NG" as const,
+        error: { message: "画像形式がサポートされていません" },
+      };
+    }
+
+    // 入力検証: 画像サイズ
+    const imageBytes = Buffer.from(base64Image, "base64");
+    if (imageBytes.length === 0 || imageBytes.length > maxImageBytes) {
+      return {
+        result: "NG" as const,
+        error: { message: "画像サイズが制限を超えています" },
+      };
+    }
+
+    // サーバー管理データからプレミアム判定（クライアントの申告値は信用しない）
+    const isPremium = await hasPremiumEntitlement(uid);
+    const monthlyLimit = isPremium
+      ? premiumMonthlyImageRecognitionLimit
+      : freeMonthlyImageRecognitionLimit;
+
+    const firestore = admin.firestore();
+    const now = new Date();
+    const yearMonth = now.toISOString().slice(0, 7);
+    const aiUsageRef = firestore
+      .collection("users")
+      .doc(uid)
+      .collection("aiUsage")
+      .doc(yearMonth);
+
+    // 上限判定とカウント更新は同一トランザクション内で実施
+    // 冪等にしない理由: 月次利用上限を正確に適用するため、成功リクエストごとに1回だけ加算する必要がある。
+    const limitCheckResult = await firestore.runTransaction(async (tx) => {
+      const aiUsageDoc = await tx.get(aiUsageRef);
+      const aiUsageData = aiUsageDoc.data() as UserAIUsageData | undefined;
+      const used = aiUsageData?.imageRecognitionCount ?? 0;
+      if (used >= monthlyLimit) {
+        return { isLimitReached: true as const };
+      }
+
+      if (aiUsageDoc.exists) {
+        tx.update(aiUsageRef, {
+          imageRecognitionCount: admin.firestore.FieldValue.increment(1),
+          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      } else {
+        tx.set(aiUsageRef, {
+          id: yearMonth,
+          userID: uid,
+          imageRecognitionCount: 1,
+          serverCreatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      }
+      return { isLimitReached: false as const };
+    });
+
+    if (limitCheckResult.isLimitReached) {
+      return {
+        result: "NG" as const,
+        error: {
+          message: `AI画像認識の月間利用回数（${monthlyLimit}回）に達しました`,
+        },
+      };
+    }
 
     try {
       const imageFile = await uploadBase64ImageToGemini(base64Image, mimeType);
@@ -93,8 +220,9 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
       if (!functionCalls || functionCalls.length === 0) {
         throw new Error("Function call not found");
       }
-      const shoppingListItems = (functionCalls[0].args as { shoppingListItems: string[] })
-        .shoppingListItems;
+      const shoppingListItems = (
+        functionCalls[0].args as { shoppingListItems: string[] }
+      ).shoppingListItems;
 
       return {
         result: "OK",
@@ -104,11 +232,21 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
         },
       } as z.infer<typeof ResponseSchema>;
     } catch (error) {
-      logger.error(error);
+      // 機密データ（base64Image / APIキー）はログに出力しない
+      logger.error("generateShoppingListItemsFromImage failed", {
+        uid,
+        yearMonth,
+        errorName: error instanceof Error ? error.name : "unknown",
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
       return {
         result: "NG",
-        status: 500,
-        error: error,
+        error: {
+          message:
+            error instanceof Error
+              ? error.message
+              : "買い物リストの生成に失敗しました",
+        },
       } as z.infer<typeof ResponseSchema>;
     } finally {
       // 一時ファイルのクリーンアップ
@@ -131,7 +269,7 @@ const genAI = new GoogleGenerativeAI(apiKey);
 const fileManager = new GoogleAIFileManager(apiKey);
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash-exp",
+  model: "gemini-2.0-flash",
 });
 
 const generationConfig = {
@@ -162,11 +300,9 @@ async function uploadBase64ImageToGemini(
       mimeType,
       displayName: "uploaded_image",
     });
-    const file = uploadResult.file;
-    console.log(`Uploaded file ${file.displayName} as: ${file.name}`);
-    return file;
+    return uploadResult.file;
   } catch (error) {
-    console.error("Error uploading image:", error);
-    throw error; // エラーを上流に伝播
+    logger.error("Error uploading image to Gemini");
+    throw error;
   }
 }

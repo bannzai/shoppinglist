@@ -17,6 +17,8 @@ import es.antonborri.home_widget.HomeWidgetProvider
 class ShoppingListWidgetProvider : HomeWidgetProvider() {
     companion object {
         const val ACTION_TOGGLE_ITEM = "com.bannzai.shoppinglist.ACTION_TOGGLE_ITEM"
+        /** テーマカラーの16進カラーコードバリデーション用パターン */
+        private val HEX_COLOR_PATTERN = Regex("^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$")
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -88,11 +90,23 @@ class ShoppingListWidgetProvider : HomeWidgetProvider() {
         appWidgetIds: IntArray,
         widgetData: SharedPreferences
     ) {
+        val defaultThemeColorHex = "#673AB7"
+        val isPremium = widgetData.getBoolean("widget_is_premium", false)
+        val rawThemeColorHex = widgetData.getString("widget_theme_color_hex", defaultThemeColorHex) ?: defaultThemeColorHex
+        val themeColorHex = if (isPremium && HEX_COLOR_PATTERN.matches(rawThemeColorHex.trim())) {
+            rawThemeColorHex.trim().uppercase()
+        } else {
+            defaultThemeColorHex
+        }
+        val themeColor = runCatching { android.graphics.Color.parseColor(themeColorHex) }
+            .getOrDefault(android.graphics.Color.parseColor(defaultThemeColorHex))
+
         appWidgetIds.forEach { widgetId ->
             val views = RemoteViews(context.packageName, R.layout.shopping_list_widget)
 
             val shoppingListName = widgetData.getString("widget_current_shopping_list_name", "買い物リスト") ?: "買い物リスト"
             views.setTextViewText(R.id.widget_title, shoppingListName)
+            views.setTextColor(R.id.widget_title, themeColor)
 
             val groupID = widgetData.getString("widget_current_group_id", "") ?: ""
             val shoppingListID = widgetData.getString("widget_current_shopping_list_id", "") ?: ""

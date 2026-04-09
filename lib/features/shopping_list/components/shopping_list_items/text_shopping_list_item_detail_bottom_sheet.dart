@@ -1,12 +1,19 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/color.dart';
+import 'package:shoppinglist/utils/functions/firebase_function.dart';
+import 'package:shoppinglist/utils/image/image.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 class _PresetColor {
   final String label;
@@ -45,6 +52,13 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
     final selectedColor = useState<String?>(textShoppingListItem.color);
     final colorScheme = Theme.of(context).colorScheme;
 
+    // 写真関連の状態
+    final originalImageURL = textShoppingListItem.imageURL;
+    final imageURL = useState<String?>(textShoppingListItem.imageURL);
+    final selectedPhoto = useState<XFile?>(null);
+    final removeImageOnSave = useState<bool>(false);
+    final isSavingImage = useState<bool>(false);
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
       child: Column(
@@ -74,6 +88,27 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
               hintText: '補足説明を入力',
               border: OutlineInputBorder(),
             ),
+          ),
+          const SizedBox(height: 24),
+          // 写真セクション
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '写真',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          _PhotoSection(
+            groupID: groupID,
+            itemID: textShoppingListItem.id,
+            imageURL: imageURL,
+            selectedPhoto: selectedPhoto,
+            removeImageOnSave: removeImageOnSave,
+            originalImageURL: originalImageURL,
           ),
           const SizedBox(height: 24),
           // カラーセクション
@@ -170,24 +205,73 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
           SizedBox(
             width: double.infinity,
             child: FilledButton(
-              onPressed: () {
-                analytics.logEvent(name: 'tap_save_item_detail', parameters: {
-                  'groupID': groupID,
-                  'itemID': textShoppingListItem.id
-                });
-                final description = descriptionController.text.trim();
-                ref.read(updateShoppingListItemProvider(groupID: groupID)).call(
-                      shoppingListID: textShoppingListItem.shoppingListID,
-                      item: textShoppingListItem.copyWith(
-                        description: description.isEmpty ? null : description,
-                        color: selectedColor.value,
-                      ),
-                      editedByUserID: currentUserID,
-                    );
+              onPressed: isSavingImage.value
+                  ? null
+                  : () async {
+                      analytics.logEvent(
+                          name: 'tap_save_item_detail',
+                          parameters: {
+                            'groupID': groupID,
+                            'itemID': textShoppingListItem.id
+                          });
+                      isSavingImage.value = true;
+                      try {
+                        var nextImageURL = imageURL.value;
 
-                Navigator.pop(context);
-              },
-              child: const Text('保存'),
+                        if (selectedPhoto.value != null) {
+                          final file = File(selectedPhoto.value!.path);
+                          nextImageURL =
+                              await functions.uploadShoppingListItemImage(
+                            groupID: groupID,
+                            shoppingListID: textShoppingListItem.shoppingListID,
+                            itemID: textShoppingListItem.id,
+                            mimeType: mimeType(file),
+                            base64Image: await base64CompressImage(file),
+                          );
+                        } else if (removeImageOnSave.value &&
+                            originalImageURL != null) {
+                          await functions.deleteShoppingListItemImage(
+                            groupID: groupID,
+                            shoppingListID: textShoppingListItem.shoppingListID,
+                            itemID: textShoppingListItem.id,
+                          );
+                          nextImageURL = null;
+                        }
+
+                        final description = descriptionController.text.trim();
+                        ref
+                            .read(updateShoppingListItemProvider(
+                                groupID: groupID))
+                            .call(
+                              shoppingListID:
+                                  textShoppingListItem.shoppingListID,
+                              item: textShoppingListItem.copyWith(
+                                description:
+                                    description.isEmpty ? null : description,
+                                color: selectedColor.value,
+                                imageURL: nextImageURL,
+                              ),
+                              editedByUserID: currentUserID,
+                            );
+
+                        if (context.mounted) Navigator.pop(context);
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(e.toString())),
+                          );
+                        }
+                      } finally {
+                        isSavingImage.value = false;
+                      }
+                    },
+              child: isSavingImage.value
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('保存'),
             ),
           ),
           const SizedBox(height: 12),
@@ -242,6 +326,208 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// 写真セクションのUI。選択した画像のプレビュー・追加・削除を行う。
+class _PhotoSection extends HookConsumerWidget {
+  final String groupID;
+  final String itemID;
+  final ValueNotifier<String?> imageURL;
+  final ValueNotifier<XFile?> selectedPhoto;
+  final ValueNotifier<bool> removeImageOnSave;
+  final String? originalImageURL;
+
+  const _PhotoSection({
+    required this.groupID,
+    required this.itemID,
+    required this.imageURL,
+    required this.selectedPhoto,
+    required this.removeImageOnSave,
+    required this.originalImageURL,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    // ローカル選択画像があればそれを表示
+    if (selectedPhoto.value != null) {
+      return _buildImagePreview(
+        context: context,
+        colorScheme: colorScheme,
+        ref: ref,
+        child: Image.file(
+          File(selectedPhoto.value!.path),
+          width: double.infinity,
+          height: 200,
+          fit: BoxFit.cover,
+        ),
+      );
+    }
+
+    // サーバー上の画像URLがあれば表示
+    if (imageURL.value != null) {
+      return _buildImagePreview(
+        context: context,
+        colorScheme: colorScheme,
+        ref: ref,
+        child: CachedNetworkImage(
+          imageUrl: imageURL.value!,
+          width: double.infinity,
+          height: 200,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => const SizedBox(
+            height: 200,
+            child: Center(child: CircularProgressIndicator()),
+          ),
+          errorWidget: (context, url, error) => const SizedBox(
+            height: 200,
+            child: Center(child: Icon(Icons.broken_image, size: 48)),
+          ),
+        ),
+      );
+    }
+
+    // 画像がない場合は追加ボタン
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: () => _showImageSourceDialog(context: context, ref: ref),
+        icon: const Icon(Icons.add_a_photo),
+        label: const Text('写真を追加'),
+      ),
+    );
+  }
+
+  Widget _buildImagePreview({
+    required BuildContext context,
+    required ColorScheme colorScheme,
+    required WidgetRef ref,
+    required Widget child,
+  }) {
+    return Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: child,
+        ),
+        Positioned(
+          top: 8,
+          right: 8,
+          child: Row(
+            children: [
+              // 写真を変更
+              _CircleIconButton(
+                icon: Icons.edit,
+                colorScheme: colorScheme,
+                onTap: () => _showImageSourceDialog(context: context, ref: ref),
+              ),
+              const SizedBox(width: 8),
+              // 写真を削除
+              _CircleIconButton(
+                icon: Icons.delete,
+                colorScheme: colorScheme,
+                onTap: () {
+                  analytics.logEvent(
+                      name: 'tap_item_remove_photo',
+                      parameters: {'groupID': groupID, 'itemID': itemID});
+                  selectedPhoto.value = null;
+                  imageURL.value = null;
+                  removeImageOnSave.value = originalImageURL != null;
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showImageSourceDialog({
+    required BuildContext context,
+    required WidgetRef ref,
+  }) {
+    final isPremium =
+        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
+    if (!isPremium) {
+      analytics.logEvent(
+          name: 'tap_item_photo_non_premium',
+          parameters: {'groupID': groupID, 'itemID': itemID});
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('商品写真の添付はプレミアム機能です')),
+      );
+      return;
+    }
+
+    analytics.logEvent(
+        name: 'tap_item_add_photo',
+        parameters: {'groupID': groupID, 'itemID': itemID});
+
+    showModalBottomSheet(
+      context: context,
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('カメラで撮影'),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                _pickImage(source: ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('フォトライブラリから選択'),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                _pickImage(source: ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 画像を選択する。アップロードは保存ボタン押下時に実行する。
+  Future<void> _pickImage({required ImageSource source}) async {
+    final photo = await ImagePicker().pickImage(source: source);
+    if (photo == null) return;
+
+    selectedPhoto.value = photo;
+    imageURL.value = null;
+    removeImageOnSave.value = false;
+  }
+}
+
+/// 画像プレビュー上のアクションボタン。
+class _CircleIconButton extends StatelessWidget {
+  final IconData icon;
+  final ColorScheme colorScheme;
+  final VoidCallback onTap;
+
+  const _CircleIconButton({
+    required this.icon,
+    required this.colorScheme,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: colorScheme.surface.withValues(alpha: 0.8),
+        ),
+        child: Icon(icon, size: 20),
       ),
     );
   }

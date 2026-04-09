@@ -26,6 +26,8 @@ abstract class AppUser with _$AppUser {
     String? name,
     // NOTE: Firebase Auth の photoURL からマッピング。匿名ユーザーや既存ユーザーでは null になりうる
     String? iconImageURL,
+    // NOTE: テーマカラーのHEX値。プレミアムユーザーのみ変更可能。nullの場合はデフォルト(deepPurple=#673AB7)を使用する
+    String? themeColorHex,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,

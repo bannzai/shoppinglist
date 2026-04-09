@@ -24,6 +24,9 @@ mixin _$GroupShoppingListItem {
   GroupShoppingListItemStatus get status;
   String? get description;
   String? get color;
+
+  /// Firebase Storage上の商品写真のダウンロードURL。プレミアム機能。
+  String? get imageURL;
   @NullableTimestampConverter()
   DateTime? get reminderDateTime;
   String? get checkedByUserID;
@@ -68,6 +71,8 @@ mixin _$GroupShoppingListItem {
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.color, color) || other.color == color) &&
+            (identical(other.imageURL, imageURL) ||
+                other.imageURL == imageURL) &&
             (identical(other.reminderDateTime, reminderDateTime) ||
                 other.reminderDateTime == reminderDateTime) &&
             (identical(other.checkedByUserID, checkedByUserID) ||
@@ -90,30 +95,32 @@ mixin _$GroupShoppingListItem {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      groupID,
-      shoppingListID,
-      userID,
-      message,
-      order,
-      status,
-      description,
-      color,
-      reminderDateTime,
-      checkedByUserID,
-      lastCheckedDateTime,
-      lastEditedByUserID,
-      lastEditedDateTime,
-      createdDateTime,
-      updatedDateTime,
-      serverCreatedDateTime,
-      serverUpdatedDateTime);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        groupID,
+        shoppingListID,
+        userID,
+        message,
+        order,
+        status,
+        description,
+        color,
+        imageURL,
+        reminderDateTime,
+        checkedByUserID,
+        lastCheckedDateTime,
+        lastEditedByUserID,
+        lastEditedDateTime,
+        createdDateTime,
+        updatedDateTime,
+        serverCreatedDateTime,
+        serverUpdatedDateTime
+      ]);
 
   @override
   String toString() {
-    return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, message: $message, order: $order, status: $status, description: $description, color: $color, reminderDateTime: $reminderDateTime, checkedByUserID: $checkedByUserID, lastCheckedDateTime: $lastCheckedDateTime, lastEditedByUserID: $lastEditedByUserID, lastEditedDateTime: $lastEditedDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, message: $message, order: $order, status: $status, description: $description, color: $color, imageURL: $imageURL, reminderDateTime: $reminderDateTime, checkedByUserID: $checkedByUserID, lastCheckedDateTime: $lastCheckedDateTime, lastEditedByUserID: $lastEditedByUserID, lastEditedDateTime: $lastEditedDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -133,6 +140,7 @@ abstract mixin class $GroupShoppingListItemCopyWith<$Res> {
       GroupShoppingListItemStatus status,
       String? description,
       String? color,
+      String? imageURL,
       @NullableTimestampConverter() DateTime? reminderDateTime,
       String? checkedByUserID,
       @NullableTimestampConverter() DateTime? lastCheckedDateTime,
@@ -166,6 +174,7 @@ class _$GroupShoppingListItemCopyWithImpl<$Res>
     Object? status = null,
     Object? description = freezed,
     Object? color = freezed,
+    Object? imageURL = freezed,
     Object? reminderDateTime = freezed,
     Object? checkedByUserID = freezed,
     Object? lastCheckedDateTime = freezed,
@@ -212,6 +221,10 @@ class _$GroupShoppingListItemCopyWithImpl<$Res>
       color: freezed == color
           ? _self.color
           : color // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageURL: freezed == imageURL
+          ? _self.imageURL
+          : imageURL // ignore: cast_nullable_to_non_nullable
               as String?,
       reminderDateTime: freezed == reminderDateTime
           ? _self.reminderDateTime
@@ -356,6 +369,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             GroupShoppingListItemStatus status,
             String? description,
             String? color,
+            String? imageURL,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             String? checkedByUserID,
             @NullableTimestampConverter() DateTime? lastCheckedDateTime,
@@ -381,6 +395,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             _that.status,
             _that.description,
             _that.color,
+            _that.imageURL,
             _that.reminderDateTime,
             _that.checkedByUserID,
             _that.lastCheckedDateTime,
@@ -420,6 +435,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             GroupShoppingListItemStatus status,
             String? description,
             String? color,
+            String? imageURL,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             String? checkedByUserID,
             @NullableTimestampConverter() DateTime? lastCheckedDateTime,
@@ -444,6 +460,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             _that.status,
             _that.description,
             _that.color,
+            _that.imageURL,
             _that.reminderDateTime,
             _that.checkedByUserID,
             _that.lastCheckedDateTime,
@@ -482,6 +499,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             GroupShoppingListItemStatus status,
             String? description,
             String? color,
+            String? imageURL,
             @NullableTimestampConverter() DateTime? reminderDateTime,
             String? checkedByUserID,
             @NullableTimestampConverter() DateTime? lastCheckedDateTime,
@@ -506,6 +524,7 @@ extension GroupShoppingListItemPatterns on GroupShoppingListItem {
             _that.status,
             _that.description,
             _that.color,
+            _that.imageURL,
             _that.reminderDateTime,
             _that.checkedByUserID,
             _that.lastCheckedDateTime,
@@ -535,6 +554,7 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
       this.status = GroupShoppingListItemStatus.unchecked,
       this.description,
       this.color,
+      this.imageURL,
       @NullableTimestampConverter() this.reminderDateTime,
       this.checkedByUserID,
       @NullableTimestampConverter() this.lastCheckedDateTime,
@@ -568,6 +588,10 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
   final String? description;
   @override
   final String? color;
+
+  /// Firebase Storage上の商品写真のダウンロードURL。プレミアム機能。
+  @override
+  final String? imageURL;
   @override
   @NullableTimestampConverter()
   final DateTime? reminderDateTime;
@@ -626,6 +650,8 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.color, color) || other.color == color) &&
+            (identical(other.imageURL, imageURL) ||
+                other.imageURL == imageURL) &&
             (identical(other.reminderDateTime, reminderDateTime) ||
                 other.reminderDateTime == reminderDateTime) &&
             (identical(other.checkedByUserID, checkedByUserID) ||
@@ -648,30 +674,32 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      groupID,
-      shoppingListID,
-      userID,
-      message,
-      order,
-      status,
-      description,
-      color,
-      reminderDateTime,
-      checkedByUserID,
-      lastCheckedDateTime,
-      lastEditedByUserID,
-      lastEditedDateTime,
-      createdDateTime,
-      updatedDateTime,
-      serverCreatedDateTime,
-      serverUpdatedDateTime);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        groupID,
+        shoppingListID,
+        userID,
+        message,
+        order,
+        status,
+        description,
+        color,
+        imageURL,
+        reminderDateTime,
+        checkedByUserID,
+        lastCheckedDateTime,
+        lastEditedByUserID,
+        lastEditedDateTime,
+        createdDateTime,
+        updatedDateTime,
+        serverCreatedDateTime,
+        serverUpdatedDateTime
+      ]);
 
   @override
   String toString() {
-    return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, message: $message, order: $order, status: $status, description: $description, color: $color, reminderDateTime: $reminderDateTime, checkedByUserID: $checkedByUserID, lastCheckedDateTime: $lastCheckedDateTime, lastEditedByUserID: $lastEditedByUserID, lastEditedDateTime: $lastEditedDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, message: $message, order: $order, status: $status, description: $description, color: $color, imageURL: $imageURL, reminderDateTime: $reminderDateTime, checkedByUserID: $checkedByUserID, lastCheckedDateTime: $lastCheckedDateTime, lastEditedByUserID: $lastEditedByUserID, lastEditedDateTime: $lastEditedDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -693,6 +721,7 @@ abstract mixin class _$GroupShoppingListItemCopyWith<$Res>
       GroupShoppingListItemStatus status,
       String? description,
       String? color,
+      String? imageURL,
       @NullableTimestampConverter() DateTime? reminderDateTime,
       String? checkedByUserID,
       @NullableTimestampConverter() DateTime? lastCheckedDateTime,
@@ -726,6 +755,7 @@ class __$GroupShoppingListItemCopyWithImpl<$Res>
     Object? status = null,
     Object? description = freezed,
     Object? color = freezed,
+    Object? imageURL = freezed,
     Object? reminderDateTime = freezed,
     Object? checkedByUserID = freezed,
     Object? lastCheckedDateTime = freezed,
@@ -772,6 +802,10 @@ class __$GroupShoppingListItemCopyWithImpl<$Res>
       color: freezed == color
           ? _self.color
           : color // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageURL: freezed == imageURL
+          ? _self.imageURL
+          : imageURL // ignore: cast_nullable_to_non_nullable
               as String?,
       reminderDateTime: freezed == reminderDateTime
           ? _self.reminderDateTime

@@ -36,7 +36,7 @@ List<GroupShoppingList> mockShoppingLists() => [
         groupID: mockGroupID,
         name: '今日の買い物',
         status: GroupShoppingListStatus.active,
-        ttlExpiresDateTime: DateTime.now().add(const Duration(days: 30)),
+        ttlExpiresDateTime: null,
       ),
       GroupShoppingList(
         id: mockShoppingListID2,
@@ -44,7 +44,7 @@ List<GroupShoppingList> mockShoppingLists() => [
         groupID: mockGroupID,
         name: '週末の買い物',
         status: GroupShoppingListStatus.active,
-        ttlExpiresDateTime: DateTime.now().add(const Duration(days: 30)),
+        ttlExpiresDateTime: null,
       ),
     ];
 
@@ -132,6 +132,9 @@ GroupShoppingLocation mockShoppingLocation() => const GroupShoppingLocation(
       id: mockShoppingLocationID,
       groupID: mockGroupID,
       name: '近所のスーパー',
+      latitude: null,
+      longitude: null,
+      geofenceRadiusMeters: null,
     );
 
 List<GroupUserProfile> mockUserProfiles() => [

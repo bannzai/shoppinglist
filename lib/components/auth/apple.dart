@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -6,12 +9,18 @@ import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
+/// Apple Sign-Inで認証し、Firebase UserCredentialを返す。
+/// nonce: rawNonceをSHA-256ハッシュしてAppleに渡し、rawNonceをFirebaseに渡すことでリプレイ攻撃を防ぐ。
 Future<UserCredential> signInWithApple() async {
+  final rawNonce = generateNonce();
+  final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
+
   final appleCredential = await SignInWithApple.getAppleIDCredential(
     scopes: [
       AppleIDAuthorizationScopes.email,
       AppleIDAuthorizationScopes.fullName,
     ],
+    nonce: hashedNonce,
   );
 
   final idToken = appleCredential.identityToken;
@@ -19,16 +28,16 @@ Future<UserCredential> signInWithApple() async {
     throw Exception('No identity token');
   }
 
-  final rawNonce = generateNonce();
-  final credential = AppleAuthProvider.credentialWithIDToken(
-    idToken,
-    rawNonce,
-    AppleFullPersonName(
-      givenName: appleCredential.givenName,
-      familyName: appleCredential.familyName,
+  return await FirebaseAuth.instance.signInWithCredential(
+    AppleAuthProvider.credentialWithIDToken(
+      idToken,
+      rawNonce,
+      AppleFullPersonName(
+        givenName: appleCredential.givenName,
+        familyName: appleCredential.familyName,
+      ),
     ),
   );
-  return await FirebaseAuth.instance.signInWithCredential(credential);
 }
 
 class AppSignInWithAppleButton extends HookConsumerWidget {

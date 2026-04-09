@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
@@ -16,6 +15,7 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_items.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_sync.dart';
 import 'package:shoppinglist/provider/app_user.dart';
+import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/notification_setting.dart';
@@ -36,115 +36,140 @@ class ShoppingListPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shoppingLists = ref.watch(shoppingListsProvider(groupID: groupID));
+    final firestoreIsPremium =
+        ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
+    final shoppingLists = ref.watch(
+        shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium));
     final userGroupsAsync = ref.watch(userGroupsProvider);
     final appUserAsync = ref.watch(appUserProvider);
     final appUser = appUserAsync.asData?.value;
     useValueListenable(currentShoppingListID);
 
     return Retry(
-      retry: () => ref.invalidate(shoppingListsProvider(groupID: groupID)),
-      child: Column(
-        children: [
-          if (userGroupsAsync.asData?.value != null)
-            GroupSwitcher(
-              groups: userGroupsAsync.asData!.value,
-              currentGroupID: groupID,
-              onGroupChanged: (newGroupID) {
-                onGroupChanged?.call(newGroupID);
-              },
-            ),
-          Expanded(
-            child: shoppingLists.when(
-              data: (shoppingLists) {
-                if (shoppingLists.isEmpty) {
-                  final colorScheme = Theme.of(context).colorScheme;
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.playlist_add,
-                            size: 80,
-                            color: colorScheme.onSurfaceVariant
-                                .withValues(alpha: 0.4),
-                          ),
-                          const SizedBox(height: 24),
-                          Text(
-                            '買い物リストがありません',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineSmall
-                                ?.copyWith(
-                                  color: colorScheme.onSurface,
-                                ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '新しい買い物リストを作成しましょう',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 32),
-                          FilledButton.icon(
-                            onPressed: () {
-                              if (appUser == null) return;
-                              analytics.logEvent(
-                                  name: 'tap_create_first_shopping_list',
-                                  parameters: {
-                                    'groupID': groupID,
-                                  });
-                              final shoppingListAdd = ref.read(
-                                  shoppingListAddProvider(groupID: groupID));
-                              shoppingListAdd(
-                                createUserID: appUser.id,
-                                groupID: groupID,
-                                shoppingLocationID: null,
-                                duplicatedFromGroupShoppingListID: null,
-                              );
-                            },
-                            icon: const Icon(Icons.add),
-                            label: const Text('買い物リストを作成'),
-                          ),
-                        ],
+      retry: () => ref.invalidate(shoppingListsProvider(
+          groupID: groupID, isPremium: firestoreIsPremium)),
+      // SafeAreaでGroupSwitcherをステータスバー/ノッチ領域の下に配置する
+      child: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            if (userGroupsAsync.asData?.value != null)
+              GroupSwitcher(
+                groups: userGroupsAsync.asData!.value,
+                currentGroupID: groupID,
+                onGroupChanged: (newGroupID) {
+                  onGroupChanged?.call(newGroupID);
+                },
+              ),
+            Expanded(
+              child: shoppingLists.when(
+                data: (shoppingLists) {
+                  if (shoppingLists.isEmpty) {
+                    final colorScheme = Theme.of(context).colorScheme;
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.playlist_add,
+                              size: 80,
+                              color: colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.4),
+                            ),
+                            const SizedBox(height: 24),
+                            Text(
+                              '買い物リストがありません',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall
+                                  ?.copyWith(
+                                    color: colorScheme.onSurface,
+                                  ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              '新しい買い物リストを作成しましょう',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 32),
+                            FilledButton.icon(
+                              onPressed: () async {
+                                if (appUser == null) return;
+                                analytics.logEvent(
+                                    name: 'tap_create_first_shopping_list',
+                                    parameters: {
+                                      'groupID': groupID,
+                                    });
+                                try {
+                                  await ref
+                                      .read(shoppingListAddProvider(
+                                          groupID: groupID))
+                                      .call(
+                                        createUserID: appUser.id,
+                                        groupID: groupID,
+                                        shoppingLocationID: null,
+                                        duplicatedFromGroupShoppingListID: null,
+                                      );
+                                } on ShoppingListLimitExceededException catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(e.toString())),
+                                    );
+                                  }
+                                } catch (_) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text('買い物リストの作成に失敗しました')),
+                                    );
+                                  }
+                                }
+                              },
+                              icon: const Icon(Icons.add),
+                              label: const Text('買い物リストを作成'),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                }
-                final currentShoppingListIDValue = currentShoppingListID.value;
-                final resolvedShoppingListID =
-                    (currentShoppingListIDValue != null &&
-                            shoppingLists
-                                .any((e) => e.id == currentShoppingListIDValue))
-                        ? currentShoppingListIDValue
-                        : shoppingLists.first.id;
-                return HomeWidgetSync(
-                  groupID: groupID,
-                  shoppingListID: resolvedShoppingListID,
-                  builder: (context) {
-                    return _Body(
-                      key: ValueKey(resolvedShoppingListID),
-                      groupID: groupID,
-                      shoppingListID: resolvedShoppingListID,
-                      onShoppingListIDChanged: (newID) {
-                        currentShoppingListID.value = newID;
-                      },
                     );
-                  },
-                );
-              },
-              error: (e, st) => RetryPage(exception: e, stackTrace: st),
-              loading: () => const Loading(),
+                  }
+                  final currentShoppingListIDValue =
+                      currentShoppingListID.value;
+                  final resolvedShoppingListID = (currentShoppingListIDValue !=
+                              null &&
+                          shoppingLists
+                              .any((e) => e.id == currentShoppingListIDValue))
+                      ? currentShoppingListIDValue
+                      : shoppingLists.first.id;
+                  return HomeWidgetSync(
+                    groupID: groupID,
+                    shoppingListID: resolvedShoppingListID,
+                    builder: (context) {
+                      return _Body(
+                        key: ValueKey(resolvedShoppingListID),
+                        groupID: groupID,
+                        shoppingListID: resolvedShoppingListID,
+                        onShoppingListIDChanged: (newID) {
+                          currentShoppingListID.value = newID;
+                        },
+                      );
+                    },
+                  );
+                },
+                error: (e, st) => RetryPage(exception: e, stackTrace: st),
+                loading: () => const Loading(),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -164,8 +189,13 @@ class _Body extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shoppingLists =
-        ref.watch(shoppingListsProvider(groupID: groupID)).valueOrNull ?? [];
+    final firestoreIsPremium =
+        ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
+    final shoppingLists = ref
+            .watch(shoppingListsProvider(
+                groupID: groupID, isPremium: firestoreIsPremium))
+            .valueOrNull ??
+        [];
     final retry = Retry.of(context).retry;
     final showChecked = useState(true);
     final sortByCategory = useState(true);
@@ -186,7 +216,6 @@ class _Body extends HookConsumerWidget {
     final totalCount = allItems.length;
     final shoppingList =
         shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID);
-    final ttlExpiresDateTime = shoppingList?.ttlExpiresDateTime;
 
     // 手動通知用: メンバープロフィールとアイテム変更検知
     final currentUserID = ref.watch(currentUserIDProvider);
@@ -364,11 +393,11 @@ class _Body extends HookConsumerWidget {
                             sortByCategory: sortByCategory.value,
                             shoppingLocationID:
                                 shoppingList?.shoppingLocationID)),
-                    if (ttlExpiresDateTime != null)
+                    if (!firestoreIsPremium)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
-                          '${DateFormat('M/d').format(ttlExpiresDateTime)}になるとこのリストは削除されます',
+                          '無料プランでは過去30日以内のリストのみ表示されます',
                           style: TextStyle(
                             color:
                                 Theme.of(context).colorScheme.onSurfaceVariant,

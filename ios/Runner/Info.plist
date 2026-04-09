@@ -43,6 +43,17 @@
 	<string>買い物リストを作成するためにカメラのアクセスを許可してください</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>買い物リストを作成するためにアクセスを許可してください</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>買い物する場所を地図で設定するために位置情報を使用します</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>お店の近くに来た時に買い物リストをお知らせするために、バックグラウンドでも位置情報を使用します</string>
+	<key>GMSApiKey</key>
+	<string>$(GOOGLE_MAPS_API_KEY)</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

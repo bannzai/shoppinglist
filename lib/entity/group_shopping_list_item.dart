@@ -10,6 +10,7 @@ abstract class GroupShoppingListItemFirestoreKeys {
   static const userID = 'userID';
   static const status = 'status';
   static const order = 'order';
+  static const imageURL = 'imageURL';
   static const checkedByUserID = 'checkedByUserID';
   static const lastCheckedDateTime = 'lastCheckedDateTime';
   static const lastEditedByUserID = 'lastEditedByUserID';
@@ -44,6 +45,9 @@ abstract class GroupShoppingListItem with _$GroupShoppingListItem {
     GroupShoppingListItemStatus status,
     String? description,
     String? color,
+
+    /// Firebase Storage上の商品写真のダウンロードURL。プレミアム機能。
+    String? imageURL,
     @NullableTimestampConverter() DateTime? reminderDateTime,
     String? checkedByUserID,
     @NullableTimestampConverter() DateTime? lastCheckedDateTime,

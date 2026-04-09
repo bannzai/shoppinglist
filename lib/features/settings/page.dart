@@ -13,7 +13,14 @@ import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/notification_setting.dart';
 
+import 'package:geolocator/geolocator.dart';
+import 'package:shoppinglist/features/settings/theme_color_selection_page.dart';
+import 'package:shoppinglist/provider/geofence.dart';
+import 'package:shoppinglist/provider/local_notification.dart';
+import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingPage extends HookConsumerWidget {
@@ -158,8 +165,12 @@ class SettingPage extends HookConsumerWidget {
                   },
                 ),
               ]),
+              SettingSectionTitle(text: '外観', children: [
+                _ThemeColorTile(),
+              ]),
               SettingSectionTitle(text: '通知', children: [
                 _AutoNotifyToggle(),
+                _LocationReminderToggle(),
               ]),
               SettingSectionTitle(text: 'アプリについて', children: [
                 ListTile(
@@ -241,6 +252,59 @@ class SettingPage extends HookConsumerWidget {
   }
 }
 
+/// テーマカラー設定のListTile。プレミアムユーザーのみ選択画面へ遷移可能。
+class _ThemeColorTile extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
+
+    return ListTile(
+      title: const Text('テーマカラー'),
+      leading: const Icon(Icons.palette),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: resolveThemeColor(
+                  ref.watch(appUserProvider).asData?.value.themeColorHex),
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 8),
+          if (!isPremium)
+            Icon(
+              Icons.lock,
+              size: 16,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+        ],
+      ),
+      onTap: () {
+        analytics.logEvent(
+          name: 'tap_theme_color_setting',
+          parameters: {'isPremium': isPremium.toString()},
+        );
+        if (isPremium) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ThemeColorSelectionPage(),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('テーマカラーの変更はプレミアム機能です')),
+          );
+        }
+      },
+    );
+  }
+}
+
 class _AutoNotifyToggle extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -257,6 +321,97 @@ class _AutoNotifyToggle extends ConsumerWidget {
         );
         ref.read(autoNotifyShoppingListUpdateProvider.notifier).toggle();
       },
+    );
+  }
+}
+
+/// 位置情報リマインダーの有効/無効を切り替えるトグル。
+class _LocationReminderToggle extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
+    final isEnabled = ref.watch(locationReminderEnabledProvider);
+
+    return SwitchListTile(
+      title: const Text('位置情報リマインダー'),
+      subtitle: const Text('店舗の近くに来たら買い物リストを通知'),
+      secondary: Icon(
+        Icons.location_on,
+        color:
+            !isPremium ? Theme.of(context).colorScheme.onSurfaceVariant : null,
+      ),
+      value: isPremium && isEnabled,
+      onChanged: isPremium
+          ? (value) async {
+              analytics.logEvent(
+                name: 'tap_toggle_location_remind',
+                parameters: {
+                  'enabled': value.toString(),
+                  'isPremium': isPremium.toString(),
+                },
+              );
+
+              if (value) {
+                // Android通知権限の確認
+                final androidNotifications = ref
+                    .read(localNotificationsPluginProvider)
+                    .resolvePlatformSpecificImplementation<
+                        AndroidFlutterLocalNotificationsPlugin>();
+                if (await androidNotifications
+                        ?.requestNotificationsPermission() ==
+                    false) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('通知権限を許可すると利用できます'),
+                      ),
+                    );
+                  }
+                  return;
+                }
+
+                // 「常に許可」が必要
+                var permission = await Geolocator.checkPermission();
+                if (permission == LocationPermission.denied ||
+                    permission == LocationPermission.deniedForever) {
+                  permission = await Geolocator.requestPermission();
+                }
+                if (permission == LocationPermission.whileInUse) {
+                  permission = await Geolocator.requestPermission();
+                }
+                if (permission != LocationPermission.always) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'バックグラウンドの位置情報を「常に許可」にすると利用できます',
+                        ),
+                      ),
+                    );
+                  }
+                  return;
+                }
+              }
+
+              await ref
+                  .read(locationReminderEnabledProvider.notifier)
+                  .setEnabled(enabled: value);
+            }
+          : (value) {
+              analytics.logEvent(
+                name: 'tap_toggle_location_remind',
+                parameters: {
+                  'enabled': value.toString(),
+                  'isPremium': isPremium.toString(),
+                },
+              );
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('位置情報リマインダーはプレミアム機能です'),
+                ),
+              );
+            },
     );
   }
 }
