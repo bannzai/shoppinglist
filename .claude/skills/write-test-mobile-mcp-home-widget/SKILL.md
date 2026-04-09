@@ -15,6 +15,7 @@ allowed-tools:
   - mcp__mobile__mobile_install_app
   - mcp__mobile__mobile_swipe_on_screen
   - mcp__mobile__mobile_type_keys
+  - Bash(bash ${CLAUDE_SKILL_DIR}/scripts/test_skill.sh:*)
   - Bash
   - Read
 ---
@@ -125,3 +126,9 @@ iOSシミュレータ上でFlutterアプリの**ホーム画面ウィジェッ�
 - Widget ExtensionでFlutter/home_widgetをimportしない（Widget Extensionからはアクセス不可）
 - AppDelegateに `HomeWidgetPlugin.setConfigurationLookup` は不要（home_widget 0.7.0+1にはない）
 - ビルドサイクルエラー: 「Embed Foundation Extensions」を「Thin Binary」の前に配置する
+
+## 検証方法
+
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/test_skill.sh
+```

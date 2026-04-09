@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SKILL_DIR="$(dirname "$SCRIPT_DIR")"
+
+PASS=0
+FAIL=0
+
+check() {
+  local desc="$1"
+  shift
+  if "$@" >/dev/null 2>&1; then
+    echo "✓ $desc"
+    PASS=$((PASS + 1))
+  else
+    echo "✗ $desc"
+    FAIL=$((FAIL + 1))
+  fi
+}
+
+echo "=== ui-competitive-research テスト ==="
+
+# SKILL.md フロントマター検証
+check "SKILL.md に name フィールドがある" grep -q "^name:" "$SKILL_DIR/SKILL.md"
+check "SKILL.md に description フィールドがある" grep -q "^description:" "$SKILL_DIR/SKILL.md"
+
+# references存在
+check "references/analysis-criteria.md が存在する" test -f "$SKILL_DIR/references/analysis-criteria.md"
+
+echo ""
+echo "結果: $PASS passed, $FAIL failed"
+[ "$FAIL" -eq 0 ]

@@ -1,5 +1,16 @@
 ---
 name: ui-competitive-research
+allowed-tools:
+  - Bash(bash ${CLAUDE_SKILL_DIR}/scripts/test_skill.sh:*)
+  - Bash(mkdir:*)
+  - Bash(curl:*)
+  - Read
+  - Glob
+  - Grep
+  - Agent
+  - WebSearch
+  - WebFetch
+  - AskUserQuestion
 description: |
   Web上から競合・類似アプリのUIスクリーンショットを収集し、自アプリと比較分析してUI改善プランを策定するスキル。
   「買い物リスト」「grocery」等のキーワードで類似アプリを検索し、共通UIパターンを抽出する。
@@ -25,8 +36,6 @@ description: |
 ```
 
 自アプリのスクリーンショットは `.local/screenshots/` を参照する。
-
----
 
 ## Step 1: 競合アプリの検索・選定
 
@@ -55,8 +64,6 @@ description: |
 ### ユーザー確認
 
 AskUserQuestionで調査対象アプリのリストを提示し、確認する。ユーザーが追加・削除を指示した場合は反映する。
-
----
 
 ## Step 2: スクリーンショットの収集・保存
 
@@ -99,8 +106,6 @@ mkdir -p .local/ui-research/references
 
 `{app-name}` はkebab-case（例: `any-list`, `bring`, `our-groceries`）。
 
----
-
 ## Step 3: 比較分析
 
 ### 自アプリのスクリーンショット読み込み
@@ -120,8 +125,6 @@ mkdir -p .local/ui-research/references
 2. 自アプリと競合の**ギャップ**を特定する
 3. 各ギャップについて**改善の優先度**を判断する（高・中・低）
 4. 具体的な**改善アクション**を策定する
-
----
 
 ## Step 4: 改善プラン策定
 
@@ -180,8 +183,6 @@ mkdir -p .local/ui-research/analysis
 - `analysis/improvement-plan.md` - 分析結果・改善プラン
 ```
 
----
-
 ## エラーハンドリング
 
 ### agent-browserが利用できない場合
@@ -195,3 +196,13 @@ WebSearchとWebFetchで代替する。App Storeのプレビュー画像URLを直
 1. `run_maestro_screenshots.sh` を実行してスクリーンショットを撮影
 2. `.local/screenshots/` にスクリーンショットをコピー
 3. 準備完了後にStep 3から再開
+
+## スクリプト
+
+- `scripts/test_skill.sh` — スキルの動作確認テスト
+
+## 検証方法
+
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/test_skill.sh
+```
