@@ -28,6 +28,9 @@ allowed-tools:
   - Bash(npm test:*)
   - Bash(mkdir:*)
   - Bash(ls:*)
+  - Bash(bash ${CLAUDE_SKILL_DIR}/scripts/run_implement_issues.sh:*)
+  - Bash(bash ${CLAUDE_SKILL_DIR}/scripts/generate_issue_prompts.sh:*)
+  - Bash(bash ${CLAUDE_SKILL_DIR}/scripts/test_skill.sh:*)
   - Read
   - Write
   - Edit
@@ -78,6 +81,24 @@ GitHub Issue の仕様を読み取り、実装→検証→PR作成までを実�
    - `maestro test maestro/flows/`
    - Firebase変更がある場合: `firebase/functions/functions/` で `npm run lint`, `npm run build`, `npm test`
 4. エラーがあれば修正して再検証
+
+## スクリプト
+
+- `scripts/run_implement_issues.sh` — 複数Issue一括実行。ccnipreでプロンプトを順次実行する
+- `scripts/generate_issue_prompts.sh` — Issue番号からプロンプトファイルを自動生成する
+- `scripts/test_skill.sh` — スキルの動作確認テスト
+
+## 参照ファイル
+
+- `references/prompt_template.md` — Issue実装のプロンプトテンプレート
+- `references/coding_review_prompt.md` — 実装後コーディング規約レビュー用プロンプト
+- `references/common_rules.md` — プロジェクト規約・検証コマンド・チェックリスト
+
+## 検証方法
+
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/test_skill.sh
+```
 
 ## Phase 4.5: 動作確認チェックリスト作成
 
