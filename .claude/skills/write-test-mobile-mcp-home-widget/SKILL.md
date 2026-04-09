@@ -15,6 +15,7 @@ allowed-tools:
   - mcp__mobile__mobile_install_app
   - mcp__mobile__mobile_swipe_on_screen
   - mcp__mobile__mobile_type_keys
+  - "Bash(bash ${CLAUDE_SKILL_DIR}/scripts/setup_and_install.sh:*)"
   - Bash
   - Read
 ---
@@ -29,15 +30,12 @@ iOSシミュレータ上でFlutterアプリの**ホーム画面ウィジェッ�
 ## ワークフロー
 
 ### Step 1: テスト専用シミュレータの作成・アプリインストール
+
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/setup_and_install.sh
 ```
-1. xcrun simctl list runtimes で利用可能なiOSランタイムを確認
-2. xcrun simctl create "WidgetTest" <DeviceType> <Runtime> でテスト専用シミュレータを作成
-   - 例: xcrun simctl create "WidgetTest" "iPhone 16 Pro" "iOS 18.2"
-3. xcrun simctl shutdown all で他のシミュレータを全てシャットダウン
-4. xcrun simctl boot <作成したUDID> で作成したシミュレータだけをboot
-5. open -a Simulator でシミュレータを表示
-6. xcrun simctl install <DEVICE_UDID> <APP_PATH> でアプリをインストール
-```
+
+テスト専用シミュレータ "WidgetTest" の作成（既存なら再利用）、他シミュレータのシャットダウン、アプリのビルド・インストールを自動で行う。
 
 ### Step 1.5: アプリを起動して匿名サインイン
 ```
@@ -125,3 +123,9 @@ iOSシミュレータ上でFlutterアプリの**ホーム画面ウィジェッ�
 - Widget ExtensionでFlutter/home_widgetをimportしない（Widget Extensionからはアクセス不可）
 - AppDelegateに `HomeWidgetPlugin.setConfigurationLookup` は不要（home_widget 0.7.0+1にはない）
 - ビルドサイクルエラー: 「Embed Foundation Extensions」を「Thin Binary」の前に配置する
+
+## 検証方法
+
+1. `bash ${CLAUDE_SKILL_DIR}/scripts/setup_and_install.sh` を実行し、テスト専用シミュレータ "WidgetTest" の作成・アプリインストールが完了することを確認
+2. mobile-mcpの `mobile_list_available_devices` で作成されたシミュレータが表示されることを確認
+3. mobile-mcpの `mobile_launch_app` でアプリが起動し、`mobile_take_screenshot` でスクリーンショットが取得できることを確認
