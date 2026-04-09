@@ -17,6 +17,8 @@ allowed-tools:
   - mcp__mobile__mobile_swipe_on_screen
   - mcp__mobile__mobile_type_keys
   - mcp__mobile__mobile_terminate_app
+  - Bash(bash ${CLAUDE_SKILL_DIR}/scripts/setup_devices.sh:*)
+  - Bash(bash ${CLAUDE_SKILL_DIR}/scripts/test_skill.sh:*)
   - Bash
   - Read
 ---
@@ -114,6 +116,12 @@ bash maestro/scripts/run_group_sync_test.sh
 - デバッグユーザーID形式: `{実UID}_debug_1`
 - Firestoreセキュリティルールの `isDebugUserOf()` で `{uid}_debug_[0-9]+` パターンを許可
 - Firestoreルールにデバッグユーザー用の `allow delete` ルールが必要（`/users/{userID}` と `/userProfiles/{profileID}`）
+
+## 検証方法
+
+```bash
+bash .claude/skills/multi-device-group-invite-test/scripts/test_skill.sh
+```
 
 ## リファレンス: Android E2E テストの既知問題
 
