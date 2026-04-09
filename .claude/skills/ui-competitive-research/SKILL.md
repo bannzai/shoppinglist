@@ -5,6 +5,10 @@ description: |
   「買い物リスト」「grocery」等のキーワードで類似アプリを検索し、共通UIパターンを抽出する。
   使用例: "/ui-competitive-research" (キーワード「shopping list」で検索)
   使用例: "/ui-competitive-research grocery app"
+allowed-tools:
+  - "Bash(bash ${CLAUDE_SKILL_DIR}/scripts/setup_research_dir.sh:*)"
+  - Bash
+  - Read
 ---
 
 # UI Competitive Research Skill
@@ -63,7 +67,7 @@ AskUserQuestionで調査対象アプリのリストを提示し、確認する�
 ### 準備
 
 ```bash
-mkdir -p .local/ui-research/references
+bash ${CLAUDE_SKILL_DIR}/scripts/setup_research_dir.sh
 ```
 
 ### 収集方法
@@ -129,9 +133,7 @@ mkdir -p .local/ui-research/references
 
 分析結果を `.local/ui-research/analysis/improvement-plan.md` に出力する。
 
-```bash
-mkdir -p .local/ui-research/analysis
-```
+分析結果の出力先は `setup_research_dir.sh` で既に作成済み。
 
 ### improvement-plan.md の構成
 
@@ -195,3 +197,9 @@ WebSearchとWebFetchで代替する。App Storeのプレビュー画像URLを直
 1. `run_maestro_screenshots.sh` を実行してスクリーンショットを撮影
 2. `.local/screenshots/` にスクリーンショットをコピー
 3. 準備完了後にStep 3から再開
+
+## 検証方法
+
+1. `bash ${CLAUDE_SKILL_DIR}/scripts/setup_research_dir.sh` を実行し、`.local/ui-research/references/` と `.local/ui-research/analysis/` が作成されることを確認
+2. WebSearchで「shopping list app iOS screenshots」を検索し、競合アプリの情報が取得できることを確認
+3. `references/analysis-criteria.md` をReadツールで読み込み、評価基準が表示されることを確認
