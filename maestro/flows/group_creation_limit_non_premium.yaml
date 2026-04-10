@@ -14,12 +14,12 @@ appId: com.bannzai.shoppinglist
 - assertVisible: "グループ管理"
 - takeScreenshot: screenshots/group_creation_limit_01_group_list
 
-# FABをタップしてグループ作成を試みる
-- tapOn:
-    point: "90%,92%"
+# FABをタップしてグループ作成を試みる（FABのtooltip "グループ作成" を使用）
+- tapOn: "グループ作成"
 - waitForAnimationToEnd
 
 # グループ作成画面が表示された場合（グループ名ラベルで判定） → グループを作成して上限に到達させる
+# "グループ作成" はFABのtooltipにもマッチするため、グループ作成画面固有の "グループ名" で判定
 - runFlow:
     when:
       visible: "グループ名"
@@ -31,8 +31,7 @@ appId: com.bannzai.shoppinglist
           visible: "グループ管理"
           timeout: 15000
       # 上限到達後に再度FABをタップ
-      - tapOn:
-          point: "90%,92%"
+      - tapOn: "グループ作成"
       - waitForAnimationToEnd
 
 # 上限超過時、グループ管理画面に留まりFABにロックアイコンが表示されること

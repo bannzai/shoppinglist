@@ -9,9 +9,8 @@ appId: com.bannzai.shoppinglist
 # 新規ユーザーではリスト作成日が本日のため30日メッセージは表示されない
 # リスト設定で保存期間が「30日」と表示されることを確認する
 
-# リスト設定を開いて保存期間の表示を確認（ギアアイコンはtooltip「リスト設定」）
-- tapOn:
-    point: "82%,14%"
+# リスト設定を開いて保存期間の表示を確認（ギアアイコンのtooltip「リスト設定」を使用）
+- tapOn: "リスト設定"
 - extendedWaitUntil:
     visible: "買い物リスト設定"
     timeout: 5000
