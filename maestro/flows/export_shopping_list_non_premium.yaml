@@ -8,5 +8,6 @@ appId: com.bannzai.shoppinglist
 - waitForAnimationToEnd
 
 # 無料ユーザーの場合、SnackBarが表示される
-- assertVisible: "リストのエクスポートはプレミアム機能です"
+# assertVisible の text は正規表現。実際のSnackBarテキストは "...プレミアム機能です。プレミアムにアップグレードすると利用できます"
+- assertVisible: "リストのエクスポートはプレミアム機能です.*"
 - takeScreenshot: screenshots/export_01_non_premium_snackbar

@@ -3,18 +3,19 @@ appId: com.bannzai.shoppinglist
 - runFlow: shared/anonymous_sign_in.yaml
 
 # 設定タブに切り替え
-- tapOn: "設定"
+# text は正規表現。NavigationBarのラベル "設定\nTab 2 of 2" にマッチさせるため "設定.*" を使用
+- tapOn:
+    text: "設定.*"
+    index: 0
 - waitForAnimationToEnd
 
 # 位置情報リマインダートグルが表示されていること
-- scrollUntilVisible:
-    element: "位置情報リマインダー"
-    direction: DOWN
-- assertVisible: "位置情報リマインダー"
+# assertVisible の text は正規表現。Switchのラベル "位置情報リマインダー\n店舗の..." にマッチさせる
+- assertVisible: "位置情報リマインダー.*"
 - takeScreenshot: screenshots/location_reminder_01_setting_visible
 
 # 非プレミアムユーザーがトグルをタップ
-- tapOn: "位置情報リマインダー"
+- tapOn: "位置情報リマインダー.*"
 - waitForAnimationToEnd
 
 # プレミアム機能の SnackBar が表示されること

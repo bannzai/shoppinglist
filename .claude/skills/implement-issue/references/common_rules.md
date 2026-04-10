@@ -21,6 +21,7 @@
 ## テスト作成
 - Widget Test: 新規・変更したWidgetに対して積極的に書く（isPremium分岐、UI表示条件等）
 - Maestro E2E: 実装した機能に対応する maestro flow を `maestro/flows/` に新規作成する
+- 【maestro の text フィールドは正規表現】tapOn や assertVisible の text は正規表現として解釈される。FlutterのNavigationBarラベルは "設定\nTab 2 of 2" のように付加テキストがつくため `"設定.*"` のように `.*` で後続を許容する。正規表現を使う箇所にはコメントで理由を記載すること
 - Firebase Functions: 新規/変更関数に対するJestテスト
 
 ## 検証コマンド
