@@ -96,3 +96,10 @@ if (
 ) {
   exports.deleteShoppingListItemImage = require("./functions/deleteShoppingListItemImage/function");
 }
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "grantPromotionalPremium"
+) {
+  exports.grantPromotionalPremium = require("./functions/grantPromotionalPremium/function");
+}

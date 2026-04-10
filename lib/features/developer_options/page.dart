@@ -9,6 +9,9 @@ import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:shoppinglist/utils/functions/firebase_function.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 /// 開発者オプションのモーダルボトムシートを表示する。
 void showDeveloperOptionsModal(BuildContext context) {
@@ -87,6 +90,8 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
     final isProcessing = useState(false);
     final resultMessage = useState('');
 
+    final customerInfo = ref.watch(customerInfoProvider).asData?.value;
+    final revenueCatIsPremium = customerInfo?.isPremium ?? false;
     final firestoreIsPremium =
         ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
     // shoppingListsProviderをbuild内でwatchしてデータをロードする
@@ -140,6 +145,9 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
             style: Theme.of(context).textTheme.bodySmall),
         Text('デバッグユーザーID: ${debugUID ?? "不明"}',
             style: Theme.of(context).textTheme.bodySmall),
+        Text(
+            'Premium(RC): $revenueCatIsPremium / Premium(Claims): $firestoreIsPremium',
+            style: Theme.of(context).textTheme.bodySmall),
         if (resultMessage.value.isNotEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -153,6 +161,27 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
               ),
             ),
           ),
+        const Divider(height: 24),
+
+        // プレミアム付与（RC Promotions API経由）
+        _ActionTile(
+          title: 'プレミアム付与（1日）',
+          subtitle: 'RC Promo経由でプレミアムEntitlementを付与（dev環境のみ）',
+          icon: Icons.star,
+          isProcessing: isProcessing.value,
+          onTap: () => _execute(
+            isProcessing: isProcessing,
+            resultMessage: resultMessage,
+            action: () async {
+              await functions.grantPromotionalPremium(duration: 'daily');
+              // RC SDKのcustomerInfoをrefetchしてプレミアム状態を反映する
+              await Purchases.getCustomerInfo();
+              ref.invalidate(customerInfoProvider);
+            },
+            actionName: 'プレミアム付与',
+          ),
+        ),
+
         const Divider(height: 24),
 
         // デバッグユーザー作成
