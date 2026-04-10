@@ -3,12 +3,15 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/developer_options/firestore_viewer_page.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
 import 'package:shoppinglist/features/developer_options/provider.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/utils/functions/firebase_function.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 /// 開発者オプションのモーダルボトムシートを表示する。
 void showDeveloperOptionsModal(BuildContext context) {
@@ -87,6 +90,8 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
     final isProcessing = useState(false);
     final resultMessage = useState('');
 
+    final customerInfo = ref.watch(customerInfoProvider).asData?.value;
+    final revenueCatIsPremium = customerInfo?.isPremium ?? false;
     final firestoreIsPremium =
         ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
     // shoppingListsProviderをbuild内でwatchしてデータをロードする
@@ -140,6 +145,9 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
             style: Theme.of(context).textTheme.bodySmall),
         Text('デバッグユーザーID: ${debugUID ?? "不明"}',
             style: Theme.of(context).textTheme.bodySmall),
+        Text(
+            'Premium(RC): $revenueCatIsPremium / Premium(Claims): $firestoreIsPremium',
+            style: Theme.of(context).textTheme.bodySmall),
         if (resultMessage.value.isNotEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -153,6 +161,32 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
               ),
             ),
           ),
+        const Divider(height: 24),
+
+        // プレミアム付与（RC Promotions API経由）
+        _ActionTile(
+          title: 'プレミアム付与（1ヶ月）',
+          subtitle: 'RC Promo経由でプレミアムEntitlementを付与',
+          icon: Icons.star,
+          isProcessing: isProcessing.value,
+          onTap: () => _execute(
+            isProcessing: isProcessing,
+            resultMessage: resultMessage,
+            action: () async {
+              await functions.grantPromotionalPremium(duration: 'monthly');
+              // Custom Claimsの反映のためトークンを強制更新する
+              await ref
+                  .read(firebaseUserChangesProvider)
+                  .asData
+                  ?.value
+                  ?.getIdToken(true);
+              ref.invalidate(firestoreIsPremiumProvider);
+              ref.invalidate(customerInfoProvider);
+            },
+            actionName: 'プレミアム付与',
+          ),
+        ),
+
         const Divider(height: 24),
 
         // デバッグユーザー作成

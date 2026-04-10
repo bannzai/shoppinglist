@@ -202,6 +202,23 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     return response['data']['imageURL'] as String;
   }
 
+  /// RevenueCat Promotions API経由でプレミアムEntitlementを付与する。
+  /// 開発者オプションでのテスト用。
+  Future<void> grantPromotionalPremium({
+    required String duration,
+  }) async {
+    final result = await httpsCallable('grantPromotionalPremium').call(
+      {
+        'duration': duration,
+      },
+    );
+    debugPrint('grantPromotionalPremium.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+  }
+
   /// 商品写真をFirebase Storageから削除する。
   Future<void> deleteShoppingListItemImage({
     required String groupID,
