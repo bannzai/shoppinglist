@@ -1,10 +1,10 @@
-import admin from "firebase-admin";
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import { defineString } from "firebase-functions/params";
 import * as z from "zod";
 import { ai } from "../utils/genkit";
 import { appAuthPolicy } from "../utils/authPolicy";
+import { appEnv } from "../../core/env";
 import {
   DataResponseSchema,
   ErrorResponseSchema,
@@ -37,7 +37,7 @@ const ResponseSchema = z.union([
   ErrorResponseSchema,
 ]);
 
-// 検証用引数: { "duration": "monthly" }
+// 検証用引数: { "duration": "daily" }
 const grantPromotionalPremiumFlow = ai.defineFlow(
   {
     name: "grantPromotionalPremium",
@@ -54,12 +54,22 @@ const grantPromotionalPremiumFlow = ai.defineFlow(
           "yearly",
           "lifetime",
         ])
-        .default("monthly"),
+        .default("daily"),
     }),
     outputSchema: ResponseSchema,
   },
   async ({ duration }) => {
     try {
+      // 開発環境でのみ実行可能。本番環境での課金バイパスを防止する。
+      if (appEnv() !== "dev") {
+        return {
+          result: "NG" as const,
+          error: {
+            message: "この機能は開発環境でのみ使用できます",
+          },
+        };
+      }
+
       const context = ai.currentContext();
       const uid = context?.auth?.uid;
       if (!uid) {
@@ -69,7 +79,9 @@ const grantPromotionalPremiumFlow = ai.defineFlow(
         };
       }
 
-      // RevenueCat Promotions APIを呼び出してプレミアムEntitlementを付与する
+      // RevenueCat Promotions APIを呼び出してプレミアムEntitlementを付与する。
+      // Custom Claimsの設定は不要。クライアント側でRevenueCat SDKのcustomerInfoを
+      // refetchすることでプレミアム状態を取得する。
       const revenueCatResponse = await fetch(
         `https://api.revenuecat.com/v1/subscribers/${uid}/entitlements/${PREMIUM_ENTITLEMENT_IDENTIFIER}/promotional`,
         {
@@ -94,11 +106,6 @@ const grantPromotionalPremiumFlow = ai.defineFlow(
           },
         };
       }
-
-      // Firebase Auth Custom Claimsにプレミアム状態を設定する
-      await admin
-        .auth()
-        .setCustomUserClaims(uid, { isPremium: true });
 
       logger.info(
         `Granted promotional premium to ${uid} with duration ${duration}`
