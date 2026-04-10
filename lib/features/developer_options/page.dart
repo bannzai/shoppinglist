@@ -3,13 +3,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/developer_options/firestore_viewer_page.dart';
-import 'package:shoppinglist/features/resolver/auth.dart';
 import 'package:shoppinglist/features/developer_options/provider.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
@@ -165,22 +165,17 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
 
         // プレミアム付与（RC Promotions API経由）
         _ActionTile(
-          title: 'プレミアム付与（1ヶ月）',
-          subtitle: 'RC Promo経由でプレミアムEntitlementを付与',
+          title: 'プレミアム付与（1日）',
+          subtitle: 'RC Promo経由でプレミアムEntitlementを付与（dev環境のみ）',
           icon: Icons.star,
           isProcessing: isProcessing.value,
           onTap: () => _execute(
             isProcessing: isProcessing,
             resultMessage: resultMessage,
             action: () async {
-              await functions.grantPromotionalPremium(duration: 'monthly');
-              // Custom Claimsの反映のためトークンを強制更新する
-              await ref
-                  .read(firebaseUserChangesProvider)
-                  .asData
-                  ?.value
-                  ?.getIdToken(true);
-              ref.invalidate(firestoreIsPremiumProvider);
+              await functions.grantPromotionalPremium(duration: 'daily');
+              // RC SDKのcustomerInfoをrefetchしてプレミアム状態を反映する
+              await Purchases.getCustomerInfo();
               ref.invalidate(customerInfoProvider);
             },
             actionName: 'プレミアム付与',
