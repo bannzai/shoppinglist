@@ -39,5 +39,5 @@ appId: com.bannzai.shoppinglist
 - waitForAnimationToEnd
 - tapOn: "現在の買い物リストを複製"
 - waitForAnimationToEnd
-- assertVisible: "無料プランでは1グループあたり5個までリストを作成できます"
+- assertVisible: "無料プランでは1グループあたり5個までリストを作成できます。プレミアムにアップグレードすると無制限に作成できます"
 - takeScreenshot: screenshots/shopping_list_limit_duplicate_01_exceeded

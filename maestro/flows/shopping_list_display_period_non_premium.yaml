@@ -6,13 +6,15 @@ appId: com.bannzai.shoppinglist
 - assertVisible: ".*"
 - takeScreenshot: screenshots/display_period_01_home
 
-# 無料ユーザー向けの表示制限メッセージが表示されること
-- assertVisible: "無料プランでは過去30日以内のリストのみ表示されます"
-- takeScreenshot: screenshots/display_period_02_free_user_message
+# 新規ユーザーではリスト作成日が本日のため30日メッセージは表示されない
+# リスト設定で保存期間が「30日」と表示されることを確認する
 
-# 設定を開いて保存期間の表示を確認
-- tapOn: "リスト設定"
-- assertVisible: "買い物リスト設定"
+# リスト設定を開いて保存期間の表示を確認（ギアアイコンはtooltip「リスト設定」）
+- tapOn:
+    point: "82%,14%"
+- extendedWaitUntil:
+    visible: "買い物リスト設定"
+    timeout: 5000
 - assertVisible: "買い物リストの保存期間"
 - assertVisible: "作成から30日間表示されます"
 - takeScreenshot: screenshots/display_period_03_setting_free_user

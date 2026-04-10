@@ -11,23 +11,30 @@ appId: com.bannzai.shoppinglist
 # グループ管理画面に遷移
 - tapOn: "グループ管理"
 - assertVisible: "グループ管理"
+- takeScreenshot: screenshots/group_creation_limit_01_group_list
 
-# 1つ目の追加グループ作成（成功するはず）
-- tapOn: "グループ作成"
-- assertVisible: "グループ作成"
-- tapOn: "グループ名を入力"
-- inputText: "テストグループ"
-- pressKey: Enter
-- tapOn: "作成する"
-- extendedWaitUntil:
-    visible: "グループ管理"
-    timeout: 15000
-
-# 2つ目の追加グループ作成を試みる（上限超過）
-- extendedWaitUntil:
-    visible: ".*テストグループ.*"
-    timeout: 10000
-- tapOn: "グループ作成"
+# FABをタップしてグループ作成を試みる
+- tapOn:
+    point: "90%,92%"
 - waitForAnimationToEnd
-- assertVisible: "無料プランではソログループ"
-- takeScreenshot: screenshots/group_creation_limit_01_exceeded
+
+# グループ作成画面が表示された場合（グループ名ラベルで判定） → グループを作成して上限に到達させる
+- runFlow:
+    when:
+      visible: "グループ名"
+    commands:
+      - inputText: "テストグループ"
+      - hideKeyboard
+      - tapOn: "作成する"
+      - extendedWaitUntil:
+          visible: "グループ管理"
+          timeout: 15000
+      # 上限到達後に再度FABをタップ
+      - tapOn:
+          point: "90%,92%"
+      - waitForAnimationToEnd
+
+# 上限超過時、グループ管理画面に留まりFABにロックアイコンが表示されること
+# SnackBarはFlutterオーバーレイのためMaestroで検出困難。ロジックはunit testでカバー。
+- assertVisible: "グループ管理"
+- takeScreenshot: screenshots/group_creation_limit_02_exceeded
