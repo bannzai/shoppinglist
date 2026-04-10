@@ -142,9 +142,7 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   break;
                 case 'export':
                   _exportShoppingList(
-                      context: context,
-                      ref: ref,
-                      isPremium: isPremium);
+                      context: context, ref: ref, isPremium: isPremium);
                   break;
               }
             },
