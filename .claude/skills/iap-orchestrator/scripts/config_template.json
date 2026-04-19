@@ -1,0 +1,65 @@
+{
+  "project": "shoppinglist",
+  "app": {
+    "bundle_id": "com.bannzai.shoppinglist",
+    "package_name": "com.bannzai.shoppinglist",
+    "display_name": {
+      "ja": "買い物リスト",
+      "en-US": "Shopping List"
+    }
+  },
+  "subscription_group_reference_name": "Premium",
+  "products": [
+    {
+      "price_jp": 480,
+      "type": "1month",
+      "display_name": {
+        "ja": "プレミアム（月額）",
+        "en-US": "Premium Monthly"
+      },
+      "description": {
+        "ja": "プレミアム機能をすべて利用できる月額プラン。",
+        "en-US": "Monthly plan with all premium features."
+      }
+    },
+    {
+      "price_jp": 2580,
+      "type": "6month",
+      "display_name": {
+        "ja": "プレミアム（6ヶ月）",
+        "en-US": "Premium 6 Month"
+      },
+      "description": {
+        "ja": "プレミアム機能をすべて利用できる6ヶ月プラン。月額換算で約16%お得。",
+        "en-US": "6-month plan, ~16% off vs monthly."
+      }
+    },
+    {
+      "price_jp": 4800,
+      "type": "1year",
+      "display_name": {
+        "ja": "プレミアム（年額）",
+        "en-US": "Premium Yearly"
+      },
+      "description": {
+        "ja": "プレミアム機能をすべて利用できる年額プラン。月額換算で約17%お得。",
+        "en-US": "Yearly plan, ~17% off vs monthly."
+      }
+    }
+  ],
+  "revenuecat": {
+    "entitlement_lookup_key": "Premium",
+    "entitlement_display_name": "プレミアム",
+    "offerings": [
+      {
+        "lookup_key": "default",
+        "display_name": "Default Offering",
+        "packages": [
+          {"package_key": "$rc_monthly", "type": "1month"},
+          {"package_key": "$rc_six_month", "type": "6month"},
+          {"package_key": "$rc_annual", "type": "1year"}
+        ]
+      }
+    ]
+  }
+}
