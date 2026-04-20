@@ -2,8 +2,8 @@
 # RevenueCat に Product を作成する（複数同時）
 # 命名規則 {project}_{price}yen_{type} を強制バリデート
 # Usage:
-#   create_products.sh --app-id app_xxx --product-ids id1,id2,id3
-#   create_products.sh --app-id app_xxx --product-ids id1 --display-name "Premium"
+#   create_products.sh --app-id app_xxx --app-type app_store --product-ids id1,id2,id3
+#   create_products.sh --app-id app_xxx --app-type play_store --product-ids id1 --display-name "Premium"
 
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -12,12 +12,14 @@ source "${SCRIPT_DIR}/_common.sh"
 require_jq
 
 APP_ID=""
+APP_TYPE=""
 PRODUCT_IDS=""
 DISPLAY_NAME=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --app-id) APP_ID="$2"; shift 2 ;;
+    --app-type) APP_TYPE="$2"; shift 2 ;;
     --product-ids) PRODUCT_IDS="$2"; shift 2 ;;
     --display-name) DISPLAY_NAME="$2"; shift 2 ;;
     --dry-run) DRY_RUN=1; shift ;;
@@ -26,6 +28,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 : "${APP_ID:?--app-id is required}"
+: "${APP_TYPE:?--app-type is required (app_store|play_store|mac_app_store|amazon)}"
 : "${PRODUCT_IDS:?--product-ids is required (comma-separated)}"
 
 IFS=',' read -ra IDS <<< "$PRODUCT_IDS"
@@ -53,14 +56,21 @@ for product_id in "${IDS[@]}"; do
 
   display_name="${DISPLAY_NAME:-$product_id}"
 
+  # Play Store subscription のみ {sid}:{basePlanId} 形式
+  # https://www.revenuecat.com/docs/getting-started/entitlements/android-products
+  store_identifier="$product_id"
+  if [[ "$APP_TYPE" == "play_store" && "$rc_type" == "subscription" ]]; then
+    store_identifier="${product_id}:${product_type}"
+  fi
+
   body=$(jq -n \
-    --arg sid "$product_id" \
+    --arg sid "$store_identifier" \
     --arg type "$rc_type" \
     --arg aid "$APP_ID" \
     --arg dn "$display_name" \
     '{store_identifier: $sid, type: $type, app_id: $aid, display_name: $dn}')
 
-  printf 'Creating product: %s (type=%s)\n' "$product_id" "$rc_type"
+  printf 'Creating product: %s (store_identifier=%s type=%s)\n' "$product_id" "$store_identifier" "$rc_type"
   response=$(rc_api_v2 POST "/projects/{project_id}/products" "$body")
 
   if [[ "${DRY_RUN:-0}" == "1" ]]; then
@@ -69,12 +79,11 @@ for product_id in "${IDS[@]}"; do
 
   rc_product_id=$(printf '%s' "$response" | jq -r '.id // empty')
   if [[ -z "$rc_product_id" ]]; then
-    printf 'Failed to create product %s. Response: %s\n' "$product_id" "$response" >&2
-    # 既に存在する場合はスキップ（idempotent）
-    if printf '%s' "$response" | jq -e '.code == 7263' >/dev/null 2>&1; then
+    if printf '%s' "$response" | jq -e '.type == "resource_already_exists" or .code == 7263' >/dev/null 2>&1; then
       printf '  → already exists, skipping\n'
       continue
     fi
+    printf 'Failed to create product %s. Response: %s\n' "$product_id" "$response" >&2
     exit 1
   fi
   printf '  → created: id=%s\n' "$rc_product_id"
