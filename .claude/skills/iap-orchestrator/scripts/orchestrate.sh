@@ -247,11 +247,19 @@ if [[ "$SKIP_RC" -ne 1 && ( -z "$RUN_PHASE" || "$RUN_PHASE" == "3" ) ]]; then
   product_ids=$(list_product_ids "$CONFIG" | tr '\n' ',' | sed 's/,$//')
 
   printf '\n# RC Products (iOS): %s\n' "$product_ids"
-  bash "${RC_SETUP_SKILL}/create_products.sh" --app-id "$RC_IOS_APP_ID" --product-ids "$product_ids" $DRY_RUN_FLAG || true
+  bash "${RC_SETUP_SKILL}/create_products.sh" \
+    --app-id "$RC_IOS_APP_ID" \
+    --app-type app_store \
+    --product-ids "$product_ids" \
+    $DRY_RUN_FLAG || true
 
   if [[ -n "$RC_ANDROID_APP_ID" ]]; then
     printf '\n# RC Products (Android): %s\n' "$product_ids"
-    bash "${RC_SETUP_SKILL}/create_products.sh" --app-id "$RC_ANDROID_APP_ID" --product-ids "$product_ids" $DRY_RUN_FLAG || true
+    bash "${RC_SETUP_SKILL}/create_products.sh" \
+      --app-id "$RC_ANDROID_APP_ID" \
+      --app-type play_store \
+      --product-ids "$product_ids" \
+      $DRY_RUN_FLAG || true
   fi
 
   printf '\n# RC Entitlement: %s\n' "$ENTITLEMENT_KEY"
