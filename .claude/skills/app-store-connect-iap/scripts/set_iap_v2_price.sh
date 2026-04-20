@@ -27,18 +27,42 @@ done
 JWT_TOKEN=$(generate_jwt)
 export JWT_TOKEN
 
-# Step 1: JPN territory の IAP V2 価格ポイント候補を取得し、JPY 完全一致を選ぶ
+# Step 1: JPN territory の IAP V2 価格ポイント候補を取得し、JPY 完全一致を選ぶ (links.next でページネーション)
 printf 'Looking up IAP V2 price point for JPY %s\n' "$PRICE_JP"
-pp_response=$(asc_api GET "/v2/inAppPurchases/${IAP_ID}/pricePoints?filter%5Bterritory%5D=JPN&include=territory&limit=200")
 
 if [[ "${DRY_RUN:-0}" == "1" ]]; then
+  # DRY_RUN は curl 本体を走らせないため 1 ページだけ叩いて curl ログを出す
+  asc_api GET "/v2/inAppPurchases/${IAP_ID}/pricePoints?filter%5Bterritory%5D=JPN&include=territory&limit=200" >/dev/null
   jp_price_point_id="DRY_RUN_PP_ID"
 else
-  jp_price_point_id=$(printf '%s' "$pp_response" | jq -r --arg p "$PRICE_JP" \
-    '.data[] | select(.attributes.customerPrice == $p or .attributes.customerPrice == ($p + ".00")) | .id' | head -1)
+  jp_price_point_id=""
+  first_page_sample=""
+  next_path="/v2/inAppPurchases/${IAP_ID}/pricePoints?filter%5Bterritory%5D=JPN&include=territory&limit=200"
+
+  while [[ -n "$next_path" ]]; do
+    pp_response=$(asc_api GET "$next_path")
+
+    matched=$(printf '%s' "$pp_response" | jq -r --arg p "$PRICE_JP" \
+      '.data[] | select(.attributes.customerPrice == $p or .attributes.customerPrice == ($p + ".00")) | .id' 2>/dev/null | head -1)
+    if [[ -n "$matched" ]]; then
+      jp_price_point_id="$matched"
+      break
+    fi
+
+    if [[ -z "$first_page_sample" ]]; then
+      first_page_sample=$(printf '%s' "$pp_response" | jq -r '.data[].attributes.customerPrice' 2>/dev/null | head -20)
+    fi
+
+    next_url=$(printf '%s' "$pp_response" | jq -r '.links.next // empty' 2>/dev/null)
+    if [[ -z "$next_url" ]]; then
+      break
+    fi
+    next_path="${next_url#${ASC_API_BASE}}"
+  done
+
   if [[ -z "$jp_price_point_id" ]]; then
-    printf 'No IAP V2 price point found for JPY %s. Available prices (first 20):\n' "$PRICE_JP" >&2
-    printf '%s' "$pp_response" | jq -r '.data[].attributes.customerPrice' | head -20 >&2
+    printf 'No IAP V2 price point found for JPY %s (searched all pages). First page sample:\n' "$PRICE_JP" >&2
+    printf '%s\n' "$first_page_sample" >&2
     exit 1
   fi
 fi
@@ -54,7 +78,8 @@ body=$(jq -n \
       type: "inAppPurchasePriceSchedules",
       relationships: {
         inAppPurchase: { data: { type: "inAppPurchases", id: $iid } },
-        manualPrices: { data: [{ type: "inAppPurchasePrices", id: "${price1}" }] }
+        manualPrices: { data: [{ type: "inAppPurchasePrices", id: "${price1}" }] },
+        baseTerritory: { data: { type: "territories", id: "JPN" } }
       }
     },
     included: [

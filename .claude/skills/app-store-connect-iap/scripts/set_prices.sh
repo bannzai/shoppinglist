@@ -39,16 +39,35 @@ fi
 JWT_TOKEN=$(generate_jwt)
 export JWT_TOKEN
 
-# Step 1: JPY の価格に対応する subscriptionPricePoint を取得
+# Step 1: JPY の価格に対応する subscriptionPricePoint を取得 (links.next でページネーション)
 printf 'Looking up price point for JPY %s\n' "$PRICE_JP"
-pp_response=$(asc_api GET "/v1/subscriptions/${SUB_ID}/pricePoints?filter%5Bterritory%5D=JPN&include=territory&limit=200")
+jp_price_point_id=""
+first_page_sample=""
+next_path="/v1/subscriptions/${SUB_ID}/pricePoints?filter%5Bterritory%5D=JPN&include=territory&limit=200"
 
-# 完全一致する customerPrice (例: "480") を探す
-jp_price_point_id=$(printf '%s' "$pp_response" | jq -r --arg p "$PRICE_JP" '.data[] | select(.attributes.customerPrice == $p or .attributes.customerPrice == ($p + ".00")) | .id' | head -1)
+while [[ -n "$next_path" ]]; do
+  pp_response=$(asc_api GET "$next_path")
+
+  matched=$(printf '%s' "$pp_response" | jq -r --arg p "$PRICE_JP" '.data[] | select(.attributes.customerPrice == $p or .attributes.customerPrice == ($p + ".00")) | .id' 2>/dev/null | head -1)
+  if [[ -n "$matched" ]]; then
+    jp_price_point_id="$matched"
+    break
+  fi
+
+  if [[ -z "$first_page_sample" ]]; then
+    first_page_sample=$(printf '%s' "$pp_response" | jq -r '.data[].attributes.customerPrice' 2>/dev/null | head -20)
+  fi
+
+  next_url=$(printf '%s' "$pp_response" | jq -r '.links.next // empty' 2>/dev/null)
+  if [[ -z "$next_url" ]]; then
+    break
+  fi
+  next_path="${next_url#${ASC_API_BASE}}"
+done
 
 if [[ -z "$jp_price_point_id" ]]; then
-  printf 'No price point found for JPY %s. Available prices:\n' "$PRICE_JP" >&2
-  printf '%s' "$pp_response" | jq -r '.data[].attributes.customerPrice' | head -20 >&2
+  printf 'No price point found for JPY %s (searched all pages). First page sample:\n' "$PRICE_JP" >&2
+  printf '%s\n' "$first_page_sample" >&2
   exit 1
 fi
 printf '  → JP price point: %s\n' "$jp_price_point_id"
