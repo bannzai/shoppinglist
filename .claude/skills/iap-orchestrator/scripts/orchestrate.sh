@@ -166,22 +166,16 @@ if [[ "$SKIP_PLAY" -ne 1 && ( -z "$RUN_PHASE" || "$RUN_PHASE" == "1" ) ]]; then
     if is_subscription_type "$type"; then
       bpid="$type"
 
-      printf '\n# Play Subscription: %s\n' "$pid"
+      printf '\n# Play Subscription + Base Plan: %s/%s\n' "$pid" "$bpid"
       bash "${PLAY_IAP_SKILL}/create_subscription.sh" \
-        --package-name "$PACKAGE_NAME" \
-        --product-id "$pid" \
-        --display-name-ja "$name_ja" \
-        --display-name-en "$name_en" \
-        --description-ja "$desc_ja" \
-        --description-en "$desc_en" \
-        $DRY_RUN_FLAG || true
-
-      printf '\n# Play Base Plan: %s/%s\n' "$pid" "$bpid"
-      bash "${PLAY_IAP_SKILL}/create_base_plan.sh" \
         --package-name "$PACKAGE_NAME" \
         --product-id "$pid" \
         --base-plan-id "$bpid" \
         --price-jp "$price" \
+        --display-name-ja "$name_ja" \
+        --display-name-en "$name_en" \
+        --description-ja "$desc_ja" \
+        --description-en "$desc_en" \
         $DRY_RUN_FLAG || true
 
       printf '\n# Play Activate: %s/%s\n' "$pid" "$bpid"
