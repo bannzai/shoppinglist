@@ -8,7 +8,6 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 source "${SCRIPT_DIR}/_common.sh"
 
 require_jq
-require_python_jwt
 
 GROUP_ID=""
 PRODUCT_ID=""

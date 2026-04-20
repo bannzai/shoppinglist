@@ -8,7 +8,6 @@ SKILL_DIR="$(dirname "$SCRIPT_DIR")"
 source "${SCRIPT_DIR}/_common.sh"
 
 require_jq
-require_python_jwt
 
 SUB_ID=""
 PNG_PATH="${SKILL_DIR}/templates/paywall.png"
