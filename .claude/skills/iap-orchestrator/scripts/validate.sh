@@ -47,7 +47,7 @@ if [[ $fail -eq 1 ]]; then
 fi
 
 # 環境変数（warning のみ、validate では fail にしない）
-for var in APP_STORE_CONNECT_KEY_BASE64 APP_STORE_CONNECT_KEY_ID APP_STORE_CONNECT_ISSUER_ID GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64 REVENUECAT_V2_SECRET_KEY REVENUECAT_PROJECT_ID; do
+for var in ASC_KEY_P8_BASE64 ASC_KEY_ID ASC_ISSUER_ID GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64 REVENUECAT_V2_SECRET_KEY REVENUECAT_PROJECT_ID; do
   if [[ -z "${!var:-}" ]]; then
     printf '[warning] env var %s is not set (will fail at orchestrate time)\n' "$var" >&2
   fi

@@ -3,7 +3,7 @@
 各依存スキルが手動を要する箇所を一覧化。Skill 経由で自動化できない / Web UI が必須の項目。
 
 ## App Store Connect 関連
-1. **API Key (.p8) 発行と base64 エンコード** → 環境変数 `APP_STORE_CONNECT_KEY_BASE64`
+1. **API Key (.p8) 発行と base64 エンコード** → 環境変数 `ASC_KEY_P8_BASE64`
 2. **Sandbox Tester の作成・削除** (App Store Connect Web で実施)
 3. **初回 Subscription はバイナリと同時に Web から提出が必須** ← 最重要
 4. **Sandbox 反映に最大 1 時間遅延**
