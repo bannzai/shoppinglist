@@ -159,7 +159,18 @@ Package? monthlyPremiumPackage(Ref ref) {
 Future<void> initializePurchase() async {
   await Purchases.setLogLevel(
       Environment.isDevelopment ? LogLevel.debug : LogLevel.info);
-  Purchases.configure(PurchasesConfiguration(Secret.revenueCatPublicAPIKey));
+
+  final apiKey = Environment.useRCTestStore
+      ? Secret.revenueCatTestStorePublicAPIKey
+      : Secret.revenueCatPublicAPIKey;
+
+  assert(
+    !Environment.useRCTestStore || apiKey.isNotEmpty,
+    'REVENUECAT_TEST_STORE_API_KEY is required when USE_RC_TEST_STORE=true. '
+    'Pass it via --dart-define=REVENUECAT_TEST_STORE_API_KEY=test_xxx',
+  );
+
+  Purchases.configure(PurchasesConfiguration(apiKey));
 }
 
 final purchaseProvider = Provider((ref) => Purchase());

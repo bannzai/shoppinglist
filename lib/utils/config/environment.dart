@@ -11,6 +11,15 @@ abstract class Environment {
   static bool get isDevelopment =>
       flavor == Flavor.DEVELOP || flavor == Flavor.LOCAL;
   static bool get isLocal => flavor == Flavor.LOCAL;
+
+  /// RC Test Store を使うかどうか。
+  /// `--dart-define=USE_RC_TEST_STORE=true` で build した場合に true を返す。
+  /// Release build では常に false を返す（本番キー誤差し替え防止のガード）。
+  static bool get useRCTestStore {
+    if (isProduction) return false;
+    return const bool.fromEnvironment('USE_RC_TEST_STORE');
+  }
+
   static bool isTest = false;
   static Flavor? flavor;
   // Avoid too, too much CPU usage.
