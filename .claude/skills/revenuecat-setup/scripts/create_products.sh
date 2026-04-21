@@ -28,7 +28,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 : "${APP_ID:?--app-id is required}"
-: "${APP_TYPE:?--app-type is required (app_store|play_store|mac_app_store|amazon)}"
+: "${APP_TYPE:?--app-type is required (app_store|play_store|mac_app_store|amazon|test_store)}"
 : "${PRODUCT_IDS:?--product-ids is required (comma-separated)}"
 
 IFS=',' read -ra IDS <<< "$PRODUCT_IDS"
