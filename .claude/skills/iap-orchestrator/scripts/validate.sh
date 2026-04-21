@@ -53,6 +53,13 @@ for var in ASC_KEY_P8_BASE64 ASC_KEY_ID ASC_ISSUER_ID GOOGLE_PLAY_SERVICE_ACCOUN
   fi
 done
 
+# Test Store を有効化している場合、関連環境変数の存在を警告
+if jq -e '.revenuecat.test_store.enabled == true' "$CONFIG" >/dev/null; then
+  if [[ -z "${REVENUECAT_TEST_STORE_API_KEY:-}" ]]; then
+    printf '[warning] revenuecat.test_store.enabled=true but REVENUECAT_TEST_STORE_API_KEY is not set.\n' >&2
+  fi
+fi
+
 printf 'OK: config is valid.\n'
 printf 'Generated product IDs:\n'
 list_product_ids "$CONFIG" | sed 's/^/  - /'
