@@ -28,7 +28,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 : "${APP_ID:?--app-id is required}"
-: "${APP_TYPE:?--app-type is required (app_store|play_store|mac_app_store|amazon)}"
+: "${APP_TYPE:?--app-type is required (app_store|play_store|mac_app_store|amazon|test_store)}"
 : "${PRODUCT_IDS:?--product-ids is required (comma-separated)}"
 
 IFS=',' read -ra IDS <<< "$PRODUCT_IDS"
@@ -63,12 +63,29 @@ for product_id in "${IDS[@]}"; do
     store_identifier="${product_id}:${product_type}"
   fi
 
+  # Test Store は実ストア連携がないため title と subscription.duration (subscription 型のみ) が必須。
+  # Duration enum: P1W / P1M / P2M / P3M / P6M / P1Y
+  # https://www.revenuecat.com/docs/redocusaurus/plugin-redoc-0.yaml
+  duration=""
+  if [[ "$APP_TYPE" == "test_store" && "$rc_type" == "subscription" ]]; then
+    case "$product_type" in
+      1month) duration="P1M" ;;
+      6month) duration="P6M" ;;
+      1year)  duration="P1Y" ;;
+      *) printf 'Unknown subscription duration for product_type: %s\n' "$product_type" >&2; exit 1 ;;
+    esac
+  fi
+
   body=$(jq -n \
     --arg sid "$store_identifier" \
     --arg type "$rc_type" \
     --arg aid "$APP_ID" \
     --arg dn "$display_name" \
-    '{store_identifier: $sid, type: $type, app_id: $aid, display_name: $dn}')
+    --arg apt "$APP_TYPE" \
+    --arg dur "$duration" \
+    '{store_identifier: $sid, type: $type, app_id: $aid, display_name: $dn}
+     + (if $apt == "test_store" then {title: $dn} else {} end)
+     + (if $apt == "test_store" and $dur != "" then {subscription: {duration: $dur}} else {} end)')
 
   printf 'Creating product: %s (store_identifier=%s type=%s)\n' "$product_id" "$store_identifier" "$rc_type"
   response=$(rc_api_v2 POST "/projects/{project_id}/products" "$body")
