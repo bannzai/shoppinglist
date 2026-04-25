@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/features/group_create/page.dart';
 import 'package:shoppinglist/features/group_setting/page.dart';
+import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -88,9 +89,13 @@ class GroupListPage extends ConsumerWidget {
         analytics.logEvent(name: 'tap_navigate_group_create');
         if (isLimitReached) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
+            SnackBar(
+              content: const Text(
                 '無料プランではソログループ+1グループまで作成できます。プレミアムにアップグレードすると無制限に作成できます',
+              ),
+              action: SnackBarAction(
+                label: 'アップグレード',
+                onPressed: () => showPaywall(context: context),
               ),
             ),
           );

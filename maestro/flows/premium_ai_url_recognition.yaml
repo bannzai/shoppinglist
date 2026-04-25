@@ -1,0 +1,21 @@
+appId: com.bannzai.shoppinglist
+---
+# プレミアム状態では AI URL 認識の月間利用回数が 50 回に拡張されることを確認する。
+# non_premium では上限 5 回到達で SnackBar 末尾に「月50回まで利用できます」が付く。
+# premium ではその末尾文字列が出ない。
+
+- runFlow: shared/anonymous_sign_in.yaml
+- runFlow: shared/mock_purchase.yaml
+
+- tapOn:
+    id: "popup_menu_button"
+    optional: true
+- waitForAnimationToEnd
+- tapOn:
+    text: "URLから追加"
+    optional: true
+- waitForAnimationToEnd
+
+- assertNotVisible: "プレミアムにアップグレードすると月50回まで利用できます"
+
+- takeScreenshot: screenshots/premium_ai_url_recognition_unlocked

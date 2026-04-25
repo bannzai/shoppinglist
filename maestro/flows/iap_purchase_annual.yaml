@@ -1,0 +1,16 @@
+appId: com.bannzai.shoppinglist
+---
+# annual パッケージ購入 E2E。
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+- runFlow: shared/mock_purchase_annual.yaml
+
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+- assertVisible: "プレミアム会員"
+- assertVisible: "有効"
+
+- takeScreenshot: screenshots/iap_purchase_annual_completed

@@ -143,6 +143,22 @@ Package? sixMonthPackage(Ref ref) {
       (element) => element.packageType == PackageType.sixMonth);
 }
 
+/// 現在 Offering から annual (1 年) Package を返す。Offering に未設定なら null。
+@Riverpod()
+Package? annualPackage(Ref ref) {
+  final currentOfferingPackages = ref.watch(currentOfferingPackagesProvider);
+  return currentOfferingPackages.firstWhereOrNull(
+      (element) => element.packageType == PackageType.annual);
+}
+
+/// 現在 Offering から lifetime (買い切り) Package を返す。Offering に未設定なら null。
+@Riverpod()
+Package? lifetimePackage(Ref ref) {
+  final currentOfferingPackages = ref.watch(currentOfferingPackagesProvider);
+  return currentOfferingPackages.firstWhereOrNull(
+      (element) => element.packageType == PackageType.lifetime);
+}
+
 @Riverpod()
 Package? monthlyPremiumPackage(Ref ref) {
   const premiumPackageOfferingType = OfferingType.premium;
