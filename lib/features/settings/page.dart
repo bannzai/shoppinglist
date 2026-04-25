@@ -7,6 +7,7 @@ import 'package:shoppinglist/components/button/user_delete.dart';
 import 'package:shoppinglist/features/group_invitation/page.dart';
 import 'package:shoppinglist/features/developer_options/page.dart';
 import 'package:shoppinglist/features/group_list/page.dart';
+import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/settings/components/section.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
@@ -172,6 +173,9 @@ class SettingPage extends HookConsumerWidget {
                 _AutoNotifyToggle(),
                 _LocationReminderToggle(),
               ]),
+              SettingSectionTitle(text: 'プレミアム', children: [
+                _PremiumMembershipTile(),
+              ]),
               SettingSectionTitle(text: 'アプリについて', children: [
                 ListTile(
                     title: const Text(
@@ -297,7 +301,13 @@ class _ThemeColorTile extends ConsumerWidget {
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('テーマカラーの変更はプレミアム機能です')),
+            SnackBar(
+              content: const Text('テーマカラーの変更はプレミアム機能です'),
+              action: SnackBarAction(
+                label: 'アップグレード',
+                onPressed: () => showPaywall(context: context),
+              ),
+            ),
           );
         }
       },
@@ -407,10 +417,40 @@ class _LocationReminderToggle extends ConsumerWidget {
                 },
               );
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('位置情報リマインダーはプレミアム機能です'),
+                SnackBar(
+                  content: const Text('位置情報リマインダーはプレミアム機能です'),
+                  action: SnackBarAction(
+                    label: 'アップグレード',
+                    onPressed: () => showPaywall(context: context),
+                  ),
                 ),
               );
+            },
+    );
+  }
+}
+
+/// 「プレミアム会員」状態を表示する ListTile。
+///
+/// `customerInfoProvider.isPremium` を watch し、subtitle を「有効」/「未加入」で切り替える。
+/// 未加入時のみタップ可能で、タップすると PaywallPage を開く。
+class _PremiumMembershipTile extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
+    return ListTile(
+      leading: const Icon(Icons.workspace_premium),
+      title: const Text('プレミアム会員'),
+      subtitle: Text(isPremium ? '有効' : '未加入'),
+      onTap: isPremium
+          ? null
+          : () {
+              analytics.logEvent(
+                name: 'tap_premium_membership_tile',
+                parameters: {},
+              );
+              showPaywall(context: context);
             },
     );
   }

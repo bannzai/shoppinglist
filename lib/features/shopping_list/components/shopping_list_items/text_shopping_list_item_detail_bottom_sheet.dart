@@ -6,6 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -457,7 +458,13 @@ class _PhotoSection extends HookConsumerWidget {
           name: 'tap_item_photo_non_premium',
           parameters: {'groupID': groupID, 'itemID': itemID});
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('商品写真の添付はプレミアム機能です')),
+        SnackBar(
+          content: const Text('商品写真の添付はプレミアム機能です'),
+          action: SnackBarAction(
+            label: 'アップグレード',
+            onPressed: () => showPaywall(context: context),
+          ),
+        ),
       );
       return;
     }

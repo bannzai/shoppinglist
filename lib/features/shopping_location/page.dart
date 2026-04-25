@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
+import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_location/location_picker_page.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -143,8 +144,12 @@ class ShoppingLocationPage extends ConsumerWidget {
                   );
                   if (!isPremium) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('位置情報リマインダーはプレミアム機能です'),
+                      SnackBar(
+                        content: const Text('位置情報リマインダーはプレミアム機能です'),
+                        action: SnackBarAction(
+                          label: 'アップグレード',
+                          onPressed: () => showPaywall(context: context),
+                        ),
                       ),
                     );
                     return;

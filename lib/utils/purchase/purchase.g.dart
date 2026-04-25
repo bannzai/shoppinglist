@@ -92,6 +92,44 @@ final sixMonthPackageProvider = AutoDisposeProvider<Package?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SixMonthPackageRef = AutoDisposeProviderRef<Package?>;
+String _$annualPackageHash() => r'84a4a588f0eaebbd8d31e87c839f0c2cb6ece25e';
+
+/// 現在 Offering から annual (1 年) Package を返す。Offering に未設定なら null。
+///
+/// Copied from [annualPackage].
+@ProviderFor(annualPackage)
+final annualPackageProvider = AutoDisposeProvider<Package?>.internal(
+  annualPackage,
+  name: r'annualPackageProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$annualPackageHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AnnualPackageRef = AutoDisposeProviderRef<Package?>;
+String _$lifetimePackageHash() => r'd6ce85cb4d25c704a916e53bbae5458d1fbcdd7b';
+
+/// 現在 Offering から lifetime (買い切り) Package を返す。Offering に未設定なら null。
+///
+/// Copied from [lifetimePackage].
+@ProviderFor(lifetimePackage)
+final lifetimePackageProvider = AutoDisposeProvider<Package?>.internal(
+  lifetimePackage,
+  name: r'lifetimePackageProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$lifetimePackageHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef LifetimePackageRef = AutoDisposeProviderRef<Package?>;
 String _$monthlyPremiumPackageHash() =>
     r'b60369ee20eb3938b31dae6ff05bebfcb615512f';
 

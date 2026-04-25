@@ -1,0 +1,37 @@
+appId: com.bannzai.shoppinglist
+---
+# lifetime パッケージ購入の共通サブフロー。shared/mock_purchase_monthly.yaml と同構造。
+
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+
+- swipe:
+    start: "50%,80%"
+    end: "50%,20%"
+- swipe:
+    start: "50%,80%"
+    end: "50%,20%"
+- waitForAnimationToEnd
+- tapOn:
+    text: ".*プレミアム会員.*"
+- extendedWaitUntil:
+    visible: "プレミアムプラン"
+    timeout: 15000
+
+# 表示順 index で tap（monthly=0 / annual=1 / lifetime=2）
+- tapOn:
+    text: "購入"
+    index: 2
+
+- extendedWaitUntil:
+    visible: "Subscribe"
+    timeout: 30000
+- tapOn: "Subscribe"
+
+- extendedWaitUntil:
+    visible: "購入ありがとうございました"
+    timeout: 30000
+
+- takeScreenshot: screenshots/mock_purchase_lifetime_completed

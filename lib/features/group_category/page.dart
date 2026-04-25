@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/features/group_category/category_edit_page.dart';
+import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
 import 'package:shoppinglist/provider/group_category.dart';
@@ -236,8 +237,14 @@ class _CategoryListBody extends HookConsumerWidget {
                             );
                             if (value != null && !isPremium) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
+                                SnackBar(
+                                  content: const Text(
+                                      '買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
+                                  action: SnackBarAction(
+                                    label: 'アップグレード',
+                                    onPressed: () =>
+                                        showPaywall(context: context),
+                                  ),
                                 ),
                               );
                               return;
@@ -391,8 +398,12 @@ class _CategoryReorderableList extends ConsumerWidget {
         if (selectedShoppingLocationID != null) {
           if (!isPremium) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
+              SnackBar(
+                content: const Text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
+                action: SnackBarAction(
+                  label: 'アップグレード',
+                  onPressed: () => showPaywall(context: context),
+                ),
               ),
             );
             return;

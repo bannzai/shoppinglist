@@ -1,0 +1,18 @@
+appId: com.bannzai.shoppinglist
+---
+# monthly パッケージ購入 E2E。
+# 購入成功後に設定画面の「プレミアム会員」subtitle が「有効」になっていることを確認する。
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+- runFlow: shared/mock_purchase.yaml
+
+# 設定画面に戻って premium 状態を確認
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+- assertVisible: "プレミアム会員"
+- assertVisible: "有効"
+
+- takeScreenshot: screenshots/iap_purchase_monthly_completed
