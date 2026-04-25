@@ -50,6 +50,9 @@
   "revenuecat": {
     "entitlement_lookup_key": "Premium",
     "entitlement_display_name": "プレミアム",
+    "test_store": {
+      "enabled": false
+    },
     "offerings": [
       {
         "lookup_key": "default",

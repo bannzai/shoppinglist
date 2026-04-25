@@ -35,9 +35,9 @@ allowed-tools:
 
 | 変数名 | スキル |
 |---|---|
-| `APP_STORE_CONNECT_KEY_BASE64` | Skill 1 |
-| `APP_STORE_CONNECT_KEY_ID` | Skill 1 |
-| `APP_STORE_CONNECT_ISSUER_ID` | Skill 1 |
+| `ASC_KEY_P8_BASE64` | Skill 1 |
+| `ASC_KEY_ID` | Skill 1 |
+| `ASC_ISSUER_ID` | Skill 1 |
 | `GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64` | Skill 2 |
 | `REVENUECAT_V2_SECRET_KEY` | Skill 3 |
 | `REVENUECAT_PROJECT_ID` | Skill 3 |

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/utils/config/environment.dart';
@@ -159,7 +160,22 @@ Package? monthlyPremiumPackage(Ref ref) {
 Future<void> initializePurchase() async {
   await Purchases.setLogLevel(
       Environment.isDevelopment ? LogLevel.debug : LogLevel.info);
-  Purchases.configure(PurchasesConfiguration(Secret.revenueCatPublicAPIKey));
+
+  // kDebugMode=true のとき RC Test Store Key を使い、mock purchase modal で IAP フローを検証する。
+  // Release ビルドでは kDebugMode=false となり本番キーが使われる（本番キー誤差し替え防止のガード）。
+  // Debug ビルドで本番課金フローを検証したい場合は、ここの apiKey の値を一時的に
+  // Secret.revenueCatPublicAPIKey に差し替える運用とする（USE_RC_TEST_STORE のような環境変数スイッチは設けない）。
+  final apiKey = kDebugMode
+      ? Secret.revenueCatTestStorePublicAPIKey
+      : Secret.revenueCatPublicAPIKey;
+
+  assert(
+    !kDebugMode || apiKey.isNotEmpty,
+    'REVENUECAT_TEST_STORE_API_KEY is required in debug builds. '
+    'Pass it via --dart-define=REVENUECAT_TEST_STORE_API_KEY=test_xxx',
+  );
+
+  Purchases.configure(PurchasesConfiguration(apiKey));
 }
 
 final purchaseProvider = Provider((ref) => Purchase());

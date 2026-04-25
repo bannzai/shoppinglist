@@ -2,9 +2,9 @@
 """ASC API JWT 生成。20 分有効。
 
 Usage (環境変数で渡す):
-  APP_STORE_CONNECT_KEY_BASE64   .p8 base64
-  APP_STORE_CONNECT_KEY_ID       Key ID
-  APP_STORE_CONNECT_ISSUER_ID    Issuer ID
+  ASC_KEY_P8_BASE64   .p8 base64
+  ASC_KEY_ID       Key ID
+  ASC_ISSUER_ID    Issuer ID
 
 stdout に JWT を出力。
 """
@@ -23,13 +23,13 @@ except ImportError:
 
 
 def main() -> None:
-    key_b64 = os.environ.get("APP_STORE_CONNECT_KEY_BASE64")
-    key_id = os.environ.get("APP_STORE_CONNECT_KEY_ID")
-    issuer_id = os.environ.get("APP_STORE_CONNECT_ISSUER_ID")
+    key_b64 = os.environ.get("ASC_KEY_P8_BASE64")
+    key_id = os.environ.get("ASC_KEY_ID")
+    issuer_id = os.environ.get("ASC_ISSUER_ID")
 
     if not all([key_b64, key_id, issuer_id]):
         sys.stderr.write(
-            "Error: APP_STORE_CONNECT_KEY_BASE64 / APP_STORE_CONNECT_KEY_ID / APP_STORE_CONNECT_ISSUER_ID are required\n"
+            "Error: ASC_KEY_P8_BASE64 / ASC_KEY_ID / ASC_ISSUER_ID are required\n"
         )
         sys.exit(1)
 

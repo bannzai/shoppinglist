@@ -107,3 +107,18 @@ require_jq() {
     exit 1
   fi
 }
+
+# store_identifier から RC 内部 Product ID (prodXXX) を解決する。
+# iOS/Android 両ストアに同 logical product があれば両方の ID を改行区切りで返す。
+# Play subscription の `{sid}:{basePlanId}` 形式に対応するため prefix 一致でもマッチさせる。
+resolve_rc_product_ids_by_sid() {
+  local sid="$1"
+  local products_response
+  products_response=$(rc_api_v2 GET "/projects/{project_id}/products?limit=50")
+  printf '%s' "$products_response" | jq -r --arg sid "$sid" \
+    '.items[] | select(.store_identifier == $sid or (.store_identifier | startswith($sid + ":"))) | .id'
+}
+
+resolve_rc_product_id_by_sid() {
+  resolve_rc_product_ids_by_sid "$1" | head -1
+}

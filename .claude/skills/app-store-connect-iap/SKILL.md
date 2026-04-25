@@ -39,9 +39,9 @@ App Store Connect API を使い、リリース準備に必要な以下を自動�
 ## 環境変数
 | 変数名 | 用途 |
 |---|---|
-| `APP_STORE_CONNECT_KEY_BASE64` | `.p8` 秘密鍵（base64 エンコード） |
-| `APP_STORE_CONNECT_KEY_ID` | API Key の ID（10 文字） |
-| `APP_STORE_CONNECT_ISSUER_ID` | API の Issuer ID（UUID） |
+| `ASC_KEY_P8_BASE64` | `.p8` 秘密鍵（base64 エンコード） |
+| `ASC_KEY_ID` | API Key の ID（10 文字） |
+| `ASC_ISSUER_ID` | API の Issuer ID（UUID） |
 
 ## Product ID 命名規則
 全スクリプトで `{project}_{price}yen_{type}` を強制。詳細は `references/naming-conventions.md`。

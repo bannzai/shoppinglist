@@ -8,10 +8,31 @@ set -euo pipefail
 readonly PLAY_API_BASE="https://androidpublisher.googleapis.com/androidpublisher/v3"
 readonly PLAY_PRODUCT_ID_REGEX='^[a-z][a-z0-9]*_[0-9]+yen_(1month|6month|1year|consumable|lifetime)$'
 readonly PLAY_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly PLAY_VENV_DIR="${PLAY_SCRIPT_DIR}/../.venv"
+readonly PLAY_VENV_PYTHON="${PLAY_VENV_DIR}/bin/python"
+# PyJWT 3.x 系で jwt.encode の戻り値型が str ↔ bytes で変わった前例があるためピン留め
+readonly PLAY_VENV_PACKAGES=("pyjwt==2.9.0" "cryptography==43.0.1")
+
+# Skill ローカル venv を冪等にセットアップ。既に存在すれば何もしない。
+ensure_venv() {
+  if [[ -x "${PLAY_VENV_PYTHON}" ]]; then
+    return 0
+  fi
+  if ! command -v python3 >/dev/null 2>&1; then
+    printf 'Error: python3 is required to bootstrap venv.\n' >&2
+    exit 1
+  fi
+  printf 'Creating venv: %s\n' "${PLAY_VENV_DIR}" >&2
+  python3 -m venv "${PLAY_VENV_DIR}"
+  printf 'Installing packages: %s\n' "${PLAY_VENV_PACKAGES[*]}" >&2
+  "${PLAY_VENV_PYTHON}" -m pip install --quiet --upgrade pip
+  "${PLAY_VENV_PYTHON}" -m pip install --quiet "${PLAY_VENV_PACKAGES[@]}"
+}
 
 # Access token を生成して echo
 get_access_token() {
-  python3 "${PLAY_SCRIPT_DIR}/_auth.py"
+  ensure_venv
+  "${PLAY_VENV_PYTHON}" "${PLAY_SCRIPT_DIR}/_auth.py"
 }
 
 # 命名規則バリデーション
@@ -76,17 +97,6 @@ play_api() {
 require_jq() {
   if ! command -v jq >/dev/null 2>&1; then
     printf 'Error: jq is required. Install with `brew install jq`.\n' >&2
-    exit 1
-  fi
-}
-
-require_python_jwt() {
-  if ! command -v python3 >/dev/null 2>&1; then
-    printf 'Error: python3 is required.\n' >&2
-    exit 1
-  fi
-  if ! python3 -c "import jwt" 2>/dev/null; then
-    printf 'Error: PyJWT is required. Install with: pip3 install pyjwt cryptography\n' >&2
     exit 1
   fi
 }
