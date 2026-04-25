@@ -48,6 +48,13 @@ encoded_pid=$(printf '%s' "$PRODUCT_ID" | jq -sRr @uri)
 printf 'Fetching subscription: %s\n' "$PRODUCT_ID"
 existing=$(play_api GET "/applications/${PACKAGE_NAME}/subscriptions/${encoded_pid}")
 
+if [[ "${DRY_RUN:-0}" != "1" ]]; then
+  if printf '%s' "$existing" | jq -e '.error' >/dev/null 2>&1 || ! printf '%s' "$existing" | jq -e '.productId' >/dev/null 2>&1; then
+    printf 'Failed to fetch subscription %s. Response: %s\n' "$PRODUCT_ID" "$existing" >&2
+    exit 1
+  fi
+fi
+
 # 既存 Subscription に新 Base Plan を追加
 new_base_plan=$(jq -n \
   --arg bpid "$BASE_PLAN_ID" \

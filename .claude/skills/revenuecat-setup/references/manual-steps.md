@@ -78,3 +78,26 @@
 - 自動セルフサービス登録は無い（リードタイムあり）
 
 → 個人用 Skill では Secret Key で十分なので、本 Skill では未対応。
+
+## 8. Test Store の作成と API Key 発行（開発時のみ）
+
+**いつ**: 実 ASC/Play に商品登録せずに開発ビルドで IAP フローをテストしたいとき。
+
+**なぜ手動**: REST API v2 の `POST /projects/{pid}/apps` の `type` enum は `app_store, mac_app_store, play_store, amazon, stripe, rc_billing, roku, paddle` の 8 種のみで `test_store` が含まれない。Test Store は Dashboard 専用リソース。
+- 確認ソース: [API v2 reference](https://www.revenuecat.com/docs/api-v2)、[OpenAPI YAML](https://www.revenuecat.com/docs/redocusaurus/plugin-redoc-0.yaml)（`test_store` 文字列ゼロ件）、[Test Store docs](https://www.revenuecat.com/docs/test-and-launch/sandbox/test-store)（"create one on the **Apps and providers** tab"）
+
+**手順**:
+1. https://app.revenuecat.com/projects/${REVENUECAT_PROJECT_ID}/apps にアクセス
+2. "Apps and providers" ページの **"Test configuration"** セクションから新規作成
+3. 発行される Test Store Public API Key を `REVENUECAT_TEST_STORE_API_KEY` として export
+4. Dashboard URL から Test Store App の内部 ID (`appXXX`) を控え、`REVENUECAT_TEST_STORE_APP_ID` として export（`inspect_test_store.sh` で API 経由発見できる場合は不要）
+5. config の `revenuecat.test_store.enabled` を `true` にして `orchestrate.sh --phase 3` を実行
+6. Products は自動登録される（Entitlement / Offering / Package は本番 App と共有）
+
+**先行調査**: API での Test Store App の見え方 (`type` 値) が公式非明記のため、`inspect_test_store.sh` を実行してから `lookup_test_store_app.sh` の candidate 配列を確定すること。
+
+**SDK 側の注意**: Test Store API Key で Release build を起動すると SDK が警告を出す（本番不可）。Flutter 側での API Key 切替は別 Issue で対応予定。
+
+**参考**:
+- https://www.revenuecat.com/docs/test-and-launch/sandbox/test-store
+- https://www.revenuecat.com/blog/engineering/testing-test-store/

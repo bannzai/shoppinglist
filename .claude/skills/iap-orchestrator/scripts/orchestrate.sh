@@ -46,6 +46,13 @@ if [[ "$SKIP_RC" -ne 1 ]]; then
   : "${REVENUECAT_PROJECT_ID:?REVENUECAT_PROJECT_ID required}"
 fi
 
+# RC Test Store は Dashboard 手動作成が前提 (API v2 非対応)
+# config の revenuecat.test_store.enabled=true のときだけ Phase 3 で lookup + Products 登録を実行
+TEST_STORE_ENABLED=0
+if [[ "$SKIP_RC" -ne 1 ]] && jq -e '.revenuecat.test_store.enabled == true' "$CONFIG" >/dev/null; then
+  TEST_STORE_ENABLED=1
+fi
+
 PROJECT=$(jq -r '.project' "$CONFIG")
 BUNDLE_ID=$(jq -r '.app.bundle_id' "$CONFIG")
 PACKAGE_NAME=$(jq -r '.app.package_name // empty' "$CONFIG")
@@ -166,22 +173,16 @@ if [[ "$SKIP_PLAY" -ne 1 && ( -z "$RUN_PHASE" || "$RUN_PHASE" == "1" ) ]]; then
     if is_subscription_type "$type"; then
       bpid="$type"
 
-      printf '\n# Play Subscription: %s\n' "$pid"
+      printf '\n# Play Subscription + Base Plan: %s/%s\n' "$pid" "$bpid"
       bash "${PLAY_IAP_SKILL}/create_subscription.sh" \
-        --package-name "$PACKAGE_NAME" \
-        --product-id "$pid" \
-        --display-name-ja "$name_ja" \
-        --display-name-en "$name_en" \
-        --description-ja "$desc_ja" \
-        --description-en "$desc_en" \
-        $DRY_RUN_FLAG || true
-
-      printf '\n# Play Base Plan: %s/%s\n' "$pid" "$bpid"
-      bash "${PLAY_IAP_SKILL}/create_base_plan.sh" \
         --package-name "$PACKAGE_NAME" \
         --product-id "$pid" \
         --base-plan-id "$bpid" \
         --price-jp "$price" \
+        --display-name-ja "$name_ja" \
+        --display-name-en "$name_en" \
+        --description-ja "$desc_ja" \
+        --description-en "$desc_en" \
         $DRY_RUN_FLAG || true
 
       printf '\n# Play Activate: %s/%s\n' "$pid" "$bpid"
@@ -249,15 +250,49 @@ if [[ "$SKIP_RC" -ne 1 && ( -z "$RUN_PHASE" || "$RUN_PHASE" == "3" ) ]]; then
     printf 'RC Android app_id: %s\n' "$RC_ANDROID_APP_ID"
   fi
 
+  RC_TEST_STORE_APP_ID=""
+  if [[ "$TEST_STORE_ENABLED" -eq 1 ]]; then
+    printf '\n# RC App: test_store (Dashboard 作成済みを lookup)\n'
+    test_store_out=$(bash "${RC_SETUP_SKILL}/lookup_test_store_app.sh" $DRY_RUN_FLAG 2>&1 || true)
+    printf '%s\n' "$test_store_out"
+    if [[ -n "$DRY_RUN_FLAG" ]]; then
+      RC_TEST_STORE_APP_ID="DRY_RUN_TEST_STORE_APP_ID"
+    else
+      RC_TEST_STORE_APP_ID=$(printf '%s' "$test_store_out" | awk '/Test Store app_id:/ {print $NF; exit}')
+      if [[ -z "$RC_TEST_STORE_APP_ID" ]]; then
+        printf 'Test Store app_id lookup failed. Dashboard 作成 + REVENUECAT_TEST_STORE_APP_ID env を確認してください。\n' >&2
+        TEST_STORE_ENABLED=0
+      fi
+    fi
+    printf 'RC Test Store app_id: %s\n' "$RC_TEST_STORE_APP_ID"
+  fi
+
   # Product ID リスト
   product_ids=$(list_product_ids "$CONFIG" | tr '\n' ',' | sed 's/,$//')
 
   printf '\n# RC Products (iOS): %s\n' "$product_ids"
-  bash "${RC_SETUP_SKILL}/create_products.sh" --app-id "$RC_IOS_APP_ID" --product-ids "$product_ids" $DRY_RUN_FLAG || true
+  bash "${RC_SETUP_SKILL}/create_products.sh" \
+    --app-id "$RC_IOS_APP_ID" \
+    --app-type app_store \
+    --product-ids "$product_ids" \
+    $DRY_RUN_FLAG || true
 
   if [[ -n "$RC_ANDROID_APP_ID" ]]; then
     printf '\n# RC Products (Android): %s\n' "$product_ids"
-    bash "${RC_SETUP_SKILL}/create_products.sh" --app-id "$RC_ANDROID_APP_ID" --product-ids "$product_ids" $DRY_RUN_FLAG || true
+    bash "${RC_SETUP_SKILL}/create_products.sh" \
+      --app-id "$RC_ANDROID_APP_ID" \
+      --app-type play_store \
+      --product-ids "$product_ids" \
+      $DRY_RUN_FLAG || true
+  fi
+
+  if [[ "$TEST_STORE_ENABLED" -eq 1 && -n "$RC_TEST_STORE_APP_ID" ]]; then
+    printf '\n# RC Products (Test Store): %s\n' "$product_ids"
+    bash "${RC_SETUP_SKILL}/create_products.sh" \
+      --app-id "$RC_TEST_STORE_APP_ID" \
+      --app-type test_store \
+      --product-ids "$product_ids" \
+      $DRY_RUN_FLAG || true
   fi
 
   printf '\n# RC Entitlement: %s\n' "$ENTITLEMENT_KEY"

@@ -12,6 +12,28 @@
 3. **package name は作成後変更不可・削除不可・再利用不可**
 4. 作成後、Internal testing トラックに 1 度 AAB をアップロード（これをやらないと Monetize メニューが使えない）
 
+### 1-a. Lifetime / Consumable (onetimeproducts) を API で作成する場合の前提
+
+**Subscription (auto-renewing) は AAB 側の特別な宣言なしでも `subscriptions.patch` で API 作成できる**。一方、**lifetime / consumable を `onetimeproducts.patch` で作成するには、AAB の `AndroidManifest.xml` に `com.android.vending.BILLING` permission を宣言済みの AAB を Internal testing 以上に 1 回アップロードしておく必要がある**。
+
+Flutter / React Native / ネイティブ共通で:
+```xml
+<!-- AndroidManifest.xml -->
+<uses-permission android:name="com.android.vending.BILLING" />
+```
+
+この宣言がない状態で `onetimeproducts.patch` を叩くと以下のエラーになる:
+```
+"Can't create product. To fix, request billing permission."
+```
+
+対処:
+1. AndroidManifest.xml に上記 permission を追加
+2. AAB をビルドして Play Console の Internal testing track に 1 回アップロード
+3. その後 `create_inapp_product.sh` が成功する
+
+本 Skill の `create_subscription.sh` と `create_inapp_product.sh` は、上記前提が満たされていれば自動で登録される。満たされていない場合は Play Console UI から手動で商品登録する。
+
 ## 2. Service Account の作成と Play Console 招待
 
 **いつ**: Skill 初回利用時。

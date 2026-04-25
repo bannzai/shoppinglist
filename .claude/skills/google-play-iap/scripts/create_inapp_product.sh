@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
-# inappproduct (one-time / lifetime) を upsert する。
-# subscriptions と異なり Edits セッション不要で /inappproducts エンドポイントを直接叩く。
+# One-time product (lifetime / consumable) を新 API で upsert する。
+# 旧 /inappproducts エンドポイントは "Please migrate to the new publishing API" で非推奨。
+# 新エンドポイント: PATCH /applications/{pkg}/onetimeproducts/{productId}
+#
+# 前提: AndroidManifest.xml に `com.android.vending.BILLING` permission を宣言した AAB を
+#       Play Console の Internal testing track に 1 回アップロード済みであること。
+#       未対応だと "Can't create product. To fix, request billing permission." で失敗する。
+#       詳細: google-play-iap/references/manual-steps.md の §1-a 参照。
+#
 # Usage:
 #   create_inapp_product.sh \
 #     --package-name com.foo.bar \
@@ -46,45 +53,50 @@ done
 
 validate_product_id "$PRODUCT_ID"
 
-# JPY は小数点なし通貨
-PRICE_MICROS="${PRICE_JP}000000"
-
 body=$(jq -n \
   --arg package "$PACKAGE_NAME" \
-  --arg sku "$PRODUCT_ID" \
-  --arg priceMicros "$PRICE_MICROS" \
+  --arg pid "$PRODUCT_ID" \
   --arg ja_title "$DISPLAY_NAME_JA" \
   --arg ja_desc "$DESCRIPTION_JA" \
   --arg en_title "$DISPLAY_NAME_EN" \
   --arg en_desc "$DESCRIPTION_EN" \
+  --arg priceUnits "$PRICE_JP" \
   '{
     packageName: $package,
-    sku: $sku,
-    status: "active",
-    purchaseType: "managedUser",
-    defaultPrice: {priceMicros: $priceMicros, currency: "JPY"},
-    prices: {JP: {priceMicros: $priceMicros, currency: "JPY"}},
-    defaultLanguage: "ja-JP",
-    listings: {
-      "ja-JP": {title: $ja_title, description: $ja_desc},
-      "en-US": {title: $en_title, description: $en_desc}
-    }
+    productId: $pid,
+    listings: [
+      {languageCode: "ja", title: $ja_title, description: $ja_desc},
+      {languageCode: "en-US", title: $en_title, description: $en_desc}
+    ],
+    purchaseOptions: [
+      {
+        purchaseOptionId: "default",
+        state: "ACTIVE",
+        buyOption: {legacyCompatible: true},
+        regionalPricingAndAvailabilityConfigs: [
+          {
+            regionCode: "JP",
+            price: {currencyCode: "JPY", units: $priceUnits, nanos: 0},
+            availability: "AVAILABLE"
+          }
+        ]
+      }
+    ]
   }')
 
 ACCESS_TOKEN=$(get_access_token)
 export ACCESS_TOKEN
 
-encoded_sku=$(printf '%s' "$PRODUCT_ID" | jq -sRr @uri)
+encoded_pid=$(printf '%s' "$PRODUCT_ID" | jq -sRr @uri)
 
-# PUT は upsert 相当なので再実行安全。autoConvertMissingPrices=false で未指定国の価格自動変換を止める。
-printf 'Upserting in-app product: %s (JPY %s)\n' "$PRODUCT_ID" "$PRICE_JP"
-response=$(play_api PUT "/applications/${PACKAGE_NAME}/inappproducts/${encoded_sku}?autoConvertMissingPrices=false" "$body")
+printf 'Upserting one-time product (new API): %s (JPY %s)\n' "$PRODUCT_ID" "$PRICE_JP"
+response=$(play_api PATCH "/applications/${PACKAGE_NAME}/onetimeproducts/${encoded_pid}?regionsVersion.version=2022/02&updateMask=listings,purchaseOptions&allowMissing=true" "$body")
 
 if [[ "${DRY_RUN:-0}" == "1" ]]; then
   exit 0
 fi
 
-if printf '%s' "$response" | jq -e '.sku' >/dev/null 2>&1; then
+if printf '%s' "$response" | jq -e '.productId' >/dev/null 2>&1; then
   printf '  → upserted: id=%s\n' "$PRODUCT_ID"
 else
   printf 'Failed. Response: %s\n' "$response" >&2
