@@ -34,6 +34,7 @@ RevenueCat の v2 REST API を使い、リリース準備に必要な以下を�
 - **Project 自体の作成**: Dashboard で 1 回だけ作成 (https://app.revenuecat.com)
 - **Google Play Service Account JSON のアップロード**: `play_store` 型の App を API で作っても、JSON は別途 Dashboard アップロード必要
 - **App Store Connect の API Key (.p8) を Dashboard 経由でアップロードする方が楽**: API でも `subscription_private_key` フィールドに渡せるが、運用上は Dashboard 推奨
+- **Test Store App の作成**: REST API v2 の `type` enum に `test_store` が含まれないため Dashboard 専用。開発時に実ストア登録なしで IAP フローをテストしたいときに Dashboard で作成 → `lookup_test_store_app.sh` で API 経由 ID 解決 → `create_products.sh --app-type test_store` で Products 登録
 
 ## 環境変数
 スクリプト先頭で `: "${VAR:?required}"` でチェック。事前に `.zshrc` 等で export しておく。
@@ -82,6 +83,16 @@ bash ~/.claude/skills/revenuecat-setup/scripts/create_package.sh \
 
 # Current Offering 設定
 bash ~/.claude/skills/revenuecat-setup/scripts/set_current_offering.sh --lookup-key default
+
+# Test Store (開発時のみ、Dashboard で作成済みが前提)
+# 事前調査
+bash ~/.claude/skills/revenuecat-setup/scripts/inspect_test_store.sh
+# Test Store app_id の解決
+bash ~/.claude/skills/revenuecat-setup/scripts/lookup_test_store_app.sh
+# Test Store Products 登録
+bash ~/.claude/skills/revenuecat-setup/scripts/create_products.sh \
+  --app-id app_xxx --app-type test_store \
+  --product-ids shoppinglist_480yen_1month,shoppinglist_2580yen_6month,shoppinglist_4800yen_1year
 
 # Promotional 付与（テスト用、duration: daily/weekly/monthly/yearly/lifetime 等）
 bash ~/.claude/skills/revenuecat-setup/scripts/grant_promotional.sh \

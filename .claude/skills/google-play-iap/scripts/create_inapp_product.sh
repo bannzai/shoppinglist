@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 # One-time product (lifetime / consumable) を新 API で upsert する。
 # 旧 /inappproducts エンドポイントは "Please migrate to the new publishing API" で非推奨。
-# 新エンドポイント: PATCH /applications/{pkg}/monetization/onetimeproducts/{productId}
+# 新エンドポイント: PATCH /applications/{pkg}/onetimeproducts/{productId}
+#
+# 前提: AndroidManifest.xml に `com.android.vending.BILLING` permission を宣言した AAB を
+#       Play Console の Internal testing track に 1 回アップロード済みであること。
+#       未対応だと "Can't create product. To fix, request billing permission." で失敗する。
+#       詳細: google-play-iap/references/manual-steps.md の §1-a 参照。
+#
 # Usage:
 #   create_inapp_product.sh \
 #     --package-name com.foo.bar \
