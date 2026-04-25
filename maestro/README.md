@@ -99,7 +99,9 @@ maestro --platform android hierarchy --output tmp/mock-purchase-modal-android.xm
 |---|---|---|
 | `shared/anonymous_sign_in.yaml` | 匿名サインインまで到達する共通サブフロー | なし |
 | `shared/open_developer_options.yaml` | 設定 → 開発者オプション画面を開く | 匿名サインイン後 |
-| `shared/mock_purchase.yaml` | 設定 → プレミアム会員 → ペイウォール → 指定 Package 購入 → 購入完了まで | `PACKAGE_TYPE=monthly/annual/lifetime`、匿名サインイン後 |
+| `shared/mock_purchase.yaml` | 設定 → プレミアム会員 → ペイウォール → monthly 購入 → 購入完了まで（monthly 専用） | 匿名サインイン後 |
+| `shared/mock_purchase_annual.yaml` | 同上の annual 版 | 匿名サインイン後 |
+| `shared/mock_purchase_lifetime.yaml` | 同上の lifetime 版 | 匿名サインイン後 |
 | `iap_purchase_monthly.yaml` | monthly 購入後に「プレミアム会員: 有効」を assert | RC Test Store |
 | `iap_purchase_annual.yaml` | annual 購入後に「プレミアム会員: 有効」を assert | RC Test Store |
 | `iap_purchase_lifetime.yaml` | lifetime 購入後に「プレミアム会員: 有効」を assert | RC Test Store |
@@ -113,3 +115,5 @@ maestro --platform android hierarchy --output tmp/mock-purchase-modal-android.xm
 | `premium_shopping_list_limit_duplicate.yaml` | premium 後の複製で 6 個目作成 | RC Test Store |
 | `premium_ai_image_recognition.yaml` | premium 後の AI 画像認識上限 50 | RC Test Store（事前データ任意） |
 | `premium_ai_url_recognition.yaml` | premium 後の AI URL 認識上限 50 | RC Test Store（事前データ任意） |
+| `premium_category_location_order.yaml` | premium 後にカテゴリ買い物場所別並び替えで SnackBar が出ないこと | RC Test Store |
+| `category_location_order_non_premium.yaml` | 非 premium でロケーション別ソートがデフォルト順にフォールバックすること | なし |

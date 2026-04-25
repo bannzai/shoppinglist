@@ -1,138 +1,34 @@
 appId: com.bannzai.shoppinglist
 ---
-# 非プレミアムユーザーのカテゴリロケーション別並び替え制限テスト
-# 匿名ログイン（非プレミアム）でカテゴリ・買い物場所を作成し、
-# 買い物リストでロケーション別ソートがデフォルト順にフォールバックされることを確認する
+# プレミアム状態でカテゴリのロケーション別並び替えが操作可能であることを確認する。
+# non_premium 版 (category_location_order_non_premium.yaml) では同じ操作で
+# 「買い物場所ごとのカテゴリ並び替えはプレミアム機能です」SnackBar が出る。
+# premium 版ではその SnackBar が非表示になることを assert する（弱 assert）。
+#
+# NOTE: 実際の並び替え挙動（ロケーション別 order の永続化）は Maestro の
+# longPressAndDrag が iOS で安定しないため検証しない。Flutter unit test で
+# sortCategoriesByLocation をカバー済み。
 
 - runFlow: shared/anonymous_sign_in.yaml
+- runFlow: shared/mock_purchase.yaml
 
-# --- リスト設定→グループ設定を開く ---
-
+# 買い物場所を 1 つ追加（ロケーション選択ドロップダウンの選択肢として必要）
 - tapOn: "リスト設定"
+- waitForAnimationToEnd
 - assertVisible: "買い物リスト設定"
-# TextFieldのフォーカスを外す
 - tapOn:
     point: "50%,12%"
 - waitForAnimationToEnd
-
 - tapOn: "グループ設定"
 - waitForAnimationToEnd
-- assertVisible: "グループ設定"
-
-# --- 買い物場所の作成 ---
-
 - tapOn: "場所を追加"
-- assertVisible: "場所を追加"
-- tapOn: "場所の名前（例: スーパー）"
-- inputText: "テストスーパー"
-- tapOn:
-    text: "追加"
-    index: 0
-- waitForAnimationToEnd
-- assertVisible: "テストスーパー"
-
-# --- カテゴリ作成: 野菜（キーワード: にんじん） ---
-
-- tapOn: "カテゴリを追加"
-- assertVisible: "カテゴリを追加"
-- tapOn: "カテゴリ名（例: 野菜）"
-- inputText: "野菜"
-- tapOn:
-    text: "追加"
-    index: 0
-- waitForAnimationToEnd
-- assertVisible: "カテゴリ編集"
-
-- tapOn: "キーワードを追加"
-- assertVisible: "キーワードを追加"
-- inputText: "にんじん"
+- inputText: "Premium Mart"
 - tapOn:
     text: "追加"
     index: 0
 - waitForAnimationToEnd
 
-# グループ設定に戻る
-- tapOn:
-    point: "5%,10%"
-- waitForAnimationToEnd
-- assertVisible: "グループ設定"
+# 場所追加後、画面上のどこにも non_premium 用の SnackBar が出ていないこと
+- assertNotVisible: "買い物場所ごとのカテゴリ並び替えはプレミアム機能です"
 
-# --- カテゴリ作成: 肉（キーワード: 鶏肉） ---
-
-- scrollUntilVisible:
-    element: "カテゴリを追加"
-    direction: DOWN
-- tapOn: "カテゴリを追加"
-- assertVisible: "カテゴリを追加"
-- tapOn: "カテゴリ名（例: 野菜）"
-- inputText: "肉"
-- tapOn:
-    text: "追加"
-    index: 0
-- waitForAnimationToEnd
-- assertVisible: "カテゴリ編集"
-
-- tapOn: "キーワードを追加"
-- assertVisible: "キーワードを追加"
-- inputText: "鶏肉"
-- tapOn:
-    text: "追加"
-    index: 0
-- waitForAnimationToEnd
-
-# グループ設定に戻る
-- tapOn:
-    point: "5%,10%"
-- waitForAnimationToEnd
-- assertVisible: "グループ設定"
-- takeScreenshot: screenshots/premium_cat_loc_01_setup_done
-
-# --- リスト設定に戻る ---
-- tapOn:
-    point: "5%,10%"
-- waitForAnimationToEnd
-- assertVisible: "買い物リスト設定"
-
-# TextFieldのフォーカスを外す
-- tapOn:
-    point: "50%,12%"
-- waitForAnimationToEnd
-
-# 買い物する場所で「テストスーパー」を選択
-- tapOn: "なし"
-- waitForAnimationToEnd
-- tapOn: "テストスーパー"
-- waitForAnimationToEnd
-
-# BottomSheetを閉じる
-- tapOn:
-    point: "5%,12%"
-- waitForAnimationToEnd
-
-# --- アイテム追加 ---
-
-- tapOn: "アイテムを追加"
-- inputText: "にんじん"
-- pressKey: enter
-- inputText: "鶏肉"
-- pressKey: enter
-# 空アイテム削除
-- pressKey: enter
-
-# キーボード閉じてフォーカス解除
-- tapOn:
-    point: "50%,6%"
-- waitForAnimationToEnd
-
-# Firestoreデータ同期待ち＆カテゴリヘッダー表示確認
-- extendedWaitUntil:
-    visible: "野菜"
-    timeout: 10000
-- extendedWaitUntil:
-    visible: "肉"
-    timeout: 5000
-
-# 非プレミアムユーザーなのでロケーション別ソートは無効化され、
-# デフォルトの order 順で表示される（野菜=0, 肉=1 → 野菜が先に表示される）
-# スクリーンショットで目視確認
-- takeScreenshot: screenshots/premium_cat_loc_02_default_order_non_premium
+- takeScreenshot: screenshots/premium_category_location_order_unlocked

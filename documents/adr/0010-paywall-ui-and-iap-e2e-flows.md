@@ -81,5 +81,5 @@ E2E の前段として、まず「課金導線が存在するアプリ」「購�
 ### Follow-up
 - iOS / Android での Maestro E2E 実行（Phase I / J）は Test Store × clearState の挙動が解明された後に再開
 - mock purchase modal の `tapOn` 対象（暫定 `"Subscribe"`）は実機調査で確定し、必要なら iOS / Android で platform 別サブフローに分離
-- `maestro/flows/premium_category_location_order.yaml` の名前と実態の不整合（実態は非プレミアム検証）は別 Issue でリネーム + 新規 premium 版作成
+- `maestro/flows/premium_category_location_order.yaml` の名前と実態の不整合は本 PR で同時対応: 既存ファイルを `category_location_order_non_premium.yaml` にリネームし、新規 `premium_category_location_order.yaml`（実 premium 版、SnackBar 非表示の弱 assert）を追加
 - ペイウォール UI のデザイン拡充（コンバージョン視点）は paywall-design skill ベースで別 Issue
