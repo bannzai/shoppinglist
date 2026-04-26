@@ -102,9 +102,36 @@ extension CustomerInfoExtension on CustomerInfo {
   }
 }
 
+/// RevenueCat Offerings を取得する Provider。
+///
+/// `Purchases.configure` 直後の race（Issue #237: Maestro `clearState=true +
+/// clearKeychain=true` 起動で `PlatformException(code:23, CONFIGURATION_ERROR)`
+/// を踏むケース）に備え、`PurchasesErrorCode.configurationError` のみ
+/// 指数バックオフで最大 3 回 retry する。それ以外のエラーは即時 rethrow。
 @Riverpod()
-Future<Offerings> offerings(Ref ref) {
-  return Purchases.getOfferings();
+Future<Offerings> offerings(Ref ref) async {
+  const retryDelays = [
+    Duration(milliseconds: 500),
+    Duration(seconds: 1),
+    Duration(seconds: 2),
+  ];
+  for (var attempt = 0;; attempt++) {
+    try {
+      return await Purchases.getOfferings();
+    } on PlatformException catch (exception) {
+      final isConfigurationError =
+          PurchasesErrorHelper.getErrorCode(exception) ==
+              PurchasesErrorCode.configurationError;
+      if (!isConfigurationError || attempt >= retryDelays.length) {
+        rethrow;
+      }
+      analytics.logEvent(
+        name: 'offerings_retry_after_configuration_error',
+        parameters: {'attempt': attempt},
+      );
+      await Future.delayed(retryDelays[attempt]);
+    }
+  }
 }
 
 @Riverpod()
@@ -173,6 +200,13 @@ Package? monthlyPremiumPackage(Ref ref) {
       (element) => element.packageType == PackageType.monthly);
 }
 
+/// RevenueCat SDK の初期化。
+///
+/// `Purchases.configure` は同期返却 API だが、内部のネイティブ初期化は
+/// 非同期で走る。Issue #237: Maestro `clearState=true + clearKeychain=true`
+/// 起動時、初期化完了前に `getOfferings` が走り CONFIGURATION_ERROR を踏むため、
+/// configure 直後に `Purchases.getCustomerInfo()` を await して
+/// SDK の初期化完了を barrier として待つ。
 Future<void> initializePurchase() async {
   await Purchases.setLogLevel(
       Environment.isDevelopment ? LogLevel.debug : LogLevel.info);
@@ -192,6 +226,14 @@ Future<void> initializePurchase() async {
   );
 
   Purchases.configure(PurchasesConfiguration(apiKey));
+
+  // configure 完了の barrier。CustomerInfo 取得失敗自体は致命でないため例外を握りつぶす
+  // （offeringsProvider 側で getOfferings を retry するため）。
+  try {
+    await Purchases.getCustomerInfo();
+  } on PlatformException catch (exception, stack) {
+    errorLogger.recordError(exception, stack);
+  }
 }
 
 final purchaseProvider = Provider((ref) => Purchase());
