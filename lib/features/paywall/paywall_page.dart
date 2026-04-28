@@ -21,7 +21,26 @@ class PaywallPage extends ConsumerWidget {
       appBar: AppBar(title: const Text('プレミアムプラン')),
       body: offerings.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(e.toString())),
+        error: (e, _) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(e.toString()),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  key: const Key('paywall_retry'),
+                  onPressed: () {
+                    analytics.logEvent(name: 'tap_paywall_retry');
+                    ref.invalidate(offeringsProvider);
+                  },
+                  child: const Text('再試行'),
+                ),
+              ],
+            ),
+          ),
+        ),
         data: (_) {
           final monthly = ref.watch(monthlyPackageProvider);
           final annual = ref.watch(annualPackageProvider);

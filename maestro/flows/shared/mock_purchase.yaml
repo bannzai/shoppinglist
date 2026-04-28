@@ -35,12 +35,12 @@ appId: com.bannzai.shoppinglist
     index: 0
 
 # RC Test Store mock purchase modal を承認する。
-# NOTE: tapOn の対象 text/id は実機の maestro hierarchy 調査で確定させること。
-# 暫定: "Subscribe" を想定（iOS / Android で異なる可能性あり）。
+# モーダルには "Test valid purchase" / "Test failed purchase" / "Cancel" の 3 ボタンが並ぶ。
+# 正常購入完遂のため "Test valid purchase" を選ぶ（Issue #237 動作確認時に実機で確認）。
 - extendedWaitUntil:
-    visible: "Subscribe"
+    visible: "Test valid purchase"
     timeout: 30000
-- tapOn: "Subscribe"
+- tapOn: "Test valid purchase"
 
 - extendedWaitUntil:
     visible: "購入ありがとうございました"

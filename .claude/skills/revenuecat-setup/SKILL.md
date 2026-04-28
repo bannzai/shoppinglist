@@ -35,6 +35,7 @@ RevenueCat の v2 REST API を使い、リリース準備に必要な以下を�
 - **Google Play Service Account JSON のアップロード**: `play_store` 型の App を API で作っても、JSON は別途 Dashboard アップロード必要
 - **App Store Connect の API Key (.p8) を Dashboard 経由でアップロードする方が楽**: API でも `subscription_private_key` フィールドに渡せるが、運用上は Dashboard 推奨
 - **Test Store App の作成**: REST API v2 の `type` enum に `test_store` が含まれないため Dashboard 専用。開発時に実ストア登録なしで IAP フローをテストしたいときに Dashboard で作成 → `lookup_test_store_app.sh` で API 経由 ID 解決 → `create_products.sh --app-type test_store` で Products 登録
+- **Test Store Product の Base price 設定**: REST API v2 の Product create / update / create_in_store のいずれにも `price` / `currency` フィールドが無いため Dashboard 専用。**未設定だと SDK 側で `CONFIGURATION_ERROR(23)` を踏み Offerings 取得失敗**（Issue #237 で確認済み）
 
 ## 環境変数
 スクリプト先頭で `: "${VAR:?required}"` でチェック。事前に `.zshrc` 等で export しておく。
@@ -93,6 +94,8 @@ bash ~/.claude/skills/revenuecat-setup/scripts/lookup_test_store_app.sh
 bash ~/.claude/skills/revenuecat-setup/scripts/create_products.sh \
   --app-id app_xxx --app-type test_store \
   --product-ids shoppinglist_480yen_1month,shoppinglist_2580yen_6month,shoppinglist_4800yen_1year
+# ⚠️ 上記の後、Dashboard で各 Test Store product に Base price を必ず設定する
+#    詳細: references/manual-steps.md section 9
 
 # Promotional 付与（テスト用、duration: daily/weekly/monthly/yearly/lifetime 等）
 bash ~/.claude/skills/revenuecat-setup/scripts/grant_promotional.sh \
@@ -109,6 +112,7 @@ bash ~/.claude/skills/revenuecat-setup/scripts/grant_promotional.sh \
 4. `create_entitlement.sh` で `lookup_key=Premium` の Entitlement を作成
 5. `grant_promotional.sh` で自分の Firebase UID にプレミアムを付与
 6. アプリ側で `customerInfoProvider` の `isPremium=true` になることを確認
+7. (Test Store のみ) `create_products.sh --app-type test_store` 後、Dashboard で各 product に Base price を設定し、curl で `/rcbilling/v1/subscribers/dummy/products?id=...` が `product_details` 非空を返すことを確認（`references/manual-steps.md` section 9）
 
 ## 関連リンク
 - 公式・非公式リファレンス: `references/links.md`

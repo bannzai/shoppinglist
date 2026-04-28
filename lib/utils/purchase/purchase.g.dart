@@ -6,9 +6,16 @@ part of 'purchase.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$offeringsHash() => r'a44517ca66731d95ed64ddb147c72567df8b12c7';
+String _$offeringsHash() => r'ebd4126332e68385e116eae2daef545cc07975d9';
 
-/// See also [offerings].
+/// RevenueCat Offerings を取得する Provider。
+///
+/// `Purchases.configure` 直後の race（Issue #237: Maestro `clearState=true +
+/// clearKeychain=true` 起動で `PlatformException(code:23, CONFIGURATION_ERROR)`
+/// を踏むケース）に備え、`PurchasesErrorCode.configurationError` のみ
+/// 指数バックオフで最大 3 回 retry する。それ以外のエラーは即時 rethrow。
+///
+/// Copied from [offerings].
 @ProviderFor(offerings)
 final offeringsProvider = AutoDisposeFutureProvider<Offerings>.internal(
   offerings,
