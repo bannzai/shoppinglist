@@ -7,6 +7,7 @@ import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list/components/app_bar.dart';
 
 import 'package:shoppinglist/features/shopping_list/components/group_switcher.dart';
@@ -121,7 +122,14 @@ class ShoppingListPage extends HookConsumerWidget {
                                 } on ShoppingListLimitExceededException catch (e) {
                                   if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(e.toString())),
+                                      SnackBar(
+                                        content: Text(e.toString()),
+                                        action: SnackBarAction(
+                                          label: 'アップグレード',
+                                          onPressed: () =>
+                                              showPaywall(context: context),
+                                        ),
+                                      ),
                                     );
                                   }
                                 } catch (_) {

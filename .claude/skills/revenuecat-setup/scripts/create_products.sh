@@ -104,4 +104,14 @@ for product_id in "${IDS[@]}"; do
     exit 1
   fi
   printf '  → created: id=%s\n' "$rc_product_id"
+
+  # Test Store product は Base price を Dashboard で設定しないと
+  # /rcbilling/.../products が空配列を返し、SDK が CONFIGURATION_ERROR(23) になる (Issue #237)。
+  # API v2 では price 設定エンドポイントが存在しないため Dashboard 必須。
+  if [[ "$APP_TYPE" == "test_store" ]]; then
+    printf '  ⚠️  Set Base price in Dashboard (REQUIRED, not supported via API):\n' >&2
+    printf '      https://app.revenuecat.com/projects/%s/products/%s\n' \
+      "${REVENUECAT_PROJECT_ID}" "$rc_product_id" >&2
+    printf '      Detail: references/manual-steps.md section 9\n' >&2
+  fi
 done

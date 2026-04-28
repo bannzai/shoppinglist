@@ -1,0 +1,27 @@
+appId: com.bannzai.shoppinglist
+---
+# プレミアム状態では 1 グループあたり 6 個目以降のリストも作成できることを確認する。
+# non_premium では 6 個目で SnackBar「無料プランでは 5 個まで」で遮断される。
+
+- runFlow: shared/anonymous_sign_in.yaml
+- runFlow: shared/mock_purchase.yaml
+
+# 6 個のリストを連続追加する（non_premium では 6 個目で block される）
+- repeat:
+    times: 6
+    commands:
+      - tapOn: "メニュー"
+      - waitForAnimationToEnd
+      - tapOn: "買い物リストを追加"
+      - waitForAnimationToEnd
+      - tapOn: "リスト名"
+      - inputText: "List ${maestro.copies}"
+      - tapOn:
+          text: "追加"
+          index: 0
+      - waitForAnimationToEnd
+
+# non_premium 時の上限 SnackBar が出ないこと
+- assertNotVisible: "無料プランでは1グループあたり5個までリストを作成できます"
+
+- takeScreenshot: screenshots/premium_shopping_list_limit_unlocked

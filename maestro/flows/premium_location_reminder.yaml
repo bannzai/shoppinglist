@@ -1,0 +1,28 @@
+appId: com.bannzai.shoppinglist
+---
+# プレミアム状態では位置情報リマインダーを有効化できることを確認する。
+# non_premium 版では SnackBar で遮断される。
+
+- runFlow: shared/anonymous_sign_in.yaml
+- runFlow: shared/mock_purchase.yaml
+
+# 設定 → 位置情報リマインダー Switch
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+- tapOn: "位置情報リマインダー"
+- waitForAnimationToEnd
+
+# non_premium 時の SnackBar が出ないこと
+- assertNotVisible: "位置情報リマインダーはプレミアム機能です"
+
+# 位置情報権限ダイアログが出たら許可する
+- runFlow:
+    when:
+      visible: "許可"
+    commands:
+      - tapOn: "許可"
+      - waitForAnimationToEnd
+
+- takeScreenshot: screenshots/premium_location_reminder_unlocked

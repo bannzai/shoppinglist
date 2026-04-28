@@ -1,0 +1,30 @@
+appId: com.bannzai.shoppinglist
+---
+# プレミアム状態では 2 個目以降のグループも作成できることを確認する。
+# non_premium 版では「ソログループ+1グループまで」の SnackBar で遮断される。
+
+- runFlow: shared/anonymous_sign_in.yaml
+- runFlow: shared/mock_purchase.yaml
+
+# 設定 → グループ管理
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+- tapOn: "グループ管理"
+- waitForAnimationToEnd
+
+# 2 個目のグループを作成
+- tapOn: "グループ作成"
+- waitForAnimationToEnd
+- tapOn: "グループ名"
+- inputText: "Extra Group"
+- tapOn:
+    text: "作成"
+    index: 0
+- waitForAnimationToEnd
+
+# non_premium 時の SnackBar が出ないこと
+- assertNotVisible: "無料プランではソログループ\\+1グループまで作成できます"
+
+- takeScreenshot: screenshots/premium_group_creation_unlocked
