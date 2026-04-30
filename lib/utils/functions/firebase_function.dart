@@ -219,6 +219,17 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     }
   }
 
+  /// RevenueCat Promotions API経由で付与済みのプレミアムEntitlementを取り消す。
+  /// 開発者オプションでのテスト用（実購入由来のEntitlementには影響しない）。
+  Future<void> revokePromotionalPremium() async {
+    final result = await httpsCallable('revokePromotionalPremium').call();
+    debugPrint('revokePromotionalPremium.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+  }
+
   /// 商品写真をFirebase Storageから削除する。
   Future<void> deleteShoppingListItemImage({
     required String groupID,
