@@ -5,7 +5,7 @@ appId: com.bannzai.shoppinglist
 # premium の「プレミアム: 無制限」に切り替わる。
 
 - runFlow: shared/anonymous_sign_in.yaml
-- runFlow: shared/mock_purchase.yaml
+- runFlow: shared/grant_premium_via_debug.yaml
 
 # リスト設定を開いて「買い物リストの保存期間」タイルを確認
 - tapOn: "リスト設定"

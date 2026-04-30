@@ -4,7 +4,7 @@ appId: com.bannzai.shoppinglist
 # non_premium では複製で 6 個目を作ろうとすると SnackBar で遮断される。
 
 - runFlow: shared/anonymous_sign_in.yaml
-- runFlow: shared/mock_purchase.yaml
+- runFlow: shared/grant_premium_via_debug.yaml
 
 # 5 個のリストを作成
 - repeat:

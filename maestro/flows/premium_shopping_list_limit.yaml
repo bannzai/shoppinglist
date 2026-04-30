@@ -4,7 +4,7 @@ appId: com.bannzai.shoppinglist
 # non_premium では 6 個目で SnackBar「無料プランでは 5 個まで」で遮断される。
 
 - runFlow: shared/anonymous_sign_in.yaml
-- runFlow: shared/mock_purchase.yaml
+- runFlow: shared/grant_premium_via_debug.yaml
 
 # 6 個のリストを連続追加する（non_premium では 6 個目で block される）
 - repeat:

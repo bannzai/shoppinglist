@@ -5,6 +5,7 @@ appId: com.bannzai.shoppinglist
 # 買い物リストでロケーション別ソートがデフォルト順にフォールバックされることを確認する
 
 - runFlow: shared/anonymous_sign_in.yaml
+- runFlow: shared/grant_premium_via_debug.yaml
 
 # --- リスト設定→グループ設定を開く ---
 
