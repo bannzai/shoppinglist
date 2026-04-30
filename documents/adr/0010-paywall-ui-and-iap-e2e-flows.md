@@ -79,7 +79,13 @@ E2E の前段として、まず「課金導線が存在するアプリ」「購�
 - **Flutter `Key('paywall_subscribe_xxx')` は実質飾り**: iOS で accessibility identifier に伝搬しないため、Maestro テストからは `text + index` で間接 tap する。将来 `Semantics` に切り替える場合は本 ADR を更新する
 
 ### Follow-up
-- iOS / Android での Maestro E2E 実行（Phase I / J）は Test Store × clearState の挙動が解明された後に再開
-- mock purchase modal の `tapOn` 対象（暫定 `"Subscribe"`）は実機調査で確定し、必要なら iOS / Android で platform 別サブフローに分離
-- `maestro/flows/premium_category_location_order.yaml` の名前と実態の不整合（実態は非プレミアム検証）は別 Issue でリネーム + 新規 premium 版作成
+- ✅ Issue #237 root cause（Test Store の Subscription "Premium" に Base price 未設定で
+  GetOfferingsOperation が空を返す）が判明し、Test Store 設定を修正済み（Issue #237 で対応完了）
+- ✅ `premium_*.yaml` 11 本は Issue #239 で `shared/grant_premium_via_debug.yaml` 経由
+  （RC Promotional Entitlement を開発者オプションから直接付与）に方針転換。
+  `iap_purchase_*.yaml` 3 本のみ実購入動線検証として `shared/mock_purchase*.yaml` を踏み続ける
+- ✅ `revokePromotionalPremium` onCall を Issue #239 で追加。テスト後のクリーンアップに使用
+- mock purchase modal の `tapOn` 対象（暫定 `"Subscribe"`）は実機調査で確定し、必要なら iOS / Android で platform 別サブフローに分離（`iap_purchase_*.yaml` のみで使用）
+- `maestro/flows/premium_category_location_order.yaml` のロケーション別ソート assert
+  実装は別 Issue。Issue #239 では `grant_premium_via_debug` 経由でプレミアム化のみ揃えた
 - ペイウォール UI のデザイン拡充（コンバージョン視点）は paywall-design skill ベースで別 Issue
