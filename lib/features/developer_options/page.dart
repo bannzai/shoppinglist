@@ -174,11 +174,33 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
             resultMessage: resultMessage,
             action: () async {
               await functions.grantPromotionalPremium(duration: 'daily');
-              // RC SDKのcustomerInfoをrefetchしてプレミアム状態を反映する
+              // RC SDK のキャッシュを無効化してから fresh fetch する。
+              // invalidate を挟まないと getCustomerInfo() が古いキャッシュを返し、
+              // Promotional Entitlement の付与が UI に反映されない。
+              await Purchases.invalidateCustomerInfoCache();
               await Purchases.getCustomerInfo();
               ref.invalidate(customerInfoProvider);
             },
             actionName: 'プレミアム付与',
+          ),
+        ),
+
+        // プレミアム剥奪（RC Promotions API revoke 経由）
+        _ActionTile(
+          title: 'プレミアム剥奪',
+          subtitle: 'RC Promo経由で付与したプレミアムEntitlementを取り消す（dev環境のみ）',
+          icon: Icons.star_border,
+          isProcessing: isProcessing.value,
+          onTap: () => _execute(
+            isProcessing: isProcessing,
+            resultMessage: resultMessage,
+            action: () async {
+              await functions.revokePromotionalPremium();
+              await Purchases.invalidateCustomerInfoCache();
+              await Purchases.getCustomerInfo();
+              ref.invalidate(customerInfoProvider);
+            },
+            actionName: 'プレミアム剥奪',
           ),
         ),
 
