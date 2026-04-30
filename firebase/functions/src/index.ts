@@ -103,3 +103,10 @@ if (
 ) {
   exports.grantPromotionalPremium = require("./functions/grantPromotionalPremium/function");
 }
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "revokePromotionalPremium"
+) {
+  exports.revokePromotionalPremium = require("./functions/revokePromotionalPremium/function");
+}
