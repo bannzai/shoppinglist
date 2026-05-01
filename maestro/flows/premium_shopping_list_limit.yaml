@@ -7,18 +7,18 @@ appId: com.bannzai.shoppinglist
 - runFlow: shared/grant_premium_via_debug.yaml
 
 # 6 個のリストを連続追加する（non_premium では 6 個目で block される）
+# メニュー → 「買い物リストを追加」（PopupMenuItem）→ BottomSheet 表示 →
+# BottomSheet 内の「買い物リストを追加」ListTile で名前なしリストを作成する。
 - repeat:
     times: 6
     commands:
       - tapOn: "メニュー"
       - waitForAnimationToEnd
       - tapOn: "買い物リストを追加"
-      - waitForAnimationToEnd
-      - tapOn: "リスト名"
-      - inputText: "List ${maestro.copies}"
-      - tapOn:
-          text: "追加"
-          index: 0
+      - extendedWaitUntil:
+          visible: "現在の買い物リストを複製"
+          timeout: 5000
+      - tapOn: "買い物リストを追加"
       - waitForAnimationToEnd
 
 # non_premium 時の上限 SnackBar が出ないこと
