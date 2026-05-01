@@ -110,3 +110,10 @@ if (
 ) {
   exports.revokePromotionalPremium = require("./functions/revokePromotionalPremium/function");
 }
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "setupTestCategoryLocationOrder"
+) {
+  exports.setupTestCategoryLocationOrder = require("./functions/setupTestCategoryLocationOrder/function");
+}

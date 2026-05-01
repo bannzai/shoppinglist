@@ -230,6 +230,29 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     }
   }
 
+  /// カテゴリのロケーション別表示順序をテスト用に設定する。
+  /// [firstCategoryName] の順序を 0、[secondCategoryName] の順序を 1 に設定する。
+  /// 開発者オプションでのテスト用。
+  Future<void> setupTestCategoryLocationOrder({
+    required String groupID,
+    required String locationName,
+    required String firstCategoryName,
+    required String secondCategoryName,
+  }) async {
+    final result =
+        await httpsCallable('setupTestCategoryLocationOrder').call({
+      'groupID': groupID,
+      'locationName': locationName,
+      'firstCategoryName': firstCategoryName,
+      'secondCategoryName': secondCategoryName,
+    });
+    debugPrint('setupTestCategoryLocationOrder.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+  }
+
   /// 商品写真をFirebase Storageから削除する。
   Future<void> deleteShoppingListItemImage({
     required String groupID,
