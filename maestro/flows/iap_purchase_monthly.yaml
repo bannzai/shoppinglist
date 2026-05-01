@@ -12,7 +12,10 @@ appId: com.bannzai.shoppinglist
     text: "設定.*"
     index: 0
 - waitForAnimationToEnd
-- assertVisible: "プレミアム会員"
-- assertVisible: "有効"
+# ListTile の title/subtitle が 1 つのセマンティクス要素にマージされるため部分一致 regex で確認
+- assertVisible:
+    text: ".*プレミアム会員.*"
+- assertVisible:
+    text: ".*有効.*"
 
 - takeScreenshot: screenshots/iap_purchase_monthly_completed
