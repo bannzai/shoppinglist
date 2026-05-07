@@ -22,26 +22,29 @@ class UserDeveloperTokenSync {
   /// と異なる場合のみ Firestore を更新する。
   ///
   /// - dart-define が空文字（本番ユーザービルド）→ 何もしない
+  /// - AppUser ドキュメント未作成 → 何もしない（AppUserCreate の後に呼ばれる前提）
   /// - 既存値が一致 → 書き込みスキップ（無駄な write を避ける）
-  /// - 不一致 / 未設定 → update する
+  /// - 不一致 → AppUser を copyWith して set(merge: true) で更新
+  ///   タイムスタンプは ServerUpdatedTimestamp converter が自動付与する
   Future<void> call() async {
     if (Environment.developerToken.isEmpty) {
       return;
     }
     final appUserSnapshot = await userDatabase.userReference().get();
-    if (appUserSnapshot.data()?.developerToken == Environment.developerToken) {
+    final appUser = appUserSnapshot.data();
+    if (appUser == null ||
+        appUser.developerToken == Environment.developerToken) {
       return;
     }
-    await userDatabase.userReference().update({
-      'developerToken': Environment.developerToken,
-      'updatedDateTime': FieldValue.serverTimestamp(),
-      'serverUpdatedDateTime': FieldValue.serverTimestamp(),
-    });
+    await userDatabase.userReference().set(
+          appUser.copyWith(developerToken: Environment.developerToken),
+          SetOptions(merge: true),
+        );
   }
 }
 
 /// [UserDeveloperTokenSync] を提供する Provider。
 @Riverpod(dependencies: [userDatabase])
 UserDeveloperTokenSync userDeveloperTokenSync(Ref ref) {
-  return UserDeveloperTokenSync(userDatabase: ref.read(userDatabaseProvider));
+  return UserDeveloperTokenSync(userDatabase: ref.watch(userDatabaseProvider));
 }
