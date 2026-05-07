@@ -4,7 +4,7 @@ import { defineString } from "firebase-functions/params";
 import * as z from "zod";
 import { ai } from "../utils/genkit";
 import { appAuthPolicy } from "../utils/authPolicy";
-import { appEnv } from "../../core/env";
+import { developerToken, isDeveloper } from "../../core/developer";
 import {
   DataResponseSchema,
   ErrorResponseSchema,
@@ -34,22 +34,19 @@ const revokePromotionalPremiumFlow = ai.defineFlow(
   },
   async () => {
     try {
-      // 開発環境でのみ実行可能。本番環境での運用ミスを防止する。
-      if (appEnv() !== "dev") {
-        return {
-          result: "NG" as const,
-          error: {
-            message: "この機能は開発環境でのみ使用できます",
-          },
-        };
-      }
-
       const context = ai.currentContext();
       const uid = context?.auth?.uid;
       if (!uid) {
         return {
           result: "NG" as const,
           error: { message: "認証されていません" },
+        };
+      }
+      // 登録された開発者本人のみ実行可能。本番ユーザーが叩いても NG を返す。
+      if (!(await isDeveloper(uid))) {
+        return {
+          result: "NG" as const,
+          error: { message: "この機能は開発者のみ使用できます" },
         };
       }
 
@@ -105,6 +102,7 @@ const revokePromotionalPremiumFlow = ai.defineFlow(
 module.exports = onCallGenkit(
   {
     authPolicy: appAuthPolicy("revokePromotionalPremium"),
+    secrets: [developerToken],
   },
   revokePromotionalPremiumFlow
 );

@@ -28,9 +28,10 @@ jest.mock("firebase-functions/params", () => ({
   defineString: jest.fn(() => ({ value: () => "test-secret-key" })),
 }));
 
-const mockAppEnv = jest.fn();
-jest.mock("../../core/env", () => ({
-  appEnv: () => mockAppEnv(),
+const mockIsDeveloper = jest.fn();
+jest.mock("../../core/developer", () => ({
+  developerToken: { value: () => "test-secret-key" },
+  isDeveloper: (...args: unknown[]) => mockIsDeveloper(...args),
 }));
 
 const originalFetch = global.fetch;
@@ -38,7 +39,7 @@ const mockFetch = jest.fn();
 
 beforeEach(() => {
   jest.clearAllMocks();
-  mockAppEnv.mockReturnValue("dev");
+  mockIsDeveloper.mockResolvedValue(true);
   (global as any).fetch = mockFetch;
 });
 
@@ -50,7 +51,7 @@ afterAll(() => {
 require("./function");
 
 describe("revokePromotionalPremium", () => {
-  test("正常系: dev 環境で剥奪できる", async () => {
+  test("正常系: 開発者として認証されたユーザーで剥奪できる", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
     mockFetch.mockResolvedValue({
       ok: true,
@@ -62,6 +63,7 @@ describe("revokePromotionalPremium", () => {
 
     expect(result.result).toBe("OK");
     expect(result.data.success).toBe(true);
+    expect(mockIsDeveloper).toHaveBeenCalledWith("user-1");
     expect(mockFetch).toHaveBeenCalledWith(
       "https://api.revenuecat.com/v1/subscribers/user-1/entitlements/Premium/revoke_promotionals",
       expect.objectContaining({
@@ -74,14 +76,14 @@ describe("revokePromotionalPremium", () => {
     );
   });
 
-  test("異常系: prod 環境では実行できない", async () => {
-    mockAppEnv.mockReturnValue("prod");
+  test("異常系: 開発者ではないユーザーは実行できない", async () => {
+    mockIsDeveloper.mockResolvedValue(false);
     mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
 
     const result = await capturedFlowFn({});
 
     expect(result.result).toBe("NG");
-    expect(result.error.message).toContain("開発環境でのみ");
+    expect(result.error.message).toContain("開発者のみ");
     expect(mockFetch).not.toHaveBeenCalled();
   });
 

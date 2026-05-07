@@ -70,9 +70,10 @@ jest.mock("firebase-functions/params", () => ({
   defineString: jest.fn(() => ({ value: () => "" })),
 }));
 
-const mockAppEnv = jest.fn();
-jest.mock("../../core/env", () => ({
-  appEnv: () => mockAppEnv(),
+const mockIsDeveloper = jest.fn();
+jest.mock("../../core/developer", () => ({
+  developerToken: { value: () => "test-secret-key" },
+  isDeveloper: (...args: unknown[]) => mockIsDeveloper(...args),
 }));
 
 // モジュール読み込み（モック設定後）
@@ -149,17 +150,18 @@ function setupDefaultMocks() {
 
 beforeEach(() => {
   jest.clearAllMocks();
-  mockAppEnv.mockReturnValue("dev");
+  mockIsDeveloper.mockResolvedValue(true);
 });
 
 describe("setupTestCategoryLocationOrder", () => {
-  test("正常系: dev環境でlocationOrdersを更新できる", async () => {
+  test("正常系: 開発者として認証されたユーザーでlocationOrdersを更新できる", async () => {
     setupDefaultMocks();
 
     const result = await capturedFlowFn(INPUT);
 
     expect(result.result).toBe("OK");
     expect(result.data.success).toBe(true);
+    expect(mockIsDeveloper).toHaveBeenCalledWith("user-1");
     expect(mockRunTransaction).toHaveBeenCalledTimes(1);
     expect(mockTransactionUpdate).toHaveBeenCalledTimes(2);
     expect(mockTransactionUpdate).toHaveBeenCalledWith(
@@ -178,14 +180,14 @@ describe("setupTestCategoryLocationOrder", () => {
     );
   });
 
-  test("異常系: prod環境では実行できない", async () => {
-    mockAppEnv.mockReturnValue("prod");
+  test("異常系: 開発者ではないユーザーは実行できない", async () => {
+    mockIsDeveloper.mockResolvedValue(false);
     mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
 
     const result = await capturedFlowFn(INPUT);
 
     expect(result.result).toBe("NG");
-    expect(result.error.message).toBe("この機能は開発環境でのみ使用できます");
+    expect(result.error.message).toBe("この機能は開発者のみ使用できます");
     expect(mockRunTransaction).not.toHaveBeenCalled();
   });
 
