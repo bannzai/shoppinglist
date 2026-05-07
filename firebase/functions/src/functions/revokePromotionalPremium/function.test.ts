@@ -25,7 +25,7 @@ jest.mock("firebase-functions", () => ({
 }));
 
 jest.mock("firebase-functions/params", () => ({
-  defineString: jest.fn(() => ({ value: () => "test-secret-key" })),
+  defineSecret: jest.fn(() => ({ value: () => "test-secret-key" })),
 }));
 
 const mockIsDeveloper = jest.fn();

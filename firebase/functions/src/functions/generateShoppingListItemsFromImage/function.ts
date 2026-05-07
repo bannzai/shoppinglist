@@ -9,7 +9,10 @@ import { appAuthPolicy } from "../utils/authPolicy";
 import { DataResponseSchema, ErrorResponseSchema } from "../../entity/response";
 import { UserAIUsageData } from "../../entity/ai_usage";
 import fs from "fs";
-import { defineString } from "firebase-functions/params";
+import { defineSecret } from "firebase-functions/params";
+
+/// Gemini API Key。Secret Manager 経由で取得する。
+const googleAIApiKey = defineSecret("GOOGLE_GENAI_API_KEY");
 
 const ResponseSchema = z.union([
   DataResponseSchema.extend({
@@ -170,8 +173,27 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
       };
     }
 
+    // Secret Manager から API Key を取得し、Gemini クライアントを初期化する
+    const apiKey = googleAIApiKey.value();
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const fileManager = new GoogleAIFileManager(apiKey);
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.0-flash",
+    });
+    const generationConfig = {
+      temperature: 1,
+      topP: 0.95,
+      topK: 40,
+      maxOutputTokens: 8192,
+      responseMimeType: "text/plain",
+    };
+
     try {
-      const imageFile = await uploadBase64ImageToGemini(base64Image, mimeType);
+      const imageFile = await uploadBase64ImageToGemini(
+        fileManager,
+        base64Image,
+        mimeType
+      );
 
       const chatSession = await model.startChat({
         generationConfig,
@@ -260,27 +282,13 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
 module.exports = onCallGenkit(
   {
     authPolicy: appAuthPolicy("generateShoppingListItemsFromImage"),
+    secrets: [googleAIApiKey],
   },
   generateShoppingListItemsFromImageFlow
 );
 
-const apiKey = defineString("GOOGLE_GENAI_API_KEY").value();
-const genAI = new GoogleGenerativeAI(apiKey);
-const fileManager = new GoogleAIFileManager(apiKey);
-
-const model = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash",
-});
-
-const generationConfig = {
-  temperature: 1,
-  topP: 0.95,
-  topK: 40,
-  maxOutputTokens: 8192,
-  responseMimeType: "text/plain",
-};
-
 async function uploadBase64ImageToGemini(
+  fileManager: GoogleAIFileManager,
   base64Image: string,
   mimeType: string
 ) {

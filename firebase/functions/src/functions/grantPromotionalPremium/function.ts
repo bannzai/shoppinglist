@@ -1,6 +1,6 @@
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
-import { defineString } from "firebase-functions/params";
+import { defineSecret } from "firebase-functions/params";
 import * as z from "zod";
 import { ai } from "../utils/genkit";
 import { appAuthPolicy } from "../utils/authPolicy";
@@ -10,8 +10,8 @@ import {
   ErrorResponseSchema,
 } from "../../entity/response";
 
-/// RevenueCat Secret API Key。Promotions APIの呼び出しに使用する。
-const REVENUECAT_SECRET_API_KEY = defineString("REVENUECAT_SECRET_API_KEY");
+/// RevenueCat Secret API Key。Promotions APIの呼び出しに使用する。Secret Manager 経由で取得。
+const revenueCatSecretApiKey = defineSecret("REVENUECAT_SECRET_API_KEY");
 
 /// RevenueCatのプレミアムEntitlement識別子。
 const PREMIUM_ENTITLEMENT_IDENTIFIER = "Premium";
@@ -84,7 +84,7 @@ const grantPromotionalPremiumFlow = ai.defineFlow(
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${REVENUECAT_SECRET_API_KEY.value()}`,
+            Authorization: `Bearer ${revenueCatSecretApiKey.value()}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ duration: duration as PromotionDuration }),
@@ -130,7 +130,7 @@ const grantPromotionalPremiumFlow = ai.defineFlow(
 module.exports = onCallGenkit(
   {
     authPolicy: appAuthPolicy("grantPromotionalPremium"),
-    secrets: [developerToken],
+    secrets: [developerToken, revenueCatSecretApiKey],
   },
   grantPromotionalPremiumFlow
 );

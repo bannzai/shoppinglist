@@ -1,3 +1,5 @@
+import { appEnv } from "../../core/env";
+
 type AuthPolicy = (auth: any, data: any) => boolean | Promise<boolean>;
 
 export function appAuthPolicy(fn: string): AuthPolicy {
@@ -16,7 +18,7 @@ export function appAuthPolicy(fn: string): AuthPolicy {
       throw new Error("User token is expired");
     }
 
-    if (process.env.FUNCTIONS_EMULATOR === "true") {
+    if (appEnv() === "dev") {
       console.log("[DEBUG] User ID: ", auth.uid);
     }
     return true;

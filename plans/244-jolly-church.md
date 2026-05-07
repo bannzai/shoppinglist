@@ -652,3 +652,249 @@ maestro test maestro/flows/shared/grant_premium_via_debug.yaml
 - [ ] 開発者トークン無しのアカウントで上記 3 関数が NG `"この機能は開発者のみ使用できます"` を返す
 - [ ] Phase A の `.env.shopping-list-prod-a615c` の `APP_ENV=dev` → `prod` 修正がプロセス中の安全弁として最初のコミットに含まれている
 - [ ] Phase E で `core/env.ts` ごと削除し、`appEnv` 参照が 0 件になっている
+
+---
+
+# 追加対応 Phase G: 全 secret を defineSecret (gcloud Secret Manager) に統一
+
+## Context
+
+PR #245 のレビュー対応で `addf02c` (`chore: plans を更新`) から 3 つの secret 値が漏洩していた:
+- `SHOPPINGLIST_DEVELOPER_TOKEN` (uuid)
+- `GOOGLE_GENAI_API_KEY` (Gemini)
+- `REVENUECAT_SECRET_API_KEY` (RevenueCat)
+
+`a990ad2` で plan ファイルからは redact 済みだが git history には残るため、ユーザーが 3 つの値を rotate した上で **すべて GCP Secret Manager (= Firebase の `defineSecret`) で一元管理** に切り替え。これにより:
+- `.env.<projectId>` ファイルから secret 値を全廃して PR の git history に永久露出するリスクを除去
+- Firebase Functions v2 の公式推奨パスに統一 (`defineSecret` + `onCall*({ secrets: [...] }, ...)`)
+- 既存の `defineString("...")` で `.env.<projectId>` 由来だった旧方式を廃止
+
+`SHOPPINGLIST_DEVELOPER_TOKEN` は既に Phase B-C で `defineSecret` 化済み。残りの secret と関連デッドコードを整理する。
+
+## 変更対象ファイルとコード提案
+
+### G-1. `firebase/functions/src/index.ts`
+
+`defineString("GOOGLE_GENAI_API_KEY")` の登録呼び出し（副作用のみ、Issue #1567 workaround 由来）と `defineString` import を削除。各関数側で `defineSecret` するため index.ts での登録は不要。
+
+```diff
+ import admin = require("firebase-admin");
+-import { defineString } from "firebase-functions/params";
+
+ console.log("THIS IS NOT TEST ENVIRONMENT");
+ if (process.env.ENV === "local") {
+   console.log("THIS IS LOCAL ENVIRONMENT");
+   admin.initializeApp({
+     storageBucket: "gs://shopping-list-prod-a615c.firebasestorage.app",
+   });
+ } else {
+   admin.initializeApp({
+     storageBucket: "gs://shopping-list-prod-a615c.firebasestorage.app",
+   });
+ }
+
+-// https://github.com/firebase/firebase-functions/issues/1567#issue-2303336877
+-// 本当はdefineSecretを使いたい
+-// defineSecret("GOOGLE_GENAI_API_KEY");
+-defineString("GOOGLE_GENAI_API_KEY");
+-
+ admin.firestore().settings({ ignoreUndefinedProperties: true });
+```
+
+### G-2. `firebase/functions/src/functions/utils/openai.ts`
+
+ファイルごと削除（`git rm`）。`grep` で `openai()` の呼び出し元なし、`utils/openai.ts:6` の `defineString("OPENAI_API_KEY")` も副作用登録のみのデッドコード。SSOT 原則に従いスキップさせる。
+
+```bash
+git rm firebase/functions/src/functions/utils/openai.ts
+```
+
+### G-3. `firebase/functions/src/functions/grantPromotionalPremium/function.ts`
+
+`REVENUECAT_SECRET_API_KEY` を `defineSecret` 化、`secrets:` 配列に追加。
+
+```diff
+-import { defineString } from "firebase-functions/params";
++import { defineSecret } from "firebase-functions/params";
+ ...
+-/// RevenueCat Secret API Key。Promotions APIの呼び出しに使用する。
+-const REVENUECAT_SECRET_API_KEY = defineString("REVENUECAT_SECRET_API_KEY");
++/// RevenueCat Secret API Key。Promotions APIの呼び出しに使用する。Secret Manager 経由で取得。
++const revenueCatSecretApiKey = defineSecret("REVENUECAT_SECRET_API_KEY");
+ ...
+       const revenueCatResponse = await fetch(
+         `https://api.revenuecat.com/v1/subscribers/${uid}/entitlements/${PREMIUM_ENTITLEMENT_IDENTIFIER}/promotional`,
+         {
+           method: "POST",
+           headers: {
+-            Authorization: `Bearer ${REVENUECAT_SECRET_API_KEY.value()}`,
++            Authorization: `Bearer ${revenueCatSecretApiKey.value()}`,
+             "Content-Type": "application/json",
+           },
+ ...
+ module.exports = onCallGenkit(
+   {
+     authPolicy: appAuthPolicy("grantPromotionalPremium"),
+-    secrets: [developerToken],
++    secrets: [developerToken, revenueCatSecretApiKey],
+   },
+   grantPromotionalPremiumFlow
+ );
+```
+
+### G-4. `firebase/functions/src/functions/revokePromotionalPremium/function.ts`
+
+G-3 と同じパターン（同名 secret を使うため定義名のみ揃え、識別子は同じ `revenueCatSecretApiKey`）。
+
+### G-5. `firebase/functions/src/functions/generateShoppingListItemsFromImage/function.ts`
+
+モジュールトップレベルでの `defineString().value()` 呼び出しは `defineSecret` では動かない（`secrets:` バインドが効くのは関数実行時のみ）ため、API クライアント初期化をハンドラ内に移動。
+
+```diff
+-import { defineString } from "firebase-functions/params";
++import { defineSecret } from "firebase-functions/params";
+ ...
++const googleAIApiKey = defineSecret("GOOGLE_GENAI_API_KEY");
++
+ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
+   { ... },
+   async ({ ... }) => {
++    const apiKey = googleAIApiKey.value();
++    const genAI = new GoogleGenerativeAI(apiKey);
++    const fileManager = new GoogleAIFileManager(apiKey);
++    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
++    // ...既存処理（genAI / fileManager / model はハンドラ内のローカル変数として参照）
+   }
+ );
+
+ module.exports = onCallGenkit(
+   {
+     authPolicy: appAuthPolicy("generateShoppingListItemsFromImage"),
++    secrets: [googleAIApiKey],
+   },
+   generateShoppingListItemsFromImageFlow
+ );
+
+-const apiKey = defineString("GOOGLE_GENAI_API_KEY").value();
+-const genAI = new GoogleGenerativeAI(apiKey);
+-const fileManager = new GoogleAIFileManager(apiKey);
+-const model = genAI.getGenerativeModel({ ... });
+```
+
+実装時に注意: モジュールトップレベルで定義されていた `genAI` / `fileManager` / `model` / `generationConfig` などをハンドラ内のローカル変数に再配置し、参照箇所もすべてハンドラ内に閉じ込める。1 関数 1 リクエストの cold start 影響は許容（Gemini 公式 SDK は軽量）。
+
+### G-6. テストファイル修正
+
+3 つの test ファイルで `jest.mock("firebase-functions/params", ...)` を `defineString` mock から `defineSecret` mock に切り替え。既存の `developer.test.ts` のパターンを踏襲。
+
+対象:
+- `grantPromotionalPremium/function.test.ts`
+- `revokePromotionalPremium/function.test.ts`
+- `generateShoppingListItemsFromImage/function.test.ts`
+
+例（`grantPromotionalPremium/function.test.ts`）:
+
+```diff
+ jest.mock("firebase-functions/params", () => ({
+-  defineString: jest.fn(() => ({ value: () => "test-secret-key" })),
++  defineSecret: jest.fn(() => ({ value: () => "test-secret-key" })),
+ }));
+```
+
+`developer.ts` を import する関数 (`grantPromotionalPremium`, `revokePromotionalPremium`, `setupTestCategoryLocationOrder`) は既に `defineSecret` mock 経由で `developerToken: { value: () => "test-secret-key" }` をパッチしているので、`secret-key` 値は使い回し OK。
+
+無関係な test ファイル (`createGroup`, `acceptGroupInvitation`, `removeGroupMember`, `createGroupInvitation`, `createShoppingList`, `updateGroupName`, `setupTestCategoryLocationOrder`) は `defineString` mock がデフォルト残留しても import チェーンで Resolve されないため触らない (= 動作影響なし)。
+
+## ユーザー手動
+
+### `firebase/functions/.env.shopping-list-prod-a615c`
+
+3 つの値を全削除。`APP_ENV=prod` のみ残す（GenKit Web UI 認証 / `appEnv() === "dev"` デバッグログ用）。
+
+```diff
+-GOOGLE_GENAI_API_KEY=<旧値>
+ APP_ENV=prod
+-REVENUECAT_SECRET_API_KEY=<旧値>
+```
+
+### `firebase/functions/.envrc`
+
+`OPEN_AI_KEY` / `OPENAI_API_KEY` の export 行を削除（openai.ts 削除に伴いデッドコード化）。`GOOGLE_GENAI_API_KEY` / `REVENUECAT_SECRET_API_KEY` の export も genkit dev / emulator では gcloud secret manager 経由になるため削除可能。`GENKIT_ENV=dev` / `APP_ENV=dev` / `GOOGLE_APPLICATION_CREDENTIALS` / `SHOPPINGLIST_DEVELOPER_TOKEN` (uuid、Flutter dart-define 用) は維持。
+
+### gcloud 登録確認
+
+```bash
+gcloud secrets list --project=shopping-list-prod-a615c
+# 期待される secret 一覧:
+# - SHOPPINGLIST_DEVELOPER_TOKEN
+# - GOOGLE_GENAI_API_KEY
+# - REVENUECAT_SECRET_API_KEY
+```
+
+## 検証
+
+```bash
+cd firebase/functions
+npm run lint            # eslint クリア
+npm run build           # tsc クリア
+npm test                # 全 suite pass
+```
+
+## main vs HEAD で deploy が必要なもの
+
+`git diff --name-only origin/main...HEAD -- firebase/`:
+
+```
+firebase/firestore.rules                                              → firestore:rules
+firebase/functions/src/core/developer.ts                              → functions
+firebase/functions/src/core/developer.test.ts                         → (test only)
+firebase/functions/src/core/env.ts                                    → functions
+firebase/functions/src/functions/grantPromotionalPremium/function.ts  → functions:grantPromotionalPremium
+firebase/functions/src/functions/grantPromotionalPremium/function.test.ts → (test only)
+firebase/functions/src/functions/revokePromotionalPremium/function.ts → functions:revokePromotionalPremium
+firebase/functions/src/functions/revokePromotionalPremium/function.test.ts → (test only)
+firebase/functions/src/functions/setupTestCategoryLocationOrder/function.ts → functions:setupTestCategoryLocationOrder
+firebase/functions/src/functions/setupTestCategoryLocationOrder/function.test.ts → (test only)
+firebase/functions/src/functions/utils/authPolicy.ts                  → functions (全関数の共通 import)
+firebase/functions/src/index.ts                                       → functions
++ Phase G で追加変更:
+firebase/functions/src/functions/utils/openai.ts                      → 削除（依存なし、deploy 不要）
+firebase/functions/src/functions/generateShoppingListItemsFromImage/function.ts → functions:generateShoppingListItemsFromImage
+```
+
+### Deploy コマンド
+
+`authPolicy.ts` は全関数の共通 import なので、念のため全関数を再 deploy する形が安全:
+
+```bash
+cd /Users/bannzai/ghq/github.com/bannzai/shoppinglist/firebase
+firebase deploy --only functions,firestore:rules
+```
+
+個別を指定するなら（`authPolicy.ts` の変更が小さいため許容できれば）:
+
+```bash
+cd /Users/bannzai/ghq/github.com/bannzai/shoppinglist/firebase
+firebase deploy --only firestore:rules
+firebase deploy --only \
+  functions:grantPromotionalPremium,\
+functions:revokePromotionalPremium,\
+functions:setupTestCategoryLocationOrder,\
+functions:generateShoppingListItemsFromImage
+```
+
+`generateShoppingListItemsFromURL` は変更なし、deploy 不要。
+
+### Phase G チェックリスト
+
+- [ ] `firebase/functions/src/index.ts` から `defineString` import と `defineString("GOOGLE_GENAI_API_KEY")` 行を削除
+- [ ] `firebase/functions/src/functions/utils/openai.ts` を `git rm`
+- [ ] `grantPromotionalPremium/function.ts`: `defineString("REVENUECAT_SECRET_API_KEY")` → `defineSecret(...)` + `secrets: [developerToken, revenueCatSecretApiKey]`
+- [ ] `revokePromotionalPremium/function.ts`: 同上
+- [ ] `generateShoppingListItemsFromImage/function.ts`: `defineString("GOOGLE_GENAI_API_KEY")` → `defineSecret(...)` + `secrets: [googleAIApiKey]` + 初期化ハンドラ内移動
+- [ ] 3 つの test ファイルで `defineString` mock を `defineSecret` mock に変更
+- [ ] `cd firebase/functions && npm run lint && npm run build && npm test` 全件 pass
+- [ ] ユーザー手動: `.env.shopping-list-prod-a615c` から secret 値削除（`APP_ENV=prod` のみ残す）
+- [ ] ユーザー手動: `.envrc` から `OPEN_AI_KEY` / `GOOGLE_GENAI_API_KEY` / `REVENUECAT_SECRET_API_KEY` 削除
+- [ ] ユーザー手動: `gcloud secrets list` で 3 つの secret 登録確認
+- [ ] ユーザー手動: `firebase deploy --only functions,firestore:rules`
