@@ -47,10 +47,10 @@ Flutter / iOS / Android 側も同時に dev/prod アプリを別アプリとし�
 **ファイル**: `firebase/functions/.env.shopping-list-prod-a615c`
 
 ```diff
- GOOGLE_GENAI_API_KEY=AIzaSyAGxnQmZEAroI2cTsm7LqeI9-wxEqqnUZc
+ GOOGLE_GENAI_API_KEY=<REDACTED>
 -APP_ENV=dev
 +APP_ENV=prod
- REVENUECAT_SECRET_API_KEY=sk_xSRnKVOfQtARZuyfVKJNJiEGBTNpc
+ REVENUECAT_SECRET_API_KEY=<REDACTED>
 ```
 
 理由: `firebase deploy` 時に `firebase-functions/params` の `defineString("APP_ENV")` がプロジェクト名一致の `.env.<projectId>` を自動読み込みする。現状は prod プロジェクト名のファイルなのに `APP_ENV=dev` のため、prod デプロイ時に `appEnv() === "dev"` ガードが効かなくなり、`grantPromotionalPremium` 等が prod でも動作可能になる。

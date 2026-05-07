@@ -22,7 +22,7 @@ Issue #242 ではこれを安全にするために Firebase dev/prod project 完
 
 `.vscode/launch.json` で `--dart-define=SHOPPINGLIST_DEVELOPER_TOKEN=${env:SHOPPINGLIST_DEVELOPER_TOKEN}` で bridge する（既存 `REVENUECAT_TEST_STORE_API_KEY` と同パターン）。
 
-`.envrc` には既に `SHOPPINGLIST_DEVELOPER_TOKEN=BF543988-ECDA-451E-99F4-2D31401736BE`（uuid v4）が設定済み。Secret Manager にもこの値をそのまま登録する。
+`.envrc` には既に `SHOPPINGLIST_DEVELOPER_TOKEN=<REDACTED-ROTATE-IN-SECRET-MANAGER>`（uuid v4）が設定済み。Secret Manager にもこの値をそのまま登録する。
 
 ## 実装順序と Phase 構成
 
@@ -43,10 +43,10 @@ Issue #242 ではこれを安全にするために Firebase dev/prod project 完
 ### Phase A: `firebase/functions/.env.shopping-list-prod-a615c`
 
 ```diff
- GOOGLE_GENAI_API_KEY=AIzaSyAGxnQmZEAroI2cTsm7LqeI9-wxEqqnUZc
+ GOOGLE_GENAI_API_KEY=<REDACTED>
 -APP_ENV=dev
 +APP_ENV=prod
- REVENUECAT_SECRET_API_KEY=sk_xSRnKVOfQtARZuyfVKJNJiEGBTNpc
+ REVENUECAT_SECRET_API_KEY=<REDACTED>
 ```
 
 Phase E で `APP_ENV` 行ごと削除するので、Phase A は中間状態の安全弁。
@@ -160,7 +160,7 @@ describe("isDeveloper", () => {
 ```bash
 cd /Users/bannzai/ghq/github.com/bannzai/shoppinglist/firebase
 echo -n "$SHOPPINGLIST_DEVELOPER_TOKEN" | firebase functions:secrets:set SHOPPINGLIST_DEVELOPER_TOKEN --data-file=-
-firebase functions:secrets:access SHOPPINGLIST_DEVELOPER_TOKEN  # → BF543988-ECDA-451E-99F4-2D31401736BE 確認
+firebase functions:secrets:access SHOPPINGLIST_DEVELOPER_TOKEN  # → <REDACTED-ROTATE-IN-SECRET-MANAGER> 確認
 ```
 
 Phase C のデプロイより先に必須。
@@ -487,7 +487,7 @@ UserDeveloperTokenSync userDeveloperTokenSync(Ref ref) {
        ]
 ```
 
-`.envrc` に既に `SHOPPINGLIST_DEVELOPER_TOKEN=BF543988-ECDA-451E-99F4-2D31401736BE` が設定済み。direnv 環境下から `code .` で VSCode を起動すれば `${env:SHOPPINGLIST_DEVELOPER_TOKEN}` が解決される。
+`.envrc` に既に `SHOPPINGLIST_DEVELOPER_TOKEN=<REDACTED-ROTATE-IN-SECRET-MANAGER>` が設定済み。direnv 環境下から `code .` で VSCode を起動すれば `${env:SHOPPINGLIST_DEVELOPER_TOKEN}` が解決される。
 
 ### Phase D-6: Flutter テスト（任意・現実的範囲）
 
@@ -535,9 +535,9 @@ UserDeveloperTokenSync userDeveloperTokenSync(Ref ref) {
 ### Phase E-3: `firebase/functions/.env.shopping-list-prod-a615c` から `APP_ENV` 行削除
 
 ```diff
- GOOGLE_GENAI_API_KEY=AIzaSyAGxnQmZEAroI2cTsm7LqeI9-wxEqqnUZc
+ GOOGLE_GENAI_API_KEY=<REDACTED>
 -APP_ENV=prod
- REVENUECAT_SECRET_API_KEY=sk_xSRnKVOfQtARZuyfVKJNJiEGBTNpc
+ REVENUECAT_SECRET_API_KEY=<REDACTED>
 ```
 
 `firebase/functions/.envrc` の `export APP_ENV=dev` も同様に削除（Phase E-2 で `appEnv()` 関数自体が消えるため、参照されない値を残しても無意味）。
@@ -565,7 +565,7 @@ cd firebase/functions
 npm run lint
 npm run build
 npm test                                        # developer.test.ts 含めて全件パス
-firebase functions:secrets:access SHOPPINGLIST_DEVELOPER_TOKEN  # → BF543988-... 確認
+firebase functions:secrets:access SHOPPINGLIST_DEVELOPER_TOKEN  # → <REDACTED> 確認
 ```
 
 ### Flutter
@@ -588,7 +588,7 @@ maestro test maestro/flows/shared/grant_premium_via_debug.yaml
 
 ### 手動動作確認
 
-- 開発者ビルド（dart-define あり）でサインイン → Firestore Console で `users/{uid}.developerToken` に `BF543988-...` が書き込まれている
+- 開発者ビルド（dart-define あり）でサインイン → Firestore Console で `users/{uid}.developerToken` に `<REDACTED>` が書き込まれている
 - 既存ユーザー（`developerToken` 未保存）で開発者ビルド起動 → 自動 upsert で書き込まれる
 - 本番ユーザービルド（`flutter run --release` で dart-define なし）で起動 → `users/{uid}.developerToken` に書き込みなし
 - 開発者ビルドで `grantPromotionalPremium` / `revokePromotionalPremium` / `setupTestCategoryLocationOrder` 全成功
