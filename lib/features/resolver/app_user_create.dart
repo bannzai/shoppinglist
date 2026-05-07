@@ -65,7 +65,7 @@ class AppUserCreateResolver extends HookConsumerWidget {
     final optionalAppUser = ref.watch(optionalAppUserProvider);
     final appUserCreate =
         AppUserCreate(userDatabase: ref.watch(userDatabaseProvider));
-    final userDeveloperTokenSync = ref.read(userDeveloperTokenSyncProvider);
+    final userDeveloperTokenSync = ref.watch(userDeveloperTokenSyncProvider);
 
     // 初回ログイン時にFirestoreにAppUserドキュメントが存在しない場合、ここで作成する。
     // 続けて dart-define SHOPPINGLIST_DEVELOPER_TOKEN を users/{uid}.developerToken に upsert する。
