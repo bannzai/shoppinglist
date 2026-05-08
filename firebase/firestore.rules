@@ -17,6 +17,10 @@ service cloud.firestore {
     }
 
     match /users/{userID} {
+      // developerToken フィールドは Cloud Functions の dev only 関数 (grantPromotionalPremium 等)
+      // のユーザー単位ガードに使われる。dart-define SHOPPINGLIST_DEVELOPER_TOKEN を持つ開発者ビルドでのみ
+      // クライアント (UserDeveloperTokenSync) が upsert する。本人以外のアクセスは下記の
+      // isUserAuth(userID) || isDebugUserOf(userID) で既に拒否されている。
       allow read: if isUserAuth(userID) || isDebugUserOf(userID);
       allow create, update: if isUserAuth(userID) || isDebugUserOf(userID);
       allow delete: if isDebugUserOf(userID);

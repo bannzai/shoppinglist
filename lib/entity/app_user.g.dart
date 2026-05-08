@@ -12,6 +12,7 @@ _AppUser _$AppUserFromJson(Map<String, dynamic> json) => _AppUser(
       name: json['name'] as String?,
       iconImageURL: json['iconImageURL'] as String?,
       themeColorHex: json['themeColorHex'] as String?,
+      developerToken: json['developerToken'] as String?,
       createdDateTime: const ClientCreatedTimestamp()
           .fromJson(json['createdDateTime'] as Timestamp?),
       updatedDateTime: const ClientUpdatedTimestamp()
@@ -28,6 +29,7 @@ Map<String, dynamic> _$AppUserToJson(_AppUser instance) => <String, dynamic>{
       'name': instance.name,
       'iconImageURL': instance.iconImageURL,
       'themeColorHex': instance.themeColorHex,
+      'developerToken': instance.developerToken,
       'createdDateTime':
           const ClientCreatedTimestamp().toJson(instance.createdDateTime),
       'updatedDateTime':

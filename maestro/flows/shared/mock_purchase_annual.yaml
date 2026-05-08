@@ -26,9 +26,9 @@ appId: com.bannzai.shoppinglist
     index: 1
 
 - extendedWaitUntil:
-    visible: "Subscribe"
+    visible: "Test valid purchase"
     timeout: 30000
-- tapOn: "Subscribe"
+- tapOn: "Test valid purchase"
 
 - extendedWaitUntil:
     visible: "購入ありがとうございました"

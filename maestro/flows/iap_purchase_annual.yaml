@@ -10,7 +10,9 @@ appId: com.bannzai.shoppinglist
     text: "設定.*"
     index: 0
 - waitForAnimationToEnd
-- assertVisible: "プレミアム会員"
-- assertVisible: "有効"
+- assertVisible:
+    text: ".*プレミアム会員.*"
+- assertVisible:
+    text: ".*有効.*"
 
 - takeScreenshot: screenshots/iap_purchase_annual_completed
