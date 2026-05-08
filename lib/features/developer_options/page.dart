@@ -174,11 +174,56 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
             resultMessage: resultMessage,
             action: () async {
               await functions.grantPromotionalPremium(duration: 'daily');
-              // RC SDKのcustomerInfoをrefetchしてプレミアム状態を反映する
+              // RC SDK のキャッシュを無効化してから fresh fetch する。
+              // invalidate を挟まないと getCustomerInfo() が古いキャッシュを返し、
+              // Promotional Entitlement の付与が UI に反映されない。
+              await Purchases.invalidateCustomerInfoCache();
               await Purchases.getCustomerInfo();
               ref.invalidate(customerInfoProvider);
             },
             actionName: 'プレミアム付与',
+          ),
+        ),
+
+        // カテゴリロケーション順序設定（Maestro E2Eテスト用）
+        _ActionTile(
+          title: 'カテゴリロケーション順序設定（テスト用）',
+          subtitle: '「肉」→「野菜」の順序を「テストスーパー」に設定（dev環境のみ）',
+          icon: Icons.sort,
+          isProcessing: isProcessing.value,
+          onTap: defaultGroupID == null
+              ? null
+              : () => _execute(
+                    isProcessing: isProcessing,
+                    resultMessage: resultMessage,
+                    action: () async {
+                      await functions.setupTestCategoryLocationOrder(
+                        groupID: defaultGroupID,
+                        locationName: 'テストスーパー',
+                        firstCategoryName: '肉',
+                        secondCategoryName: '野菜',
+                      );
+                    },
+                    actionName: 'カテゴリロケーション順序設定',
+                  ),
+        ),
+
+        // プレミアム剥奪（RC Promotions API revoke 経由）
+        _ActionTile(
+          title: 'プレミアム剥奪',
+          subtitle: 'RC Promo経由で付与したプレミアムEntitlementを取り消す（dev環境のみ）',
+          icon: Icons.star_border,
+          isProcessing: isProcessing.value,
+          onTap: () => _execute(
+            isProcessing: isProcessing,
+            resultMessage: resultMessage,
+            action: () async {
+              await functions.revokePromotionalPremium();
+              await Purchases.invalidateCustomerInfoCache();
+              await Purchases.getCustomerInfo();
+              ref.invalidate(customerInfoProvider);
+            },
+            actionName: 'プレミアム剥奪',
           ),
         ),
 

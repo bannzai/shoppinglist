@@ -75,13 +75,17 @@ E2E の前段として、まず「課金導線が存在するアプリ」「購�
 
 ### Negative / Trade-off
 - **PaywallPage はミニマル UI**（タイトル + 説明 + Card 3 枚）で、コンバージョン最適化されたデザインではない。`paywall-design` skill の活用や A/B テストは後続 Issue で対応
-- ~~**iOS Maestro 実行は CONFIGURATION_ERROR で未完了**~~: 当初は `launchApp.clearState=true + clearKeychain=true` 起動 × Test Store mode の race を疑っていたが、Issue #237（https://github.com/bannzai/shoppinglist/issues/237）の調査で **真の root cause は RC Dashboard の Test Store product に Base price (currency) が未設定** だったと判明した。`/rcbilling/v1/.../products?id=...` が `{"product_details":[]}` を返し、SDK が `OfferingsManager.Error error 1` を発生させていた。Dashboard で Base price を設定すれば解消する（API 経由設定は不可、Dashboard 専用操作）
+- **iOS Maestro 実行は CONFIGURATION_ERROR で未完了**: `launchApp.clearState=true + clearKeychain=true` での起動時、RC SDK が Test Store mode 認識・GetOfferingsOperation 完了 log を出すにもかかわらず、Flutter 経由の `Purchases.getOfferings()` Future が `PlatformException(code: 23, CONFIGURATION_ERROR)` を投げる挙動が再現する。`xcrun simctl launch`（clearState なし）では再現せず Offerings 取得成功。purchases-flutter / purchases-ios の Test Store mode と clearState の組合せに関わる挙動として別 Issue で調査
 - **Flutter `Key('paywall_subscribe_xxx')` は実質飾り**: iOS で accessibility identifier に伝搬しないため、Maestro テストからは `text + index` で間接 tap する。将来 `Semantics` に切り替える場合は本 ADR を更新する
 
 ### Follow-up
-- ~~iOS / Android での Maestro E2E 実行（Phase I / J）は Test Store × clearState の挙動が解明された後に再開~~ → Issue #237 で root cause（Test Store Base price）解消、`iap_purchase_*.yaml` 3 本 + `category_location_order_non_premium.yaml` + `premium_ai_image_recognition.yaml` + `premium_ai_url_recognition.yaml` の 6/15 が iPhone 16 Plus / iOS 18.5 で PASS 確認済み
-- ~~mock purchase modal の `tapOn` 対象（暫定 `"Subscribe"`）は実機調査で確定し、必要なら iOS / Android で platform 別サブフローに分離~~ → Issue #237 検証時に実 modal を確認し `Test valid purchase` に確定。`shared/mock_purchase{,_annual,_lifetime}.yaml` を更新済み
-- **premium_*.yaml × 11 の方針転換**: Issue #237 検証で残り 9 本が flow-design 問題で fail（mock_purchase 後の Settings 画面 scroll 引き継ぎ等）。Maestro での課金 modal 自動操作自体が long-term で脆いため、**RC Promotional Entitlement の grant + デバッグ画面ボタン経由** に切り替える。詳細は Issue #239（https://github.com/bannzai/shoppinglist/issues/239）で対応
-- IAP 3 flow（`iap_purchase_{monthly,annual,lifetime}.yaml`）は実購入フロー検証専用として `mock_purchase` 経路を残す
-- `maestro/flows/premium_category_location_order.yaml` の名前と実態の不整合は本 PR で同時対応: 既存ファイルを `category_location_order_non_premium.yaml` にリネームし、新規 `premium_category_location_order.yaml`（実 premium 版、SnackBar 非表示の弱 assert）を追加
+- ✅ Issue #237 root cause（Test Store の Subscription "Premium" に Base price 未設定で
+  GetOfferingsOperation が空を返す）が判明し、Test Store 設定を修正済み（Issue #237 で対応完了）
+- ✅ `premium_*.yaml` 11 本は Issue #239 で `shared/grant_premium_via_debug.yaml` 経由
+  （RC Promotional Entitlement を開発者オプションから直接付与）に方針転換。
+  `iap_purchase_*.yaml` 3 本のみ実購入動線検証として `shared/mock_purchase*.yaml` を踏み続ける
+- ✅ `revokePromotionalPremium` onCall を Issue #239 で追加。テスト後のクリーンアップに使用
+- mock purchase modal の `tapOn` 対象（暫定 `"Subscribe"`）は実機調査で確定し、必要なら iOS / Android で platform 別サブフローに分離（`iap_purchase_*.yaml` のみで使用）
+- `maestro/flows/premium_category_location_order.yaml` のロケーション別ソート assert
+  実装は別 Issue。Issue #239 では `grant_premium_via_debug` 経由でプレミアム化のみ揃えた
 - ペイウォール UI のデザイン拡充（コンバージョン視点）は paywall-design skill ベースで別 Issue

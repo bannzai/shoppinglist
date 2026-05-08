@@ -8,7 +8,7 @@ appId: com.bannzai.shoppinglist
 # 事前投入しないと SnackBar 自体が表示されないため、`optional: true` で安全に保護する。
 
 - runFlow: shared/anonymous_sign_in.yaml
-- runFlow: shared/mock_purchase.yaml
+- runFlow: shared/grant_premium_via_debug.yaml
 
 # AI 画像認識の導線を開く
 - tapOn:

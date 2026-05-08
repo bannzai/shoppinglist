@@ -33,6 +33,14 @@ extension OfferingTypeFunction on OfferingType {
 final customerInfoProvider = StreamProvider((ref) {
   final StreamController<CustomerInfo> stream =
       StreamController<CustomerInfo>();
+  // ref.invalidate 直後でも最新の CustomerInfo を即座に AsyncData として返せるよう、
+  // Purchases.getCustomerInfo() の結果を初期値として流す。listener 経由の更新は
+  // その後に上書きされる。
+  Purchases.getCustomerInfo().then((info) {
+    if (!stream.isClosed) {
+      stream.sink.add(info);
+    }
+  });
   void listener(CustomerInfo customerInfo) {
     stream.sink.add(customerInfo);
   }
@@ -70,11 +78,11 @@ extension CustomerInfoExtension on CustomerInfo {
     return DateTime.parse(expirationDate);
   }
 
-// プロモーション期間中はfalse
+// Promotional Entitlement 期間中も true を返す（Focus アプリの hasPremiumEntitlement と
+// 同じ方針）。ディスカウント表示判定は isInDiscountDuration / currentOfferingType で
+// 独立に行うため、ここで除外する必要はない。Issue #239 でも「プロモーション付与で
+// プレミアム機能を解禁する」前提に揃える。
   bool get isPremium {
-    if (isInPromotion) {
-      return false;
-    }
     return entitlements.active.containsKey(premiumEntitlementIdentifier);
   }
 
@@ -199,6 +207,14 @@ Package? monthlyPremiumPackage(Ref ref) {
   return offering.availablePackages.firstWhereOrNull(
       (element) => element.packageType == PackageType.monthly);
 }
+
+// Issue #237 (https://github.com/bannzai/shoppinglist/issues/237) /
+// Issue #239 (https://github.com/bannzai/shoppinglist/issues/239) 経緯:
+// iOS Test Store mock purchase modal 経由の Maestro E2E (`maestro/flows/shared/mock_purchase.yaml`)
+// が long-term で flaky なため、`premium_*.yaml` の動作確認は
+// `maestro/flows/shared/grant_premium_via_debug.yaml` 経由（開発者オプション画面の
+// 「プレミアム付与（1日）」ボタンから RC Promotional Entitlement を直接付与）に切り替えた。
+// `iap_purchase_*.yaml` のみ実購入動線検証として mock_purchase を踏み続ける。
 
 /// RevenueCat SDK の初期化。
 ///

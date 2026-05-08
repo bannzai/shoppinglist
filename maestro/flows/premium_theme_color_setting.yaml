@@ -4,13 +4,19 @@ appId: com.bannzai.shoppinglist
 # non_premium 版では SnackBar で遮断される。対の premium フロー。
 
 - runFlow: shared/anonymous_sign_in.yaml
-- runFlow: shared/mock_purchase.yaml
+- runFlow: shared/grant_premium_via_debug.yaml
 
-# 設定タブ → テーマカラー
+# 設定タブ → テーマカラー（grant_premium_via_debug.yaml 終了時点で設定画面の下方にいるため
+# UP 方向にスクロールしてテーマカラー ListTile まで戻す）
 - tapOn:
     text: "設定.*"
     index: 0
 - waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      text: "テーマカラー"
+    direction: UP
+    timeout: 30000
 - tapOn: "テーマカラー"
 - waitForAnimationToEnd
 

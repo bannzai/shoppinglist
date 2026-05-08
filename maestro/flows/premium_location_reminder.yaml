@@ -4,13 +4,19 @@ appId: com.bannzai.shoppinglist
 # non_premium 版では SnackBar で遮断される。
 
 - runFlow: shared/anonymous_sign_in.yaml
-- runFlow: shared/mock_purchase.yaml
+- runFlow: shared/grant_premium_via_debug.yaml
 
-# 設定 → 位置情報リマインダー Switch
+# 設定 → 位置情報リマインダー Switch（grant_premium_via_debug.yaml 終了時点で設定画面の
+# 下方にいるため UP 方向にスクロールして位置情報リマインダー ListTile まで戻す）
 - tapOn:
     text: "設定.*"
     index: 0
 - waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      text: "位置情報リマインダー"
+    direction: UP
+    timeout: 30000
 - tapOn: "位置情報リマインダー"
 - waitForAnimationToEnd
 

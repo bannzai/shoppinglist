@@ -5,7 +5,7 @@ appId: com.bannzai.shoppinglist
 # premium ではその末尾文字列が出ない。
 
 - runFlow: shared/anonymous_sign_in.yaml
-- runFlow: shared/mock_purchase.yaml
+- runFlow: shared/grant_premium_via_debug.yaml
 
 - tapOn:
     id: "popup_menu_button"
