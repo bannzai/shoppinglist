@@ -14,6 +14,7 @@ import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/entity/ai_usage.dart';
+import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/provider/ai_usage.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/image/image.dart';
@@ -245,8 +246,15 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
           : freeMonthlyImageRecognitionLimit;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(
-                'AI画像認識の月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyImageRecognitionLimit回まで利用できます'}')),
+          content: Text(
+              'AI画像認識の月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyImageRecognitionLimit回まで利用できます'}'),
+          action: isPremium
+              ? null
+              : SnackBarAction(
+                  label: 'アップグレード',
+                  onPressed: () => showPaywall(context: context),
+                ),
+        ),
       );
       return;
     }
@@ -370,8 +378,15 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
           : freeMonthlyURLRecognitionLimit;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(
-                'URL読み取りの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyURLRecognitionLimit回まで利用できます'}')),
+          content: Text(
+              'URL読み取りの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyURLRecognitionLimit回まで利用できます'}'),
+          action: isPremium
+              ? null
+              : SnackBarAction(
+                  label: 'アップグレード',
+                  onPressed: () => showPaywall(context: context),
+                ),
+        ),
       );
       return;
     }
@@ -421,8 +436,14 @@ class ShoppingListAppBar extends ConsumerWidget implements PreferredSizeWidget {
     // ユーザー操作ごとに共有シート表示と分析送信を行うため、この処理は非冪等。
     if (!isPremium) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('リストのエクスポートはプレミアム機能です。プレミアムにアップグレードすると利用できます')),
+        SnackBar(
+          content:
+              const Text('リストのエクスポートはプレミアム機能です。プレミアムにアップグレードすると利用できます'),
+          action: SnackBarAction(
+            label: 'アップグレード',
+            onPressed: () => showPaywall(context: context),
+          ),
+        ),
       );
       return;
     }
@@ -535,7 +556,13 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
               } on ShoppingListLimitExceededException catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString())),
+                    SnackBar(
+                      content: Text(e.toString()),
+                      action: SnackBarAction(
+                        label: 'アップグレード',
+                        onPressed: () => showPaywall(context: context),
+                      ),
+                    ),
                   );
                   Navigator.pop(context);
                 }
@@ -575,7 +602,13 @@ class _AddShoppingListBottomSheet extends HookConsumerWidget {
               } on ShoppingListLimitExceededException catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString())),
+                    SnackBar(
+                      content: Text(e.toString()),
+                      action: SnackBarAction(
+                        label: 'アップグレード',
+                        onPressed: () => showPaywall(context: context),
+                      ),
+                    ),
                   );
                   Navigator.pop(context);
                 }

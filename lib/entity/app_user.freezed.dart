@@ -22,7 +22,12 @@ mixin _$AppUser {
       get name; // NOTE: Firebase Auth の photoURL からマッピング。匿名ユーザーや既存ユーザーでは null になりうる
   String?
       get iconImageURL; // NOTE: テーマカラーのHEX値。プレミアムユーザーのみ変更可能。nullの場合はデフォルト(deepPurple=#673AB7)を使用する
-  String? get themeColorHex;
+  String?
+      get themeColorHex; // NOTE: 開発者識別用トークン。dart-define `SHOPPINGLIST_DEVELOPER_TOKEN` を持つビルドが起動時に
+// upsert する。Cloud Functions (grantPromotionalPremium 等) で
+// Secret Manager の SHOPPINGLIST_DEVELOPER_TOKEN と一致比較し、ユーザー単位の認可に使う。
+// 本番ユーザービルドでは null のまま。
+  String? get developerToken;
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime;
   @ClientUpdatedTimestamp()
@@ -55,6 +60,8 @@ mixin _$AppUser {
                 other.iconImageURL == iconImageURL) &&
             (identical(other.themeColorHex, themeColorHex) ||
                 other.themeColorHex == themeColorHex) &&
+            (identical(other.developerToken, developerToken) ||
+                other.developerToken == developerToken) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -74,6 +81,7 @@ mixin _$AppUser {
       name,
       iconImageURL,
       themeColorHex,
+      developerToken,
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -81,7 +89,7 @@ mixin _$AppUser {
 
   @override
   String toString() {
-    return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, name: $name, iconImageURL: $iconImageURL, themeColorHex: $themeColorHex, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, name: $name, iconImageURL: $iconImageURL, themeColorHex: $themeColorHex, developerToken: $developerToken, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -96,6 +104,7 @@ abstract mixin class $AppUserCopyWith<$Res> {
       String? name,
       String? iconImageURL,
       String? themeColorHex,
+      String? developerToken,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -119,6 +128,7 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
     Object? name = freezed,
     Object? iconImageURL = freezed,
     Object? themeColorHex = freezed,
+    Object? developerToken = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -144,6 +154,10 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
       themeColorHex: freezed == themeColorHex
           ? _self.themeColorHex
           : themeColorHex // ignore: cast_nullable_to_non_nullable
+              as String?,
+      developerToken: freezed == developerToken
+          ? _self.developerToken
+          : developerToken // ignore: cast_nullable_to_non_nullable
               as String?,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
@@ -264,6 +278,7 @@ extension AppUserPatterns on AppUser {
             String? name,
             String? iconImageURL,
             String? themeColorHex,
+            String? developerToken,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -280,6 +295,7 @@ extension AppUserPatterns on AppUser {
             _that.name,
             _that.iconImageURL,
             _that.themeColorHex,
+            _that.developerToken,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -310,6 +326,7 @@ extension AppUserPatterns on AppUser {
             String? name,
             String? iconImageURL,
             String? themeColorHex,
+            String? developerToken,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -325,6 +342,7 @@ extension AppUserPatterns on AppUser {
             _that.name,
             _that.iconImageURL,
             _that.themeColorHex,
+            _that.developerToken,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -354,6 +372,7 @@ extension AppUserPatterns on AppUser {
             String? name,
             String? iconImageURL,
             String? themeColorHex,
+            String? developerToken,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -369,6 +388,7 @@ extension AppUserPatterns on AppUser {
             _that.name,
             _that.iconImageURL,
             _that.themeColorHex,
+            _that.developerToken,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -389,6 +409,7 @@ class _AppUser extends AppUser {
       this.name,
       this.iconImageURL,
       this.themeColorHex,
+      this.developerToken,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
@@ -411,6 +432,12 @@ class _AppUser extends AppUser {
 // NOTE: テーマカラーのHEX値。プレミアムユーザーのみ変更可能。nullの場合はデフォルト(deepPurple=#673AB7)を使用する
   @override
   final String? themeColorHex;
+// NOTE: 開発者識別用トークン。dart-define `SHOPPINGLIST_DEVELOPER_TOKEN` を持つビルドが起動時に
+// upsert する。Cloud Functions (grantPromotionalPremium 等) で
+// Secret Manager の SHOPPINGLIST_DEVELOPER_TOKEN と一致比較し、ユーザー単位の認可に使う。
+// 本番ユーザービルドでは null のまま。
+  @override
+  final String? developerToken;
   @override
   @ClientCreatedTimestamp()
   final DateTime? createdDateTime;
@@ -452,6 +479,8 @@ class _AppUser extends AppUser {
                 other.iconImageURL == iconImageURL) &&
             (identical(other.themeColorHex, themeColorHex) ||
                 other.themeColorHex == themeColorHex) &&
+            (identical(other.developerToken, developerToken) ||
+                other.developerToken == developerToken) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -471,6 +500,7 @@ class _AppUser extends AppUser {
       name,
       iconImageURL,
       themeColorHex,
+      developerToken,
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -478,7 +508,7 @@ class _AppUser extends AppUser {
 
   @override
   String toString() {
-    return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, name: $name, iconImageURL: $iconImageURL, themeColorHex: $themeColorHex, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, name: $name, iconImageURL: $iconImageURL, themeColorHex: $themeColorHex, developerToken: $developerToken, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -494,6 +524,7 @@ abstract mixin class _$AppUserCopyWith<$Res> implements $AppUserCopyWith<$Res> {
       String? name,
       String? iconImageURL,
       String? themeColorHex,
+      String? developerToken,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -517,6 +548,7 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
     Object? name = freezed,
     Object? iconImageURL = freezed,
     Object? themeColorHex = freezed,
+    Object? developerToken = freezed,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -542,6 +574,10 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
       themeColorHex: freezed == themeColorHex
           ? _self.themeColorHex
           : themeColorHex // ignore: cast_nullable_to_non_nullable
+              as String?,
+      developerToken: freezed == developerToken
+          ? _self.developerToken
+          : developerToken // ignore: cast_nullable_to_non_nullable
               as String?,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime

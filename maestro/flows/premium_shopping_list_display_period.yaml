@@ -1,0 +1,21 @@
+appId: com.bannzai.shoppinglist
+---
+# プレミアム状態では買い物リストの表示期間が無制限になることを確認する。
+# 設定画面の表示テキストが non_premium の「作成から30日間表示されます」から
+# premium の「プレミアム: 無制限」に切り替わる。
+
+- runFlow: shared/anonymous_sign_in.yaml
+- runFlow: shared/grant_premium_via_debug.yaml
+
+# リスト設定を開いて「買い物リストの保存期間」タイルを確認
+- tapOn: "リスト設定"
+- waitForAnimationToEnd
+- assertVisible: "買い物リスト設定"
+- tapOn: "買い物リストの保存期間"
+- waitForAnimationToEnd
+
+# non_premium の文言が消え、premium の文言が表示されていること
+- assertNotVisible: "作成から30日間表示されます"
+- assertVisible: "プレミアム: 無制限"
+
+- takeScreenshot: screenshots/premium_shopping_list_display_period_unlocked

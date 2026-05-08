@@ -1,0 +1,26 @@
+appId: com.bannzai.shoppinglist
+---
+# プレミアム状態でテーマカラー設定画面に遷移できることを確認する。
+# non_premium 版では SnackBar で遮断される。対の premium フロー。
+
+- runFlow: shared/anonymous_sign_in.yaml
+- runFlow: shared/grant_premium_via_debug.yaml
+
+# 設定タブ → テーマカラー（grant_premium_via_debug.yaml 終了時点で設定画面の下方にいるため
+# UP 方向にスクロールしてテーマカラー ListTile まで戻す）
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      text: "テーマカラー"
+    direction: UP
+    timeout: 30000
+- tapOn: "テーマカラー"
+- waitForAnimationToEnd
+
+# non_premium 時の SnackBar が出ないこと
+- assertNotVisible: "テーマカラーの変更はプレミアム機能です"
+
+- takeScreenshot: screenshots/premium_theme_color_setting_unlocked
