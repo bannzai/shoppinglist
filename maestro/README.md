@@ -99,17 +99,22 @@ maestro --platform android hierarchy --output tmp/mock-purchase-modal-android.xm
 |---|---|---|
 | `shared/anonymous_sign_in.yaml` | 匿名サインインまで到達する共通サブフロー | なし |
 | `shared/open_developer_options.yaml` | 設定 → 開発者オプション画面を開く | 匿名サインイン後 |
-| `shared/mock_purchase.yaml` | 設定 → プレミアム会員 → ペイウォール → 指定 Package 購入 → 購入完了まで | `PACKAGE_TYPE=monthly/annual/lifetime`、匿名サインイン後 |
+| `shared/grant_premium_via_debug.yaml` | 開発者オプションから RC Promotional Entitlement を直接付与（`premium_*.yaml` の前段） | 匿名サインイン後 |
+| `shared/mock_purchase.yaml` | 設定 → プレミアム会員 → ペイウォール → monthly 購入 → 購入完了まで（monthly 専用） | 匿名サインイン後、RC Test Store |
+| `shared/mock_purchase_annual.yaml` | 同上の annual 版 | 匿名サインイン後、RC Test Store |
+| `shared/mock_purchase_lifetime.yaml` | 同上の lifetime 版 | 匿名サインイン後、RC Test Store |
 | `iap_purchase_monthly.yaml` | monthly 購入後に「プレミアム会員: 有効」を assert | RC Test Store |
 | `iap_purchase_annual.yaml` | annual 購入後に「プレミアム会員: 有効」を assert | RC Test Store |
 | `iap_purchase_lifetime.yaml` | lifetime 購入後に「プレミアム会員: 有効」を assert | RC Test Store |
-| `premium_theme_color_setting.yaml` | premium 後のテーマカラー画面遷移 | RC Test Store |
-| `premium_export_shopping_list.yaml` | premium 後のリストエクスポート実行 | RC Test Store |
-| `premium_group_creation.yaml` | premium 後の 2 個目グループ作成 | RC Test Store |
-| `premium_item_photo_attachment.yaml` | premium 後のアイテム写真添付導線 | RC Test Store |
-| `premium_location_reminder.yaml` | premium 後の位置情報リマインダー有効化 | RC Test Store |
-| `premium_shopping_list_display_period.yaml` | premium 後の「プレミアム: 無制限」表示 | RC Test Store |
-| `premium_shopping_list_limit.yaml` | premium 後の 6 個目リスト作成 | RC Test Store |
-| `premium_shopping_list_limit_duplicate.yaml` | premium 後の複製で 6 個目作成 | RC Test Store |
-| `premium_ai_image_recognition.yaml` | premium 後の AI 画像認識上限 50 | RC Test Store（事前データ任意） |
-| `premium_ai_url_recognition.yaml` | premium 後の AI URL 認識上限 50 | RC Test Store（事前データ任意） |
+| `premium_theme_color_setting.yaml` | premium 後のテーマカラー画面遷移 | grant_premium_via_debug |
+| `premium_export_shopping_list.yaml` | premium 後のリストエクスポート実行 | grant_premium_via_debug |
+| `premium_group_creation.yaml` | premium 後の 2 個目グループ作成 | grant_premium_via_debug |
+| `premium_item_photo_attachment.yaml` | premium 後のアイテム写真添付導線 | grant_premium_via_debug |
+| `premium_location_reminder.yaml` | premium 後の位置情報リマインダー有効化 | grant_premium_via_debug |
+| `premium_shopping_list_display_period.yaml` | premium 後の「プレミアム: 無制限」表示 | grant_premium_via_debug |
+| `premium_shopping_list_limit.yaml` | premium 後の 6 個目リスト作成 | grant_premium_via_debug |
+| `premium_shopping_list_limit_duplicate.yaml` | premium 後の複製で 6 個目作成 | grant_premium_via_debug |
+| `premium_ai_image_recognition.yaml` | premium 後の AI 画像認識上限 50 | grant_premium_via_debug |
+| `premium_ai_url_recognition.yaml` | premium 後の AI URL 認識上限 50 | grant_premium_via_debug |
+| `premium_category_location_order.yaml` | premium 後にロケーション別カテゴリ並び替えが反映される（デバッグ Function 経由で順序設定→リスト画面で逆順表示を assert） | grant_premium_via_debug + setupTestCategoryLocationOrder Function |
+| `category_location_order_non_premium.yaml` | 非 premium でロケーション別ソートがデフォルト順にフォールバックすること | なし |

@@ -23,9 +23,9 @@ mixin _$AppUser {
   String?
       get iconImageURL; // NOTE: テーマカラーのHEX値。プレミアムユーザーのみ変更可能。nullの場合はデフォルト(deepPurple=#673AB7)を使用する
   String?
-      get themeColorHex; // NOTE: 開発者識別用トークン。dart-define `DEVELOPER_TOKEN` を持つビルドが起動時に
+      get themeColorHex; // NOTE: 開発者識別用トークン。dart-define `SHOPPINGLIST_DEVELOPER_TOKEN` を持つビルドが起動時に
 // upsert する。Cloud Functions (grantPromotionalPremium 等) で
-// Secret Manager の DEVELOPER_TOKEN と一致比較し、ユーザー単位の認可に使う。
+// Secret Manager の SHOPPINGLIST_DEVELOPER_TOKEN と一致比較し、ユーザー単位の認可に使う。
 // 本番ユーザービルドでは null のまま。
   String? get developerToken;
   @ClientCreatedTimestamp()
@@ -432,9 +432,9 @@ class _AppUser extends AppUser {
 // NOTE: テーマカラーのHEX値。プレミアムユーザーのみ変更可能。nullの場合はデフォルト(deepPurple=#673AB7)を使用する
   @override
   final String? themeColorHex;
-// NOTE: 開発者識別用トークン。dart-define `DEVELOPER_TOKEN` を持つビルドが起動時に
+// NOTE: 開発者識別用トークン。dart-define `SHOPPINGLIST_DEVELOPER_TOKEN` を持つビルドが起動時に
 // upsert する。Cloud Functions (grantPromotionalPremium 等) で
-// Secret Manager の DEVELOPER_TOKEN と一致比較し、ユーザー単位の認可に使う。
+// Secret Manager の SHOPPINGLIST_DEVELOPER_TOKEN と一致比較し、ユーザー単位の認可に使う。
 // 本番ユーザービルドでは null のまま。
   @override
   final String? developerToken;

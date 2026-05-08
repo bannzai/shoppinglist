@@ -34,8 +34,9 @@ appId: com.bannzai.shoppinglist
     text: "購入"
     index: 0
 
-# RC Test Store mock purchase modal を承認する（iOS 18.5 シミュレータで確認した文言）。
-# Test Store SDK は "Test valid purchase" / "Test failed purchase" / "Cancel" の 3 ボタン Alert を表示する。
+# RC Test Store mock purchase modal を承認する。
+# モーダルには "Test valid purchase" / "Test failed purchase" / "Cancel" の 3 ボタンが並ぶ。
+# 正常購入完遂のため "Test valid purchase" を選ぶ（Issue #237 動作確認時に実機で確認）。
 - extendedWaitUntil:
     visible: "Test valid purchase"
     timeout: 30000

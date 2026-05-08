@@ -101,3 +101,39 @@
 **参考**:
 - https://www.revenuecat.com/docs/test-and-launch/sandbox/test-store
 - https://www.revenuecat.com/blog/engineering/testing-test-store/
+
+## 9. Test Store Product の Base price 設定（必須・Dashboard のみ）
+
+**いつ**: `create_products.sh --app-type test_store` で Test Store product を作成した直後。
+
+**なぜ手動**: REST API v2 の以下のいずれの endpoint にも `price` / `currency` フィールドが存在しない（OpenAPI YAML 全文確認済み）:
+- `POST /v2/projects/{pid}/products` (create-product) — request body は `store_identifier` / `app_id` / `type` / `display_name` / `subscription` / `title` のみ
+- `POST /v2/projects/{pid}/products/{prod_id}` (update-product) — `display_name` のみ更新可
+- `POST /v2/projects/{pid}/products/{prod_id}/create_in_store` — App Store 向け push 専用、Test Store 用途では使用不可
+
+つまり Base price は Dashboard でしか設定できない。
+
+**症状（未設定時）**: SDK が CONFIGURATION_ERROR(23) を返し Paywall が表示できない。
+- `GET /v1/.../offerings` は package 一覧を返す（`platform_product_identifier` 入り、正常）
+- `GET /rcbilling/v1/subscribers/{uid}/products?id=shoppinglist_500yen_1month&...` は `{"product_details":[]}` を返す（**price 未設定の product は除外される**）
+- iOS SDK は `OfferingsManager.Error error 1` を発生 → Flutter 側に `PlatformException(code:23, CONFIGURATION_ERROR)` として透過
+- shoppinglist Issue #237 で再現と root cause 特定済み
+
+**手順**:
+1. https://app.revenuecat.com/projects/${REVENUECAT_PROJECT_ID}/products にアクセス
+2. 対象 Test Store product (例: `shoppinglist_500yen_1month`) をクリック
+3. **Base price** セクションの **+ Add currency** で通貨と金額を追加
+   - 日本円なら `JPY` / `500` 等、product_id 末尾の `_500yen_` から自然に読み取れる値を入れる
+4. 全 Test Store product に対して繰り返す
+5. 設定後、curl で確認:
+   ```bash
+   curl -H "Authorization: Bearer ${REVENUECAT_TEST_STORE_API_KEY}" \
+     "https://api.revenuecat.com/rcbilling/v1/subscribers/dummy/products?id=shoppinglist_500yen_1month"
+   # → product_details が非空配列で返れば OK
+   # → product_details: [] のままなら設定が反映されていない（数秒〜1分待って再試行）
+   ```
+
+**参考**:
+- OpenAPI YAML (`POST /products` schema 確認用): https://www.revenuecat.com/docs/redocusaurus/plugin-redoc-0.yaml
+- Test Store overview: https://www.revenuecat.com/docs/test-and-launch/sandbox/test-store
+- shoppinglist Issue #237: 本症状の Maestro E2E 経由再現と log stream 解析
