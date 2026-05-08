@@ -28,6 +28,11 @@ abstract class AppUser with _$AppUser {
     String? iconImageURL,
     // NOTE: テーマカラーのHEX値。プレミアムユーザーのみ変更可能。nullの場合はデフォルト(deepPurple=#673AB7)を使用する
     String? themeColorHex,
+    // NOTE: 開発者識別用トークン。dart-define `SHOPPINGLIST_DEVELOPER_TOKEN` を持つビルドが起動時に
+    // upsert する。Cloud Functions (grantPromotionalPremium 等) で
+    // Secret Manager の SHOPPINGLIST_DEVELOPER_TOKEN と一致比較し、ユーザー単位の認可に使う。
+    // 本番ユーザービルドでは null のまま。
+    String? developerToken,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,

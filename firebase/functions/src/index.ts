@@ -1,5 +1,4 @@
 import admin = require("firebase-admin");
-import { defineString } from "firebase-functions/params";
 
 console.log("THIS IS NOT TEST ENVIRONMENT");
 if (process.env.ENV === "local") {
@@ -12,11 +11,6 @@ if (process.env.ENV === "local") {
     storageBucket: "gs://shopping-list-prod-a615c.firebasestorage.app",
   });
 }
-
-// https://github.com/firebase/firebase-functions/issues/1567#issue-2303336877
-// 本当はdefineSecretを使いたい
-// defineSecret("GOOGLE_GENAI_API_KEY");
-defineString("GOOGLE_GENAI_API_KEY");
 
 admin.firestore().settings({ ignoreUndefinedProperties: true });
 

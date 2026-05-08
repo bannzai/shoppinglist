@@ -1,17 +1,17 @@
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
-import { defineString } from "firebase-functions/params";
+import { defineSecret } from "firebase-functions/params";
 import * as z from "zod";
 import { ai } from "../utils/genkit";
 import { appAuthPolicy } from "../utils/authPolicy";
-import { appEnv } from "../../core/env";
+import { developerToken, isDeveloper } from "../../core/developer";
 import {
   DataResponseSchema,
   ErrorResponseSchema,
 } from "../../entity/response";
 
-/// RevenueCat Secret API Key。Promotions APIのrevoke呼び出しに使用する。
-const REVENUECAT_SECRET_API_KEY = defineString("REVENUECAT_SECRET_API_KEY");
+/// RevenueCat Secret API Key。Promotions APIのrevoke呼び出しに使用する。Secret Manager 経由で取得。
+const revenueCatSecretApiKey = defineSecret("REVENUECAT_SECRET_API_KEY");
 
 /// RevenueCatのプレミアムEntitlement識別子。
 const PREMIUM_ENTITLEMENT_IDENTIFIER = "Premium";
@@ -34,22 +34,19 @@ const revokePromotionalPremiumFlow = ai.defineFlow(
   },
   async () => {
     try {
-      // 開発環境でのみ実行可能。本番環境での運用ミスを防止する。
-      if (appEnv() !== "dev") {
-        return {
-          result: "NG" as const,
-          error: {
-            message: "この機能は開発環境でのみ使用できます",
-          },
-        };
-      }
-
       const context = ai.currentContext();
       const uid = context?.auth?.uid;
       if (!uid) {
         return {
           result: "NG" as const,
           error: { message: "認証されていません" },
+        };
+      }
+      // 登録された開発者本人のみ実行可能。本番ユーザーが叩いても NG を返す。
+      if (!(await isDeveloper(uid))) {
+        return {
+          result: "NG" as const,
+          error: { message: "この機能は開発者のみ使用できます" },
         };
       }
 
@@ -62,7 +59,7 @@ const revokePromotionalPremiumFlow = ai.defineFlow(
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${REVENUECAT_SECRET_API_KEY.value()}`,
+            Authorization: `Bearer ${revenueCatSecretApiKey.value()}`,
             "Content-Type": "application/json",
           },
         }
@@ -105,6 +102,7 @@ const revokePromotionalPremiumFlow = ai.defineFlow(
 module.exports = onCallGenkit(
   {
     authPolicy: appAuthPolicy("revokePromotionalPremium"),
+    secrets: [developerToken, revenueCatSecretApiKey],
   },
   revokePromotionalPremiumFlow
 );
