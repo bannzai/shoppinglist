@@ -10,6 +10,7 @@ import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/app_user_private.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/app_user.dart';
+import 'package:shoppinglist/provider/user_developer_token_sync.dart';
 
 class AppUserCreate {
   final UserDatabase userDatabase;
@@ -64,11 +65,16 @@ class AppUserCreateResolver extends HookConsumerWidget {
     final optionalAppUser = ref.watch(optionalAppUserProvider);
     final appUserCreate =
         AppUserCreate(userDatabase: ref.watch(userDatabaseProvider));
+    final userDeveloperTokenSync = ref.watch(userDeveloperTokenSyncProvider);
 
     // 初回ログイン時にFirestoreにAppUserドキュメントが存在しない場合、ここで作成する。
+    // 続けて dart-define SHOPPINGLIST_DEVELOPER_TOKEN を users/{uid}.developerToken に upsert する。
     // この処理はユーザーごとに一度だけ実行されればよいため、依存配列は空にする。
     useEffect(() {
-      appUserCreate(firebaseUser: firebaseUser);
+      () async {
+        await appUserCreate(firebaseUser: firebaseUser);
+        await userDeveloperTokenSync();
+      }();
       return null;
     }, []);
 

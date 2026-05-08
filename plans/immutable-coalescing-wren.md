@@ -1,226 +1,473 @@
-# First Release 残タスク監査
+# IAP 自動化 Skill 群 設計プラン (グローバル Skill 想定)
 
 ## Context
 
-ユーザーが「first release 前に残っているタスクを教えてほしい」と依頼。`RELEASE_TEST_PLAN.md`・最近マージされたPR・open issue/PR・ADR・ASO分析issueを調査し、リリースまでに必要なタスクを洗い出した。
+`#215` (App Store Connect 商品登録)、`#216` (Google Play 商品登録)、`#217` (RevenueCat 設定) の手作業を Claude Code Skill 化する。複数アプリで再利用するため**グローバル Skill (`~/.claude/skills/`) として設計する**。
 
-**本プランはコード実装ではなく、リリース準備の作業リスト（棚卸し）である**。承認後に各タスクを個別に着手する想定。
-
-### スコープ判断（ユーザー確認済み）
-
-- **広告機能（#77 + #150）**: first release **後**に延期。v1.1 以降で対応。
-- **PR #97**（ボトムシートキーボード修正）: **Close**。現在の main で `item_detail_and_delete.yaml` が通る前提で不要。
-- **ASO 分析結果（#194〜#205）**: first release **前に反映**。
+調査結果（3 API の自動化可能範囲）と、ユーザーフィードバックを反映した最終設計を以下にまとめる。
 
 ---
 
-## 現状サマリ（完了済み）
+## 全体方針（ユーザー指示反映）
 
-| 項目 | 状態 | 参照 |
-|------|------|------|
-| ファーストリリース QA テストプラン | CLOSED (2026-04-05) | bannzai/shoppinglist#116 |
-| プレミアム機能11件一括実装 | MERGED (2026-04-09) | bannzai/shoppinglist#177 |
-| Maestro E2Eフロー7件修正・全12フロー PASS | MERGED (2026-04-10) | bannzai/shoppinglist#212 |
-| 開発用プレミアム付与 (`grantPromotionalPremium`) | 実装済み | ADR 0008 |
-| 自動テスト / ビルド（Flutter + Functions） | 全PASS | `RELEASE_TEST_PLAN.md` §1, §13 |
-| ASO 競合分析・キーワード調査（ja / en-US） | 完了（反映は未） | bannzai/shoppinglist#194〜#205 |
-
-リリース済みフィーチャ:
-- 基本機能（リスト作成・アイテムCRUD・複製・カテゴリ・場所）
-- グループ共有（招待コード方式）
-- プレミアム機能11件（テーマカラー、AI画像認識/URL、表示期間、リスト/グループ上限緩和、エクスポート、カテゴリ並び替え、写真添付、位置情報リマインダー、ホームウィジェット拡張）
-- プッシュ通知（FCM）・ホーム画面ウィジェット
-
----
-
-## 残タスク
-
-優先度・依存順で整理。A→Dの順で実施する想定。
-
-### [A] RELEASE_TEST_PLAN.md のプレミアム動作確認を完了
-
-`RELEASE_TEST_PLAN.md` は PR #212 以前に作成されたため、Maestro 結果が古い。また `[Premium]` 項目（開発者オプションでプレミアム付与後のUI動作確認）が未消化。
-
-#### A-1. Maestro 結果を PR #212 の成果で更新
-
-`RELEASE_TEST_PLAN.md` の以下セクションを更新。該当 flow は PR #212 で全 PASS 済み:
-
-| セクション | 対象 flow | 現在の記述 | 更新後 |
-|---|---|---|---|
-| §5 買い物リスト表示期間制限 | `shopping_list_display_period_non_premium.yaml` | FAIL | `- [x]` + PR #212 の更新内容に合わせた説明 |
-| §6 リスト作成数の上限緩和 | `shopping_list_limit_non_premium.yaml`, `shopping_list_limit_duplicate_non_premium.yaml` | FAIL | `- [x]` |
-| §7 グループ作成数の上限緩和 | `group_creation_limit_non_premium.yaml` | FAIL | `- [x]` |
-| §8 リストのエクスポート | `export_shopping_list_non_premium.yaml` | FAIL | `- [x]` |
-| §10 アイテムへの写真添付 | `item_photo_attachment_non_premium.yaml` | FAIL | `- [x]` |
-| §11 位置情報リマインダー | `location_reminder_non_premium.yaml` | FAIL | `- [x]` |
-
-**変更対象**: `RELEASE_TEST_PLAN.md` のみ。
-
-**検証**: 更新前に `maestro test maestro/flows/` を一括実行して全12フローPASSを再確認。
-
-#### A-2. `[Premium]` パス動作確認を実行
-
-開発者オプション → `grantPromotionalPremium` でプレミアム付与後、mobile-mcp または手動で以下を確認。エビデンスは `gh-r2-image` で R2 にアップロードし `RELEASE_TEST_PLAN.md` に `<img src="..." width="320">` で貼付する。
-
-| セクション | 未消化項目 |
+| 項目 | 方針 |
 |---|---|
-| §2 テーマカラー | `[Premium]` 選択画面遷移 / カラー選択でUI全体に反映 |
-| §5 表示期間 | 30日超過リストを Firestore dump で注入 → プレミアムで表示されること（困難な場合は unit test カバー済みとしてスキップ明記） |
-| §6 リスト上限 | プレミアムで6個目以降も作成可能 |
-| §7 グループ上限 | プレミアムで2個目以降のグループ作成可能 |
-| §8 エクスポート | `[Premium]` 「リストをエクスポート」→ 共有シート表示 |
-| §9 カテゴリ並び替え | `[Premium]` ロケーション選択 → ドラッグで並び替え |
-| §10 写真添付 | `[Premium]` アイテム詳細 → 「写真を追加」 → 画像ソースダイアログ |
-| §11 位置情報リマインダー | `[Premium]` トグルON → 位置情報権限ダイアログ表示（ジオフェンス実動作はスキップ継続） |
-
-**実行フロー**:
-1. iOS Simulator（iPhone 16 Plus）でデバッグビルド起動
-2. 匿名サインイン → 開発者オプション → プレミアム付与
-3. 上記各項目を順に確認 → スクショ → `gh-r2-image` → エビデンス記述
-
-#### A-3. ホームウィジェット動作テスト
-
-`§12 ホームウィジェット拡張` の「ウィジェット操作テスト」が未実施。`/write-test-mobile-mcp-home-widget` skill で実行し、結果を §12 に追記。
-
-**変更対象**: `RELEASE_TEST_PLAN.md` §12 のみ。
+| 配置先 | `~/.claude/skills/` (グローバル) |
+| 認証情報 | **全て環境変数 `*_BASE64` で管理**。明示的な setup フェーズなし。各スクリプト先頭で base64 デコードして使用 |
+| 資産（paywall png 等） | Skill 内 `templates/` に同梱。共通 paywall テンプレ画像を使い回し |
+| FAQ / 手動操作ガイド | Skill 内 `references/` にまとめ、ユーザーが「これ手動？」と聞いたら答えられるように |
+| ドキュメント参照 | 公式・非公式 URL を `references/links.md` に集約 |
+| リファレンス URL | 各 Skill 内で参照可能に |
+| **Product ID 命名規則** | **`{project}_{price}yen_{type}` で統一** (詳細は次セクション) |
 
 ---
 
-### [B] Open PR #97 を Close
+## Product ID 命名規則（全 Skill 共通の強制ルール）
 
-- **PR**: bannzai/shoppinglist#97 「ボトムシートのキーボード問題を修正してitem_detail_and_deleteテストを安定化」
-- **作成**: 2026-03-14 / **最終更新**: 2026-03-31
+### フォーマット
+```
+{project}_{price}yen_{type}
+```
 
-#### 実施手順
-
-1. 念のため現在の main で該当 Maestro テストが通ることを確認:
-   ```
-   maestro test maestro/flows/item_detail_and_delete.yaml
-   ```
-2. PASS なら PR #97 に close コメントを残して close:
-   - コメント例: 「PR #177 以降の `item_detail_bottom_sheet` 改修で該当問題は解消済み。main で `item_detail_and_delete.yaml` が PASS することを確認したため close します。」
-   - `gh pr close 97 --comment "..."` で close
-3. FAIL だった場合は当該 PR の差分を現状の main に rebase するか、別途修正プランを立てる
-
----
-
-### [C] ASO 最終最適化と反映
-
-ASO分析の結果（#194〜#205）をストアリスティングに反映する。各issueは「分析レポート」であり、実際の反映作業は未実施。
-
-#### C-1. メタデータ反映（app_store_metadata ディレクトリ/ストア設定）
-
-bannzai/shoppinglist#195, #203 の分析結果を元に以下を更新:
-
-| フィールド | 現状 | 改善案（#195 より） |
+| 部位 | 説明 | 値例 |
 |---|---|---|
-| name (ja) | 「買い物リスト」(6文字) | キーワード拡張（例: 「買い物リスト - 共有できるお買い物メモ」20文字程度） |
-| subtitle (ja) | 「家族やルームメイトと共有できるお買い物メモ」(20文字) | nameと重複しないキーワード（「買い忘れ」「カテゴリ」等）で30文字枠を活用 |
-| keywords (ja) | 55文字（重複含む） | 100文字枠を最適化。name/subtitle重複を排除し「ストック」「買い忘れ」「食料品」「シンプル」等を追加 |
-| description | 整理済みだが冒頭3行の訴求力に改善余地 | 競合との差別化ポイント（家族共有・カテゴリ自動ソート・ウィジェット）を冒頭に |
-| name/subtitle/keywords (en-US) | — | #202, #203 の分析を元に同様に最適化 |
+| `{project}` | プロジェクト識別子 (snake_case) | `shoppinglist`, `focus`, `mealplan` |
+| `{price}yen` | 円表記の価格（数値+`yen`） | `100yen`, `480yen`, `1000yen`, `4800yen`, `10000yen` |
+| `{type}` | 商品タイプ。Subscription は期間も含める | `1month` / `6month` / `1year` / `consumable` / `lifetime` |
 
-#### C-2. スクリーンショット作成
-
-現状、App Store スクリーンショットは未作成（#199, #205 の分析で判明）。
-
-- **対応**: `/onboarding-design` や `/ui-screenshot-review` skillを活用し、competitorの訴求パターン（Familiar: ビジュアルリッチ / Komorebi: ミニマル+ウィジェット / Sky Nexus: 店舗別タブ）を参考にスクショ4〜5枚を作成
-- **訴求軸**:
-  - 1枚目: メイン機能（買い物リスト + カテゴリ自動ソート）
-  - 2枚目: 家族共有（招待コード or 共有画面）
-  - 3枚目: ウィジェット（ホーム画面ウィジェット）
-  - 4枚目: プレミアム機能（テーマカラー、AI画像認識 等）
-  - 5枚目: 店舗別管理
-- **作成先**: `fastlane/metadata/ios/` などストア提出に使う場所（fastlane は未導入のため、手動 or 別ワークフローで）
-
-#### C-3. レビュー分析からの機能確認（#196, #204）
-
-レビュー分析で「広告への不満」「データ消失」が競合の弱点として浮上。自アプリが該当しないことを確認:
-
-- [x] **広告**: 未実装（first release では広告なし）
-- [ ] **データ消失**: Firestore を使用しているためリスクは低いが、アカウント削除→再ログイン時のデータ状態を `RELEASE_TEST_PLAN.md` の基本機能項目で再確認
-
----
-
-### [D] リリース提出準備（コードベース外 / 各チェック必要）
-
-リポジトリ内に release 専用ドキュメント（`documents/release*.md`, `fastlane/`）は未配置。以下はプラン範囲外だが、ユーザー側で漏れがないか確認が必要:
-
-1. **App Store Connect**: バンドルID確認、ビルド提出、スクリーンショット、プライバシー、審査用アカウント
-2. **Google Play Console**: アプリ署名、AAB 提出、ストアリスティング
-3. **RevenueCat**: production の product/entitlement 設定、`REVENUECAT_SECRET_API_KEY` が Firebase Functions production に設定済みか
-4. **プッシュ通知本番証明書**: APNs production key が Firebase に設定済みか
-5. **Remote Config**: 強制アップデートチェックが production の Remote Config に設定済みか
-6. **プライバシーポリシー / 利用規約 / 特定商取引法に基づく表記**: URL が生きているか（設定画面から実機確認）
-
-このセクションは「チェック項目」のみ。作業はユーザー側で実施する想定。
-
----
-
-## 延期事項（v1.1 以降）
-
-ユーザー確認済み:
-
-- **#77** 一覧の中にNative広告を表示
-- **#150** プレミアム機能: 広告削除 (P0, 依存: #77)
-
-→ これら2件は first release スコープ外。v1.1 計画時に再整理する。
-
----
-
-## 推奨実施順
-
+### 例（買い物リストの場合）
 ```
-A-1: RELEASE_TEST_PLAN.md の Maestro 結果更新（数分）
- ↓
-A-2, A-3: プレミアム動作確認 + ホームウィジェットテスト（1セッション）
- ↓
-B: PR #97 close（数分）
- ↓
-C-1: ASO メタデータ更新（name, subtitle, keywords, description）
- ↓
-C-2: ASO スクリーンショット作成（最も時間がかかる）
- ↓
-C-3: レビュー分析からの機能確認チェック
- ↓
-D: リリース提出準備（ユーザー側チェック）
+shoppinglist_480yen_1month
+shoppinglist_2580yen_6month
+shoppinglist_4800yen_1year
 ```
 
+### 例（Focus アプリの場合、ユーザー実績）
+```
+focus_10000yen_lifetime
+focus_4800yen_1year
+focus_1000yen_1month
+focus_100yen_consumable
+```
+
+### 各 API への mapping
+
+| `type` | App Store Connect | Google Play | RevenueCat Package |
+|---|---|---|---|
+| `1month` | Subscription, `subscriptionPeriod: ONE_MONTH` | Subscription + Base Plan `P1M` | `$rc_monthly` |
+| `6month` | Subscription, `subscriptionPeriod: SIX_MONTHS` | Subscription + Base Plan `P6M` | `$rc_six_month` |
+| `1year` | Subscription, `subscriptionPeriod: ONE_YEAR` | Subscription + Base Plan `P1Y` | `$rc_annual` |
+| `consumable` | IAP V2, `inAppPurchaseType: CONSUMABLE` | inappproducts (managed product) | (entitlement なし、都度 grant) |
+| `lifetime` (= non-consumable) | IAP V2, `inAppPurchaseType: NON_CONSUMABLE` | inappproducts (managed product) | `$rc_lifetime` |
+
+### Skill 側の責務
+1. **入力時に命名規則をバリデート**: 入力 ID が正規表現 `^[a-z][a-z0-9]*_\d+yen_(1month|6month|1year|consumable|lifetime)$` にマッチしなければ Skill が拒否
+2. **type から各ストア API パラメータを自動導出**: ユーザーは `type` だけ指定すれば良い、`subscriptionPeriod` や `P1M` への変換は Skill が行う
+3. **`iap-orchestrator` の config では `project` と `price` と `type` を別フィールドで持ち、Product ID は自動生成**:
+
+```json
+{
+  "project": "shoppinglist",
+  "products": [
+    { "price_jp": 480,  "type": "1month",   "display_name_ja": "プレミアム（月額）", ... },
+    { "price_jp": 2580, "type": "6month",   "display_name_ja": "プレミアム（6ヶ月）", ... },
+    { "price_jp": 4800, "type": "1year",    "display_name_ja": "プレミアム（年額）", ... }
+  ]
+}
+```
+
+→ Skill が `shoppinglist_480yen_1month` 等を機械的に生成する。
+
+### 補足
+- `price_jp` は **JPY 整数値**。他通貨は ASC/Play の自動換算 or 個別指定（`price_us` などのフィールドを optional 追加可能）
+- `consumable` には期間がないため Subscription にできない、Skill 側で型チェック
+- `lifetime` は Google Play では **non-consumable in-app product** として作成（`inappproducts`、subscription ではない）
+
 ---
 
-## 検証方法
+## Skill 構成（全 4 つ）
 
-| タスク | 完了条件 |
-|---|---|
-| A-1 | `RELEASE_TEST_PLAN.md` §5〜§11 の Maestro チェックボックスが `[x]`、記述が現状と一致 |
-| A-2 | 全 `[Premium]` 項目が `[x]`、各項目に `<img src="R2 URL" width="320">` でスクショ添付 |
-| A-3 | §12 の「ウィジェット操作テスト」が `[x]`、ウィジェット上のチェック操作とアプリ同期のスクショあり |
-| B | PR #97 が closed、コメントに close 理由記載 |
-| C-1 | App Store Connect の ja / en-US の name / subtitle / keywords / description が最適化案で更新済み |
-| C-2 | スクショ4〜5枚が作成・App Store Connect にアップロード済み |
-| C-3 | アカウント削除→再ログインでデータ状態が期待通り（この plan で実機確認し、結果をメモに残す） |
-| D | ユーザーがチェック（この plan の範囲外） |
+| Skill | 役割 | 対象 API |
+|---|---|---|
+| `app-store-connect-iap` | iOS の IAP / Subscription 作成 | App Store Connect API (JWT, ES256) |
+| `google-play-iap` | Android の IAP / Subscription 作成 | Google Play Developer API (Service Account) |
+| `revenuecat-setup` | RC の App / Entitlement / Offering / Package セットアップ | RevenueCat REST API v2 (`sk_` Secret) |
+| **`iap-orchestrator`** | 上記 3 Skill を順次起動する オーケストレータ | (Skill を内部で呼ぶ) |
 
 ---
 
-## 参照ファイル
+## 環境変数設計（全 Skill 共通）
 
-| ファイル | 用途 |
+各スクリプトの先頭で `base64 -d` してから使う。`.zshrc` などで export しておく前提。
+
+| 変数名 | 用途 | 元データ |
+|---|---|---|
+| `APP_STORE_CONNECT_KEY_BASE64` | ASC API JWT 署名鍵 | `.p8` ファイル |
+| `APP_STORE_CONNECT_KEY_ID` | ASC API Key の ID | (10 文字、base64 不要) |
+| `APP_STORE_CONNECT_ISSUER_ID` | ASC API の Issuer ID | (UUID、base64 不要) |
+| `GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64` | Play Developer API 認証 | service-account.json |
+| `REVENUECAT_V2_SECRET_KEY` | RC v2 API（`sk_` プレフィックス） | (そのまま、base64 不要) |
+| `REVENUECAT_PROJECT_ID` | 操作対象 RC プロジェクト | (そのまま、base64 不要) |
+
+→ `*_BASE64` の suffix が付くものだけ base64 デコード対象。それ以外はそのまま使う。
+
+例（各スクリプト先頭の共通処理）:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+: "${APP_STORE_CONNECT_KEY_BASE64:?env required}"
+: "${APP_STORE_CONNECT_KEY_ID:?env required}"
+: "${APP_STORE_CONNECT_ISSUER_ID:?env required}"
+
+ASC_KEY_PATH=$(mktemp -t asc_key.p8)
+trap "rm -f $ASC_KEY_PATH" EXIT
+echo "$APP_STORE_CONNECT_KEY_BASE64" | base64 -d > "$ASC_KEY_PATH"
+# 以降 $ASC_KEY_PATH を使って JWT 生成
+```
+
+---
+
+## Skill 1: `app-store-connect-iap`
+
+### ディレクトリ構成
+```
+~/.claude/skills/app-store-connect-iap/
+├── SKILL.md
+├── references/
+│   ├── links.md          # 公式/非公式 URL 集
+│   ├── manual-steps.md   # 手動が必要なタイミングと内容（FAQ）
+│   └── jwt-spec.md       # JWT 生成仕様（ES256, 20 分有効）
+├── templates/
+│   └── paywall.png       # 審査用テンプレ画像（使い回し）
+└── scripts/
+    ├── _common.sh        # 環境変数チェック + JWT 生成 + curl wrapper
+    ├── create_subscription_group.sh
+    ├── create_subscription.sh
+    ├── set_localization.sh
+    ├── set_prices.sh
+    ├── upload_review_screenshot.sh   # templates/paywall.png をアップロード
+    └── submit_subscription.sh        # 2回目以降のみ
+```
+
+### 自動化範囲
+- Subscription Group 作成 (`POST /v1/subscriptionGroups`)
+- Auto-Renewable Subscription 作成 (`POST /v1/subscriptions`、`subscriptionPeriod`: `ONE_MONTH` / `SIX_MONTHS` / `ONE_YEAR`)
+- Localization (ja / en-US) 登録
+- Price 設定（per-territory、`POST /v1/subscriptionPrices` をループ）
+- Review Screenshot アップロード（4 段階: 予約 → PUT → commit → polling）
+- 2 回目以降の `POST /v1/subscriptionSubmissions` 提出
+
+### 手動チェックポイント（`references/manual-steps.md` に明記）
+- **初回 Subscription はアプリバイナリと一緒に App Store Connect Web で提出が必須**（Apple 公式: "The first in-app purchase must be submitted with an app binary submission"）
+- Sandbox Tester の作成・削除（API 不可、Web UI のみ）
+- Sandbox 反映に最大 1 時間遅延
+
+### Paywall テンプレ画像
+- `templates/paywall.png` に汎用的な「Premium Plan」UI のスクリーンショットを 1 枚配置
+- 審査用に必要な「機能リスト + 価格 + Subscribe ボタン」が映っているもの
+- 毎回これを使い回す（ユーザーの運用上問題ない実績あり）
+
+---
+
+## Skill 2: `google-play-iap`
+
+### ディレクトリ構成
+```
+~/.claude/skills/google-play-iap/
+├── SKILL.md
+├── references/
+│   ├── links.md
+│   ├── manual-steps.md
+│   └── edits-workflow.md  # Edits の楽観ロック仕様
+└── scripts/
+    ├── _common.sh         # SA JSON base64 デコード + auth
+    ├── create_subscription.sh
+    ├── create_base_plan.sh
+    ├── activate_base_plan.sh
+    ├── set_localization.sh
+    ├── upload_aab.sh
+    ├── promote_track.sh
+    └── cleanup_edits.sh
+```
+
+### 自動化範囲
+- Subscription 作成 (`monetization.subscriptions.create`)
+- Base Plan 作成 + Activate (`P1M`, `P6M`, `P1Y`)
+- Subscription Localization
+- Price (`RegionalBasePlanConfig`)
+- AAB アップロード (`edits.bundles.upload`)
+- Track 切り替え (`edits.tracks.update`)
+- Release notes 登録
+- Dangling edits cleanup
+
+### 手動チェックポイント
+- **アプリ (package name) の Play Console 初回作成** (`applications` リソースに `create` メソッドなし)
+- Service Account の Play Console 初回招待（Permissions API は招待後の権限変更のみ）
+- RTDN の Topic 名登録（Cloud Pub/Sub 側は API 化可能だが Play Console 側 UI 必須）
+- 個別 email の License Tester（`googleGroups[]` のみ受付）
+- Data Safety フォーム
+- **2026 から Closed testing で 12 名以上が 14 日間アクティブ要件**（ポリシー、API では解決不可）
+
+---
+
+## Skill 3: `revenuecat-setup`
+
+### ディレクトリ構成
+```
+~/.claude/skills/revenuecat-setup/
+├── SKILL.md
+├── references/
+│   ├── links.md
+│   ├── manual-steps.md
+│   └── lookup-key-conventions.md  # SDK 標準 lookup_key (`$rc_monthly` など)
+└── scripts/
+    ├── _common.sh
+    ├── create_app.sh
+    ├── create_products.sh        # ストア Skill の出力 JSON を入力
+    ├── create_entitlement.sh
+    ├── attach_products_to_entitlement.sh
+    ├── create_offering.sh
+    ├── create_package.sh
+    ├── set_current_offering.sh
+    └── grant_promotional.sh      # v2 grant_entitlement を使用
+```
+
+### 自動化範囲（**v2 API 1 本で統一**）
+- App 作成 (`POST /v2/projects/{project_id}/apps`)
+- Product 作成 (`POST /v2/projects/{project_id}/products`、ストア Skill の出力リストを入力に N 回 POST)
+- Entitlement 作成 (`lookup_key: 'Premium'` を強制)
+- Entitlement に Product を attach
+- Offering 作成 (`lookup_key: 'default'` / `'discounted'`)
+- Package 作成 (`lookup_key: '$rc_monthly'` / `'$rc_six_month'` / `'$rc_weekly'` を強制)
+- Current Offering 設定
+- **Promotional Entitlement 付与** (`POST /v2/projects/{project_id}/customers/{customer_id}/actions/grant_entitlement`)
+
+### v1 API Key について（質問 3 への回答）
+- **新規 Skill では v1 不要**。v2 の `grant_entitlement` で Promotional 付与可能（`customer_information:customers:read_write` スコープ、480 req/min）
+- 既存 Functions の `grantPromotionalPremium` は v1 を使い続けて OK（Premium Entitlement を `lookup_key='Premium'` で正しく作れば 404 は解消する）
+- 将来 Functions 側も v2 に統一したくなったら別タスクで対応
+
+### 「Product 自動 import」について（質問 5 への回答）
+- RC Dashboard の `+ New → Import Products` ボタン（接続済みストアから自動取得）は **REST API に同等エンドポイントが存在しない**
+- Skill では「ストア Skill の出力 Product ID リスト（JSON）を入力にして、`POST /v2/projects/.../products` を N 回呼ぶ」で代替
+- 結果は同じ。ユーザー視点では `iap-orchestrator` が橋渡しするので意識不要
+
+### 手動チェックポイント
+- **Project 自体の作成**（v2 にも作成 API なし、Dashboard 必須、最初の 1 回のみ）
+- **Google Play Service Account JSON のアップロード**（`play_store` App は `package_name` のみ受け付け、JSON は別途 Dashboard アップロード）
+
+### 既存コードとの整合性（強制バリデーション項目）
+
+`lib/utils/purchase/purchase.dart` の以下定数と一致させる:
+
+| 定数 | 値 | Skill 入力での扱い |
+|---|---|---|
+| `premiumEntitlementIdentifier` | `'Premium'` | Entitlement `lookup_key` のデフォルト値、変更時は警告 |
+| `OfferingType` | `'default'` / `'discounted'` | Offering `lookup_key` のデフォルト値 |
+| `PackageType` | SDK 標準 | Package `lookup_key` は `$rc_*` 標準値必須 |
+
+---
+
+## Skill 4: `iap-orchestrator` ← 新規追加（フィードバック 8）
+
+### 想定ユースケース
+> 「このアプリは com.example.foo というバンドルで、月額 480 円・半年 2580 円・年額 4800 円のプレミアムプランを iOS と Android で提供したい。プレミアム機能は X / Y / Z の 3 つ。3 ストア + RC を全部セットアップしてほしい」
+
+### ディレクトリ構成
+```
+~/.claude/skills/iap-orchestrator/
+├── SKILL.md
+├── references/
+│   ├── links.md
+│   ├── workflow.md             # 全体フロー図
+│   └── manual-checkpoints.md   # 全手動操作タイミングまとめ
+└── scripts/
+    ├── orchestrate.sh          # 全 Skill を順次呼ぶ
+    └── config_template.json    # アプリごとの設定テンプレ
+```
+
+### config 設計
+入力 JSON 1 ファイルで Skill 群に必要な情報を集約。**Product ID は `project` + `price_jp` + `type` から自動生成**するためユーザーは個別 ID を書かない:
+
+```json
+{
+  "project": "shoppinglist",
+  "app": {
+    "bundle_id": "com.bannzai.shoppinglist",
+    "package_name": "com.bannzai.shoppinglist",
+    "display_name": { "ja": "買い物リスト", "en-US": "Shopping List" }
+  },
+  "products": [
+    {
+      "price_jp": 480,
+      "type": "1month",
+      "display_name": { "ja": "プレミアム（月額）", "en-US": "Premium Monthly" },
+      "description": { "ja": "...", "en-US": "..." }
+    },
+    {
+      "price_jp": 2580,
+      "type": "6month",
+      "display_name": { "ja": "プレミアム（6ヶ月）", "en-US": "Premium 6 Month" }
+    },
+    {
+      "price_jp": 4800,
+      "type": "1year",
+      "display_name": { "ja": "プレミアム（年額）", "en-US": "Premium Yearly" }
+    }
+  ],
+  "revenuecat": {
+    "project_id": "proj_xxx",
+    "entitlement_lookup_key": "Premium",
+    "offerings": [
+      { "lookup_key": "default", "packages": ["$rc_monthly", "$rc_six_month", "$rc_annual"] }
+    ]
+  }
+}
+```
+
+→ Skill が以下を自動生成:
+- Product ID (ASC / Play / RC 共通): `shoppinglist_480yen_1month`, `shoppinglist_2580yen_6month`, `shoppinglist_4800yen_1year`
+- ASC `subscriptionPeriod`: `ONE_MONTH` / `SIX_MONTHS` / `ONE_YEAR`
+- Play Base Plan billing period: `P1M` / `P6M` / `P1Y`
+- RC Package `lookup_key`: `$rc_monthly` / `$rc_six_month` / `$rc_annual`
+
+### オーケストレーションフロー
+```
+[Phase 1] iOS / Android 並列実行
+  ├─ Skill 1: app-store-connect-iap (3 subscription 作成)
+  └─ Skill 2: google-play-iap (3 subscription + base plan 作成 + activate)
+
+[Phase 2] 手動チェックポイント (orchestrator が指示を出す)
+  ├─ ASC: 「初回提出はバイナリと一緒に Web から行ってください」
+  ├─ Play: 「Service Account JSON を Play Console に招待してください」
+  └─ RC: 「Project と Service Account JSON を Dashboard で設定してください」
+
+[Phase 3] RevenueCat セットアップ
+  └─ Skill 3: revenuecat-setup (App + Product + Entitlement + Offering + Package)
+
+[Phase 4] 動作確認
+  └─ Promotional 付与でプレミアム動作確認
+```
+
+### Skill UX 例
+```
+/iap-orchestrator init           # config テンプレを生成
+/iap-orchestrator validate config.json
+/iap-orchestrator run config.json
+/iap-orchestrator status         # 各 Skill の進捗
+/iap-orchestrator manual-checkpoints  # 手動操作の一覧表示
+```
+
+### 手動チェックポイントの統合表示
+全 Skill の手動操作を 1 ヶ所に集約。ユーザーが「いまどこで何を手動でやらないといけない？」と聞いたら、orchestrator がフェーズに応じて答える。
+
+---
+
+## 各 Skill 共通の設計原則
+
+1. **スクリプトファースト**: SKILL.md に直接処理を書かず、`scripts/` 配下のシェル/Python に委譲（bannzai-skill-creator 準拠）
+2. **冪等性**: 全操作 upsert パターン（`lookup_key` / `productId` で GET → 無ければ POST、あれば skip/PATCH）
+3. **環境変数チェック**: 各スクリプト冒頭で `: "${VAR:?required}"` で必須変数を明示
+4. **手動チェックポイント明示**: スクリプト中で `printf "次のステップ: ダッシュボードで XX してください\n"` を出力
+5. **エラーリトライ**: 429 は exponential backoff、409 は upsert で吸収、5xx は最大 3 回リトライ
+6. **既存コード規約準拠**: `lookup_key` バリデーションを Skill が拒否するレベルで強制
+7. **動作確認セクション必須**: SKILL.md に「これで動いていることを確認するには」(dry-run / list-only モード)
+8. **manual-steps.md (FAQ)**: ユーザーが「ここ手動？」と聞いたら答えられるよう Q&A 形式で配置
+
+---
+
+## 実装順序（見積もり時間 = ユーザーフィードバック 7 に従い短縮）
+
+```
+Phase A: revenuecat-setup (Skill 3)         ← 4 時間
+  理由: 単独で価値が出る (404 解消、開発者オプションが動くようになる)
+  必要環境変数: REVENUECAT_V2_SECRET_KEY, REVENUECAT_PROJECT_ID
+
+Phase B: app-store-connect-iap (Skill 1)    ← 6 時間
+  理由: iOS 先行リリースができる
+  注意: 初回 Subscription はバイナリ提出と同時 (UI 必須) → Skill ではメタデータ作成までで終わり、提出は人間に依頼
+  必要環境変数: APP_STORE_CONNECT_KEY_BASE64, APP_STORE_CONNECT_KEY_ID, APP_STORE_CONNECT_ISSUER_ID
+
+Phase C: google-play-iap (Skill 2)          ← 6 時間
+  理由: Android リリースに必要
+  注意: アプリ初期作成 + Service Account 招待は UI、本体作成後から自動化
+  必要環境変数: GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64
+
+Phase D: iap-orchestrator (Skill 4)         ← 3 時間
+  理由: A/B/C を統合して新規アプリ立ち上げを 1 コマンドに
+  config JSON 設計とフェーズ管理、手動チェックポイント統合
+```
+
+合計 19 時間 ≈ 2.5 日（Claude が書く速度なら）。
+
+---
+
+## 関連 issue の更新（後続作業）
+
+調査結果反映で以下の issue を更新:
+
+- **#215** (App Store Connect 商品登録): 「初回はバイナリ提出と同時の UI 操作必須」追記、Skill 化対象範囲をメタデータ作成までに限定
+- **#216** (Google Play Console 商品登録): 「アプリ作成 / Service Account 招待 / RTDN Topic 登録 / Closed testing 14 日要件」を手動チェックポイントとして追記
+- **#217** (RevenueCat ダッシュボード設定): 404 真因 (`lookup_key` vs `entl_xxx` の取り違え) を追記、Project 作成と Service Account JSON アップロードのみ手動と明確化、v2 grant_entitlement で完結する旨追記
+
+---
+
+## 参考資料
+
+### App Store Connect API
+- [App Store Connect API トップ](https://developer.apple.com/documentation/appstoreconnectapi)
+- [JWT トークン生成](https://developer.apple.com/documentation/appstoreconnectapi/generating-tokens-for-api-requests)
+- [Subscriptions リソース](https://developer.apple.com/documentation/appstoreconnectapi/subscriptions)
+- [Auto-Renewable Subscription 管理手順](https://developer.apple.com/documentation/appstoreconnectapi/managing-auto-renewable-subscriptions)
+- [Subscription 提出手順](https://developer.apple.com/documentation/appstoreconnectapi/submitting-subscriptions-and-subscription-groups-for-app-review)
+- [Subscription Price Points & Prices](https://developer.apple.com/documentation/appstoreconnectapi/subscription-price-points-and-subscription-prices)
+- [Sandbox Testers (v2)](https://developer.apple.com/documentation/appstoreconnectapi/sandbox-testers)
+- [レート制限](https://developer.apple.com/documentation/appstoreconnectapi/identifying-rate-limits)
+
+### Google Play Developer API
+- [Google Play Developer API トップ](https://developers.google.com/android-publisher)
+- [Getting Started (認証)](https://developers.google.com/android-publisher/getting_started)
+- [monetization.subscriptions](https://developers.google.com/android-publisher/api-ref/rest/v3/monetization.subscriptions)
+- [monetization.subscriptions.basePlans/activate](https://developers.google.com/android-publisher/api-ref/rest/v3/monetization.subscriptions.basePlans/activate)
+- [edits リソース](https://developers.google.com/android-publisher/api-ref/rest/v3/edits)
+- [edits.bundles (AAB)](https://developers.google.com/android-publisher/api-ref/rest/v3/edits.bundles)
+- [edits.tracks](https://developers.google.com/android-publisher/api-ref/rest/v3/edits.tracks)
+- [Quotas (レート制限)](https://developers.google.com/android-publisher/quotas)
+- [Closed Testing 14 日要件 (2026)](https://12testers14days.pro/blog/google-play-policy-changes-2026/)
+
+### RevenueCat REST API
+- [REST API v1 ドキュメント](https://www.revenuecat.com/docs/api-v1)
+- [REST API v2 (Developer API) ドキュメント](https://www.revenuecat.com/docs/api-v2)
+- [API Keys & Authentication](https://www.revenuecat.com/docs/projects/authentication)
+- [Promotional Entitlements](https://www.revenuecat.com/docs/promotionals)
+- [Connect Apps & Web Providers](https://www.revenuecat.com/docs/projects/connect-a-store)
+- [REST API v2 App Management 追加 (2023/10)](https://revenuecat.releasenotes.io/release/n27PU-new-rest-api-v2-functionality-app-management-overview-metrics)
+- [Community: 404 の原因](https://community.revenuecat.com/general-questions-7/rest-api-grant-promotional-retruns-error-with-not-found-4449)
+- [Community: Project 作成 API は無い](https://community.revenuecat.com/general-questions-7/create-projects-apps-etc-via-api-1870)
+- [RevenueCat MCP Server (公式 MCP との比較検討用)](https://www.revenuecat.com/docs/tools/mcp/setup)
+
+→ これらは各 Skill の `references/links.md` にコピーして配置。
+
+---
+
+## 検証方法（各 Skill 完成後）
+
+| Skill | 検証コマンド |
 |---|---|
-| `RELEASE_TEST_PLAN.md` | プレミアム機能 QA テストプラン（A-1, A-2, A-3 の更新対象） |
-| `plans/dazzling-tickling-sun.md` | PR #212 の Maestro 修正プラン（参考） |
-| `documents/PROJECT.md` | プロジェクト全体の機能ロードマップ |
-| `documents/adr/0008-grant-promotional-premium-via-revenuecat-api.md` | プレミアム付与の仕組み（A-2 で使用） |
-| `lib/features/developer_options/` | `grantPromotionalPremium` 呼び出し画面（A-2 で使用） |
-| `maestro/flows/` | 更新対象の Maestro フロー（A-1 で再実行） |
+| `revenuecat-setup` | `~/.claude/skills/revenuecat-setup/scripts/create_entitlement.sh --dry-run` で API call 内容を確認、本実行で開発者オプションのプレミアム付与が成功すること |
+| `app-store-connect-iap` | `~/.claude/skills/app-store-connect-iap/scripts/create_subscription.sh --dry-run` 後、ASC Web で作成されたことを目視確認 |
+| `google-play-iap` | `~/.claude/skills/google-play-iap/scripts/create_subscription.sh --dry-run` 後、Play Console で確認 |
+| `iap-orchestrator` | `~/.claude/skills/iap-orchestrator/scripts/orchestrate.sh --validate config.json` で fail せず、本実行で全フェーズ完了 |
 
 ---
 
 ## チェックリスト
 
 ### 実装内容
-- [x] 変更対象ファイルごとに具体的なコード提案をコードブロックで記載している（本プランは監査のため、更新対象は `RELEASE_TEST_PLAN.md` のチェックボックス状態とエビデンス貼付のみ。実装コードは該当しない）
-- [x] 既存コードのパターン・構成を確認し、同じパターンで実装している（`RELEASE_TEST_PLAN.md` のフォーマットに従う）
+- [x] 変更対象ファイルごとに具体的なコード提案をコードブロックで記載している（`_common.sh` の base64 デコード例、config JSON テンプレ、ディレクトリ構成等）
+- [x] 既存コードのパターン・構成を確認し、同じパターンで実装している（`purchase.dart` の `lookup_key` 整合性、bannzai-skill-creator 準拠）
 
 ### 共通
 - [ ] エラーメッセージはそのまま表示（加工・プレフィックス除去なし）

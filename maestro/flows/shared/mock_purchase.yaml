@@ -1,0 +1,49 @@
+appId: com.bannzai.shoppinglist
+---
+# monthly パッケージ購入の共通サブフロー。
+# 匿名サインイン後に呼び出される前提（shared/anonymous_sign_in.yaml の後段で runFlow）。
+#
+# NOTE: env による PACKAGE_TYPE 切替は Maestro の idRegex 展開では動作しないため
+# monthly 版はここ（shared/mock_purchase.yaml）、annual / lifetime 版は
+# shared/mock_purchase_annual.yaml / shared/mock_purchase_lifetime.yaml に分離している。
+
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+
+# 設定画面は長いので、プレミアム会員 ListTile までスクロール。
+# ListTile の title/subtitle が 1 つのセマンティクス要素に merge されるため、
+# scrollUntilVisible は text 単独マッチが不安定。swipe + 部分一致 regex tapOn で対応する。
+- swipe:
+    start: "50%,80%"
+    end: "50%,20%"
+- swipe:
+    start: "50%,80%"
+    end: "50%,20%"
+- waitForAnimationToEnd
+- tapOn:
+    text: ".*プレミアム会員.*"
+- extendedWaitUntil:
+    visible: "プレミアムプラン"
+    timeout: 15000
+
+# PaywallPage 上の「購入」ボタンは monthly / annual / lifetime の順に並ぶ。
+# Flutter Key は iOS accessibility identifier に伝搬しないため、表示順 index で tap する。
+- tapOn:
+    text: "購入"
+    index: 0
+
+# RC Test Store mock purchase modal を承認する。
+# モーダルには "Test valid purchase" / "Test failed purchase" / "Cancel" の 3 ボタンが並ぶ。
+# 正常購入完遂のため "Test valid purchase" を選ぶ（Issue #237 動作確認時に実機で確認）。
+- extendedWaitUntil:
+    visible: "Test valid purchase"
+    timeout: 30000
+- tapOn: "Test valid purchase"
+
+- extendedWaitUntil:
+    visible: "購入ありがとうございました"
+    timeout: 30000
+
+- takeScreenshot: screenshots/mock_purchase_monthly_completed

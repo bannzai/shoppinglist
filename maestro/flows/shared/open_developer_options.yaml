@@ -1,15 +1,16 @@
 appId: com.bannzai.shoppinglist
 ---
 # 設定タブ → 開発者オプション画面への共通ナビゲーション
+# 「開発者オプション」ListTile は title 単独（subtitle なし）のため、
+# ADR 0010 の Semantics merge 問題に該当せず scrollUntilVisible が安定する。
 - tapOn:
     text: "設定.*"
     index: 0
 - waitForAnimationToEnd
-- swipe:
-    start: "50%,80%"
-    end: "50%,20%"
-- swipe:
-    start: "50%,80%"
-    end: "50%,20%"
+- scrollUntilVisible:
+    element:
+      text: "開発者オプション"
+    direction: DOWN
+    timeout: 30000
 - tapOn: "開発者オプション"
 - waitForAnimationToEnd

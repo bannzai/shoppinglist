@@ -68,7 +68,7 @@ jest.mock("firebase-functions", () => ({
 }));
 
 jest.mock("firebase-functions/params", () => ({
-  defineString: jest.fn(() => ({ value: () => "test-api-key" })),
+  defineSecret: jest.fn(() => ({ value: () => "test-api-key" })),
 }));
 
 // Gemini SDKのモック
