@@ -25,9 +25,9 @@ appId: com.bannzai.shoppinglist
 - waitForAnimationToEnd
 - tapOn: "グループ名"
 - inputText: "Extra Group"
-- tapOn:
-    text: "作成"
-    index: 0
+# `text: "作成"` の regex だと AppBar の「グループ作成」(index 0) もマッチしてしまうため、
+# 「作成する」ボタン本体を完全一致で指定する。
+- tapOn: "作成する"
 - waitForAnimationToEnd
 
 # non_premium 時の SnackBar が出ないこと
