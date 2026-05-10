@@ -18,7 +18,16 @@ class ShoppingListWidgetProvider : HomeWidgetProvider() {
     companion object {
         const val ACTION_TOGGLE_ITEM = "com.bannzai.shoppinglist.ACTION_TOGGLE_ITEM"
         /** テーマカラーの16進カラーコードバリデーション用パターン */
-        private val HEX_COLOR_PATTERN = Regex("^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$")
+        private val HEX_COLOR_PATTERN = Regex("^#([0-9A-F]{6}|[0-9A-F]{8})$")
+
+        /** 5 色プリセット（朱 / 抹茶 / 藍 / 墨 / 朽葉）。Flutter 側 AccentPreset と同期させること。 */
+        private val SUPPORTED_THEME_COLOR_HEXES = setOf(
+            "#C2410C", // 朱
+            "#1F6B4E", // 抹茶
+            "#0F4C81", // 藍
+            "#1B1B1B", // 墨
+            "#B45309", // 朽葉
+        )
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -90,11 +99,16 @@ class ShoppingListWidgetProvider : HomeWidgetProvider() {
         appWidgetIds: IntArray,
         widgetData: SharedPreferences
     ) {
-        val defaultThemeColorHex = "#673AB7"
+        // 朱（5 色プリセットのデフォルト）。Flutter 側 AccentPreset.shu と一致。
+        val defaultThemeColorHex = "#C2410C"
         val isPremium = widgetData.getBoolean("widget_is_premium", false)
         val rawThemeColorHex = widgetData.getString("widget_theme_color_hex", defaultThemeColorHex) ?: defaultThemeColorHex
-        val themeColorHex = if (isPremium && HEX_COLOR_PATTERN.matches(rawThemeColorHex.trim())) {
-            rawThemeColorHex.trim().uppercase()
+        val normalizedHex = rawThemeColorHex.trim().uppercase()
+        val themeColorHex = if (isPremium &&
+            HEX_COLOR_PATTERN.matches(normalizedHex) &&
+            SUPPORTED_THEME_COLOR_HEXES.contains(normalizedHex)
+        ) {
+            normalizedHex
         } else {
             defaultThemeColorHex
         }

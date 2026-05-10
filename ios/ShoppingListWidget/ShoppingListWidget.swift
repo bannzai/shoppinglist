@@ -1,7 +1,18 @@
 import SwiftUI
 import WidgetKit
 
-private let defaultThemeColorHex = "#673AB7"
+// 朱（5 色プリセットのデフォルト）。Flutter 側 AccentPreset.shu と一致。
+private let defaultThemeColorHex = "#C2410C"
+
+/// プレミアムで切り替え可能な 5 色プリセット（朱 / 抹茶 / 藍 / 墨 / 朽葉）の HEX。
+/// Flutter 側 AccentPreset の persistHex と同期させること。
+private let supportedThemeColorHexes: Set<String> = [
+    "#C2410C", // 朱
+    "#1F6B4E", // 抹茶
+    "#0F4C81", // 藍
+    "#1B1B1B", // 墨
+    "#B45309", // 朽葉
+]
 
 struct ShoppingListEntry: TimelineEntry {
     let date: Date
@@ -96,14 +107,14 @@ struct Provider: AppIntentTimelineProvider {
         )
     }
 
-    /// HEX値を正規化する。不正値はデフォルトカラーにフォールバックする。
+    /// HEX値を正規化する。フォーマット不正値・5 色プリセット外（旧 10 色含む）はデフォルトカラーにフォールバックする。
     private func normalizeThemeColorHex(_ value: String?) -> String {
         guard let value else { return defaultThemeColorHex }
-        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-        if trimmed.range(of: "^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$", options: .regularExpression) != nil {
-            return trimmed.uppercased()
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        guard trimmed.range(of: "^#([0-9A-F]{6}|[0-9A-F]{8})$", options: .regularExpression) != nil else {
+            return defaultThemeColorHex
         }
-        return defaultThemeColorHex
+        return supportedThemeColorHexes.contains(trimmed) ? trimmed : defaultThemeColorHex
     }
 
     private func loadItemsFromUserDefaults(groupID: String, shoppingListID: String) -> [ShoppingListItemData] {

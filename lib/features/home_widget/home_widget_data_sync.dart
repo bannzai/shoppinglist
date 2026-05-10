@@ -12,13 +12,26 @@ class HomeWidgetDataSync {
 
   static final _hexColorRegExp =
       RegExp(r'^#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$');
-  static const _defaultThemeColorHex = '#673AB7';
 
-  /// HEX値を正規化する。不正値はデフォルトカラーにフォールバックする。
+  /// 朱（5 色プリセットのデフォルト）。
+  /// design_handoff_shopping_list の AccentPreset.shu と同じ値。
+  static const _defaultThemeColorHex = '#C2410C';
+
+  /// 5 色プリセット以外（旧 10 色や不正値）を朱に倒すための許可リスト。
+  static const _supportedHexes = {
+    '#C2410C', // 朱
+    '#1F6B4E', // 抹茶
+    '#0F4C81', // 藍
+    '#1B1B1B', // 墨
+    '#B45309', // 朽葉
+  };
+
+  /// HEX値を正規化する。フォーマット不正値・旧 10 色プリセット値は朱にフォールバックする。
   static String _normalizeThemeColorHex(String value) {
-    final normalized = value.trim();
-    if (_hexColorRegExp.hasMatch(normalized)) {
-      return normalized.toUpperCase();
+    final normalized = value.trim().toUpperCase();
+    if (_hexColorRegExp.hasMatch(normalized) &&
+        _supportedHexes.contains(normalized)) {
+      return normalized;
     }
     return _defaultThemeColorHex;
   }
