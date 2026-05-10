@@ -12,6 +12,8 @@ import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/features/auth/page.dart';
+import 'package:shoppinglist/features/onboarding/page.dart';
+import 'package:shoppinglist/provider/onboarding.dart';
 import 'package:shoppinglist/provider/shared_preferences.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 
@@ -31,6 +33,7 @@ class AuthResolver extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final firebaseUserChanges = ref.watch(firebaseUserChangesProvider);
     final sharedPreferences = ref.watch(sharedPreferencesProvider);
+    final hasSeenOnboarding = ref.watch(hasSeenOnboardingProvider);
 
     useEffect(() {
       final userID = firebaseUserChanges.asData?.valueOrNull?.uid;
@@ -54,6 +57,9 @@ class AuthResolver extends HookConsumerWidget {
 
             // kDebugMode時は匿名ユーザーでも認証済みとして通過させる（自動テスト用）
             if (user == null || (!kDebugMode && user.isAnonymous)) {
+              if (!hasSeenOnboarding) {
+                return const OnboardingPage();
+              }
               return const AuthPage();
             } else {
               return builder(context, user);
