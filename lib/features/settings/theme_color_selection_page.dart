@@ -50,7 +50,7 @@ class ThemeColorSelectionPage extends ConsumerWidget {
                           );
                           try {
                             await ref.read(themeColorUpdateProvider).call(
-                                  themeColorHex: preset.hex,
+                                  preset: preset.preset,
                                 );
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(

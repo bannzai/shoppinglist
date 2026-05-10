@@ -9,6 +9,7 @@ import 'package:shoppinglist/provider/geofence.dart';
 import 'package:shoppinglist/provider/local_notification.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/root.dart';
+import 'package:shoppinglist/style/theme.dart';
 
 final _navigatorKey = GlobalKey<NavigatorState>();
 
@@ -35,27 +36,15 @@ class _AppState extends ConsumerState<App> {
     ref.watch(geofenceMonitorProvider);
 
     // appUserProvider は UserDatabaseResolver スコープ外では AsyncError になるが、
-    // .asData?.value で安全に null フォールバックし、デフォルト色が使われる
-    final seedColor = resolveThemeColor(
+    // .asData?.value で安全に null フォールバックし、shu（朱）が使われる
+    final accent = resolveAccentPreset(
         ref.watch(appUserProvider).asData?.value.themeColorHex);
 
     return MaterialApp(
       navigatorKey: _navigatorKey,
       title: '買い物リスト',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: seedColor,
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: seedColor,
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-      ),
+      theme: buildAppTheme(brightness: Brightness.light, accent: accent),
+      darkTheme: buildAppTheme(brightness: Brightness.dark, accent: accent),
       themeMode: ThemeMode.system,
       builder: kDebugMode
           ? (context, child) {

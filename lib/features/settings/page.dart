@@ -273,8 +273,9 @@ class _ThemeColorTile extends ConsumerWidget {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: resolveThemeColor(
-                  ref.watch(appUserProvider).asData?.value.themeColorHex),
+              color: resolveAccentPreset(
+                      ref.watch(appUserProvider).asData?.value.themeColorHex)
+                  .light,
               shape: BoxShape.circle,
             ),
           ),
