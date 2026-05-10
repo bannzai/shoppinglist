@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/group_setting/page.dart';
+import 'package:shoppinglist/features/paywall/paywall.dart';
+import 'package:shoppinglist/features/shopping_list/utils/export_text_formatter.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/button.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -276,6 +281,13 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                   ),
                 ),
                 const Divider(),
+                _ListActionsSection(
+                  groupID: groupID,
+                  shoppingListID: shoppingListID,
+                  shoppingList: shoppingList.value,
+                  isPremium: isPremium,
+                ),
+                const Divider(),
                 const SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -352,6 +364,142 @@ class ShoppingListSettingPage extends HookConsumerWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// 「リストの操作」セクション。複製 / エクスポートを集約する。
+/// 旧 `ShoppingListAppBar` のメニューから移植したロジック。
+class _ListActionsSection extends ConsumerWidget {
+  final String groupID;
+  final String shoppingListID;
+  final GroupShoppingList shoppingList;
+  final bool isPremium;
+  const _ListActionsSection({
+    required this.groupID,
+    required this.shoppingListID,
+    required this.shoppingList,
+    required this.isPremium,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final shoppingListItems = ref
+            .watch(textShoppingListItemsProvider(
+              groupID: groupID,
+              shoppingListID: shoppingListID,
+              showChecked: true,
+            ))
+            .valueOrNull ??
+        const <GroupShoppingListItem>[];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('リストの操作',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () async {
+                analytics.logEvent(name: 'tap_duplicate_list', parameters: {
+                  'groupID': groupID,
+                  'sourceShoppingListID': shoppingListID,
+                });
+                try {
+                  await ref
+                      .read(shoppingListDuplicateProvider(groupID: groupID))
+                      .call(
+                        createUserID: shoppingList.createUserID,
+                        groupID: groupID,
+                        sourceShoppingList: shoppingList,
+                        shoppingListItems: shoppingListItems,
+                      );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('リストを複製しました')),
+                    );
+                  }
+                } on ShoppingListLimitExceededException catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(e.toString()),
+                        action: SnackBarAction(
+                          label: 'アップグレード',
+                          onPressed: () => showPaywall(context: context),
+                        ),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.toString())),
+                    );
+                  }
+                }
+              },
+              icon: const Icon(Icons.content_copy_outlined),
+              label: const Text('現在のリストを複製'),
+            ),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () async {
+                analytics.logEvent(name: 'tap_export_shopping_list',
+                    parameters: {
+                      'groupID': groupID,
+                      'shoppingListID': shoppingListID,
+                    });
+                if (!isPremium) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                          'リストのエクスポートはプレミアム機能です。プレミアムにアップグレードすると利用できます'),
+                      action: SnackBarAction(
+                        label: 'アップグレード',
+                        onPressed: () => showPaywall(context: context),
+                      ),
+                    ),
+                  );
+                  return;
+                }
+                try {
+                  final box = context.findRenderObject() as RenderBox?;
+                  if (box == null) {
+                    throw StateError('共有シートの表示位置を取得できませんでした');
+                  }
+                  await SharePlus.instance.share(
+                    ShareParams(
+                      text: buildShoppingListExportText(
+                        shoppingListName: shoppingList.name,
+                        shoppingListItems: shoppingListItems,
+                      ),
+                      sharePositionOrigin:
+                          box.localToGlobal(Offset.zero) & box.size,
+                    ),
+                  );
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.toString())),
+                    );
+                  }
+                }
+              },
+              icon: const Icon(Icons.ios_share_outlined),
+              label: const Text('リストをエクスポート'),
+            ),
+          ),
+        ],
       ),
     );
   }

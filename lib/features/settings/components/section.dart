@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shoppinglist/components/frame/app_section_card.dart';
 
+/// 設定画面用のセクション。タイトル + 子 Cell を `AppSectionCard` でラップする。
+/// 旧実装と API 互換のため `text` / `children` を受け取る。
 class SettingSectionTitle extends StatelessWidget {
   final String text;
   final List<Widget> children;
@@ -9,34 +12,9 @@ class SettingSectionTitle extends StatelessWidget {
     required this.text,
     required this.children,
   });
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _SectionTitle(text: text),
-        ...children,
-      ],
-    );
-  }
-}
-
-class _SectionTitle extends StatelessWidget {
-  final String text;
-  const _SectionTitle({required this.text});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(top: 32, left: 15, right: 16),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-      ),
-    );
+    return AppSectionCard(title: text, children: children);
   }
 }

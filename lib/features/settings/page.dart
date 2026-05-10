@@ -1,27 +1,27 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/button/inquiry.dart';
 import 'package:shoppinglist/components/button/user_delete.dart';
-import 'package:shoppinglist/features/group_invitation/page.dart';
 import 'package:shoppinglist/features/developer_options/page.dart';
+import 'package:shoppinglist/features/group_invitation/page.dart';
 import 'package:shoppinglist/features/group_list/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/settings/components/section.dart';
+import 'package:shoppinglist/features/settings/theme_color_selection_page.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
-import 'package:shoppinglist/provider/group_user_profile.dart';
-import 'package:shoppinglist/provider/notification_setting.dart';
-
-import 'package:geolocator/geolocator.dart';
-import 'package:shoppinglist/features/settings/theme_color_selection_page.dart';
 import 'package:shoppinglist/provider/geofence.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/local_notification.dart';
+import 'package:shoppinglist/provider/notification_setting.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingPage extends HookConsumerWidget {
@@ -54,14 +54,23 @@ class SettingPage extends HookConsumerWidget {
       return null;
     }, [myProfile]);
 
+    final tokens = context.tokens;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('設定'),
-      ),
+      backgroundColor: tokens.neutral.paper,
+      appBar: null,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+                child: Text(
+                  '設定',
+                  style: Theme.of(context).textTheme.displayMedium,
+                ),
+              ),
               SettingSectionTitle(text: 'プロフィール', children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(
