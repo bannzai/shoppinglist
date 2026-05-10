@@ -4,12 +4,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/features/group_setting/page.dart';
-import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/button.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 class ShoppingListSettingPage extends HookConsumerWidget {
   final String groupID;
@@ -30,8 +30,10 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     final textEditingController =
         useTextEditingController(text: shoppingList.value.name);
     final isCreatingInvitation = useState(false);
-    final firestoreIsPremium =
-        ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
+    // UI 表示用途は customerInfoProvider を使う。Promotional Entitlement 経由の付与でも
+    // 即座に反映できる (Custom Claims はリアルタイムに更新されない)。
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
 
     void autoSave(GroupShoppingList updated) {
       shoppingList.value = updated;
@@ -156,7 +158,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
-                      if (firestoreIsPremium)
+                      if (isPremium)
                         const Row(
                           children: [
                             Icon(Icons.all_inclusive, size: 16),
