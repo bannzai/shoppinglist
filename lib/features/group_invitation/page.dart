@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
+import 'package:shoppinglist/style/theme.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/invitation_code_validator.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -17,7 +19,15 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
     final codeController = useTextEditingController();
     final isValidCode = useState(false);
 
+    final tokens = context.tokens;
+    final neutral = tokens.neutral;
+    final hasError = errorMessage.value != null;
+    final borderColor = hasError
+        ? neutral.danger
+        : (isValidCode.value ? tokens.accent : neutral.divider);
+
     return Scaffold(
+      backgroundColor: neutral.surface,
       appBar: AppBar(
         title: const Text('招待コードで参加'),
       ),
@@ -28,27 +38,27 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.group_add,
-                size: 64,
-                color: Colors.blue,
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: tokens.accentSoft,
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Icon(Icons.group_add,
+                    size: 32, color: tokens.accent),
               ),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 '招待コードを入力してください',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.headlineSmall,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
-              const Text(
+              Text(
                 'グループのメンバーから共有された8桁のコードを入力してください',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
+                style: TextStyle(fontSize: 13, color: neutral.ink2, height: 1.6),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -57,25 +67,40 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                 textCapitalization: TextCapitalization.characters,
                 textAlign: TextAlign.center,
                 maxLength: 8,
-                style: const TextStyle(
-                  fontSize: 24,
-                  letterSpacing: 4,
-                  fontWeight: FontWeight.bold,
-                ),
-                decoration: const InputDecoration(
+                style: monoTextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                  color: neutral.ink,
+                ).copyWith(letterSpacing: 6),
+                decoration: InputDecoration(
                   hintText: 'ABCD3456',
+                  hintStyle: monoTextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w400,
+                    color: neutral.ink4,
+                  ).copyWith(letterSpacing: 6),
                   counterText: '',
-                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: neutral.card,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(color: borderColor, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(color: borderColor, width: 1.5),
+                  ),
                 ),
                 onChanged: (value) {
+                  errorMessage.value = null;
                   isValidCode.value = isValidInvitationCode(value);
                 },
               ),
-              if (errorMessage.value != null) ...[
-                const SizedBox(height: 16),
+              if (hasError) ...[
+                const SizedBox(height: 12),
                 Text(
                   errorMessage.value!,
-                  style: const TextStyle(color: Colors.red),
+                  style: TextStyle(color: neutral.danger, fontSize: 12),
                   textAlign: TextAlign.center,
                 ),
               ],

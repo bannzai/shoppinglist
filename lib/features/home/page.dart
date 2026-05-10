@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/frame/app_bottom_tab_bar.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/features/shopping_list/page.dart';
 import 'package:shoppinglist/features/settings/page.dart';
-// import 'package:shoppinglist/features/ec_items/page.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/default_group_update.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -60,29 +60,21 @@ class HomePage extends HookConsumerWidget {
       _screenTracking(tabController.index);
     });
 
+    final activeTab =
+        tabIndex.value == 0 ? AppTab.list : AppTab.settings;
+
     return DefaultTabController(
       length: HomePageTabType.values.length,
       child: Scaffold(
         appBar: null,
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: tabIndex.value,
-          onDestinationSelected: (index) {
-            tabIndex.value = index;
-            tabController.animateTo(index);
-            _screenTracking(index);
+        bottomNavigationBar: AppBottomTabBar(
+          active: activeTab,
+          onChanged: (tab) {
+            final newIndex = tab == AppTab.list ? 0 : 1;
+            tabIndex.value = newIndex;
+            tabController.animateTo(newIndex);
+            _screenTracking(newIndex);
           },
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.list_alt_outlined),
-              selectedIcon: Icon(Icons.list_alt),
-              label: '買い物リスト',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.settings_outlined),
-              selectedIcon: Icon(Icons.settings),
-              label: '設定',
-            ),
-          ],
         ),
         body: TabBarView(
           physics: const NeverScrollableScrollPhysics(),
