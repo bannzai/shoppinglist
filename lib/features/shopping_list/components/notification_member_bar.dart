@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 
 /// 買い物リスト更新時にSnackBar内に表示するメンバーアイコンバー。
@@ -40,12 +41,15 @@ class NotificationMemberBar extends HookConsumerWidget {
       children: [
         const Icon(Icons.notifications_none, size: 18, color: Colors.white70),
         const SizedBox(width: 8),
-        const Text(
-          '通知:',
-          style: TextStyle(color: Colors.white, fontSize: 13),
+        const Flexible(
+          child: Text(
+            'リストが更新されました — 家族に通知しますか?',
+            style: TextStyle(color: Colors.white, fontSize: 12.5, height: 1.3),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
         const SizedBox(width: 8),
-        // 全員送信ボタン
         _SendAllButton(
           otherMembers: otherMembers,
           sendingUserIDs: sendingUserIDs,
@@ -58,7 +62,6 @@ class NotificationMemberBar extends HookConsumerWidget {
           ),
         ),
         const SizedBox(width: 4),
-        // 個別メンバーアイコン
         ...otherMembers.map((profile) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 2),
@@ -224,7 +227,9 @@ class _MemberAvatar extends StatelessWidget {
   }
 }
 
-/// 通知送信用SnackBarを表示する。ソログループ（自分のみ）の場合は表示しない。
+/// 通知送信用 SnackBar を表示する。ソログループ（自分のみ）の場合は表示しない。
+/// `design_handoff_shopping_list/source/screens-list.jsx#NotifySnack` 相当。
+/// card 背景 + 角丸 14、左スワイプ dismiss、5 秒で自動消滅。
 void showNotificationSnackBar({
   required BuildContext context,
   required String groupID,
@@ -238,6 +243,9 @@ void showNotificationSnackBar({
 
   if (otherMembers.isEmpty) return;
 
+  final tokens = Theme.of(context).extension<AppTokens>();
+  final background = tokens?.neutral.ink ?? const Color(0xFF1B1813);
+
   ScaffoldMessenger.of(context).hideCurrentSnackBar();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
@@ -248,8 +256,13 @@ void showNotificationSnackBar({
         currentUserID: currentUserID,
         memberProfiles: memberProfiles,
       ),
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 5),
       behavior: SnackBarBehavior.floating,
+      backgroundColor: background,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      dismissDirection: DismissDirection.startToEnd,
+      elevation: 6,
     ),
   );
 }
