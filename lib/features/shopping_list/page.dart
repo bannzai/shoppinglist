@@ -19,6 +19,7 @@ import 'package:shoppinglist/features/shopping_list/components/notification_memb
 import 'package:shoppinglist/features/shopping_list/components/progress_block.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/empty_text_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_items.dart';
+import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
 import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/auth_claim.dart';
@@ -228,10 +229,9 @@ class _Body extends HookConsumerWidget {
       showChecked: true,
     ));
     final allItems = allItemsAsync.valueOrNull ?? [];
-    final checkedCount = allItems
-        .where((i) => i.status == GroupShoppingListItemStatus.checked)
-        .length;
-    final totalCount = allItems.length;
+    final itemMetrics = ShoppingListItemMetrics.fromItems(allItems);
+    final checkedCount = itemMetrics.checkedCount;
+    final totalCount = itemMetrics.totalCount;
     final shoppingList =
         shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID);
 
