@@ -29,29 +29,49 @@ void main() {
     expect(find.text('詳しく'), findsOneWidget);
   });
 
-  testWidgets('AIProcessingBanner(image): 画像ラベルが表示される', (tester) async {
+  testWidgets('AIProcessingBanner(image): 画像ラベルとサブテキストが表示される',
+      (tester) async {
     await tester.pumpWidget(_wrap(
       const AIProcessingBanner(type: AIProcessingType.image),
     ));
-    expect(find.text('画像から候補を抽出中...'), findsOneWidget);
+    expect(find.text('写真からアイテムを生成中'), findsOneWidget);
+    expect(find.text('レシート 1 枚 ・ 候補を抽出しています…'), findsOneWidget);
   });
 
-  testWidgets('AIProcessingBanner(url): URL ラベルが表示される', (tester) async {
+  testWidgets('AIProcessingBanner(url): URL ラベルとサブテキストが表示される',
+      (tester) async {
     await tester.pumpWidget(_wrap(
       const AIProcessingBanner(type: AIProcessingType.url),
     ));
-    expect(find.text('URL から候補を抽出中...'), findsOneWidget);
+    expect(find.text('URL からアイテムを生成中'), findsOneWidget);
+    expect(find.text('ページを解析しています…'), findsOneWidget);
   });
 
-  testWidgets('ListErrorCard: 例外メッセージと「再試行」が表示される', (tester) async {
+  testWidgets('ListErrorCard: 固定文言と「再試行」が表示される', (tester) async {
     var retried = 0;
     await tester.pumpWidget(_wrap(ListErrorCard(
       exception: Exception('boom'),
       onRetry: () => retried++,
     )));
     expect(find.text('リストを読み込めませんでした'), findsOneWidget);
-    expect(find.textContaining('boom'), findsOneWidget);
+    expect(
+      find.textContaining('通信状態を確認してください。'),
+      findsOneWidget,
+    );
     await tester.tap(find.text('再試行'));
     expect(retried, 1);
+  });
+
+  testWidgets('ListErrorCard: onContactSupport を渡すと「サポートに連絡」が出る',
+      (tester) async {
+    var contacted = 0;
+    await tester.pumpWidget(_wrap(ListErrorCard(
+      exception: null,
+      onRetry: () {},
+      onContactSupport: () => contacted++,
+    )));
+    expect(find.text('サポートに連絡'), findsOneWidget);
+    await tester.tap(find.text('サポートに連絡'));
+    expect(contacted, 1);
   });
 }
