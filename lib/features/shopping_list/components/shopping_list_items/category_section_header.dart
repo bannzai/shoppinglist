@@ -45,11 +45,14 @@ class CategorySectionHeader extends StatelessWidget {
               name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
+              // screens-list.jsx の `letter-spacing: 0.06em` は em 指定なので、
+              // 11px に対する絶対値は 0.06 × 11 = 0.66。`Flutter` の letterSpacing は logical px 単位。
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 color: neutral.ink2,
-                letterSpacing: 0.06,
+                letterSpacing: 0.66,
+                height: 1.2,
               ),
             ),
           ),

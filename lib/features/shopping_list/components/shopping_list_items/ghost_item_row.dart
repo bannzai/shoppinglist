@@ -6,19 +6,21 @@ import 'package:shoppinglist/style/tokens.dart';
 /// `design_handoff_shopping_list/source/screens-list.jsx` の `ItemRow(ghost)` 相当。
 /// 入力できない（`onChanged: null` で disabled）。
 class GhostItemRow extends StatelessWidget {
-  /// プレースホルダとして表示する例文。
+  /// プレースホルダとして表示する例文。デフォルトは「新しいアイテム…」。
   final String hint;
 
-  const GhostItemRow({super.key, required this.hint});
+  const GhostItemRow({super.key, this.hint = '新しいアイテム…'});
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.tokens;
     return Opacity(
       opacity: 0.5,
-      child: Padding(
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 52),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const AppCheckbox(checked: false, onChanged: null),
             const SizedBox(width: 12),
@@ -26,7 +28,7 @@ class GhostItemRow extends StatelessWidget {
               child: Text(
                 hint,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
                   fontStyle: FontStyle.italic,
                   color: tokens.neutral.ink3,
                 ),

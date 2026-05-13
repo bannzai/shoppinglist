@@ -4,6 +4,7 @@ import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_section_header.dart';
+import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/tail_empty_row.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
 import 'package:shoppinglist/provider/group_category.dart';
@@ -64,7 +65,9 @@ class ShoppingListItems extends ConsumerWidget {
   }
 }
 
-/// カテゴリが存在しない場合のフラット表示（従来の表示）
+/// カテゴリが存在しない場合のフラット表示（従来の表示）。
+/// `screens-list.jsx#ShoppingListFlat` 末尾の「ItemRow isEmpty focused」を再現するため、
+/// `SliverReorderableList` + 末尾 `TailEmptyRow` + FAB 分の SizedBox を `CustomScrollView` で並べる。
 class _FlatShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
@@ -78,36 +81,51 @@ class _FlatShoppingListItems extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ReorderableList(
-      onReorder: (oldIndex, newIndex) {
-        // ドラッグ時にリストから要素を一時的に削除するため newIndex がずれるのを調整
-        if (oldIndex < newIndex) {
-          newIndex -= 1;
-        }
-        final changedItems = [...shoppingListItems];
-        final movedItem = changedItems.removeAt(oldIndex);
-        changedItems.insert(newIndex, movedItem);
-        final orderedItems = changedItems
-            .asMap()
-            .entries
-            .map((entry) => entry.value.copyWith(order: entry.key))
-            .toList();
-        ref.read(shoppingListItemBatchUpdateProvider(groupID: groupID)).call(
-              shoppingListID: shoppingListID,
-              shoppingListItems: orderedItems,
+    return CustomScrollView(
+      slivers: [
+        SliverReorderableList(
+          onReorder: (oldIndex, newIndex) {
+            // ドラッグ時にリストから要素を一時的に削除するため newIndex がずれるのを調整
+            if (oldIndex < newIndex) {
+              newIndex -= 1;
+            }
+            final changedItems = [...shoppingListItems];
+            final movedItem = changedItems.removeAt(oldIndex);
+            changedItems.insert(newIndex, movedItem);
+            final orderedItems = changedItems
+                .asMap()
+                .entries
+                .map((entry) => entry.value.copyWith(order: entry.key))
+                .toList();
+            ref
+                .read(shoppingListItemBatchUpdateProvider(groupID: groupID))
+                .call(
+                  shoppingListID: shoppingListID,
+                  shoppingListItems: orderedItems,
+                );
+          },
+          itemCount: shoppingListItems.length,
+          itemBuilder: (context, index) {
+            final item = shoppingListItems[index];
+            return TextShoppingListItemWidget(
+              key: ValueKey(item.id),
+              groupID: groupID,
+              textShoppingListItem: item,
+              shoppingListItems: shoppingListItems,
+              reorderIndex: index,
             );
-      },
-      itemCount: shoppingListItems.length,
-      itemBuilder: (context, index) {
-        final item = shoppingListItems[index];
-        return TextShoppingListItemWidget(
-          key: ValueKey(item.id),
-          groupID: groupID,
-          textShoppingListItem: item,
-          shoppingListItems: shoppingListItems,
-          reorderIndex: index,
-        );
-      },
+          },
+        ),
+        SliverToBoxAdapter(
+          child: TailEmptyRow(
+            groupID: groupID,
+            shoppingListID: shoppingListID,
+            nextOrder: shoppingListItems.nextOrder,
+          ),
+        ),
+        // FAB (56) + 余白で隠れないよう下部 100px を確保
+        const SliverToBoxAdapter(child: SizedBox(height: 100)),
+      ],
     );
   }
 }
@@ -153,6 +171,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
         return _GroupedListView(
           groupID: groupID,
           shoppingListID: shoppingListID,
+          shoppingListItems: shoppingListItems,
           categories: categories,
           grouped: grouped,
           shoppingLocationID: isPremium ? shoppingLocationID : null,
@@ -172,6 +191,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
 class _GroupedListView extends StatelessWidget {
   final String groupID;
   final String shoppingListID;
+  final List<GroupShoppingListItem> shoppingListItems;
   final List<GroupCategory> categories;
   final Map<String, List<GroupShoppingListItem>> grouped;
   final String? shoppingLocationID;
@@ -179,6 +199,7 @@ class _GroupedListView extends StatelessWidget {
   const _GroupedListView({
     required this.groupID,
     required this.shoppingListID,
+    required this.shoppingListItems,
     required this.categories,
     required this.grouped,
     required this.shoppingLocationID,
@@ -240,6 +261,15 @@ class _GroupedListView extends StatelessWidget {
         ));
       }
     }
+
+    // 末尾の TailEmptyRow と FAB 分の余白 (screens-list.jsx#ShoppingListByCategory も末尾に空 focused 行を持つ)
+    children.add(const SizedBox(height: 12));
+    children.add(TailEmptyRow(
+      groupID: groupID,
+      shoppingListID: shoppingListID,
+      nextOrder: shoppingListItems.nextOrder,
+    ));
+    children.add(const SizedBox(height: 100));
 
     return ListView(children: children);
   }
