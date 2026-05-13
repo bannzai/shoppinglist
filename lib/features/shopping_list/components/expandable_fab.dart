@@ -134,19 +134,39 @@ class ExpandableFab extends HookConsumerWidget {
           animation: controller,
           builder: (_, __) => Transform.rotate(
             angle: controller.value * 0.785,
-            child: FloatingActionButton(
-              backgroundColor: tokens.accent,
-              foregroundColor: Colors.white,
-              shape: const CircleBorder(),
-              onPressed: () {
-                analytics.logEvent(name: 'tap_toggle_fab', parameters: {
-                  'groupID': groupID,
-                  'shoppingListID': shoppingListID,
-                  'open': (!open.value).toString(),
-                });
-                open.value = !open.value;
-              },
-              child: const Icon(Icons.add, size: 26),
+            child: Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: tokens.accent,
+                // 仕様: accent 影 (alpha 0.35) と内側ハイライト (Flutter で再現可な範囲)。
+                boxShadow: [
+                  BoxShadow(
+                    color: tokens.accent.withValues(alpha: 0.35),
+                    offset: const Offset(0, 6),
+                    blurRadius: 14,
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                shape: const CircleBorder(),
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: () {
+                    analytics.logEvent(name: 'tap_toggle_fab', parameters: {
+                      'groupID': groupID,
+                      'shoppingListID': shoppingListID,
+                      'open': (!open.value).toString(),
+                    });
+                    open.value = !open.value;
+                  },
+                  child: const Center(
+                    child: Icon(Icons.add, size: 26, color: Colors.white),
+                  ),
+                ),
+              ),
             ),
           ),
         ),
@@ -399,19 +419,37 @@ class _ActionRow extends StatelessWidget {
           children: [
             _ActionLabel(label: action.label, ai: action.ai),
             const SizedBox(width: 10),
-            Material(
-              color: action.primary ? tokens.accent : tokens.neutral.surface2,
-              shape: const CircleBorder(),
-              child: InkWell(
-                customBorder: const CircleBorder(),
-                onTap: action.onTap,
-                child: SizedBox(
-                  width: action.primary ? 56 : 44,
-                  height: action.primary ? 56 : 44,
-                  child: Icon(
-                    action.icon,
-                    size: action.primary ? 24 : 20,
-                    color: action.primary ? Colors.white : tokens.neutral.ink,
+            Container(
+              width: action.primary ? 56 : 44,
+              height: action.primary ? 56 : 44,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                // 仕様: 副ボタンは surface（surface2 ではない）+ 1px divider border + 影。
+                color: action.primary ? tokens.accent : tokens.neutral.surface,
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x1F1B1813),
+                    offset: Offset(0, 6),
+                    blurRadius: 14,
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                shape: action.primary
+                    ? const CircleBorder()
+                    : CircleBorder(
+                        side: BorderSide(color: tokens.neutral.divider)),
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: action.onTap,
+                  child: Center(
+                    child: Icon(
+                      action.icon,
+                      // 仕様: 副ボタンのアイコンは 18px。
+                      size: action.primary ? 24 : 18,
+                      color: action.primary ? Colors.white : tokens.neutral.ink,
+                    ),
                   ),
                 ),
               ),

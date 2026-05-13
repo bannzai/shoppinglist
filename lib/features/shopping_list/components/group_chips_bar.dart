@@ -5,7 +5,7 @@ import 'package:shoppinglist/utils/logger/analytics.dart';
 
 /// グループ切替の横スクロールチップ群（高さ 46）。
 /// `design_handoff_shopping_list/source/screens-list.jsx#GroupChips` 相当。
-/// 旧 `GroupSwitcher` を置き換える。グループが 1 つのときは非表示。
+/// グループが 1 つのときは非表示。
 class GroupChipsBar extends StatelessWidget {
   final List<Group> groups;
   final String currentGroupID;
@@ -24,10 +24,11 @@ class GroupChipsBar extends StatelessWidget {
       return const SizedBox.shrink();
     }
     return SizedBox(
-      height: 46,
+      height: 38,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+        // 仕様: padding `0 16px 8px`（screens-list.jsx L42）。上余白は ListTopBar 側で吸収。
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
         itemCount: groups.length,
         separatorBuilder: (_, __) => const SizedBox(width: 6),
         itemBuilder: (context, index) {
@@ -37,7 +38,8 @@ class GroupChipsBar extends StatelessWidget {
             label: group.name ?? 'グループ',
             active: selected,
             soft: true,
-            icon: selected ? Icons.check : null,
+            // 仕様: active 時は check、非アクティブは people（複数人グループの抽象）。
+            icon: selected ? Icons.check : Icons.people_outline,
             onTap: selected
                 ? null
                 : () {

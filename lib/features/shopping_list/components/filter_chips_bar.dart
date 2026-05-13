@@ -35,9 +35,11 @@ class FilterChipsBar extends ConsumerWidget {
         child: Row(
           children: [
             AppChip(
-              label: showChecked.value ? 'チェック済み表示' : 'チェック済み非表示',
-              icon: Icons.check,
-              soft: true,
+              // 仕様（screens-list.jsx L80）: 半角スペース入りラベル。
+              label: showChecked.value ? 'チェック済み 表示' : 'チェック済み 非表示',
+              // active（=「非表示」モード）時のみ check アイコン + soft 配色。
+              icon: !showChecked.value ? Icons.check : null,
+              soft: !showChecked.value,
               active: !showChecked.value,
               onTap: () {
                 final next = !showChecked.value;
@@ -55,8 +57,9 @@ class FilterChipsBar extends ConsumerWidget {
             const SizedBox(width: 6),
             AppChip(
               label: sortByCategory.value ? 'カテゴリ順' : 'リスト順',
-              icon: Icons.sell_outlined,
-              soft: true,
+              // active 時のみ tag アイコン + soft 配色。
+              icon: sortByCategory.value ? Icons.sell_outlined : null,
+              soft: sortByCategory.value,
               active: sortByCategory.value,
               onTap: hasCategories
                   ? () {
