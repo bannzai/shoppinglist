@@ -1,6 +1,13 @@
 import SwiftUI
 import WidgetKit
 
+/// `design_handoff_shoppinglist/preview/widgets-and-micro.jsx` 準拠の iOS Widget UI。
+///
+/// 仕様:
+/// - 左上: 18×18 accent 四角 + cart icon、リスト名 11.5pt
+/// - 右上: done/total を IBM Plex Mono 11.5pt（システム mono で代替）
+/// - 各行: 14×14 checkbox + アイテム名 11.5pt + 5×5 cat color dot
+/// - 底: 2.5px progress sliver（accent / accent 0.15）
 struct ShoppingListWidgetView: View {
     let entry: ShoppingListEntry
 
@@ -11,44 +18,92 @@ struct ShoppingListWidgetView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Image(systemName: "cart.fill")
-                    .font(.caption)
-                    .foregroundStyle(themeColor)
-                Text(entry.shoppingListName)
-                    .font(.headline)
-                    .foregroundStyle(themeColor)
-                    .lineLimit(1)
-                Spacer()
-            }
-            .padding(.bottom, 2)
-
+        VStack(alignment: .leading, spacing: 6) {
+            header
             if entry.items.isEmpty {
-                Spacer()
-                HStack {
-                    Spacer()
-                    Text("アイテムがありません")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                }
-                Spacer()
+                emptyBody
             } else {
-                let maxItems = maxItemCount
-                ForEach(Array(entry.items.prefix(maxItems))) { item in
-                    ShoppingListItemRow(item: item)
-                }
-                if entry.items.count > maxItems {
-                    Text("他 \(entry.items.count - maxItems) 件")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                        .padding(.top, 2)
-                }
-                Spacer(minLength: 0)
+                itemsBody
             }
+            progressSliver
         }
         .padding(.vertical, 4)
+    }
+
+    // MARK: Header
+
+    private var header: some View {
+        HStack(spacing: 6) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(themeColor)
+                    .frame(width: 18, height: 18)
+                Image(systemName: "cart.fill")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(.white)
+            }
+            Text(entry.shoppingListName)
+                .font(.system(size: 11.5, weight: .semibold))
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+            Spacer()
+            Text("\(entry.doneCount)/\(entry.totalCount)")
+                .font(.system(size: 11.5, weight: .semibold, design: .monospaced))
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    // MARK: Body
+
+    private var emptyBody: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                Text("アイテムがありません")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Spacer()
+            }
+            Spacer()
+        }
+    }
+
+    private var itemsBody: some View {
+        let maxItems = maxItemCount
+        return VStack(alignment: .leading, spacing: 4) {
+            ForEach(Array(entry.items.prefix(maxItems))) { item in
+                ShoppingListItemRow(item: item, accent: themeColor)
+            }
+            if entry.items.count > maxItems {
+                Text("他 \(entry.items.count - maxItems) 件")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+                    .padding(.top, 2)
+            }
+            Spacer(minLength: 0)
+        }
+    }
+
+    // MARK: Progress sliver (2.5px)
+
+    private var progressSliver: some View {
+        GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                Rectangle()
+                    .fill(themeColor.opacity(0.15))
+                    .frame(height: 2.5)
+                Rectangle()
+                    .fill(themeColor)
+                    .frame(width: geo.size.width * progressRatio, height: 2.5)
+            }
+        }
+        .frame(height: 2.5)
+    }
+
+    private var progressRatio: CGFloat {
+        guard entry.totalCount > 0 else { return 0 }
+        return CGFloat(entry.doneCount) / CGFloat(entry.totalCount)
     }
 
     private var maxItemCount: Int {
@@ -63,6 +118,7 @@ struct ShoppingListWidgetView: View {
 
 struct ShoppingListItemRow: View {
     let item: ShoppingListItemData
+    let accent: Color
 
     var body: some View {
         Button(intent: ToggleItemIntent(
@@ -72,26 +128,37 @@ struct ShoppingListItemRow: View {
             currentStatus: item.status
         )) {
             HStack(spacing: 6) {
-                Image(systemName: item.isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.body)
-                    .foregroundStyle(item.isChecked ? .green : .secondary)
-
+                checkboxView
                 Text(item.message)
-                    .font(.subheadline)
+                    .font(.system(size: 11.5))
                     .strikethrough(item.isChecked)
                     .foregroundStyle(item.isChecked ? .secondary : .primary)
                     .lineLimit(1)
-
                 Spacer()
-
                 if let color = item.color, !color.isEmpty {
                     Circle()
                         .fill(Color(hex: color))
-                        .frame(width: 8, height: 8)
+                        .frame(width: 5, height: 5)
                 }
             }
         }
         .buttonStyle(.plain)
+    }
+
+    private var checkboxView: some View {
+        ZStack {
+            Circle()
+                .stroke(item.isChecked ? accent : Color.secondary, lineWidth: 1.4)
+                .frame(width: 14, height: 14)
+            if item.isChecked {
+                Circle()
+                    .fill(accent)
+                    .frame(width: 14, height: 14)
+                Image(systemName: "checkmark")
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundStyle(.white)
+            }
+        }
     }
 }
 
