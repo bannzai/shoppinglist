@@ -58,37 +58,29 @@ class _AppCheckboxState extends State<AppCheckbox>
   Widget build(BuildContext context) {
     final tokens = context.tokens;
     final accent = widget.color ?? tokens.accent;
-    final disabled = widget.onChanged == null;
-    return Opacity(
-      opacity: disabled ? 0.5 : 1.0,
-      child: ScaleTransition(
-        scale: _scale,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: disabled ? null : () => widget.onChanged!(!widget.checked),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 120),
-            width: widget.size,
-            height: widget.size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: widget.checked ? accent : Colors.transparent,
-              border: Border.all(
-                color: widget.checked ? accent : tokens.neutral.ink4,
-                width: 1.5,
-              ),
+    return ScaleTransition(
+      scale: _scale,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: widget.onChanged == null
+            ? null
+            : () => widget.onChanged!(!widget.checked),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 120),
+          width: widget.size,
+          height: widget.size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: widget.checked ? accent : Colors.transparent,
+            border: Border.all(
+              color: widget.checked ? accent : tokens.neutral.ink4,
+              width: 1.5,
             ),
-            alignment: Alignment.center,
-            // frame.jsx#Checkbox の `sw: 2.4` 相当のチェック太さを Icons.check_rounded + weight: 700 で擬似的に再現。
-            child: widget.checked
-                ? Icon(
-                    Icons.check_rounded,
-                    size: widget.size * 0.62,
-                    color: Colors.white,
-                    weight: 700,
-                  )
-                : null,
           ),
+          alignment: Alignment.center,
+          child: widget.checked
+              ? Icon(Icons.check, size: widget.size * 0.62, color: Colors.white)
+              : null,
         ),
       ),
     );

@@ -39,6 +39,10 @@ class AppPill extends StatelessWidget {
   /// CTA サイズ（高さ 50）にするか。
   final bool large;
 
+  /// 横幅を親に合わせて広げるか（`SizedBox(width: double.infinity)` でラップする想定）。
+  /// 既定は false（中身に合わせて最小幅）。
+  final bool expanded;
+
   const AppPill({
     super.key,
     required this.label,
@@ -46,6 +50,7 @@ class AppPill extends StatelessWidget {
     this.icon,
     this.variant = AppPillVariant.neutral,
     this.large = false,
+    this.expanded = false,
   });
 
   @override
@@ -91,7 +96,8 @@ class AppPill extends StatelessWidget {
             child: SizedBox(
               height: large ? 50 : 36,
               child: Row(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize:
+                    expanded ? MainAxisSize.max : MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (icon != null) ...[
@@ -100,13 +106,12 @@ class AppPill extends StatelessWidget {
                   ],
                   Text(
                     label,
-                    // labelLarge をベースに継承して palt / Noto Sans JP を効かせる。
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: fg,
-                          fontSize: large ? 15 : 13.5,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.005,
-                        ),
+                    style: TextStyle(
+                      color: fg,
+                      fontSize: large ? 15 : 13.5,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.005,
+                    ),
                   ),
                 ],
               ),

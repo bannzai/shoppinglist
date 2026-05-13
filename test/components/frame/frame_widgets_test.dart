@@ -65,12 +65,12 @@ void main() {
     await tester.pumpWidget(_wrap(
       const AppCheckbox(checked: false, onChanged: null),
     ));
-    expect(find.byIcon(Icons.check_rounded), findsNothing);
+    expect(find.byIcon(Icons.check), findsNothing);
 
     await tester.pumpWidget(_wrap(
       const AppCheckbox(checked: true, onChanged: null),
     ));
-    expect(find.byIcon(Icons.check_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.check), findsOneWidget);
   });
 
   testWidgets('AppCheckbox: タップで onChanged(!checked) が発火', (tester) async {

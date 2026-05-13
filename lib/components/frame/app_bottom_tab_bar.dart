@@ -94,16 +94,13 @@ class _AppTabItem extends StatelessWidget {
               const SizedBox(height: 3),
               Text(
                 label,
-                // labelSmall を継承して palt / Noto Sans JP を効かせる。
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      fontSize: 10.5,
-                      fontWeight: selected
-                          ? FontWeight.w600
-                          : FontWeight.w500,
-                      letterSpacing: 0.02,
-                      color: color,
-                      height: 1.0,
-                    ),
+                style: TextStyle(
+                  fontSize: 10.5,
+                  fontWeight:
+                      selected ? FontWeight.w600 : FontWeight.w500,
+                  letterSpacing: 0.02,
+                  color: color,
+                ),
               ),
             ],
           ),

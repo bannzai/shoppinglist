@@ -85,17 +85,13 @@ class AppChip extends StatelessWidget {
                   ],
                   Text(
                     label,
-                    softWrap: false,
-                    overflow: TextOverflow.visible,
-                    // chipTheme.labelStyle を継承して palt / Noto Sans JP を効かせる。
-                    style: Theme.of(context).chipTheme.labelStyle?.copyWith(
-                          fontSize: 12.5,
-                          fontWeight: active
-                              ? FontWeight.w600
-                              : FontWeight.w500,
-                          letterSpacing: -0.005,
-                          color: fg,
-                        ),
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      fontWeight:
+                          active ? FontWeight.w600 : FontWeight.w500,
+                      letterSpacing: -0.005,
+                      color: fg,
+                    ),
                   ),
                 ],
               ),
