@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shoppinglist/components/button/inquiry.dart';
 import 'package:shoppinglist/components/button/user_delete.dart';
+import 'package:shoppinglist/components/frame/app_pill.dart';
 import 'package:shoppinglist/features/developer_options/page.dart';
 import 'package:shoppinglist/features/group_invitation/page.dart';
 import 'package:shoppinglist/features/group_list/page.dart';
@@ -182,9 +185,10 @@ class SettingPage extends HookConsumerWidget {
                 _AutoNotifyToggle(),
                 _LocationReminderToggle(),
               ]),
-              SettingSectionTitle(text: 'プレミアム', children: [
-                _PremiumMembershipTile(),
-              ]),
+              const Padding(
+                padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+                child: _PremiumCard(),
+              ),
               SettingSectionTitle(text: 'アプリについて', children: [
                 ListTile(
                     title: const Text(
@@ -257,8 +261,144 @@ class SettingPage extends HookConsumerWidget {
                   ),
                 ]),
               const DeleteUserButton(),
+              const _VersionLabel(),
+              const SizedBox(height: 24),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// プレミアム会員カード。free=surface2 / premium=accent→#7C2A07 グラデ。
+/// `design_handoff_shoppinglist/preview/screens-settings.jsx#SettingPage` 相当。
+class _PremiumCard extends ConsumerWidget {
+  const _PremiumCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tokens = context.tokens;
+    final neutral = tokens.neutral;
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: isPremium
+            ? LinearGradient(
+                colors: [tokens.accent, const Color(0xFF7C2A07)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              )
+            : null,
+        color: isPremium ? null : neutral.surface2,
+        borderRadius: BorderRadius.circular(14),
+        border: isPremium
+            ? null
+            : Border.all(color: neutral.divider, width: 0.5),
+        boxShadow: isPremium ? tokens.cardShadow : null,
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isPremium
+                  ? Colors.white.withValues(alpha: 0.2)
+                  : tokens.accentSoft,
+            ),
+            alignment: Alignment.center,
+            child: Icon(
+              Icons.workspace_premium,
+              color: isPremium ? Colors.white : tokens.accent,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  isPremium ? 'プレミアム会員' : 'プレミアムにアップグレード',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: isPremium ? Colors.white : neutral.ink,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  isPremium
+                      ? 'すべての機能が利用できます'
+                      : '5 色テーマ・AI 無制限など',
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    color: isPremium
+                        ? Colors.white.withValues(alpha: 0.85)
+                        : neutral.ink2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (!isPremium)
+            AppPill(
+              label: 'はじめる',
+              variant: AppPillVariant.accent,
+              onPressed: () {
+                analytics.logEvent(
+                  name: 'tap_premium_membership_tile',
+                  parameters: {},
+                );
+                showPaywall(context: context);
+              },
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// アプリバージョンを mono フォントで表示。`package_info_plus` から取得。
+class _VersionLabel extends StatefulWidget {
+  const _VersionLabel();
+
+  @override
+  State<_VersionLabel> createState() => _VersionLabelState();
+}
+
+class _VersionLabelState extends State<_VersionLabel> {
+  String? _label;
+
+  @override
+  void initState() {
+    super.initState();
+    PackageInfo.fromPlatform().then((info) {
+      if (!mounted) return;
+      setState(() {
+        _label = 'v${info.version} (build ${info.buildNumber})';
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.tokens;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
+      child: Text(
+        _label ?? '',
+        textAlign: TextAlign.center,
+        style: GoogleFonts.ibmPlexMono(
+          fontSize: 11,
+          fontWeight: FontWeight.w400,
+          color: tokens.neutral.ink3,
         ),
       ),
     );
@@ -435,32 +575,6 @@ class _LocationReminderToggle extends ConsumerWidget {
                   ),
                 ),
               );
-            },
-    );
-  }
-}
-
-/// 「プレミアム会員」状態を表示する ListTile。
-///
-/// `customerInfoProvider.isPremium` を watch し、subtitle を「有効」/「未加入」で切り替える。
-/// 未加入時のみタップ可能で、タップすると PaywallPage を開く。
-class _PremiumMembershipTile extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isPremium =
-        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
-    return ListTile(
-      leading: const Icon(Icons.workspace_premium),
-      title: const Text('プレミアム会員'),
-      subtitle: Text(isPremium ? '有効' : '未加入'),
-      onTap: isPremium
-          ? null
-          : () {
-              analytics.logEvent(
-                name: 'tap_premium_membership_tile',
-                parameters: {},
-              );
-              showPaywall(context: context);
             },
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
@@ -19,9 +20,10 @@ class ThemeColorSelectionPage extends ConsumerWidget {
             defaultThemeColorHex;
 
     return Scaffold(
-      backgroundColor: neutral.surface,
+      backgroundColor: neutral.paper,
       appBar: AppBar(
         title: const Text('テーマカラー'),
+        backgroundColor: neutral.paper,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -146,10 +148,11 @@ class _ColorSwatch extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               preset.label,
-              style: TextStyle(
+              style: GoogleFonts.zenKakuGothicNew(
                 fontSize: 12,
-                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
                 color: selected ? neutral.ink : neutral.ink2,
+                letterSpacing: -0.01,
               ),
             ),
           ],

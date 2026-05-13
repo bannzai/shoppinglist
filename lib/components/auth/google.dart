@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 Future<UserCredential> signInWithGoogle() async {
@@ -37,21 +38,25 @@ class AppSignInWithGoogleButton extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoading = useState(false);
+    final tokens = context.tokens;
+    final neutral = tokens.neutral;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Stack(
         children: [
-          Align(
-            alignment: Alignment.center,
+          SizedBox(
+            width: double.infinity,
+            height: 52,
             child: OutlinedButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(Colors.white),
-                shape: WidgetStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40),
-                  ),
+              style: OutlinedButton.styleFrom(
+                backgroundColor: neutral.surface2,
+                foregroundColor: neutral.ink,
+                side: BorderSide(color: neutral.divider, width: 1),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
                 ),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
               ),
               onPressed: () async {
                 if (isLoading.value) return;
@@ -68,27 +73,24 @@ class AppSignInWithGoogleButton extends HookConsumerWidget {
                   isLoading.value = false;
                 }
               },
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SvgPicture.asset(
-                      'images/google_icon.svg',
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SvgPicture.asset(
+                    'images/google_icon.svg',
+                    width: 20,
+                    height: 20,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Google でサインイン',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: neutral.ink,
+                      fontWeight: FontWeight.w600,
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'Googleでサインイン',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black54,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

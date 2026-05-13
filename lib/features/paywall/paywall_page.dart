@@ -1,10 +1,13 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/components/frame/app_pill.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// プレミアムプランへのアップグレード画面。
 ///
@@ -22,14 +25,14 @@ class PaywallPage extends ConsumerWidget {
     final offerings = ref.watch(offeringsProvider);
 
     return Scaffold(
-      backgroundColor: neutral.surface,
+      backgroundColor: neutral.paper,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const SizedBox.shrink(),
-        backgroundColor: neutral.surface,
+        backgroundColor: neutral.paper,
       ),
       body: offerings.when(
         loading: () => const _LoadingBody(),
@@ -66,9 +69,87 @@ class PaywallPage extends ConsumerWidget {
                   style: TextStyle(fontSize: 11.5, color: neutral.ink3),
                 ),
               ),
+              const SizedBox(height: 12),
+              const _PaywallFooterLinks(),
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+/// Paywall フッタの 3 リンク（利用規約・プライバシー・復元）。
+class _PaywallFooterLinks extends ConsumerWidget {
+  const _PaywallFooterLinks();
+
+  static const _termsUrl =
+      'https://bannzai.github.io/shoppinglist/TermsOfService';
+  static const _privacyUrl =
+      'https://bannzai.github.io/shoppinglist/PrivacyPolicy';
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tokens = context.tokens;
+    final linkStyle = TextStyle(
+      fontSize: 11.5,
+      color: tokens.accent,
+      decoration: TextDecoration.underline,
+      decorationColor: tokens.accent,
+      decorationThickness: 1,
+    );
+    final separatorStyle = TextStyle(
+      fontSize: 11.5,
+      color: tokens.neutral.ink4,
+    );
+    return Center(
+      child: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: '利用規約',
+              style: linkStyle,
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  analytics.logEvent(name: 'tap_paywall_terms');
+                  launchUrl(Uri.parse(_termsUrl),
+                      mode: LaunchMode.externalApplication);
+                },
+            ),
+            TextSpan(text: '   ·   ', style: separatorStyle),
+            TextSpan(
+              text: 'プライバシー',
+              style: linkStyle,
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  analytics.logEvent(name: 'tap_paywall_privacy');
+                  launchUrl(Uri.parse(_privacyUrl),
+                      mode: LaunchMode.externalApplication);
+                },
+            ),
+            TextSpan(text: '   ·   ', style: separatorStyle),
+            TextSpan(
+              text: '復元',
+              style: linkStyle,
+              recognizer: TapGestureRecognizer()
+                ..onTap = () async {
+                  analytics.logEvent(name: 'tap_paywall_restore');
+                  try {
+                    await Purchases.restorePurchases();
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('購入を復元しました')),
+                    );
+                  } catch (e) {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.toString())),
+                    );
+                  }
+                },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -91,9 +172,9 @@ class _Hero extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [tokens.accent, const Color(0xFF7C2A07)],
+                colors: [tokens.accent, const Color(0xFF7C2A07)],
             ),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
                 color: tokens.accent.withValues(alpha: 0.3),
@@ -320,8 +401,8 @@ class _PaywallPackageTile extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(999),
                         ),
                         child: Text(
-                          'お得',
-                          style: TextStyle(
+                          'おすすめ',
+                          style: GoogleFonts.zenKakuGothicNew(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                             color: tokens.accent,
@@ -334,10 +415,11 @@ class _PaywallPackageTile extends ConsumerWidget {
                 const SizedBox(height: 4),
                 Text(
                   package.storeProduct.priceString,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: neutral.ink2,
-                    fontWeight: FontWeight.w500,
+                  style: GoogleFonts.ibmPlexMono(
+                    fontSize: 19,
+                    fontWeight: FontWeight.w700,
+                    color: neutral.ink,
+                    fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                 ),
               ],

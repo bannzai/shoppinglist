@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/frame/app_pill.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -27,9 +28,10 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
         : (isValidCode.value ? tokens.accent : neutral.divider);
 
     return Scaffold(
-      backgroundColor: neutral.surface,
+      backgroundColor: neutral.paper,
       appBar: AppBar(
         title: const Text('招待コードで参加'),
+        backgroundColor: neutral.paper,
       ),
       body: SafeArea(
         child: Padding(
@@ -107,8 +109,11 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
               const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
+                child: AppPill(
+                  label: isAccepting.value ? '参加中...' : '参加する',
+                  variant: AppPillVariant.accent,
+                  large: true,
+                  expanded: true,
                   onPressed: isAccepting.value || !isValidCode.value
                       ? null
                       : () async {
@@ -129,36 +134,22 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                             isAccepting.value = false;
                           }
                         },
-                  child: isAccepting.value
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const Text(
-                          '参加する',
-                          style: TextStyle(fontSize: 16),
-                        ),
                 ),
               ),
               const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
-                height: 48,
-                child: TextButton(
+                child: AppPill(
+                  label: 'キャンセル',
+                  variant: AppPillVariant.ghost,
+                  large: true,
+                  expanded: true,
                   onPressed: isAccepting.value
                       ? null
                       : () {
                           analytics.logEvent(name: 'cancel_join_group');
                           Navigator.pop(context);
                         },
-                  child: const Text(
-                    'キャンセル',
-                    style: TextStyle(fontSize: 16),
-                  ),
                 ),
               ),
             ],
