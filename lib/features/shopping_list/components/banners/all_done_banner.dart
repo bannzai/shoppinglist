@@ -11,38 +11,32 @@ class AllDoneBanner extends StatelessWidget {
     final tokens = context.tokens;
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
         color: tokens.neutral.okSoft,
         borderRadius: BorderRadius.circular(14),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text('🌿', style: TextStyle(fontSize: 22)),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '全部チェック完了!',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: tokens.neutral.ok,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  // 仕様（screens-list.jsx L308）の文言。
-                  'お会計のあと、リストをアーカイブしますか?',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400,
-                    color: tokens.neutral.ok.withValues(alpha: 0.85),
-                  ),
-                ),
-              ],
+          const Text('🌿', style: TextStyle(fontSize: 24)),
+          const SizedBox(height: 8),
+          Text(
+            '全部チェック完了!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: tokens.neutral.ok,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'お会計のあと、また再開もできます',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 11.5,
+              color: tokens.neutral.ok.withValues(alpha: 0.85),
             ),
           ),
         ],

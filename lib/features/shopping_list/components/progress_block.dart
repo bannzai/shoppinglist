@@ -32,20 +32,16 @@ class ProgressBlock extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            // 仕様: ラベルと数値の baseline を揃える。
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
             children: [
               Text.rich(
                 TextSpan(children: [
                   TextSpan(
                     text: '$checkedCount',
-                    // 仕様: letter-spacing -0.02em × 24px = -0.48。
                     style: monoTextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w600,
                       color: neutral.ink,
-                    ).copyWith(letterSpacing: -0.48),
+                    ),
                   ),
                   TextSpan(
                     text: '/$totalCount',
@@ -53,20 +49,20 @@ class ProgressBlock extends StatelessWidget {
                       fontSize: 24,
                       fontWeight: FontWeight.w400,
                       color: neutral.ink3,
-                    ).copyWith(letterSpacing: -0.48),
+                    ),
                   ),
                 ]),
               ),
               const SizedBox(width: 8),
-              Text(
-                allDone ? '完了!' : 'チェック済み',
-                // 仕様: 12px / weight 指定なし（= 400）。w500 だと太い。
-                style: TextStyle(
-                  fontSize: 12,
-                  color: neutral.ink2,
-                  fontWeight: FontWeight.w400,
+              if (!allDone)
+                Text(
+                  'チェック済み',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: neutral.ink2,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
               const Spacer(),
               if (allDone)
                 Text(
@@ -82,18 +78,12 @@ class ProgressBlock extends StatelessWidget {
           const SizedBox(height: 8),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
-            // 仕様: 進捗値変化を 240ms で width アニメ補間する。
-            child: TweenAnimationBuilder<double>(
-              duration: const Duration(milliseconds: 240),
-              curve: Curves.easeOut,
-              tween: Tween(begin: 0, end: progress),
-              builder: (context, value, _) => LinearProgressIndicator(
-                value: value,
-                minHeight: 4,
-                backgroundColor: neutral.divider2,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  allDone ? neutral.ok : tokens.accent,
-                ),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 4,
+              backgroundColor: neutral.divider2,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                allDone ? neutral.ok : tokens.accent,
               ),
             ),
           ),

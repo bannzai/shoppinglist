@@ -5,18 +5,13 @@ import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 
-/// 買い物リスト更新時に SnackBar 内に表示するメンバー通知バー。
-/// `design_handoff_shopping_list/source/screens-list.jsx#NotifySnack` 相当。
-///
-/// 構造 (横方向):
-///  bell (16, surface) → 2 段テキスト (Expanded) → 重なりアバター (-6 marginLeft) → accent pill「全員に通知」
+/// 買い物リスト更新時に SnackBar 内に表示するメンバーアイコンバー。
+/// `design_handoff_shoppinglist/preview/screens-list.jsx#NotifySnack` 相当。
+/// 仕様: アバター 26×26、-6px overlap、accent 全員 pill、2 段テキスト。
 class NotificationMemberBar extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final String? shoppingListName;
-
-  /// 直近で追加された非空メッセージ。null の場合は「リストが更新されました」表記にフォールバック。
-  final String? addedItemMessage;
   final String currentUserID;
   final List<GroupUserProfile> memberProfiles;
 
@@ -25,7 +20,6 @@ class NotificationMemberBar extends HookConsumerWidget {
     required this.groupID,
     required this.shoppingListID,
     required this.shoppingListName,
-    required this.addedItemMessage,
     required this.currentUserID,
     required this.memberProfiles,
   });
@@ -34,71 +28,72 @@ class NotificationMemberBar extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final otherMembers =
         memberProfiles.where((p) => p.userID != currentUserID).toList();
-    if (otherMembers.isEmpty) return const SizedBox.shrink();
 
-    final tokens = context.tokens;
-    final neutral = tokens.neutral;
+    if (otherMembers.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     final sendingUserIDs = useState<Set<String>>({});
     final sentUserIDs = useState<Set<String>>({});
+    final tokens = context.tokens;
+
+    final titleText = (shoppingListName != null && shoppingListName!.isNotEmpty)
+        ? '「$shoppingListName」が更新されました'
+        : 'リストが更新されました';
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.notifications_outlined, size: 16, color: neutral.surface),
-        const SizedBox(width: 10),
-        Expanded(
+        Flexible(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                addedItemMessage != null
-                    ? '『$addedItemMessage』を追加'
-                    : 'リストが更新されました',
-                style: TextStyle(
-                  color: neutral.surface,
+                titleText,
+                style: const TextStyle(
+                  color: Colors.white,
                   fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  height: 1.3,
+                  fontWeight: FontWeight.w600,
+                  height: 1.25,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 2),
-              Text(
+              const Text(
                 '家族に通知しますか?',
                 style: TextStyle(
-                  color: neutral.surface.withValues(alpha: 0.7),
-                  fontSize: 11,
-                  height: 1.2,
+                  color: Colors.white70,
+                  fontSize: 11.5,
+                  height: 1.3,
                 ),
               ),
             ],
           ),
         ),
         const SizedBox(width: 10),
-        _StackedMemberAvatars(
+        _SendAllButton(
+          accent: tokens.accent,
           otherMembers: otherMembers,
           sendingUserIDs: sendingUserIDs,
           sentUserIDs: sentUserIDs,
-          inkColor: neutral.ink,
-          fallbackBg: tokens.accent,
-          onTapAvatar: (profile) => _sendNotification(
+          onSendAll: () => _sendNotification(
             context: context,
-            targetUserIDs: [profile.userID],
+            targetUserIDs: otherMembers.map((m) => m.userID).toList(),
             sendingUserIDs: sendingUserIDs,
             sentUserIDs: sentUserIDs,
           ),
         ),
-        const SizedBox(width: 10),
-        _SendAllButton(
-          otherMembers: otherMembers,
-          sendingUserIDs: sendingUserIDs,
-          sentUserIDs: sentUserIDs,
+        const SizedBox(width: 8),
+        _MemberAvatarStack(
           accent: tokens.accent,
-          onSendAll: () => _sendNotification(
+          members: otherMembers,
+          sendingUserIDs: sendingUserIDs.value,
+          sentUserIDs: sentUserIDs.value,
+          onTap: (userID) => _sendNotification(
             context: context,
-            targetUserIDs: otherMembers.map((m) => m.userID).toList(),
+            targetUserIDs: [userID],
             sendingUserIDs: sendingUserIDs,
             sentUserIDs: sentUserIDs,
           ),
@@ -135,89 +130,126 @@ class NotificationMemberBar extends HookConsumerWidget {
   }
 }
 
-/// `screens-list.jsx#NotifySnack` のメンバーアバター: 26×26 円 + 1.5px ink ボーダー、
-/// 配色循環 ['#C2410C','#1F6B4E','#0F4C81']、Stack で -6 marginLeft の重なり、
-/// 4 件目以降は "+N" バッジでまとめる。
-class _StackedMemberAvatars extends StatelessWidget {
-  static const _palette = <Color>[
-    Color(0xFFC2410C),
-    Color(0xFF1F6B4E),
-    Color(0xFF0F4C81),
-  ];
-  static const _avatarSize = 26.0;
-  static const _overlap = 6.0;
-  static const _maxVisible = 3;
-
+/// 全員に通知する pill ボタン。accent solid 背景に白文字。
+class _SendAllButton extends StatelessWidget {
+  final Color accent;
   final List<GroupUserProfile> otherMembers;
   final ValueNotifier<Set<String>> sendingUserIDs;
   final ValueNotifier<Set<String>> sentUserIDs;
-  final Color inkColor;
-  final Color fallbackBg;
-  final void Function(GroupUserProfile profile) onTapAvatar;
+  final VoidCallback onSendAll;
 
-  const _StackedMemberAvatars({
+  const _SendAllButton({
+    required this.accent,
     required this.otherMembers,
     required this.sendingUserIDs,
     required this.sentUserIDs,
-    required this.inkColor,
-    required this.fallbackBg,
-    required this.onTapAvatar,
+    required this.onSendAll,
   });
 
   @override
   Widget build(BuildContext context) {
-    final visible = otherMembers.take(_maxVisible).toList();
-    final overflow = otherMembers.length - visible.length;
-    final slotCount = visible.length + (overflow > 0 ? 1 : 0);
-    final width =
-        _avatarSize + (slotCount - 1) * (_avatarSize - _overlap);
+    final allSent =
+        otherMembers.every((m) => sentUserIDs.value.contains(m.userID));
+    final anySending =
+        otherMembers.any((m) => sendingUserIDs.value.contains(m.userID));
 
-    return SizedBox(
-      width: width,
-      height: _avatarSize,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          for (var i = 0; i < visible.length; i++)
-            Positioned(
-              left: i * (_avatarSize - _overlap),
-              child: _NotifyAvatar(
-                profile: visible[i],
-                bg: _palette[i % _palette.length],
-                borderColor: inkColor,
-                isSending:
-                    sendingUserIDs.value.contains(visible[i].userID),
-                isSent: sentUserIDs.value.contains(visible[i].userID),
-                onTap: () => onTapAvatar(visible[i]),
+    return InkWell(
+      onTap: allSent || anySending ? null : onSendAll,
+      borderRadius: BorderRadius.circular(999),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: allSent
+              ? Colors.green.withValues(alpha: 0.45)
+              : accent,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (anySending)
+              const SizedBox(
+                width: 12,
+                height: 12,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+            else if (allSent)
+              const Icon(Icons.check, size: 14, color: Colors.white)
+            else
+              const Icon(Icons.notifications, size: 14, color: Colors.white),
+            const SizedBox(width: 4),
+            Text(
+              allSent ? '送信済み' : '全員',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
               ),
             ),
-          if (overflow > 0)
-            Positioned(
-              left: visible.length * (_avatarSize - _overlap),
-              child: _OverflowAvatar(
-                count: overflow,
-                bg: fallbackBg,
-                borderColor: inkColor,
-              ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
-class _NotifyAvatar extends StatelessWidget {
+/// メンバーアバターの -6px overlap スタック。最大 3 名表示。
+class _MemberAvatarStack extends StatelessWidget {
+  final Color accent;
+  final List<GroupUserProfile> members;
+  final Set<String> sendingUserIDs;
+  final Set<String> sentUserIDs;
+  final void Function(String userID) onTap;
+
+  const _MemberAvatarStack({
+    required this.accent,
+    required this.members,
+    required this.sendingUserIDs,
+    required this.sentUserIDs,
+    required this.onTap,
+  });
+
+  static const _size = 26.0;
+  static const _step = 20.0; // 26 - 6 overlap
+
+  @override
+  Widget build(BuildContext context) {
+    final shown = members.take(3).toList();
+    if (shown.isEmpty) return const SizedBox.shrink();
+    final width = (shown.length - 1) * _step + _size;
+    return SizedBox(
+      width: width,
+      height: _size,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: List.generate(shown.length, (i) {
+          final profile = shown[i];
+          return Positioned(
+            left: i * _step,
+            child: _MemberAvatar(
+              profile: profile,
+              isSending: sendingUserIDs.contains(profile.userID),
+              isSent: sentUserIDs.contains(profile.userID),
+              onTap: () => onTap(profile.userID),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class _MemberAvatar extends StatelessWidget {
   final GroupUserProfile profile;
-  final Color bg;
-  final Color borderColor;
   final bool isSending;
   final bool isSent;
   final VoidCallback onTap;
 
-  const _NotifyAvatar({
+  const _MemberAvatar({
     required this.profile,
-    required this.bg,
-    required this.borderColor,
     required this.isSending,
     required this.isSent,
     required this.onTap,
@@ -228,6 +260,7 @@ class _NotifyAvatar extends StatelessWidget {
     final initial = (profile.displayName?.isNotEmpty == true)
         ? profile.displayName![0].toUpperCase()
         : '?';
+
     return GestureDetector(
       onTap: isSending || isSent ? null : onTap,
       child: Tooltip(
@@ -237,8 +270,10 @@ class _NotifyAvatar extends StatelessWidget {
           height: 26,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: bg,
-            border: Border.all(color: borderColor, width: 1.5),
+            color: isSent
+                ? Colors.green.withValues(alpha: 0.7)
+                : Colors.white.withValues(alpha: 0.3),
+            border: Border.all(color: Colors.white, width: 1.5),
           ),
           alignment: Alignment.center,
           child: isSending
@@ -246,7 +281,7 @@ class _NotifyAvatar extends StatelessWidget {
                   width: 12,
                   height: 12,
                   child: CircularProgressIndicator(
-                    strokeWidth: 1.5,
+                    strokeWidth: 2,
                     color: Colors.white,
                   ),
                 )
@@ -256,7 +291,7 @@ class _NotifyAvatar extends StatelessWidget {
                       initial,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 11,
+                        fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -266,102 +301,20 @@ class _NotifyAvatar extends StatelessWidget {
   }
 }
 
-class _OverflowAvatar extends StatelessWidget {
-  final int count;
-  final Color bg;
-  final Color borderColor;
-  const _OverflowAvatar({
-    required this.count,
-    required this.bg,
-    required this.borderColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 26,
-      height: 26,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: bg,
-        border: Border.all(color: borderColor, width: 1.5),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        '+$count',
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-  }
-}
-
-class _SendAllButton extends StatelessWidget {
-  final List<GroupUserProfile> otherMembers;
-  final ValueNotifier<Set<String>> sendingUserIDs;
-  final ValueNotifier<Set<String>> sentUserIDs;
-  final Color accent;
-  final VoidCallback onSendAll;
-
-  const _SendAllButton({
-    required this.otherMembers,
-    required this.sendingUserIDs,
-    required this.sentUserIDs,
-    required this.accent,
-    required this.onSendAll,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final allSent =
-        otherMembers.every((m) => sentUserIDs.value.contains(m.userID));
-    final anySending =
-        otherMembers.any((m) => sendingUserIDs.value.contains(m.userID));
-    final disabled = allSent || anySending;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: disabled ? null : onSendAll,
-        borderRadius: BorderRadius.circular(999),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: disabled ? accent.withValues(alpha: 0.5) : accent,
-            borderRadius: BorderRadius.circular(999),
-          ),
-          child: Text(
-            allSent ? '送信済み' : '全員に通知',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              height: 1.0,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 /// 通知送信用 SnackBar を表示する。ソログループ（自分のみ）の場合は表示しない。
-/// `design_handoff_shopping_list/source/screens-list.jsx#NotifySnack` 相当。
+/// `design_handoff_shoppinglist/preview/screens-list.jsx#NotifySnack` 相当。
 /// ink 背景 + 角丸 14、左スワイプ dismiss、5 秒で自動消滅。
-/// `addedItemMessage` を渡すと 1 段目を「『XXX』を追加」表記に切り替える。
 void showNotificationSnackBar({
   required BuildContext context,
   required String groupID,
   required String shoppingListID,
   required String? shoppingListName,
-  required String? addedItemMessage,
   required String currentUserID,
   required List<GroupUserProfile> memberProfiles,
 }) {
   final otherMembers =
       memberProfiles.where((p) => p.userID != currentUserID).toList();
+
   if (otherMembers.isEmpty) return;
 
   final tokens = Theme.of(context).extension<AppTokens>();
@@ -374,15 +327,13 @@ void showNotificationSnackBar({
         groupID: groupID,
         shoppingListID: shoppingListID,
         shoppingListName: shoppingListName,
-        addedItemMessage: addedItemMessage,
         currentUserID: currentUserID,
         memberProfiles: memberProfiles,
       ),
       duration: const Duration(seconds: 5),
       behavior: SnackBarBehavior.floating,
       backgroundColor: background,
-      // 仕様: FAB(56) + bottom margin(90) の上に乗せるため bottom 156。
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 156),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       dismissDirection: DismissDirection.startToEnd,
       elevation: 6,
