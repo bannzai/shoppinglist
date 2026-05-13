@@ -7,6 +7,7 @@ import 'package:shoppinglist/entity/group_category_keyword.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupCategoryEditPage extends ConsumerWidget {
@@ -31,9 +32,8 @@ class GroupCategoryEditPage extends ConsumerWidget {
         final category =
             categories.where((c) => c.id == categoryID).firstOrNull;
         if (category == null) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('カテゴリ編集')),
-            body: const Center(child: Text('カテゴリが見つかりません')),
+          return _EditScaffold(
+            child: const Center(child: Text('カテゴリが見つかりません')),
           );
         }
         return _CategoryEditBody(
@@ -42,14 +42,27 @@ class GroupCategoryEditPage extends ConsumerWidget {
           category: category,
         );
       },
-      error: (e, st) => Scaffold(
-        appBar: AppBar(title: const Text('カテゴリ編集')),
-        body: Center(child: Text(e.toString())),
+      error: (e, st) => _EditScaffold(child: Center(child: Text(e.toString()))),
+      loading: () => const _EditScaffold(
+          child: Center(child: CircularProgressIndicator())),
+    );
+  }
+}
+
+/// カテゴリ編集画面の loading/error/not-found 用 paper bg Scaffold。
+class _EditScaffold extends StatelessWidget {
+  final Widget child;
+  const _EditScaffold({required this.child});
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.tokens;
+    return Scaffold(
+      backgroundColor: tokens.neutral.paper,
+      appBar: AppBar(
+        title: const Text('カテゴリ編集'),
+        backgroundColor: tokens.neutral.paper,
       ),
-      loading: () => Scaffold(
-        appBar: AppBar(title: const Text('カテゴリ編集')),
-        body: const Center(child: CircularProgressIndicator()),
-      ),
+      body: child,
     );
   }
 }
@@ -70,9 +83,12 @@ class _CategoryEditBody extends HookConsumerWidget {
     final nameController = useTextEditingController(text: category.name);
     final isSaving = useState(false);
 
+    final tokens = context.tokens;
     return Scaffold(
+      backgroundColor: tokens.neutral.paper,
       appBar: AppBar(
         title: const Text('カテゴリ編集'),
+        backgroundColor: tokens.neutral.paper,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -218,7 +234,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                     '[DEBUG] locationOrders: ${category.locationOrders}',
                     style: TextStyle(
                       fontSize: 11,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: context.tokens.neutral.ink3,
                       fontFamily: 'monospace',
                     ),
                   ),
@@ -243,7 +259,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                       ),
                       trailing: IconButton(
                         icon: Icon(Icons.delete,
-                            color: Theme.of(context).colorScheme.error),
+                            color: context.tokens.neutral.danger),
                         onPressed: () => _deleteKeyword(
                           context: context,
                           ref: ref,

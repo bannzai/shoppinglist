@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/frame/app_pill.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
@@ -16,8 +17,27 @@ import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+
+/// グループ設定画面の loading / error 用に paper bg + 共通 AppBar を持つ Scaffold。
+class _PaperScaffold extends StatelessWidget {
+  final Widget child;
+  const _PaperScaffold({required this.child});
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.tokens;
+    return Scaffold(
+      backgroundColor: tokens.neutral.paper,
+      appBar: AppBar(
+        title: const Text('グループ設定'),
+        backgroundColor: tokens.neutral.paper,
+      ),
+      body: child,
+    );
+  }
+}
 
 class GroupSettingPage extends ConsumerWidget {
   final String groupID;
@@ -40,23 +60,14 @@ class GroupSettingPage extends ConsumerWidget {
           group: group,
           profiles: profiles,
         ),
-        error: (e, st) => Scaffold(
-          appBar: AppBar(title: const Text('グループ設定')),
-          body: Center(child: Text(e.toString())),
-        ),
-        loading: () => Scaffold(
-          appBar: AppBar(title: const Text('グループ設定')),
-          body: const Center(child: CircularProgressIndicator()),
-        ),
+        error: (e, st) => _PaperScaffold(child: Center(child: Text(e.toString()))),
+        loading: () => const _PaperScaffold(
+            child: Center(child: CircularProgressIndicator())),
       ),
-      error: (e, st) => Scaffold(
-        appBar: AppBar(title: const Text('グループ設定')),
-        body: Center(child: Text(e.toString())),
-      ),
-      loading: () => Scaffold(
-        appBar: AppBar(title: const Text('グループ設定')),
-        body: const Center(child: CircularProgressIndicator()),
-      ),
+      error: (e, st) =>
+          _PaperScaffold(child: Center(child: Text(e.toString()))),
+      loading: () => const _PaperScaffold(
+          child: Center(child: CircularProgressIndicator())),
     );
   }
 }
@@ -82,9 +93,13 @@ class _GroupSettingBody extends HookConsumerWidget {
     final isCreatingInvitation = useState(false);
     final isRemovingMember = useState(false);
 
+    final tokens = context.tokens;
+
     return Scaffold(
+      backgroundColor: tokens.neutral.paper,
       appBar: AppBar(
         title: const Text('グループ設定'),
+        backgroundColor: tokens.neutral.paper,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -153,7 +168,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                     trailing: (isOwner && !isProfileOwner)
                         ? IconButton(
                             icon: Icon(Icons.remove_circle,
-                                color: Theme.of(context).colorScheme.error),
+                                color: context.tokens.neutral.danger),
                             onPressed: isRemovingMember.value
                                 ? null
                                 : () {
@@ -195,50 +210,42 @@ class _GroupSettingBody extends HookConsumerWidget {
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: isCreatingInvitation.value
-                              ? null
-                              : () async {
-                                  analytics.logEvent(
-                                      name: 'tap_create_grp_invitation',
-                                      parameters: {'groupID': groupID});
-                                  isCreatingInvitation.value = true;
-                                  try {
-                                    final invitationCode = await ref
-                                        .read(createGroupInvitationProvider)
-                                        .call(groupID: groupID);
-                                    if (context.mounted) {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            _InvitationCodeDialog(
-                                                groupID: groupID,
-                                                invitationCode: invitationCode),
-                                      );
-                                    }
-                                  } catch (e) {
-                                    if (context.mounted) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(content: Text(e.toString())),
-                                      );
-                                    }
-                                  } finally {
-                                    isCreatingInvitation.value = false;
+                      AppPill(
+                        label: isCreatingInvitation.value
+                            ? '招待コードを発行中...'
+                            : '招待コードを発行',
+                        icon: Icons.person_add,
+                        variant: AppPillVariant.soft,
+                        onPressed: isCreatingInvitation.value
+                            ? null
+                            : () async {
+                                analytics.logEvent(
+                                    name: 'tap_create_grp_invitation',
+                                    parameters: {'groupID': groupID});
+                                isCreatingInvitation.value = true;
+                                try {
+                                  final invitationCode = await ref
+                                      .read(createGroupInvitationProvider)
+                                      .call(groupID: groupID);
+                                  if (context.mounted) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          _InvitationCodeDialog(
+                                              groupID: groupID,
+                                              invitationCode: invitationCode),
+                                    );
                                   }
-                                },
-                          icon: isCreatingInvitation.value
-                              ? const SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child:
-                                      CircularProgressIndicator(strokeWidth: 2),
-                                )
-                              : const Icon(Icons.person_add),
-                          label: const Text('グループに招待'),
-                        ),
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(e.toString())),
+                                    );
+                                  }
+                                } finally {
+                                  isCreatingInvitation.value = false;
+                                }
+                              },
                       ),
                     ],
                   ),
@@ -297,7 +304,7 @@ class _GroupSettingBody extends HookConsumerWidget {
             },
             child: Text(
               '削除',
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+              style: TextStyle(color: context.tokens.neutral.danger),
             ),
           ),
           TextButton(
@@ -385,7 +392,7 @@ class _ShoppingLocationsSection extends ConsumerWidget {
                             ),
                             IconButton(
                               icon: Icon(Icons.delete,
-                                  color: Theme.of(context).colorScheme.error),
+                                  color: context.tokens.neutral.danger),
                               onPressed: () {
                                 analytics.logEvent(
                                     name: 'tap_delete_location',
@@ -570,7 +577,7 @@ class _ShoppingLocationsSection extends ConsumerWidget {
             },
             child: Text(
               '削除',
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+              style: TextStyle(color: context.tokens.neutral.danger),
             ),
           ),
           TextButton(
@@ -910,7 +917,7 @@ class _CategoryListContent extends ConsumerWidget {
             },
             child: Text(
               '削除',
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+              style: TextStyle(color: context.tokens.neutral.danger),
             ),
           ),
           TextButton(
