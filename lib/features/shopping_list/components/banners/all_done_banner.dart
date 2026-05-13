@@ -34,9 +34,11 @@ class AllDoneBanner extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'お会計のあと、また再開もできます',
+                  // 仕様（screens-list.jsx L308）の文言。
+                  'お会計のあと、リストをアーカイブしますか?',
                   style: TextStyle(
                     fontSize: 11,
+                    fontWeight: FontWeight.w400,
                     color: tokens.neutral.ok.withValues(alpha: 0.85),
                   ),
                 ),
