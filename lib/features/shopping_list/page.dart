@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
+import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_sync.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/ai_processing_banner.dart';
@@ -58,53 +59,40 @@ class ShoppingListPage extends HookConsumerWidget {
           groupID: groupID, isPremium: firestoreIsPremium)),
       child: SafeArea(
         bottom: false,
-        child: Column(
-          children: [
-            if (userGroupsAsync.asData?.value != null)
-              GroupChipsBar(
-                groups: userGroupsAsync.asData!.value,
-                currentGroupID: groupID,
-                onGroupChanged: (newGroupID) {
-                  onGroupChanged?.call(newGroupID);
-                },
-              ),
-            Expanded(
-              child: shoppingLists.when(
-                data: (shoppingLists) {
-                  if (shoppingLists.isEmpty) {
-                    return _NoListYet(
-                      groupID: groupID,
-                      appUserID: appUser?.id,
-                    );
-                  }
-                  final currentShoppingListIDValue =
-                      currentShoppingListID.value;
-                  final resolvedShoppingListID = (currentShoppingListIDValue !=
-                              null &&
-                          shoppingLists
-                              .any((e) => e.id == currentShoppingListIDValue))
-                      ? currentShoppingListIDValue
-                      : shoppingLists.first.id;
-                  return HomeWidgetSync(
-                    groupID: groupID,
-                    shoppingListID: resolvedShoppingListID,
-                    builder: (context) {
-                      return _Body(
-                        key: ValueKey(resolvedShoppingListID),
-                        groupID: groupID,
-                        shoppingListID: resolvedShoppingListID,
-                        onShoppingListIDChanged: (newID) {
-                          currentShoppingListID.value = newID;
-                        },
-                      );
-                    },
-                  );
-                },
-                error: (e, st) => RetryPage(exception: e, stackTrace: st),
-                loading: () => const Loading(),
-              ),
-            ),
-          ],
+        child: shoppingLists.when(
+          data: (shoppingLists) {
+            if (shoppingLists.isEmpty) {
+              return _NoListYet(
+                groupID: groupID,
+                appUserID: appUser?.id,
+              );
+            }
+            final currentShoppingListIDValue = currentShoppingListID.value;
+            final resolvedShoppingListID =
+                (currentShoppingListIDValue != null &&
+                        shoppingLists
+                            .any((e) => e.id == currentShoppingListIDValue))
+                    ? currentShoppingListIDValue
+                    : shoppingLists.first.id;
+            return HomeWidgetSync(
+              groupID: groupID,
+              shoppingListID: resolvedShoppingListID,
+              builder: (context) {
+                return _Body(
+                  key: ValueKey(resolvedShoppingListID),
+                  groupID: groupID,
+                  shoppingListID: resolvedShoppingListID,
+                  userGroups: userGroupsAsync.asData?.value ?? const [],
+                  onShoppingListIDChanged: (newID) {
+                    currentShoppingListID.value = newID;
+                  },
+                  onGroupChanged: onGroupChanged,
+                );
+              },
+            );
+          },
+          error: (e, st) => RetryPage(exception: e, stackTrace: st),
+          loading: () => const Loading(),
         ),
       ),
     );
@@ -194,13 +182,17 @@ class _NoListYet extends ConsumerWidget {
 class _Body extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
+  final List<Group> userGroups;
   final void Function(String newID) onShoppingListIDChanged;
+  final void Function(String groupID)? onGroupChanged;
 
   const _Body({
     super.key,
     required this.groupID,
     required this.shoppingListID,
+    required this.userGroups,
     required this.onShoppingListIDChanged,
+    this.onGroupChanged,
   });
 
   @override
@@ -239,14 +231,24 @@ class _Body extends HookConsumerWidget {
     final memberProfiles = memberProfilesAsync.asData?.value ?? [];
 
     final itemChangeCount = useState(0);
+    final lastAddedMessage = useRef<String?>(null);
+    final previousMessages = useRef<Set<String>>(<String>{});
     final isInitialLoad = useState(true);
     useEffect(() {
-      if (allItemsAsync is AsyncData) {
+      if (allItemsAsync is AsyncData<List<dynamic>>) {
+        final currentMessages =
+            allItems.map((e) => e.message).where((m) => m.isNotEmpty).toSet();
         if (isInitialLoad.value) {
           isInitialLoad.value = false;
         } else {
-          itemChangeCount.value++;
+          // 新規追加された非空メッセージを最新追加分として記録する。
+          final added = currentMessages.difference(previousMessages.value);
+          if (added.isNotEmpty) {
+            lastAddedMessage.value = added.last;
+            itemChangeCount.value++;
+          }
         }
+        previousMessages.value = currentMessages;
       }
       return null;
     }, [allItemsAsync]);
@@ -260,6 +262,7 @@ class _Body extends HookConsumerWidget {
               groupID: groupID,
               shoppingListID: shoppingListID,
               shoppingListName: shoppingList?.name,
+              addedItemMessage: lastAddedMessage.value,
               currentUserID: currentUserID,
               memberProfiles: memberProfiles,
             );
@@ -295,6 +298,7 @@ class _Body extends HookConsumerWidget {
     }, [autoNotify, currentUserID, memberProfiles]);
 
     final aiProcessingType = ref.watch(aIProcessingProvider);
+    final isError = shoppingListItemsAsync.hasError;
 
     return Retry(
       retry: () {
@@ -306,11 +310,15 @@ class _Body extends HookConsumerWidget {
       },
       child: Scaffold(
         backgroundColor: tokens.neutral.surface,
-        floatingActionButton: ExpandableFab(
-          groupID: groupID,
-          shoppingListID: shoppingListID,
-          shoppingListItems: shoppingListItemsAsync.asData?.value ?? const [],
-        ),
+        // 仕様: AI 処理中 / エラー時は FAB を出さない（screens-list.jsx の各状態を参照）。
+        floatingActionButton: (aiProcessingType != null || isError)
+            ? null
+            : ExpandableFab(
+                groupID: groupID,
+                shoppingListID: shoppingListID,
+                shoppingListItems:
+                    shoppingListItemsAsync.asData?.value ?? const [],
+              ),
         body: Column(
           children: [
             ListTopBar(
@@ -318,43 +326,65 @@ class _Body extends HookConsumerWidget {
               shoppingListID: shoppingListID,
               shoppingLists: shoppingLists,
               shoppingList: shoppingList,
-              onShoppingListIDChanged: onShoppingListIDChanged,
-            ),
-            FilterChipsBar(
-              groupID: groupID,
-              shoppingListID: shoppingListID,
               showChecked: showChecked,
               sortByCategory: sortByCategory,
+              onShoppingListIDChanged: onShoppingListIDChanged,
             ),
-            if (totalCount > 0)
+            // 仕様: GroupChips は ListTopBar の直下。グループ 1 件のときは非表示。
+            GroupChipsBar(
+              groups: userGroups,
+              currentGroupID: groupID,
+              onGroupChanged: (newGroupID) {
+                onGroupChanged?.call(newGroupID);
+              },
+            ),
+            if (isError)
+              Expanded(
+                child: ListErrorCard(
+                  exception: shoppingListItemsAsync.error,
+                  onRetry: () => Retry.of(context).retry(),
+                ),
+              )
+            else ...[
+              FilterChipsBar(
+                groupID: groupID,
+                shoppingListID: shoppingListID,
+                showChecked: showChecked,
+                sortByCategory: sortByCategory,
+              ),
+              // 仕様: ProgressBlock は Empty (totalCount==0) でも常時表示する。
               ProgressBlock(
                 checkedCount: checkedCount,
                 totalCount: totalCount,
               ),
-            if (totalCount > 0 && checkedCount == totalCount)
-              const AllDoneBanner(),
-            if (aiProcessingType != null)
-              AIProcessingBanner(type: aiProcessingType),
-            Expanded(
-              child: shoppingListItemsAsync.when(
-                data: (shoppingListItems) => ShoppingListBodyContent(
-                  groupID: groupID,
-                  shoppingListID: shoppingListID,
-                  shoppingLists: shoppingLists,
-                  shoppingList: shoppingList,
-                  shoppingListItems: shoppingListItems,
-                  showChecked: showChecked.value,
-                  sortByCategory: sortByCategory.value,
-                  onShoppingListIDChanged: onShoppingListIDChanged,
+              if (totalCount > 0 && checkedCount == totalCount)
+                const AllDoneBanner(),
+              if (aiProcessingType != null)
+                AIProcessingBanner(
+                  type: aiProcessingType,
+                  onCancel: () => ref.read(aIProcessingProvider.notifier).end(),
                 ),
-                error: (e, st) => ListErrorCard(
-                  exception: e,
-                  onRetry: () => Retry.of(context).retry(),
+              // 仕様: RetentionBanner は List body の「上」（Expanded の前）。
+              if (!firestoreIsPremium && totalCount > 50)
+                const RetentionBanner(),
+              Expanded(
+                child: shoppingListItemsAsync.when(
+                  data: (shoppingListItems) => ShoppingListBodyContent(
+                    groupID: groupID,
+                    shoppingListID: shoppingListID,
+                    shoppingLists: shoppingLists,
+                    shoppingList: shoppingList,
+                    shoppingListItems: shoppingListItems,
+                    showChecked: showChecked.value,
+                    sortByCategory: sortByCategory.value,
+                    onShoppingListIDChanged: onShoppingListIDChanged,
+                  ),
+                  // isError 分岐で吸収済み
+                  error: (_, __) => const SizedBox.shrink(),
+                  loading: () => const Loading(),
                 ),
-                loading: () => const Loading(),
               ),
-            ),
-            if (!firestoreIsPremium && totalCount > 50) const RetentionBanner(),
+            ],
           ],
         ),
       ),
