@@ -61,7 +61,11 @@ class AppLargeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitle!,
-                    style: textTheme.bodyMedium?.copyWith(color: neutral.ink2),
+                    // frame.jsx#AppBar(large) L80: fontSize 13。
+                    style: textTheme.bodyMedium?.copyWith(
+                      fontSize: 13,
+                      color: neutral.ink2,
+                    ),
                   ),
                 ],
               ],

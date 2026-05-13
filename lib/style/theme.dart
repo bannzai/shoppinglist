@@ -58,8 +58,8 @@ ThemeData buildAppTheme({
   );
 
   final textTheme = base.copyWith(
-    displayLarge: serif(34, FontWeight.w800),
-    displayMedium: serif(28, FontWeight.w800),
+    displayLarge: serif(38, FontWeight.w800),
+    displayMedium: serif(28, FontWeight.w700),
     headlineSmall: sans(22, FontWeight.w700, height: 1.25, ls: -0.015),
     titleLarge: sans(17, FontWeight.w700, height: 1.3, ls: -0.01),
     titleMedium: sans(15, FontWeight.w600, height: 1.4),
@@ -110,7 +110,8 @@ ThemeData buildAppTheme({
       foregroundColor: neutral.ink,
       elevation: 0,
       scrolledUnderElevation: 0,
-      titleTextStyle: textTheme.titleLarge,
+      // frame.jsx#AppBar (compact) 仕様: 17 / w600 / -0.01。Section heading の titleLarge (w700) とは別。
+      titleTextStyle: sans(17, FontWeight.w600, height: 1.3, ls: -0.01),
       centerTitle: true,
       surfaceTintColor: Colors.transparent,
     ),

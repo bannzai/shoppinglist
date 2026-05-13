@@ -100,12 +100,13 @@ class AppPill extends StatelessWidget {
                   ],
                   Text(
                     label,
-                    style: TextStyle(
-                      color: fg,
-                      fontSize: large ? 15 : 13.5,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.005,
-                    ),
+                    // labelLarge をベースに継承して palt / Noto Sans JP を効かせる。
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: fg,
+                          fontSize: large ? 15 : 13.5,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.005,
+                        ),
                   ),
                 ],
               ),
