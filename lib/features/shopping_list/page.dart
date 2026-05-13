@@ -4,7 +4,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_sync.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/ai_processing_banner.dart';
@@ -17,8 +16,7 @@ import 'package:shoppinglist/features/shopping_list/components/group_chips_bar.d
 import 'package:shoppinglist/features/shopping_list/components/list_top_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/notification_member_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/progress_block.dart';
-import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/empty_text_shopping_list_item.dart';
-import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_items.dart';
+import 'package:shoppinglist/features/shopping_list/components/shopping_list_body_content.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
 import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/app_user.dart';
@@ -298,67 +296,6 @@ class _Body extends HookConsumerWidget {
 
     final aiProcessingType = ref.watch(aIProcessingProvider);
 
-    Widget buildBodyContent(List<GroupShoppingListItem> shoppingListItems) {
-      final isEmpty = shoppingListItems.isEmpty;
-      if (showChecked.value && isEmpty) {
-        return EmptyTextShoppingListItems(
-          groupID: groupID,
-          shoppingListID: shoppingListID,
-          shoppingListItems: shoppingListItems,
-        );
-      }
-      return Column(
-        children: [
-          if (shoppingList?.duplicatedFromGroupShoppingListID != null) ...[
-            const SizedBox(height: 4),
-            GestureDetector(
-              onTap: () {
-                final sourceID =
-                    shoppingList!.duplicatedFromGroupShoppingListID!;
-                analytics
-                    .logEvent(name: 'tap_navigate_source_list', parameters: {
-                  'groupID': groupID,
-                  'shoppingListID': shoppingListID,
-                  'sourceShoppingListID': sourceID,
-                });
-                if (shoppingLists.any((sl) => sl.id == sourceID)) {
-                  onShoppingListIDChanged(sourceID);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('複製元の買い物リストは削除されています')),
-                  );
-                }
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.content_copy, size: 14, color: tokens.accent),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingList!.duplicatedFromGroupShoppingListID)?.name ?? "削除済みリスト"}から複製',
-                    style: TextStyle(
-                      color: tokens.accent,
-                      fontSize: 12,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 6),
-          ],
-          Expanded(
-            child: ShoppingListItems(
-              groupID: groupID,
-              shoppingListID: shoppingListID,
-              sortByCategory: sortByCategory.value,
-              shoppingLocationID: shoppingList?.shoppingLocationID,
-            ),
-          ),
-        ],
-      );
-    }
-
     return Retry(
       retry: () {
         retry();
@@ -400,7 +337,16 @@ class _Body extends HookConsumerWidget {
               AIProcessingBanner(type: aiProcessingType),
             Expanded(
               child: shoppingListItemsAsync.when(
-                data: buildBodyContent,
+                data: (shoppingListItems) => ShoppingListBodyContent(
+                  groupID: groupID,
+                  shoppingListID: shoppingListID,
+                  shoppingLists: shoppingLists,
+                  shoppingList: shoppingList,
+                  shoppingListItems: shoppingListItems,
+                  showChecked: showChecked.value,
+                  sortByCategory: sortByCategory.value,
+                  onShoppingListIDChanged: onShoppingListIDChanged,
+                ),
                 error: (e, st) => ListErrorCard(
                   exception: e,
                   onRetry: () => Retry.of(context).retry(),
