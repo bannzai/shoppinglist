@@ -141,6 +141,7 @@ class _NoOpCreateGroup extends CreateGroup {
     required AppUser appUser,
     required String? name,
     required bool setAsDefault,
+    required String iconName,
   }) async {}
 }
 

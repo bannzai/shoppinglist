@@ -141,16 +141,20 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
   }
 
   /// サーバー側で上限チェックを行った上でグループを作成する。
+  /// `iconName` は `design_handoff_shoppinglist/preview/screens-groups.jsx#GroupCreatePage`
+  /// で許容される 6 種 (home/cart/fork/cookie/pets/bag) のいずれか。
   Future<void> createGroup({
     required String createUserID,
     required String? name,
     required bool setAsDefault,
+    required String iconName,
   }) async {
     final result = await httpsCallable('createGroup').call(
       {
         'createUserID': createUserID,
         'name': name,
         'setAsDefault': setAsDefault,
+        'iconName': iconName,
       },
     );
     debugPrint('createGroup.result: ${result.data}');

@@ -9,16 +9,20 @@ part 'group_create.g.dart';
 /// サーバー側で上限チェックを行った上でグループを作成する。
 class CreateGroup {
   /// グループを作成する。
+  /// [iconName] は `design_handoff_shoppinglist/preview/screens-groups.jsx#GroupCreatePage`
+  /// で許容される 6 種 (home / cart / fork / cookie / pets / bag) のいずれか。
   Future<void> call({
     required AppUser appUser,
     required String? name,
     required bool setAsDefault,
+    required String iconName,
   }) async {
     try {
       await functions.createGroup(
         createUserID: appUser.id,
         name: name,
         setAsDefault: setAsDefault,
+        iconName: iconName,
       );
     } catch (e) {
       debugPrint('Failed to create group: $e');

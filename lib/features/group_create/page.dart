@@ -7,6 +7,17 @@ import 'package:shoppinglist/provider/group_create.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
+/// `design_handoff_shoppinglist/preview/screens-groups.jsx#GroupCreatePage` の
+/// iconName プリセット 6 種。`Group.iconName` で許容される値。
+const _iconPresets = <({String name, IconData icon, String label})>[
+  (name: 'home', icon: Icons.home_outlined, label: 'いえ'),
+  (name: 'cart', icon: Icons.shopping_cart_outlined, label: 'カート'),
+  (name: 'fork', icon: Icons.restaurant_outlined, label: 'たべる'),
+  (name: 'cookie', icon: Icons.cookie_outlined, label: 'おかし'),
+  (name: 'pets', icon: Icons.pets_outlined, label: 'ペット'),
+  (name: 'bag', icon: Icons.shopping_bag_outlined, label: 'バッグ'),
+];
+
 class GroupCreatePage extends HookConsumerWidget {
   const GroupCreatePage({super.key});
 
@@ -15,6 +26,7 @@ class GroupCreatePage extends HookConsumerWidget {
     final nameController = useTextEditingController();
     final isCreating = useState(false);
     final errorMessage = useState<String?>(null);
+    final selectedIconName = useState<String>('home');
 
     final tokens = context.tokens;
     final neutral = tokens.neutral;
@@ -80,6 +92,67 @@ class GroupCreatePage extends HookConsumerWidget {
                   ),
                 ),
               ],
+              const SizedBox(height: 20),
+              // GroupCreatePage iconName 選択 (3x2 GridView)。AI アイコン生成タイルは
+              // M-3 確定で表示しない (design_handoff v2 運用ルール 4 参照)。
+              Text(
+                'アイコン',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                  color: neutral.ink2,
+                  letterSpacing: 0.04,
+                ),
+              ),
+              const SizedBox(height: 8),
+              GridView.count(
+                crossAxisCount: 3,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                childAspectRatio: 1.6,
+                children: _iconPresets.map((preset) {
+                  final isSelected = selectedIconName.value == preset.name;
+                  return GestureDetector(
+                    onTap: () {
+                      analytics.logEvent(
+                        name: 'select_group_icon',
+                        parameters: {'iconName': preset.name},
+                      );
+                      selectedIconName.value = preset.name;
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isSelected ? tokens.accentSoft : neutral.card,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: isSelected ? tokens.accent : neutral.divider,
+                          width: isSelected ? 1.5 : 0.5,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            preset.icon,
+                            size: 24,
+                            color: isSelected ? tokens.accent : neutral.ink,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            preset.label,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: isSelected ? tokens.accent : neutral.ink2,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
@@ -106,6 +179,7 @@ class GroupCreatePage extends HookConsumerWidget {
                                       ? nameController.text.trim()
                                       : null,
                                   setAsDefault: false,
+                                  iconName: selectedIconName.value,
                                 );
                             if (context.mounted) {
                               Navigator.pop(context);
