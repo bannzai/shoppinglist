@@ -159,6 +159,36 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                   ),
                 ),
                 const Divider(),
+                // i-21 自動通知 (リスト単位): `design_handoff_shopping_list/preview/screens-list-settings.jsx` 準拠。
+                // グローバル通知設定 (SharedPreferences) と AND で評価される。
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4),
+                  child: SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('アイテム追加で家族に通知',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
+                    subtitle: const Text(
+                      'このリストでアイテム追加・チェック切替があったとき',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    value: shoppingList.value.autoNotifyEnabled,
+                    onChanged: (value) {
+                      analytics.logEvent(
+                        name: 'toggle_list_auto_notify',
+                        parameters: {
+                          'groupID': groupID,
+                          'shoppingListID': shoppingListID,
+                          'value': value.toString(),
+                        },
+                      );
+                      autoSave(shoppingList.value
+                          .copyWith(autoNotifyEnabled: value));
+                    },
+                  ),
+                ),
+                const Divider(),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16.0, vertical: 10),
