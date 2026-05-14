@@ -96,8 +96,7 @@ class _AppTabItem extends StatelessWidget {
                 label,
                 style: TextStyle(
                   fontSize: 10.5,
-                  fontWeight:
-                      selected ? FontWeight.w600 : FontWeight.w500,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
                   letterSpacing: 0.02,
                   color: color,
                 ),

@@ -252,9 +252,8 @@ class _TiltedListArt extends StatelessWidget {
                           shape: BoxShape.circle,
                           color: checked ? tokens.accent : Colors.transparent,
                           border: Border.all(
-                            color: checked
-                                ? tokens.accent
-                                : tokens.neutral.ink4,
+                            color:
+                                checked ? tokens.accent : tokens.neutral.ink4,
                             width: 1.4,
                           ),
                         ),
@@ -270,8 +269,7 @@ class _TiltedListArt extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: checked
                                 ? tokens.neutral.divider2
-                                : tokens.neutral.ink4
-                                    .withValues(alpha: 0.35),
+                                : tokens.neutral.ink4.withValues(alpha: 0.35),
                             borderRadius: BorderRadius.circular(3),
                           ),
                           margin: EdgeInsets.only(right: 160 * (1 - w)),

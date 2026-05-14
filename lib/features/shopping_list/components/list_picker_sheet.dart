@@ -193,8 +193,7 @@ class _ListPickerRow extends StatelessWidget {
                 ),
               ),
             ),
-            if (selected)
-              Icon(Icons.check, size: 18, color: tokens.accent),
+            if (selected) Icon(Icons.check, size: 18, color: tokens.accent),
           ],
         ),
       ),

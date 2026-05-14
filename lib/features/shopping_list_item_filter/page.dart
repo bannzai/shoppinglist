@@ -50,7 +50,8 @@ class ShoppingListItemFilterPage extends ConsumerWidget {
                   title: const Text('チェック済みを表示する'),
                   value: showChecked.value,
                   onChanged: (value) {
-                    analytics.logEvent(name: 'toggle_show_checked', parameters: {
+                    analytics
+                        .logEvent(name: 'toggle_show_checked', parameters: {
                       'groupID': groupID,
                       'shoppingListID': shoppingListID,
                       'value': value.toString(),
@@ -88,7 +89,8 @@ class ShoppingListItemFilterPage extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 'チェック済みを非表示にすると、買い物中のリストがコンパクトに見えます。',
-                style: TextStyle(fontSize: 12, color: neutral.ink3, height: 1.5),
+                style:
+                    TextStyle(fontSize: 12, color: neutral.ink3, height: 1.5),
               ),
             ),
           ],

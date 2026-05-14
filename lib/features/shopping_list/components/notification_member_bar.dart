@@ -159,9 +159,7 @@ class _SendAllButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: allSent
-              ? Colors.green.withValues(alpha: 0.45)
-              : accent,
+          color: allSent ? Colors.green.withValues(alpha: 0.45) : accent,
           borderRadius: BorderRadius.circular(999),
         ),
         child: Row(

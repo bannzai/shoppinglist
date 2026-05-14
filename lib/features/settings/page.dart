@@ -295,9 +295,8 @@ class _PremiumCard extends ConsumerWidget {
             : null,
         color: isPremium ? null : neutral.surface2,
         borderRadius: BorderRadius.circular(14),
-        border: isPremium
-            ? null
-            : Border.all(color: neutral.divider, width: 0.5),
+        border:
+            isPremium ? null : Border.all(color: neutral.divider, width: 0.5),
         boxShadow: isPremium ? tokens.cardShadow : null,
       ),
       child: Row(
@@ -334,9 +333,7 @@ class _PremiumCard extends ConsumerWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  isPremium
-                      ? 'すべての機能が利用できます'
-                      : '5 色テーマ・AI 無制限など',
+                  isPremium ? 'すべての機能が利用できます' : '5 色テーマ・AI 無制限など',
                   style: TextStyle(
                     fontSize: 11.5,
                     color: isPremium

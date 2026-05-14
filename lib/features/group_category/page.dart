@@ -76,7 +76,8 @@ class GroupCategoryPage extends ConsumerWidget {
           axes: axes,
         );
       },
-      error: (e, st) => _CategoryScaffold(child: Center(child: Text(e.toString()))),
+      error: (e, st) =>
+          _CategoryScaffold(child: Center(child: Text(e.toString()))),
       loading: () => const _CategoryScaffold(
           child: Center(child: CircularProgressIndicator())),
     );
@@ -256,8 +257,8 @@ class _CategoryListBody extends HookConsumerWidget {
                             if (value != null && !isPremium) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: const Text(
-                                      '買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
+                                  content:
+                                      const Text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
                                   action: SnackBarAction(
                                     label: 'アップグレード',
                                     onPressed: () =>
@@ -300,7 +301,8 @@ class _CategoryListBody extends HookConsumerWidget {
           child: const Icon(Icons.add),
         ),
       ),
-      error: (e, st) => _CategoryScaffold(child: Center(child: Text(e.toString()))),
+      error: (e, st) =>
+          _CategoryScaffold(child: Center(child: Text(e.toString()))),
       loading: () => const _CategoryScaffold(
           child: Center(child: CircularProgressIndicator())),
     );
@@ -493,8 +495,7 @@ class _CategoryReorderableList extends ConsumerWidget {
                 },
               ),
               IconButton(
-                icon: Icon(Icons.delete,
-                    color: context.tokens.neutral.danger),
+                icon: Icon(Icons.delete, color: context.tokens.neutral.danger),
                 onPressed: () {
                   analytics.logEvent(name: 'tap_delete_category', parameters: {
                     'groupID': groupID,

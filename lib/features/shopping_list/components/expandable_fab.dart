@@ -194,12 +194,11 @@ class ExpandableFab extends HookConsumerWidget {
                 title: const Text('カメラ'),
                 leading: const Icon(Icons.photo_camera),
                 onTap: () async {
-                  analytics.logEvent(
-                      name: 'tap_image_picker_camera',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': shoppingListID,
-                      });
+                  analytics
+                      .logEvent(name: 'tap_image_picker_camera', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                  });
                   final XFile? photo =
                       await imagePicker.pickImage(source: ImageSource.camera);
                   if (photo != null) {
@@ -216,12 +215,11 @@ class ExpandableFab extends HookConsumerWidget {
                 title: const Text('フォトライブラリ'),
                 leading: const Icon(Icons.photo_album),
                 onTap: () async {
-                  analytics.logEvent(
-                      name: 'tap_image_picker_gallery',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': shoppingListID,
-                      });
+                  analytics
+                      .logEvent(name: 'tap_image_picker_gallery', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                  });
                   final XFile? photo =
                       await imagePicker.pickImage(source: ImageSource.gallery);
                   if (photo != null) {
@@ -451,8 +449,7 @@ class _ActionLabel extends StatelessWidget {
           if (ai) ...[
             const SizedBox(width: 6),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
               decoration: BoxDecoration(
                 color: tokens.accent,
                 borderRadius: BorderRadius.circular(999),

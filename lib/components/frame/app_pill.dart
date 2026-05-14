@@ -96,8 +96,7 @@ class AppPill extends StatelessWidget {
             child: SizedBox(
               height: large ? 50 : 36,
               child: Row(
-                mainAxisSize:
-                    expanded ? MainAxisSize.max : MainAxisSize.min,
+                mainAxisSize: expanded ? MainAxisSize.max : MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (icon != null) ...[

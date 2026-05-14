@@ -146,8 +146,7 @@ class LocationPickerPage extends HookConsumerWidget {
                   if (isLoadingAddress.value)
                     LinearProgressIndicator(
                       backgroundColor: neutral.divider2,
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(tokens.accent),
+                      valueColor: AlwaysStoppedAnimation<Color>(tokens.accent),
                     )
                   else if (address.value.isNotEmpty)
                     Text(

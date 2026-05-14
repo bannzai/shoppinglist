@@ -26,16 +26,12 @@ void main() {
       children: [
         AppPill(label: 'neutral', onPressed: () {}),
         AppPill(
-            label: 'accent',
-            onPressed: () {},
-            variant: AppPillVariant.accent),
+            label: 'accent', onPressed: () {}, variant: AppPillVariant.accent),
         AppPill(label: 'soft', onPressed: () {}, variant: AppPillVariant.soft),
         AppPill(
             label: 'ghost', onPressed: () {}, variant: AppPillVariant.ghost),
         AppPill(
-            label: 'danger',
-            onPressed: () {},
-            variant: AppPillVariant.danger),
+            label: 'danger', onPressed: () {}, variant: AppPillVariant.danger),
         const AppPill(label: 'disabled', onPressed: null),
       ],
     )));
