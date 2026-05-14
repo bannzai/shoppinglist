@@ -29,19 +29,22 @@ class OnboardingPage extends HookConsumerWidget {
         eyebrowIndex: 1,
         title: '家族と作る、\n買い物リスト',
         body: 'メンバー全員でリアルタイムに共有・編集できる。',
-        artBuilder: (tokens) => _TiltedListArt(tokens: tokens),
+        assetPath: 'images/onboarding/slide_1.png',
+        fallbackBuilder: (tokens) => _TiltedListArt(tokens: tokens),
       ),
       _SlideContent(
         eyebrowIndex: 2,
         title: '同じリストを\n同時に編集',
         body: '誰がチェックを入れたかもひと目でわかる。',
-        artBuilder: (tokens) => _AvatarOrbitArt(tokens: tokens),
+        assetPath: 'images/onboarding/slide_2.png',
+        fallbackBuilder: (tokens) => _AvatarOrbitArt(tokens: tokens),
       ),
       _SlideContent(
         eyebrowIndex: 3,
         title: 'お店の近くで、\nそっと思い出す',
         body: 'カテゴリと店舗ごとに最適な順序で表示。',
-        artBuilder: (tokens) => _MapHaloArt(tokens: tokens),
+        assetPath: 'images/onboarding/slide_3.png',
+        fallbackBuilder: (tokens) => _MapHaloArt(tokens: tokens),
       ),
     ];
 
@@ -120,17 +123,20 @@ class OnboardingPage extends HookConsumerWidget {
   }
 }
 
-/// 1 スライドのデータ。`artBuilder` は token に応じて Widget を返す関数。
+/// 1 スライドのデータ。`assetPath` の画像を表示し、ロード失敗時は
+/// `fallbackBuilder` の Flutter 描画 Widget を使う。
 class _SlideContent {
-  final int eyebrowIndex; // 1..3
+  final int eyebrowIndex;
   final String title;
   final String body;
-  final Widget Function(AppTokens tokens) artBuilder;
+  final String assetPath;
+  final Widget Function(AppTokens tokens) fallbackBuilder;
   const _SlideContent({
     required this.eyebrowIndex,
     required this.title,
     required this.body,
-    required this.artBuilder,
+    required this.assetPath,
+    required this.fallbackBuilder,
   });
 }
 
@@ -150,7 +156,12 @@ class _OnboardingSlide extends StatelessWidget {
           SizedBox(
             width: 220,
             height: 220,
-            child: data.artBuilder(tokens),
+            child: Image.asset(
+              data.assetPath,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) =>
+                  data.fallbackBuilder(tokens),
+            ),
           ),
           const Spacer(),
           // mono eyebrow: `01/03` 形式

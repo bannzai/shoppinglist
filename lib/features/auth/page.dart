@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/auth/apple.dart';
 import 'package:shoppinglist/components/auth/google.dart';
@@ -29,8 +28,9 @@ class AuthPage extends ConsumerWidget {
               const Spacer(),
               ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: 240),
-                child: SvgPicture.asset(
-                  'images/undraw_shopping-app_b80f.svg',
+                child: Image.asset(
+                  'images/auth/auth_art.png',
+                  fit: BoxFit.contain,
                 ),
               ),
               const SizedBox(height: 32),
