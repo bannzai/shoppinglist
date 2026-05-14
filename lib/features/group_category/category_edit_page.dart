@@ -251,10 +251,11 @@ class _CategoryEditBody extends HookConsumerWidget {
                       contentPadding: EdgeInsets.zero,
                       title: Text(keyword.keyword),
                       subtitle: Text(
-                        keyword.matchingType ==
-                                GroupCategoryKeywordMatchingType.exact
-                            ? '完全一致'
-                            : '部分一致',
+                        switch (keyword.matchingType) {
+                          GroupCategoryKeywordMatchingType.exact => '完全一致',
+                          GroupCategoryKeywordMatchingType.partial => '部分一致',
+                          GroupCategoryKeywordMatchingType.regex => '正規表現',
+                        },
                         style: const TextStyle(fontSize: 12),
                       ),
                       trailing: IconButton(
@@ -337,6 +338,26 @@ class _CategoryEditBody extends HookConsumerWidget {
                         setState(() {
                           selectedMatchingType =
                               GroupCategoryKeywordMatchingType.exact;
+                        });
+                      }
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  ChoiceChip(
+                    label: const Text('正規表現'),
+                    selected: selectedMatchingType ==
+                        GroupCategoryKeywordMatchingType.regex,
+                    onSelected: (selected) {
+                      if (selected) {
+                        analytics.logEvent(
+                            name: 'select_match_regex',
+                            parameters: {
+                              'groupID': groupID,
+                              'categoryID': category.id
+                            });
+                        setState(() {
+                          selectedMatchingType =
+                              GroupCategoryKeywordMatchingType.regex;
                         });
                       }
                     },
