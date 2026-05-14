@@ -7,6 +7,7 @@ import 'package:shoppinglist/features/group_setting/page.dart';
 import 'package:shoppinglist/features/group_category/category_edit_page.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/home/page.dart';
+import 'package:shoppinglist/features/onboarding/page.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_item_filter_preview.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_preview.dart';
@@ -22,6 +23,10 @@ class _PreviewEntry {
 }
 
 final _previewEntries = <_PreviewEntry>[
+  _PreviewEntry(
+    title: 'OnboardingPage',
+    builder: (_) => const OnboardingPage(),
+  ),
   _PreviewEntry(
     title: 'AuthPage',
     builder: (_) => const AuthPage(),
