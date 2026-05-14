@@ -239,8 +239,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     required String firstCategoryName,
     required String secondCategoryName,
   }) async {
-    final result =
-        await httpsCallable('setupTestCategoryLocationOrder').call({
+    final result = await httpsCallable('setupTestCategoryLocationOrder').call({
       'groupID': groupID,
       'locationName': locationName,
       'firstCategoryName': firstCategoryName,

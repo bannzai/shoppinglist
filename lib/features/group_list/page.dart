@@ -101,8 +101,7 @@ class GroupListPage extends ConsumerWidget {
 
     return FloatingActionButton(
       tooltip: 'グループ作成',
-      backgroundColor:
-          isLimitReached ? tokens.neutral.surface2 : tokens.accent,
+      backgroundColor: isLimitReached ? tokens.neutral.surface2 : tokens.accent,
       foregroundColor: isLimitReached ? tokens.neutral.ink3 : Colors.white,
       onPressed: () {
         analytics.logEvent(name: 'tap_navigate_group_create');
@@ -127,9 +126,7 @@ class GroupListPage extends ConsumerWidget {
           ),
         );
       },
-      child: isLimitReached
-          ? const Icon(Icons.lock)
-          : const Icon(Icons.add),
+      child: isLimitReached ? const Icon(Icons.lock) : const Icon(Icons.add),
     );
   }
 }
@@ -181,8 +178,7 @@ class _GroupCard extends ConsumerWidget {
                       color: neutral.surface2,
                     ),
                     alignment: Alignment.center,
-                    child:
-                        Icon(Icons.person, size: 16, color: neutral.ink3),
+                    child: Icon(Icons.person, size: 16, color: neutral.ink3),
                   )
                 else
                   SizedBox(
@@ -264,8 +260,7 @@ class _GroupCard extends ConsumerWidget {
                       const SizedBox(height: 2),
                       Text(
                         'メンバー ${group.memberUserIDs.length}人',
-                        style:
-                            TextStyle(fontSize: 11.5, color: neutral.ink3),
+                        style: TextStyle(fontSize: 11.5, color: neutral.ink3),
                       ),
                     ],
                   ),

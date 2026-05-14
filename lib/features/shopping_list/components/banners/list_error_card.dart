@@ -11,7 +11,8 @@ class ListErrorCard extends StatelessWidget {
   /// 「再試行」押下時のコールバック。
   final VoidCallback onRetry;
 
-  const ListErrorCard({super.key, required this.exception, required this.onRetry});
+  const ListErrorCard(
+      {super.key, required this.exception, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {

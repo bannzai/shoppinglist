@@ -21,8 +21,7 @@ class RetentionBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.workspace_premium,
-              size: 16, color: tokens.accent),
+          Icon(Icons.workspace_premium, size: 16, color: tokens.accent),
           const SizedBox(width: 10),
           Expanded(
             child: Text(

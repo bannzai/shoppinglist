@@ -38,9 +38,8 @@ class AppRoundButton extends StatelessWidget {
     return Material(
       color: soft ? tokens.accentSoft : Colors.transparent,
       shape: CircleBorder(
-        side: ring
-            ? BorderSide(color: tokens.neutral.divider)
-            : BorderSide.none,
+        side:
+            ring ? BorderSide(color: tokens.neutral.divider) : BorderSide.none,
       ),
       child: InkWell(
         onTap: onPressed,

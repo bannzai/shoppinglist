@@ -60,7 +60,8 @@ class GroupSettingPage extends ConsumerWidget {
           group: group,
           profiles: profiles,
         ),
-        error: (e, st) => _PaperScaffold(child: Center(child: Text(e.toString()))),
+        error: (e, st) =>
+            _PaperScaffold(child: Center(child: Text(e.toString()))),
         loading: () => const _PaperScaffold(
             child: Center(child: CircularProgressIndicator())),
       ),

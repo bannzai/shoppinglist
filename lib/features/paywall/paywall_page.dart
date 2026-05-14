@@ -172,7 +172,7 @@ class _Hero extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-                colors: [tokens.accent, const Color(0xFF7C2A07)],
+              colors: [tokens.accent, const Color(0xFF7C2A07)],
             ),
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
@@ -428,12 +428,10 @@ class _PaywallPackageTile extends ConsumerWidget {
           ElevatedButton(
             key: Key('paywall_subscribe_${package.packageType.name}'),
             style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  recommended ? tokens.accent : neutral.surface2,
+              backgroundColor: recommended ? tokens.accent : neutral.surface2,
               foregroundColor: recommended ? Colors.white : neutral.ink,
               shape: const StadiumBorder(),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
             ),
             onPressed: () async {
               analytics.logEvent(

@@ -101,16 +101,15 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                     ? colorFromHex(textShoppingListItem.color!)
                     : tokens.accent,
                 onChanged: (_) {
-                  analytics.logEvent(
-                      name: 'tap_toggle_item_checkbox',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': textShoppingListItem.shoppingListID,
-                        'itemID': textShoppingListItem.id,
-                      });
+                  analytics
+                      .logEvent(name: 'tap_toggle_item_checkbox', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': textShoppingListItem.shoppingListID,
+                    'itemID': textShoppingListItem.id,
+                  });
                   ref
-                      .read(toggleShoppingListItemCheckProvider(
-                          groupID: groupID))
+                      .read(
+                          toggleShoppingListItemCheckProvider(groupID: groupID))
                       .call(
                         shoppingListID: textShoppingListItem.shoppingListID,
                         item: textShoppingListItem,
@@ -186,12 +185,10 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
             IconButton(
               tooltip: 'アイテム詳細',
               onPressed: () {
-                analytics.logEvent(
-                    name: 'tap_open_item_detail',
-                    parameters: {
-                      'groupID': groupID,
-                      'itemID': textShoppingListItem.id,
-                    });
+                analytics.logEvent(name: 'tap_open_item_detail', parameters: {
+                  'groupID': groupID,
+                  'itemID': textShoppingListItem.id,
+                });
                 appShowModalBottomSheet(
                   context: context,
                   builder: (context) {

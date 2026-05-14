@@ -12,6 +12,7 @@ import 'package:shoppinglist/root.dart';
 import 'package:shoppinglist/style/theme.dart';
 
 final _navigatorKey = GlobalKey<NavigatorState>();
+final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 /// アプリケーションのルートWidget。テーマカラー・ナビゲーション・FCM通知を管理する。
 class App extends ConsumerStatefulWidget {
@@ -25,7 +26,8 @@ class _AppState extends ConsumerState<App> {
   @override
   void initState() {
     super.initState();
-    FcmNotificationHandler(navigatorKey: _navigatorKey).initialize();
+    FcmNotificationHandler(scaffoldMessengerKey: _scaffoldMessengerKey)
+        .initialize();
   }
 
   @override
@@ -42,6 +44,7 @@ class _AppState extends ConsumerState<App> {
 
     return MaterialApp(
       navigatorKey: _navigatorKey,
+      scaffoldMessengerKey: _scaffoldMessengerKey,
       title: '買い物リスト',
       theme: buildAppTheme(brightness: Brightness.light, accent: accent),
       darkTheme: buildAppTheme(brightness: Brightness.dark, accent: accent),

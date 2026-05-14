@@ -46,9 +46,7 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
               'groupID': groupID,
               'shoppingListID': shoppingListID,
             });
-            await ref
-                .read(addShoppingListItemProvider(groupID: groupID))
-                .call(
+            await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
                   shoppingListID: shoppingListID,
                   userID: ref.read(currentUserIDProvider)!,
                   message: '',

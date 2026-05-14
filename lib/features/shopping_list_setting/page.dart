@@ -450,11 +450,11 @@ class _ListActionsSection extends ConsumerWidget {
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: () async {
-                analytics.logEvent(name: 'tap_export_shopping_list',
-                    parameters: {
-                      'groupID': groupID,
-                      'shoppingListID': shoppingListID,
-                    });
+                analytics
+                    .logEvent(name: 'tap_export_shopping_list', parameters: {
+                  'groupID': groupID,
+                  'shoppingListID': shoppingListID,
+                });
                 if (!isPremium) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -521,8 +521,7 @@ class _InvitationCodeDialog extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: neutral.surface2,
               borderRadius: BorderRadius.circular(12),

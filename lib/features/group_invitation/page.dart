@@ -48,8 +48,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
-                child: Icon(Icons.group_add,
-                    size: 32, color: tokens.accent),
+                child: Icon(Icons.group_add, size: 32, color: tokens.accent),
               ),
               const SizedBox(height: 24),
               Text(
@@ -60,7 +59,8 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
               const SizedBox(height: 12),
               Text(
                 'グループのメンバーから共有された8桁のコードを入力してください',
-                style: TextStyle(fontSize: 13, color: neutral.ink2, height: 1.6),
+                style:
+                    TextStyle(fontSize: 13, color: neutral.ink2, height: 1.6),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),

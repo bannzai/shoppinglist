@@ -60,8 +60,7 @@ class HomePage extends HookConsumerWidget {
       _screenTracking(tabController.index);
     });
 
-    final activeTab =
-        tabIndex.value == 0 ? AppTab.list : AppTab.settings;
+    final activeTab = tabIndex.value == 0 ? AppTab.list : AppTab.settings;
 
     return DefaultTabController(
       length: HomePageTabType.values.length,

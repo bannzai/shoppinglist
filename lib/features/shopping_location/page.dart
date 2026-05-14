@@ -67,8 +67,8 @@ class ShoppingLocationPage extends ConsumerWidget {
               final hasGeo = location.latitude != null;
               return Container(
                 margin: const EdgeInsets.only(bottom: 10),
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(
                   color: neutral.card,
                   borderRadius: BorderRadius.circular(14),
@@ -81,8 +81,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                       height: 36,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color:
-                            hasGeo ? tokens.accentSoft : neutral.surface2,
+                        color: hasGeo ? tokens.accentSoft : neutral.surface2,
                       ),
                       alignment: Alignment.center,
                       child: Icon(

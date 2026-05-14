@@ -20,4 +20,16 @@ void main() {
     expect(tokens!.brightness, Brightness.light);
     expect(tokens.accentPreset, AccentPreset.shu);
   });
+
+  testWidgets('PreviewsPage lists onboarding and auth previews',
+      (tester) async {
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: PreviewApp(),
+      ),
+    );
+
+    expect(find.text('OnboardingPage'), findsOneWidget);
+    expect(find.text('AuthPage'), findsOneWidget);
+  });
 }

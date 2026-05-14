@@ -182,8 +182,8 @@ Package? sixMonthPackage(Ref ref) {
 @Riverpod()
 Package? annualPackage(Ref ref) {
   final currentOfferingPackages = ref.watch(currentOfferingPackagesProvider);
-  return currentOfferingPackages.firstWhereOrNull(
-      (element) => element.packageType == PackageType.annual);
+  return currentOfferingPackages
+      .firstWhereOrNull((element) => element.packageType == PackageType.annual);
 }
 
 /// 現在 Offering から lifetime (買い切り) Package を返す。Offering に未設定なら null。
