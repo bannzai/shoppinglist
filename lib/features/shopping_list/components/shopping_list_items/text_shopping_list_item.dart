@@ -217,14 +217,62 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
 
     return Dismissible(
       key: ValueKey(textShoppingListItem.id),
-      direction: DismissDirection.startToEnd,
+      direction: DismissDirection.horizontal,
+      // i-8 右スワイプでチェックトグル: `design_handoff_shopping_list/README.md` §8
       background: Container(
-        color: neutral.danger,
+        color: neutral.ok,
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.only(left: 16),
+        child: const Icon(Icons.check, color: Colors.white),
+      ),
+      // i-7 左スワイプ削除
+      secondaryBackground: Container(
+        color: neutral.danger,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 16),
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       confirmDismiss: (direction) async {
+        if (direction == DismissDirection.startToEnd) {
+          // 右スワイプ: チェック状態をトグルし、行は残す
+          final wasChecked = textShoppingListItem.status ==
+              GroupShoppingListItemStatus.checked;
+          analytics.logEvent(
+            name: 'swipe_toggle_shopping_list_item',
+            parameters: {
+              'groupShoppingListItemID': textShoppingListItem.id,
+              'before': wasChecked.toString(),
+            },
+          );
+          try {
+            await ref
+                .read(groupDatabaseProvider(groupID: groupID))
+                .shoppingListItemsReference(
+                  shoppingListID: textShoppingListItem.shoppingListID,
+                )
+                .doc(textShoppingListItem.id)
+                .update({
+              GroupShoppingListItemFirestoreKeys.status: wasChecked
+                  ? GroupShoppingListItemStatus.unchecked.name
+                  : GroupShoppingListItemStatus.checked.name,
+            });
+          } catch (e, st) {
+            debugPrint('アイテムのチェック切替に失敗: $e\n$st');
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(e.toString())),
+              );
+            }
+          }
+          return false;
+        }
+        // 左スワイプ: 削除
+        analytics.logEvent(
+          name: 'swipe_delete_shopping_list_item',
+          parameters: {
+            'groupShoppingListItemID': textShoppingListItem.id,
+          },
+        );
         try {
           await ref
               .read(groupDatabaseProvider(groupID: groupID))
