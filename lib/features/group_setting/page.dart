@@ -462,6 +462,7 @@ class _ShoppingLocationsSection extends ConsumerWidget {
                     .read(shoppingLocationAddProvider(groupID: groupID))
                     .call(
                       name: name,
+                      address: '',
                       latitude: null,
                       longitude: null,
                       geofenceRadiusMeters: null,
