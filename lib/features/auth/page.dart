@@ -35,13 +35,14 @@ class AuthPage extends ConsumerWidget {
               ),
               const SizedBox(height: 32),
               Text(
-                '買い物リストへようこそ',
+                '家族の買い物を、\nひとつのリストへ',
                 style: Theme.of(context).textTheme.displayMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
               Text(
-                'サインインして、家族・パートナーと\nリストを共有しましょう。',
+                'サインインすると端末をまたいでリストが同期します。'
+                '広告もメールマガジンもありません。',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: neutral.ink2,
@@ -100,6 +101,20 @@ class _Note extends StatelessWidget {
       textAlign: TextAlign.center,
       text: TextSpan(
         children: [
+          TextSpan(text: '続けることで ', style: muted),
+          TextSpan(
+            text: '利用規約',
+            style: linkStyle,
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                analytics.logEvent(name: 'tap_auth_terms_of_service');
+                launchUrl(
+                  Uri.parse('https://bannzai.github.io/shoppinglist/Terms'),
+                  mode: LaunchMode.externalApplication,
+                );
+              },
+          ),
+          TextSpan(text: ' と ', style: muted),
           TextSpan(
             text: 'プライバシーポリシー',
             style: linkStyle,
@@ -113,20 +128,7 @@ class _Note extends StatelessWidget {
                 );
               },
           ),
-          TextSpan(text: 'と', style: muted),
-          TextSpan(
-            text: '利用規約',
-            style: linkStyle,
-            recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                analytics.logEvent(name: 'tap_auth_terms_of_service');
-                launchUrl(
-                  Uri.parse('https://bannzai.github.io/shoppinglist/Terms'),
-                  mode: LaunchMode.externalApplication,
-                );
-              },
-          ),
-          TextSpan(text: 'に同意した上でサインインしてください', style: muted),
+          TextSpan(text: ' に同意したものとみなされます。', style: muted),
         ],
       ),
     );

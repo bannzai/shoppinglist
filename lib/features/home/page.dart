@@ -7,6 +7,7 @@ import 'package:shoppinglist/features/shopping_list/page.dart';
 import 'package:shoppinglist/features/settings/page.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/default_group_update.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 enum HomePageTabType {
@@ -65,6 +66,7 @@ class HomePage extends HookConsumerWidget {
     return DefaultTabController(
       length: HomePageTabType.values.length,
       child: Scaffold(
+        backgroundColor: context.tokens.neutral.paper,
         appBar: null,
         bottomNavigationBar: AppBottomTabBar(
           active: activeTab,
