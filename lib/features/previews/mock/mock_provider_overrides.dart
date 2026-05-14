@@ -137,12 +137,13 @@ class _NoOpDefaultGroupUpdate extends DefaultGroupUpdate {
 
 class _NoOpCreateGroup extends CreateGroup {
   @override
-  Future<void> call({
+  Future<String> call({
     required AppUser appUser,
     required String? name,
     required bool setAsDefault,
     required String iconName,
-  }) async {}
+  }) async =>
+      mockGroupID;
 }
 
 class _NoOpCategoryAxisAdd extends GroupCategoryAxisAdd {

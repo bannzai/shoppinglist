@@ -1,11 +1,83 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shoppinglist/components/frame/app_pill.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/group_create.dart';
+import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+
+/// グループ作成成功後に招待コードを表示する dialog。
+/// `design_handoff_shoppinglist/preview/screens-groups.jsx` 準拠。
+/// コピー / 共有 / 閉じる の 3 アクションを提供する。
+class _PostCreateInvitationDialog extends StatelessWidget {
+  final String invitationCode;
+  const _PostCreateInvitationDialog({required this.invitationCode});
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.tokens;
+    final neutral = tokens.neutral;
+    return AlertDialog(
+      backgroundColor: neutral.card,
+      title: const Text('メンバーを招待'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('招待コードを家族と共有してください'),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: tokens.accentSoft,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              invitationCode,
+              style: GoogleFonts.ibmPlexMono(
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                color: tokens.accent,
+                letterSpacing: 2,
+              ),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            analytics.logEvent(name: 'tap_copy_invitation_code_post_create');
+            await Clipboard.setData(ClipboardData(text: invitationCode));
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('招待コードをコピーしました')),
+              );
+            }
+          },
+          child: const Text('コピー'),
+        ),
+        TextButton(
+          onPressed: () async {
+            analytics.logEvent(name: 'tap_share_invitation_code_post_create');
+            await SharePlus.instance.share(
+              ShareParams(text: '買い物リストの招待コード: $invitationCode'),
+            );
+          },
+          child: const Text('共有'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('閉じる'),
+        ),
+      ],
+    );
+  }
+}
 
 /// `design_handoff_shoppinglist/preview/screens-groups.jsx#GroupCreatePage` の
 /// iconName プリセット 6 種。`Group.iconName` で許容される値。
@@ -173,14 +245,40 @@ class GroupCreatePage extends HookConsumerWidget {
                             if (appUser == null) {
                               throw StateError('AppUser is not available');
                             }
-                            await ref.read(createGroupProvider).call(
-                                  appUser: appUser,
-                                  name: nameController.text.trim().isNotEmpty
-                                      ? nameController.text.trim()
-                                      : null,
-                                  setAsDefault: false,
-                                  iconName: selectedIconName.value,
+                            final groupID =
+                                await ref.read(createGroupProvider).call(
+                                      appUser: appUser,
+                                      name:
+                                          nameController.text.trim().isNotEmpty
+                                              ? nameController.text.trim()
+                                              : null,
+                                      setAsDefault: false,
+                                      iconName: selectedIconName.value,
+                                    );
+                            // 作成後、招待コードを直ちに生成して共有 dialog を表示する。
+                            // `design_handoff_shoppinglist/preview/screens-groups.jsx` 準拠。
+                            try {
+                              final invitationCode = await ref
+                                  .read(createGroupInvitationProvider)
+                                  .call(groupID: groupID);
+                              if (context.mounted) {
+                                await showDialog<void>(
+                                  context: context,
+                                  builder: (dialogContext) =>
+                                      _PostCreateInvitationDialog(
+                                    invitationCode: invitationCode,
+                                  ),
                                 );
+                              }
+                            } catch (e) {
+                              // 招待生成失敗時もグループ作成自体は成功している
+                              // のでエラー表示は SnackBar に留め、画面は閉じる。
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(e.toString())),
+                                );
+                              }
+                            }
                             if (context.mounted) {
                               Navigator.pop(context);
                             }
