@@ -77,8 +77,7 @@ void main() {
         ..remove('serverCreatedDateTime')
         ..remove('serverUpdatedDateTime');
       expect(json['address'], '東京都千代田区丸の内1-1');
-      expect(GroupShoppingLocation.fromJson(json).address,
-          '東京都千代田区丸の内1-1');
+      expect(GroupShoppingLocation.fromJson(json).address, '東京都千代田区丸の内1-1');
     });
   });
 }

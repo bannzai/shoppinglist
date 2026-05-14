@@ -73,12 +73,14 @@ class AppCell extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(title,
-                        style: textTheme.bodyLarge?.copyWith(color: titleColor)),
+                        style:
+                            textTheme.bodyLarge?.copyWith(color: titleColor)),
                     if (subtitle != null) ...[
                       const SizedBox(height: 2),
                       Text(
                         subtitle!,
-                        style: textTheme.bodySmall?.copyWith(color: neutral.ink3),
+                        style:
+                            textTheme.bodySmall?.copyWith(color: neutral.ink3),
                       ),
                     ],
                   ],

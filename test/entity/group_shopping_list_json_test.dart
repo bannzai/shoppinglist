@@ -43,7 +43,8 @@ void main() {
         autoNotifyEnabled: true,
         ttlExpiresDateTime: null,
       );
-      final round = GroupShoppingList.fromJson(_withoutTimestamps(list.toJson()));
+      final round =
+          GroupShoppingList.fromJson(_withoutTimestamps(list.toJson()));
       expect(round.name, '夕食');
       expect(round.status, GroupShoppingListStatus.active);
     });

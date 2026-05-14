@@ -205,10 +205,12 @@ void main() {
   testWidgets('AppDivider: 既定 inset 60 で 0.5px の線が描かれる', (tester) async {
     await tester.pumpWidget(_wrap(const AppDivider()));
     final padding = tester.widget<Padding>(
-      find.ancestor(
-        of: find.byType(Container),
-        matching: find.byType(Padding),
-      ).first,
+      find
+          .ancestor(
+            of: find.byType(Container),
+            matching: find.byType(Padding),
+          )
+          .first,
     );
     expect(padding.padding, const EdgeInsets.only(left: 60));
   });
