@@ -165,10 +165,16 @@ class LocationPickerPage extends HookConsumerWidget {
                     large: true,
                     expanded: true,
                     onPressed: () {
-                      analytics.logEvent(name: 'tap_confirm_map_location');
+                      analytics.logEvent(
+                        name: 'tap_confirm_map_location',
+                        parameters: {
+                          'hasAddress': address.value.isNotEmpty.toString(),
+                        },
+                      );
                       Navigator.pop(context, (
                         latitude: selectedLatLng.value.latitude,
                         longitude: selectedLatLng.value.longitude,
+                        address: address.value,
                       ));
                     },
                   ),

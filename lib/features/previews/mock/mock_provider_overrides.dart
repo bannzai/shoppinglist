@@ -233,6 +233,7 @@ class _NoOpShoppingLocationAdd extends ShoppingLocationAdd {
   @override
   Future<GroupShoppingLocation> call({
     required String name,
+    required String address,
     required double? latitude,
     required double? longitude,
     required double? geofenceRadiusMeters,

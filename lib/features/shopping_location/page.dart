@@ -173,6 +173,7 @@ class ShoppingLocationPage extends ConsumerWidget {
     final controller = TextEditingController();
     double? selectedLatitude;
     double? selectedLongitude;
+    String selectedAddress = '';
     final isPremium =
         ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
 
@@ -219,7 +220,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                     return;
                   }
                   final result = await Navigator.push<
-                      ({double latitude, double longitude})>(
+                      ({double latitude, double longitude, String address})>(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const LocationPickerPage(
@@ -232,10 +233,21 @@ class ShoppingLocationPage extends ConsumerWidget {
                     setDialogState(() {
                       selectedLatitude = result.latitude;
                       selectedLongitude = result.longitude;
+                      selectedAddress = result.address;
                     });
                   }
                 },
               ),
+              if (selectedAddress.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  selectedAddress,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: context.tokens.neutral.ink3,
+                  ),
+                ),
+              ],
             ],
           ),
           actions: [
@@ -252,6 +264,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                       .read(shoppingLocationAddProvider(groupID: groupID))
                       .call(
                         name: name,
+                        address: selectedAddress,
                         latitude: selectedLatitude,
                         longitude: selectedLongitude,
                         geofenceRadiusMeters: null,
