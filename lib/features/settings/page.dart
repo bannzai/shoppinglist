@@ -9,6 +9,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shoppinglist/components/button/inquiry.dart';
 import 'package:shoppinglist/components/button/user_delete.dart';
+import 'package:shoppinglist/components/frame/app_dialog_shell.dart';
 import 'package:shoppinglist/components/frame/app_pill.dart';
 import 'package:shoppinglist/features/developer_options/page.dart';
 import 'package:shoppinglist/features/group_invitation/page.dart';
@@ -605,25 +606,60 @@ class _SignOutButton extends ConsumerWidget {
           ),
           onPressed: () async {
             analytics.logEvent(name: 'tap_sign_out');
-            final confirmed = await showDialog<bool>(
+            // `design_handoff_shoppinglist/preview/screens-list-settings.jsx`
+            // の DialogShell 準拠 (overlay + blur + 上から 32% に paper card)。
+            final confirmed = await showGeneralDialog<bool>(
               context: context,
-              builder: (dialogContext) => AlertDialog(
-                title: const Text('サインアウトしますか?'),
-                content: const Text('再度サインインするまで端末からはリストにアクセスできなくなります。'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(dialogContext, false),
-                    child: const Text('キャンセル'),
+              barrierLabel: 'サインアウト確認',
+              barrierDismissible: true,
+              barrierColor: Colors.transparent,
+              transitionDuration: const Duration(milliseconds: 160),
+              pageBuilder: (dialogContext, _, __) {
+                return AppDialogShell(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'サインアウトしますか?',
+                        style: Theme.of(dialogContext).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        '再度サインインするまで端末からはリストにアクセスできなくなります。',
+                        style: Theme.of(dialogContext)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: tokens.neutral.ink2),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AppPill(
+                              label: 'キャンセル',
+                              variant: AppPillVariant.ghost,
+                              expanded: true,
+                              onPressed: () =>
+                                  Navigator.pop(dialogContext, false),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: AppPill(
+                              label: 'サインアウト',
+                              variant: AppPillVariant.danger,
+                              expanded: true,
+                              onPressed: () =>
+                                  Navigator.pop(dialogContext, true),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(dialogContext, true),
-                    style: TextButton.styleFrom(
-                      foregroundColor: tokens.neutral.danger,
-                    ),
-                    child: const Text('サインアウト'),
-                  ),
-                ],
-              ),
+                );
+              },
             );
             if (confirmed != true) return;
             analytics.logEvent(name: 'confirm_sign_out');
