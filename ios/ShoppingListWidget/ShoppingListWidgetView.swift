@@ -12,9 +12,27 @@ struct ShoppingListWidgetView: View {
     let entry: ShoppingListEntry
 
     @Environment(\.widgetFamily) var widgetFamily
+    // i-14 dark mode cross-fade に追従するための明示 colorScheme。
+    // `design_handoff_shoppinglist/preview/widgets-and-micro.jsx` の WiOS (light/dark) 準拠。
+    @Environment(\.colorScheme) var colorScheme
 
     private var themeColor: Color {
         Color(hex: entry.themeColorHex)
+    }
+
+    /// 和紙ベース背景。tokens.dart の AppNeutralColors.{light,dark}.paper と一致。
+    private var paper: Color {
+        colorScheme == .dark
+            ? Color(hex: "#13110D")
+            : Color(hex: "#F6F0E2")
+    }
+
+    /// card 背景 (現状は未使用だが、今後の Light/Dark 統一のためプロパティとして保持)。
+    /// tokens.dart の AppNeutralColors.{light,dark}.card と一致。
+    private var card: Color {
+        colorScheme == .dark
+            ? Color(hex: "#26221C")
+            : Color(hex: "#FFFFFF")
     }
 
     var body: some View {
@@ -28,6 +46,7 @@ struct ShoppingListWidgetView: View {
             progressSliver
         }
         .padding(.vertical, 4)
+        .containerBackground(paper, for: .widget)
     }
 
     // MARK: Header
