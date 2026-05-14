@@ -28,21 +28,24 @@ class OnboardingPage extends HookConsumerWidget {
       _SlideContent(
         eyebrowIndex: 1,
         title: '家族と作る、\n買い物リスト',
-        body: 'メンバー全員でリアルタイムに共有・編集できる。',
+        body: '家で思いついたものを誰かが追加して、店頭で別の誰かがチェック。'
+            '「買ってきて」のやり取りを、ぜんぶこの一枚に。',
         assetPath: 'images/onboarding/slide_1.png',
         fallbackBuilder: (tokens) => _TiltedListArt(tokens: tokens),
       ),
       _SlideContent(
         eyebrowIndex: 2,
         title: '同じリストを\n同時に編集',
-        body: '誰がチェックを入れたかもひと目でわかる。',
+        body: '家族・パートナー・同居人を招待コードで招くと、同じリストを編集できます。'
+            '誰が追加したかではなく、何を買い忘れずに済むかを大切に。',
         assetPath: 'images/onboarding/slide_2.png',
         fallbackBuilder: (tokens) => _AvatarOrbitArt(tokens: tokens),
       ),
       _SlideContent(
         eyebrowIndex: 3,
         title: 'お店の近くで、\nそっと思い出す',
-        body: 'カテゴリと店舗ごとに最適な順序で表示。',
+        body: '登録した店舗の近くに来ると、買い物リストをやさしくお知らせ。'
+            '通知は必要な時だけ、押し付けがましくなく。',
         assetPath: 'images/onboarding/slide_3.png',
         fallbackBuilder: (tokens) => _MapHaloArt(tokens: tokens),
       ),
