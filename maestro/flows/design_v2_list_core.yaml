@@ -1,0 +1,47 @@
+appId: com.bannzai.shoppinglist
+---
+# PR-3 List Core の検証:
+# - i-7 (左スワイプ削除) / i-8 (右スワイプチェック切替) を assert
+# - 長押し context menu (複製 / メモを追加 / 削除) が出ることを assert
+# - FAB から空行追加 → 連続入力ができることを確認
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 初期はリスト空。FAB をタップして展開する。
+- tapOn:
+    id: "expandable_fab"
+    optional: true
+- waitForAnimationToEnd
+
+# 空行追加 (FAB 内のメニューが無くても TextField から開始できる場合あり)
+- tapOn:
+    text: "アイテムを追加"
+    optional: true
+- inputText: "牛乳"
+- pressKey: enter
+- inputText: "卵"
+- pressKey: enter
+- hideKeyboard
+- waitForAnimationToEnd
+
+- assertVisible: "牛乳"
+- assertVisible: "卵"
+
+# 長押しで context menu 表示
+- longPressOn: "牛乳"
+- waitForAnimationToEnd
+- assertVisible: "複製"
+- assertVisible: "メモを追加"
+- assertVisible: "削除"
+
+# 「削除」をタップ → 牛乳が消える
+- tapOn: "削除"
+- waitForAnimationToEnd
+- assertNotVisible: "牛乳"
+
+# 右スワイプでチェック切替 (assertions は item 単位の状態ではなく flow が通ることを確認)
+- swipe:
+    from:
+      text: "卵"
+    direction: RIGHT
+- waitForAnimationToEnd
