@@ -38,8 +38,30 @@ Issue #261 メタプランに基づく design_handoff_shoppinglist v2 完全準�
 
 凡例:
 - ✅ 実装+ローカル検証完了
-- 🟡 実装完了、3 環境スクショ比較は次セッション継続
+- 🟡 実装完了、3 環境スクショ比較は手動目視 (Maestro flow は CI に組み込み済み)
 - ⏸️ 実装途中（部分マージ済 / 次セッション継続）
+
+## 本セッションの追加実装
+
+`tmp/goal-prompt.md` 完遂のため、各 issue の残作業を補完 PR で追加実装した。
+
+| issue | 追加 PR | 内容 |
+|---|---|---|
+| #265 | #282 | AI review sheet 新規 + 長押し context menu + maestro flows |
+| #266 | #283 | Functions 側 autoNotifyEnabled AND 条件 + maestro flow |
+| #267 | #284 | 作成後招待 dialog + maestro flow (CreateGroup 戻り値を String に拡張) |
+| #268 | #285 | LocationPicker address 永続化 + maestro flow |
+| #269 | #286 | サインアウト dialog の AppDialogShell 化 + maestro flow |
+| #270 | #287 | iOS Widget dark mode 明示化 (@Environment(\.colorScheme)) + maestro flow |
+| #271 | #288 (本 PR) | design_v2_dark_mode maestro flow + 本ドキュメント更新 |
+
+## 補完 PR で扱わなかった残作業 (将来 issue で扱う)
+
+- 設定画面の全 ListTile を AppCell に置き換える page 全面再構成 (#269 のフォロー)
+- group_setting/page.dart 1000 行のカテゴリ/場所インライン管理を外す (#267 のフォロー)
+- group_invitation/page.dart の verifying 状態色 (#267 のフォロー、該当 state 未実装)
+- preview_flows 13 → 17 画面拡張 (#271 のフォロー、preview entry 拡張要)
+- 3 環境 (iOS Simulator / Android Emulator / agent-browser) スクショ目視比較 (#271 のフォロー、手動 QA 範囲)
 
 ## 決定事項 (Web preview と意図的差分)
 
