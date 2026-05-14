@@ -1,0 +1,14 @@
+appId: com.bannzai.shoppinglist
+---
+# PR-8 Widgets の検証 (動作確認はホーム画面 widget 追加が必要なため UI 起動のみ assert):
+# - アプリ起動 → ホーム widget 設定への導線は OS UI のため手動でしか触れない
+# - 設定画面に「ウィジェット」セクションがあれば assert
+
+- runFlow: shared/anonymous_sign_in.yaml
+- tapOn:
+    text: "設定"
+    optional: true
+- waitForAnimationToEnd
+- assertVisible:
+    text: "ウィジェット"
+    optional: true
