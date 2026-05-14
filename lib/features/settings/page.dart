@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -260,6 +261,9 @@ class SettingPage extends HookConsumerWidget {
                     },
                   ),
                 ]),
+              // サインアウト: `design_handoff_shoppinglist/preview/screens-settings.jsx`
+              // 準拠で破壊的操作扱い (danger 色 + 確認ダイアログ)。
+              const _SignOutButton(),
               const DeleteUserButton(),
               const _VersionLabel(),
               const SizedBox(height: 24),
@@ -573,6 +577,60 @@ class _LocationReminderToggle extends ConsumerWidget {
                 ),
               );
             },
+    );
+  }
+}
+
+/// サインアウトボタン。
+/// `design_handoff_shoppinglist/preview/screens-settings.jsx` 準拠の確認ダイアログ
+/// 経由で `FirebaseAuth.instance.signOut()` を実行する。
+class _SignOutButton extends ConsumerWidget {
+  const _SignOutButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tokens = context.tokens;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      child: SizedBox(
+        width: double.infinity,
+        child: TextButton.icon(
+          icon: Icon(Icons.logout, color: tokens.neutral.danger, size: 18),
+          label: Text(
+            'サインアウト',
+            style: TextStyle(
+              color: tokens.neutral.danger,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          onPressed: () async {
+            analytics.logEvent(name: 'tap_sign_out');
+            final confirmed = await showDialog<bool>(
+              context: context,
+              builder: (dialogContext) => AlertDialog(
+                title: const Text('サインアウトしますか?'),
+                content: const Text('再度サインインするまで端末からはリストにアクセスできなくなります。'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(dialogContext, false),
+                    child: const Text('キャンセル'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(dialogContext, true),
+                    style: TextButton.styleFrom(
+                      foregroundColor: tokens.neutral.danger,
+                    ),
+                    child: const Text('サインアウト'),
+                  ),
+                ],
+              ),
+            );
+            if (confirmed != true) return;
+            analytics.logEvent(name: 'confirm_sign_out');
+            await FirebaseAuth.instance.signOut();
+          },
+        ),
+      ),
     );
   }
 }
