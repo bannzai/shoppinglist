@@ -147,3 +147,45 @@ appId: com.bannzai.shoppinglist
     start: "1%,50%"
     end: "90%,50%"
 - waitForAnimationToEnd
+
+# 14. AIReviewSheet (modal sheet auto-opens)
+- assertVisible: "Previews"
+- tapOn: "AIReviewSheet"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/14_ai_review_sheet
+- swipe:
+    start: "1%,50%"
+    end: "90%,50%"
+- waitForAnimationToEnd
+- swipe:
+    start: "1%,50%"
+    end: "90%,50%"
+- waitForAnimationToEnd
+
+# 15. SignOutDialog (AppDialogShell auto-opens)
+- assertVisible: "Previews"
+- tapOn: "SignOutDialog"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/15_sign_out_dialog
+- swipe:
+    start: "1%,50%"
+    end: "90%,50%"
+- waitForAnimationToEnd
+- swipe:
+    start: "1%,50%"
+    end: "90%,50%"
+- waitForAnimationToEnd
+
+# 16. GroupInvitationVerifying (AppDialogShell auto-opens)
+- assertVisible: "Previews"
+- tapOn: "GroupInvitationVerifying"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/16_invitation_verifying
+- swipe:
+    start: "1%,50%"
+    end: "90%,50%"
+- waitForAnimationToEnd
+- swipe:
+    start: "1%,50%"
+    end: "90%,50%"
+- waitForAnimationToEnd
