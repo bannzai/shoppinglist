@@ -193,12 +193,11 @@ class SettingPage extends HookConsumerWidget {
               ),
               SettingSectionTitle(text: 'アプリについて', children: [
                 ListTile(
-                    title: const Text(
+                    title: Text(
                       '利用規約',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w300,
-                        fontSize: 16,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w300,
+                          ),
                     ),
                     onTap: () {
                       analytics.logEvent(
@@ -224,12 +223,11 @@ class SettingPage extends HookConsumerWidget {
                 ),
                 const _Divider(),
                 ListTile(
-                    title: const Text(
+                    title: Text(
                       '特定商法取引法に基づく表記',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w300,
-                        fontSize: 16,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w300,
+                          ),
                     ),
                     onTap: () {
                       analytics.logEvent(
@@ -330,21 +328,19 @@ class _PremiumCard extends ConsumerWidget {
               children: [
                 Text(
                   isPremium ? 'プレミアム会員' : 'プレミアムにアップグレード',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: isPremium ? Colors.white : neutral.ink,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: isPremium ? Colors.white : neutral.ink,
+                      ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   isPremium ? 'すべての機能が利用できます' : '5 色テーマ・AI 無制限など',
-                  style: TextStyle(
-                    fontSize: 11.5,
-                    color: isPremium
-                        ? Colors.white.withValues(alpha: 0.85)
-                        : neutral.ink2,
-                  ),
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: isPremium
+                            ? Colors.white.withValues(alpha: 0.85)
+                            : neutral.ink2,
+                      ),
                 ),
               ],
             ),
@@ -599,10 +595,10 @@ class _SignOutButton extends ConsumerWidget {
           icon: Icon(Icons.logout, color: tokens.neutral.danger, size: 18),
           label: Text(
             'サインアウト',
-            style: TextStyle(
-              color: tokens.neutral.danger,
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: tokens.neutral.danger,
+                  fontWeight: FontWeight.w600,
+                ),
           ),
           onPressed: () async {
             analytics.logEvent(name: 'tap_sign_out');

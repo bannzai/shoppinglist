@@ -75,9 +75,11 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('買い物リスト名',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text('買い物リスト名',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700)),
                       SizedBox(
                         width: double.infinity,
                         child: TextField(
@@ -111,9 +113,11 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('買い物する場所',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text('買い物する場所',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700)),
                       const SizedBox(height: 8),
                       () {
                         final locationsAsync = ref
@@ -166,12 +170,14 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                       const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4),
                   child: SwitchListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: const Text('アイテム追加で家族に通知',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
-                    subtitle: const Text(
+                    title: Text('アイテム追加で家族に通知',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w700)),
+                    subtitle: Text(
                       'このリストでアイテム追加・チェック切替があったとき',
-                      style: TextStyle(fontSize: 12),
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                     value: shoppingList.value.autoNotifyEnabled,
                     onChanged: (value) {
@@ -196,9 +202,11 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('買い物リストの保存期間',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text('買い物リストの保存期間',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700)),
                       const SizedBox(height: 8),
                       if (isPremium)
                         const Row(
@@ -227,9 +235,11 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('グループ招待',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text('グループ招待',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700)),
                       const SizedBox(height: 8),
                       SizedBox(
                         width: double.infinity,
@@ -289,9 +299,11 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('グループ管理',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text('グループ管理',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700)),
                       const SizedBox(height: 8),
                       SizedBox(
                         width: double.infinity,
@@ -426,8 +438,11 @@ class _ListActionsSection extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('リストの操作',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text('リストの操作',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w700)),
           const SizedBox(height: 8),
           SizedBox(
             width: double.infinity,
@@ -547,7 +562,10 @@ class _InvitationCodeDialog extends StatelessWidget {
         children: [
           Text(
             '以下のコードを共有してください',
-            style: TextStyle(fontSize: 12.5, color: neutral.ink2),
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.copyWith(color: neutral.ink2),
           ),
           const SizedBox(height: 16),
           Container(
@@ -572,7 +590,10 @@ class _InvitationCodeDialog extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             '有効期限: 7日間',
-            style: TextStyle(fontSize: 11.5, color: neutral.ink3),
+            style: Theme.of(context)
+                .textTheme
+                .labelSmall
+                ?.copyWith(color: neutral.ink3),
           ),
         ],
       ),

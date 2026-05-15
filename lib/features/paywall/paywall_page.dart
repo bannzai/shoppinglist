@@ -66,7 +66,10 @@ class PaywallPage extends ConsumerWidget {
                 child: Text(
                   'いつでもキャンセル可能・自動更新は購入後 24 時間前まで',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 11.5, color: neutral.ink3),
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelSmall
+                      ?.copyWith(color: neutral.ink3),
                 ),
               ),
               const SizedBox(height: 12),
