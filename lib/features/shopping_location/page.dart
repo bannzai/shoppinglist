@@ -49,10 +49,10 @@ class ShoppingLocationPage extends ConsumerWidget {
                     const SizedBox(height: 12),
                     Text(
                       '買い物する場所がまだありません',
-                      style: TextStyle(
-                          fontSize: 13,
-                          color: neutral.ink2,
-                          fontWeight: FontWeight.w600),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: neutral.ink2,
+                            fontWeight: FontWeight.w600,
+                          ),
                     ),
                   ],
                 ),
@@ -97,17 +97,21 @@ class ShoppingLocationPage extends ConsumerWidget {
                         children: [
                           Text(
                             location.name,
-                            style: TextStyle(
-                              fontSize: 14.5,
-                              fontWeight: FontWeight.w600,
-                              color: neutral.ink,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: neutral.ink,
+                                ),
                           ),
                           if (hasGeo)
                             Text(
                               '位置情報設定済み',
-                              style: TextStyle(
-                                  fontSize: 11.5, color: neutral.ink3),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(color: neutral.ink3),
                             ),
                         ],
                       ),
@@ -242,10 +246,10 @@ class ShoppingLocationPage extends ConsumerWidget {
                 const SizedBox(height: 8),
                 Text(
                   selectedAddress,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: context.tokens.neutral.ink3,
-                  ),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(color: context.tokens.neutral.ink3),
                 ),
               ],
             ],

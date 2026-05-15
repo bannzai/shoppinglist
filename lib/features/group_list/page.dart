@@ -37,7 +37,10 @@ class GroupListPage extends ConsumerWidget {
               ? Center(
                   child: Text(
                     '所属しているグループはありません',
-                    style: TextStyle(color: neutral.ink2),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: neutral.ink2),
                   ),
                 )
               : ListView.builder(
@@ -229,11 +232,10 @@ class _GroupCard extends ConsumerWidget {
                               group.name ?? '名前未設定',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: neutral.ink,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(color: neutral.ink),
                             ),
                           ),
                           if (isDefault) ...[
@@ -247,11 +249,14 @@ class _GroupCard extends ConsumerWidget {
                               ),
                               child: Text(
                                 'デフォルト',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                  color: tokens.accent,
-                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall
+                                    ?.copyWith(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      color: tokens.accent,
+                                    ),
                               ),
                             ),
                           ],
@@ -260,7 +265,10 @@ class _GroupCard extends ConsumerWidget {
                       const SizedBox(height: 2),
                       Text(
                         'メンバー ${group.memberUserIDs.length}人',
-                        style: TextStyle(fontSize: 11.5, color: neutral.ink3),
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelSmall
+                            ?.copyWith(color: neutral.ink3),
                       ),
                     ],
                   ),
@@ -296,10 +304,10 @@ class _FreeLimitBanner extends StatelessWidget {
           Expanded(
             child: Text(
               '無料プランは追加 1 グループまで',
-              style: TextStyle(
-                  fontSize: 12.5,
-                  color: tokens.accentInk,
-                  fontWeight: FontWeight.w600),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: tokens.accentInk,
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
           ),
           InkWell(
@@ -308,11 +316,10 @@ class _FreeLimitBanner extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
               child: Text(
                 '解除',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: tokens.accent,
-                ),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: tokens.accent,
+                    ),
               ),
             ),
           ),
