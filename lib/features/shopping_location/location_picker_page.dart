@@ -151,11 +151,10 @@ class LocationPickerPage extends HookConsumerWidget {
                   else if (address.value.isNotEmpty)
                     Text(
                       address.value,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: neutral.ink,
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: neutral.ink,
+                          ),
                       textAlign: TextAlign.center,
                     ),
                   const SizedBox(height: 12),

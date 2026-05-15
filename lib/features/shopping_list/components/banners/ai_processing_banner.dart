@@ -64,11 +64,10 @@ class _AIProcessingBannerState extends State<AIProcessingBanner>
           Expanded(
             child: Text(
               label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: tokens.accentInk,
-              ),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: tokens.accentInk,
+                  ),
             ),
           ),
         ],

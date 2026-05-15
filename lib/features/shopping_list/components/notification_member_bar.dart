@@ -287,11 +287,10 @@ class _MemberAvatar extends StatelessWidget {
                   ? const Icon(Icons.check, size: 14, color: Colors.white)
                   : Text(
                       initial,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
                     ),
         ),
       ),

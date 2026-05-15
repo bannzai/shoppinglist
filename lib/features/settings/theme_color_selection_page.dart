@@ -35,11 +35,10 @@ class ThemeColorSelectionPage extends ConsumerWidget {
                 padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
                 child: Text(
                   '和の伝統色 5 色から選んで、アプリ全体の差し色を切り替えます。',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: neutral.ink2,
-                    height: 1.6,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: neutral.ink2,
+                        height: 1.6,
+                      ),
                 ),
               ),
               GridView.count(

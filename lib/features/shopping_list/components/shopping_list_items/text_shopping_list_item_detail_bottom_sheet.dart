@@ -71,14 +71,14 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
           ),
           const SizedBox(height: 16),
           // メモセクション
-          const Align(
+          Align(
             alignment: Alignment.centerLeft,
             child: Text(
               'メモ',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w700),
             ),
           ),
           const SizedBox(height: 8),
@@ -92,14 +92,14 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
           ),
           const SizedBox(height: 24),
           // 写真セクション
-          const Align(
+          Align(
             alignment: Alignment.centerLeft,
             child: Text(
               '写真',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w700),
             ),
           ),
           const SizedBox(height: 8),
@@ -113,14 +113,14 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
           ),
           const SizedBox(height: 24),
           // カラーセクション
-          const Align(
+          Align(
             alignment: Alignment.centerLeft,
             child: Text(
               'カラー',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w700),
             ),
           ),
           const SizedBox(height: 8),
@@ -310,7 +310,10 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                         },
                         child: Text(
                           '削除',
-                          style: TextStyle(color: colorScheme.error),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(color: colorScheme.error),
                         ),
                       ),
                       TextButton(

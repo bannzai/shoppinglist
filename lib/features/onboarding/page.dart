@@ -72,11 +72,10 @@ class OnboardingPage extends HookConsumerWidget {
                   onPressed: () => finish(reason: 'skip'),
                   child: Text(
                     'スキップ',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: tokens.neutral.ink3,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: tokens.neutral.ink3,
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                 ),
               ),

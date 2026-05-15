@@ -83,19 +83,17 @@ class _Note extends StatelessWidget {
     final tokens = context.tokens;
     final neutral = tokens.neutral;
 
-    final linkStyle = TextStyle(
-      fontSize: 11,
-      color: tokens.accent,
-      fontWeight: FontWeight.w600,
-      decoration: TextDecoration.underline,
-      decorationThickness: 1,
-      decorationColor: tokens.accent,
-    );
-    final muted = TextStyle(
-      fontSize: 11,
-      color: neutral.ink3,
-      height: 1.5,
-    );
+    final linkStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: tokens.accent,
+          fontWeight: FontWeight.w600,
+          decoration: TextDecoration.underline,
+          decorationThickness: 1,
+          decorationColor: tokens.accent,
+        );
+    final muted = Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: neutral.ink3,
+          height: 1.5,
+        );
 
     return RichText(
       textAlign: TextAlign.center,

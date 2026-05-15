@@ -117,12 +117,11 @@ class GroupCreatePage extends HookConsumerWidget {
             children: [
               Text(
                 'グループ名',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                  color: neutral.ink2,
-                  letterSpacing: 0.04,
-                ),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: neutral.ink2,
+                      letterSpacing: 0.04,
+                    ),
               ),
               const SizedBox(height: 8),
               Container(
@@ -160,7 +159,10 @@ class GroupCreatePage extends HookConsumerWidget {
                   ),
                   child: Text(
                     errorMessage.value!,
-                    style: TextStyle(color: neutral.danger, fontSize: 12),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: neutral.danger),
                   ),
                 ),
               ],
@@ -169,12 +171,11 @@ class GroupCreatePage extends HookConsumerWidget {
               // M-3 確定で表示しない (design_handoff v2 運用ルール 4 参照)。
               Text(
                 'アイコン',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                  color: neutral.ink2,
-                  letterSpacing: 0.04,
-                ),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: neutral.ink2,
+                      letterSpacing: 0.04,
+                    ),
               ),
               const SizedBox(height: 8),
               GridView.count(
@@ -214,10 +215,13 @@ class GroupCreatePage extends HookConsumerWidget {
                           const SizedBox(height: 4),
                           Text(
                             preset.label,
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: isSelected ? tokens.accent : neutral.ink2,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                  color:
+                                      isSelected ? tokens.accent : neutral.ink2,
+                                ),
                           ),
                         ],
                       ),

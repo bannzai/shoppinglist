@@ -80,12 +80,12 @@ class AppChip extends StatelessWidget {
                   ],
                   Text(
                     label,
-                    style: TextStyle(
-                      fontSize: 12.5,
-                      fontWeight: active ? FontWeight.w600 : FontWeight.w500,
-                      letterSpacing: -0.005,
-                      color: fg,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight:
+                              active ? FontWeight.w600 : FontWeight.w500,
+                          letterSpacing: -0.005,
+                          color: fg,
+                        ),
                   ),
                 ],
               ),

@@ -70,11 +70,10 @@ class ShoppingListBodyContent extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   '${shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingList!.duplicatedFromGroupShoppingListID)?.name ?? "削除済みリスト"}から複製',
-                  style: TextStyle(
-                    color: tokens.accent,
-                    fontSize: 12,
-                    decoration: TextDecoration.underline,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: tokens.accent,
+                        decoration: TextDecoration.underline,
+                      ),
                 ),
               ],
             ),

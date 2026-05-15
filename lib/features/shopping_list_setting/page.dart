@@ -374,7 +374,10 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                 },
                                 child: Text(
                                   '削除',
-                                  style: TextStyle(color: neutral.danger),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(color: neutral.danger),
                                 ),
                               ),
                               TextButton(

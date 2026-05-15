@@ -19,25 +19,23 @@ class AllDoneBanner extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text('🌿', style: TextStyle(fontSize: 24)),
+          Text('🌿', style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 8),
           Text(
             '全部チェック完了!',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: tokens.neutral.ok,
-            ),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: tokens.neutral.ok,
+                ),
           ),
           const SizedBox(height: 4),
           Text(
             'お会計のあと、また再開もできます',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 11.5,
-              color: tokens.neutral.ok.withValues(alpha: 0.85),
-            ),
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: tokens.neutral.ok.withValues(alpha: 0.85),
+                ),
           ),
         ],
       ),
