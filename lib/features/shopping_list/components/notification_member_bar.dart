@@ -51,23 +51,22 @@ class NotificationMemberBar extends HookConsumerWidget {
             children: [
               Text(
                 titleText,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  height: 1.25,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      height: 1.25,
+                    ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 2),
-              const Text(
+              Text(
+                // SSOT: screens-list.jsx#NotifySnack
                 '家族に通知しますか?',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 11.5,
-                  height: 1.3,
-                ),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Colors.white70,
+                      height: 1.3,
+                    ),
               ),
             ],
           ),
@@ -180,12 +179,13 @@ class _SendAllButton extends StatelessWidget {
               const Icon(Icons.notifications, size: 14, color: Colors.white),
             const SizedBox(width: 4),
             Text(
-              allSent ? '送信済み' : '全員',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
+              // `design_handoff_shoppinglist/preview/screens-list.jsx#NotifySnack`
+              // のラベル「全員に通知」を SSOT として採用 (短縮形「全員」から移行)。
+              allSent ? '送信済み' : '全員に通知',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
           ],
         ),
