@@ -9,6 +9,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shoppinglist/components/button/inquiry.dart';
 import 'package:shoppinglist/components/button/user_delete.dart';
+import 'package:shoppinglist/components/frame/app_cell.dart';
 import 'package:shoppinglist/components/frame/app_dialog_shell.dart';
 import 'package:shoppinglist/components/frame/app_pill.dart';
 import 'package:shoppinglist/features/developer_options/page.dart';
@@ -147,11 +148,9 @@ class SettingPage extends HookConsumerWidget {
                 ),
               ]),
               SettingSectionTitle(text: 'グループ', children: [
-                ListTile(
-                  title: const Text(
-                    'グループ管理',
-                  ),
-                  leading: const Icon(Icons.groups),
+                AppCell(
+                  icon: Icons.groups,
+                  title: 'グループ管理',
                   onTap: () {
                     analytics.logEvent(
                         name: 'tap_navigate_group_list', parameters: {});
@@ -163,11 +162,9 @@ class SettingPage extends HookConsumerWidget {
                     );
                   },
                 ),
-                ListTile(
-                  title: const Text(
-                    '招待コードでグループに参加',
-                  ),
-                  leading: const Icon(Icons.group_add),
+                AppCell(
+                  icon: Icons.group_add,
+                  title: '招待コードでグループに参加',
                   onTap: () {
                     analytics.logEvent(
                         name: 'tap_navigate_invitation', parameters: {});
@@ -192,26 +189,22 @@ class SettingPage extends HookConsumerWidget {
                 child: _PremiumCard(),
               ),
               SettingSectionTitle(text: 'アプリについて', children: [
-                ListTile(
-                    title: Text(
-                      '利用規約',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w300,
-                          ),
-                    ),
-                    onTap: () {
-                      analytics.logEvent(
-                          name: 'did_select_terms_of_service', parameters: {});
-                      launchUrl(
-                          Uri.parse(
-                              'https://bannzai.github.io/shoppinglist/TermsOfService'),
-                          mode: LaunchMode.externalApplication);
-                    }),
+                AppCell(
+                  icon: Icons.description_outlined,
+                  title: '利用規約',
+                  onTap: () {
+                    analytics.logEvent(
+                        name: 'did_select_terms_of_service', parameters: {});
+                    launchUrl(
+                        Uri.parse(
+                            'https://bannzai.github.io/shoppinglist/TermsOfService'),
+                        mode: LaunchMode.externalApplication);
+                  },
+                ),
                 const _Divider(),
-                ListTile(
-                  title: const Text(
-                    'プライバシーポリシー',
-                  ),
+                AppCell(
+                  icon: Icons.shield_outlined,
+                  title: 'プライバシーポリシー',
                   onTap: () {
                     analytics.logEvent(
                         name: 'did_select_privacy_policy', parameters: {});
@@ -222,26 +215,23 @@ class SettingPage extends HookConsumerWidget {
                   },
                 ),
                 const _Divider(),
-                ListTile(
-                    title: Text(
-                      '特定商法取引法に基づく表記',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w300,
-                          ),
-                    ),
-                    onTap: () {
-                      analytics.logEvent(
-                          name:
-                              'did_select_specified_commercial_transaction_act',
-                          parameters: {});
-                      launchUrl(
-                          Uri.parse(
-                              'https://bannzai.github.io/shoppinglist/SpecifiedCommercialTransactionAct'),
-                          mode: LaunchMode.externalApplication);
-                    }),
+                AppCell(
+                  icon: Icons.gavel_outlined,
+                  title: '特定商法取引法に基づく表記',
+                  onTap: () {
+                    analytics.logEvent(
+                        name: 'did_select_specified_commercial_transaction_act',
+                        parameters: {});
+                    launchUrl(
+                        Uri.parse(
+                            'https://bannzai.github.io/shoppinglist/SpecifiedCommercialTransactionAct'),
+                        mode: LaunchMode.externalApplication);
+                  },
+                ),
                 const _Divider(),
-                ListTile(
-                  title: const Text('お問い合わせ'),
+                AppCell(
+                  icon: Icons.mail_outline,
+                  title: 'お問い合わせ',
                   onTap: () {
                     analytics
                         .logEvent(name: 'tap_open_inquiry', parameters: {});
@@ -252,9 +242,9 @@ class SettingPage extends HookConsumerWidget {
               // E2Eテストでシェイクが使えないSimulator向けの代替入口
               if (kDebugMode)
                 SettingSectionTitle(text: 'デバッグ', children: [
-                  ListTile(
-                    title: const Text('開発者オプション'),
-                    leading: const Icon(Icons.developer_mode),
+                  AppCell(
+                    icon: Icons.developer_mode,
+                    title: '開発者オプション',
                     onTap: () {
                       navigateToDeveloperOptionsPage(context);
                     },
