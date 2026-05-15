@@ -173,11 +173,10 @@ class _AIReviewSheetState extends State<_AIReviewSheet> {
                     ),
                     child: Text(
                       '$selectedCount / ${_candidates.length}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: tokens.accent,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: tokens.accent,
+                            fontWeight: FontWeight.w700,
+                          ),
                     ),
                   ),
                 ],
@@ -189,7 +188,10 @@ class _AIReviewSheetState extends State<_AIReviewSheet> {
                   ? Center(
                       child: Text(
                         '候補がありませんでした',
-                        style: TextStyle(color: neutral.ink3),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: neutral.ink3),
                       ),
                     )
                   : ListView.separated(

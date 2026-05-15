@@ -45,12 +45,11 @@ class CategorySectionHeader extends StatelessWidget {
               name.toUpperCase(),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: neutral.ink2,
-                letterSpacing: 0.06,
-              ),
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: neutral.ink2,
+                    letterSpacing: 0.06,
+                  ),
             ),
           ),
           const Spacer(),

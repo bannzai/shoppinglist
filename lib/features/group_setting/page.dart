@@ -110,9 +110,11 @@ class _GroupSettingBody extends HookConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('グループ名',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text('グループ名',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700)),
                       const SizedBox(height: 8),
                       TextField(
                         controller: groupNameController,
@@ -142,9 +144,11 @@ class _GroupSettingBody extends HookConsumerWidget {
                 // メンバー一覧セクション
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: const Text('メンバー一覧',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  child: Text('メンバー一覧',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontWeight: FontWeight.w700)),
                 ),
                 const SizedBox(height: 8),
                 ...profiles.map((profile) {
@@ -233,9 +237,11 @@ class _GroupSettingBody extends HookConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('グループ招待',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text('グループ招待',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700)),
                       const SizedBox(height: 8),
                       AppPill(
                         label: isCreatingInvitation.value
@@ -331,7 +337,10 @@ class _GroupSettingBody extends HookConsumerWidget {
             },
             child: Text(
               '削除',
-              style: TextStyle(color: context.tokens.neutral.danger),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: context.tokens.neutral.danger),
             ),
           ),
           TextButton(
@@ -369,17 +378,19 @@ class _InvitationCodeDialog extends StatelessWidget {
           const SizedBox(height: 16),
           SelectableText(
             invitationCode,
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 4,
-            ),
+            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 4,
+                ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             '有効期限: 7日間',
-            style: TextStyle(fontSize: 12, color: Colors.grey),
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.copyWith(color: Colors.grey),
           ),
         ],
       ),

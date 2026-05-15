@@ -73,12 +73,10 @@ class ListTopBar extends ConsumerWidget {
                         shoppingList?.name ?? '買い物リスト',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w700,
-                          color: tokens.neutral.ink,
-                          letterSpacing: -0.17,
-                        ),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              color: tokens.neutral.ink,
+                              letterSpacing: -0.17,
+                            ),
                       ),
                     ),
                     const SizedBox(width: 4),
@@ -197,11 +195,10 @@ class _Avatar extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         initial,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
-          color: tokens.accentInk,
-        ),
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: tokens.accentInk,
+            ),
       ),
     );
   }
@@ -226,11 +223,10 @@ class _OverflowAvatar extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         '+$count',
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: tokens.neutral.ink2,
-        ),
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: tokens.neutral.ink2,
+            ),
       ),
     );
   }

@@ -386,7 +386,10 @@ class ShoppingLocationPage extends ConsumerWidget {
             },
             child: Text(
               '削除',
-              style: TextStyle(color: context.tokens.neutral.danger),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: context.tokens.neutral.danger),
             ),
           ),
           TextButton(

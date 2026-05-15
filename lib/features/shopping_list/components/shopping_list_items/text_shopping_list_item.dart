@@ -151,10 +151,10 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                         padding: const EdgeInsets.only(bottom: 4),
                         child: Text(
                           textShoppingListItem.description!,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: neutral.ink3,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(color: neutral.ink3),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -404,8 +404,11 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
               ListTile(
                 leading:
                     Icon(Icons.delete_outline, color: tokens.neutral.danger),
-                title:
-                    Text('削除', style: TextStyle(color: tokens.neutral.danger)),
+                title: Text('削除',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: tokens.neutral.danger)),
                 onTap: () async {
                   analytics.logEvent(
                     name: 'delete_shopping_list_item_long_press',
@@ -571,16 +574,15 @@ class TextShoppingListItemTextField extends ConsumerWidget {
         cursorColor: tokens.accent,
         cursorWidth: 1.5,
         cursorOpacityAnimates: true,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          letterSpacing: -0.16,
-          color: isChecked ? neutral.checked : neutral.ink,
-          decoration:
-              isChecked ? TextDecoration.lineThrough : TextDecoration.none,
-          decorationColor: neutral.ink4,
-          decorationThickness: 1.2,
-        ),
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              letterSpacing: -0.16,
+              color: isChecked ? neutral.checked : neutral.ink,
+              decoration:
+                  isChecked ? TextDecoration.lineThrough : TextDecoration.none,
+              decorationColor: neutral.ink4,
+              decorationThickness: 1.2,
+            ),
         onSubmitted: (String v) async {
           analytics.logEvent(name: 'submit_item_text', parameters: {
             'groupID': groupID,

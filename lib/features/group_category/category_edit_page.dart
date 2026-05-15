@@ -97,9 +97,11 @@ class _CategoryEditBody extends HookConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('カテゴリ名',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text('カテゴリ名',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 8),
                 TextField(
                   controller: nameController,
@@ -142,9 +144,11 @@ class _CategoryEditBody extends HookConsumerWidget {
                   },
                 ),
                 const SizedBox(height: 24),
-                const Text('カテゴリカラー',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text('カテゴリカラー',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 8),
                 _CategoryColorPicker(
                   selectedColor: category.color,
@@ -172,9 +176,11 @@ class _CategoryEditBody extends HookConsumerWidget {
                   },
                 ),
                 const SizedBox(height: 24),
-                const Text('カテゴリアイコン',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text('カテゴリアイコン',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 8),
                 _CategoryIconPicker(
                   selectedIconName: category.iconName,
@@ -206,9 +212,11 @@ class _CategoryEditBody extends HookConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('キーワード',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text('キーワード',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w700)),
                     IconButton(
                       tooltip: 'キーワードを追加',
                       onPressed: () {
@@ -232,17 +240,19 @@ class _CategoryEditBody extends HookConsumerWidget {
                   const SizedBox(height: 16),
                   Text(
                     '[DEBUG] locationOrders: ${category.locationOrders}',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: context.tokens.neutral.ink3,
-                      fontFamily: 'monospace',
-                    ),
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: context.tokens.neutral.ink3,
+                          fontFamily: 'monospace',
+                        ),
                   ),
                   const SizedBox(height: 8),
                 ],
                 if (category.keywords.isEmpty)
-                  const Text('キーワードがまだありません',
-                      style: TextStyle(color: Colors.grey))
+                  Text('キーワードがまだありません',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(color: Colors.grey))
                 else
                   ...category.keywords.asMap().entries.map((entry) {
                     final index = entry.key;
@@ -256,7 +266,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                           GroupCategoryKeywordMatchingType.partial => '部分一致',
                           GroupCategoryKeywordMatchingType.regex => '正規表現',
                         },
-                        style: const TextStyle(fontSize: 12),
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                       trailing: IconButton(
                         icon: Icon(Icons.delete,
