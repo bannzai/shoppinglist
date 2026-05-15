@@ -9,9 +9,12 @@ import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/home/page.dart';
 import 'package:shoppinglist/features/onboarding/page.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
+import 'package:shoppinglist/features/previews/screens/ai_review_sheet_preview.dart';
+import 'package:shoppinglist/features/previews/screens/invitation_verifying_preview.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_item_filter_preview.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_preview.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_setting_preview.dart';
+import 'package:shoppinglist/features/previews/screens/sign_out_dialog_preview.dart';
 import 'package:shoppinglist/features/settings/page.dart';
 import 'package:shoppinglist/features/shopping_location/page.dart';
 
@@ -82,6 +85,18 @@ final _previewEntries = <_PreviewEntry>[
   _PreviewEntry(
     title: 'ShoppingListSettingPage',
     builder: (_) => const ShoppingListSettingPreview(),
+  ),
+  _PreviewEntry(
+    title: 'AIReviewSheet',
+    builder: (_) => const AIReviewSheetPreview(),
+  ),
+  _PreviewEntry(
+    title: 'SignOutDialog',
+    builder: (_) => const SignOutDialogPreview(),
+  ),
+  _PreviewEntry(
+    title: 'GroupInvitationVerifying',
+    builder: (_) => const GroupInvitationVerifyingPreview(),
   ),
 ];
 
