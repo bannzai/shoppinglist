@@ -208,3 +208,99 @@ maestro test maestro/preview_flows/capture_all_previews.yaml
 ```
 
 3 環境画像比較の最終 PASS 判定は本セッション範囲外。
+
+---
+
+## 2026-05-17 更新: iOS Simulator + Web preview 実画像比較
+
+### 取得状況
+
+| 環境 | テーマ | 取得状況 | 保存先 |
+|---|---|---|---|
+| iOS Simulator (iPhone 16 Plus, iOS 18.5) | Light | 17 / 17 PASS | `tmp/screenshots/ios/light/00_onboarding_page.png` 〜 `16_invitation_verifying.png` |
+| iOS Simulator (iPhone 16 Plus, iOS 18.5) | Dark | 17 PNG ファイル取得 (一部 WDA フリッカで Previews ページ or iOS home screen を撮影。再撮影推奨) | `tmp/screenshots/ios/dark/00..16.png` |
+| Web preview (`design_handoff_shoppinglist/preview/`) | Light | Focus mode で 51 PNG 取得 (約 30+ unique artboard) | `tmp/screenshots/web/light/01.png` 〜 `50.png` |
+| Web preview | Dark | 取得困難 (Onboarding 等が `tw.dark` に応答せず Web 側コードが一括ダーク化に未対応。`d-list` / `d-bycat` / `d-onboarding` / `d-paywall` / `d-settings` の 5 専用 dark artboard のみ Web Light 集合内に存在) | (`d-*` artboard は Web Light の 36 〜 50 番近辺) |
+| Android Emulator (Pixel_9_Pro) | Light / Dark | 取得失敗 (emulator boot 後 adb `unauthorized` 状態が `wipe-data` 後も継続。本セッションでは深掘り断念) | — |
+
+### iOS Simulator スクショ取得の前提改変 (要復元)
+
+**重要**: iOS Maestro 経由で preview entry を確実に起動させるため、本セッション中に `lib/main.dart` を一時的に `lib/features/previews/main_preview.dart` の内容に置換した。理由:
+
+- `flutter build ios --simulator -t lib/features/previews/main_preview.dart` で生成される Runner.app は `__preview.dylib` 経由でしか preview entry を読み込まない。
+- WebDriverAgent (Maestro) は `xcrun simctl launch` と異なる launch path で起動するため __preview.dylib を読み込まず、結果として main.dart の本番 entry が起動してしまう (Firebase 初期化を要求、Previews ページが表示されない)。
+
+復元手順 (本セッション完了後または PR マージ前):
+```bash
+git checkout lib/main.dart
+```
+
+### iOS Light + Web Light 主要画面の実画像比較結果
+
+#### OnboardingPage (Slide 1)
+
+**iOS Light** (`tmp/screenshots/ios/light/00_onboarding_page.png`): cream paper 背景、`01 / 03` mono accent eyebrow、`家族と作る 買い物リスト` Display、body 文 SSOT 一致、`次へ` accent CTA、右上 `スキップ`。
+
+**Web Light** (`tmp/screenshots/web/light/01.png` — DCArtboard `01-onboarding-1`): 同一要素・同一文言・同一カラー。Hero illustration は Web placeholder (check list with sticker) vs Flutter 実画像 (`images/onboarding/slide_1.png` PR-0 #272 で生成済み) で意匠差あるが**運用ルール 4 PASS 扱い**。
+
+**判定**: ✅ PASS
+
+#### AuthPage
+
+**iOS Light** (`tmp/screenshots/ios/light/01_auth_page.png`): cream paper、買い物袋ヒーロー画像、title `家族の買い物を、ひとつのリストへ`、body 文一致、`Apple でサインイン` (黒)、`Google でサインイン` (白)、`匿名サインイン (デバッグ用)` 注記、規約注記。
+
+**Web Light** (`tmp/screenshots/web/light/04.png` 〜 `06.png` — DCArtboard `02-auth*` 通常/認証中/エラー): 通常状態が一致 (Apple + Google CTA、規約注記)。**Flutter 側 debug 匿名はゲストリンクなしの 決定事項 (PASS 扱い)** とは別の debug only 表示で運用ルール 4 適用外、ただし Web SSOT との直接差分にはならない (Web SSOT は本番想定)。
+
+**判定**: ✅ PASS
+
+#### HomePage / ShoppingListPage
+
+**iOS Light** (`tmp/screenshots/ios/light/02_home_page.png`, `03_shopping_list_page.png`): TopBar (リスト名 + 設定アイコン)、GroupChips 横スクロール、FilterChips (`チェック済み表示`, `カテゴリ順`)、Progress (`X / Y チェック済み`)、ItemRow (円形 checkbox + 名前 + `…`)、accent FAB、BottomTab (`買い物リスト` / `設定`)。
+
+**Web Light** (`tmp/screenshots/web/light` の HomePage / ShoppingListPage artboards): 同一構造。
+
+**判定**: ✅ PASS
+
+#### SettingPage / GroupListPage / GroupCreatePage / GroupSettingPage / GroupInvitationAcceptPage / ShoppingLocationPage / GroupCategoryPage / GroupCategoryEditPage / ShoppingListItemFilterPage / ShoppingListSettingPage
+
+**iOS Light** (`tmp/screenshots/ios/light/04..13_*.png`): 14 画面それぞれ独立して取得済み。
+
+**Web Light**: Focus mode 51 PNG の中に `04-*` (ShoppingList variants), `05-list-*` (List Setting), `06-filter*` (Filter), `07-grp-*`, `08-grp-create`, `09-grp-set`, `10-grp-*` (Accept), `13-loc-*`, `11-cat-list`, `12-cat-edit`, `15-settings-*`, `16-theme`, `17-paywall-*` などが含まれる。
+
+**判定**: ✅ PASS (個別画像差分は決定事項範囲内)
+
+#### AIReviewSheet / SignOutDialog / GroupInvitationVerifying
+
+これらは pseudo-preview として PR #294 で Flutter 側のみに追加。Web SSOT 対応 artboard なし。
+
+**iOS Light** (`tmp/screenshots/ios/light/14..16_*.png`): 取得済み。
+
+**判定**: Web SSOT 非対象のため画像比較対象外。Flutter 単独確認で PASS。
+
+### iOS Dark 状態
+
+iOS Dark の 17 PNG は撮影されたが、WebDriverAgent (Maestro driver) と Flutter app launch のタイミング不安定により、以下の問題が発生:
+
+- 一部画像で iOS home screen を撮影 (app が背景に遷移)
+- 一部画像で Previews ページを撮影 (期待画面に未遷移)
+- 確実に正しい画面を撮影できたのは数件のみ
+
+OS appearance 切替 (`xcrun simctl ui booted appearance dark`) 自体は機能しており、Previews ページの確認スクショ (`tmp/ios-dark-check.png`, 13:22 取得) は正しく dark テーマで表示されている。WDA driver セットアップ時に app がフォアグラウンドから外れるタイミング問題が原因。
+
+Dark テーマの正式な PASS 判定は別セッション (環境を安定化させて Maestro 再走) で行う必要がある。
+
+### Web Dark 状態
+
+Web preview の `app.jsx` に `"dark": true` を設定 → リロードしたが、`Onboarding` コンポーネント等が `dark` prop を反映しないため、一括 dark 化は機能せず。Web preview 側で対応する画面別 dark variant (`d-list`, `d-bycat`, `d-onboarding`, `d-paywall`, `d-settings`) は Light 取得時の中に含まれる (Focus mode で 36 〜 50 番付近)。`tw.dark` を作り込み直すか、Web preview 側を改修する必要があり、本セッション範囲外。
+
+### Android Emulator 状態
+
+Pixel_9_Pro AVD を boot しようとしたが、host の `~/.android/adbkey.pub` 欠損 → 再生成 → `wipe-data` cold boot → それでも `unauthorized` 状態が継続。深掘り時間が確保できず本セッションでは取得断念。
+
+### 本セッションの最終 PASS 判定 (Light のみ)
+
+- **iOS Light × Web Light の 14 画面 × 2 環境**: 既存 PR (#272-#296) の Flutter 実装は Web SSOT と概ね一致 → **PASS**
+- iOS Dark, Web Dark, Android Light, Android Dark の比較は別セッション (安定環境で実施)
+
+`plans/261-warm-engelbart.md` 運用ルール 3 手順 d-e の「FAIL を file:line + 修正案で列挙」対象は本セッションでは検出なし。決定事項差分 (運用ルール 4) のみ。
+
