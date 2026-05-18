@@ -1,10 +1,13 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/components/frame/app_pill.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// プレミアムプランへのアップグレード画面。
 ///
@@ -22,14 +25,14 @@ class PaywallPage extends ConsumerWidget {
     final offerings = ref.watch(offeringsProvider);
 
     return Scaffold(
-      backgroundColor: neutral.surface,
+      backgroundColor: neutral.paper,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const SizedBox.shrink(),
-        backgroundColor: neutral.surface,
+        backgroundColor: neutral.paper,
       ),
       body: offerings.when(
         loading: () => const _LoadingBody(),
@@ -63,12 +66,92 @@ class PaywallPage extends ConsumerWidget {
                 child: Text(
                   'いつでもキャンセル可能・自動更新は購入後 24 時間前まで',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 11.5, color: neutral.ink3),
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelSmall
+                      ?.copyWith(color: neutral.ink3),
                 ),
               ),
+              const SizedBox(height: 12),
+              const _PaywallFooterLinks(),
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+/// Paywall フッタの 3 リンク（利用規約・プライバシー・復元）。
+class _PaywallFooterLinks extends ConsumerWidget {
+  const _PaywallFooterLinks();
+
+  static const _termsUrl =
+      'https://bannzai.github.io/shoppinglist/TermsOfService';
+  static const _privacyUrl =
+      'https://bannzai.github.io/shoppinglist/PrivacyPolicy';
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tokens = context.tokens;
+    final linkStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: tokens.accent,
+          decoration: TextDecoration.underline,
+          decorationColor: tokens.accent,
+          decorationThickness: 1,
+        );
+    final separatorStyle = Theme.of(context)
+        .textTheme
+        .labelSmall
+        ?.copyWith(color: tokens.neutral.ink4);
+    return Center(
+      child: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: '利用規約',
+              style: linkStyle,
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  analytics.logEvent(name: 'tap_paywall_terms');
+                  launchUrl(Uri.parse(_termsUrl),
+                      mode: LaunchMode.externalApplication);
+                },
+            ),
+            TextSpan(text: '   ·   ', style: separatorStyle),
+            TextSpan(
+              text: 'プライバシー',
+              style: linkStyle,
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  analytics.logEvent(name: 'tap_paywall_privacy');
+                  launchUrl(Uri.parse(_privacyUrl),
+                      mode: LaunchMode.externalApplication);
+                },
+            ),
+            TextSpan(text: '   ·   ', style: separatorStyle),
+            TextSpan(
+              text: '復元',
+              style: linkStyle,
+              recognizer: TapGestureRecognizer()
+                ..onTap = () async {
+                  analytics.logEvent(name: 'tap_paywall_restore');
+                  try {
+                    await Purchases.restorePurchases();
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('購入を復元しました')),
+                    );
+                  } catch (e) {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.toString())),
+                    );
+                  }
+                },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -93,7 +176,7 @@ class _Hero extends StatelessWidget {
               end: Alignment.bottomRight,
               colors: [tokens.accent, const Color(0xFF7C2A07)],
             ),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
                 color: tokens.accent.withValues(alpha: 0.3),
@@ -112,21 +195,19 @@ class _Hero extends StatelessWidget {
         const SizedBox(height: 16),
         Text(
           'プレミアムにアップグレード',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-            color: tokens.neutral.ink,
-            letterSpacing: -0.015,
-          ),
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: tokens.neutral.ink,
+                letterSpacing: -0.015,
+              ),
         ),
         const SizedBox(height: 8),
         Text(
           '全機能を解放して、家族みんなで気持ちよく使えます。',
-          style: TextStyle(
-            fontSize: 13,
-            color: tokens.neutral.ink2,
-            height: 1.6,
-          ),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: tokens.neutral.ink2,
+                height: 1.6,
+              ),
         ),
       ],
     );
@@ -183,11 +264,10 @@ class _FeatureRow extends StatelessWidget {
         Expanded(
           child: Text(
             label,
-            style: TextStyle(
-              fontSize: 13.5,
-              color: tokens.neutral.ink,
-              fontWeight: FontWeight.w500,
-            ),
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: tokens.neutral.ink,
+                  fontWeight: FontWeight.w500,
+                ),
           ),
         ),
         Icon(Icons.check_circle, size: 16, color: tokens.neutral.ok),
@@ -223,11 +303,14 @@ class _ErrorBody extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('📡', style: TextStyle(fontSize: 32)),
+            Text('📡', style: Theme.of(context).textTheme.displayMedium),
             const SizedBox(height: 8),
             Text(exception.toString(),
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 13, color: tokens.neutral.ink2)),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.copyWith(color: tokens.neutral.ink2)),
             const SizedBox(height: 16),
             AppPill(
               label: '再試行',
@@ -252,7 +335,10 @@ class _NoPlansBody extends StatelessWidget {
         child: Text(
           '現在ご利用いただけるプランがありません',
           textAlign: TextAlign.center,
-          style: TextStyle(color: tokens.neutral.ink2),
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.copyWith(color: tokens.neutral.ink2),
         ),
       ),
     );
@@ -303,11 +389,10 @@ class _PaywallPackageTile extends ConsumerWidget {
                         package.storeProduct.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: neutral.ink,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: neutral.ink,
+                            ),
                       ),
                     ),
                     if (recommended) ...[
@@ -320,8 +405,8 @@ class _PaywallPackageTile extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(999),
                         ),
                         child: Text(
-                          'お得',
-                          style: TextStyle(
+                          'おすすめ',
+                          style: GoogleFonts.zenKakuGothicNew(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                             color: tokens.accent,
@@ -334,10 +419,11 @@ class _PaywallPackageTile extends ConsumerWidget {
                 const SizedBox(height: 4),
                 Text(
                   package.storeProduct.priceString,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: neutral.ink2,
-                    fontWeight: FontWeight.w500,
+                  style: GoogleFonts.ibmPlexMono(
+                    fontSize: 19,
+                    fontWeight: FontWeight.w700,
+                    color: neutral.ink,
+                    fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                 ),
               ],
@@ -346,12 +432,10 @@ class _PaywallPackageTile extends ConsumerWidget {
           ElevatedButton(
             key: Key('paywall_subscribe_${package.packageType.name}'),
             style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  recommended ? tokens.accent : neutral.surface2,
+              backgroundColor: recommended ? tokens.accent : neutral.surface2,
               foregroundColor: recommended ? Colors.white : neutral.ink,
               shape: const StadiumBorder(),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
             ),
             onPressed: () async {
               analytics.logEvent(

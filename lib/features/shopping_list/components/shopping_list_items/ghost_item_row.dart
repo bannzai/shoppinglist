@@ -25,11 +25,10 @@ class GhostItemRow extends StatelessWidget {
             Expanded(
               child: Text(
                 hint,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontStyle: FontStyle.italic,
-                  color: tokens.neutral.ink3,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontStyle: FontStyle.italic,
+                      color: tokens.neutral.ink3,
+                    ),
               ),
             ),
           ],

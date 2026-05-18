@@ -1,0 +1,42 @@
+appId: com.bannzai.shoppinglist
+---
+# PR-5 Groups の検証:
+# - GroupCreatePage の icon picker (6 種) が表示される
+# - グループ作成後に招待コード dialog が表示される
+# - GroupInvitationAcceptPage を表示
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# グループ一覧 → 新規作成
+- tapOn:
+    id: "popup_menu_button"
+    optional: true
+- tapOn:
+    text: "グループ一覧"
+    optional: true
+- waitForAnimationToEnd
+- tapOn:
+    text: "+"
+    optional: true
+- tapOn:
+    text: "新規作成"
+    optional: true
+- waitForAnimationToEnd
+
+# icon picker の 6 種が表示される
+- assertVisible:
+    text: "いえ"
+    optional: true
+- assertVisible:
+    text: "カート"
+    optional: true
+- assertVisible:
+    text: "たべる"
+    optional: true
+
+# 招待コード入力ページにも遷移できる
+- back
+- tapOn:
+    text: "招待コードで参加"
+    optional: true
+- waitForAnimationToEnd

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shoppinglist/components/frame/app_pill.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/group_setting/page.dart';
@@ -12,7 +14,7 @@ import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
-import 'package:shoppinglist/style/button.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
@@ -48,9 +50,14 @@ class ShoppingListSettingPage extends HookConsumerWidget {
       );
     }
 
+    final tokens = context.tokens;
+    final neutral = tokens.neutral;
+
     return Scaffold(
+      backgroundColor: neutral.paper,
       appBar: AppBar(
         title: const Text('買い物リスト設定'),
+        backgroundColor: neutral.paper,
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
@@ -68,9 +75,11 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('買い物リスト名',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text('買い物リスト名',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700)),
                       SizedBox(
                         width: double.infinity,
                         child: TextField(
@@ -104,9 +113,11 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('買い物する場所',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text('買い物する場所',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700)),
                       const SizedBox(height: 8),
                       () {
                         final locationsAsync = ref
@@ -152,6 +163,38 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                   ),
                 ),
                 const Divider(),
+                // i-21 自動通知 (リスト単位): `design_handoff_shopping_list/preview/screens-list-settings.jsx` 準拠。
+                // グローバル通知設定 (SharedPreferences) と AND で評価される。
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4),
+                  child: SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text('アイテム追加で家族に通知',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w700)),
+                    subtitle: Text(
+                      'このリストでアイテム追加・チェック切替があったとき',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    value: shoppingList.value.autoNotifyEnabled,
+                    onChanged: (value) {
+                      analytics.logEvent(
+                        name: 'toggle_list_auto_notify',
+                        parameters: {
+                          'groupID': groupID,
+                          'shoppingListID': shoppingListID,
+                          'value': value.toString(),
+                        },
+                      );
+                      autoSave(shoppingList.value
+                          .copyWith(autoNotifyEnabled: value));
+                    },
+                  ),
+                ),
+                const Divider(),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16.0, vertical: 10),
@@ -159,9 +202,11 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('買い物リストの保存期間',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text('買い物リストの保存期間',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700)),
                       const SizedBox(height: 8),
                       if (isPremium)
                         const Row(
@@ -190,9 +235,11 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('グループ招待',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text('グループ招待',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700)),
                       const SizedBox(height: 8),
                       SizedBox(
                         width: double.infinity,
@@ -252,9 +299,11 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('グループ管理',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text('グループ管理',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700)),
                       const SizedBox(height: 8),
                       SizedBox(
                         width: double.infinity,
@@ -292,14 +341,13 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: SizedBox(
-                    height: 48,
                     width: double.infinity,
-                    child: ElevatedButton(
-                      style: elevatedButtonStyle.merge(
-                        const ButtonStyle(
-                            backgroundColor:
-                                WidgetStatePropertyAll(Colors.red)),
-                      ),
+                    child: AppPill(
+                      label: '買い物リストを削除',
+                      icon: Icons.delete_outline,
+                      variant: AppPillVariant.danger,
+                      large: true,
+                      expanded: true,
                       onPressed: () {
                         analytics.logEvent(
                           name: 'tap_delete_list',
@@ -326,9 +374,10 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                 },
                                 child: Text(
                                   '削除',
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.error,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(color: neutral.danger),
                                 ),
                               ),
                               TextButton(
@@ -348,14 +397,6 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                           ),
                         );
                       },
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.delete),
-                          SizedBox(width: 8),
-                          Text('買い物リストを削除'),
-                        ],
-                      ),
                     ),
                   ),
                 ),
@@ -400,8 +441,11 @@ class _ListActionsSection extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('リストの操作',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text('リストの操作',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w700)),
           const SizedBox(height: 8),
           SizedBox(
             width: double.infinity,
@@ -454,11 +498,11 @@ class _ListActionsSection extends ConsumerWidget {
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: () async {
-                analytics.logEvent(name: 'tap_export_shopping_list',
-                    parameters: {
-                      'groupID': groupID,
-                      'shoppingListID': shoppingListID,
-                    });
+                analytics
+                    .logEvent(name: 'tap_export_shopping_list', parameters: {
+                  'groupID': groupID,
+                  'shoppingListID': shoppingListID,
+                });
                 if (!isPremium) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -512,26 +556,47 @@ class _InvitationCodeDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.tokens;
+    final neutral = tokens.neutral;
     return AlertDialog(
       title: const Text('招待コード'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('以下のコードを共有してください'),
+          Text(
+            '以下のコードを共有してください',
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.copyWith(color: neutral.ink2),
+          ),
           const SizedBox(height: 16),
-          SelectableText(
-            invitationCode,
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 4,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: neutral.surface2,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: neutral.divider, width: 0.5),
             ),
-            textAlign: TextAlign.center,
+            child: SelectableText(
+              invitationCode,
+              style: GoogleFonts.ibmPlexMono(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 6,
+                color: neutral.ink,
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             '有効期限: 7日間',
-            style: TextStyle(fontSize: 12, color: Colors.grey),
+            style: Theme.of(context)
+                .textTheme
+                .labelSmall
+                ?.copyWith(color: neutral.ink3),
           ),
         ],
       ),

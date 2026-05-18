@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shoppinglist/entity/ai_usage.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
+import 'package:shoppinglist/features/shopping_list/components/ai_review_sheet.dart';
 import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/ai_usage.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
@@ -194,12 +195,11 @@ class ExpandableFab extends HookConsumerWidget {
                 title: const Text('カメラ'),
                 leading: const Icon(Icons.photo_camera),
                 onTap: () async {
-                  analytics.logEvent(
-                      name: 'tap_image_picker_camera',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': shoppingListID,
-                      });
+                  analytics
+                      .logEvent(name: 'tap_image_picker_camera', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                  });
                   final XFile? photo =
                       await imagePicker.pickImage(source: ImageSource.camera);
                   if (photo != null) {
@@ -216,12 +216,11 @@ class ExpandableFab extends HookConsumerWidget {
                 title: const Text('フォトライブラリ'),
                 leading: const Icon(Icons.photo_album),
                 onTap: () async {
-                  analytics.logEvent(
-                      name: 'tap_image_picker_gallery',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': shoppingListID,
-                      });
+                  analytics
+                      .logEvent(name: 'tap_image_picker_gallery', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                  });
                   final XFile? photo =
                       await imagePicker.pickImage(source: ImageSource.gallery);
                   if (photo != null) {
@@ -256,33 +255,43 @@ class ExpandableFab extends HookConsumerWidget {
   Future<void> _addShoppingListItemsFromImage(
       BuildContext context, WidgetRef ref, XFile photo) async {
     ref.read(aIProcessingProvider.notifier).start(AIProcessingType.image);
+    List<String> rawItems;
     try {
       final file = File(photo.path);
       final base64Image = await base64CompressImage(file);
-      final rawItems = await functions.generateShoppingListItemsFromImage(
+      rawItems = await functions.generateShoppingListItemsFromImage(
         mimeType: mimeType(file),
         base64Image: base64Image,
       );
-      final distinct = rawItems.toSet().toList();
-      for (var (i, e) in distinct.indexed) {
-        if (shoppingListItems.any((item) => item.message == e)) {
-          continue;
-        }
-        try {
-          await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
-                shoppingListID: shoppingListID,
-                userID: ref.read(currentUserIDProvider)!,
-                message: e,
-                order: shoppingListItems.nextOrder + i,
-                description: null,
-                color: null,
-              );
-        } catch (e) {
-          debugPrint('Error: $e');
-        }
-      }
     } finally {
       ref.read(aIProcessingProvider.notifier).end();
+    }
+    if (!context.mounted) return;
+    // 既存アイテムに存在しない候補だけ review sheet にかける。
+    final candidates = rawItems
+        .where((e) => !shoppingListItems.any((item) => item.message == e))
+        .toList();
+    if (candidates.isEmpty) return;
+    final reviewed = await showAIReviewSheet(
+      context: context,
+      rawNames: candidates,
+      source: 'image',
+    );
+    if (reviewed == null) return;
+    final selected = reviewed.where((c) => c.selected).toList();
+    for (var (i, c) in selected.indexed) {
+      try {
+        await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+              shoppingListID: shoppingListID,
+              userID: ref.read(currentUserIDProvider)!,
+              message: c.name,
+              order: shoppingListItems.nextOrder + i,
+              description: null,
+              color: null,
+            );
+      } catch (e) {
+        debugPrint('Error: $e');
+      }
     }
   }
 
@@ -442,28 +451,26 @@ class _ActionLabel extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: tokens.neutral.surface,
-            ),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: tokens.neutral.surface,
+                ),
           ),
           if (ai) ...[
             const SizedBox(width: 6),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
               decoration: BoxDecoration(
                 color: tokens.accent,
                 borderRadius: BorderRadius.circular(999),
               ),
-              child: const Text(
+              child: Text(
                 'AI',
-                style: TextStyle(
-                  fontSize: 9,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
               ),
             ),
           ],
@@ -554,48 +561,55 @@ class _URLInputDialog extends HookConsumerWidget {
                   ref
                       .read(aIProcessingProvider.notifier)
                       .start(AIProcessingType.url);
+                  List<String> rawItems;
                   try {
-                    final rawItems =
-                        await functions.generateShoppingListItemsFromURL(
+                    rawItems = await functions.generateShoppingListItemsFromURL(
                       url: normalizedURL,
                     );
-                    final distinct = rawItems.toSet().toList();
-                    for (var (i, e) in distinct.indexed) {
-                      final item = e.trim();
-                      if (item.isEmpty || item.length > 100) continue;
-                      if (shoppingListItems
-                          .any((existing) => existing.message == item)) {
-                        continue;
-                      }
-                      try {
-                        await ref
-                            .read(addShoppingListItemProvider(groupID: groupID))
-                            .call(
-                              shoppingListID: shoppingListID,
-                              userID: ref.read(currentUserIDProvider)!,
-                              message: item,
-                              order: shoppingListItems.nextOrder + i,
-                              description: null,
-                              color: null,
-                            );
-                      } catch (e) {
-                        debugPrint('Error: $e');
-                      }
-                    }
-                    if (context.mounted) {
-                      Navigator.pop(context);
-                    }
                   } catch (e) {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(e.toString())),
                       );
                     }
+                    return;
                   } finally {
                     if (context.mounted) {
                       isLoading.value = false;
                     }
                     ref.read(aIProcessingProvider.notifier).end();
+                  }
+                  if (!context.mounted) return;
+                  // URL ダイアログを先に閉じてから review sheet を出す。
+                  Navigator.pop(context);
+                  if (!context.mounted) return;
+                  final candidates = rawItems
+                      .where((e) => !shoppingListItems
+                          .any((existing) => existing.message == e))
+                      .toList();
+                  if (candidates.isEmpty) return;
+                  final reviewed = await showAIReviewSheet(
+                    context: context,
+                    rawNames: candidates,
+                    source: 'url',
+                  );
+                  if (reviewed == null) return;
+                  final selected = reviewed.where((c) => c.selected).toList();
+                  for (var (i, c) in selected.indexed) {
+                    try {
+                      await ref
+                          .read(addShoppingListItemProvider(groupID: groupID))
+                          .call(
+                            shoppingListID: shoppingListID,
+                            userID: ref.read(currentUserIDProvider)!,
+                            message: c.name,
+                            order: shoppingListItems.nextOrder + i,
+                            description: null,
+                            color: null,
+                          );
+                    } catch (e) {
+                      debugPrint('Error: $e');
+                    }
                   }
                 },
           child: const Text('生成'),

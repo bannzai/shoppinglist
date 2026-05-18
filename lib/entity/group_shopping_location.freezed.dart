@@ -18,6 +18,11 @@ mixin _$GroupShoppingLocation {
   String get groupID;
   String get name;
 
+  /// 逆ジオコードで取得した住所文字列。LocationPicker (PRO 限定地図設定) で
+  /// 緯度経度を確定したときに保存し、無料機能で場所名のみ登録した際は空文字。
+  /// 既存ドキュメントにはこのフィールドが存在しないため default で空文字。
+  String get address;
+
   /// 店舗の緯度。nullの場合はジオフェンス対象外。
   double? get latitude;
 
@@ -54,6 +59,7 @@ mixin _$GroupShoppingLocation {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.address, address) || other.address == address) &&
             (identical(other.latitude, latitude) ||
                 other.latitude == latitude) &&
             (identical(other.longitude, longitude) ||
@@ -77,6 +83,7 @@ mixin _$GroupShoppingLocation {
       id,
       groupID,
       name,
+      address,
       latitude,
       longitude,
       geofenceRadiusMeters,
@@ -87,7 +94,7 @@ mixin _$GroupShoppingLocation {
 
   @override
   String toString() {
-    return 'GroupShoppingLocation(id: $id, groupID: $groupID, name: $name, latitude: $latitude, longitude: $longitude, geofenceRadiusMeters: $geofenceRadiusMeters, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingLocation(id: $id, groupID: $groupID, name: $name, address: $address, latitude: $latitude, longitude: $longitude, geofenceRadiusMeters: $geofenceRadiusMeters, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -101,6 +108,7 @@ abstract mixin class $GroupShoppingLocationCopyWith<$Res> {
       {String id,
       String groupID,
       String name,
+      String address,
       double? latitude,
       double? longitude,
       double? geofenceRadiusMeters,
@@ -126,6 +134,7 @@ class _$GroupShoppingLocationCopyWithImpl<$Res>
     Object? id = null,
     Object? groupID = null,
     Object? name = null,
+    Object? address = null,
     Object? latitude = freezed,
     Object? longitude = freezed,
     Object? geofenceRadiusMeters = freezed,
@@ -146,6 +155,10 @@ class _$GroupShoppingLocationCopyWithImpl<$Res>
       name: null == name
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      address: null == address
+          ? _self.address
+          : address // ignore: cast_nullable_to_non_nullable
               as String,
       latitude: freezed == latitude
           ? _self.latitude
@@ -276,6 +289,7 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
             String id,
             String groupID,
             String name,
+            String address,
             double? latitude,
             double? longitude,
             double? geofenceRadiusMeters,
@@ -293,6 +307,7 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
             _that.id,
             _that.groupID,
             _that.name,
+            _that.address,
             _that.latitude,
             _that.longitude,
             _that.geofenceRadiusMeters,
@@ -324,6 +339,7 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
             String id,
             String groupID,
             String name,
+            String address,
             double? latitude,
             double? longitude,
             double? geofenceRadiusMeters,
@@ -340,6 +356,7 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
             _that.id,
             _that.groupID,
             _that.name,
+            _that.address,
             _that.latitude,
             _that.longitude,
             _that.geofenceRadiusMeters,
@@ -370,6 +387,7 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
             String id,
             String groupID,
             String name,
+            String address,
             double? latitude,
             double? longitude,
             double? geofenceRadiusMeters,
@@ -386,6 +404,7 @@ extension GroupShoppingLocationPatterns on GroupShoppingLocation {
             _that.id,
             _that.groupID,
             _that.name,
+            _that.address,
             _that.latitude,
             _that.longitude,
             _that.geofenceRadiusMeters,
@@ -407,6 +426,7 @@ class _GroupShoppingLocation extends GroupShoppingLocation {
       {required this.id,
       required this.groupID,
       required this.name,
+      this.address = '',
       required this.latitude,
       required this.longitude,
       required this.geofenceRadiusMeters,
@@ -424,6 +444,13 @@ class _GroupShoppingLocation extends GroupShoppingLocation {
   final String groupID;
   @override
   final String name;
+
+  /// 逆ジオコードで取得した住所文字列。LocationPicker (PRO 限定地図設定) で
+  /// 緯度経度を確定したときに保存し、無料機能で場所名のみ登録した際は空文字。
+  /// 既存ドキュメントにはこのフィールドが存在しないため default で空文字。
+  @override
+  @JsonKey()
+  final String address;
 
   /// 店舗の緯度。nullの場合はジオフェンス対象外。
   @override
@@ -473,6 +500,7 @@ class _GroupShoppingLocation extends GroupShoppingLocation {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.address, address) || other.address == address) &&
             (identical(other.latitude, latitude) ||
                 other.latitude == latitude) &&
             (identical(other.longitude, longitude) ||
@@ -496,6 +524,7 @@ class _GroupShoppingLocation extends GroupShoppingLocation {
       id,
       groupID,
       name,
+      address,
       latitude,
       longitude,
       geofenceRadiusMeters,
@@ -506,7 +535,7 @@ class _GroupShoppingLocation extends GroupShoppingLocation {
 
   @override
   String toString() {
-    return 'GroupShoppingLocation(id: $id, groupID: $groupID, name: $name, latitude: $latitude, longitude: $longitude, geofenceRadiusMeters: $geofenceRadiusMeters, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingLocation(id: $id, groupID: $groupID, name: $name, address: $address, latitude: $latitude, longitude: $longitude, geofenceRadiusMeters: $geofenceRadiusMeters, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -522,6 +551,7 @@ abstract mixin class _$GroupShoppingLocationCopyWith<$Res>
       {String id,
       String groupID,
       String name,
+      String address,
       double? latitude,
       double? longitude,
       double? geofenceRadiusMeters,
@@ -547,6 +577,7 @@ class __$GroupShoppingLocationCopyWithImpl<$Res>
     Object? id = null,
     Object? groupID = null,
     Object? name = null,
+    Object? address = null,
     Object? latitude = freezed,
     Object? longitude = freezed,
     Object? geofenceRadiusMeters = freezed,
@@ -567,6 +598,10 @@ class __$GroupShoppingLocationCopyWithImpl<$Res>
       name: null == name
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      address: null == address
+          ? _self.address
+          : address // ignore: cast_nullable_to_non_nullable
               as String,
       latitude: freezed == latitude
           ? _self.latitude

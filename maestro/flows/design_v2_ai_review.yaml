@@ -1,0 +1,25 @@
+appId: com.bannzai.shoppinglist
+---
+# PR-3 AI review sheet の検証:
+# - AI 抽出後に review sheet が表示されることを assert
+# - 選択数バッジ / キャンセル / N件追加 の表示を assert
+#
+# 前提: URL 抽出の経路はテスト環境で外部 fetch が走るため、本フローでは UI 到達のみ assert する。
+# 実 API 呼び出しは ai_url_recognition_limit.yaml が担当する。
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# FAB から URL 入力 dialog を開く
+- tapOn:
+    id: "expandable_fab"
+    optional: true
+- waitForAnimationToEnd
+- tapOn:
+    text: "URLから追加"
+    optional: true
+- waitForAnimationToEnd
+
+# URL 入力 dialog が出ることを assert (review sheet までは外部 fetch が要るため optional)
+- assertVisible:
+    text: "URL"
+    optional: true

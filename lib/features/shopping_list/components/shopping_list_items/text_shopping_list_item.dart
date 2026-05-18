@@ -71,7 +71,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         : null;
     final focused = isEditing.value;
     final backgroundColor = focused
-        ? tokens.accentSoft.withValues(alpha: 0.4)
+        ? tokens.accentSoft.withValues(alpha: 0.6)
         : itemColor ??
             (isChecked
                 ? neutral.divider2.withValues(alpha: 0.5)
@@ -80,135 +80,145 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
     // ReorderableListView のドラッグ移動中に Material が必要
     final content = Material(
       color: backgroundColor,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            left: BorderSide(
-              color: focused ? tokens.accent : Colors.transparent,
-              width: 2,
+      child: GestureDetector(
+        // i-6 長押し context menu (複製 / メモ追加 / 削除)。
+        // 担当者項目は M-4 の運用ルール 4 で除外。
+        behavior: HitTestBehavior.translucent,
+        onLongPress: () => _showLongPressMenu(
+          context: context,
+          ref: ref,
+          currentUserID: currentUserID,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              left: BorderSide(
+                color: focused ? tokens.accent : Colors.transparent,
+                width: 2,
+              ),
             ),
           ),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Semantics(
-              label: textShoppingListItem.message,
-              child: _CircleCheckbox(
-                checked: isChecked,
-                color: textShoppingListItem.color != null
-                    ? colorFromHex(textShoppingListItem.color!)
-                    : tokens.accent,
-                onChanged: (_) {
-                  analytics.logEvent(
-                      name: 'tap_toggle_item_checkbox',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': textShoppingListItem.shoppingListID,
-                        'itemID': textShoppingListItem.id,
-                      });
-                  ref
-                      .read(toggleShoppingListItemCheckProvider(
-                          groupID: groupID))
-                      .call(
-                        shoppingListID: textShoppingListItem.shoppingListID,
-                        item: textShoppingListItem,
-                        userID: currentUserID,
-                      );
-                },
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Semantics(
+                label: textShoppingListItem.message,
+                child: _CircleCheckbox(
+                  checked: isChecked,
+                  color: textShoppingListItem.color != null
+                      ? colorFromHex(textShoppingListItem.color!)
+                      : tokens.accent,
+                  onChanged: (_) {
+                    analytics.logEvent(
+                        name: 'tap_toggle_item_checkbox',
+                        parameters: {
+                          'groupID': groupID,
+                          'shoppingListID': textShoppingListItem.shoppingListID,
+                          'itemID': textShoppingListItem.id,
+                        });
+                    ref
+                        .read(toggleShoppingListItemCheckProvider(
+                            groupID: groupID))
+                        .call(
+                          shoppingListID: textShoppingListItem.shoppingListID,
+                          item: textShoppingListItem,
+                          userID: currentUserID,
+                        );
+                  },
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 44,
-                    width: double.infinity,
-                    child: TextShoppingListItemTextField(
-                      groupID: groupID,
-                      textEditingController: textEditingController,
-                      focusNode: focusNode,
-                      textShoppingListItem: textShoppingListItem,
-                      shoppingListItems: shoppingListItems,
-                      isEditing: isEditing.value,
-                    ),
-                  ),
-                  if (hasDescription)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: Text(
-                        textShoppingListItem.description!,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: neutral.ink3,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 44,
+                      width: double.infinity,
+                      child: TextShoppingListItemTextField(
+                        groupID: groupID,
+                        textEditingController: textEditingController,
+                        focusNode: focusNode,
+                        textShoppingListItem: textShoppingListItem,
+                        shoppingListItems: shoppingListItems,
+                        isEditing: isEditing.value,
                       ),
                     ),
-                ],
+                    if (hasDescription)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Text(
+                          textShoppingListItem.description!,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(color: neutral.ink3),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
-            if (textShoppingListItem.imageURL != null)
-              Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: CachedNetworkImage(
-                    imageUrl: textShoppingListItem.imageURL!,
-                    width: 36,
-                    height: 36,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => SizedBox(
+              if (textShoppingListItem.imageURL != null)
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      imageUrl: textShoppingListItem.imageURL!,
                       width: 36,
                       height: 36,
-                      child: Center(
-                        child: SizedBox(
-                          width: 14,
-                          height: 14,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(tokens.accent),
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => SizedBox(
+                        width: 36,
+                        height: 36,
+                        child: Center(
+                          child: SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(tokens.accent),
+                            ),
                           ),
                         ),
                       ),
+                      errorWidget: (context, url, error) => Icon(
+                          Icons.broken_image,
+                          size: 18,
+                          color: neutral.ink3),
                     ),
-                    errorWidget: (context, url, error) =>
-                        Icon(Icons.broken_image, size: 18, color: neutral.ink3),
                   ),
                 ),
+              IconButton(
+                tooltip: 'アイテム詳細',
+                onPressed: () {
+                  analytics.logEvent(name: 'tap_open_item_detail', parameters: {
+                    'groupID': groupID,
+                    'itemID': textShoppingListItem.id,
+                  });
+                  appShowModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return TextShoppingListItemDetailBottomSheet(
+                        groupID: groupID,
+                        textShoppingListItem: textShoppingListItem,
+                      );
+                    },
+                  );
+                },
+                icon: Icon(
+                  Icons.more_horiz,
+                  size: 20,
+                  color: isChecked ? neutral.ink4 : neutral.ink3,
+                ),
               ),
-            IconButton(
-              tooltip: 'アイテム詳細',
-              onPressed: () {
-                analytics.logEvent(
-                    name: 'tap_open_item_detail',
-                    parameters: {
-                      'groupID': groupID,
-                      'itemID': textShoppingListItem.id,
-                    });
-                appShowModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    return TextShoppingListItemDetailBottomSheet(
-                      groupID: groupID,
-                      textShoppingListItem: textShoppingListItem,
-                    );
-                  },
-                );
-              },
-              icon: Icon(
-                Icons.more_horiz,
-                size: 20,
-                color: isChecked ? neutral.ink4 : neutral.ink3,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -220,14 +230,62 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
 
     return Dismissible(
       key: ValueKey(textShoppingListItem.id),
-      direction: DismissDirection.startToEnd,
+      direction: DismissDirection.horizontal,
+      // i-8 右スワイプでチェックトグル: `design_handoff_shopping_list/README.md` §8
       background: Container(
-        color: neutral.danger,
+        color: neutral.ok,
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.only(left: 16),
+        child: const Icon(Icons.check, color: Colors.white),
+      ),
+      // i-7 左スワイプ削除
+      secondaryBackground: Container(
+        color: neutral.danger,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 16),
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       confirmDismiss: (direction) async {
+        if (direction == DismissDirection.startToEnd) {
+          // 右スワイプ: チェック状態をトグルし、行は残す
+          final wasChecked = textShoppingListItem.status ==
+              GroupShoppingListItemStatus.checked;
+          analytics.logEvent(
+            name: 'swipe_toggle_shopping_list_item',
+            parameters: {
+              'groupShoppingListItemID': textShoppingListItem.id,
+              'before': wasChecked.toString(),
+            },
+          );
+          try {
+            await ref
+                .read(groupDatabaseProvider(groupID: groupID))
+                .shoppingListItemsReference(
+                  shoppingListID: textShoppingListItem.shoppingListID,
+                )
+                .doc(textShoppingListItem.id)
+                .update({
+              GroupShoppingListItemFirestoreKeys.status: wasChecked
+                  ? GroupShoppingListItemStatus.unchecked.name
+                  : GroupShoppingListItemStatus.checked.name,
+            });
+          } catch (e, st) {
+            debugPrint('アイテムのチェック切替に失敗: $e\n$st');
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(e.toString())),
+              );
+            }
+          }
+          return false;
+        }
+        // 左スワイプ: 削除
+        analytics.logEvent(
+          name: 'swipe_delete_shopping_list_item',
+          parameters: {
+            'groupShoppingListItemID': textShoppingListItem.id,
+          },
+        );
         try {
           await ref
               .read(groupDatabaseProvider(groupID: groupID))
@@ -248,6 +306,140 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         }
       },
       child: widget,
+    );
+  }
+
+  /// i-6 長押し context menu。
+  /// `design_handoff_shopping_list/preview/screens-list.jsx` 準拠で
+  /// 「複製 / メモを追加 / 削除」を BottomSheet で提示する (担当者は除外)。
+  Future<void> _showLongPressMenu({
+    required BuildContext context,
+    required WidgetRef ref,
+    required String currentUserID,
+  }) async {
+    analytics.logEvent(
+      name: 'long_press_shopping_list_item',
+      parameters: {
+        'groupID': groupID,
+        'shoppingListID': textShoppingListItem.shoppingListID,
+        'itemID': textShoppingListItem.id,
+      },
+    );
+    final tokens = context.tokens;
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: tokens.neutral.card,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 10),
+              Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: tokens.neutral.divider,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 8),
+              ListTile(
+                leading: Icon(Icons.content_copy, color: tokens.accent),
+                title: const Text('複製'),
+                onTap: () async {
+                  analytics.logEvent(
+                    name: 'duplicate_shopping_list_item_long_press',
+                    parameters: {
+                      'groupID': groupID,
+                      'itemID': textShoppingListItem.id,
+                    },
+                  );
+                  Navigator.pop(sheetContext);
+                  try {
+                    await ref
+                        .read(addShoppingListItemProvider(groupID: groupID))
+                        .call(
+                          shoppingListID: textShoppingListItem.shoppingListID,
+                          userID: currentUserID,
+                          message: textShoppingListItem.message,
+                          order: shoppingListItems.nextOrder,
+                          description: textShoppingListItem.description,
+                          color: textShoppingListItem.color,
+                        );
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
+                    }
+                  }
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.notes, color: tokens.accent),
+                title: const Text('メモを追加'),
+                onTap: () {
+                  analytics.logEvent(
+                    name: 'open_item_detail_from_long_press',
+                    parameters: {
+                      'groupID': groupID,
+                      'itemID': textShoppingListItem.id,
+                    },
+                  );
+                  Navigator.pop(sheetContext);
+                  appShowModalBottomSheet(
+                    context: context,
+                    builder: (_) => TextShoppingListItemDetailBottomSheet(
+                      groupID: groupID,
+                      textShoppingListItem: textShoppingListItem,
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading:
+                    Icon(Icons.delete_outline, color: tokens.neutral.danger),
+                title: Text('削除',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: tokens.neutral.danger)),
+                onTap: () async {
+                  analytics.logEvent(
+                    name: 'delete_shopping_list_item_long_press',
+                    parameters: {
+                      'groupID': groupID,
+                      'itemID': textShoppingListItem.id,
+                    },
+                  );
+                  Navigator.pop(sheetContext);
+                  try {
+                    await ref
+                        .read(groupDatabaseProvider(groupID: groupID))
+                        .shoppingListItemsReference(
+                          shoppingListID: textShoppingListItem.shoppingListID,
+                        )
+                        .doc(textShoppingListItem.id)
+                        .delete();
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
+                    }
+                  }
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -380,16 +572,17 @@ class TextShoppingListItemTextField extends ConsumerWidget {
           hintText: 'メモを書く...',
         ),
         cursorColor: tokens.accent,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          letterSpacing: -0.16,
-          color: isChecked ? neutral.checked : neutral.ink,
-          decoration:
-              isChecked ? TextDecoration.lineThrough : TextDecoration.none,
-          decorationColor: neutral.ink4,
-          decorationThickness: 1.2,
-        ),
+        cursorWidth: 1.5,
+        cursorOpacityAnimates: true,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              letterSpacing: -0.16,
+              color: isChecked ? neutral.checked : neutral.ink,
+              decoration:
+                  isChecked ? TextDecoration.lineThrough : TextDecoration.none,
+              decorationColor: neutral.ink4,
+              decorationThickness: 1.2,
+            ),
         onSubmitted: (String v) async {
           analytics.logEvent(name: 'submit_item_text', parameters: {
             'groupID': groupID,

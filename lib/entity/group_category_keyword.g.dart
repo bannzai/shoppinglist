@@ -25,4 +25,5 @@ Map<String, dynamic> _$GroupCategoryKeywordToJson(
 const _$GroupCategoryKeywordMatchingTypeEnumMap = {
   GroupCategoryKeywordMatchingType.exact: 'exact',
   GroupCategoryKeywordMatchingType.partial: 'partial',
+  GroupCategoryKeywordMatchingType.regex: 'regex',
 };

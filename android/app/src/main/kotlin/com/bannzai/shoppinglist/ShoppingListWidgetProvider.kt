@@ -127,6 +127,13 @@ class ShoppingListWidgetProvider : HomeWidgetProvider() {
             val key = "widget_items_${groupID}_${shoppingListID}"
             val itemsJson = widgetData.getString(key, "[]") ?: "[]"
 
+            // done/total を mono count に反映（progress 状況用）。Flutter 側 home_widget_data_sync.dart と同期。
+            val countKey = "${groupID}_${shoppingListID}"
+            val doneCount = widgetData.getInt("widget_done_count_$countKey", 0)
+            val totalCount = widgetData.getInt("widget_total_count_$countKey", 0)
+            views.setTextViewText(R.id.widget_count, "${doneCount}/${totalCount}")
+            views.setTextColor(R.id.widget_count, themeColor)
+
             val textIds = arrayOf(R.id.item_text_0, R.id.item_text_1, R.id.item_text_2, R.id.item_text_3, R.id.item_text_4)
             val checkIds = arrayOf(R.id.item_check_0, R.id.item_check_1, R.id.item_check_2, R.id.item_check_3, R.id.item_check_4)
             val rowIds = arrayOf(R.id.item_row_0, R.id.item_row_1, R.id.item_row_2, R.id.item_row_3, R.id.item_row_4)
