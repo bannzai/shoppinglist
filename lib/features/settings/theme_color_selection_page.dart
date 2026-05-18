@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
@@ -19,9 +20,10 @@ class ThemeColorSelectionPage extends ConsumerWidget {
             defaultThemeColorHex;
 
     return Scaffold(
-      backgroundColor: neutral.surface,
+      backgroundColor: neutral.paper,
       appBar: AppBar(
         title: const Text('テーマカラー'),
+        backgroundColor: neutral.paper,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -33,11 +35,10 @@ class ThemeColorSelectionPage extends ConsumerWidget {
                 padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
                 child: Text(
                   '和の伝統色 5 色から選んで、アプリ全体の差し色を切り替えます。',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: neutral.ink2,
-                    height: 1.6,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: neutral.ink2,
+                        height: 1.6,
+                      ),
                 ),
               ),
               GridView.count(
@@ -63,8 +64,7 @@ class ThemeColorSelectionPage extends ConsumerWidget {
                                 .call(preset: preset.preset);
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('テーマカラーを変更しました')),
+                                const SnackBar(content: Text('テーマカラーを変更しました')),
                               );
                             }
                           } catch (e) {
@@ -146,10 +146,11 @@ class _ColorSwatch extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               preset.label,
-              style: TextStyle(
+              style: GoogleFonts.zenKakuGothicNew(
                 fontSize: 12,
-                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
                 color: selected ? neutral.ink : neutral.ink2,
+                letterSpacing: -0.01,
               ),
             ),
           ],

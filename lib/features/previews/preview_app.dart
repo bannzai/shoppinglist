@@ -19,7 +19,7 @@ class PreviewApp extends StatelessWidget {
         brightness: Brightness.dark,
         accent: AccentPreset.shu,
       ),
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.system,
       home: const PreviewsPage(),
     );
   }

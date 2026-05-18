@@ -94,13 +94,12 @@ class _AppTabItem extends StatelessWidget {
               const SizedBox(height: 3),
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 10.5,
-                  fontWeight:
-                      selected ? FontWeight.w600 : FontWeight.w500,
-                  letterSpacing: 0.02,
-                  color: color,
-                ),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      fontSize: 10.5,
+                      fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                      letterSpacing: 0.02,
+                      color: color,
+                    ),
               ),
             ],
           ),

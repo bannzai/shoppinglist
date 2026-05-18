@@ -1,6 +1,4 @@
-// app.jsx — main canvas composition
-
-const { useState } = React;
+// app.jsx — final canvas composition (only final design, no exploratory variants)
 
 const DEFAULTS = /*EDITMODE-BEGIN*/{
   "dark": false,
@@ -251,7 +249,6 @@ function App() {
 function SystemSummary({ t }) {
   return (
     <div style={{ padding: 32, height: '100%', boxSizing: 'border-box', display: 'flex', gap: 32, fontFamily: '"Noto Sans JP"' }}>
-      {/* Left — copy */}
       <div style={{ flex: 1.2, display: 'flex', flexDirection: 'column', gap: 18 }}>
         <div>
           <div className="mono" style={{ fontSize: 11, color: t.accent, fontWeight: 600, letterSpacing: 0.6, textTransform: 'uppercase' }}>
@@ -266,10 +263,10 @@ function SystemSummary({ t }) {
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, maxWidth: 460 }}>
           {[
-            ['片手・親指で届く', 'AppBar下のチップ + 末尾FAB'],
+            ['ShoppingList = 紙 + 白', 'NavBar/TabBar=紙色、中身=白で視認性'],
+            ['他の画面 = 紙色を中心', '世界観を継続させる'],
             ['共有はあるが監視しない', '通知は手動 / 自動を選べる'],
             ['AIは「写真・URL」のみ', 'テキスト貼り付けはAIにしない'],
-            ['暮らしの色 · 朱', 'プレミアムで10色から選べる'],
           ].map((r, i) => (
             <div key={i} style={{ background: t.surface2, border: `1px solid ${t.divider}`, borderRadius: 10, padding: '10px 12px' }}>
               <div style={{ fontSize: 12, color: t.ink, fontWeight: 700 }}>{r[0]}</div>
@@ -278,9 +275,7 @@ function SystemSummary({ t }) {
           ))}
         </div>
       </div>
-      {/* Right — tokens */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 18 }}>
-        {/* Color */}
         <div style={{ background: t.card, borderRadius: 14, padding: 18, border: `1px solid ${t.divider}` }}>
           <div className="mono" style={{ fontSize: 10, color: t.ink3, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 10 }}>Palette · 暖色ニュートラル</div>
           <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
@@ -301,7 +296,6 @@ function SystemSummary({ t }) {
             ))}
           </div>
         </div>
-        {/* Type */}
         <div style={{ background: t.card, borderRadius: 14, padding: 18, border: `1px solid ${t.divider}` }}>
           <div className="mono" style={{ fontSize: 10, color: t.ink3, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 10 }}>Type</div>
           <div style={{ fontSize: 28, fontWeight: 800, color: t.ink, letterSpacing: -0.02, lineHeight: 1.15 }}>家族と作る、買い物リスト</div>

@@ -51,11 +51,10 @@ class ListPickerSheet extends ConsumerWidget {
                 children: [
                   Text(
                     'リストを切り替える',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: tokens.neutral.ink2,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: tokens.neutral.ink2,
+                        ),
                   ),
                 ],
               ),
@@ -149,11 +148,10 @@ class _AddListRow extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               '新しいリストを追加',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: tokens.accent,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: tokens.accent,
+                  ),
             ),
           ],
         ),
@@ -186,15 +184,13 @@ class _ListPickerRow extends StatelessWidget {
                 list.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                  color: tokens.neutral.ink,
-                ),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                      color: tokens.neutral.ink,
+                    ),
               ),
             ),
-            if (selected)
-              Icon(Icons.check, size: 18, color: tokens.accent),
+            if (selected) Icon(Icons.check, size: 18, color: tokens.accent),
           ],
         ),
       ),

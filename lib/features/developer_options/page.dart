@@ -153,12 +153,12 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Text(
               resultMessage.value,
-              style: TextStyle(
-                color: resultMessage.value.contains('エラー')
-                    ? Colors.red
-                    : Colors.green,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: resultMessage.value.contains('エラー')
+                        ? Colors.red
+                        : Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
           ),
         const Divider(height: 24),

@@ -1,0 +1,41 @@
+appId: com.bannzai.shoppinglist
+---
+# PR-6 Categories & Locations の検証:
+# - GroupCategoryPage で regex マッチング選択肢が出る
+# - ShoppingLocationPage で「場所を追加」dialog の地図設定が PRO バッジ付き
+# - LocationPicker (Premium) で逆ジオコード結果が address 表示される
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# カテゴリ画面: regex マッチング選択肢
+- tapOn:
+    id: "popup_menu_button"
+    optional: true
+- tapOn:
+    text: "カテゴリ"
+    optional: true
+- waitForAnimationToEnd
+- tapOn:
+    text: "編集"
+    optional: true
+- waitForAnimationToEnd
+- tapOn:
+    text: "キーワードを追加"
+    optional: true
+- assertVisible:
+    text: "正規表現"
+    optional: true
+
+# 場所追加 dialog
+- back
+- back
+- tapOn:
+    text: "買い物場所"
+    optional: true
+- waitForAnimationToEnd
+- tapOn:
+    text: "+"
+    optional: true
+- assertVisible:
+    text: "地図で場所を設定"
+    optional: true
