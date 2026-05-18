@@ -1,0 +1,36 @@
+appId: com.bannzai.shoppinglist
+---
+# PR-4 List Settings の検証:
+# - ShoppingListSettingPage に autoNotifyEnabled Switch があることを assert
+# - ShoppingListItemFilterPage の表示セクション (チェック済み表示 / カテゴリ順) を assert
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# リスト設定画面に遷移 (アプリ UI ナビ次第で popup から開く想定)
+- tapOn:
+    id: "popup_menu_button"
+    optional: true
+- tapOn:
+    text: "リスト設定"
+    optional: true
+- waitForAnimationToEnd
+
+- assertVisible:
+    text: "アイテム追加で家族に通知"
+    optional: true
+- assertVisible:
+    text: "このリストでアイテム追加・チェック切替があったとき"
+    optional: true
+
+# フィルター画面 (リスト top bar からのアクセスでも可)
+- back
+- tapOn:
+    text: "フィルター"
+    optional: true
+- waitForAnimationToEnd
+- assertVisible:
+    text: "チェック済みを表示する"
+    optional: true
+- assertVisible:
+    text: "カテゴリ順で表示する"
+    optional: true

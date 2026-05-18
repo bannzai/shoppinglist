@@ -21,6 +21,9 @@ struct ShoppingListEntry: TimelineEntry {
     let showCheckedItems: Bool
     /// ウィジェットのアクセントカラー。無料ユーザーは常にデフォルト色。
     let themeColorHex: String
+    /// 完了済みアイテム数 / 全アイテム数（progress sliver / mono done/total 表示用）。
+    let doneCount: Int
+    let totalCount: Int
 }
 
 struct ShoppingListItemData: Identifiable, Codable {
@@ -50,7 +53,9 @@ struct Provider: AppIntentTimelineProvider {
                 ShoppingListItemData(id: "2", groupID: "", shoppingListID: "", message: "卵", status: "checked", order: 1, color: nil),
             ],
             showCheckedItems: true,
-            themeColorHex: defaultThemeColorHex
+            themeColorHex: defaultThemeColorHex,
+            doneCount: 1,
+            totalCount: 2
         )
     }
 
@@ -94,6 +99,10 @@ struct Provider: AppIntentTimelineProvider {
             items = loadItemsFromUserDefaults(groupID: groupID, shoppingListID: shoppingListID)
         }
 
+        // done/total は filter 前の全アイテムで計算する（progress sliver と mono 表記用）。
+        let totalCount = items.count
+        let doneCount = items.filter { $0.isChecked }.count
+
         if !showChecked {
             items = items.filter { !$0.isChecked }
         }
@@ -103,7 +112,9 @@ struct Provider: AppIntentTimelineProvider {
             shoppingListName: shoppingListName,
             items: items,
             showCheckedItems: showChecked,
-            themeColorHex: themeColorHex
+            themeColorHex: themeColorHex,
+            doneCount: doneCount,
+            totalCount: totalCount
         )
     }
 

@@ -173,7 +173,7 @@ function Chip({ children, t, active, icon, soft, onClick, dot }) {
       display: 'inline-flex', alignItems: 'center', gap: 6,
       height: 30, padding: '0 12px', borderRadius: 999,
       whiteSpace: 'nowrap', flexShrink: 0, flexGrow: 0, width: 'auto',
-      background: active ? (soft ? t.accentSoft : t.ink) : t.surface,
+      background: active ? (soft ? t.accentSoft : t.ink) : t.card,
       color: active ? (soft ? t.accent : (t.dark ? t.surface : '#fff')) : t.ink2,
       border: active ? 'none' : `1px solid ${t.divider}`,
       fontFamily: 'inherit', fontWeight: active ? 600 : 500, fontSize: 12.5, cursor: 'pointer',

@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/components/frame/app_checkbox.dart';
-import 'package:shoppinglist/components/frame/stripe_placeholder.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
@@ -24,8 +22,8 @@ import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 /// - description / imageURL（任意）
 /// - 詳細アイコン
 ///
-/// focused 中は左端に 2px の accent ボーダーと accentSoft の透明度 0x60 (≒ 0.376) 背景を出す。
-/// checked 時はテキスト色 `t.checked` + 取り消し線、Checkbox 内はカテゴリ色（指定があれば）で塗る。
+/// focused 中は左端に 2px の accent ボーダーと accentSoft 0.4 の背景を出す。
+/// checked 時はテキスト色 `t.checked` + 取り消し線、Checkbox 内 accent 塗り。
 class TextShoppingListItemWidget extends HookConsumerWidget {
   final String groupID;
   final GroupShoppingListItem textShoppingListItem;
@@ -68,143 +66,141 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         textShoppingListItem.status == GroupShoppingListItemStatus.checked;
     final hasDescription = textShoppingListItem.description != null &&
         textShoppingListItem.description!.isNotEmpty;
-    final categoryColor = textShoppingListItem.color != null
-        ? colorFromHex(textShoppingListItem.color!)
+    final itemColor = textShoppingListItem.color != null
+        ? colorFromHex(textShoppingListItem.color!).withValues(alpha: 0.1)
         : null;
     final focused = isEditing.value;
-    // screens-list.jsx#ItemRow: focused 時のみ accentSoft + 16進透明度 0x60 (= 96/255 ≒ 0.376)。
-    // 非 focused は transparent。カテゴリ色や checked の薄塗りはしない（仕様外）。
     final backgroundColor = focused
-        ? tokens.accentSoft.withValues(alpha: 0x60 / 0xFF)
-        : Colors.transparent;
+        ? tokens.accentSoft.withValues(alpha: 0.6)
+        : itemColor ??
+            (isChecked
+                ? neutral.divider2.withValues(alpha: 0.5)
+                : Colors.transparent);
 
     // ReorderableListView のドラッグ移動中に Material が必要
     final content = Material(
       color: backgroundColor,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            left: BorderSide(
-              color: focused ? tokens.accent : Colors.transparent,
-              width: 2,
+      child: GestureDetector(
+        // i-6 長押し context menu (複製 / メモ追加 / 削除)。
+        // 担当者項目は M-4 の運用ルール 4 で除外。
+        behavior: HitTestBehavior.translucent,
+        onLongPress: () => _showLongPressMenu(
+          context: context,
+          ref: ref,
+          currentUserID: currentUserID,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              left: BorderSide(
+                color: focused ? tokens.accent : Colors.transparent,
+                width: 2,
+              ),
             ),
           ),
-        ),
-        constraints: const BoxConstraints(minHeight: 52),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 最初の行のテキストと Checkbox の上端を揃える微調整 (frame.jsx#ItemRow paddingTop:1)。
-            Padding(
-              padding: const EdgeInsets.only(top: 1),
-              child: Semantics(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Semantics(
                 label: textShoppingListItem.message,
-                child: AppCheckbox(
+                child: _CircleCheckbox(
                   checked: isChecked,
-                  size: 22,
-                  color: categoryColor,
+                  color: textShoppingListItem.color != null
+                      ? colorFromHex(textShoppingListItem.color!)
+                      : tokens.accent,
                   onChanged: (_) {
                     analytics.logEvent(
                         name: 'tap_toggle_item_checkbox',
                         parameters: {
                           'groupID': groupID,
-                          'shoppingListID':
-                              textShoppingListItem.shoppingListID,
+                          'shoppingListID': textShoppingListItem.shoppingListID,
                           'itemID': textShoppingListItem.id,
                         });
                     ref
                         .read(toggleShoppingListItemCheckProvider(
                             groupID: groupID))
                         .call(
-                          shoppingListID:
-                              textShoppingListItem.shoppingListID,
+                          shoppingListID: textShoppingListItem.shoppingListID,
                           item: textShoppingListItem,
                           userID: currentUserID,
                         );
                   },
                 ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextShoppingListItemTextField(
-                    groupID: groupID,
-                    textEditingController: textEditingController,
-                    focusNode: focusNode,
-                    textShoppingListItem: textShoppingListItem,
-                    shoppingListItems: shoppingListItems,
-                    isEditing: isEditing.value,
-                  ),
-                  if (hasDescription)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Opacity(
-                        opacity: isChecked ? 0.5 : 1.0,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 44,
+                      width: double.infinity,
+                      child: TextShoppingListItemTextField(
+                        groupID: groupID,
+                        textEditingController: textEditingController,
+                        focusNode: focusNode,
+                        textShoppingListItem: textShoppingListItem,
+                        shoppingListItems: shoppingListItems,
+                        isEditing: isEditing.value,
+                      ),
+                    ),
+                    if (hasDescription)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
                         child: Text(
                           textShoppingListItem.description!,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: neutral.ink3,
-                            height: 1.4,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(color: neutral.ink3),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                    ),
-                ],
-              ),
-            ),
-            // サムネ: 40×40, radius 10, カテゴリ色 0x30 (≒ 0.188) 背景 + divider border + stripe placeholder。
-            if (textShoppingListItem.imageURL != null)
-              Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: categoryColor != null
-                        ? categoryColor.withValues(alpha: 0x30 / 0xFF)
-                        : neutral.surface2,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: neutral.divider, width: 1),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      CustomPaint(
-                        painter: StripePlaceholderPainter(color: neutral.ink),
-                      ),
-                      CachedNetworkImage(
-                        imageUrl: textShoppingListItem.imageURL!,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => const SizedBox.shrink(),
-                        errorWidget: (context, url, error) => Icon(
-                            Icons.broken_image,
-                            size: 18,
-                            color: neutral.ink3),
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
               ),
-            // more icon: size 16 / padding 4 / InkResponse (IconButton の自動 48dp tap-target を避ける)。
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: InkResponse(
-                onTap: () {
-                  analytics.logEvent(
-                      name: 'tap_open_item_detail',
-                      parameters: {
-                        'groupID': groupID,
-                        'itemID': textShoppingListItem.id,
-                      });
+              if (textShoppingListItem.imageURL != null)
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      imageUrl: textShoppingListItem.imageURL!,
+                      width: 36,
+                      height: 36,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => SizedBox(
+                        width: 36,
+                        height: 36,
+                        child: Center(
+                          child: SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(tokens.accent),
+                            ),
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Icon(
+                          Icons.broken_image,
+                          size: 18,
+                          color: neutral.ink3),
+                    ),
+                  ),
+                ),
+              IconButton(
+                tooltip: 'アイテム詳細',
+                onPressed: () {
+                  analytics.logEvent(name: 'tap_open_item_detail', parameters: {
+                    'groupID': groupID,
+                    'itemID': textShoppingListItem.id,
+                  });
                   appShowModalBottomSheet(
                     context: context,
                     builder: (context) {
@@ -215,20 +211,14 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                     },
                   );
                 },
-                radius: 16,
-                customBorder: const CircleBorder(),
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Icon(
-                    Icons.more_horiz,
-                    size: 16,
-                    color: isChecked ? neutral.ink4 : neutral.ink3,
-                    semanticLabel: 'アイテム詳細',
-                  ),
+                icon: Icon(
+                  Icons.more_horiz,
+                  size: 20,
+                  color: isChecked ? neutral.ink4 : neutral.ink3,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -240,14 +230,62 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
 
     return Dismissible(
       key: ValueKey(textShoppingListItem.id),
-      direction: DismissDirection.startToEnd,
+      direction: DismissDirection.horizontal,
+      // i-8 右スワイプでチェックトグル: `design_handoff_shopping_list/README.md` §8
       background: Container(
-        color: neutral.danger,
+        color: neutral.ok,
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.only(left: 16),
+        child: const Icon(Icons.check, color: Colors.white),
+      ),
+      // i-7 左スワイプ削除
+      secondaryBackground: Container(
+        color: neutral.danger,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 16),
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       confirmDismiss: (direction) async {
+        if (direction == DismissDirection.startToEnd) {
+          // 右スワイプ: チェック状態をトグルし、行は残す
+          final wasChecked = textShoppingListItem.status ==
+              GroupShoppingListItemStatus.checked;
+          analytics.logEvent(
+            name: 'swipe_toggle_shopping_list_item',
+            parameters: {
+              'groupShoppingListItemID': textShoppingListItem.id,
+              'before': wasChecked.toString(),
+            },
+          );
+          try {
+            await ref
+                .read(groupDatabaseProvider(groupID: groupID))
+                .shoppingListItemsReference(
+                  shoppingListID: textShoppingListItem.shoppingListID,
+                )
+                .doc(textShoppingListItem.id)
+                .update({
+              GroupShoppingListItemFirestoreKeys.status: wasChecked
+                  ? GroupShoppingListItemStatus.unchecked.name
+                  : GroupShoppingListItemStatus.checked.name,
+            });
+          } catch (e, st) {
+            debugPrint('アイテムのチェック切替に失敗: $e\n$st');
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(e.toString())),
+              );
+            }
+          }
+          return false;
+        }
+        // 左スワイプ: 削除
+        analytics.logEvent(
+          name: 'swipe_delete_shopping_list_item',
+          parameters: {
+            'groupShoppingListItemID': textShoppingListItem.id,
+          },
+        );
         try {
           await ref
               .read(groupDatabaseProvider(groupID: groupID))
@@ -268,6 +306,211 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         }
       },
       child: widget,
+    );
+  }
+
+  /// i-6 長押し context menu。
+  /// `design_handoff_shopping_list/preview/screens-list.jsx` 準拠で
+  /// 「複製 / メモを追加 / 削除」を BottomSheet で提示する (担当者は除外)。
+  Future<void> _showLongPressMenu({
+    required BuildContext context,
+    required WidgetRef ref,
+    required String currentUserID,
+  }) async {
+    analytics.logEvent(
+      name: 'long_press_shopping_list_item',
+      parameters: {
+        'groupID': groupID,
+        'shoppingListID': textShoppingListItem.shoppingListID,
+        'itemID': textShoppingListItem.id,
+      },
+    );
+    final tokens = context.tokens;
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: tokens.neutral.card,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 10),
+              Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: tokens.neutral.divider,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 8),
+              ListTile(
+                leading: Icon(Icons.content_copy, color: tokens.accent),
+                title: const Text('複製'),
+                onTap: () async {
+                  analytics.logEvent(
+                    name: 'duplicate_shopping_list_item_long_press',
+                    parameters: {
+                      'groupID': groupID,
+                      'itemID': textShoppingListItem.id,
+                    },
+                  );
+                  Navigator.pop(sheetContext);
+                  try {
+                    await ref
+                        .read(addShoppingListItemProvider(groupID: groupID))
+                        .call(
+                          shoppingListID: textShoppingListItem.shoppingListID,
+                          userID: currentUserID,
+                          message: textShoppingListItem.message,
+                          order: shoppingListItems.nextOrder,
+                          description: textShoppingListItem.description,
+                          color: textShoppingListItem.color,
+                        );
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
+                    }
+                  }
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.notes, color: tokens.accent),
+                title: const Text('メモを追加'),
+                onTap: () {
+                  analytics.logEvent(
+                    name: 'open_item_detail_from_long_press',
+                    parameters: {
+                      'groupID': groupID,
+                      'itemID': textShoppingListItem.id,
+                    },
+                  );
+                  Navigator.pop(sheetContext);
+                  appShowModalBottomSheet(
+                    context: context,
+                    builder: (_) => TextShoppingListItemDetailBottomSheet(
+                      groupID: groupID,
+                      textShoppingListItem: textShoppingListItem,
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading:
+                    Icon(Icons.delete_outline, color: tokens.neutral.danger),
+                title: Text('削除',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: tokens.neutral.danger)),
+                onTap: () async {
+                  analytics.logEvent(
+                    name: 'delete_shopping_list_item_long_press',
+                    parameters: {
+                      'groupID': groupID,
+                      'itemID': textShoppingListItem.id,
+                    },
+                  );
+                  Navigator.pop(sheetContext);
+                  try {
+                    await ref
+                        .read(groupDatabaseProvider(groupID: groupID))
+                        .shoppingListItemsReference(
+                          shoppingListID: textShoppingListItem.shoppingListID,
+                        )
+                        .doc(textShoppingListItem.id)
+                        .delete();
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
+                    }
+                  }
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// 円形チェックボックス。`AppCheckbox` を ItemRow 用にラップしたもの。
+/// チェック ON 時の pop アニメ + チェック中はカテゴリ色（指定があれば）で塗る。
+class _CircleCheckbox extends StatefulWidget {
+  final bool checked;
+  final Color color;
+  final ValueChanged<bool> onChanged;
+  const _CircleCheckbox({
+    required this.checked,
+    required this.color,
+    required this.onChanged,
+  });
+
+  @override
+  State<_CircleCheckbox> createState() => _CircleCheckboxState();
+}
+
+class _CircleCheckboxState extends State<_CircleCheckbox>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    duration: const Duration(milliseconds: 220),
+    vsync: this,
+  );
+  late final Animation<double> _scale = TweenSequence<double>([
+    TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.2), weight: 40),
+    TweenSequenceItem(tween: Tween(begin: 1.2, end: 1.0), weight: 60),
+  ]).animate(_controller);
+
+  @override
+  void didUpdateWidget(covariant _CircleCheckbox oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!oldWidget.checked && widget.checked) {
+      _controller.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.tokens;
+    return ScaleTransition(
+      scale: _scale,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => widget.onChanged(!widget.checked),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 120),
+          width: 22,
+          height: 22,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: widget.checked ? widget.color : Colors.transparent,
+            border: Border.all(
+              color: widget.checked ? widget.color : tokens.neutral.ink4,
+              width: 1.5,
+            ),
+          ),
+          alignment: Alignment.center,
+          child: widget.checked
+              ? const Icon(Icons.check, size: 14, color: Colors.white)
+              : null,
+        ),
+      ),
     );
   }
 }
@@ -329,19 +572,17 @@ class TextShoppingListItemTextField extends ConsumerWidget {
           hintText: 'メモを書く...',
         ),
         cursorColor: tokens.accent,
-        // styles.css#.fake-caret の 1.5px キャレットに合わせる。
         cursorWidth: 1.5,
-        cursorRadius: const Radius.circular(0.75),
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          letterSpacing: -0.16,
-          color: isChecked ? neutral.checked : neutral.ink,
-          decoration:
-              isChecked ? TextDecoration.lineThrough : TextDecoration.none,
-          decorationColor: neutral.ink4,
-          decorationThickness: 1.2,
-        ),
+        cursorOpacityAnimates: true,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              letterSpacing: -0.16,
+              color: isChecked ? neutral.checked : neutral.ink,
+              decoration:
+                  isChecked ? TextDecoration.lineThrough : TextDecoration.none,
+              decorationColor: neutral.ink4,
+              decorationThickness: 1.2,
+            ),
         onSubmitted: (String v) async {
           analytics.logEvent(name: 'submit_item_text', parameters: {
             'groupID': groupID,

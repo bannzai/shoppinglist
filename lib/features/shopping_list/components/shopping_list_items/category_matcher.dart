@@ -63,6 +63,16 @@ String _findMatchingCategoryID({
           if (messageLower.contains(keywordLower)) {
             return category.id;
           }
+        case GroupCategoryKeywordMatchingType.regex:
+          // FormatException (不正な regex 文字列) のときはマッチさせない。
+          try {
+            if (RegExp(keyword.keyword, caseSensitive: false)
+                .hasMatch(item.message)) {
+              return category.id;
+            }
+          } on FormatException {
+            // ignore: regex 文字列が不正な場合は次のキーワードへ進む。
+          }
       }
     }
   }

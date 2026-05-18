@@ -137,11 +137,13 @@ class _NoOpDefaultGroupUpdate extends DefaultGroupUpdate {
 
 class _NoOpCreateGroup extends CreateGroup {
   @override
-  Future<void> call({
+  Future<String> call({
     required AppUser appUser,
     required String? name,
     required bool setAsDefault,
-  }) async {}
+    required String iconName,
+  }) async =>
+      mockGroupID;
 }
 
 class _NoOpCategoryAxisAdd extends GroupCategoryAxisAdd {
@@ -231,6 +233,7 @@ class _NoOpShoppingLocationAdd extends ShoppingLocationAdd {
   @override
   Future<GroupShoppingLocation> call({
     required String name,
+    required String address,
     required double? latitude,
     required double? longitude,
     required double? geofenceRadiusMeters,

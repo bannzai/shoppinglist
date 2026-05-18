@@ -15,7 +15,8 @@ class AppSectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final neutral = context.tokens.neutral;
+    final tokens = context.tokens;
+    final neutral = tokens.neutral;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
       child: Column(
@@ -28,17 +29,17 @@ class AppSectionCard extends StatelessWidget {
                 title!,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: neutral.ink3,
+                      letterSpacing: 0.5,
                       fontWeight: FontWeight.w600,
                     ),
               ),
             ),
-          // handoff README L124「フローティング以外には影を載せない」。
-          // セクションカードは面に貼り付いた構造なので boxShadow は載せない。
           Container(
             decoration: BoxDecoration(
               color: neutral.card,
               borderRadius: BorderRadius.circular(AppTokens.radiusCard),
               border: Border.all(color: neutral.divider, width: 0.5),
+              boxShadow: tokens.cardShadow,
             ),
             child: Column(children: _withDividers(children, neutral.divider2)),
           ),

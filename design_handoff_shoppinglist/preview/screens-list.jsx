@@ -1,4 +1,5 @@
-// shopping-list.jsx — the core ShoppingListPage with all states
+// screens-list.jsx — ShoppingListPage (final design)
+// Layout: NavBar (status + title row) on paper · GroupChips + Filter + Progress + List on white · TabBar on paper
 
 const ITEMS_FEW = [
   { id: 1, name: '牛乳 1L', cat: 'dairy', checked: false, note: '低脂肪じゃないやつ' },
@@ -20,13 +21,12 @@ const CATS = {
   misc:  { name: 'その他', color: '#8A8275', icon: '📦' },
 };
 
-// Top section common to most states
-function ListTopBar({ t, name = 'うちの買い物', onSettings }) {
+// NavBar (paper colored) — status bar inset + title row
+function ListNavBar({ t, name = 'うちの買い物' }) {
   return (
-    <>
+    <div style={{ background: t.surface, borderBottom: `0.5px solid ${t.divider}` }}>
       <div style={{ paddingTop: 44 }}/>
-      {/* Top row: list switcher + actions */}
-      <div style={{ height: 48, display: 'flex', alignItems: 'center', padding: '0 8px 0 16px', gap: 4 }}>
+      <div style={{ height: 48, display: 'flex', alignItems: 'center', padding: '0 8px 8px 16px', gap: 4 }}>
         <button style={{
           display: 'flex', alignItems: 'center', gap: 4, background: 'transparent', border: 'none',
           padding: 0, color: t.ink, fontFamily: 'inherit', cursor: 'pointer',
@@ -38,18 +38,23 @@ function ListTopBar({ t, name = 'うちの買い物', onSettings }) {
         <RoundBtn name="filter" t={t}/>
         <RoundBtn name="more-h" t={t}/>
       </div>
-      {/* Group chips */}
-      <div className="no-scrollbar" style={{ display: 'flex', gap: 6, padding: '0 16px 8px', overflowX: 'auto' }}>
-        <Chip t={t} active soft icon="people">家族</Chip>
-        <Chip t={t} icon="person">じぶん用</Chip>
-        <Chip t={t} icon="people">ルームシェア</Chip>
-        <Chip t={t} icon="plus">追加</Chip>
-      </div>
-    </>
+    </div>
   );
 }
 
-function ProgressBlock({ t, done, total, label = `${done}/${total}` }) {
+// Group chips — lives inside white content area
+function GroupChipsRow({ t }) {
+  return (
+    <div className="no-scrollbar" style={{ display: 'flex', gap: 6, padding: '12px 16px 6px', overflowX: 'auto' }}>
+      <Chip t={t} active soft icon="people">家族</Chip>
+      <Chip t={t} icon="person">じぶん用</Chip>
+      <Chip t={t} icon="people">ルームシェア</Chip>
+      <Chip t={t} icon="plus">追加</Chip>
+    </div>
+  );
+}
+
+function ProgressBlock({ t, done, total }) {
   const pct = total === 0 ? 0 : (done / total) * 100;
   const allDone = done === total && total > 0;
   return (
@@ -88,7 +93,7 @@ function FilterChips({ t, showChecked = true, byCategory = false }) {
 }
 
 // Single list row — TextField-as-row
-function ItemRow({ item, t, focused, ghost, isEmpty, onClick, hint }) {
+function ItemRow({ item, t, focused, ghost, isEmpty, hint }) {
   if (ghost) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 20px', minHeight: 52, opacity: 0.5 }}>
@@ -152,7 +157,7 @@ function ItemRow({ item, t, focused, ghost, isEmpty, onClick, hint }) {
   );
 }
 
-// FAB stack
+// FAB
 function FAB({ t, label = '空行を追加', open = false }) {
   if (open) {
     return (
@@ -230,12 +235,26 @@ function NotifySnack({ t, members = ['M', 'K'], message = '「トマト」を追
   );
 }
 
-// SHOPPING LIST PAGE — flat with focused empty row at end
-function ShoppingListFlat({ t, items = ITEMS_FEW, focusedIdx = items.length, showFAB = true, snack = false }) {
-  const total = items.length, done = items.filter(i => i.checked).length;
+// Shared shell wrapper: paper NavBar + white content + paper TabBar
+function ListShell({ t, snack, children }) {
   return (
     <div style={{ background: t.surface, height: '100%', position: 'relative', overflow: 'hidden' }}>
-      <ListTopBar t={t}/>
+      <ListNavBar t={t}/>
+      <div style={{ background: t.card, minHeight: 'calc(100% - 200px)' }}>
+        {children}
+      </div>
+      {snack && <NotifySnack t={t}/>}
+      <TabBar t={t} active="list"/>
+    </div>
+  );
+}
+
+// SHOPPING LIST PAGE — flat with focused empty row at end
+function ShoppingListFlat({ t, items = ITEMS_FEW, focusedIdx = items.length, snack = false }) {
+  const total = items.length, done = items.filter(i => i.checked).length;
+  return (
+    <ListShell t={t} snack={snack}>
+      <GroupChipsRow t={t}/>
       <FilterChips t={t}/>
       <ProgressBlock t={t} done={done} total={total}/>
       <div style={{ borderTop: `0.5px solid ${t.divider}`, paddingBottom: 100 }}>
@@ -243,10 +262,8 @@ function ShoppingListFlat({ t, items = ITEMS_FEW, focusedIdx = items.length, sho
         <ItemRow t={t} isEmpty focused={focusedIdx === items.length}/>
         <ItemRow t={t} ghost/>
       </div>
-      {showFAB && <FAB t={t}/>}
-      {snack && <NotifySnack t={t}/>}
-      <TabBar t={t} active="list"/>
-    </div>
+      <FAB t={t}/>
+    </ListShell>
   );
 }
 
@@ -257,8 +274,8 @@ function ShoppingListByCategory({ t, items = ITEMS_FEW }) {
   for (const it of items) (groups[it.cat] ||= []).push(it);
   const order = ['veg', 'meat', 'dairy', 'bake', 'drink', 'misc'];
   return (
-    <div style={{ background: t.surface, height: '100%', position: 'relative', overflow: 'hidden' }}>
-      <ListTopBar t={t}/>
+    <ListShell t={t}>
+      <GroupChipsRow t={t}/>
       <FilterChips t={t} byCategory/>
       <ProgressBlock t={t} done={done} total={total}/>
       <div style={{ borderTop: `0.5px solid ${t.divider}`, paddingBottom: 100 }}>
@@ -266,7 +283,7 @@ function ShoppingListByCategory({ t, items = ITEMS_FEW }) {
           <div key={k}>
             <div style={{
               display: 'flex', alignItems: 'center', gap: 8,
-              padding: '10px 20px 6px', background: t.surface,
+              padding: '10px 20px 6px', background: t.card,
               fontSize: 11, fontWeight: 700, color: t.ink2, letterSpacing: 0.06, textTransform: 'uppercase',
             }}>
               <span style={{ width: 8, height: 8, borderRadius: 8, background: CATS[k].color }}/>
@@ -278,14 +295,12 @@ function ShoppingListByCategory({ t, items = ITEMS_FEW }) {
             {groups[k].map(it => <ItemRow key={it.id} item={it} t={t}/>)}
           </div>
         ))}
-        {/* tail empty row */}
         <div style={{ marginTop: 12 }}>
           <ItemRow t={t} isEmpty focused/>
         </div>
       </div>
       <FAB t={t}/>
-      <TabBar t={t} active="list"/>
-    </div>
+    </ListShell>
   );
 }
 
@@ -294,8 +309,8 @@ function ShoppingListAllDone({ t }) {
   const items = ITEMS_FEW.map(i => ({ ...i, checked: true }));
   const total = items.length, done = total;
   return (
-    <div style={{ background: t.surface, height: '100%', position: 'relative', overflow: 'hidden' }}>
-      <ListTopBar t={t}/>
+    <ListShell t={t}>
+      <GroupChipsRow t={t}/>
       <FilterChips t={t}/>
       <ProgressBlock t={t} done={done} total={total}/>
       <div style={{
@@ -315,19 +330,18 @@ function ShoppingListAllDone({ t }) {
         {items.map(it => <ItemRow key={it.id} item={it} t={t}/>)}
       </div>
       <FAB t={t}/>
-      <TabBar t={t} active="list"/>
-    </div>
+    </ListShell>
   );
 }
 
 // EMPTY STATE — list has no items
 function ShoppingListEmpty({ t }) {
   return (
-    <div style={{ background: t.surface, height: '100%', position: 'relative', overflow: 'hidden' }}>
-      <ListTopBar t={t}/>
+    <ListShell t={t}>
+      <GroupChipsRow t={t}/>
       <FilterChips t={t}/>
       <ProgressBlock t={t} done={0} total={0}/>
-      <div style={{ borderTop: `0.5px solid ${t.divider}`, paddingTop: 6 }}>
+      <div style={{ borderTop: `0.5px solid ${t.divider}`, paddingTop: 6, paddingBottom: 200 }}>
         <ItemRow t={t} isEmpty focused/>
         {[0,1,2,3,4].map(i => <ItemRow key={i} t={t} ghost hint={i === 0 ? '例: 牛乳 1L' : undefined}/>)}
       </div>
@@ -341,17 +355,16 @@ function ShoppingListEmpty({ t }) {
         空行をタップして名前を打ち、<span className="mono" style={{ background: t.surface, padding: '1px 6px', borderRadius: 4, border: `1px solid ${t.divider}` }}>return</span> で次の行へ。空行で <span className="mono" style={{ background: t.surface, padding: '1px 6px', borderRadius: 4, border: `1px solid ${t.divider}` }}>delete</span> で行を消せます。
       </div>
       <FAB t={t}/>
-      <TabBar t={t} active="list"/>
-    </div>
+    </ListShell>
   );
 }
 
-// AI Processing state — image to items
+// AI Processing state
 function ShoppingListAIProcessing({ t }) {
   const total = ITEMS_FEW.length, done = ITEMS_FEW.filter(i => i.checked).length;
   return (
-    <div style={{ background: t.surface, height: '100%', position: 'relative', overflow: 'hidden' }}>
-      <ListTopBar t={t}/>
+    <ListShell t={t}>
+      <GroupChipsRow t={t}/>
       <FilterChips t={t}/>
       <ProgressBlock t={t} done={done} total={total}/>
       <div style={{
@@ -378,7 +391,6 @@ function ShoppingListAIProcessing({ t }) {
       </div>
       <div style={{ borderTop: `0.5px solid ${t.divider}`, paddingBottom: 100 }}>
         {ITEMS_FEW.map(it => <ItemRow key={it.id} item={it} t={t}/>)}
-        {/* skeleton rows */}
         {[0,1,2].map(i => (
           <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 20px', opacity: 1 - i * 0.2 }}>
             <Checkbox t={t}/>
@@ -386,16 +398,14 @@ function ShoppingListAIProcessing({ t }) {
           </div>
         ))}
       </div>
-      <TabBar t={t} active="list"/>
-    </div>
+    </ListShell>
   );
 }
 
 // ERROR STATE
 function ShoppingListError({ t }) {
   return (
-    <div style={{ background: t.surface, height: '100%', position: 'relative', overflow: 'hidden' }}>
-      <ListTopBar t={t}/>
+    <ListShell t={t}>
       <div style={{
         margin: '40px 24px', padding: '24px 18px', borderRadius: 18,
         background: t.dangerSoft, textAlign: 'center',
@@ -410,8 +420,7 @@ function ShoppingListError({ t }) {
           <Pill t={t} accent>再試行</Pill>
         </div>
       </div>
-      <TabBar t={t} active="list"/>
-    </div>
+    </ListShell>
   );
 }
 
@@ -425,8 +434,8 @@ function ShoppingListFreeNotice({ t }) {
   }));
   const total = items.length, done = items.filter(i => i.checked).length;
   return (
-    <div style={{ background: t.surface, height: '100%', position: 'relative', overflow: 'hidden' }}>
-      <ListTopBar t={t}/>
+    <ListShell t={t}>
+      <GroupChipsRow t={t}/>
       <FilterChips t={t}/>
       <ProgressBlock t={t} done={done} total={total}/>
       <div style={{
@@ -442,14 +451,14 @@ function ShoppingListFreeNotice({ t }) {
         {items.map(it => <ItemRow key={it.id} item={it} t={t}/>)}
       </div>
       <FAB t={t}/>
-      <TabBar t={t} active="list"/>
-    </div>
+    </ListShell>
   );
 }
 
 Object.assign(window, {
   ShoppingListFlat, ShoppingListByCategory, ShoppingListAllDone,
   ShoppingListEmpty, ShoppingListAIProcessing, ShoppingListError,
-  ShoppingListFreeNotice, ListTopBar, ProgressBlock, FilterChips,
+  ShoppingListFreeNotice,
+  ListNavBar, GroupChipsRow, ProgressBlock, FilterChips, ListShell,
   ItemRow, FAB, NotifySnack, CATS, ITEMS_FEW,
 });

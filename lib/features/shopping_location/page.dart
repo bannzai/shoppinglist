@@ -4,6 +4,7 @@ import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_location/location_picker_page.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
@@ -19,37 +20,104 @@ class ShoppingLocationPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final locationsAsync =
         ref.watch(shoppingLocationsProvider(groupID: groupID));
+    final tokens = context.tokens;
+    final neutral = tokens.neutral;
 
     return Scaffold(
+      backgroundColor: neutral.paper,
       appBar: AppBar(
         title: const Text('買い物する場所'),
+        backgroundColor: neutral.paper,
       ),
       body: locationsAsync.when(
         data: (locations) {
           if (locations.isEmpty) {
-            return const Center(
-              child: Text('買い物する場所がまだありません'),
+            return Center(
+              child: Container(
+                margin: const EdgeInsets.all(32),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                decoration: BoxDecoration(
+                  color: neutral.surface2,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: neutral.divider, width: 0.5),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.store, size: 36, color: neutral.ink3),
+                    const SizedBox(height: 12),
+                    Text(
+                      '買い物する場所がまだありません',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: neutral.ink2,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
             );
           }
           return ListView.builder(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
             itemCount: locations.length,
             itemBuilder: (context, index) {
               final location = locations[index];
-              return ListTile(
-                leading: Icon(
-                  location.latitude != null ? Icons.location_on : Icons.store,
-                  color: location.latitude != null
-                      ? Theme.of(context).colorScheme.primary
-                      : null,
+              final hasGeo = location.latitude != null;
+              return Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color: neutral.card,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: neutral.divider, width: 0.5),
                 ),
-                title: Text(location.name),
-                subtitle:
-                    location.latitude != null ? const Text('位置情報設定済み') : null,
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
+                child: Row(
                   children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: hasGeo ? tokens.accentSoft : neutral.surface2,
+                      ),
+                      alignment: Alignment.center,
+                      child: Icon(
+                        hasGeo ? Icons.location_on : Icons.store,
+                        size: 18,
+                        color: hasGeo ? tokens.accent : neutral.ink3,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            location.name,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: neutral.ink,
+                                ),
+                          ),
+                          if (hasGeo)
+                            Text(
+                              '位置情報設定済み',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(color: neutral.ink3),
+                            ),
+                        ],
+                      ),
+                    ),
                     IconButton(
-                      icon: const Icon(Icons.edit),
+                      icon: Icon(Icons.edit, color: neutral.ink3),
                       onPressed: () {
                         analytics.logEvent(
                             name: 'tap_edit_location',
@@ -65,8 +133,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                       },
                     ),
                     IconButton(
-                      icon: Icon(Icons.delete,
-                          color: Theme.of(context).colorScheme.error),
+                      icon: Icon(Icons.delete, color: neutral.danger),
                       onPressed: () {
                         analytics.logEvent(
                             name: 'tap_delete_location',
@@ -91,6 +158,8 @@ class ShoppingLocationPage extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: tokens.accent,
+        foregroundColor: Colors.white,
         onPressed: () {
           analytics.logEvent(
               name: 'tap_add_location', parameters: {'groupID': groupID});
@@ -108,6 +177,7 @@ class ShoppingLocationPage extends ConsumerWidget {
     final controller = TextEditingController();
     double? selectedLatitude;
     double? selectedLongitude;
+    String selectedAddress = '';
     final isPremium =
         ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
 
@@ -133,10 +203,9 @@ class ShoppingLocationPage extends ConsumerWidget {
                 title: Text(selectedLatitude != null ? '位置設定済み' : '地図で場所を設定'),
                 trailing: !isPremium
                     ? Icon(Icons.lock,
-                        size: 16,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant)
+                        size: 16, color: context.tokens.neutral.ink3)
                     : (selectedLatitude != null
-                        ? const Icon(Icons.check, color: Colors.green)
+                        ? Icon(Icons.check, color: context.tokens.neutral.ok)
                         : null),
                 onTap: () async {
                   analytics.logEvent(
@@ -155,7 +224,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                     return;
                   }
                   final result = await Navigator.push<
-                      ({double latitude, double longitude})>(
+                      ({double latitude, double longitude, String address})>(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const LocationPickerPage(
@@ -168,10 +237,21 @@ class ShoppingLocationPage extends ConsumerWidget {
                     setDialogState(() {
                       selectedLatitude = result.latitude;
                       selectedLongitude = result.longitude;
+                      selectedAddress = result.address;
                     });
                   }
                 },
               ),
+              if (selectedAddress.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  selectedAddress,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(color: context.tokens.neutral.ink3),
+                ),
+              ],
             ],
           ),
           actions: [
@@ -188,6 +268,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                       .read(shoppingLocationAddProvider(groupID: groupID))
                       .call(
                         name: name,
+                        address: selectedAddress,
                         latitude: selectedLatitude,
                         longitude: selectedLongitude,
                         geofenceRadiusMeters: null,
@@ -305,7 +386,10 @@ class ShoppingLocationPage extends ConsumerWidget {
             },
             child: Text(
               '削除',
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: context.tokens.neutral.danger),
             ),
           ),
           TextButton(

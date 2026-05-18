@@ -103,8 +103,21 @@ class HomeWidgetDataSync {
         .toList();
     final key = 'widget_items_${groupID}_$shoppingListID';
     await HomeWidget.saveWidgetData(key, jsonEncode(itemsJson));
+
+    // done/total を progress sliver / mono 表記用に同期する
+    // (design_handoff_shoppinglist/preview/widgets-and-micro.jsx 準拠)
+    final totalCount = items.length;
+    final doneCount = items
+        .where((item) => item.status == GroupShoppingListItemStatus.checked)
+        .length;
+    final countKeyPrefix = '${groupID}_$shoppingListID';
+    await HomeWidget.saveWidgetData(
+        'widget_total_count_$countKeyPrefix', totalCount);
+    await HomeWidget.saveWidgetData(
+        'widget_done_count_$countKeyPrefix', doneCount);
+
     debugPrint(
-        '[HomeWidgetDataSync] syncCurrentShoppingListItems: ${items.length}件, key=$key');
+        '[HomeWidgetDataSync] syncCurrentShoppingListItems: ${items.length}件, done=$doneCount, key=$key');
     await updateWidget();
   }
 

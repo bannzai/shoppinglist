@@ -39,13 +39,10 @@ class AppChip extends StatelessWidget {
     final neutral = tokens.neutral;
     final isDark = tokens.isDark;
 
-    final bg = active
-        ? (soft ? tokens.accentSoft : neutral.ink)
-        : neutral.surface;
+    final bg =
+        active ? (soft ? tokens.accentSoft : neutral.ink) : neutral.surface;
     final fg = active
-        ? (soft
-            ? tokens.accent
-            : (isDark ? neutral.surface : Colors.white))
+        ? (soft ? tokens.accent : (isDark ? neutral.surface : Colors.white))
         : neutral.ink2;
     final disabled = onTap == null;
 
@@ -54,9 +51,7 @@ class AppChip extends StatelessWidget {
       child: Material(
         color: bg,
         shape: StadiumBorder(
-          side: active
-              ? BorderSide.none
-              : BorderSide(color: neutral.divider),
+          side: active ? BorderSide.none : BorderSide(color: neutral.divider),
         ),
         child: InkWell(
           onTap: onTap,
@@ -85,14 +80,9 @@ class AppChip extends StatelessWidget {
                   ],
                   Text(
                     label,
-                    softWrap: false,
-                    overflow: TextOverflow.visible,
-                    // chipTheme.labelStyle を継承して palt / Noto Sans JP を効かせる。
-                    style: Theme.of(context).chipTheme.labelStyle?.copyWith(
-                          fontSize: 12.5,
-                          fontWeight: active
-                              ? FontWeight.w600
-                              : FontWeight.w500,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight:
+                              active ? FontWeight.w600 : FontWeight.w500,
                           letterSpacing: -0.005,
                           color: fg,
                         ),

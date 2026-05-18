@@ -9,6 +9,8 @@ import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
+import 'package:shoppinglist/style/theme.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 const _testGroupID = 'test-group-001';
@@ -159,8 +161,10 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: _nonPremiumOverrides(),
-          child: const MaterialApp(
-            home: GroupCategoryPage(groupID: _testGroupID),
+          child: MaterialApp(
+            theme: buildAppTheme(
+                brightness: Brightness.light, accent: AccentPreset.shu),
+            home: const GroupCategoryPage(groupID: _testGroupID),
           ),
         ),
       );
@@ -177,8 +181,10 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: _nonPremiumOverrides(),
-          child: const MaterialApp(
-            home: GroupCategoryPage(groupID: _testGroupID),
+          child: MaterialApp(
+            theme: buildAppTheme(
+                brightness: Brightness.light, accent: AccentPreset.shu),
+            home: const GroupCategoryPage(groupID: _testGroupID),
           ),
         ),
       );

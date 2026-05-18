@@ -1,4 +1,444 @@
-# 買い物リスト UI 全面再設計（design_handoff_shopping_list 実装）
+# 買い物リスト UI 全面再設計（design_handoff_shopping_list 実装）— v1 アーカイブ
+
+> **2026-05-13 v2 移行ノート**
+>
+> `design_handoff_shopping_list/` は `design_handoff_shoppinglist/` にリネームされ、README（391→562 行）と `screens-list.jsx`（+117 行）が大幅に書き換わった。具体的には次の変更が加わっている:
+> - **ハイブリッドサーフェス**: ShoppingListPage は paper NavBar/TabBar + 白(card) コンテンツ部のハイブリッド構造（旧バージョンは単一面）
+> - **行 = TextField + フェイクキャレット**: 1.5px accent / 1.06s blink、フォーカスリングなし、accentSoft 60% オーバーレイ + 左 2px accent border
+> - **ProgressBlock 仕様確定**: mono 24/600 done / mono 24/400 total + 4px progress bar + caption「チェック済み」
+> - **FAB 4 アクション正規化**: 写真AI / URL AI / テキスト貼り付け / 空行を追加
+> - **NotifySnack 仕様**: 26×26 avatar -6px overlap、accent 全員 pill、2 段テキスト、ink bg 5 秒
+> - **Free 50+ バナー**: surface2 + crown + 「詳しく」accent link
+> - **iOS 17+ Interactive Widget**: AppIntent + Button(intent:) 必須
+> - **Accent 5 プリセット**（shu/matcha/ai/sumi/kuchiba）が canonical（preview の 10 色は drift）
+> - **Paywall 3 プラン**: ¥480 月額 / ¥3,800 年間 おすすめ / ¥9,800 買い切り
+>
+> v1 の進捗:
+> - 共通基盤・frame Widget・shopping_list の中核 Widget・banners・onboarding・settings・paywall・group_invitation・home_widget の 5 色同期は実装済み（コミット履歴参照）。
+> - 周辺 8 画面（shopping_list_setting / group_list / group_create / group_setting / group_category / group_category/category_edit / shopping_location / shopping_location/location_picker）は旧 Material default のままで新トークン未適用。
+> - ShoppingListPage の細部（ハイブリッドサーフェス / フェイクキャレット / accentSoft 60% / NotifySnack 仕様 / CategoryHeader uppercase / AI Processing stripe-ph / RetentionBanner surface2 / AllDoneBanner 配置 / EmptyHint 内塗り）は未完。
+> - Onboarding 3 種イラスト / AuthArt 紙袋 / Settings Profile/Premium card / Paywall mono 価格 / おすすめバッジ / 規約フッタは未完。
+> - iOS ウィジェットの accent 四角 / done-total / 2.5px sliver / 5×5 dot、Android ウィジェットの 4×2 cell / `#F6F0E2` 背景 / mono / Material You 動的色は未完。
+>
+> **v2 redesign 計画は新ファイル `plans/design-handoff-shoppinglist-v2-redesign.md` に書く**（Plan mode 抜け直後の実装フェーズで作成する）。本 v1 ファイルは実装参考用として保持。
+
+---
+
+# v2 redesign 計画サマリ
+
+> このセクションは v2 redesign の計画サマリ。Plan mode 抜け直後に新ファイル `plans/design-handoff-shoppinglist-v2-redesign.md` を作成して、本サマリを転記し、各 PR セクションのコード提案を詳細化する。
+
+## v2 Context
+
+`design_handoff_shoppinglist/` （new bundle）の README §4「ブランド原則とサーフェスの使い分け」とハイブリッドサーフェスが新規導入された。`screens-list.jsx` も +117 行で再構成され、行 = TextField + フェイクキャレット / 4 アクション FAB / 6 状態バナー が canonical になった。これらの細部が現実装でまだ未対応のため、4 スコープ × 4 PR で完全準拠を目指す。アプリは未リリースで UI/UX を大胆に変えられる最後のタイミング。
+
+## 全体方針: 4 スコープ × 4 PR
+
+| PR | スコープ | 対象数 | 主目的 |
+|---|---|---|---|
+| PR-A | ShoppingListPage 中核細部 | 10 マイクロ修正 | ハイブリッドサーフェス + フェイクキャレット + NotifySnack 仕様 + バナー類 + EmptyHint |
+| PR-B | 周辺画面 (Onboarding/Auth/Settings/Paywall/GroupInvitation) | 約 6 ファイル | 3 種イラスト・AuthArt 紙袋・Profile/Premium card・mono 価格・おすすめバッジ・規約フッタ |
+| PR-C | PR4 集約 — 周辺 8 画面の新トークン移行（1 PR） | 8 ファイル | shopping_list_setting + group_list + group_create + group_setting + group_category(2) + shopping_location(2) を新トークン/Section card に置換 |
+| PR-D | ホームウィジェット仕様準拠（RemoteViews 維持） | iOS 3 / Android 2 / Flutter 1 | iOS accent 四角・done/total・2.5px sliver・5×5 dot / Android 4×2 cell・#F6F0E2 bg・mono count・Material You |
+
+---
+
+## PR-A: ShoppingListPage 中核細部
+
+| # | 変更対象 | 修正内容 |
+|---|---|---|
+| A1 | `lib/features/shopping_list/page.dart` | Scaffold `bg: surface(paper)`、コンテンツ Column の外側に `Container(color: tokens.neutral.card)` を挟みハイブリッドサーフェス化 |
+| A2 | `lib/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart` | `cursorWidth: 0` で OS カーソル抑制、`Stack` で `_FakeCaret`（1.5px / 1.06s blink）を重ねる |
+| A3 | 同上 | focused 時 accentSoft オーバーレイ濃度を 40% → **60%** へ |
+| A4 | `lib/features/shopping_list/components/notification_member_bar.dart` | アバター 32px → **26×26**（radius 13）、`-6px overlap`（Stack/Positioned）、全員 pill を **accent bg** へ、テキストを「『XXX』を追加」「家族に通知しますか？」の 2 段に分離 |
+| A5 | `lib/features/shopping_list/components/shopping_list_items/category_section_header.dart` | `name` を `name.toUpperCase()` 表示に変更 |
+| A6 | `lib/features/shopping_list/components/banners/ai_processing_banner.dart` | `_StripePainter`（45° 縞 CustomPainter）で 32×32 stripe-ph + 1.6s loop アニメ |
+| A7 | `lib/features/shopping_list/components/banners/all_done_banner.dart` | 左 emoji + 2 段テキスト → **中央寄せ祝福 UI**（emoji 中央 / テキスト中央） |
+| A8 | `lib/features/shopping_list/components/banners/retention_banner.dart` | accentSoft + premium icon → **surface2 + crown icon + 詳しく(accent link)** |
+| A9 | `lib/features/shopping_list/components/progress_block.dart` | 全完了時表示を AllDoneBanner と二重化させない（progress 内は "✓ おつかれさま" のみ、バナーは別個に表示） |
+| A10 | `lib/features/shopping_list/components/shopping_list_items/empty_text_shopping_list_item.dart` | dashed hint card の内側に `surface2` 塗りを追加 |
+
+### 代表コード: A2 フェイクキャレット
+
+```dart
+// lib/features/shopping_list/components/shopping_list_items/_fake_caret.dart
+class FakeCaret extends StatefulWidget {
+  final Color color;
+  final double height;
+  const FakeCaret({super.key, required this.color, this.height = 20});
+  @override
+  State<FakeCaret> createState() => _FakeCaretState();
+}
+
+class _FakeCaretState extends State<FakeCaret> with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1060),
+  )..repeat();
+
+  @override
+  void dispose() { _ctrl.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _ctrl,
+      builder: (_, __) {
+        final visible = _ctrl.value < 0.5;
+        return Opacity(
+          opacity: visible ? 1.0 : 0.0,
+          child: Container(width: 1.5, height: widget.height, color: widget.color),
+        );
+      },
+    );
+  }
+}
+```
+
+`text_shopping_list_item.dart` 側で:
+
+```dart
+TextField(
+  // ...既存設定
+  cursorWidth: 0, // OS カーソル抑制
+  showCursor: false,
+)
+// Stack で focused 時のみ FakeCaret を TextField の右側に重ねる（簡易実装）
+```
+
+### 代表コード: A4 NotifySnack アバター仕様
+
+```dart
+// _MemberAvatarStack: 26×26、-6px overlap
+class _MemberAvatarStack extends StatelessWidget {
+  final List<GroupUserProfile> members;
+  final void Function(String userID) onTap;
+  const _MemberAvatarStack({required this.members, required this.onTap});
+  @override
+  Widget build(BuildContext context) {
+    final shown = members.take(3).toList();
+    return SizedBox(
+      width: shown.length * 20.0 + 6,
+      height: 26,
+      child: Stack(
+        children: List.generate(shown.length, (i) {
+          return Positioned(
+            left: i * 20.0,
+            child: GestureDetector(
+              onTap: () => onTap(shown[i].userID),
+              child: Container(
+                width: 26, height: 26,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.3),
+                  border: Border.all(color: Colors.white, width: 1.5),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  shown[i].displayName?.substring(0,1).toUpperCase() ?? '?',
+                  style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}
+```
+
+### 検証
+- `flutter test test/features/shopping_list/components/banners_test.dart`
+- 新規 widget test: `test/features/shopping_list/components/fake_caret_test.dart`、`notification_member_bar_test.dart`
+- `maestro test maestro/flows/add_and_check_item.yaml`
+- 手動: iOS Simulator iPhone 16 Plus で ShoppingListPage 開いて focused 行のキャレットを目視確認
+
+---
+
+## PR-B: 周辺画面細部
+
+| # | 変更対象 | 修正内容 |
+|---|---|---|
+| B1 | `lib/features/onboarding/page.dart` | 3 種イラスト `_TiltedListArt` / `_AvatarOrbitArt` / `_MapHaloArt` を CustomPainter or Stack で実装。eyebrow を `01/03` mono accent 表記に変更 |
+| B2 | `lib/features/auth/page.dart`、`components/auth/apple.dart`、`google.dart` | Apple ボタン h=52/radius 14/black、Google ボタン h=52/surface2/divider に揃える。AuthArt を `_PaperBagArt`（紙袋+葉物 CustomPaint）に置換 |
+| B3 | `lib/features/settings/page.dart` | `_ProfileCard`（48 avatar + name + email + Edit ghost pill）新規作成。`_PremiumCard` を free=surface2 / premium=LinearGradient(accent → #7C2A07) で出し分け。末尾に mono version 行 (`v1.4.2 (build 248)`) |
+| B4 | `lib/features/settings/theme_color_selection_page.dart` | bg を `paper` に変更、ラベルを `serif` 12/600（`GoogleFonts.zenKakuGothicNew`）に |
+| B5 | `lib/features/paywall/paywall_page.dart` | bg `paper`、Hero radius 18、価格 mono フォント、recommended バッジ「お得」→「おすすめ」、フッタに 利用規約/プライバシー/復元 の 3 リンク追加 |
+| B6 | `lib/features/group_invitation/page.dart` | AppBar を `AppLargeAppBar`、ボタンを `AppPill(accent, large:true)` / `AppPill(ghost)` に置換 |
+
+### 代表コード: B3 Premium card グラデ
+
+```dart
+class _PremiumCard extends ConsumerWidget {
+  const _PremiumCard();
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tokens = context.tokens;
+    final isPremium = ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: isPremium
+          ? const LinearGradient(
+              colors: [Color(0xFFC2410C), Color(0xFF7C2A07)],
+              begin: Alignment.topLeft, end: Alignment.bottomRight,
+            )
+          : null,
+        color: isPremium ? null : tokens.neutral.surface2,
+        borderRadius: BorderRadius.circular(14),
+        border: isPremium ? null : Border.all(color: tokens.neutral.divider, width: 0.5),
+        boxShadow: isPremium ? tokens.cardShadow : null,
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 36, height: 36,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isPremium ? Colors.white.withValues(alpha: 0.2) : tokens.accentSoft,
+            ),
+            alignment: Alignment.center,
+            child: Icon(Icons.workspace_premium,
+              color: isPremium ? Colors.white : tokens.accent, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(isPremium ? 'プレミアム会員' : 'プレミアムにアップグレード',
+                style: TextStyle(
+                  fontSize: 14, fontWeight: FontWeight.w700,
+                  color: isPremium ? Colors.white : tokens.neutral.ink)),
+              const SizedBox(height: 2),
+              Text(isPremium ? 'すべての機能が利用できます' : '5 色テーマ・AI 無制限など',
+                style: TextStyle(fontSize: 11.5,
+                  color: isPremium ? Colors.white.withValues(alpha: 0.85) : tokens.neutral.ink2)),
+            ],
+          )),
+          if (!isPremium) AppPill(
+            label: 'はじめる', variant: AppPillVariant.accent,
+            onPressed: () => showPaywall(context: context),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+### 検証
+- `flutter test test/features/onboarding/`、`test/features/settings/`、`test/features/paywall/`
+- `maestro test maestro/flows/onboarding_first_launch.yaml`（新規 or 既存）
+- `maestro test maestro/flows/theme_color_change.yaml`
+- 手動: iOS Simulator で Onboarding → Auth → Home → Settings → Paywall 全部のフロー目視
+
+---
+
+## PR-C: PR4 集約 — 周辺 8 画面の新トークン移行
+
+| # | 変更対象 | 主要修正 |
+|---|---|---|
+| C1 | `lib/features/shopping_list_setting/page.dart` | `AppLargeAppBar` + `AppSectionCard` 4 セクション（リスト名 / 場所 / 保存期間 / 共有）+ 削除ボタン `AppPill(danger, large)`。InviteCodeDialog（mono 36/600 letterSpacing 8）、DeleteConfirmDialog を新規ダイアログ Widget で実装 |
+| C2 | `lib/features/group_list/page.dart` | グループカードを `AppSectionCard` で実装。3-stack avatars (28×28 / -8px overlap)、デフォルトバッジ accentSoft / accent。FAB を accent / lock 切替（free-limit 時） |
+| C3 | `lib/features/group_create/page.dart` | TextField 下線 1px accent、CTA `AppPill(accent, large)` 全幅。creating spinner、error 時 dangerSoft 帯 |
+| C4 | `lib/features/group_setting/page.dart` | `AppLargeAppBar` + `AppSectionCard`（メンバー / 招待コード発行 pill / リストの軸 pin+tag Cell）。ロケーション/カテゴリのインライン CRUD を別ページ push に変更 |
+| C5 | `lib/features/group_category/page.dart` | 並び順 surface2 row + ドロップダウンチップ「イオン藤沢店」。drag handle + 32×32 色付きアイコンタイル + 名前 + キーワード件数 + edit/trash。free-locked 時 surface2 + crown バナー |
+| C6 | `lib/features/group_category/category_edit_page.dart` | 色 9 swatches + none + 2px ink ring、アイコン 6 列グリッド（未設定タイル + 12 emoji + AI 生成 dashed accent + crown）、キーワード mode(部分/完全/正規) + ×、追加 `AppPill(ghost)` |
+| C7 | `lib/features/shopping_location/page.dart` | 場所カード 36×36 アイコンタイル（`pin-fill` accent or `store` ink3）、empty surface2 + dashed + store 36 icon。AddLocationDialog（名前 + 地図で場所を設定 dashed + PRO badge） |
+| C8 | `lib/features/shopping_location/location_picker_page.dart` | 地図 + 中央 pin-fill 42 accent + drop-shadow、右下 crosshair 44×44、底カード radius 18、loading stripe-ph、`AppPill(accent, large)` |
+
+### 代表コード: C2 グループカード（3-stack avatars）
+
+```dart
+class _GroupCard extends StatelessWidget {
+  final Group group;
+  final List<GroupUserProfile> members;
+  final bool isDefault;
+  final VoidCallback onTap;
+  const _GroupCard({
+    required this.group, required this.members,
+    required this.isDefault, required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.tokens;
+    final shown = members.take(3).toList();
+    return AppSectionCard(
+      onTap: onTap,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      child: Row(children: [
+        SizedBox(
+          width: shown.length * 20.0 + 8, height: 28,
+          child: Stack(children: List.generate(shown.length, (i) => Positioned(
+            left: i * 20.0,
+            child: Container(
+              width: 28, height: 28,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: tokens.accentSoft,
+                border: Border.all(color: tokens.neutral.card, width: 1.5),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                shown[i].displayName?.substring(0,1).toUpperCase() ?? '?',
+                style: GoogleFonts.ibmPlexMono(
+                  fontSize: 11, fontWeight: FontWeight.w600, color: tokens.accent),
+              ),
+            ),
+          ))),
+        ),
+        const SizedBox(width: 12),
+        Expanded(child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(children: [
+              Flexible(child: Text(group.name,
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                overflow: TextOverflow.ellipsis)),
+              if (isDefault) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: tokens.accentSoft,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text('デフォルト',
+                    style: TextStyle(fontSize: 10, color: tokens.accent, fontWeight: FontWeight.w600)),
+                ),
+              ],
+            ]),
+            const SizedBox(height: 2),
+            Text('メンバー ${members.length}人',
+              style: TextStyle(fontSize: 11.5, color: tokens.neutral.ink3)),
+          ],
+        )),
+        Icon(Icons.chevron_right, color: tokens.neutral.ink4, size: 20),
+      ]),
+    );
+  }
+}
+```
+
+### 検証
+- `flutter test`（既存 + 新規 widget test）
+- `maestro test maestro/flows/`（group_create / group_setting / category_edit / shopping_location 系の既存 flow 全件パス。なければ新規追加）
+- `flutter analyze` エラーなし
+- 手動: 各画面を iOS Simulator で開き、design preview と並べてレイアウト目視
+
+---
+
+## PR-D: ホームウィジェット仕様準拠（RemoteViews 維持）
+
+| # | 変更対象 | 主要修正 |
+|---|---|---|
+| D1 | `ios/ShoppingListWidget/ShoppingListWidgetView.swift` | 左上ロゴ: `18×18` accent 四角 + cart icon、右上: `done/total` mono Text 11.5pt、底に 2.5px progress sliver、checkbox 14×14、cat dot 5×5、フォント 11.5pt（`.system(size: 11.5)`） |
+| D2 | `ios/ShoppingListWidget/ShoppingListWidget.swift`（Provider/Entry） | `Entry` 構造体に `done: Int` / `total: Int` フィールド追加。`FirestoreService` で集計してから return |
+| D3 | `lib/features/home_widget/home_widget_data_sync.dart` | `widget_done_count_<group>_<list>` / `widget_total_count_<group>_<list>` を `HomeWidget.saveWidgetData` で書き込み |
+| D4 | `android/app/src/main/res/layout/shopping_list_widget.xml` | bg を `#F6F0E2` 固定、count TextView を `@font/ibm_plex_mono`（要追加）または `android:fontFamily="monospace"` で実装、Material You 用 `@android:color/system_accent1_600` を accent 寄せに |
+| D5 | `android/app/src/main/res/xml/shopping_list_widget_info.xml` | `targetCellWidth=4 / targetCellHeight=2 / minWidth=320dp / minHeight=200dp` に変更 |
+
+### 代表コード: D1 progress sliver (Swift)
+
+```swift
+// ShoppingListWidgetView.swift — Small 用 footer
+private var progressSliver: some View {
+  GeometryReader { geo in
+    ZStack(alignment: .bottomLeading) {
+      Rectangle()
+        .fill(Color(hex: entry.themeColorHex).opacity(0.15))
+      Rectangle()
+        .fill(Color(hex: entry.themeColorHex))
+        .frame(width: geo.size.width * progressRatio)
+    }
+  }
+  .frame(height: 2.5)
+}
+
+private var progressRatio: CGFloat {
+  guard entry.total > 0 else { return 0 }
+  return CGFloat(entry.done) / CGFloat(entry.total)
+}
+```
+
+### 代表コード: D4 Android count TextView
+
+```xml
+<!-- shopping_list_widget.xml: top row -->
+<TextView
+  android:id="@+id/widget_count"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:fontFamily="monospace"
+  android:textSize="14sp"
+  android:textStyle="bold"
+  android:textColor="@android:color/system_accent1_600"
+  tools:text="3/8" />
+```
+
+### 検証
+- iOS: シミュレータでウィジェット追加 → Small / Medium / Large 全てに done/total と progress sliver が表示される
+- iOS 17+: ToggleItemIntent が動作するか確認（チェックボックス押下でアイテム状態が変わる）
+- Android: エミュレータでウィジェット追加 → 4×2 セルで `#F6F0E2` 背景、mono count、Material You テーマ追従
+- `flutter test`、`maestro` は影響なし（ウィジェットは E2E 対象外）
+- 手動: テーマカラー 5 色全てを切り替えて、widget の accent が反映されるか確認
+
+---
+
+## 推奨実装順序
+
+1. **PR-A** マージ → ShoppingListPage が新仕様に完全準拠（ユーザーが一番見る画面）
+2. **PR-B** マージ → 周辺画面（Onboarding/Auth/Settings/Paywall）細部完成
+3. **PR-C** マージ → 残 8 画面が新トークンに移行
+4. **PR-D** マージ → ウィジェットも仕様準拠
+
+各 PR は `flutter analyze` / `flutter test` / `flutter build ios --no-codesign` / `flutter build apk --debug` / 該当 `maestro` を必ずグリーンにしてマージ。PR-D マージ時に issue 250 / 251 を close。
+
+## 共通検証（各 PR ごと）
+
+- [ ] `flutter analyze` エラーなし
+- [ ] `flutter test` 全件パス（新規 widget/unit test を追加）
+- [ ] `flutter build ios --no-codesign` 成功
+- [ ] `flutter build apk --debug` 成功
+- [ ] 該当する `maestro/flows/*.yaml` 全件パス
+- [ ] iOS Simulator iPhone 16 Plus で手動目視確認
+
+## v2 チェックリスト
+
+### 実装内容
+- [ ] 4 PR それぞれに具体的なコード提案（コードブロック）が新ファイル `plans/design-handoff-shoppinglist-v2-redesign.md` に記載されている
+- [ ] 既存コードのパターン・構成と整合している
+- [ ] Plan mode 抜け直後の最初のステップとして新ファイル `plans/design-handoff-shoppinglist-v2-redesign.md` を作成し、本サマリを転記して詳細化
+
+### Flutter（lib/ 変更がある場合）
+- [ ] コード生成: `dart run build_runner build`（v2 では新規 provider なし、不要見込み）
+- [ ] 静的解析: `flutter analyze` エラーなし
+- [ ] テスト: `flutter test` 全件パス
+- [ ] iOS ビルド: `flutter build ios` 成功
+- [ ] Android ビルド: `flutter build apk` 成功
+- [ ] 新規・変更機能に対するテストが存在する
+- [ ] Maestro E2E: 該当 flow があれば実行、なければ新規作成
+- [ ] Entity 命名: フィールド名省略なし
+- [ ] DB 操作: Firestore 操作は `call` クラス Provider 経由
+- [ ] 引数: 関数・コンストラクタ引数に `{required}` あり
+- [ ] ref 使い分け: build 内 `ref.watch`、コールバック `ref.read`
+
+### Firebase（firebase/ 変更がある場合）
+- 今回スコープ外
+
+### 共通
+- [ ] エラーメッセージはそのまま表示（加工・プレフィックス除去なし）
+
+---
+
+# v1 アーカイブ（参考用）
+
+以下は v1 計画の本文。design_handoff_shopping_list（旧）時点で書かれたもの。実装時の参考にはなるが、新仕様との差分があるので v2 サマリを優先する。
+
+---
 
 ## Context
 
@@ -977,838 +1417,6 @@ L 内部の `_defaultThemeColorHex = '#673AB7'` を `'#C2410C'` に変更。`syn
 - **既存ユーザーの themeColor 保護**: 読み取り fallback のみ、書き戻ししない。設定画面で明示的に色変更したときだけ新 HEX が永続化される
 - **削除予定ファイル**: `lib/features/shopping_list/components/app_bar.dart`、`group_switcher.dart` は PR2 で削除。中身のロジック（PopupMenu、URL ダイアログ、AddListBottomSheet）は `expandable_fab.dart` または個別ファイルに移植
 - **`lib/components/toolbar/picker.dart`** の `CupertinoButton` は `AppPill` への置換を後続フェーズで検討（PR1 では触らない）
-
----
-
-## 再修正ラウンド (Round 2): デザイン忠実度の引き上げ
-
-### Context
-
-1 回目の実装で PR1 (基盤) + PR2 (ShoppingListPage 中核) を完了したが、ユーザー評価は「雰囲気だけできていて Claude Design のものと違う」だった。
-
-`design_handoff_shopping_list/source/{tokens.jsx, styles.css, frame.jsx, screens-list.jsx}` と現状実装を再照合した結果、数値・配置・色・配色・状態出し分けに細かいドリフトが多数あった。本ラウンドはそれらを潰す。
-
-スコープは初回ヒアリングどおり PR1 + PR2 のみ。PR3 / PR4 / PR5 は別ラウンド。
-
-### 影響範囲サマリ
-
-| カテゴリ | 主な修正内容 |
-|---|---|
-| PR1 基盤 (5 ファイル) | 文字スタイル正本化 (w800→w700)、影方針修正、palt 継承、Pop アイコン強化 |
-| PR2 page.dart 構造 | ProgressBlock 常時表示・Error/AI 時 FAB 抑止・RetentionBanner 位置 |
-| PR2 共通 Widget (3 ファイル) | ListTopBar 縮小 + AvatarStack 削除・GroupChips/FilterChips active 条件 |
-| PR2 進捗 / FAB (2 ファイル) | baseline 整列・letterSpacing・240ms width アニメ・accent 影 |
-| PR2 バナー類 (4 ファイル) | retention 背景・ai_processing 全面書換・list_error 固定文言・サポート Pill |
-| PR2 ItemRow 系 (5 ファイル) | padding 20/11・サムネ 40×40・dashed hint card 絶対配置・末尾の isEmpty focused 行 |
-| PR2 SnackBar (1 ファイル) | 2 段テキスト・accent pill・26×26 配色循環 avatar |
-| 重複削除 | `_CircleCheckbox` (text_shopping_list_item.dart L255-324) を削除し `AppCheckbox` に統一 |
-
----
-
-### PR1 基盤の修正点
-
-#### B1. theme.dart: タイポスケール正本化
-
-frame.jsx の AppBar large は w700、compact は w600。現状 `displayMedium = w800` + `titleTextStyle = textTheme.titleLarge (=w700)` は両方とも仕様より太い。
-
-```dart
-// lib/style/theme.dart
-final textTheme = base.copyWith(
-  displayLarge:  serif(38, FontWeight.w800, height: 1.15, ls: -0.02),
-  displayMedium: serif(28, FontWeight.w700, height: 1.15, ls: -0.02), // w800 → w700
-  headlineSmall: sans(22, FontWeight.w700, height: 1.25, ls: -0.015),
-  // ...既存維持
-);
-
-return ThemeData(
-  // ...
-  appBarTheme: AppBarTheme(
-    backgroundColor: neutral.surface,
-    foregroundColor: neutral.ink,
-    elevation: 0,
-    scrolledUnderElevation: 0,
-    titleTextStyle: sans(17, FontWeight.w600, height: 1.3, ls: -0.01), // titleLarge ではなく明示
-    centerTitle: true,
-    surfaceTintColor: Colors.transparent,
-  ),
-  // ...
-);
-```
-
-#### B2. AppSectionCard: 影削除
-
-handoff README L124「フローティングしているもの以外には影を載せない」。AppSectionCard は面に貼り付いた構造なので `boxShadow` を削除する。
-
-```dart
-// lib/components/frame/app_section_card.dart
-Container(
-  decoration: BoxDecoration(
-    color: neutral.card,
-    borderRadius: BorderRadius.circular(AppTokens.radiusCard),
-    border: Border.all(color: neutral.divider, width: 0.5),
-    // boxShadow: tokens.cardShadow,  ← 削除 (handoff: フローティング以外影なし)
-  ),
-  child: Column(children: _withDividers(children, neutral.divider2)),
-)
-```
-
-#### B3. AppLargeAppBar: subtitle サイズ
-
-```dart
-// lib/components/frame/app_large_app_bar.dart
-if (subtitle != null) ...[
-  const SizedBox(height: 4),
-  Text(
-    subtitle!,
-    style: textTheme.bodyMedium?.copyWith(
-      fontSize: 13, // 14 → 13 (frame.jsx L80)
-      color: neutral.ink2,
-    ),
-  ),
-],
-```
-
-#### B4. AppPill / AppChip / AppBottomTabBar: textTheme 経由でフォント継承
-
-新規 `TextStyle(...)` を直書きしているため `fontFamily` が継承されず `palt` も効かない。textTheme 由来の `copyWith` に統一する。
-
-```dart
-// lib/components/frame/app_pill.dart  (label の Text)
-Text(
-  label,
-  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-        color: fg,
-        fontSize: large ? 15 : 13.5,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.005,
-      ),
-),
-
-// lib/components/frame/app_chip.dart
-Text(
-  label,
-  softWrap: false,
-  overflow: TextOverflow.visible,
-  style: Theme.of(context).chipTheme.labelStyle?.copyWith(
-        fontSize: 12.5,
-        fontWeight: active ? FontWeight.w600 : FontWeight.w500,
-        letterSpacing: -0.005,
-        color: fg,
-      ),
-),
-
-// lib/components/frame/app_bottom_tab_bar.dart
-Text(
-  label,
-  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-        fontSize: 10.5,
-        fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-        letterSpacing: 0.02,
-        color: color,
-        height: 1.0,
-      ),
-),
-```
-
-#### B5. AppCheckbox: チェックアイコン強化 + disabled
-
-frame.jsx の `sw: 2.4` は単一線の太さ指定。Material Icons には太さ可変が無いので `Icons.check_rounded` + `weight: 700` で疑似強化する。また `onChanged: null` 時に `opacity: 0.5` を適用。
-
-```dart
-// lib/components/frame/app_checkbox.dart
-@override
-Widget build(BuildContext context) {
-  final tokens = context.tokens;
-  final neutral = tokens.neutral;
-  final disabled = widget.onChanged == null;
-  return Opacity(
-    opacity: disabled ? 0.5 : 1.0,
-    child: ScaleTransition(
-      scale: _scale,
-      child: GestureDetector(
-        onTap: disabled ? null : () => widget.onChanged!(!widget.checked),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
-          width: widget.size,
-          height: widget.size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: widget.checked ? (widget.color ?? tokens.accent) : Colors.transparent,
-            border: Border.all(
-              color: widget.checked ? (widget.color ?? tokens.accent) : neutral.ink4,
-              width: 1.5,
-            ),
-          ),
-          alignment: Alignment.center,
-          child: widget.checked
-              ? Icon(
-                  Icons.check_rounded,    // ← 太め
-                  size: widget.size * 0.62,
-                  color: Colors.white,
-                  weight: 700,
-                )
-              : null,
-        ),
-      ),
-    ),
-  );
-}
-```
-
----
-
-### PR2 ShoppingListPage の修正点
-
-#### P1. page.dart: 縦構造の再編
-
-仕様 (screens-list.jsx) との差分:
-- Empty 状態でも `done=0 / total=0` で ProgressBlock を表示
-- AI 処理中 / Error 時は FAB を出さない
-- Error 時は FilterChips / ProgressBlock / RetentionBanner を非表示
-- RetentionBanner は list body の「上」(`Expanded` の前) に置く
-
-```dart
-// lib/features/shopping_list/page.dart : _Body.build の中
-final isError = shoppingListItemsAsync.hasError;
-
-return Retry(
-  retry: () => ref.invalidate(...),
-  child: Scaffold(
-    backgroundColor: tokens.neutral.surface,
-    floatingActionButton: (aiProcessingType != null || isError)
-        ? null
-        : ExpandableFab(...),
-    body: Column(
-      children: [
-        ListTopBar(...),
-        if (isError)
-          Expanded(child: ListErrorCard(onRetry: () => Retry.of(context).retry()))
-        else ...[
-          FilterChipsBar(...),
-          ProgressBlock(checkedCount: checkedCount, totalCount: totalCount), // 常時表示
-          if (totalCount > 0 && checkedCount == totalCount) const AllDoneBanner(),
-          if (aiProcessingType != null)
-            AIProcessingBanner(type: aiProcessingType, onCancel: () => ref.read(aIProcessingProvider.notifier).end()),
-          if (!firestoreIsPremium && totalCount > 50) const RetentionBanner(),
-          Expanded(
-            child: shoppingListItemsAsync.when(
-              data: (items) => ShoppingListBodyContent(...),
-              error: (_, __) => const SizedBox.shrink(),
-              loading: () => const Loading(),
-            ),
-          ),
-        ],
-      ],
-    ),
-  ),
-);
-```
-
-加えて `showNotificationSnackBar` に `addedItemMessage` を渡せるよう拡張し、useEffect で直近追加された非空メッセージを推定して渡す (P12 連動)。
-
-#### P2. list_top_bar.dart: 高さ・アイコン・AvatarStack 削除
-
-screens-list.jsx の ListTopBar は h=48、右側は `RoundBtn(filter) + RoundBtn(more-h)` のみで AvatarStack は無い (アバターは NotifySnack 内に存在)。
-
-```dart
-// lib/features/shopping_list/components/list_top_bar.dart
-return SizedBox(
-  height: 48, // 52 → 48
-  child: Padding(
-    padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
-    child: Row(
-      children: [
-        InkWell(
-          onTap: ...,
-          customBorder: const StadiumBorder(),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(mainAxisSize: MainAxisSize.min, children: [
-              Flexible(child: Text(
-                shoppingList?.name ?? '買い物リスト',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: tokens.neutral.ink, letterSpacing: -0.17),
-              )),
-              const SizedBox(width: 4),
-              Icon(Icons.keyboard_arrow_down, size: 16, color: tokens.neutral.ink2), // 18 → 16
-            ]),
-          ),
-        ),
-        const Spacer(),
-        // AvatarStack は screens-list.jsx には存在しない → 削除
-        AppRoundButton(icon: Icons.filter_list, onPressed: () { /* filter sheet */ }, size: 36, iconSize: 18),
-        const SizedBox(width: 4),
-        AppRoundButton(icon: Icons.more_horiz, onPressed: () { /* more sheet (リスト設定など) */ }, size: 36, iconSize: 18),
-      ],
-    ),
-  ),
-);
-```
-
-#### P3. group_chips_bar.dart: padding 修正 + アクティブ時 check
-
-```dart
-// lib/features/shopping_list/components/group_chips_bar.dart
-Padding(
-  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8), // top 8 → 0 (screens-list.jsx L42)
-  child: SingleChildScrollView(
-    scrollDirection: Axis.horizontal,
-    child: Row(children: [
-      for (final (i, group) in groups.indexed) ...[
-        if (i > 0) const SizedBox(width: 6),
-        AppChip(
-          label: group.name ?? 'グループ',
-          active: group.id == currentGroupID,
-          soft: true,
-          // アクティブ時は check、非アクティブはメンバー数で people/person
-          icon: group.id == currentGroupID
-              ? Icons.check
-              : (groupMemberCount(group) > 1 ? Icons.people_outline : Icons.person_outline),
-          onTap: group.id == currentGroupID ? null : () => onGroupChanged(group.id),
-        ),
-      ],
-      if (onAddGroup != null) ...[
-        const SizedBox(width: 6),
-        AppChip(label: '追加', icon: Icons.add, onTap: onAddGroup),
-      ],
-    ]),
-  ),
-);
-```
-
-#### P4. filter_chips_bar.dart: active 時のみ icon + soft
-
-```dart
-// lib/features/shopping_list/components/filter_chips_bar.dart
-AppChip(
-  label: showChecked.value ? 'チェック済み 表示' : 'チェック済み 非表示', // 半角スペース入り
-  icon: !showChecked.value ? Icons.check : null,   // active 時のみ
-  soft: !showChecked.value,                         // active 時のみ
-  active: !showChecked.value,
-  onTap: () { ... },
-),
-const SizedBox(width: 6),
-AppChip(
-  label: sortByCategory.value ? 'カテゴリ順' : 'リスト順',
-  icon: sortByCategory.value ? Icons.sell_outlined : null,
-  soft: sortByCategory.value,
-  active: sortByCategory.value,
-  onTap: hasCategories ? () { ... } : null,
-),
-```
-
-#### P5. progress_block.dart: baseline + letterSpacing + 240ms アニメ
-
-```dart
-// lib/features/shopping_list/components/progress_block.dart
-Row(
-  crossAxisAlignment: CrossAxisAlignment.baseline,
-  textBaseline: TextBaseline.alphabetic,
-  children: [
-    Text.rich(TextSpan(children: [
-      TextSpan(
-        text: '$checkedCount',
-        style: monoTextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: neutral.ink)
-            .copyWith(letterSpacing: -0.48), // -0.02em × 24px
-      ),
-      TextSpan(
-        text: '/$totalCount',
-        style: monoTextStyle(fontSize: 24, fontWeight: FontWeight.w400, color: neutral.ink3)
-            .copyWith(letterSpacing: -0.48),
-      ),
-    ])),
-    const SizedBox(width: 8),
-    Text(
-      allDone ? '完了!' : 'チェック済み',
-      style: TextStyle(fontSize: 12, color: neutral.ink2, fontWeight: FontWeight.w400), // w500 → w400
-    ),
-    const Spacer(),
-    if (allDone)
-      Text('✓ おつかれさま', style: TextStyle(fontSize: 12, color: neutral.ok, fontWeight: FontWeight.w600)),
-  ],
-),
-const SizedBox(height: 8),
-ClipRRect(
-  borderRadius: BorderRadius.circular(4),
-  child: TweenAnimationBuilder<double>(
-    duration: const Duration(milliseconds: 240),
-    curve: Curves.easeOut,
-    tween: Tween(begin: 0, end: progress),
-    builder: (context, value, _) => LinearProgressIndicator(
-      value: value,
-      minHeight: 4,
-      backgroundColor: neutral.divider2,
-      valueColor: AlwaysStoppedAnimation<Color>(allDone ? neutral.ok : tokens.accent),
-    ),
-  ),
-),
-```
-
-#### P6. expandable_fab.dart: accent 影 / 副ボタン spec
-
-```dart
-// 主ボタン (open ボタン)
-Container(
-  width: 56, height: 56,
-  decoration: BoxDecoration(
-    shape: BoxShape.circle,
-    color: tokens.accent,
-    boxShadow: [
-      BoxShadow(color: tokens.accent.withValues(alpha: 0.35), offset: const Offset(0, 6), blurRadius: 14),
-    ],
-  ),
-  child: Material(
-    color: Colors.transparent, shape: const CircleBorder(),
-    child: InkWell(customBorder: const CircleBorder(), onTap: ..., child: const Center(child: Icon(Icons.add, size: 26, color: Colors.white))),
-  ),
-);
-
-// 副ボタン (_ActionRow 内)
-Container(
-  width: 44, height: 44,
-  decoration: BoxDecoration(
-    shape: BoxShape.circle,
-    color: tokens.neutral.surface, // surface2 → surface
-    boxShadow: const [
-      BoxShadow(color: Color(0x1F1B1813), offset: Offset(0, 6), blurRadius: 14),
-    ],
-  ),
-  child: Material(
-    color: Colors.transparent,
-    shape: CircleBorder(side: BorderSide(color: tokens.neutral.divider)), // 1px divider
-    child: InkWell(
-      customBorder: const CircleBorder(),
-      onTap: action.onTap,
-      child: Center(child: Icon(action.icon, size: 18, color: tokens.neutral.ink)), // 20 → 18
-    ),
-  ),
-);
-```
-
-#### P7. banners: 4 種類の正本化
-
-```dart
-// banners/all_done_banner.dart
-Text(
-  'お会計のあと、リストをアーカイブしますか?', // 仕様文言
-  style: TextStyle(fontSize: 11, color: tokens.neutral.ok.withValues(alpha: 0.85), fontWeight: FontWeight.w400),
-),
-
-// banners/retention_banner.dart : surface2 + 1px divider + 塗り crown
-return Container(
-  margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-  decoration: BoxDecoration(
-    color: tokens.neutral.surface2, // accentSoft → surface2 (screens-list.jsx L432-440)
-    border: Border.all(color: tokens.neutral.divider, width: 1),
-    borderRadius: BorderRadius.circular(12),
-  ),
-  child: Row(children: [
-    Icon(Icons.workspace_premium, size: 14, color: tokens.accent), // 塗り版 + 16 → 14
-    const SizedBox(width: 10),
-    Expanded(child: Text(
-      '無料プランは作成から30日でリストが整理されます',
-      style: TextStyle(fontSize: 11.5, color: tokens.neutral.ink2), // accentInk → ink2
-    )),
-    InkWell(onTap: ..., child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-      child: Text('詳しく', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: tokens.accent)),
-    )),
-  ]),
-);
-
-// banners/ai_processing_banner.dart : 全面書き換え (44×44 stripe spinner + サブテキスト + ghost cancel)
-class AIProcessingBanner extends HookWidget {
-  final AIProcessingType type;
-  final VoidCallback? onCancel;
-  const AIProcessingBanner({super.key, required this.type, this.onCancel});
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.tokens;
-    final (title, sub) = switch (type) {
-      AIProcessingType.image => ('写真からアイテムを生成中', 'レシート 1枚 ・ 候補を抽出しています…'),
-      AIProcessingType.url   => ('URL からアイテムを生成中', 'ページを解析しています…'),
-    };
-    final controller = useAnimationController(duration: const Duration(seconds: 1))..repeat();
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(color: tokens.accentSoft, borderRadius: BorderRadius.circular(14)),
-      child: Row(children: [
-        SizedBox(width: 44, height: 44, child: AnimatedBuilder(
-          animation: controller,
-          builder: (_, __) => Transform.rotate(
-            angle: controller.value * 6.2831853,
-            child: CustomPaint(painter: StripeBorderPainter(accent: tokens.accent, dark: tokens.isDark)),
-          ),
-        )),
-        const SizedBox(width: 12),
-        Expanded(child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(mainAxisSize: MainAxisSize.min, children: [
-            Icon(Icons.auto_awesome, size: 14, color: tokens.isDark ? tokens.accentInk : tokens.accent),
-            const SizedBox(width: 6),
-            Text(title, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: tokens.isDark ? tokens.accentInk : tokens.accent)),
-          ]),
-          const SizedBox(height: 2),
-          Text(sub, style: TextStyle(fontSize: 11, color: tokens.neutral.ink2)),
-        ])),
-        if (onCancel != null) TextButton(
-          onPressed: onCancel,
-          style: TextButton.styleFrom(
-            foregroundColor: tokens.neutral.ink3,
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            minimumSize: const Size(0, 0),
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
-          child: const Text('キャンセル', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-        ),
-      ]),
-    );
-  }
-}
-
-// banners/list_error_card.dart : 固定文言 + サポート Pill
-return Center(child: Container(
-  margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
-  decoration: BoxDecoration(color: tokens.neutral.dangerSoft, borderRadius: BorderRadius.circular(18)),
-  child: Column(mainAxisSize: MainAxisSize.min, children: [
-    const Text('📡', style: TextStyle(fontSize: 32)),
-    const SizedBox(height: 8),
-    Text('リストを読み込めませんでした', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: tokens.neutral.danger)),
-    const SizedBox(height: 4),
-    Text(
-      '通信状態を確認してください。\nもう一度お試しいただくか、しばらくしてから開き直してください。',
-      textAlign: TextAlign.center,
-      style: TextStyle(fontSize: 12, color: tokens.neutral.ink2, height: 1.6),
-    ),
-    const SizedBox(height: 14),
-    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      AppPill(label: 'サポートに連絡', variant: AppPillVariant.ghost, onPressed: () { /* mailto / support */ }),
-      const SizedBox(width: 8),
-      AppPill(label: '再試行', variant: AppPillVariant.accent, onPressed: onRetry),
-    ]),
-  ]),
-));
-```
-
-`StripeBorderPainter` は新規追加。`-45°` ストライプ + `2px accent border (top transparent)` を `Canvas` で描画。
-
-#### P8. text_shopping_list_item.dart: padding / サムネ / more / 重複削除
-
-```dart
-// lib/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart
-// 1. L255-324 の _CircleCheckbox を全削除 (AppCheckbox と完全に同じロジック)
-
-// 2. L98-121 の Checkbox 部分を AppCheckbox に統一
-child: Padding(
-  padding: const EdgeInsets.only(top: 1),       // Checkbox を 1px 下げる
-  child: AppCheckbox(
-    checked: isChecked,
-    size: 22,
-    color: textShoppingListItem.color != null ? colorFromHex(textShoppingListItem.color!) : tokens.accent,
-    onChanged: (_) {
-      analytics.logEvent(...);
-      ref.read(toggleShoppingListItemCheckProvider(groupID: groupID)).call(...);
-    },
-  ),
-),
-
-// 3. background & padding (L72-94)
-final focused = isEditing.value;
-final backgroundColor = focused
-    ? tokens.accentSoft.withValues(alpha: 0x60 / 0xFF) // 0.4 → 0.376 (= 96/255)
-    : Colors.transparent;                              // itemColor/divider2 塗りは削除
-
-return Material(
-  color: backgroundColor,
-  child: InkWell(
-    onTap: () => focusNode.requestFocus(),
-    child: Container(
-      decoration: BoxDecoration(
-        border: Border(left: BorderSide(color: focused ? tokens.accent : Colors.transparent, width: 2)),
-      ),
-      constraints: const BoxConstraints(minHeight: 52),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11), // 16/4 → 20/11
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start, // center → start
-        children: [
-          /* ...AppCheckbox + SizedBox(12)... */,
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            TextField(
-              ...
-              cursorColor: tokens.accent,
-              cursorWidth: 1.5,                    // 追加 (.fake-caret の 1.5px)
-              cursorRadius: const Radius.circular(0.75),
-            ),
-            if (hasDescription)
-              Padding(
-                padding: const EdgeInsets.only(top: 2), // marginTop 2
-                child: Opacity(
-                  opacity: isChecked ? 0.5 : 1.0,        // checked 時 opacity
-                  child: Text(textShoppingListItem.description!,
-                    style: TextStyle(fontSize: 12, color: tokens.neutral.ink3, height: 1.4),
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
-                ),
-              ),
-          ])),
-          // 4. サムネ 40×40 + radius 10 + カテゴリ色 0x30 背景 + divider border + stripe placeholder
-          if (textShoppingListItem.imageURL != null)
-            Padding(padding: const EdgeInsets.only(left: 4), child: Container(
-              width: 40, height: 40,
-              decoration: BoxDecoration(
-                color: textShoppingListItem.color != null
-                    ? colorFromHex(textShoppingListItem.color!).withValues(alpha: 0x30 / 0xFF)
-                    : tokens.neutral.surface2,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: tokens.neutral.divider, width: 1),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: Stack(fit: StackFit.expand, children: [
-                CustomPaint(painter: StripePlaceholderPainter(color: tokens.neutral.ink)),
-                CachedNetworkImage(imageUrl: textShoppingListItem.imageURL!, fit: BoxFit.cover, ...),
-              ]),
-            )),
-          // 5. more icon を InkResponse + size 16 + padding 4 に
-          Padding(padding: const EdgeInsets.only(top: 2), child: InkResponse(
-            onTap: () { /* 詳細シート */ },
-            radius: 16,
-            customBorder: const CircleBorder(),
-            child: Padding(
-              padding: const EdgeInsets.all(4),
-              child: Icon(Icons.more_horiz, size: 16, color: isChecked ? tokens.neutral.ink4 : tokens.neutral.ink3),
-            ),
-          )),
-        ],
-      ),
-    ),
-  ),
-);
-```
-
-`StripePlaceholderPainter` 新規: `repeating-linear-gradient(-45deg, rgba(27,24,19,0.04) 0 8px, rgba(27,24,19,0.07) 8px 16px)` を `Canvas.drawLine` で再現。
-
-#### P9. empty_text_shopping_list_item.dart: Stack 構造 + 絶対配置 hint card
-
-screens-list.jsx L324-347 の `ShoppingListEmpty` 構造:
-- 最上段 `ItemRow isEmpty focused` (placeholder「アイテムを入力…」+ `.fake-caret`)
-- ghost ×5 (先頭だけ hint='例: 牛乳 1L'、残りは「新しいアイテム…」)
-- 画面下から `bottom: 170` の絶対配置 dashed hint card (radius 14 / surface2 bg / inline mono chip)
-
-```dart
-// lib/features/shopping_list/components/shopping_list_items/empty_text_shopping_list_item.dart
-return Stack(children: [
-  ListView(
-    padding: const EdgeInsets.only(top: 6, bottom: 220),
-    children: [
-      _StarterRow(onTap: () async { /* addShoppingListItem(message: '') */ }),
-      const GhostItemRow(hint: '例: 牛乳 1L'),
-      for (var i = 0; i < 4; i++) const GhostItemRow(), // default hint「新しいアイテム…」
-    ],
-  ),
-  Positioned(left: 20, right: 20, bottom: 170, child: _UsageHintCard()),
-]);
-
-// _StarterRow を ItemRow isEmpty focused 相当に書き換え
-class _StarterRow extends StatelessWidget {
-  final VoidCallback onTap;
-  const _StarterRow({required this.onTap});
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.tokens;
-    return InkWell(onTap: onTap, child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      constraints: const BoxConstraints(minHeight: 52),
-      decoration: BoxDecoration(
-        color: tokens.accentSoft.withValues(alpha: 0x40 / 0xFF),
-        border: Border(left: BorderSide(color: tokens.accent, width: 2)),
-      ),
-      child: Row(children: [
-        const AppCheckbox(checked: false, onChanged: null),
-        const SizedBox(width: 12),
-        Expanded(child: Text('アイテムを入力…', style: TextStyle(fontSize: 16, color: tokens.neutral.ink3))),
-        _BlinkingCaret(color: tokens.accent),
-      ]),
-    ));
-  }
-}
-
-// _BlinkingCaret 新規 (styles.css#.fake-caret 相当: 1.5×16, 1.06s steps(2) blink)
-// _UsageHintCard 新規 (dashed 14 + surface2 + 「そのまま入力できます」13/600 + 段落 inline mono chip)
-// _MonoChip 新規 (bg surface, padding 6/1, radius 4, 1px divider border, mono フォント)
-
-// _UsageHintCard の本文 (Text.rich):
-// 「空行をタップして名前を打ち、[return] で次の行へ。空行で [delete] で行を消せます。」
-// [] 内は _MonoChip(label: 'return') / _MonoChip(label: 'delete') を WidgetSpan で挿入
-```
-
-`_DashedRectPainter._radius` を `12.0` → `14.0` に修正。
-
-#### P10. shopping_list_items.dart: 末尾の ItemRow isEmpty focused
-
-screens-list.jsx の Flat / ByCategory は **末尾に常に `ItemRow isEmpty focused`** が描画されており、タップで空 item が追加される UX。現状は `EmptyTextShoppingListItems` (リストが完全に空のとき) のみで、items がある状態の末尾には何も無い。
-
-```dart
-// lib/features/shopping_list/components/shopping_list_items/shopping_list_items.dart
-// _FlatShoppingListItems を SliverReorderableList + 末尾 _TailEmptyRow に
-return CustomScrollView(slivers: [
-  SliverReorderableList(
-    onReorder: ...,
-    itemCount: shoppingListItems.length,
-    itemBuilder: (context, index) => TextShoppingListItemWidget(...),
-  ),
-  SliverToBoxAdapter(child: _TailEmptyRow(
-    groupID: groupID,
-    shoppingListID: shoppingListItems.isNotEmpty ? shoppingListItems.first.shoppingListID : shoppingListID,
-    nextOrder: shoppingListItems.nextOrder,
-  )),
-  const SliverToBoxAdapter(child: SizedBox(height: 100)),
-]);
-
-// _GroupedListView の children の末尾にも _TailEmptyRow と SizedBox(100) を追加
-```
-
-`_TailEmptyRow` は `_StarterRow` と同じ見た目で、タップで `addShoppingListItemProvider.call(message: '')` を呼ぶ。共通化のため `lib/features/shopping_list/components/shopping_list_items/tail_empty_row.dart` に新規ファイル。
-
-#### P11. category_section_header.dart: letterSpacing 単位修正
-
-```dart
-// lib/features/shopping_list/components/shopping_list_items/category_section_header.dart
-Text(name, style: TextStyle(
-  fontSize: 11, fontWeight: FontWeight.w700, color: neutral.ink2,
-  letterSpacing: 0.66, // em → px 換算: 0.06em × 11px = 0.66 (現状 0.06 を絶対値として誤用)
-  height: 1.2,
-)),
-```
-
-#### P12. ghost_item_row.dart: サイズ・デフォルト hint
-
-```dart
-// lib/features/shopping_list/components/shopping_list_items/ghost_item_row.dart
-class GhostItemRow extends StatelessWidget {
-  final String hint;
-  const GhostItemRow({super.key, this.hint = '新しいアイテム…'});
-
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.tokens;
-    return Opacity(opacity: 0.5, child: Container(
-      constraints: const BoxConstraints(minHeight: 52),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: Row(children: [
-        const AppCheckbox(checked: false, onChanged: null),
-        const SizedBox(width: 12),
-        Expanded(child: Text(hint, style: TextStyle(
-          fontSize: 16, // 14 → 16
-          fontStyle: FontStyle.italic,
-          color: tokens.neutral.ink3,
-        ))),
-      ]),
-    ));
-  }
-}
-```
-
-#### P13. notification_member_bar.dart: 2 段テキスト + 重なり avatar + accent pill
-
-```dart
-// lib/features/shopping_list/components/notification_member_bar.dart
-return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-  Icon(Icons.notifications_outlined, size: 16, color: neutral.surface), // 18 → 16
-  const SizedBox(width: 10),
-  Expanded(child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-    Text(
-      addedItemMessage != null ? '『$addedItemMessage』を追加' : 'リストが更新されました',
-      style: TextStyle(color: neutral.surface, fontSize: 13, fontWeight: FontWeight.w500, height: 1.3),
-      maxLines: 1, overflow: TextOverflow.ellipsis,
-    ),
-    const SizedBox(height: 2),
-    Text('家族に通知しますか?',
-      style: TextStyle(color: neutral.surface.withValues(alpha: 0.7), fontSize: 11, height: 1.2),
-    ),
-  ])),
-  const SizedBox(width: 10),
-  _StackedMemberAvatars(otherMembers: otherMembers, sendingUserIDs: sendingUserIDs, sentUserIDs: sentUserIDs),
-  const SizedBox(width: 10),
-  _SendAllButton(/* accent pill 化 */),
-]);
-
-// _StackedMemberAvatars: 26×26 円 + 1.5px ink border + 配色循環 ['#C2410C','#1F6B4E','#0F4C81']
-//                       + Stack で -6 重なり + 4 人目以降 "+N" バッジ
-
-// _SendAllButton: accent bg + radius 999 + padding 12/6 + 「全員に通知」 12/w700/white
-//                 disabled (all sent / sending 中) は accent.withAlpha(0.5)
-```
-
-呼び出し側 (page.dart):
-
-```dart
-ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  content: NotificationMemberBar(..., addedItemMessage: lastAddedMessage),
-  duration: const Duration(seconds: 5),
-  behavior: SnackBarBehavior.floating,
-  backgroundColor: tokens.neutral.ink,
-  margin: const EdgeInsets.fromLTRB(16, 0, 16, 156), // FAB(56) + bottom(90) + 余白(10)
-  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-  dismissDirection: DismissDirection.startToEnd,
-  elevation: 6,
-));
-```
-
----
-
-### 検証
-
-#### 静的解析・ビルド
-- [ ] `flutter analyze` エラーなし (`deprecated_member_use` の `RawKeyboardListener` のみ `// ignore` で許容)
-- [ ] `dart run build_runner build --delete-conflicting-outputs` 成功
-- [ ] `flutter test` 全件パス
-- [ ] `flutter build ios` 成功
-- [ ] `flutter build apk` 成功
-
-#### Widget Test (新規 or 既存追加)
-- [ ] `progress_block_test.dart`: baseline 整列 + letterSpacing -0.48 + ラベル w400
-- [ ] `retention_banner_test.dart`: surface2 背景 + 1px divider border + crown stroke accent
-- [ ] `all_done_banner_test.dart`: sub 文言「お会計のあと、リストをアーカイブしますか?」
-- [ ] `expandable_fab_test.dart`: 4 メニュー + AI バッジ + 主ボタン accent 影
-- [ ] `text_shopping_list_item_test.dart`: padding 20/11 + minHeight 52 + crossAxisAlignment.start + サムネ 40/radius 10
-- [ ] `empty_text_shopping_list_item_test.dart`: Stack 構造 + 絶対配置 dashed カード + _BlinkingCaret
-- [ ] `category_section_header_test.dart`: letterSpacing 0.66 px
-- [ ] `notification_member_bar_test.dart`: 2 段テキスト + accent pill + 26x26 avatar + 配色循環
-
-#### Maestro E2E (既存維持を確認)
-- [ ] `maestro/flows/add_and_check_item.yaml`
-- [ ] `maestro/flows/swipe_delete_item.yaml`
-- [ ] `maestro/flows/category_matching_test.yaml`
-- [ ] `maestro/flows/empty_shopping_list_create.yaml`
-
-#### 目視確認 (iPhone 16 Plus simulator)
-- [ ] ライト / ダーク両方で ShoppingListPage を表示
-- [ ] 朱 / 抹茶 / 藍 / 墨 / 朽葉 5 色アクセント切替が反映される
-- [ ] 空リスト: dashed Tips カードが画面下から 170px 位置に絶対配置
-- [ ] 進捗バーが 240ms width アニメで補間
-- [ ] AI 処理中: FAB 非表示 + ai_processing バナー (44×44 spinner + ghost cancel) 表示
-- [ ] エラー: FAB 非表示 + ListErrorCard + サポート / 再試行 2 Pill
-- [ ] AllDone: バー ok 色 + 「✓ おつかれさま」 + okSoft バナー
-- [ ] FreeNotice: surface2 + divider 枠 + 塗り crown
-- [ ] Notify SnackBar: 2 段「『XXX』を追加 / 家族に通知しますか?」 + 26x26 配色循環 avatar + accent pill「全員に通知」
-- [ ] ItemRow: padding 20/11 + サムネ 40×40 / radius 10 / カテゴリ色背景
-- [ ] design_handoff_shopping_list/買い物リスト UI再設計.html と並べて見比べ、視覚一致を確認
-
----
-
-### 実装順序の推奨
-
-各ステップで `flutter analyze` を通し、簡単な目視確認を入れる:
-
-1. **PR1 修正 (B1-B5)**: `theme.dart` / `AppSectionCard` / `AppLargeAppBar` / `AppPill`+`AppChip`+`AppBottomTabBar` / `AppCheckbox`
-2. **PR2 ItemRow 系 (P8, P11, P12, P10)**: `text_shopping_list_item` (重複 `_CircleCheckbox` 削除込み) / `category_section_header` / `ghost_item_row` / `shopping_list_items` (末尾 `_TailEmptyRow`)
-3. **PR2 Empty 系 (P9)**: `empty_text_shopping_list_item` + 新規 `_BlinkingCaret` / `_MonoChip` / `_UsageHintCard`
-4. **PR2 構造系 (P1, P2, P3, P4, P5, P6)**: `page.dart` / `list_top_bar` / `group_chips_bar` / `filter_chips_bar` / `progress_block` / `expandable_fab`
-5. **PR2 バナー (P7)**: `all_done` / `retention` / `ai_processing` / `list_error`
-6. **PR2 SnackBar (P13)**: `notification_member_bar` + `page.dart` の呼び出し改修
-7. **最終確認**: `flutter analyze` / `flutter test` / `flutter build ios` / `flutter build apk` / Maestro 流す
 
 ---
 

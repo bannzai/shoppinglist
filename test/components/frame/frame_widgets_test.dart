@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shoppinglist/components/frame/app_bottom_tab_bar.dart';
+import 'package:shoppinglist/components/frame/app_cell.dart';
 import 'package:shoppinglist/components/frame/app_checkbox.dart';
 import 'package:shoppinglist/components/frame/app_chip.dart';
+import 'package:shoppinglist/components/frame/app_dialog_shell.dart';
+import 'package:shoppinglist/components/frame/app_divider.dart';
+import 'package:shoppinglist/components/frame/app_frame_app_bar.dart';
 import 'package:shoppinglist/components/frame/app_large_app_bar.dart';
 import 'package:shoppinglist/components/frame/app_pill.dart';
 import 'package:shoppinglist/components/frame/app_round_button.dart';
@@ -26,16 +30,12 @@ void main() {
       children: [
         AppPill(label: 'neutral', onPressed: () {}),
         AppPill(
-            label: 'accent',
-            onPressed: () {},
-            variant: AppPillVariant.accent),
+            label: 'accent', onPressed: () {}, variant: AppPillVariant.accent),
         AppPill(label: 'soft', onPressed: () {}, variant: AppPillVariant.soft),
         AppPill(
             label: 'ghost', onPressed: () {}, variant: AppPillVariant.ghost),
         AppPill(
-            label: 'danger',
-            onPressed: () {},
-            variant: AppPillVariant.danger),
+            label: 'danger', onPressed: () {}, variant: AppPillVariant.danger),
         const AppPill(label: 'disabled', onPressed: null),
       ],
     )));
@@ -65,12 +65,12 @@ void main() {
     await tester.pumpWidget(_wrap(
       const AppCheckbox(checked: false, onChanged: null),
     ));
-    expect(find.byIcon(Icons.check_rounded), findsNothing);
+    expect(find.byIcon(Icons.check), findsNothing);
 
     await tester.pumpWidget(_wrap(
       const AppCheckbox(checked: true, onChanged: null),
     ));
-    expect(find.byIcon(Icons.check_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.check), findsOneWidget);
   });
 
   testWidgets('AppCheckbox: タップで onChanged(!checked) が発火', (tester) async {
@@ -149,5 +149,84 @@ void main() {
     expect(find.text('プロフィール'), findsOneWidget);
     expect(find.text('表示名'), findsOneWidget);
     expect(find.text('メール'), findsOneWidget);
+  });
+
+  testWidgets('AppFrameAppBar: preferredSize 48 + title 描画', (tester) async {
+    const bar = AppFrameAppBar(title: 'カテゴリ');
+    expect(bar.preferredSize.height, 48);
+    await tester.pumpWidget(MaterialApp(
+      theme: buildAppTheme(
+        brightness: Brightness.light,
+        accent: AccentPreset.shu,
+      ),
+      home: const Scaffold(appBar: AppFrameAppBar(title: 'カテゴリ')),
+    ));
+    expect(find.text('カテゴリ'), findsOneWidget);
+  });
+
+  testWidgets('AppCell: onTap 指定で chev-r 表示・タップ発火', (tester) async {
+    var tapped = 0;
+    await tester.pumpWidget(_wrap(AppCell(
+      icon: Icons.notifications_active_outlined,
+      title: '通知設定',
+      subtitle: 'プッシュ通知の細かい設定',
+      onTap: () => tapped++,
+    )));
+    expect(find.text('通知設定'), findsOneWidget);
+    expect(find.text('プッシュ通知の細かい設定'), findsOneWidget);
+    expect(find.byIcon(Icons.chevron_right), findsOneWidget);
+    await tester.tap(find.byType(AppCell));
+    expect(tapped, 1);
+  });
+
+  testWidgets('AppCell: onSwitch + switchValue 指定で Switch 表示', (tester) async {
+    bool? lastValue;
+    await tester.pumpWidget(_wrap(AppCell(
+      icon: Icons.notifications_active_outlined,
+      title: '自動通知',
+      switchValue: false,
+      onSwitch: (v) => lastValue = v,
+    )));
+    expect(find.byType(Switch), findsOneWidget);
+    expect(find.byIcon(Icons.chevron_right), findsNothing);
+    await tester.tap(find.byType(Switch));
+    expect(lastValue, true);
+  });
+
+  testWidgets('AppCell: danger=true でアイコンが danger 色', (tester) async {
+    await tester.pumpWidget(_wrap(const AppCell(
+      icon: Icons.logout,
+      title: 'サインアウト',
+      danger: true,
+    )));
+    expect(find.text('サインアウト'), findsOneWidget);
+  });
+
+  testWidgets('AppDivider: 既定 inset 60 で 0.5px の線が描かれる', (tester) async {
+    await tester.pumpWidget(_wrap(const AppDivider()));
+    final padding = tester.widget<Padding>(
+      find
+          .ancestor(
+            of: find.byType(Container),
+            matching: find.byType(Padding),
+          )
+          .first,
+    );
+    expect(padding.padding, const EdgeInsets.only(left: 60));
+  });
+
+  testWidgets('AppDialogShell: child が card 内に表示される', (tester) async {
+    await tester.pumpWidget(MaterialApp(
+      theme: buildAppTheme(
+        brightness: Brightness.light,
+        accent: AccentPreset.shu,
+      ),
+      home: const Scaffold(
+        body: AppDialogShell(
+          child: Text('確認ダイアログ'),
+        ),
+      ),
+    ));
+    expect(find.text('確認ダイアログ'), findsOneWidget);
   });
 }

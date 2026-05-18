@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shoppinglist/entity/ai_usage.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
+import 'package:shoppinglist/features/shopping_list/components/ai_review_sheet.dart';
 import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/ai_usage.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
@@ -134,39 +135,19 @@ class ExpandableFab extends HookConsumerWidget {
           animation: controller,
           builder: (_, __) => Transform.rotate(
             angle: controller.value * 0.785,
-            child: Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: tokens.accent,
-                // 仕様: accent 影 (alpha 0.35) と内側ハイライト (Flutter で再現可な範囲)。
-                boxShadow: [
-                  BoxShadow(
-                    color: tokens.accent.withValues(alpha: 0.35),
-                    offset: const Offset(0, 6),
-                    blurRadius: 14,
-                  ),
-                ],
-              ),
-              child: Material(
-                color: Colors.transparent,
-                shape: const CircleBorder(),
-                child: InkWell(
-                  customBorder: const CircleBorder(),
-                  onTap: () {
-                    analytics.logEvent(name: 'tap_toggle_fab', parameters: {
-                      'groupID': groupID,
-                      'shoppingListID': shoppingListID,
-                      'open': (!open.value).toString(),
-                    });
-                    open.value = !open.value;
-                  },
-                  child: const Center(
-                    child: Icon(Icons.add, size: 26, color: Colors.white),
-                  ),
-                ),
-              ),
+            child: FloatingActionButton(
+              backgroundColor: tokens.accent,
+              foregroundColor: Colors.white,
+              shape: const CircleBorder(),
+              onPressed: () {
+                analytics.logEvent(name: 'tap_toggle_fab', parameters: {
+                  'groupID': groupID,
+                  'shoppingListID': shoppingListID,
+                  'open': (!open.value).toString(),
+                });
+                open.value = !open.value;
+              },
+              child: const Icon(Icons.add, size: 26),
             ),
           ),
         ),
@@ -214,12 +195,11 @@ class ExpandableFab extends HookConsumerWidget {
                 title: const Text('カメラ'),
                 leading: const Icon(Icons.photo_camera),
                 onTap: () async {
-                  analytics.logEvent(
-                      name: 'tap_image_picker_camera',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': shoppingListID,
-                      });
+                  analytics
+                      .logEvent(name: 'tap_image_picker_camera', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                  });
                   final XFile? photo =
                       await imagePicker.pickImage(source: ImageSource.camera);
                   if (photo != null) {
@@ -236,12 +216,11 @@ class ExpandableFab extends HookConsumerWidget {
                 title: const Text('フォトライブラリ'),
                 leading: const Icon(Icons.photo_album),
                 onTap: () async {
-                  analytics.logEvent(
-                      name: 'tap_image_picker_gallery',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': shoppingListID,
-                      });
+                  analytics
+                      .logEvent(name: 'tap_image_picker_gallery', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                  });
                   final XFile? photo =
                       await imagePicker.pickImage(source: ImageSource.gallery);
                   if (photo != null) {
@@ -276,33 +255,43 @@ class ExpandableFab extends HookConsumerWidget {
   Future<void> _addShoppingListItemsFromImage(
       BuildContext context, WidgetRef ref, XFile photo) async {
     ref.read(aIProcessingProvider.notifier).start(AIProcessingType.image);
+    List<String> rawItems;
     try {
       final file = File(photo.path);
       final base64Image = await base64CompressImage(file);
-      final rawItems = await functions.generateShoppingListItemsFromImage(
+      rawItems = await functions.generateShoppingListItemsFromImage(
         mimeType: mimeType(file),
         base64Image: base64Image,
       );
-      final distinct = rawItems.toSet().toList();
-      for (var (i, e) in distinct.indexed) {
-        if (shoppingListItems.any((item) => item.message == e)) {
-          continue;
-        }
-        try {
-          await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
-                shoppingListID: shoppingListID,
-                userID: ref.read(currentUserIDProvider)!,
-                message: e,
-                order: shoppingListItems.nextOrder + i,
-                description: null,
-                color: null,
-              );
-        } catch (e) {
-          debugPrint('Error: $e');
-        }
-      }
     } finally {
       ref.read(aIProcessingProvider.notifier).end();
+    }
+    if (!context.mounted) return;
+    // 既存アイテムに存在しない候補だけ review sheet にかける。
+    final candidates = rawItems
+        .where((e) => !shoppingListItems.any((item) => item.message == e))
+        .toList();
+    if (candidates.isEmpty) return;
+    final reviewed = await showAIReviewSheet(
+      context: context,
+      rawNames: candidates,
+      source: 'image',
+    );
+    if (reviewed == null) return;
+    final selected = reviewed.where((c) => c.selected).toList();
+    for (var (i, c) in selected.indexed) {
+      try {
+        await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+              shoppingListID: shoppingListID,
+              userID: ref.read(currentUserIDProvider)!,
+              message: c.name,
+              order: shoppingListItems.nextOrder + i,
+              description: null,
+              color: null,
+            );
+      } catch (e) {
+        debugPrint('Error: $e');
+      }
     }
   }
 
@@ -419,37 +408,19 @@ class _ActionRow extends StatelessWidget {
           children: [
             _ActionLabel(label: action.label, ai: action.ai),
             const SizedBox(width: 10),
-            Container(
-              width: action.primary ? 56 : 44,
-              height: action.primary ? 56 : 44,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                // 仕様: 副ボタンは surface（surface2 ではない）+ 1px divider border + 影。
-                color: action.primary ? tokens.accent : tokens.neutral.surface,
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x1F1B1813),
-                    offset: Offset(0, 6),
-                    blurRadius: 14,
-                  ),
-                ],
-              ),
-              child: Material(
-                color: Colors.transparent,
-                shape: action.primary
-                    ? const CircleBorder()
-                    : CircleBorder(
-                        side: BorderSide(color: tokens.neutral.divider)),
-                child: InkWell(
-                  customBorder: const CircleBorder(),
-                  onTap: action.onTap,
-                  child: Center(
-                    child: Icon(
-                      action.icon,
-                      // 仕様: 副ボタンのアイコンは 18px。
-                      size: action.primary ? 24 : 18,
-                      color: action.primary ? Colors.white : tokens.neutral.ink,
-                    ),
+            Material(
+              color: action.primary ? tokens.accent : tokens.neutral.surface2,
+              shape: const CircleBorder(),
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: action.onTap,
+                child: SizedBox(
+                  width: action.primary ? 56 : 44,
+                  height: action.primary ? 56 : 44,
+                  child: Icon(
+                    action.icon,
+                    size: action.primary ? 24 : 20,
+                    color: action.primary ? Colors.white : tokens.neutral.ink,
                   ),
                 ),
               ),
@@ -480,28 +451,26 @@ class _ActionLabel extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: tokens.neutral.surface,
-            ),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: tokens.neutral.surface,
+                ),
           ),
           if (ai) ...[
             const SizedBox(width: 6),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
               decoration: BoxDecoration(
                 color: tokens.accent,
                 borderRadius: BorderRadius.circular(999),
               ),
-              child: const Text(
+              child: Text(
                 'AI',
-                style: TextStyle(
-                  fontSize: 9,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
               ),
             ),
           ],
@@ -592,48 +561,55 @@ class _URLInputDialog extends HookConsumerWidget {
                   ref
                       .read(aIProcessingProvider.notifier)
                       .start(AIProcessingType.url);
+                  List<String> rawItems;
                   try {
-                    final rawItems =
-                        await functions.generateShoppingListItemsFromURL(
+                    rawItems = await functions.generateShoppingListItemsFromURL(
                       url: normalizedURL,
                     );
-                    final distinct = rawItems.toSet().toList();
-                    for (var (i, e) in distinct.indexed) {
-                      final item = e.trim();
-                      if (item.isEmpty || item.length > 100) continue;
-                      if (shoppingListItems
-                          .any((existing) => existing.message == item)) {
-                        continue;
-                      }
-                      try {
-                        await ref
-                            .read(addShoppingListItemProvider(groupID: groupID))
-                            .call(
-                              shoppingListID: shoppingListID,
-                              userID: ref.read(currentUserIDProvider)!,
-                              message: item,
-                              order: shoppingListItems.nextOrder + i,
-                              description: null,
-                              color: null,
-                            );
-                      } catch (e) {
-                        debugPrint('Error: $e');
-                      }
-                    }
-                    if (context.mounted) {
-                      Navigator.pop(context);
-                    }
                   } catch (e) {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(e.toString())),
                       );
                     }
+                    return;
                   } finally {
                     if (context.mounted) {
                       isLoading.value = false;
                     }
                     ref.read(aIProcessingProvider.notifier).end();
+                  }
+                  if (!context.mounted) return;
+                  // URL ダイアログを先に閉じてから review sheet を出す。
+                  Navigator.pop(context);
+                  if (!context.mounted) return;
+                  final candidates = rawItems
+                      .where((e) => !shoppingListItems
+                          .any((existing) => existing.message == e))
+                      .toList();
+                  if (candidates.isEmpty) return;
+                  final reviewed = await showAIReviewSheet(
+                    context: context,
+                    rawNames: candidates,
+                    source: 'url',
+                  );
+                  if (reviewed == null) return;
+                  final selected = reviewed.where((c) => c.selected).toList();
+                  for (var (i, c) in selected.indexed) {
+                    try {
+                      await ref
+                          .read(addShoppingListItemProvider(groupID: groupID))
+                          .call(
+                            shoppingListID: shoppingListID,
+                            userID: ref.read(currentUserIDProvider)!,
+                            message: c.name,
+                            order: shoppingListItems.nextOrder + i,
+                            description: null,
+                            color: null,
+                          );
+                    } catch (e) {
+                      debugPrint('Error: $e');
+                    }
                   }
                 },
           child: const Text('生成'),
