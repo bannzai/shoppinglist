@@ -96,8 +96,7 @@ class AppPill extends StatelessWidget {
             child: SizedBox(
               height: large ? 50 : 36,
               child: Row(
-                mainAxisSize:
-                    expanded ? MainAxisSize.max : MainAxisSize.min,
+                mainAxisSize: expanded ? MainAxisSize.max : MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (icon != null) ...[
@@ -106,9 +105,11 @@ class AppPill extends StatelessWidget {
                   ],
                   Text(
                     label,
-                    style: TextStyle(
+                    style: (large
+                            ? Theme.of(context).textTheme.bodyLarge
+                            : Theme.of(context).textTheme.labelLarge)
+                        ?.copyWith(
                       color: fg,
-                      fontSize: large ? 15 : 13.5,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.005,
                     ),

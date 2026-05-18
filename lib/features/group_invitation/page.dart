@@ -1,12 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/frame/app_dialog_shell.dart';
 import 'package:shoppinglist/components/frame/app_pill.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/invitation_code_validator.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+
+/// 招待コード送信中の verifying オーバレイ。
+/// `design_handoff_shoppinglist/preview/screens-groups.jsx` の Invitation Verifying
+/// 状態を AppDialogShell ベースで実装する。barrierDismissible は false で誤閉じを防ぐ。
+void _showVerifyingDialog(BuildContext context) {
+  showGeneralDialog<void>(
+    context: context,
+    barrierLabel: '招待コードを確認中',
+    barrierDismissible: false,
+    barrierColor: Colors.transparent,
+    transitionDuration: const Duration(milliseconds: 160),
+    pageBuilder: (dialogContext, _, __) {
+      final tokens = dialogContext.tokens;
+      return AppDialogShell(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 28,
+              height: 28,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.2,
+                valueColor: AlwaysStoppedAnimation<Color>(tokens.accent),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '招待コードを確認中',
+              style: Theme.of(dialogContext).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'サーバー側でグループへの参加を処理しています。',
+              textAlign: TextAlign.center,
+              style: Theme.of(dialogContext)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(color: tokens.neutral.ink3),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
 
 class GroupInvitationAcceptPage extends HookConsumerWidget {
   const GroupInvitationAcceptPage({
@@ -48,8 +95,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
-                child: Icon(Icons.group_add,
-                    size: 32, color: tokens.accent),
+                child: Icon(Icons.group_add, size: 32, color: tokens.accent),
               ),
               const SizedBox(height: 24),
               Text(
@@ -60,7 +106,10 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
               const SizedBox(height: 12),
               Text(
                 'グループのメンバーから共有された8桁のコードを入力してください',
-                style: TextStyle(fontSize: 13, color: neutral.ink2, height: 1.6),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: neutral.ink2,
+                      height: 1.6,
+                    ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -102,7 +151,10 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                 const SizedBox(height: 12),
                 Text(
                   errorMessage.value!,
-                  style: TextStyle(color: neutral.danger, fontSize: 12),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(color: neutral.danger),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -120,16 +172,27 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                           analytics.logEvent(name: 'tap_join_group');
                           isAccepting.value = true;
                           errorMessage.value = null;
+                          // i-invitation-verifying: AppDialogShell ベースで
+                          // 「コードを確認中」のオーバレイを表示する。
+                          // `design_handoff_shoppinglist/preview/screens-groups.jsx`
+                          // 準拠で、サーバー応答中の手触りを伝える。
+                          _showVerifyingDialog(context);
                           try {
                             await ref.read(acceptGroupInvitationProvider).call(
                                 invitationCode:
                                     codeController.text.toUpperCase());
+                            if (context.mounted) {
+                              Navigator.of(context).pop(); // verifying dialog
+                            }
                             if (context.mounted) {
                               Navigator.of(context)
                                   .popUntil((route) => route.isFirst);
                             }
                           } catch (e) {
                             errorMessage.value = e.toString();
+                            if (context.mounted) {
+                              Navigator.of(context).pop(); // verifying dialog
+                            }
                           } finally {
                             isAccepting.value = false;
                           }

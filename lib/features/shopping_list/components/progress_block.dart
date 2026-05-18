@@ -57,21 +57,19 @@ class ProgressBlock extends StatelessWidget {
               if (!allDone)
                 Text(
                   'チェック済み',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: neutral.ink2,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: neutral.ink2,
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
               const Spacer(),
               if (allDone)
                 Text(
                   '✓ おつかれさま',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: neutral.ok,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: neutral.ok,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
             ],
           ),

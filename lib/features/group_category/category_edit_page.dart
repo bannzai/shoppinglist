@@ -7,6 +7,7 @@ import 'package:shoppinglist/entity/group_category_keyword.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupCategoryEditPage extends ConsumerWidget {
@@ -31,9 +32,8 @@ class GroupCategoryEditPage extends ConsumerWidget {
         final category =
             categories.where((c) => c.id == categoryID).firstOrNull;
         if (category == null) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('カテゴリ編集')),
-            body: const Center(child: Text('カテゴリが見つかりません')),
+          return _EditScaffold(
+            child: const Center(child: Text('カテゴリが見つかりません')),
           );
         }
         return _CategoryEditBody(
@@ -42,14 +42,27 @@ class GroupCategoryEditPage extends ConsumerWidget {
           category: category,
         );
       },
-      error: (e, st) => Scaffold(
-        appBar: AppBar(title: const Text('カテゴリ編集')),
-        body: Center(child: Text(e.toString())),
+      error: (e, st) => _EditScaffold(child: Center(child: Text(e.toString()))),
+      loading: () => const _EditScaffold(
+          child: Center(child: CircularProgressIndicator())),
+    );
+  }
+}
+
+/// カテゴリ編集画面の loading/error/not-found 用 paper bg Scaffold。
+class _EditScaffold extends StatelessWidget {
+  final Widget child;
+  const _EditScaffold({required this.child});
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.tokens;
+    return Scaffold(
+      backgroundColor: tokens.neutral.paper,
+      appBar: AppBar(
+        title: const Text('カテゴリ編集'),
+        backgroundColor: tokens.neutral.paper,
       ),
-      loading: () => Scaffold(
-        appBar: AppBar(title: const Text('カテゴリ編集')),
-        body: const Center(child: CircularProgressIndicator()),
-      ),
+      body: child,
     );
   }
 }
@@ -70,9 +83,12 @@ class _CategoryEditBody extends HookConsumerWidget {
     final nameController = useTextEditingController(text: category.name);
     final isSaving = useState(false);
 
+    final tokens = context.tokens;
     return Scaffold(
+      backgroundColor: tokens.neutral.paper,
       appBar: AppBar(
         title: const Text('カテゴリ編集'),
+        backgroundColor: tokens.neutral.paper,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -81,9 +97,11 @@ class _CategoryEditBody extends HookConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('カテゴリ名',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text('カテゴリ名',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 8),
                 TextField(
                   controller: nameController,
@@ -126,9 +144,11 @@ class _CategoryEditBody extends HookConsumerWidget {
                   },
                 ),
                 const SizedBox(height: 24),
-                const Text('カテゴリカラー',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text('カテゴリカラー',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 8),
                 _CategoryColorPicker(
                   selectedColor: category.color,
@@ -156,9 +176,11 @@ class _CategoryEditBody extends HookConsumerWidget {
                   },
                 ),
                 const SizedBox(height: 24),
-                const Text('カテゴリアイコン',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text('カテゴリアイコン',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 8),
                 _CategoryIconPicker(
                   selectedIconName: category.iconName,
@@ -190,9 +212,11 @@ class _CategoryEditBody extends HookConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('キーワード',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text('キーワード',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w700)),
                     IconButton(
                       tooltip: 'キーワードを追加',
                       onPressed: () {
@@ -216,17 +240,19 @@ class _CategoryEditBody extends HookConsumerWidget {
                   const SizedBox(height: 16),
                   Text(
                     '[DEBUG] locationOrders: ${category.locationOrders}',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontFamily: 'monospace',
-                    ),
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: context.tokens.neutral.ink3,
+                          fontFamily: 'monospace',
+                        ),
                   ),
                   const SizedBox(height: 8),
                 ],
                 if (category.keywords.isEmpty)
-                  const Text('キーワードがまだありません',
-                      style: TextStyle(color: Colors.grey))
+                  Text('キーワードがまだありません',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(color: Colors.grey))
                 else
                   ...category.keywords.asMap().entries.map((entry) {
                     final index = entry.key;
@@ -235,15 +261,16 @@ class _CategoryEditBody extends HookConsumerWidget {
                       contentPadding: EdgeInsets.zero,
                       title: Text(keyword.keyword),
                       subtitle: Text(
-                        keyword.matchingType ==
-                                GroupCategoryKeywordMatchingType.exact
-                            ? '完全一致'
-                            : '部分一致',
-                        style: const TextStyle(fontSize: 12),
+                        switch (keyword.matchingType) {
+                          GroupCategoryKeywordMatchingType.exact => '完全一致',
+                          GroupCategoryKeywordMatchingType.partial => '部分一致',
+                          GroupCategoryKeywordMatchingType.regex => '正規表現',
+                        },
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                       trailing: IconButton(
                         icon: Icon(Icons.delete,
-                            color: Theme.of(context).colorScheme.error),
+                            color: context.tokens.neutral.danger),
                         onPressed: () => _deleteKeyword(
                           context: context,
                           ref: ref,
@@ -321,6 +348,26 @@ class _CategoryEditBody extends HookConsumerWidget {
                         setState(() {
                           selectedMatchingType =
                               GroupCategoryKeywordMatchingType.exact;
+                        });
+                      }
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  ChoiceChip(
+                    label: const Text('正規表現'),
+                    selected: selectedMatchingType ==
+                        GroupCategoryKeywordMatchingType.regex,
+                    onSelected: (selected) {
+                      if (selected) {
+                        analytics.logEvent(
+                            name: 'select_match_regex',
+                            parameters: {
+                              'groupID': groupID,
+                              'categoryID': category.id
+                            });
+                        setState(() {
+                          selectedMatchingType =
+                              GroupCategoryKeywordMatchingType.regex;
                         });
                       }
                     },

@@ -46,9 +46,7 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
               'groupID': groupID,
               'shoppingListID': shoppingListID,
             });
-            await ref
-                .read(addShoppingListItemProvider(groupID: groupID))
-                .call(
+            await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
                   shoppingListID: shoppingListID,
                   userID: ref.read(currentUserIDProvider)!,
                   message: '',
@@ -77,11 +75,10 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
                   children: [
                     Text(
                       'こんな風に使えます',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: tokens.neutral.ink2,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: tokens.neutral.ink2,
+                          ),
                     ),
                     const SizedBox(height: 6),
                     _HintLine(text: '・タップしてそのまま入力'),
@@ -124,11 +121,10 @@ class _StarterRow extends StatelessWidget {
             Expanded(
               child: Text(
                 'タップで入力開始',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: tokens.accentInk,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: tokens.accentInk,
+                      fontWeight: FontWeight.w500,
+                    ),
               ),
             ),
             Icon(Icons.edit_outlined, size: 16, color: tokens.accent),

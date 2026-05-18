@@ -1,0 +1,49 @@
+appId: com.bannzai.shoppinglist
+---
+# Onboarding 3 スライド + Auth 文言 SSOT 化 (PR-2) の検証。
+# - Onboarding body は screens-onboarding.jsx exact 文に差し替え済み
+# - Auth title / body / 規約注記 は screens-onboarding.jsx#AuthPage 準拠
+# - Auth ゲストリンクは UI に出さない (debug 匿名ボタンのみ)
+
+- clearState
+- launchApp
+
+# Slide 1
+- assertVisible: "家族と作る、"
+- assertVisible: "買い物リスト"
+- assertVisible: "店頭で別の誰かがチェック"
+- swipe:
+    direction: LEFT
+
+# Slide 2
+- assertVisible: "同じリストを"
+- assertVisible: "同時に編集"
+- assertVisible: "招待コードで招くと"
+- swipe:
+    direction: LEFT
+
+# Slide 3
+- assertVisible: "お店の近くで、"
+- assertVisible: "そっと思い出す"
+- assertVisible: "やさしくお知らせ"
+
+# 完走で AuthPage に遷移
+- tapOn: "はじめる"
+
+# Auth title / body
+- assertVisible: "家族の買い物を、"
+- assertVisible: "ひとつのリストへ"
+- assertVisible: "広告もメールマガジンもありません"
+
+# Auth ゲスト導線は本番 UI に出さない
+- assertNotVisible: "ゲストとして使う"
+
+# サインインボタンは存在
+- assertVisible: "Apple でサインイン"
+- assertVisible: "Google でサインイン"
+
+# 規約注記は SSOT 文
+- assertVisible: "続けることで"
+- assertVisible: "利用規約"
+- assertVisible: "プライバシーポリシー"
+- assertVisible: "に同意したものとみなされます"

@@ -84,11 +84,10 @@ class AppSignInWithGoogleButton extends HookConsumerWidget {
                   const SizedBox(width: 10),
                   Text(
                     'Google でサインイン',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: neutral.ink,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: neutral.ink,
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                 ],
               ),

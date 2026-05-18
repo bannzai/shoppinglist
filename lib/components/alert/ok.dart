@@ -27,19 +27,19 @@ class OKDialog extends StatelessWidget {
         children: <Widget>[
           if (title.isNotEmpty) ...[
             Text(title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                )),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w600)),
             const SizedBox(
               height: 15,
             ),
           ],
           Text(message,
-              style: const TextStyle(
-                fontWeight: FontWeight.w300,
-                fontSize: 14,
-              )),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.w300)),
         ],
       ),
       actions: <Widget>[
@@ -54,10 +54,10 @@ class OKDialog extends StatelessWidget {
           },
           child: Text(
             'OK',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
           ),
         ),
       ],

@@ -28,20 +28,26 @@ class OnboardingPage extends HookConsumerWidget {
       _SlideContent(
         eyebrowIndex: 1,
         title: '家族と作る、\n買い物リスト',
-        body: 'メンバー全員でリアルタイムに共有・編集できる。',
-        artBuilder: (tokens) => _TiltedListArt(tokens: tokens),
+        body: '家で思いついたものを誰かが追加して、店頭で別の誰かがチェック。'
+            '「買ってきて」のやり取りを、ぜんぶこの一枚に。',
+        assetPath: 'images/onboarding/slide_1.png',
+        fallbackBuilder: (tokens) => _TiltedListArt(tokens: tokens),
       ),
       _SlideContent(
         eyebrowIndex: 2,
         title: '同じリストを\n同時に編集',
-        body: '誰がチェックを入れたかもひと目でわかる。',
-        artBuilder: (tokens) => _AvatarOrbitArt(tokens: tokens),
+        body: '家族・パートナー・同居人を招待コードで招くと、同じリストを編集できます。'
+            '誰が追加したかではなく、何を買い忘れずに済むかを大切に。',
+        assetPath: 'images/onboarding/slide_2.png',
+        fallbackBuilder: (tokens) => _AvatarOrbitArt(tokens: tokens),
       ),
       _SlideContent(
         eyebrowIndex: 3,
         title: 'お店の近くで、\nそっと思い出す',
-        body: 'カテゴリと店舗ごとに最適な順序で表示。',
-        artBuilder: (tokens) => _MapHaloArt(tokens: tokens),
+        body: '登録した店舗の近くに来ると、買い物リストをやさしくお知らせ。'
+            '通知は必要な時だけ、押し付けがましくなく。',
+        assetPath: 'images/onboarding/slide_3.png',
+        fallbackBuilder: (tokens) => _MapHaloArt(tokens: tokens),
       ),
     ];
 
@@ -66,11 +72,10 @@ class OnboardingPage extends HookConsumerWidget {
                   onPressed: () => finish(reason: 'skip'),
                   child: Text(
                     'スキップ',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: tokens.neutral.ink3,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: tokens.neutral.ink3,
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                 ),
               ),
@@ -120,17 +125,20 @@ class OnboardingPage extends HookConsumerWidget {
   }
 }
 
-/// 1 スライドのデータ。`artBuilder` は token に応じて Widget を返す関数。
+/// 1 スライドのデータ。`assetPath` の画像を表示し、ロード失敗時は
+/// `fallbackBuilder` の Flutter 描画 Widget を使う。
 class _SlideContent {
-  final int eyebrowIndex; // 1..3
+  final int eyebrowIndex;
   final String title;
   final String body;
-  final Widget Function(AppTokens tokens) artBuilder;
+  final String assetPath;
+  final Widget Function(AppTokens tokens) fallbackBuilder;
   const _SlideContent({
     required this.eyebrowIndex,
     required this.title,
     required this.body,
-    required this.artBuilder,
+    required this.assetPath,
+    required this.fallbackBuilder,
   });
 }
 
@@ -150,7 +158,12 @@ class _OnboardingSlide extends StatelessWidget {
           SizedBox(
             width: 220,
             height: 220,
-            child: data.artBuilder(tokens),
+            child: Image.asset(
+              data.assetPath,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) =>
+                  data.fallbackBuilder(tokens),
+            ),
           ),
           const Spacer(),
           // mono eyebrow: `01/03` 形式
@@ -241,9 +254,8 @@ class _TiltedListArt extends StatelessWidget {
                           shape: BoxShape.circle,
                           color: checked ? tokens.accent : Colors.transparent,
                           border: Border.all(
-                            color: checked
-                                ? tokens.accent
-                                : tokens.neutral.ink4,
+                            color:
+                                checked ? tokens.accent : tokens.neutral.ink4,
                             width: 1.4,
                           ),
                         ),
@@ -259,8 +271,7 @@ class _TiltedListArt extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: checked
                                 ? tokens.neutral.divider2
-                                : tokens.neutral.ink4
-                                    .withValues(alpha: 0.35),
+                                : tokens.neutral.ink4.withValues(alpha: 0.35),
                             borderRadius: BorderRadius.circular(3),
                           ),
                           margin: EdgeInsets.only(right: 160 * (1 - w)),

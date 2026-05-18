@@ -11,7 +11,8 @@ class ListErrorCard extends StatelessWidget {
   /// 「再試行」押下時のコールバック。
   final VoidCallback onRetry;
 
-  const ListErrorCard({super.key, required this.exception, required this.onRetry});
+  const ListErrorCard(
+      {super.key, required this.exception, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -27,22 +28,24 @@ class ListErrorCard extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('📡', style: TextStyle(fontSize: 32)),
+            Text('📡', style: Theme.of(context).textTheme.displayMedium),
             const SizedBox(height: 10),
             Text(
               'リストを読み込めませんでした',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: tokens.neutral.danger,
-              ),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: tokens.neutral.danger,
+                  ),
             ),
             const SizedBox(height: 6),
             if (exception != null)
               Text(
                 exception.toString(),
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: tokens.neutral.ink2),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.copyWith(color: tokens.neutral.ink2),
               ),
             const SizedBox(height: 14),
             AppPill(

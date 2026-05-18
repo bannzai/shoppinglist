@@ -21,13 +21,15 @@ class RetentionBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.workspace_premium,
-              size: 16, color: tokens.accent),
+          Icon(Icons.workspace_premium, size: 16, color: tokens.accent),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               '無料プランは作成から30日でリストが整理されます',
-              style: TextStyle(fontSize: 11.5, color: tokens.neutral.ink2),
+              style: Theme.of(context)
+                  .textTheme
+                  .labelSmall
+                  ?.copyWith(color: tokens.neutral.ink2),
             ),
           ),
           InkWell(
@@ -39,11 +41,10 @@ class RetentionBanner extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
               child: Text(
                 '詳しく',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: tokens.accent,
-                ),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: tokens.accent,
+                    ),
               ),
             ),
           ),

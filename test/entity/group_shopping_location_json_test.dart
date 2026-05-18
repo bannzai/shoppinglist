@@ -49,5 +49,35 @@ void main() {
     test('defaultGeofenceRadiusMeters は 300m', () {
       expect(defaultGeofenceRadiusMeters, 300.0);
     });
+
+    test('address フィールドが付与されていない既存データは空文字になる', () {
+      final json = {
+        'id': 'loc1',
+        'groupID': 'group1',
+        'name': 'スーパー',
+      };
+      expect(GroupShoppingLocation.fromJson(json).address, '');
+    });
+
+    test('address 付きデータのラウンドトリップ', () {
+      const location = GroupShoppingLocation(
+        id: 'loc1',
+        groupID: 'group1',
+        name: 'コンビニ',
+        address: '東京都千代田区丸の内1-1',
+        latitude: 35.6812,
+        longitude: 139.7671,
+        geofenceRadiusMeters: 500.0,
+      );
+      // toJson は ServerCreatedTimestamp 等で FieldValue を埋めるため、ラウンドトリップ
+      // 用にサーバータイムスタンプ系を除外する。
+      final json = location.toJson()
+        ..remove('createdDateTime')
+        ..remove('updatedDateTime')
+        ..remove('serverCreatedDateTime')
+        ..remove('serverUpdatedDateTime');
+      expect(json['address'], '東京都千代田区丸の内1-1');
+      expect(GroupShoppingLocation.fromJson(json).address, '東京都千代田区丸の内1-1');
+    });
   });
 }
