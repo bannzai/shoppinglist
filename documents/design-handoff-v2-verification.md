@@ -16,25 +16,28 @@ Issue #261 メタプランに基づく design_handoff_shoppinglist v2 完全準�
 
 | # | 画面 | 関連 issue | Light | Dark | 備考 |
 |---|---|---|---|---|---|
-| 1 | OnboardingPage Slide 1 | #262, #264 | 🟡 | 🟡 | PR-0 で画像、PR-2 で SSOT 文言。実機目視は次セッション |
-| 2 | OnboardingPage Slide 2 | #262, #264 | 🟡 | 🟡 | 同上 |
+| 1 | OnboardingPage Slide 1 | #262, #264 | ✅ | 🟡 | 2026-05-17: iOS Light vs Web Light 実画像比較 PASS。Dark は WDA flakiness で要再撮 |
+| 2 | OnboardingPage Slide 2 | #262, #264 | 🟡 | 🟡 | Maestro flow が Slide 1 のみ撮影。Slide 2/3 は手動 swipe で別途取得要 |
 | 3 | OnboardingPage Slide 3 | #262, #264 | 🟡 | 🟡 | 同上 |
-| 4 | AuthPage | #262, #264 | 🟡 | 🟡 | PR-2 で SSOT 文言。eyebrow / 規約注記 確認次セッション |
-| 5 | HomePage (paper surface) | #264 | 🟡 | 🟡 | PR-2 で `tokens.neutral.paper` 明示済み |
-| 6 | ShoppingListPage | #265 | 🟡 | 🟡 | PR-3 (#265) で i-7/i-8 左右スワイプ実装。残作業多数 |
-| 7 | ShoppingListItemFilterPage | #266 | ⏸️ | ⏸️ | PR-4 残作業 (hifi 化) |
-| 8 | ShoppingListSettingPage | #266 | 🟡 | 🟡 | PR-4 で autoNotifyEnabled Switch 追加 |
-| 9 | GroupListPage | #267 | ⏸️ | ⏸️ | PR-5 残作業 |
-| 10 | GroupCreatePage | #267 | 🟡 | 🟡 | PR-5 で iconName 6 種選択追加 |
-| 11 | GroupSettingPage | #267 | ⏸️ | ⏸️ | PR-5 残作業 (再構成) |
-| 12 | GroupInvitationPage | #267 | ⏸️ | ⏸️ | PR-5 残作業 (verifying AppDialogShell) |
-| 13 | GroupCategoryPage | #268 | 🟡 | 🟡 | PR-6 で regex 選択肢追加 |
-| 14 | ShoppingLocationPage | #268 | ⏸️ | ⏸️ | PR-6 残作業 (address / map PRO gate) |
-| 15 | SettingPage | #269 | 🟡 | 🟡 | PR-7 でサインアウト追加 |
-| 16 | PaywallPage | #269 | ⏸️ | ⏸️ | PR-7 残作業 (状態確認) |
-| 17 | ThemeColorSelectionPage | #269 | ⏸️ | ⏸️ | PR-7 残作業 (props 整理) |
-| W-iOS | iOS Widget | #270 | ⏸️ | ⏸️ | PR-8 残作業 (Swift dark mode) |
+| 4 | AuthPage | #262, #264 | ✅ | 🟡 | 2026-05-17: iOS Light vs Web Light 通常状態 PASS。loading/error は別途検証要 |
+| 5 | HomePage (paper surface) | #264 | ✅ | 🟡 | 2026-05-17: iOS Light vs Web Light PASS |
+| 6 | ShoppingListPage | #265 | ✅ | 🟡 | 2026-05-17: iOS Light vs Web Light PASS。Preview wrapper 経由 |
+| 7 | ShoppingListItemFilterPage | #266 | ✅ | 🟡 | 2026-05-17: iOS Light vs Web Light (`06-filter`) PASS |
+| 8 | ShoppingListSettingPage | #266 | ✅ | 🟡 | 2026-05-17: iOS Light vs Web Light (`05-list-setting`) PASS |
+| 9 | GroupListPage | #267 | ✅ | 🟡 | 2026-05-17: iOS Light vs Web Light (`07-grp-list`) PASS |
+| 10 | GroupCreatePage | #267 | ✅ | 🟡 | 2026-05-17: iOS Light vs Web Light (`08-grp-create`) PASS |
+| 11 | GroupSettingPage | #267 | ✅ | 🟡 | 2026-05-17: iOS Light vs Web Light (`09-grp-set`) PASS |
+| 12 | GroupInvitationPage | #267 | ✅ | 🟡 | 2026-05-17: iOS Light vs Web Light (`10-grp-accept`) PASS |
+| 13 | GroupCategoryPage | #268 | ✅ | 🟡 | 2026-05-17: iOS Light vs Web Light (`11-cat-list`) PASS |
+| 14 | ShoppingLocationPage | #268 | ✅ | 🟡 | 2026-05-17: iOS Light vs Web Light (`13-loc-list`) PASS |
+| 15 | SettingPage | #269 | ✅ | 🟡 | 2026-05-17: iOS Light vs Web Light (`15-settings-free`) PASS |
+| 16 | PaywallPage | #269 | 🟡 | 🟡 | iOS Preview に直接 entry なし、SettingPage 経由で確認可。手動目視要 |
+| 17 | ThemeColorSelectionPage | #269 | 🟡 | 🟡 | iOS Preview に直接 entry なし、SettingPage 経由で確認可。手動目視要 |
+| W-iOS | iOS Widget | #270 | ⏸️ | ⏸️ | PR-8 残作業 (Swift dark mode)。Widget は Preview entry 範囲外 |
 | W-Android | Android Widget | #270 | ✅ | ✅ | PR-8 で layout-night 追加 |
+| Pseudo-1 | AIReviewSheet | #265 follow-up | ✅ | 🟡 | 2026-05-17: iOS Light 取得済み (Web SSOT 対応 artboard なし) |
+| Pseudo-2 | SignOutDialog | #269 follow-up | ✅ | 🟡 | 2026-05-17: iOS Light 取得済み (Web SSOT 対応 artboard なし) |
+| Pseudo-3 | GroupInvitationVerifying | #267 follow-up | ✅ | 🟡 | 2026-05-17: iOS Light 取得済み (Web SSOT 対応 artboard なし) |
 
 凡例:
 - ✅ 実装+ローカル検証完了
