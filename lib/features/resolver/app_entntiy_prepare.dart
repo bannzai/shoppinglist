@@ -50,10 +50,15 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
       return null;
     }, [appUser]);
 
-    // Group未作成の場合は作成してAppUserにセット
+    // Group未作成の場合は作成してAppUserにセット (ソログループは default icon の 'home')
     useEffect(() {
       if (appUser != null && appUserDefaultGroupID == null) {
-        createGroup(appUser: appUser, name: null, setAsDefault: true);
+        createGroup(
+          appUser: appUser,
+          name: null,
+          setAsDefault: true,
+          iconName: 'home',
+        );
       }
       return null;
     }, [appUser, appUserDefaultGroupID]);

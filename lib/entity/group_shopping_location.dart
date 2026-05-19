@@ -28,6 +28,11 @@ abstract class GroupShoppingLocation with _$GroupShoppingLocation {
     required String groupID,
     required String name,
 
+    /// 逆ジオコードで取得した住所文字列。LocationPicker (PRO 限定地図設定) で
+    /// 緯度経度を確定したときに保存し、無料機能で場所名のみ登録した際は空文字。
+    /// 既存ドキュメントにはこのフィールドが存在しないため default で空文字。
+    @Default('') String address,
+
     /// 店舗の緯度。nullの場合はジオフェンス対象外。
     required double? latitude,
 

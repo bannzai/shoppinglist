@@ -18,18 +18,16 @@ class ErrorAlert extends StatelessWidget {
     return AlertDialog(
       title: Text(
         title ?? 'エラーが発生しました',
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 16,
-          color: colorScheme.onSurface,
-        ),
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurface,
+            ),
       ),
       content: Text(errorMessage,
-          style: TextStyle(
-            fontWeight: FontWeight.w300,
-            fontSize: 14,
-            color: colorScheme.onSurface,
-          )),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w300,
+                color: colorScheme.onSurface,
+              )),
       actions: <Widget>[
         if (faq != null)
           TextButton(
@@ -38,10 +36,10 @@ class ErrorAlert extends StatelessWidget {
             },
             child: Text(
               'FAQを見る',
-              style: TextStyle(
-                color: colorScheme.primary,
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
           ),
         TextButton(
@@ -50,10 +48,10 @@ class ErrorAlert extends StatelessWidget {
           },
           child: Text(
             '閉じる',
-            style: TextStyle(
-              color: colorScheme.onSurface,
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
           ),
         ),
       ],

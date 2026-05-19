@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/features/previews/previews_page.dart';
+import 'package:shoppinglist/style/theme.dart';
+import 'package:shoppinglist/style/tokens.dart';
 
 class PreviewApp extends StatelessWidget {
   const PreviewApp({super.key});
@@ -8,10 +10,16 @@ class PreviewApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Preview',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: false,
+      debugShowCheckedModeBanner: false,
+      theme: buildAppTheme(
+        brightness: Brightness.light,
+        accent: AccentPreset.shu,
       ),
+      darkTheme: buildAppTheme(
+        brightness: Brightness.dark,
+        accent: AccentPreset.shu,
+      ),
+      themeMode: ThemeMode.system,
       home: const PreviewsPage(),
     );
   }

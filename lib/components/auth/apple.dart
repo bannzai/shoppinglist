@@ -54,6 +54,8 @@ class AppSignInWithAppleButton extends HookConsumerWidget {
           Align(
             alignment: Alignment.center,
             child: SignInWithAppleButton(
+              height: 52,
+              borderRadius: BorderRadius.circular(14),
               onPressed: () async {
                 if (isLoading.value) return;
                 analytics.logEvent(name: 'tap_sign_in_apple');

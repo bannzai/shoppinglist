@@ -34,6 +34,12 @@ abstract class Group with _$Group {
     /// グループを作成したユーザーのAppUser.id
     /// NOTE: 既存のグループドキュメントにはこのフィールドが存在しない場合があるためnullable
     String? ownerUserID,
+
+    /// グループに紐づくアイコンの識別子。
+    /// `design_handoff_shoppinglist/preview/screens-groups.jsx` の GroupCreatePage で
+    /// 選択する 6 種 (`home` / `cart` / `fork` / `cookie` / `pets` / `bag`) のいずれか。
+    /// 既存ドキュメントにはこのフィールドが存在しないため default で `home` を返す。
+    @Default('home') String iconName,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
