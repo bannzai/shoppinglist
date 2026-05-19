@@ -36,11 +36,32 @@ void main() {
             label: 'ghost', onPressed: () {}, variant: AppPillVariant.ghost),
         AppPill(
             label: 'danger', onPressed: () {}, variant: AppPillVariant.danger),
+        AppPill(
+            label: 'dangerSolid',
+            onPressed: () {},
+            variant: AppPillVariant.dangerSolid),
         const AppPill(label: 'disabled', onPressed: null),
       ],
     )));
     expect(find.text('neutral'), findsOneWidget);
+    expect(find.text('dangerSolid'), findsOneWidget);
     expect(find.text('disabled'), findsOneWidget);
+  });
+
+  testWidgets('AppPill: dangerSolid は danger 塗り + 白文字', (tester) async {
+    await tester.pumpWidget(_wrap(AppPill(
+      label: '削除',
+      onPressed: () {},
+      variant: AppPillVariant.dangerSolid,
+    )));
+    final ctx = tester.element(find.byType(AppPill));
+    final neutral = ctx.tokens.neutral;
+    final material = tester.widget<Material>(
+      find.descendant(of: find.byType(AppPill), matching: find.byType(Material)),
+    );
+    expect(material.color, neutral.danger);
+    final text = tester.widget<Text>(find.text('削除'));
+    expect(text.style?.color, Colors.white);
   });
 
   testWidgets('AppPill: large=true で高さ50', (tester) async {
