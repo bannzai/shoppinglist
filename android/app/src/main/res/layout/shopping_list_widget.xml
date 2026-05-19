@@ -1,21 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  design_handoff_shoppinglist/preview/widgets-and-micro.jsx#WAndroid 準拠
+  - bg `#F6F0E2`（仕様固定の和紙色）
+  - widget_count は IBM Plex Mono 風（android:fontFamily="monospace"）
+  - タイトル / count 色は Material You 系の `@android:color/system_accent1_600`
+    （アクセント色は Kotlin 側で setTextColor により上書きされる）
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="12dp"
-    android:background="@android:color/background_light">
+    android:background="#F6F0E2">
 
-    <TextView
-        android:id="@+id/widget_title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="買い物リスト"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:drawableStart="@android:drawable/ic_menu_agenda"
-        android:drawablePadding="8dp"
-        android:paddingBottom="8dp" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/widget_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="買い物リスト"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/system_accent1_600"
+            android:drawableStart="@android:drawable/ic_menu_agenda"
+            android:drawableTint="@android:color/system_accent1_600"
+            android:drawablePadding="8dp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/widget_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:fontFamily="monospace"
+            android:textColor="@android:color/system_accent1_600"
+            android:text="0/0" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/item_row_0"
@@ -29,14 +58,15 @@
             android:id="@+id/item_check_0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="16sp"
+            android:fontFamily="monospace"
             android:paddingEnd="8dp" />
         <TextView
             android:id="@+id/item_text_0"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:maxLines="1"
             android:ellipsize="end" />
     </LinearLayout>
@@ -53,14 +83,15 @@
             android:id="@+id/item_check_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="16sp"
+            android:fontFamily="monospace"
             android:paddingEnd="8dp" />
         <TextView
             android:id="@+id/item_text_1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:maxLines="1"
             android:ellipsize="end" />
     </LinearLayout>
@@ -77,14 +108,15 @@
             android:id="@+id/item_check_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="16sp"
+            android:fontFamily="monospace"
             android:paddingEnd="8dp" />
         <TextView
             android:id="@+id/item_text_2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:maxLines="1"
             android:ellipsize="end" />
     </LinearLayout>
@@ -101,14 +133,15 @@
             android:id="@+id/item_check_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="16sp"
+            android:fontFamily="monospace"
             android:paddingEnd="8dp" />
         <TextView
             android:id="@+id/item_text_3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:maxLines="1"
             android:ellipsize="end" />
     </LinearLayout>
@@ -125,14 +158,15 @@
             android:id="@+id/item_check_4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="16sp"
+            android:fontFamily="monospace"
             android:paddingEnd="8dp" />
         <TextView
             android:id="@+id/item_text_4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:maxLines="1"
             android:ellipsize="end" />
     </LinearLayout>

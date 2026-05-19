@@ -30,7 +30,18 @@ const ResponseSchema = z.union([
   ErrorResponseSchema,
 ]);
 
-// 検証用引数: { "createUserID": "test-user-id", "name": "テスト", "setAsDefault": false }
+/// design_handoff_shoppinglist/preview/screens-groups.jsx#GroupCreatePage の
+/// iconName で許容するアイコンプリセット。Group.iconName のスキーマ統制値。
+const ALLOWED_ICON_NAMES = [
+  "home",
+  "cart",
+  "fork",
+  "cookie",
+  "pets",
+  "bag",
+] as const;
+
+// 検証用引数: { "createUserID": "test-user-id", "name": "テスト", "setAsDefault": false, "iconName": "home" }
 const createGroupFlow = ai.defineFlow(
   {
     name: "createGroup",
@@ -41,10 +52,11 @@ const createGroupFlow = ai.defineFlow(
         .refine((v) => !v.includes("/")),
       name: z.string().nullable(),
       setAsDefault: z.boolean(),
+      iconName: z.enum(ALLOWED_ICON_NAMES).default("home"),
     }),
     outputSchema: ResponseSchema,
   },
-  async ({ createUserID, name, setAsDefault }) => {
+  async ({ createUserID, name, setAsDefault, iconName }) => {
     try {
       const context = ai.currentContext();
       const uid = context?.auth?.uid;
@@ -124,6 +136,7 @@ const createGroupFlow = ai.defineFlow(
             ownerUserID: uid,
             memberUserIDs: [uid],
             name: normalizedName?.length ? normalizedName : null,
+            iconName,
             createdDateTime: admin.firestore.FieldValue.serverTimestamp(),
             updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
             serverCreatedDateTime:

@@ -12,6 +12,11 @@ enum GroupCategoryKeywordMatchingType {
   /// 部分一致: アイテムのmessageにキーワードが含まれる場合にマッチ
   @JsonValue('partial')
   partial,
+
+  /// 正規表現マッチ: keyword を `RegExp` として評価し、message に対して `hasMatch` する。
+  /// `FormatException` (不正な regex 文字列) のときはマッチさせない。
+  @JsonValue('regex')
+  regex,
 }
 
 /// [GroupCategory] に設定される自動分類用キーワードを表すエンティティ。

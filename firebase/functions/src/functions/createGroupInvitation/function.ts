@@ -33,6 +33,9 @@ const ResponseSchema = z.union([
   DataResponseSchema.extend({
     data: z.object({
       invitationCode: z.string(),
+      // 招待コードの有効期限を ISO8601 文字列で返す。
+      // クライアントで `DateTime.parse` して残り時間表示に使う。
+      expiresDateTime: z.string(),
     }),
   }),
   ErrorResponseSchema,
@@ -127,6 +130,7 @@ const createGroupInvitationFlow = ai.defineFlow(
         result: "OK" as const,
         data: {
           invitationCode,
+          expiresDateTime: expiresDateTime.toDate().toISOString(),
         },
       } as z.infer<typeof ResponseSchema>;
     } catch (error) {

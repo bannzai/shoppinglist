@@ -22,8 +22,11 @@ class ShoppingLocationAdd {
 
   ShoppingLocationAdd({required this.database});
 
+  /// [address] は LocationPicker (PRO 限定) の逆ジオコード結果を永続化するためのフィールド。
+  /// 場所名のみ登録する無料導線では空文字を渡す。
   Future<GroupShoppingLocation> call({
     required String name,
+    required String address,
     required double? latitude,
     required double? longitude,
     required double? geofenceRadiusMeters,
@@ -46,6 +49,7 @@ class ShoppingLocationAdd {
       id: docRef.id,
       groupID: database.groupID,
       name: name,
+      address: address,
       latitude: latitude,
       longitude: longitude,
       geofenceRadiusMeters: geofenceRadiusMeters,

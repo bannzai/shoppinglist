@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap');
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', system-ui, sans-serif;
+  font-feature-settings: 'palt' 1;
+  -webkit-font-smoothing: antialiased;
+  background: #ECE5D3;
+  color: #1B1813;
+}
+
+.mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-feature-settings: 'tnum' 1; }
+.tnum { font-feature-settings: 'tnum' 1; }
+.serif { font-family: 'Zen Kaku Gothic New', 'Noto Sans JP', sans-serif; }
+
+/* tighter Japanese */
+.j-tight { letter-spacing: -0.01em; }
+
+/* dotted underline link */
+.lk { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: currentColor; }
+
+/* subtle paper texture (very faint) */
+.paper-tex {
+  background-image:
+    radial-gradient(circle at 25% 35%, rgba(0,0,0,0.012) 0.5px, transparent 1px),
+    radial-gradient(circle at 75% 65%, rgba(0,0,0,0.012) 0.5px, transparent 1px);
+  background-size: 18px 18px, 22px 22px;
+}
+
+/* striped placeholder for missing imagery */
+.stripe-ph {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(27,24,19,0.04) 0 8px,
+    rgba(27,24,19,0.07) 8px 16px
+  );
+}
+
+/* keep TextField caret clean */
+.fake-caret {
+  display: inline-block;
+  width: 1.5px;
+  height: 1.05em;
+  background: #C2410C;
+  vertical-align: text-bottom;
+  margin-left: 1px;
+  animation: caret-blink 1.06s steps(2) infinite;
+}
+@keyframes caret-blink { 50% { opacity: 0; } }
+
+/* checkbox pop */
+@keyframes pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
