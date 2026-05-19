@@ -422,7 +422,7 @@ class _AsyncExpansionTileState<T> extends State<_AsyncExpansionTile<T>> {
   Widget build(BuildContext context) {
     return ExpansionTile(
       leading: Icon(widget.icon, size: 20),
-      title: Text(widget.title, style: const TextStyle(fontSize: 14)),
+      title: Text(widget.title, style: Theme.of(context).textTheme.bodyMedium),
       onExpansionChanged: (expanded) {
         if (expanded && _future == null) {
           setState(() {
@@ -449,7 +449,10 @@ class _AsyncExpansionTileState<T> extends State<_AsyncExpansionTile<T>> {
                   padding: const EdgeInsets.all(16),
                   child: Text(
                     'エラー: ${snapshot.error}',
-                    style: const TextStyle(color: Colors.red),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: Colors.red),
                   ),
                 );
               }
@@ -477,7 +480,7 @@ class _JsonExpansionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExpansionTile(
       leading: Icon(icon, size: 20),
-      title: Text(title, style: const TextStyle(fontSize: 14)),
+      title: Text(title, style: Theme.of(context).textTheme.bodyMedium),
       children: [_JsonText(data: data)],
     );
   }
@@ -514,10 +517,10 @@ class _JsonText extends StatelessWidget {
         ),
         child: SelectableText(
           jsonString,
-          style: const TextStyle(
-            fontSize: 12,
-            fontFamily: 'monospace',
-          ),
+          style: Theme.of(context)
+              .textTheme
+              .bodySmall
+              ?.copyWith(fontFamily: 'monospace'),
         ),
       ),
     );

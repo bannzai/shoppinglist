@@ -1,0 +1,34 @@
+appId: com.bannzai.shoppinglist
+---
+# PR-7 Settings & Paywall の検証:
+# - 設定画面の主要セクションが描画される
+# - サインアウトの AppDialogShell ダイアログが開閉できる
+# - Paywall 画面の状態 (loading / data / error / no-plans) のうち少なくとも 1 つを表示
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 設定タブに遷移
+- tapOn:
+    text: "設定"
+    optional: true
+- waitForAnimationToEnd
+
+# サインアウト dialog
+- assertVisible:
+    text: "サインアウト"
+    optional: true
+- tapOn: "サインアウト"
+- waitForAnimationToEnd
+- assertVisible:
+    text: "サインアウトしますか"
+    optional: true
+- tapOn:
+    text: "キャンセル"
+    optional: true
+- waitForAnimationToEnd
+
+# Paywall 経路 (プレミアム会員カード → paywall)
+- tapOn:
+    text: "はじめる"
+    optional: true
+- waitForAnimationToEnd

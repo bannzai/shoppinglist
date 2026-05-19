@@ -4,21 +4,23 @@ import 'package:flutter/material.dart';
 /// FCM通知の受信ハンドリングを初期化する。
 /// アプリ起動後に一度呼び出す。
 class FcmNotificationHandler {
-  final GlobalKey<NavigatorState> navigatorKey;
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey;
+  bool _isInitialized = false;
 
-  FcmNotificationHandler({required this.navigatorKey});
+  FcmNotificationHandler({
+    required this.scaffoldMessengerKey,
+  });
 
   void initialize() {
+    if (_isInitialized) return;
+    _isInitialized = true;
+
     // フォアグラウンド通知: SnackBarで表示
     FirebaseMessaging.onMessage.listen((message) {
       final notification = message.notification;
       if (notification == null) return;
 
-      final context = navigatorKey.currentContext;
-      if (context == null) return;
-
-      final scaffoldMessenger = ScaffoldMessenger.maybeOf(context);
-      scaffoldMessenger?.showSnackBar(
+      scaffoldMessengerKey.currentState?.showSnackBar(
         SnackBar(
           content: Column(
             mainAxisSize: MainAxisSize.min,

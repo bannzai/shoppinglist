@@ -25,6 +25,12 @@ mixin _$Group {
   /// グループを作成したユーザーのAppUser.id
   /// NOTE: 既存のグループドキュメントにはこのフィールドが存在しない場合があるためnullable
   String? get ownerUserID;
+
+  /// グループに紐づくアイコンの識別子。
+  /// `design_handoff_shoppinglist/preview/screens-groups.jsx` の GroupCreatePage で
+  /// 選択する 6 種 (`home` / `cart` / `fork` / `cookie` / `pets` / `bag`) のいずれか。
+  /// 既存ドキュメントにはこのフィールドが存在しないため default で `home` を返す。
+  String get iconName;
   @ClientCreatedTimestamp()
   DateTime? get createdDateTime;
   @ClientUpdatedTimestamp()
@@ -55,6 +61,8 @@ mixin _$Group {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.ownerUserID, ownerUserID) ||
                 other.ownerUserID == ownerUserID) &&
+            (identical(other.iconName, iconName) ||
+                other.iconName == iconName) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -73,6 +81,7 @@ mixin _$Group {
       const DeepCollectionEquality().hash(memberUserIDs),
       name,
       ownerUserID,
+      iconName,
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -80,7 +89,7 @@ mixin _$Group {
 
   @override
   String toString() {
-    return 'Group(id: $id, memberUserIDs: $memberUserIDs, name: $name, ownerUserID: $ownerUserID, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'Group(id: $id, memberUserIDs: $memberUserIDs, name: $name, ownerUserID: $ownerUserID, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -94,6 +103,7 @@ abstract mixin class $GroupCopyWith<$Res> {
       List<String> memberUserIDs,
       String? name,
       String? ownerUserID,
+      String iconName,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -116,6 +126,7 @@ class _$GroupCopyWithImpl<$Res> implements $GroupCopyWith<$Res> {
     Object? memberUserIDs = null,
     Object? name = freezed,
     Object? ownerUserID = freezed,
+    Object? iconName = null,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -138,6 +149,10 @@ class _$GroupCopyWithImpl<$Res> implements $GroupCopyWith<$Res> {
           ? _self.ownerUserID
           : ownerUserID // ignore: cast_nullable_to_non_nullable
               as String?,
+      iconName: null == iconName
+          ? _self.iconName
+          : iconName // ignore: cast_nullable_to_non_nullable
+              as String,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
           : createdDateTime // ignore: cast_nullable_to_non_nullable
@@ -256,6 +271,7 @@ extension GroupPatterns on Group {
             List<String> memberUserIDs,
             String? name,
             String? ownerUserID,
+            String iconName,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -271,6 +287,7 @@ extension GroupPatterns on Group {
             _that.memberUserIDs,
             _that.name,
             _that.ownerUserID,
+            _that.iconName,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -300,6 +317,7 @@ extension GroupPatterns on Group {
             List<String> memberUserIDs,
             String? name,
             String? ownerUserID,
+            String iconName,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -314,6 +332,7 @@ extension GroupPatterns on Group {
             _that.memberUserIDs,
             _that.name,
             _that.ownerUserID,
+            _that.iconName,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -342,6 +361,7 @@ extension GroupPatterns on Group {
             List<String> memberUserIDs,
             String? name,
             String? ownerUserID,
+            String iconName,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
             @ClientUpdatedTimestamp() DateTime? updatedDateTime,
             @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -356,6 +376,7 @@ extension GroupPatterns on Group {
             _that.memberUserIDs,
             _that.name,
             _that.ownerUserID,
+            _that.iconName,
             _that.createdDateTime,
             _that.updatedDateTime,
             _that.serverCreatedDateTime,
@@ -375,6 +396,7 @@ class _Group extends Group {
       required final List<String> memberUserIDs,
       required this.name,
       this.ownerUserID,
+      this.iconName = 'home',
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,
@@ -405,6 +427,14 @@ class _Group extends Group {
   /// NOTE: 既存のグループドキュメントにはこのフィールドが存在しない場合があるためnullable
   @override
   final String? ownerUserID;
+
+  /// グループに紐づくアイコンの識別子。
+  /// `design_handoff_shoppinglist/preview/screens-groups.jsx` の GroupCreatePage で
+  /// 選択する 6 種 (`home` / `cart` / `fork` / `cookie` / `pets` / `bag`) のいずれか。
+  /// 既存ドキュメントにはこのフィールドが存在しないため default で `home` を返す。
+  @override
+  @JsonKey()
+  final String iconName;
   @override
   @ClientCreatedTimestamp()
   final DateTime? createdDateTime;
@@ -444,6 +474,8 @@ class _Group extends Group {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.ownerUserID, ownerUserID) ||
                 other.ownerUserID == ownerUserID) &&
+            (identical(other.iconName, iconName) ||
+                other.iconName == iconName) &&
             (identical(other.createdDateTime, createdDateTime) ||
                 other.createdDateTime == createdDateTime) &&
             (identical(other.updatedDateTime, updatedDateTime) ||
@@ -462,6 +494,7 @@ class _Group extends Group {
       const DeepCollectionEquality().hash(_memberUserIDs),
       name,
       ownerUserID,
+      iconName,
       createdDateTime,
       updatedDateTime,
       serverCreatedDateTime,
@@ -469,7 +502,7 @@ class _Group extends Group {
 
   @override
   String toString() {
-    return 'Group(id: $id, memberUserIDs: $memberUserIDs, name: $name, ownerUserID: $ownerUserID, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'Group(id: $id, memberUserIDs: $memberUserIDs, name: $name, ownerUserID: $ownerUserID, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -484,6 +517,7 @@ abstract mixin class _$GroupCopyWith<$Res> implements $GroupCopyWith<$Res> {
       List<String> memberUserIDs,
       String? name,
       String? ownerUserID,
+      String iconName,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
       @ClientUpdatedTimestamp() DateTime? updatedDateTime,
       @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
@@ -506,6 +540,7 @@ class __$GroupCopyWithImpl<$Res> implements _$GroupCopyWith<$Res> {
     Object? memberUserIDs = null,
     Object? name = freezed,
     Object? ownerUserID = freezed,
+    Object? iconName = null,
     Object? createdDateTime = freezed,
     Object? updatedDateTime = freezed,
     Object? serverCreatedDateTime = freezed,
@@ -528,6 +563,10 @@ class __$GroupCopyWithImpl<$Res> implements _$GroupCopyWith<$Res> {
           ? _self.ownerUserID
           : ownerUserID // ignore: cast_nullable_to_non_nullable
               as String?,
+      iconName: null == iconName
+          ? _self.iconName
+          : iconName // ignore: cast_nullable_to_non_nullable
+              as String,
       createdDateTime: freezed == createdDateTime
           ? _self.createdDateTime
           : createdDateTime // ignore: cast_nullable_to_non_nullable

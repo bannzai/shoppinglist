@@ -1,19 +1,26 @@
 rules_version = '2';
 
+// 設計方針:
+// JWT (Firebase Auth) の本人認証 + リソース所有判定のみを行い、データ内容に踏み込んだ
+// ガード（プレミアム判定・期間判定・フィールド diff 等）は実装しない。詳細は
+// `.claude/rules/firestore-rules-simplicity.md` を参照。
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isAuth() {
+      return request.auth != null;
+    }
+
     function isUserAuth(id) {
-      return request.auth != null && request.auth.uid == id;
+      return isAuth() && request.auth.uid == id;
     }
 
     // デバッグユーザーID（{uid}_debug_1 等）を実ユーザーが操作できるかチェック
     function isDebugUserOf(userDocID) {
-      return request.auth != null
-        && userDocID.matches(request.auth.uid + '_debug_[0-9]+');
+      return isAuth() && userDocID.matches(request.auth.uid + '_debug_[0-9]+');
     }
 
     function isMember(memberUserIDs) {
-      return request.auth != null && request.auth.uid in memberUserIDs;
+      return isAuth() && request.auth.uid in memberUserIDs;
     }
 
     match /users/{userID} {
@@ -21,31 +28,25 @@ service cloud.firestore {
       // のユーザー単位ガードに使われる。dart-define SHOPPINGLIST_DEVELOPER_TOKEN を持つ開発者ビルドでのみ
       // クライアント (UserDeveloperTokenSync) が upsert する。本人以外のアクセスは下記の
       // isUserAuth(userID) || isDebugUserOf(userID) で既に拒否されている。
-      allow read: if isUserAuth(userID) || isDebugUserOf(userID);
-      allow create, update: if isUserAuth(userID) || isDebugUserOf(userID);
-      allow delete: if isDebugUserOf(userID);
+      allow read, write: if isUserAuth(userID) || isDebugUserOf(userID);
 
       match /privates/{privateID} {
-        allow read: if false;
-        allow create, update: if isUserAuth(userID) || isDebugUserOf(userID);
+        allow read, write: if isUserAuth(userID) || isDebugUserOf(userID);
       }
 
       match /aiUsage/{yearMonth} {
-        allow read: if isUserAuth(userID) || isDebugUserOf(userID);
-        allow write: if false;
+        allow read, write: if isUserAuth(userID) || isDebugUserOf(userID);
       }
     }
 
-    // グループ招待: 読み書きともにクライアントからは不可。Functions Admin SDK 経由でのみ操作する
+    // グループ招待: クライアントから直接 read/write しない (Functions Admin SDK 経由のみ)
     match /groupInvitations/{invitationID} {
-      allow read: if false;
-      allow write: if false;
+      allow read, write: if false;
     }
 
-    // カップル
     match /groups/{groupID} {
-      allow read, update: if isMember(resource.data.memberUserIDs);
-      // グループ作成はCloud Functions (createGroup) 経由でのみ許可する
+      allow read, update, delete: if isMember(resource.data.memberUserIDs);
+      // グループ作成は Cloud Functions (createGroup) 経由でのみ許可する
       allow create: if false;
 
       function isGroupMember() {
@@ -53,18 +54,7 @@ service cloud.firestore {
       }
 
       match /userProfiles/{profileID} {
-        allow read: if isGroupMember();
-        // getAfter() はバッチ/トランザクション適用後の状態を参照する
-        // - グループ新規作成時: 同一バッチ内で作成されるグループドキュメントを参照できる
-        // - 既存グループへの参加時: 既に存在するグループドキュメントをそのまま参照する
-        allow create: if (request.resource.data.userID == request.auth.uid
-                         || isDebugUserOf(request.resource.data.userID))
-                      && isMember(getAfter(/databases/$(database)/documents/groups/$(groupID)).data.memberUserIDs);
-        allow update: if isGroupMember()
-                      && (resource.data.userID == request.auth.uid
-                          || isDebugUserOf(resource.data.userID));
-        allow delete: if isGroupMember()
-                      && isDebugUserOf(resource.data.userID);
+        allow read, write: if isGroupMember();
       }
 
       match /shoppingLocations/{locationID} {
@@ -72,56 +62,18 @@ service cloud.firestore {
       }
 
       match /userCategoryAxes/{axisID} {
-        allow read: if isGroupMember();
-        allow create: if isGroupMember() && request.resource.data.userID == request.auth.uid;
-        allow update, delete: if isGroupMember() && resource.data.userID == request.auth.uid;
+        allow read, write: if isGroupMember();
 
         match /categories/{categoryID} {
-          allow read: if isGroupMember();
-          allow create: if isGroupMember() && request.resource.data.userID == request.auth.uid;
-          allow update: if isGroupMember()
-                        && resource.data.userID == request.auth.uid
-                        && (!request.resource.data
-                                .diff(resource.data)
-                                .changedKeys()
-                                .hasAny(['locationOrders'])
-                            || isPremiumFromClaim());
-          allow delete: if isGroupMember() && resource.data.userID == request.auth.uid;
+          allow read, write: if isGroupMember();
         }
       }
 
-      // プレミアムユーザーはCustom ClaimsのisPremiumで判定
-      function isPremiumFromClaim() {
-        return request.auth != null && request.auth.token.isPremium == true;
-      }
-
-      // 無料ユーザーはcreatedDateTimeが30日以内のリストのみ読み取り可能
-      function isReadableFreeShoppingList() {
-        return resource.data.createdDateTime is timestamp
-          && resource.data.createdDateTime >= request.time - duration.value(30, 'd');
-      }
-
       match /shoppingLists/{shoppingListID} {
-        allow read: if isGroupMember() && (isPremiumFromClaim() || isReadableFreeShoppingList());
-        allow create: if isGroupMember()
-                      && request.resource.data.groupID == groupID
-                      && (request.resource.data.createUserID == request.auth.uid
-                          || isDebugUserOf(request.resource.data.createUserID));
-        // groupID と createUserID は不変フィールドのため、update 時に変更されないことを保証する
-        allow update: if isGroupMember()
-                      && request.resource.data.groupID == groupID
-                      && request.resource.data.createUserID == resource.data.createUserID;
-        allow delete: if isGroupMember();
+        allow read, write: if isGroupMember();
 
         match /items/{itemID} {
-          allow read, delete: if isGroupMember();
-          allow create: if isGroupMember()
-                        && (request.resource.data.userID == request.auth.uid
-                            || isDebugUserOf(request.resource.data.userID))
-                        && (!request.resource.data.keys().hasAny(['imageURL']) || isPremiumFromClaim());
-          allow update: if isGroupMember()
-                        && (!request.resource.data.diff(resource.data).changedKeys().hasAny(['imageURL'])
-                            || isPremiumFromClaim());
+          allow read, write: if isGroupMember();
         }
       }
     }

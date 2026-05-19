@@ -13,6 +13,7 @@ _Group _$GroupFromJson(Map<String, dynamic> json) => _Group(
           .toList(),
       name: json['name'] as String?,
       ownerUserID: json['ownerUserID'] as String?,
+      iconName: json['iconName'] as String? ?? 'home',
       createdDateTime: const ClientCreatedTimestamp()
           .fromJson(json['createdDateTime'] as Timestamp?),
       updatedDateTime: const ClientUpdatedTimestamp()
@@ -28,6 +29,7 @@ Map<String, dynamic> _$GroupToJson(_Group instance) => <String, dynamic>{
       'memberUserIDs': instance.memberUserIDs,
       'name': instance.name,
       'ownerUserID': instance.ownerUserID,
+      'iconName': instance.iconName,
       'createdDateTime':
           const ClientCreatedTimestamp().toJson(instance.createdDateTime),
       'updatedDateTime':

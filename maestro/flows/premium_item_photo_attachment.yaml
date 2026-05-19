@@ -14,7 +14,10 @@ appId: com.bannzai.shoppinglist
 - tapOn:
     point: "50%,6%"
 - waitForAnimationToEnd
-- tapOn: "milk"
+# milk テキスト本体タップはチェックトグル動作のため、`IconButton(tooltip: 'アイテム詳細',
+# Icons.info_outline)` を tooltip 経由でタップして詳細ボトムシートを開く。
+# 関連実装: lib/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart
+- tapOn: "アイテム詳細"
 - waitForAnimationToEnd
 - tapOn: "写真を追加"
 - waitForAnimationToEnd
