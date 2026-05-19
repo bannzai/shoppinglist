@@ -1,8 +1,11 @@
 appId: com.bannzai.shoppinglist
 ---
-# PR-4 List Settings の検証:
-# - ShoppingListSettingPage に autoNotifyEnabled Switch があることを assert
-# - ShoppingListItemFilterPage の表示セクション (チェック済み表示 / カテゴリ順) を assert
+# ShoppingListSettingPage (design v2 SSOT 準拠) の検証:
+# - 6 セクション label (UPPERCASE) が表示される
+# - 「確定キーで保存されます」hint が表示される
+# - 共有セクションが 1 card 2 Cell 構成 (招待 / グループ設定) で表示される
+# - 「アイテム追加で家族に通知」AppCell が表示される
+# - 削除ダイアログに body 文 (件数) と「このリストを削除しますか?」が表示される
 
 - runFlow: shared/anonymous_sign_in.yaml
 
@@ -15,12 +18,68 @@ appId: com.bannzai.shoppinglist
     optional: true
 - waitForAnimationToEnd
 
+# 6 セクション label (UPPERCASE 大文字化されている)
+- assertVisible:
+    text: "リスト名"
+    optional: true
+- assertVisible:
+    text: "確定キーで保存されます"
+    optional: true
+- assertVisible:
+    text: "買い物する場所"
+    optional: true
+- assertVisible:
+    text: "保存期間"
+    optional: true
+- assertVisible:
+    text: "通知"
+    optional: true
+- assertVisible:
+    text: "共有"
+    optional: true
+- assertVisible:
+    text: "リストの操作"
+    optional: true
+
+# 共有セクション 2 Cell
+- assertVisible:
+    text: "グループに招待コードを送る"
+    optional: true
+- assertVisible:
+    text: "グループ設定"
+    optional: true
+
+# autoNotify Cell (PR #283 由来。SSOT 拡張提案中)
 - assertVisible:
     text: "アイテム追加で家族に通知"
     optional: true
 - assertVisible:
     text: "このリストでアイテム追加・チェック切替があったとき"
     optional: true
+
+# リストの操作 Cell
+- assertVisible:
+    text: "現在のリストを複製"
+    optional: true
+- assertVisible:
+    text: "リストをエクスポート"
+    optional: true
+
+# 削除ダイアログ
+- tapOn:
+    text: "このリストを削除"
+    optional: true
+- waitForAnimationToEnd
+- assertVisible:
+    text: "このリストを削除しますか?"
+    optional: true
+- assertVisible:
+    text: "元に戻せません。"
+    optional: true
+- tapOn:
+    text: "キャンセル"
+    optional: true
+- waitForAnimationToEnd
 
 # フィルター画面 (リスト top bar からのアクセスでも可)
 - back
