@@ -257,7 +257,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                                     parameters: {'groupID': groupID});
                                 isCreatingInvitation.value = true;
                                 try {
-                                  final invitationCode = await ref
+                                  final invitation = await ref
                                       .read(createGroupInvitationProvider)
                                       .call(groupID: groupID);
                                   if (context.mounted) {
@@ -266,7 +266,8 @@ class _GroupSettingBody extends HookConsumerWidget {
                                       builder: (context) =>
                                           _InvitationCodeDialog(
                                               groupID: groupID,
-                                              invitationCode: invitationCode),
+                                              invitationCode:
+                                                  invitation.invitationCode),
                                     );
                                   }
                                 } catch (e) {
