@@ -20,6 +20,11 @@ class AppCell extends StatelessWidget {
   /// 補足テキスト（任意）。
   final String? subtitle;
 
+  /// 末尾 chev-r の手前に表示する補助テキスト（任意）。
+  /// `design_handoff_shopping_list/preview/screens-list-settings.jsx#Cell` の `detail` 相当
+  /// (`fontSize: 13, color: ink3`)。Switch 付き Cell には表示されない。
+  final String? detail;
+
   /// 全面タップ時のコールバック。null で disabled。
   final VoidCallback? onTap;
 
@@ -37,6 +42,7 @@ class AppCell extends StatelessWidget {
     required this.icon,
     required this.title,
     this.subtitle,
+    this.detail,
     this.onTap,
     this.onSwitch,
     this.switchValue,
@@ -88,8 +94,18 @@ class AppCell extends StatelessWidget {
               ),
               if (onSwitch != null && switchValue != null)
                 Switch(value: switchValue!, onChanged: onSwitch)
-              else if (onTap != null)
-                Icon(Icons.chevron_right, size: 18, color: neutral.ink3),
+              else ...[
+                if (detail != null) ...[
+                  Text(
+                    detail!,
+                    style:
+                        textTheme.bodySmall?.copyWith(color: neutral.ink3),
+                  ),
+                  const SizedBox(width: 6),
+                ],
+                if (onTap != null)
+                  Icon(Icons.chevron_right, size: 18, color: neutral.ink3),
+              ],
             ],
           ),
         ),
