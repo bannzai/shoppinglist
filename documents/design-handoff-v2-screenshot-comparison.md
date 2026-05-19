@@ -304,3 +304,66 @@ Pixel_9_Pro AVD を boot しようとしたが、host の `~/.android/adbkey.pub
 
 `plans/261-warm-engelbart.md` 運用ルール 3 手順 d-e の「FAIL を file:line + 修正案で列挙」対象は本セッションでは検出なし。決定事項差分 (運用ルール 4) のみ。
 
+## 2026-05-19 更新 — Issue #297 視覚差分対応
+
+PR #300 merge 後、issue #297 のコメント 2 で **5 件の視覚差分** が検出された。本セクションは `ShoppingListSettingPage` の 3 状態 (通常 / 招待コード dialog / 削除確認 dialog) を Web SSOT に揃えるための差分修正記録。
+
+### 検出された差分と対応 PR
+
+| ID | 重要度 | 対象 | Web SSOT 仕様 | 修正前 | 修正内容 |
+|---|---|---|---|---|---|
+| §3-1 | 🔴 HIGH | 削除確認 dialog「削除」ボタン | solid `t.danger` + `#fff` 文字 | `AppPillVariant.danger` (dangerSoft 淡塗り) | `AppPillVariant.dangerSolid` (新規 variant) を `app_pill.dart` に追加し `delete_confirm_dialog.dart` で適用 |
+| §3-2 | 🟡 MED | main 画面「このリストを削除」 | `radius 14` 角丸長方形 + padding 14x16 + fontSize 15 | `AppPill(StadiumBorder)` | `Material+InkWell` の inline 実装に置換 (`page.dart`) |
+| §3-3 | 🟡 MED | 招待コード dialog コード枠 | `1px dashed ${t.divider}` | `Border.all` (solid) | `lib/components/dashed_border_box.dart` を新規追加 (CustomPainter で自前実装) し `invitation_code_dialog.dart` で適用 |
+| §3-4 | 🟢 LOW | AppCell detail テキスト | `fontSize: 13` | `bodySmall` (12px) | `app_cell.dart` で `fontSize: 13` を明示 |
+| §3-5 | 🟢 LOW | アップグレード Pill アイコン | crown (王冠) | `Icons.star_outline` | `Icons.workspace_premium` (Material 標準の王冠ベース) |
+
+### 検証方針
+
+本セクションでは以下のクライアント／環境で並列比較を行う:
+
+- **Web SSOT**: `python3 -m http.server 8765` を `design_handoff_shoppinglist/preview/` で起動し、`agent-browser` または直接ブラウザで撮影
+- **iOS Light/Dark**: iPhone 16 Plus Simulator + `flutter run -t lib/features/previews/main_preview.dart` で起動し mobile-mcp でスクショ取得
+- **Android Light/Dark**: 環境制約により今回も実施できない場合は別セッションに送る
+
+3 状態 (通常 / 招待コード dialog / 削除確認 dialog) × Light/Dark × 各環境 = 計 12 枚を `tmp/handover-297/` に保存して issue #297 §5 チェックリスト 7 項目を埋める。
+
+### 構造差分は本 issue 対象外
+
+issue #297 §4 で挙げられた構造差分 (autoNotify Switch / リストの操作セクション) は **SSOT 拡張提案 issue を別途切る** 方針で、本 issue では触らない。
+
+### 2026-05-19 取得スクショ (本セッション)
+
+iPhone 16 Plus iOS 18.5 Simulator + `flutter run -t lib/features/previews/main_preview.dart` で 6 枚取得:
+
+| 枚 | パス | 状態 | テーマ | 検証結果 |
+|---|---|---|---|---|
+| 1 | `tmp/handover-297/flutter_01_normal.png` | 通常 | Light | §3-2 (radius 14 削除ボタン) / §3-5 (アップグレード Pill workspace_premium) PASS |
+| 2 | `tmp/handover-297/flutter_02_invitation.png` | 招待コード dialog | Light | §3-3 (dashed border) PASS、§3-4 (detail 13px) PASS、コピー (ghost) / 共有 (accent solid) PASS |
+| 3 | `tmp/handover-297/flutter_03_delete.png` | 削除確認 dialog | Light | §3-1 (削除ボタン solid danger + 白文字) PASS |
+| 4 | `tmp/handover-297/flutter_04_dark_delete.png` | 削除確認 dialog | Dark | Dark `danger #E47A7A` 塗り + 白文字で §3-1 が Dark でも PASS |
+| 5 | `tmp/handover-297/flutter_05_dark_normal.png` | 通常 | Dark | Dark `dangerSoft #3A2020` + `danger #E47A7A` 文字で §3-2 が Dark でも PASS |
+| 6 | `tmp/handover-297/flutter_06_dark_invitation.png` | 招待コード dialog | Dark | Dark `divider #2A251F` で dashed border 描画 PASS |
+
+issue #297 コメント 2 の §5 チェックリスト 7 項目を Light/Dark の両方で埋めた。Android Light/Dark および Web Dark との 3 環境比較は引き続き別セッションでカバー。
+
+### 検証コマンドの実績
+
+```text
+flutter analyze            → No issues found
+flutter test               → 154/154 pass
+flutter build ios --no-codesign --debug   → 成功 (Built build/ios/iphoneos/Runner.app)
+flutter build apk --debug                 → 成功 (Built build/app/outputs/flutter-apk/app-debug.apk)
+flutter build ios --simulator --debug -t lib/features/previews/main_preview.dart → 成功 (Built build/ios/iphonesimulator/Runner.app)
+```
+
+### preview override 修正の補足
+
+本セッションで `customerInfoProvider` を preview override に追加 (`lib/features/previews/mock/mock_provider_overrides.dart`)。Purchases SDK 未初期化の状態で `ShoppingListSettingPage` を preview から開くと Fatal error でクラッシュしていた問題を `Stream<CustomerInfo>.empty()` で解消。preview 環境では `isPremium=false` 扱いになり、アップグレード Pill が常に表示される。
+
+### 関連
+
+- 修正対象ファイル: `lib/components/frame/app_pill.dart`, `lib/components/frame/app_cell.dart`, `lib/components/dashed_border_box.dart` (新規), `lib/features/shopping_list_setting/page.dart`, `lib/features/shopping_list_setting/delete_confirm_dialog.dart`, `lib/features/shopping_list_setting/invitation_code_dialog.dart`
+- 拡張 maestro flow: `maestro/flows/design_v2_list_settings.yaml` (招待コード dialog 開閉 + assertVisible)
+- プラン: `plans/297-sharded-dragonfly.md`
+
