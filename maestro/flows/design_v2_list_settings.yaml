@@ -65,6 +65,20 @@ appId: com.bannzai.shoppinglist
     text: "リストをエクスポート"
     optional: true
 
+# 招待コード dialog (招待コード送付 タップ → 招待コード + 有効期限が表示される)
+- tapOn:
+    text: "グループに招待コードを送る"
+    optional: true
+- waitForAnimationToEnd
+- assertVisible:
+    text: "招待コード"
+    optional: true
+- assertVisible:
+    text: "有効期限"
+    optional: true
+- back
+- waitForAnimationToEnd
+
 # 削除ダイアログ
 - tapOn:
     text: "このリストを削除"
