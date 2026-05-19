@@ -93,14 +93,11 @@ void main() {
     expect(find.text('グループ設定'), findsOneWidget);
   });
 
-  testWidgets('削除ボタンの label は「このリストを削除」', (tester) async {
+  testWidgets('削除ボタンに「このリストを削除」と trash アイコンが表示される', (tester) async {
     await _pumpPage(tester);
-    final deletePill = tester
-        .widgetList<AppPill>(find.byType(AppPill))
-        .where((p) => p.variant == AppPillVariant.danger)
-        .firstOrNull;
-    expect(deletePill, isNotNull);
-    expect(deletePill!.label, 'このリストを削除');
-    expect(deletePill.large, true);
+    // 削除ボタンは AppPill ではなく Material+InkWell の inline 実装 (radius 14)。
+    // SSOT: screens-list-settings.jsx L55-61 (dangerSoft 背景 + danger 文字)
+    expect(find.text('このリストを削除'), findsOneWidget);
+    expect(find.byIcon(Icons.delete_outline), findsOneWidget);
   });
 }

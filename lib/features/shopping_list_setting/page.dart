@@ -218,16 +218,44 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                 isPremium: isPremium,
               ),
               const SizedBox(height: 14),
-              AppPill(
-                label: 'このリストを削除',
-                icon: Icons.delete_outline,
-                variant: AppPillVariant.danger,
-                large: true,
-                expanded: true,
-                onPressed: () => _onTapDelete(
-                  context: context,
-                  ref: ref,
-                  currentShoppingListName: shoppingListState.value.name,
+              // SSOT: screens-list-settings.jsx L55-61
+              // background: dangerSoft / color: danger / radius: 14 / padding: 14px 16px
+              SizedBox(
+                width: double.infinity,
+                child: Material(
+                  color: neutral.dangerSoft,
+                  borderRadius: BorderRadius.circular(14),
+                  child: InkWell(
+                    onTap: () => _onTapDelete(
+                      context: context,
+                      ref: ref,
+                      currentShoppingListName: shoppingListState.value.name,
+                    ),
+                    borderRadius: BorderRadius.circular(14),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 14),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.delete_outline,
+                              size: 16, color: neutral.danger),
+                          const SizedBox(width: 8),
+                          Text(
+                            'このリストを削除',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.copyWith(
+                                  color: neutral.danger,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -423,7 +451,7 @@ class _StoragePeriodCard extends StatelessWidget {
             const SizedBox(width: 8),
             AppPill(
               label: 'アップグレード',
-              icon: Icons.star_outline,
+              icon: Icons.workspace_premium,
               variant: AppPillVariant.soft,
               onPressed: () {
                 analytics.logEvent(name: 'tap_storage_period_upgrade');
