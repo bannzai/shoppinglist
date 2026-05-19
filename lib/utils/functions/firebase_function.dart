@@ -5,7 +5,11 @@ import 'package:flutter/foundation.dart';
 final functions = FirebaseFunctions.instanceFor(region: 'us-central1');
 
 extension FirebaseFunctionsExt on FirebaseFunctions {
-  Future<String> createGroupInvitation({
+  /// 招待コードと有効期限を Functions から取得する。
+  /// 戻り値の `expiresDateTime` は `Functions` が ISO8601 文字列で返したものを
+  /// `DateTime.parse` した値。
+  Future<({String invitationCode, DateTime expiresDateTime})>
+      createGroupInvitation({
     required String groupID,
   }) async {
     final result = await httpsCallable('createGroupInvitation').call(
@@ -18,7 +22,11 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     if (response['result'] != 'OK') {
       throw Exception(response['error']['message']);
     }
-    return response['data']['invitationCode'] as String;
+    return (
+      invitationCode: response['data']['invitationCode'] as String,
+      expiresDateTime:
+          DateTime.parse(response['data']['expiresDateTime'] as String),
+    );
   }
 
   Future<String> acceptGroupInvitation({

@@ -262,7 +262,7 @@ class GroupCreatePage extends HookConsumerWidget {
                             // 作成後、招待コードを直ちに生成して共有 dialog を表示する。
                             // `design_handoff_shoppinglist/preview/screens-groups.jsx` 準拠。
                             try {
-                              final invitationCode = await ref
+                              final invitation = await ref
                                   .read(createGroupInvitationProvider)
                                   .call(groupID: groupID);
                               if (context.mounted) {
@@ -270,7 +270,7 @@ class GroupCreatePage extends HookConsumerWidget {
                                   context: context,
                                   builder: (dialogContext) =>
                                       _PostCreateInvitationDialog(
-                                    invitationCode: invitationCode,
+                                    invitationCode: invitation.invitationCode,
                                   ),
                                 );
                               }

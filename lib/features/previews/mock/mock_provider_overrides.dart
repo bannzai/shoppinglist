@@ -112,8 +112,13 @@ class _NoOpShoppingListItemBatchUpdate extends ShoppingListItemBatchUpdate {
 
 class _NoOpCreateGroupInvitation extends CreateGroupInvitation {
   @override
-  Future<String> call({required String groupID}) async {
-    return 'PREVIEW';
+  Future<({String invitationCode, DateTime expiresDateTime})> call({
+    required String groupID,
+  }) async {
+    return (
+      invitationCode: 'PREVIEW',
+      expiresDateTime: DateTime.now().add(const Duration(days: 7)),
+    );
   }
 }
 
