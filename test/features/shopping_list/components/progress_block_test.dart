@@ -23,13 +23,13 @@ void main() {
     expect(find.text('✓ おつかれさま'), findsNothing);
   });
 
-  testWidgets('ProgressBlock: 全完了時に「完了!」と「✓ おつかれさま」を表示',
+  testWidgets('ProgressBlock: 全完了時は「✓ おつかれさま」のみ表示し「チェック済み」は出さない',
       (tester) async {
     await tester.pumpWidget(_wrap(
       const ProgressBlock(checkedCount: 4, totalCount: 4),
     ));
     expect(find.text('4/4'), findsOneWidget);
-    expect(find.text('完了!'), findsOneWidget);
+    expect(find.text('チェック済み'), findsNothing);
     expect(find.text('✓ おつかれさま'), findsOneWidget);
   });
 

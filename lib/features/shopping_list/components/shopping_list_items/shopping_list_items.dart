@@ -5,6 +5,7 @@ import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_section_header.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
+import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
@@ -199,15 +200,15 @@ class _GroupedListView extends StatelessWidget {
       if (items == null || items.isEmpty) continue;
 
       final category = categoryMap[categoryID]!;
-      final doneCount = items
-          .where((i) => i.status == GroupShoppingListItemStatus.checked)
-          .length;
-      children.add(CategorySectionHeader(
-        name: category.name,
-        colorHex: category.color,
-        doneCount: doneCount,
-        totalCount: items.length,
-      ));
+      final metrics = ShoppingListItemMetrics.fromItems(items);
+      if (metrics.totalCount > 0) {
+        children.add(CategorySectionHeader(
+          name: category.name,
+          colorHex: category.color,
+          doneCount: metrics.checkedCount,
+          totalCount: metrics.totalCount,
+        ));
+      }
 
       for (final item in items) {
         children.add(TextShoppingListItemWidget(
@@ -221,15 +222,15 @@ class _GroupedListView extends StatelessWidget {
 
     final uncategorizedItems = grouped[uncategorizedCategoryID];
     if (uncategorizedItems != null && uncategorizedItems.isNotEmpty) {
-      final doneCount = uncategorizedItems
-          .where((i) => i.status == GroupShoppingListItemStatus.checked)
-          .length;
-      children.add(CategorySectionHeader(
-        name: '未分類',
-        colorHex: null,
-        doneCount: doneCount,
-        totalCount: uncategorizedItems.length,
-      ));
+      final metrics = ShoppingListItemMetrics.fromItems(uncategorizedItems);
+      if (metrics.totalCount > 0) {
+        children.add(CategorySectionHeader(
+          name: '未分類',
+          colorHex: null,
+          doneCount: metrics.checkedCount,
+          totalCount: metrics.totalCount,
+        ));
+      }
       for (final item in uncategorizedItems) {
         children.add(TextShoppingListItemWidget(
           key: ValueKey(item.id),

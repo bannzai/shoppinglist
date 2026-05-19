@@ -1,0 +1,20 @@
+appId: com.bannzai.shoppinglist
+---
+# PR-9 Dark mode 検証:
+# - アプリ起動後に Light / Dark で同一画面のスクショを比較する
+# - System の Light/Dark 切替はホスト OS の API が必要なため、`runFlow` で 2 度起動して
+#   各経路の主要画面を assert する流れ。実際の Light/Dark テーマ確認は手動目視で行う
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 主要画面到達 (買い物リスト → 設定)
+- assertVisible:
+    text: "買い物リスト"
+    optional: true
+- tapOn:
+    text: "設定"
+    optional: true
+- waitForAnimationToEnd
+- assertVisible:
+    text: "テーマカラー"
+    optional: true

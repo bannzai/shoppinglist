@@ -43,10 +43,11 @@ class DeleteUserButton extends HookConsumerWidget {
                     },
                     child: Text(
                       'キャンセル',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w600,
+                          ),
                     ),
                   ),
                   TextButton(
@@ -63,7 +64,7 @@ class DeleteUserButton extends HookConsumerWidget {
                       }
                     },
                     child: Text('削除する',
-                        style: TextStyle(
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Theme.of(context).colorScheme.error,
                             fontWeight: FontWeight.w600)),
                   ),
@@ -109,10 +110,10 @@ class DeleteUserButton extends HookConsumerWidget {
               },
               child: Text(
                 'キャンセル',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ),
             TextButton(
@@ -135,10 +136,10 @@ class DeleteUserButton extends HookConsumerWidget {
               },
               child: Text(
                 '再ログインする',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ),
           ],
@@ -167,21 +168,18 @@ class _CompletedDialog extends StatelessWidget {
         children: [
           Text(
             'アカウントを削除しました',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontWeight: FontWeight.w700,
-              fontSize: 16,
-            ),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.w700,
+                ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
           Text(
             'アプリを終了しますか？',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontWeight: FontWeight.w400,
-              fontSize: 14,
-            ),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -194,10 +192,10 @@ class _CompletedDialog extends StatelessWidget {
               },
               child: Text(
                 '終了する',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ),
           ),

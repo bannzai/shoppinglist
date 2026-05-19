@@ -5,7 +5,11 @@ import 'package:flutter/foundation.dart';
 final functions = FirebaseFunctions.instanceFor(region: 'us-central1');
 
 extension FirebaseFunctionsExt on FirebaseFunctions {
-  Future<String> createGroupInvitation({
+  /// 招待コードと有効期限を Functions から取得する。
+  /// 戻り値の `expiresDateTime` は `Functions` が ISO8601 文字列で返したものを
+  /// `DateTime.parse` した値。
+  Future<({String invitationCode, DateTime expiresDateTime})>
+      createGroupInvitation({
     required String groupID,
   }) async {
     final result = await httpsCallable('createGroupInvitation').call(
@@ -18,7 +22,11 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     if (response['result'] != 'OK') {
       throw Exception(response['error']['message']);
     }
-    return response['data']['invitationCode'] as String;
+    return (
+      invitationCode: response['data']['invitationCode'] as String,
+      expiresDateTime:
+          DateTime.parse(response['data']['expiresDateTime'] as String),
+    );
   }
 
   Future<String> acceptGroupInvitation({
@@ -141,16 +149,21 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
   }
 
   /// サーバー側で上限チェックを行った上でグループを作成する。
-  Future<void> createGroup({
+  /// `iconName` は `design_handoff_shoppinglist/preview/screens-groups.jsx#GroupCreatePage`
+  /// で許容される 6 種 (home/cart/fork/cookie/pets/bag) のいずれか。
+  /// 戻り値は作成されたグループの ID (Firestore doc ID)。
+  Future<String> createGroup({
     required String createUserID,
     required String? name,
     required bool setAsDefault,
+    required String iconName,
   }) async {
     final result = await httpsCallable('createGroup').call(
       {
         'createUserID': createUserID,
         'name': name,
         'setAsDefault': setAsDefault,
+        'iconName': iconName,
       },
     );
     debugPrint('createGroup.result: ${result.data}');
@@ -158,6 +171,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     if (response['result'] != 'OK') {
       throw Exception(response['error']['message']);
     }
+    return response['data']['groupID'] as String;
   }
 
   Future<void> updateGroupName({
@@ -239,8 +253,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     required String firstCategoryName,
     required String secondCategoryName,
   }) async {
-    final result =
-        await httpsCallable('setupTestCategoryLocationOrder').call({
+    final result = await httpsCallable('setupTestCategoryLocationOrder').call({
       'groupID': groupID,
       'locationName': locationName,
       'firstCategoryName': firstCategoryName,

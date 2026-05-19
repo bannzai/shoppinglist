@@ -42,15 +42,14 @@ class CategorySectionHeader extends StatelessWidget {
           const SizedBox(width: 8),
           Flexible(
             child: Text(
-              name,
+              name.toUpperCase(),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: neutral.ink2,
-                letterSpacing: 0.06,
-              ),
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: neutral.ink2,
+                    letterSpacing: 0.06,
+                  ),
             ),
           ),
           const Spacer(),

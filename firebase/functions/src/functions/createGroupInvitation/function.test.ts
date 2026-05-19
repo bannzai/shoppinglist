@@ -8,6 +8,7 @@ const mockFirestoreInstance = {
 const mockTimestampNow = jest.fn(() => ({ toMillis: () => Date.now() }));
 const mockTimestampFromMillis = jest.fn((ms: number) => ({
   toMillis: () => ms,
+  toDate: () => new Date(ms),
 }));
 const mockServerTimestamp = jest.fn(() => "SERVER_TIMESTAMP");
 
@@ -132,6 +133,52 @@ describe("createGroupInvitation", () => {
         status: "pending",
       })
     );
+  });
+
+  test("正常系: expiresDateTime が ISO8601 文字列で 7 日先を指す", async () => {
+    mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
+
+    const mockGroupDoc = {
+      exists: true,
+      data: () => ({ memberUserIDs: ["user-1"] }),
+    };
+
+    const mockInvitationRef = {
+      id: "invitation-1",
+      set: jest.fn().mockResolvedValue(undefined),
+    };
+
+    mockCollection.mockImplementation((path: string) => {
+      if (path === "groups") {
+        return {
+          doc: jest.fn(() => ({
+            get: jest.fn().mockResolvedValue(mockGroupDoc),
+          })),
+        };
+      }
+      if (path === "groupInvitations") {
+        return {
+          doc: jest.fn(() => mockInvitationRef),
+          where: jest.fn().mockReturnValue({
+            limit: jest.fn().mockReturnValue({
+              get: jest.fn().mockResolvedValue({ empty: true }),
+            }),
+          }),
+        };
+      }
+      return {};
+    });
+
+    const before = Date.now();
+    const result = await capturedFlowFn({ groupID: "group-1" });
+    const after = Date.now();
+
+    expect(result.result).toBe("OK");
+    expect(typeof result.data.expiresDateTime).toBe("string");
+    const expiresAt = new Date(result.data.expiresDateTime).getTime();
+    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+    expect(expiresAt).toBeGreaterThanOrEqual(before + sevenDaysMs - 1000);
+    expect(expiresAt).toBeLessThanOrEqual(after + sevenDaysMs + 1000);
   });
 
   test("異常系: 非メンバーがエラーになる", async () => {

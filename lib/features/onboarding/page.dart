@@ -1,5 +1,8 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/frame/app_pill.dart';
 import 'package:shoppinglist/provider/onboarding.dart';
@@ -7,38 +10,46 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 /// アプリ初回起動時の 3 スライドオンボーディング。
-/// `design_handoff_shopping_list/source/screens-onboarding.jsx` 相当。
+/// `design_handoff_shoppinglist/preview/screens-onboarding.jsx` 相当。
 ///
 /// 完走 / スキップで `HasSeenOnboarding.markAsSeen()` を呼び、二度と表示されないようにする。
 class OnboardingPage extends HookConsumerWidget {
   const OnboardingPage({super.key});
 
-  static const _slides = <_OnboardingSlideData>[
-    _OnboardingSlideData(
-      emoji: '🛒',
-      eyebrow: '01 — 共有',
-      title: '家族と作る、買い物リスト',
-      body: 'メンバー全員でリアルタイムに共有・編集できる。',
-    ),
-    _OnboardingSlideData(
-      emoji: '📸',
-      eyebrow: '02 — 入力',
-      title: '写真や URL から、まとめて追加',
-      body: 'レシピ画像やネット記事を放り込むだけ。',
-    ),
-    _OnboardingSlideData(
-      emoji: '🛍️',
-      eyebrow: '03 — 並び順',
-      title: 'いつもの並び順で、店舗を回る',
-      body: 'カテゴリと店舗ごとに最適な順序で表示。',
-    ),
-  ];
+  static const _slideCount = 3;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.tokens;
     final controller = usePageController();
     final index = useState(0);
+
+    final slides = <_SlideContent>[
+      _SlideContent(
+        eyebrowIndex: 1,
+        title: '家族と作る、\n買い物リスト',
+        body: '家で思いついたものを誰かが追加して、店頭で別の誰かがチェック。'
+            '「買ってきて」のやり取りを、ぜんぶこの一枚に。',
+        assetPath: 'images/onboarding/slide_1.png',
+        fallbackBuilder: (tokens) => _TiltedListArt(tokens: tokens),
+      ),
+      _SlideContent(
+        eyebrowIndex: 2,
+        title: '同じリストを\n同時に編集',
+        body: '家族・パートナー・同居人を招待コードで招くと、同じリストを編集できます。'
+            '誰が追加したかではなく、何を買い忘れずに済むかを大切に。',
+        assetPath: 'images/onboarding/slide_2.png',
+        fallbackBuilder: (tokens) => _AvatarOrbitArt(tokens: tokens),
+      ),
+      _SlideContent(
+        eyebrowIndex: 3,
+        title: 'お店の近くで、\nそっと思い出す',
+        body: '登録した店舗の近くに来ると、買い物リストをやさしくお知らせ。'
+            '通知は必要な時だけ、押し付けがましくなく。',
+        assetPath: 'images/onboarding/slide_3.png',
+        fallbackBuilder: (tokens) => _MapHaloArt(tokens: tokens),
+      ),
+    ];
 
     Future<void> finish({required String reason}) async {
       analytics.logEvent(name: 'finish_onboarding', parameters: {
@@ -61,11 +72,10 @@ class OnboardingPage extends HookConsumerWidget {
                   onPressed: () => finish(reason: 'skip'),
                   child: Text(
                     'スキップ',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: tokens.neutral.ink3,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: tokens.neutral.ink3,
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                 ),
               ),
@@ -73,7 +83,7 @@ class OnboardingPage extends HookConsumerWidget {
             Expanded(
               child: PageView.builder(
                 controller: controller,
-                itemCount: _slides.length,
+                itemCount: slides.length,
                 onPageChanged: (i) {
                   index.value = i;
                   analytics.logEvent(
@@ -81,22 +91,22 @@ class OnboardingPage extends HookConsumerWidget {
                     parameters: {'slideIndex': i.toString()},
                   );
                 },
-                itemBuilder: (context, i) =>
-                    _OnboardingSlide(data: _slides[i]),
+                itemBuilder: (context, i) => _OnboardingSlide(data: slides[i]),
               ),
             ),
-            _DotsIndicator(count: _slides.length, currentIndex: index.value),
+            _DotsIndicator(count: _slideCount, currentIndex: index.value),
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
               child: SizedBox(
                 width: double.infinity,
                 child: AppPill(
-                  label: index.value == _slides.length - 1 ? 'はじめる' : '次へ',
+                  label: index.value == slides.length - 1 ? 'はじめる' : '次へ',
                   variant: AppPillVariant.accent,
                   large: true,
+                  expanded: true,
                   onPressed: () {
-                    if (index.value == _slides.length - 1) {
+                    if (index.value == slides.length - 1) {
                       finish(reason: 'complete');
                     } else {
                       controller.nextPage(
@@ -115,21 +125,25 @@ class OnboardingPage extends HookConsumerWidget {
   }
 }
 
-class _OnboardingSlideData {
-  final String emoji;
-  final String eyebrow;
+/// 1 スライドのデータ。`assetPath` の画像を表示し、ロード失敗時は
+/// `fallbackBuilder` の Flutter 描画 Widget を使う。
+class _SlideContent {
+  final int eyebrowIndex;
   final String title;
   final String body;
-  const _OnboardingSlideData({
-    required this.emoji,
-    required this.eyebrow,
+  final String assetPath;
+  final Widget Function(AppTokens tokens) fallbackBuilder;
+  const _SlideContent({
+    required this.eyebrowIndex,
     required this.title,
     required this.body,
+    required this.assetPath,
+    required this.fallbackBuilder,
   });
 }
 
 class _OnboardingSlide extends StatelessWidget {
-  final _OnboardingSlideData data;
+  final _SlideContent data;
   const _OnboardingSlide({required this.data});
 
   @override
@@ -141,34 +155,39 @@ class _OnboardingSlide extends StatelessWidget {
       child: Column(
         children: [
           const Spacer(),
-          Container(
-            width: 180,
-            height: 180,
-            decoration: BoxDecoration(
-              color: neutral.surface2,
-              borderRadius: BorderRadius.circular(24),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              data.emoji,
-              style: const TextStyle(fontSize: 72, height: 1.0),
+          SizedBox(
+            width: 220,
+            height: 220,
+            child: Image.asset(
+              data.assetPath,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) =>
+                  data.fallbackBuilder(tokens),
             ),
           ),
           const Spacer(),
+          // mono eyebrow: `01/03` 形式
           Text(
-            data.eyebrow,
-            style: TextStyle(
+            '${data.eyebrowIndex.toString().padLeft(2, '0')}/${OnboardingPage._slideCount.toString().padLeft(2, '0')}',
+            style: GoogleFonts.ibmPlexMono(
               fontSize: 12,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.06,
+              fontWeight: FontWeight.w600,
               color: tokens.accent,
+              letterSpacing: 0.08,
+              fontFeatures: const [FontFeature.tabularFigures()],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Text(
             data.title,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.displayMedium,
+            style: GoogleFonts.zenKakuGothicNew(
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
+              height: 1.25,
+              letterSpacing: -0.02,
+              color: neutral.ink,
+            ),
           ),
           const SizedBox(height: 12),
           Text(
@@ -184,6 +203,297 @@ class _OnboardingSlide extends StatelessWidget {
       ),
     );
   }
+}
+
+/// スライド 1: 傾いた買い物リスト風カード（accent ボーダー + 行）。
+class _TiltedListArt extends StatelessWidget {
+  final AppTokens tokens;
+  const _TiltedListArt({required this.tokens});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        // 背景の角丸 surface2
+        Container(
+          decoration: BoxDecoration(
+            color: tokens.neutral.surface2,
+            borderRadius: BorderRadius.circular(28),
+          ),
+        ),
+        Transform.rotate(
+          angle: -0.06,
+          child: Container(
+            width: 160,
+            height: 180,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: tokens.neutral.card,
+              borderRadius: BorderRadius.circular(14),
+              border: Border(left: BorderSide(color: tokens.accent, width: 3)),
+              boxShadow: tokens.cardShadow,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (final (checked, w) in const [
+                  (true, 0.85),
+                  (true, 0.65),
+                  (false, 0.75),
+                  (false, 0.55),
+                  (false, 0.7),
+                ]) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Row(children: [
+                      Container(
+                        width: 14,
+                        height: 14,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: checked ? tokens.accent : Colors.transparent,
+                          border: Border.all(
+                            color:
+                                checked ? tokens.accent : tokens.neutral.ink4,
+                            width: 1.4,
+                          ),
+                        ),
+                        child: checked
+                            ? const Icon(Icons.check,
+                                size: 10, color: Colors.white)
+                            : null,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Container(
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: checked
+                                ? tokens.neutral.divider2
+                                : tokens.neutral.ink4.withValues(alpha: 0.35),
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                          margin: EdgeInsets.only(right: 160 * (1 - w)),
+                        ),
+                      ),
+                    ]),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// スライド 2: dashed orbit 上に 3 つのアバター。
+class _AvatarOrbitArt extends StatelessWidget {
+  final AppTokens tokens;
+  const _AvatarOrbitArt({required this.tokens});
+
+  @override
+  Widget build(BuildContext context) {
+    const radius = 80.0;
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: tokens.neutral.surface2,
+            borderRadius: BorderRadius.circular(28),
+          ),
+        ),
+        SizedBox(
+          width: 220,
+          height: 220,
+          child: CustomPaint(
+            painter: _DashedCirclePainter(
+              color: tokens.accent.withValues(alpha: 0.5),
+              radius: radius,
+            ),
+          ),
+        ),
+        // 中央タグ
+        Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: tokens.accent,
+            boxShadow: tokens.cardShadow,
+          ),
+          alignment: Alignment.center,
+          child: const Icon(Icons.shopping_bag, color: Colors.white, size: 26),
+        ),
+        // 3 つのアバター（30°, 150°, 270°）
+        for (final (deg, label, color) in [
+          (270.0, 'A', tokens.accent),
+          (30.0, 'B', tokens.neutral.ok),
+          (150.0, 'C', tokens.neutral.warn),
+        ])
+          Transform.translate(
+            offset: Offset(
+              radius * math.cos(deg * math.pi / 180),
+              radius * math.sin(deg * math.pi / 180),
+            ),
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: color,
+                border: Border.all(color: tokens.neutral.card, width: 2),
+                boxShadow: tokens.cardShadow,
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                label,
+                style: GoogleFonts.ibmPlexMono(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// スライド 3: SVG ライクな地図 + 中央 pin の halo パルス。
+class _MapHaloArt extends StatefulWidget {
+  final AppTokens tokens;
+  const _MapHaloArt({required this.tokens});
+
+  @override
+  State<_MapHaloArt> createState() => _MapHaloArtState();
+}
+
+class _MapHaloArtState extends State<_MapHaloArt>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1800),
+  )..repeat();
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = widget.tokens;
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: tokens.neutral.surface2,
+            borderRadius: BorderRadius.circular(28),
+          ),
+        ),
+        // 街区を模した抽象シェイプ
+        Positioned(
+          left: 24,
+          top: 30,
+          child: _block(40, 28, tokens.neutral.divider2),
+        ),
+        Positioned(
+          right: 30,
+          top: 50,
+          child: _block(50, 36, tokens.neutral.divider2),
+        ),
+        Positioned(
+          left: 40,
+          bottom: 60,
+          child: _block(60, 30, tokens.neutral.divider2),
+        ),
+        Positioned(
+          right: 24,
+          bottom: 40,
+          child: _block(36, 30, tokens.neutral.divider2),
+        ),
+        // 中央 halo（パルス）
+        AnimatedBuilder(
+          animation: _ctrl,
+          builder: (_, __) {
+            final scale = 1.0 + _ctrl.value * 1.6;
+            final opacity = (1.0 - _ctrl.value).clamp(0.0, 1.0);
+            return Container(
+              width: 28 * scale,
+              height: 28 * scale,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: tokens.accent.withValues(alpha: 0.25 * opacity),
+              ),
+            );
+          },
+        ),
+        // pin
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: tokens.accent,
+            boxShadow: tokens.cardShadow,
+          ),
+          alignment: Alignment.center,
+          child: const Icon(Icons.location_on, color: Colors.white, size: 22),
+        ),
+      ],
+    );
+  }
+
+  Widget _block(double w, double h, Color color) => Container(
+        width: w,
+        height: h,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(6),
+        ),
+      );
+}
+
+/// dashed 円を描く CustomPainter。
+class _DashedCirclePainter extends CustomPainter {
+  final Color color;
+  final double radius;
+  const _DashedCirclePainter({required this.color, required this.radius});
+
+  static const _dashAngle = 0.18; // radian
+  static const _gapAngle = 0.10;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    final center = Offset(size.width / 2, size.height / 2);
+    var theta = 0.0;
+    while (theta < math.pi * 2) {
+      final end = theta + _dashAngle;
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        theta,
+        _dashAngle,
+        false,
+        paint,
+      );
+      theta = end + _gapAngle;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _DashedCirclePainter old) =>
+      old.color != color || old.radius != radius;
 }
 
 /// 3 ドットページネーション。アクティブのみ横長。

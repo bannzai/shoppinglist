@@ -46,9 +46,7 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
               'groupID': groupID,
               'shoppingListID': shoppingListID,
             });
-            await ref
-                .read(addShoppingListItemProvider(groupID: groupID))
-                .call(
+            await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
                   shoppingListID: shoppingListID,
                   userID: ref.read(currentUserIDProvider)!,
                   message: '',
@@ -62,27 +60,32 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
         const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: CustomPaint(
-            painter: _DashedRectPainter(color: tokens.neutral.divider),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'こんな風に使えます',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: tokens.neutral.ink2,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: tokens.neutral.surface2,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: CustomPaint(
+              painter: _DashedRectPainter(color: tokens.neutral.divider),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'こんな風に使えます',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: tokens.neutral.ink2,
+                          ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  _HintLine(text: '・タップしてそのまま入力'),
-                  _HintLine(text: '・return で次の行へ'),
-                  _HintLine(text: '・空行で delete で行を消せます'),
-                ],
+                    const SizedBox(height: 6),
+                    _HintLine(text: '・タップしてそのまま入力'),
+                    _HintLine(text: '・return で次の行へ'),
+                    _HintLine(text: '・空行で delete で行を消せます'),
+                  ],
+                ),
               ),
             ),
           ),
@@ -118,11 +121,10 @@ class _StarterRow extends StatelessWidget {
             Expanded(
               child: Text(
                 'タップで入力開始',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: tokens.accentInk,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: tokens.accentInk,
+                      fontWeight: FontWeight.w500,
+                    ),
               ),
             ),
             Icon(Icons.edit_outlined, size: 16, color: tokens.accent),

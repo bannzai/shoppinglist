@@ -12,9 +12,7 @@ const _onboardingShownKey = 'hasSeenOnboarding';
 class HasSeenOnboarding extends _$HasSeenOnboarding {
   @override
   bool build() {
-    return ref
-            .watch(sharedPreferencesProvider)
-            .getBool(_onboardingShownKey) ??
+    return ref.watch(sharedPreferencesProvider).getBool(_onboardingShownKey) ??
         false;
   }
 

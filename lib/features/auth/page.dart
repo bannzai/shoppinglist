@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/auth/apple.dart';
 import 'package:shoppinglist/components/auth/google.dart';
@@ -29,19 +28,21 @@ class AuthPage extends ConsumerWidget {
               const Spacer(),
               ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: 240),
-                child: SvgPicture.asset(
-                  'images/undraw_shopping-app_b80f.svg',
+                child: Image.asset(
+                  'images/auth/auth_art.png',
+                  fit: BoxFit.contain,
                 ),
               ),
               const SizedBox(height: 32),
               Text(
-                '買い物リストへようこそ',
+                '家族の買い物を、\nひとつのリストへ',
                 style: Theme.of(context).textTheme.displayMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
               Text(
-                'サインインして、家族・パートナーと\nリストを共有しましょう。',
+                'サインインすると端末をまたいでリストが同期します。'
+                '広告もメールマガジンもありません。',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: neutral.ink2,
@@ -82,24 +83,36 @@ class _Note extends StatelessWidget {
     final tokens = context.tokens;
     final neutral = tokens.neutral;
 
-    final linkStyle = TextStyle(
-      fontSize: 11,
-      color: tokens.accent,
-      fontWeight: FontWeight.w600,
-      decoration: TextDecoration.underline,
-      decorationThickness: 1,
-      decorationColor: tokens.accent,
-    );
-    final muted = TextStyle(
-      fontSize: 11,
-      color: neutral.ink3,
-      height: 1.5,
-    );
+    final linkStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: tokens.accent,
+          fontWeight: FontWeight.w600,
+          decoration: TextDecoration.underline,
+          decorationThickness: 1,
+          decorationColor: tokens.accent,
+        );
+    final muted = Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: neutral.ink3,
+          height: 1.5,
+        );
 
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
         children: [
+          TextSpan(text: '続けることで ', style: muted),
+          TextSpan(
+            text: '利用規約',
+            style: linkStyle,
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                analytics.logEvent(name: 'tap_auth_terms_of_service');
+                launchUrl(
+                  Uri.parse('https://bannzai.github.io/shoppinglist/Terms'),
+                  mode: LaunchMode.externalApplication,
+                );
+              },
+          ),
+          TextSpan(text: ' と ', style: muted),
           TextSpan(
             text: 'プライバシーポリシー',
             style: linkStyle,
@@ -113,20 +126,7 @@ class _Note extends StatelessWidget {
                 );
               },
           ),
-          TextSpan(text: 'と', style: muted),
-          TextSpan(
-            text: '利用規約',
-            style: linkStyle,
-            recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                analytics.logEvent(name: 'tap_auth_terms_of_service');
-                launchUrl(
-                  Uri.parse('https://bannzai.github.io/shoppinglist/Terms'),
-                  mode: LaunchMode.externalApplication,
-                );
-              },
-          ),
-          TextSpan(text: 'に同意した上でサインインしてください', style: muted),
+          TextSpan(text: ' に同意したものとみなされます。', style: muted),
         ],
       ),
     );
