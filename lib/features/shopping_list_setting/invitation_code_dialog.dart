@@ -63,8 +63,7 @@ class InvitationCodeDialog extends HookWidget {
             borderRadius: 14,
             child: Container(
               width: double.infinity,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
               decoration: BoxDecoration(
                 color: neutral.surface2,
                 borderRadius: BorderRadius.circular(14),

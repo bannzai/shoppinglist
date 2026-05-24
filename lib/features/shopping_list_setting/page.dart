@@ -243,14 +243,12 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                           const SizedBox(width: 8),
                           Text(
                             'このリストを削除',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(
-                                  color: neutral.danger,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            style:
+                                Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      color: neutral.danger,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                           ),
                         ],
                       ),
@@ -573,8 +571,7 @@ class _ListActionsCard extends ConsumerWidget {
     if (!isPremium) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
-              'リストのエクスポートはプレミアム機能です。プレミアムにアップグレードすると利用できます'),
+          content: const Text('リストのエクスポートはプレミアム機能です。プレミアムにアップグレードすると利用できます'),
           action: SnackBarAction(
             label: 'アップグレード',
             onPressed: () => showPaywall(context: context),

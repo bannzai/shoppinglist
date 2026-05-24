@@ -57,7 +57,8 @@ void main() {
     final ctx = tester.element(find.byType(AppPill));
     final neutral = ctx.tokens.neutral;
     final material = tester.widget<Material>(
-      find.descendant(of: find.byType(AppPill), matching: find.byType(Material)),
+      find.descendant(
+          of: find.byType(AppPill), matching: find.byType(Material)),
     );
     expect(material.color, neutral.danger);
     final text = tester.widget<Text>(find.text('削除'));
