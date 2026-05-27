@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-/// 和紙テイストの中立色パレット（accent を除く）。LIGHT と DARK で別インスタンスを保持する。
+/// 無彩色（グレースケール）の中立色パレット（accent を除く）。LIGHT と DARK で別インスタンスを保持する。
 @immutable
 class AppNeutralColors {
-  /// アプリ全体の最外側に敷く暖色ベージュ（和紙イメージ）。
+  /// アプリ全体の最外側に敷く背景。
   final Color paper;
 
   /// 通常の画面ベース面。
@@ -15,7 +15,7 @@ class AppNeutralColors {
   /// カード・ダイアログ・最前面要素の背景。
   final Color card;
 
-  /// 主要テキスト（墨色）。
+  /// 主要テキスト。
   final Color ink;
 
   /// 副次テキスト。
@@ -70,44 +70,44 @@ class AppNeutralColors {
     required this.checked,
   });
 
-  /// LIGHT モードの中立色。`design_handoff_shopping_list/source/tokens.jsx#LIGHT` と一致させる。
+  /// LIGHT モードの中立色。無彩色グレースケール（card のみ純白）。
   static const light = AppNeutralColors(
-    paper: Color(0xFFECE5D3),
-    surface: Color(0xFFF8F2E2),
-    surface2: Color(0xFFFFFCF3),
+    paper: Color(0xFFECECEC),
+    surface: Color(0xFFF4F4F4),
+    surface2: Color(0xFFFAFAFA),
     card: Color(0xFFFFFFFF),
-    ink: Color(0xFF1B1813),
-    ink2: Color(0xFF5A5246),
-    ink3: Color(0xFF948A77),
-    ink4: Color(0xFFBDB39E),
-    divider: Color(0xFFE0D5BC),
-    divider2: Color(0xFFEBE2C9),
+    ink: Color(0xFF1A1A1A),
+    ink2: Color(0xFF595959),
+    ink3: Color(0xFF8C8C8C),
+    ink4: Color(0xFFC2C2C2),
+    divider: Color(0xFFE0E0E0),
+    divider2: Color(0xFFEEEEEE),
     ok: Color(0xFF2F6B43),
     okSoft: Color(0xFFDCEBDF),
     warn: Color(0xFFB47B1F),
     danger: Color(0xFFB53D3D),
     dangerSoft: Color(0xFFF4DEDB),
-    checked: Color(0xFFA89E89),
+    checked: Color(0xFFAEAEAE),
   );
 
-  /// DARK モードの中立色。`design_handoff_shopping_list/source/tokens.jsx#DARK` と一致させる。
+  /// DARK モードの中立色。純黒寄りグレースケール。
   static const dark = AppNeutralColors(
-    paper: Color(0xFF13110D),
-    surface: Color(0xFF1B1813),
-    surface2: Color(0xFF221E18),
-    card: Color(0xFF26221C),
-    ink: Color(0xFFF2EDE2),
-    ink2: Color(0xFFBFB6A3),
-    ink3: Color(0xFF847C6B),
-    ink4: Color(0xFF5A5246),
-    divider: Color(0xFF2A251F),
-    divider2: Color(0xFF332D26),
+    paper: Color(0xFF0D0D0D),
+    surface: Color(0xFF1A1A1A),
+    surface2: Color(0xFF242424),
+    card: Color(0xFF2E2E2E),
+    ink: Color(0xFFF5F5F5),
+    ink2: Color(0xFFB3B3B3),
+    ink3: Color(0xFF808080),
+    ink4: Color(0xFF595959),
+    divider: Color(0xFF333333),
+    divider2: Color(0xFF3D3D3D),
     ok: Color(0xFF6BB07F),
     okSoft: Color(0xFF1F3325),
     warn: Color(0xFFE1B05A),
     danger: Color(0xFFE47A7A),
     dangerSoft: Color(0xFF3A2020),
-    checked: Color(0xFF5A5246),
+    checked: Color(0xFF595959),
   );
 
   /// `ThemeExtension.lerp` から呼び出されるテーマ遷移用の補間。
@@ -304,8 +304,8 @@ class AppTokens extends ThemeExtension<AppTokens> {
 
   /// LIGHT モード時のフローティング影。
   static const shadowLight = <BoxShadow>[
-    BoxShadow(color: Color(0x0D1B1813), offset: Offset(0, 1)),
-    BoxShadow(color: Color(0x0A1B1813), offset: Offset(0, 6), blurRadius: 18),
+    BoxShadow(color: Color(0x0D000000), offset: Offset(0, 1)),
+    BoxShadow(color: Color(0x0A000000), offset: Offset(0, 6), blurRadius: 18),
   ];
 
   /// DARK モード時のフローティング影。
