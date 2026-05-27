@@ -92,7 +92,7 @@ ThemeData buildAppTheme({
     onSurfaceVariant: neutral.ink2,
     outline: neutral.divider,
     outlineVariant: neutral.divider2,
-    shadow: const Color(0x14000000),
+    shadow: const Color(0x141B1813),
     inverseSurface: neutral.ink,
     onInverseSurface: neutral.surface,
   );
