@@ -20,18 +20,18 @@ struct ShoppingListWidgetView: View {
         Color(hex: entry.themeColorHex)
     }
 
-    /// 和紙ベース背景。tokens.dart の AppNeutralColors.{light,dark}.paper と一致。
+    /// ウィジェット背景。tokens.dart の AppNeutralColors.{light,dark}.paper と一致。
     private var paper: Color {
         colorScheme == .dark
-            ? Color(hex: "#13110D")
-            : Color(hex: "#F6F0E2")
+            ? Color(hex: "#0D0D0D")
+            : Color(hex: "#ECECEC")
     }
 
     /// card 背景 (現状は未使用だが、今後の Light/Dark 統一のためプロパティとして保持)。
     /// tokens.dart の AppNeutralColors.{light,dark}.card と一致。
     private var card: Color {
         colorScheme == .dark
-            ? Color(hex: "#26221C")
+            ? Color(hex: "#2E2E2E")
             : Color(hex: "#FFFFFF")
     }
 
