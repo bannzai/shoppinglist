@@ -61,11 +61,6 @@ void main() {
     expect(find.text('リストの操作'.toUpperCase()), findsOneWidget);
   });
 
-  testWidgets('「確定キーで保存されます」hint が表示される', (tester) async {
-    await _pumpPage(tester);
-    expect(find.text('確定キーで保存されます'), findsOneWidget);
-  });
-
   testWidgets('買い物する場所 AppCell に detail「変更」が表示される', (tester) async {
     await _pumpPage(tester);
     final placeCell = tester

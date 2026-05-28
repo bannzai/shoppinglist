@@ -120,16 +120,6 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                   },
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
-                child: Text(
-                  '確定キーで保存されます',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: neutral.ink3,
-                        fontSize: 11,
-                      ),
-                ),
-              ),
               const SizedBox(height: 14),
               const AppSectionLabel(text: '買い物する場所'),
               _ShoppingLocationCell(
