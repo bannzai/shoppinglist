@@ -7,8 +7,8 @@ body {
   font-family: 'Noto Sans JP', system-ui, sans-serif;
   font-feature-settings: 'palt' 1;
   -webkit-font-smoothing: antialiased;
-  background: #ECECEC;
-  color: #1A1A1A;
+  background: #ECE5D3;
+  color: #1B1813;
 }
 
 .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-feature-settings: 'tnum' 1; }

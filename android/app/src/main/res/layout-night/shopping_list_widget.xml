@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   design_handoff_shoppinglist/preview/widgets-and-micro.jsx#WAndroid (dark) 準拠
-  - bg `#0D0D0D`（dark paper、tokens.dart の AppNeutralColors.dark.paper と一致）
+  - bg `#13110D`（dark paper、tokens.dart の AppNeutralColors.dark.paper と一致）
   - count / title 色は Material You system_accent1_200 (dark variant)
   - 構造は layout/shopping_list_widget.xml と完全に揃え、色のみ差し替える
 -->
@@ -10,7 +10,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="12dp"
-    android:background="#0D0D0D">
+    android:background="#13110D">
 
     <LinearLayout
         android:layout_width="match_parent"
