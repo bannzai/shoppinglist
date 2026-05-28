@@ -5,8 +5,6 @@ import 'package:shoppinglist/features/developer_options/page.dart';
 import 'package:shoppinglist/features/developer_options/shake_detector.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/fcm_notification.dart';
-import 'package:shoppinglist/provider/geofence.dart';
-import 'package:shoppinglist/provider/local_notification.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/root.dart';
 import 'package:shoppinglist/style/theme.dart';
@@ -32,8 +30,6 @@ class _AppState extends ConsumerState<App> {
 
   @override
   Widget build(BuildContext context) {
-    // ローカル通知初期化
-    ref.watch(localNotificationsInitializedProvider);
     // ジオフェンス監視を開始（条件を満たした場合のみ）
     ref.watch(geofenceMonitorProvider);
 

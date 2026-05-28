@@ -17,6 +17,7 @@ import 'package:shoppinglist/features/home_widget/home_widget_data_sync.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shoppinglist/utils/development/debug.dart';
+import 'package:shoppinglist/utils/local_notification/local_notification.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:shoppinglist/utils/remote_config/remote_config.dart';
 import 'package:home_widget/home_widget.dart';
@@ -53,10 +54,11 @@ void main() async {
     await FirebaseMessaging.instance.requestPermission();
 
     // ignore: prefer_typing_uninitialized_variables
-    final (sharedPreferences, _, _) = await (
+    final (sharedPreferences, _, _, _) = await (
       SharedPreferences.getInstance(),
       setupRemoteConfig(),
       initializePurchase(),
+      localNotificationsInitialize(),
     ).wait;
 
     // MEMO: FirebaseCrashlytics#recordFlutterError called dumpErrorToConsole in function.
