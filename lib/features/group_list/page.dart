@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:shoppinglist/style/theme.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
@@ -209,7 +209,7 @@ class _GroupCard extends ConsumerWidget {
                             alignment: Alignment.center,
                             child: Text(
                               initial,
-                              style: GoogleFonts.ibmPlexMono(
+                              style: monoTextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 color: tokens.accent,

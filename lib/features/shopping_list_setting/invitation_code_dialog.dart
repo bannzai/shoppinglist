@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shoppinglist/components/frame/app_dialog_shell.dart';
 import 'package:shoppinglist/components/frame/app_pill.dart';
+import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -68,12 +68,11 @@ class InvitationCodeDialog extends HookWidget {
             child: SelectableText(
               invitationCode,
               textAlign: TextAlign.center,
-              style: GoogleFonts.ibmPlexMono(
+              style: monoTextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 8,
                 color: neutral.ink,
-                fontFeatures: const [FontFeature.tabularFigures()],
               ),
             ),
           ),

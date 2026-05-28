@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
 /// `palt`(プロポーショナル詰め組) を全テキストに適用する。
 /// 日本語見出しの字面を詰めて密度を上げるための OpenType feature。
 const _paltFeatures = <FontFeature>[FontFeature('palt')];
 
-/// `tnum`(等幅数字)。`mono` 系で進捗 `done/total` を縦に揃える。
+/// `tnum`(等幅数字)。`monoTextStyle` で進捗 `done/total`・価格・コードの桁を縦に揃える。
 const _tabularFeatures = <FontFeature>[FontFeature.tabularFigures()];
 
 /// 和紙テイストのデザイントークンから ThemeData を組み立てる。
@@ -19,6 +18,9 @@ ThemeData buildAppTheme({
   final neutral = tokens.neutral;
   final isDark = brightness == Brightness.dark;
 
+  /// fontFamily を指定せず OS 標準フォントを使う。
+  /// iOS は San Francisco / Hiragino Sans、Android は Roboto / Noto Sans CJK JP で描画され、
+  /// `google_fonts` のランタイム DL による起動後のフォント差し替わりが起きない。
   TextStyle sans(
     double size,
     FontWeight w, {
@@ -26,7 +28,7 @@ ThemeData buildAppTheme({
     double ls = -0.005,
     Color? color,
   }) =>
-      GoogleFonts.notoSansJp(
+      TextStyle(
         fontSize: size,
         fontWeight: w,
         height: height,
@@ -35,31 +37,15 @@ ThemeData buildAppTheme({
         color: color ?? neutral.ink,
       );
 
-  TextStyle serif(
-    double size,
-    FontWeight w, {
-    double height = 1.15,
-    double ls = -0.02,
-  }) =>
-      GoogleFonts.zenKakuGothicNew(
-        fontSize: size,
-        fontWeight: w,
-        height: height,
-        letterSpacing: ls,
-        fontFeatures: _paltFeatures,
-        color: neutral.ink,
-      );
-
-  final base = GoogleFonts.notoSansJpTextTheme(
-    isDark ? ThemeData.dark().textTheme : ThemeData.light().textTheme,
-  ).apply(
+  final base =
+      (isDark ? ThemeData.dark().textTheme : ThemeData.light().textTheme).apply(
     bodyColor: neutral.ink,
     displayColor: neutral.ink,
   );
 
   final textTheme = base.copyWith(
-    displayLarge: serif(34, FontWeight.w800),
-    displayMedium: serif(28, FontWeight.w800),
+    displayLarge: sans(34, FontWeight.w800, height: 1.15, ls: -0.02),
+    displayMedium: sans(28, FontWeight.w800, height: 1.15, ls: -0.02),
     headlineSmall: sans(22, FontWeight.w700, height: 1.25, ls: -0.015),
     titleLarge: sans(17, FontWeight.w700, height: 1.3, ls: -0.01),
     titleMedium: sans(15, FontWeight.w600, height: 1.4),
@@ -166,18 +152,21 @@ ThemeData buildAppTheme({
   );
 }
 
-/// 数値表示用の mono スタイル（IBM Plex Mono / tabular figures）。
-/// `done/total` 等の進捗カウンターで使う。
+/// 数値表示用のスタイル。
+/// fontFamily は指定せず OS 標準フォントを使い、`tabularFigures` で done/total・価格・コードの桁を縦に揃える。
+/// 旧 IBM Plex Mono のランタイム DL を廃止したため、見た目はプロポーショナル寄りになるが、数字は等幅を維持する。
 TextStyle monoTextStyle({
   required double fontSize,
   required FontWeight fontWeight,
   required Color color,
   double height = 1.0,
+  double? letterSpacing,
 }) =>
-    GoogleFonts.ibmPlexMono(
+    TextStyle(
       fontSize: fontSize,
       fontWeight: fontWeight,
       height: height,
+      letterSpacing: letterSpacing,
       fontFeatures: _tabularFeatures,
       color: color,
     );
