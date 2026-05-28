@@ -64,19 +64,22 @@ class SettingPage extends HookConsumerWidget {
 
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
-      appBar: null,
+      appBar: AppBar(
+        title: const Text('設定'),
+        backgroundColor: tokens.neutral.paper,
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () {
+            analytics.logEvent(name: 'tap_close_app_setting');
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-                child: Text(
-                  '設定',
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
-              ),
               SettingSectionTitle(text: 'プロフィール', children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(
