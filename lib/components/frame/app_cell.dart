@@ -98,8 +98,10 @@ class AppCell extends StatelessWidget {
                 if (detail != null) ...[
                   Text(
                     detail!,
-                    style:
-                        textTheme.bodySmall?.copyWith(color: neutral.ink3),
+                    style: textTheme.bodySmall?.copyWith(
+                      color: neutral.ink3,
+                      fontSize: 13,
+                    ),
                   ),
                   const SizedBox(width: 6),
                 ],

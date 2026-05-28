@@ -17,8 +17,7 @@ Future<void> _pumpPage(WidgetTester tester) async {
   final sharedPreferences = await SharedPreferences.getInstance();
   await tester.pumpWidget(
     ProviderScope(
-      overrides:
-          previewProviderOverrides(sharedPreferences: sharedPreferences),
+      overrides: previewProviderOverrides(sharedPreferences: sharedPreferences),
       child: MaterialApp(
         theme: buildAppTheme(
           brightness: Brightness.light,
@@ -46,14 +45,16 @@ void main() {
         .widgetList<AppSectionLabel>(find.byType(AppSectionLabel))
         .map((w) => w.text)
         .toList();
-    expect(labels, containsAll(<String>[
-      'リスト名',
-      '買い物する場所',
-      '保存期間',
-      '通知',
-      '共有',
-      'リストの操作',
-    ]));
+    expect(
+        labels,
+        containsAll(<String>[
+          'リスト名',
+          '買い物する場所',
+          '保存期間',
+          '通知',
+          '共有',
+          'リストの操作',
+        ]));
 
     expect(find.text('リスト名'.toUpperCase()), findsOneWidget);
     expect(find.text('共有'.toUpperCase()), findsOneWidget);
@@ -71,8 +72,7 @@ void main() {
         .widgetList<AppCell>(find.byType(AppCell))
         .where((c) => c.icon == Icons.place_outlined)
         .firstOrNull;
-    expect(placeCell, isNotNull,
-        reason: '買い物する場所 Cell が AppCell として描画されているべき');
+    expect(placeCell, isNotNull, reason: '買い物する場所 Cell が AppCell として描画されているべき');
     expect(placeCell!.detail, '変更');
     expect(find.text('変更'), findsOneWidget);
   });
@@ -93,14 +93,11 @@ void main() {
     expect(find.text('グループ設定'), findsOneWidget);
   });
 
-  testWidgets('削除ボタンの label は「このリストを削除」', (tester) async {
+  testWidgets('削除ボタンに「このリストを削除」と trash アイコンが表示される', (tester) async {
     await _pumpPage(tester);
-    final deletePill = tester
-        .widgetList<AppPill>(find.byType(AppPill))
-        .where((p) => p.variant == AppPillVariant.danger)
-        .firstOrNull;
-    expect(deletePill, isNotNull);
-    expect(deletePill!.label, 'このリストを削除');
-    expect(deletePill.large, true);
+    // 削除ボタンは AppPill ではなく Material+InkWell の inline 実装 (radius 14)。
+    // SSOT: screens-list-settings.jsx L55-61 (dangerSoft 背景 + danger 文字)
+    expect(find.text('このリストを削除'), findsOneWidget);
+    expect(find.byIcon(Icons.delete_outline), findsOneWidget);
   });
 }

@@ -18,6 +18,10 @@ enum AppPillVariant {
 
   /// 破壊的操作（dangerSoft + danger）。
   danger,
+
+  /// 破壊的操作の確定アクション（danger 塗りつぶし + 白文字）。
+  /// 削除確認 dialog 等の primary action 用。
+  dangerSolid,
 }
 
 /// Pill 形状ボタン（StadiumBorder）。
@@ -69,6 +73,11 @@ class AppPill extends StatelessWidget {
       AppPillVariant.danger => (
           neutral.dangerSoft,
           neutral.danger,
+          BorderSide.none,
+        ),
+      AppPillVariant.dangerSolid => (
+          neutral.danger,
+          Colors.white,
           BorderSide.none,
         ),
       AppPillVariant.ghost => (
