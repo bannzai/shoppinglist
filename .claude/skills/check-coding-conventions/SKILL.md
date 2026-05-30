@@ -32,7 +32,7 @@ bash ${CLAUDE_SKILL_DIR}/scripts/run_check_conventions.sh $ARGUMENTS
 
 1. PR 情報取得 → プロンプトテンプレートにプレースホルダ置換
 2. ccnipre でプロンプトを実行（plan → review → execute）
-3. ccnipre 内で: 規約読込（`.claude/rules/`, `documents/`, `CLAUDE.md`）→ 差分チェック → 違反修正 → 検証 → fix PR → CI → マージ → ベースPR更新
+3. ccnipre 内で: 規約読込（`.claude/rules/`, `CLAUDE.md`）→ 差分チェック → 違反修正 → 検証 → fix PR → CI → マージ → ベースPR更新
 
 ## オプション
 

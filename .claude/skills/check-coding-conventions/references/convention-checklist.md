@@ -39,8 +39,8 @@
 - `e.toString()` の加工・プレフィックス除去をしていないか
 
 ### Firestore Timestamp / FieldValue
-- `documents/firestore-timestamp-rules.md` の規約に従っているか
-- `documents/firestore-fieldvalue-rules.md` の規約に従っているか
+- `.claude/rules/firestore-timestamp-rules.md` の規約に従っているか
+- `.claude/rules/firestore-fieldvalue-rules.md` の規約に従っているか
 
 ## TypeScript (.ts) ファイル
 
