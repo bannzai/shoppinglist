@@ -20,8 +20,7 @@ void main() {
     expect(find.text('2/5'), findsOneWidget);
   });
 
-  testWidgets('ProgressPill: 全完了時も done/total のみ表示し祝福文言は出さない',
-      (tester) async {
+  testWidgets('ProgressPill: 全完了時も done/total のみ表示し祝福文言は出さない', (tester) async {
     await tester.pumpWidget(_wrap(
       const ProgressPill(checkedCount: 4, totalCount: 4),
     ));
