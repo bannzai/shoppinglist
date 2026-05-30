@@ -6,7 +6,6 @@ import 'package:shoppinglist/features/developer_options/shake_detector.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/fcm_notification.dart';
 import 'package:shoppinglist/provider/geofence.dart';
-import 'package:shoppinglist/provider/local_notification.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/root.dart';
 import 'package:shoppinglist/style/theme.dart';
@@ -28,15 +27,32 @@ class _AppState extends ConsumerState<App> {
     super.initState();
     FcmNotificationHandler(scaffoldMessengerKey: _scaffoldMessengerKey)
         .initialize();
+
+    // ジオフェンス監視: 監視プランの変化に追従して開始/停止する。
+    // Provider は計算に徹し、副作用（service の開始/停止）はここで起こす（Riverpod 公式 DO）。
+    // build ではなく initState で listenManual するのは、購読を1回だけ確立すれば以降の変化は
+    // listener が追従するため（build 内 ref.listen は fireImmediately 非対応）。
+    // fireImmediately: true で初回プランにも反応し、従来の ref.watch と同じ初回挙動を保つ。
+    ref.listenManual(
+      geofenceMonitoringPlanProvider,
+      (previous, next) {
+        final service = ref.read(geofenceServiceProvider);
+        if (!next.shouldMonitor) {
+          service.stopMonitoring();
+          return;
+        }
+        service.updateMonitoredData(
+          locationsByGroupID: next.locationsByGroupID,
+          activeListsByLocationID: next.activeListsByLocationID,
+        );
+        service.startMonitoring();
+      },
+      fireImmediately: true,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // ローカル通知初期化
-    ref.watch(localNotificationsInitializedProvider);
-    // ジオフェンス監視を開始（条件を満たした場合のみ）
-    ref.watch(geofenceMonitorProvider);
-
     // appUserProvider は UserDatabaseResolver スコープ外では AsyncError になるが、
     // .asData?.value で安全に null フォールバックし、shu（朱）が使われる
     final accent = resolveAccentPreset(

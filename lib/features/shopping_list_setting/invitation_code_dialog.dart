@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shoppinglist/components/dashed_border_box.dart';
 import 'package:shoppinglist/components/frame/app_dialog_shell.dart';
 import 'package:shoppinglist/components/frame/app_pill.dart';
 import 'package:shoppinglist/style/theme.dart';
@@ -57,22 +58,25 @@ class InvitationCodeDialog extends HookWidget {
                 ),
           ),
           const SizedBox(height: 8),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-            decoration: BoxDecoration(
-              color: neutral.surface2,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: neutral.divider, width: 1),
-            ),
-            child: SelectableText(
-              invitationCode,
-              textAlign: TextAlign.center,
-              style: monoTextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 8,
-                color: neutral.ink,
+          DashedBorderBox(
+            color: neutral.divider,
+            borderRadius: 14,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              decoration: BoxDecoration(
+                color: neutral.surface2,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: SelectableText(
+                invitationCode,
+                textAlign: TextAlign.center,
+                style: monoTextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 8,
+                  color: neutral.ink,
+                ),
               ),
             ),
           ),

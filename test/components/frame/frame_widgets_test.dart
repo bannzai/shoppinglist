@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shoppinglist/components/frame/app_bottom_tab_bar.dart';
 import 'package:shoppinglist/components/frame/app_cell.dart';
 import 'package:shoppinglist/components/frame/app_checkbox.dart';
 import 'package:shoppinglist/components/frame/app_chip.dart';
@@ -36,11 +35,33 @@ void main() {
             label: 'ghost', onPressed: () {}, variant: AppPillVariant.ghost),
         AppPill(
             label: 'danger', onPressed: () {}, variant: AppPillVariant.danger),
+        AppPill(
+            label: 'dangerSolid',
+            onPressed: () {},
+            variant: AppPillVariant.dangerSolid),
         const AppPill(label: 'disabled', onPressed: null),
       ],
     )));
     expect(find.text('neutral'), findsOneWidget);
+    expect(find.text('dangerSolid'), findsOneWidget);
     expect(find.text('disabled'), findsOneWidget);
+  });
+
+  testWidgets('AppPill: dangerSolid は danger 塗り + 白文字', (tester) async {
+    await tester.pumpWidget(_wrap(AppPill(
+      label: '削除',
+      onPressed: () {},
+      variant: AppPillVariant.dangerSolid,
+    )));
+    final ctx = tester.element(find.byType(AppPill));
+    final neutral = ctx.tokens.neutral;
+    final material = tester.widget<Material>(
+      find.descendant(
+          of: find.byType(AppPill), matching: find.byType(Material)),
+    );
+    expect(material.color, neutral.danger);
+    final text = tester.widget<Text>(find.text('削除'));
+    expect(text.style?.color, Colors.white);
   });
 
   testWidgets('AppPill: large=true で高さ50', (tester) async {
@@ -116,26 +137,6 @@ void main() {
     ));
     expect(find.text('設定'), findsOneWidget);
     expect(find.text('アプリ全般の設定'), findsOneWidget);
-  });
-
-  testWidgets('AppBottomTabBar: 2 タブ表示・タップで onChanged 発火', (tester) async {
-    AppTab? selected;
-    await tester.pumpWidget(MaterialApp(
-      theme: buildAppTheme(
-        brightness: Brightness.light,
-        accent: AccentPreset.shu,
-      ),
-      home: Scaffold(
-        bottomNavigationBar: AppBottomTabBar(
-          active: AppTab.list,
-          onChanged: (t) => selected = t,
-        ),
-      ),
-    ));
-    expect(find.text('買い物リスト'), findsOneWidget);
-    expect(find.text('設定'), findsOneWidget);
-    await tester.tap(find.text('設定'));
-    expect(selected, AppTab.settings);
   });
 
   testWidgets('AppSectionCard: title と children が表示される', (tester) async {

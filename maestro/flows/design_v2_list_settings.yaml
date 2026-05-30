@@ -2,7 +2,6 @@ appId: com.bannzai.shoppinglist
 ---
 # ShoppingListSettingPage (design v2 SSOT 準拠) の検証:
 # - 6 セクション label (UPPERCASE) が表示される
-# - 「確定キーで保存されます」hint が表示される
 # - 共有セクションが 1 card 2 Cell 構成 (招待 / グループ設定) で表示される
 # - 「アイテム追加で家族に通知」AppCell が表示される
 # - 削除ダイアログに body 文 (件数) と「このリストを削除しますか?」が表示される
@@ -21,9 +20,6 @@ appId: com.bannzai.shoppinglist
 # 6 セクション label (UPPERCASE 大文字化されている)
 - assertVisible:
     text: "リスト名"
-    optional: true
-- assertVisible:
-    text: "確定キーで保存されます"
     optional: true
 - assertVisible:
     text: "買い物する場所"
@@ -64,6 +60,20 @@ appId: com.bannzai.shoppinglist
 - assertVisible:
     text: "リストをエクスポート"
     optional: true
+
+# 招待コード dialog (招待コード送付 タップ → 招待コード + 有効期限が表示される)
+- tapOn:
+    text: "グループに招待コードを送る"
+    optional: true
+- waitForAnimationToEnd
+- assertVisible:
+    text: "招待コード"
+    optional: true
+- assertVisible:
+    text: "有効期限"
+    optional: true
+- back
+- waitForAnimationToEnd
 
 # 削除ダイアログ
 - tapOn:

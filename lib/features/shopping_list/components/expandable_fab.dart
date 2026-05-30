@@ -22,9 +22,9 @@ import 'package:shoppinglist/utils/purchase/purchase.dart';
 /// `ShoppingListPage` の右下に配置する展開式 FAB。
 /// `design_handoff_shopping_list/source/screens-list.jsx#FAB` 相当。
 ///
-/// 閉時: accent の plus 56×56 円。タップで 4 メニューが上に展開する。
-/// メニュー: 写真から追加 / URL から追加 / テキスト貼り付け / 空行を追加。
-/// 写真と URL は AI を使うため、ラベルに小さな「AI」バッジを表示する。
+/// 閉時: accent の plus 56×56 円。
+/// タップ: 空行を直接追加する（最頻操作）。
+/// 長押し: 写真 / URL / テキスト貼り付け の 3 メニューを上方向に展開する。
 class ExpandableFab extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
@@ -69,7 +69,6 @@ class ExpandableFab extends HookConsumerWidget {
       _FabAction(
         icon: Icons.photo_camera_outlined,
         label: '写真から追加',
-        ai: true,
         onTap: () {
           close();
           _showImagePicker(context, ref);
@@ -78,7 +77,6 @@ class ExpandableFab extends HookConsumerWidget {
       _FabAction(
         icon: Icons.link,
         label: 'URL から追加',
-        ai: true,
         onTap: () {
           close();
           _showURLInputDialog(context, ref);
@@ -90,26 +88,6 @@ class ExpandableFab extends HookConsumerWidget {
         onTap: () {
           close();
           _pasteFromClipboard(context, ref);
-        },
-      ),
-      _FabAction(
-        icon: Icons.add,
-        label: '空行を追加',
-        primary: true,
-        onTap: () {
-          close();
-          analytics.logEvent(name: 'tap_add_item_fab', parameters: {
-            'groupID': groupID,
-            'shoppingListID': shoppingListID,
-          });
-          ref.read(addShoppingListItemProvider(groupID: groupID)).call(
-                shoppingListID: shoppingListID,
-                userID: ref.read(currentUserIDProvider)!,
-                message: '',
-                order: shoppingListItems.nextOrder,
-                description: null,
-                color: null,
-              );
         },
       ),
     ];
@@ -135,19 +113,38 @@ class ExpandableFab extends HookConsumerWidget {
           animation: controller,
           builder: (_, __) => Transform.rotate(
             angle: controller.value * 0.785,
-            child: FloatingActionButton(
-              backgroundColor: tokens.accent,
-              foregroundColor: Colors.white,
-              shape: const CircleBorder(),
-              onPressed: () {
-                analytics.logEvent(name: 'tap_toggle_fab', parameters: {
-                  'groupID': groupID,
-                  'shoppingListID': shoppingListID,
-                  'open': (!open.value).toString(),
-                });
-                open.value = !open.value;
+            child: GestureDetector(
+              onLongPress: () {
+                HapticFeedback.mediumImpact();
+                analytics.logEvent(
+                  name: 'long_press_open_fab_menu',
+                  parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                  },
+                );
+                open.value = true;
               },
-              child: const Icon(Icons.add, size: 26),
+              child: FloatingActionButton(
+                backgroundColor: tokens.accent,
+                foregroundColor: Colors.white,
+                shape: const CircleBorder(),
+                onPressed: () {
+                  analytics.logEvent(name: 'tap_add_item_fab', parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                  });
+                  ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+                        shoppingListID: shoppingListID,
+                        userID: ref.read(currentUserIDProvider)!,
+                        message: '',
+                        order: shoppingListItems.nextOrder,
+                        description: null,
+                        color: null,
+                      );
+                },
+                child: const Icon(Icons.add, size: 26),
+              ),
             ),
           ),
         ),
@@ -359,14 +356,10 @@ class ExpandableFab extends HookConsumerWidget {
 class _FabAction {
   final IconData icon;
   final String label;
-  final bool ai;
-  final bool primary;
   final VoidCallback onTap;
   _FabAction({
     required this.icon,
     required this.label,
-    this.ai = false,
-    this.primary = false,
     required this.onTap,
   });
 }
@@ -406,21 +399,21 @@ class _ActionRow extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            _ActionLabel(label: action.label, ai: action.ai),
+            _ActionLabel(label: action.label),
             const SizedBox(width: 10),
             Material(
-              color: action.primary ? tokens.accent : tokens.neutral.surface2,
+              color: tokens.neutral.surface2,
               shape: const CircleBorder(),
               child: InkWell(
                 customBorder: const CircleBorder(),
                 onTap: action.onTap,
                 child: SizedBox(
-                  width: action.primary ? 56 : 44,
-                  height: action.primary ? 56 : 44,
+                  width: 44,
+                  height: 44,
                   child: Icon(
                     action.icon,
-                    size: action.primary ? 24 : 20,
-                    color: action.primary ? Colors.white : tokens.neutral.ink,
+                    size: 20,
+                    color: tokens.neutral.ink,
                   ),
                 ),
               ),
@@ -434,8 +427,7 @@ class _ActionRow extends StatelessWidget {
 
 class _ActionLabel extends StatelessWidget {
   final String label;
-  final bool ai;
-  const _ActionLabel({required this.label, required this.ai});
+  const _ActionLabel({required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -446,35 +438,12 @@ class _ActionLabel extends StatelessWidget {
         color: tokens.neutral.ink,
         borderRadius: BorderRadius.circular(999),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: tokens.neutral.surface,
-                ),
-          ),
-          if (ai) ...[
-            const SizedBox(width: 6),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-              decoration: BoxDecoration(
-                color: tokens.accent,
-                borderRadius: BorderRadius.circular(999),
-              ),
-              child: Text(
-                'AI',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-              ),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: tokens.neutral.surface,
             ),
-          ],
-        ],
       ),
     );
   }

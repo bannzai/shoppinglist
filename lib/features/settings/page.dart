@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shoppinglist/style/theme.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shoppinglist/components/button/inquiry.dart';
@@ -22,10 +21,11 @@ import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/geofence.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
-import 'package:shoppinglist/provider/local_notification.dart';
 import 'package:shoppinglist/provider/notification_setting.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
+import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/local_notification/local_notification.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -64,19 +64,22 @@ class SettingPage extends HookConsumerWidget {
 
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
-      appBar: null,
+      appBar: AppBar(
+        title: const Text('設定'),
+        backgroundColor: tokens.neutral.paper,
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () {
+            analytics.logEvent(name: 'tap_close_app_setting');
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-                child: Text(
-                  '設定',
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
-              ),
               SettingSectionTitle(text: 'プロフィール', children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(

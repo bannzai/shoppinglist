@@ -79,7 +79,7 @@ class DeleteConfirmDialog extends StatelessWidget {
               Expanded(
                 child: AppPill(
                   label: '削除',
-                  variant: AppPillVariant.danger,
+                  variant: AppPillVariant.dangerSolid,
                   large: true,
                   expanded: true,
                   onPressed: () {

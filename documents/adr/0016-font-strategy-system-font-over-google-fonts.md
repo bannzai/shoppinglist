@@ -1,4 +1,4 @@
-# 0015. フォント戦略 - google_fonts 廃止と OS 標準フォントの採用
+# 0016. フォント戦略 - google_fonts 廃止と OS 標準フォントの採用
 
 ## Status
 Accepted

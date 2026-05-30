@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
+import 'package:shoppinglist/features/settings/page.dart';
 import 'package:shoppinglist/features/shopping_list/components/list_picker_sheet.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
@@ -95,8 +96,9 @@ class ListTopBar extends ConsumerWidget {
                 cardColor: tokens.neutral.surface,
               ),
             IconButton(
+              key: const Key('list_setting_button'),
               icon: Icon(
-                Icons.settings_outlined,
+                Icons.more_horiz,
                 size: 22,
                 color: tokens.neutral.ink2,
               ),
@@ -129,6 +131,25 @@ class ListTopBar extends ConsumerWidget {
                         ),
                       );
                     },
+            ),
+            IconButton(
+              key: const Key('app_settings_button'),
+              icon: Icon(
+                Icons.settings_outlined,
+                size: 22,
+                color: tokens.neutral.ink2,
+              ),
+              tooltip: '設定',
+              onPressed: () {
+                analytics.logEvent(name: 'tap_open_app_setting');
+                FocusScope.of(context).unfocus();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const SettingPage(),
+                  ),
+                );
+              },
             ),
           ],
         ),

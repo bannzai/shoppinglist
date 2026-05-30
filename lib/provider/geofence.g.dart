@@ -28,28 +28,33 @@ final geofenceServiceProvider = Provider<GeofenceService>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef GeofenceServiceRef = ProviderRef<GeofenceService>;
-String _$geofenceMonitorHash() => r'f25fedeaa526e56378edf961a6acf94b277324ff';
+String _$geofenceMonitoringPlanHash() =>
+    r'c779fd1ed8edf53429591b4ff71f70fe9e989845';
 
-/// ジオフェンス監視の状態を管理し、条件に応じて開始/停止するプロバイダー。
+/// ジオフェンス監視に必要なデータを計算するプロバイダー。
 ///
-/// premium状態、トグル状態、監視対象の店舗データを監視し、
-/// すべての条件が満たされる場合にのみ GeofenceService の監視を開始する。
+/// premium状態、トグル状態、監視対象の店舗データ、アクティブリストを監視（ref.watch）し、
+/// 監視すべきか否かと監視対象データを [GeofenceMonitoringPlan] として返す。
+/// 副作用（GeofenceService の開始/停止）はここでは行わず、購読側（app.dart）の
+/// ref.listen で起こす。Riverpod 公式 DO/DON'T「build で副作用を行うな」に従う。
 ///
-/// Copied from [geofenceMonitor].
-@ProviderFor(geofenceMonitor)
-final geofenceMonitorProvider = AutoDisposeProvider<void>.internal(
-  geofenceMonitor,
-  name: r'geofenceMonitorProvider',
+/// Copied from [geofenceMonitoringPlan].
+@ProviderFor(geofenceMonitoringPlan)
+final geofenceMonitoringPlanProvider =
+    AutoDisposeProvider<GeofenceMonitoringPlan>.internal(
+  geofenceMonitoringPlan,
+  name: r'geofenceMonitoringPlanProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$geofenceMonitorHash,
+      : _$geofenceMonitoringPlanHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef GeofenceMonitorRef = AutoDisposeProviderRef<void>;
+typedef GeofenceMonitoringPlanRef
+    = AutoDisposeProviderRef<GeofenceMonitoringPlan>;
 String _$locationReminderEnabledHash() =>
     r'0961f83f6995b63f4e2a2b4eb94f8d9e4e45a5b9';
 
