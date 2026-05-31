@@ -134,8 +134,11 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // 固定高さ(44)を付けると複数行 TextField(maxLines: 7) が枠を上端から
+                    // 埋めて文字が上にずれる。高さを与えず Row の crossAxisAlignment.center
+                    // に縦中央化を任せる（GhostItemRow と同じ仕組み）。行の高さは末尾の
+                    // IconButton(最小 48px) が確保するため、タップ領域は維持される。
                     SizedBox(
-                      height: 44,
                       width: double.infinity,
                       child: TextShoppingListItemTextField(
                         groupID: groupID,
