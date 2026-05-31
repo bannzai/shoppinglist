@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
-import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -17,17 +17,28 @@ class ListPickerSheet extends ConsumerWidget {
   final String currentShoppingListID;
   final void Function(String newID) onShoppingListIDChanged;
 
+  /// 本体ツリー（ListTopBar）で取得済みの AppUser を受け取る。
+  /// このシートは appShowModalBottomSheet 経由で root Navigator 側に表示され、
+  /// ページのネスト ProviderScope の外（AppEntityPrepareResolver なし）になる。
+  /// そのためシート内で appUserProvider を watch / read しても cold instance の
+  /// AsyncLoading(null) を返しうる。値は warm な親ツリーから渡す。
+  final AppUser? appUser;
+
   const ListPickerSheet({
     super.key,
     required this.groupID,
     required this.shoppingLists,
     required this.currentShoppingListID,
     required this.onShoppingListIDChanged,
+    required this.appUser,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.tokens;
+    // フィールドは null promotion が効かないため、コールバックで `appUser.id` を
+    // 参照できるよう final ローカルに束ねる。
+    final appUser = this.appUser;
     return SafeArea(
       top: false,
       child: Container(
@@ -87,7 +98,6 @@ class ListPickerSheet extends ConsumerWidget {
                 analytics.logEvent(name: 'tap_create_new_list', parameters: {
                   'groupID': groupID,
                 });
-                final appUser = ref.read(appUserProvider).asData?.value;
                 if (appUser == null) {
                   Navigator.of(context).pop();
                   return;
