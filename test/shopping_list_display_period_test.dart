@@ -8,26 +8,29 @@ void main() {
       final threshold = now.subtract(const Duration(days: 30));
 
       final oldList = GroupShoppingList(
-        id: 'old-id',
-        createUserID: 'user-id',
-        groupID: 'group-id',
-        ttlExpiresDateTime: null,
-        createdDateTime: now.subtract(const Duration(days: 31)),
-      );
+          id: 'old-id',
+          createUserID: 'user-id',
+          groupID: 'group-id',
+          ttlExpiresDateTime: null,
+          createdDateTime: now.subtract(const Duration(days: 31)),
+          duplicatedFromGroupShoppingListID: null,
+          shoppingLocationID: null);
       final boundaryList = GroupShoppingList(
-        id: 'boundary-id',
-        createUserID: 'user-id',
-        groupID: 'group-id',
-        ttlExpiresDateTime: null,
-        createdDateTime: threshold,
-      );
+          id: 'boundary-id',
+          createUserID: 'user-id',
+          groupID: 'group-id',
+          ttlExpiresDateTime: null,
+          createdDateTime: threshold,
+          duplicatedFromGroupShoppingListID: null,
+          shoppingLocationID: null);
       final recentList = GroupShoppingList(
-        id: 'recent-id',
-        createUserID: 'user-id',
-        groupID: 'group-id',
-        ttlExpiresDateTime: null,
-        createdDateTime: now.subtract(const Duration(days: 1)),
-      );
+          id: 'recent-id',
+          createUserID: 'user-id',
+          groupID: 'group-id',
+          ttlExpiresDateTime: null,
+          createdDateTime: now.subtract(const Duration(days: 1)),
+          duplicatedFromGroupShoppingListID: null,
+          shoppingLocationID: null);
 
       final freeUserLists = [oldList, boundaryList, recentList]
           .where((l) =>
@@ -41,19 +44,21 @@ void main() {
     test('プレミアムユーザーは表示期間で除外しない', () {
       final lists = [
         GroupShoppingList(
-          id: 'old-id',
-          createUserID: 'user-id',
-          groupID: 'group-id',
-          ttlExpiresDateTime: null,
-          createdDateTime: DateTime(2025, 1, 1),
-        ),
+            id: 'old-id',
+            createUserID: 'user-id',
+            groupID: 'group-id',
+            ttlExpiresDateTime: null,
+            createdDateTime: DateTime(2025, 1, 1),
+            duplicatedFromGroupShoppingListID: null,
+            shoppingLocationID: null),
         GroupShoppingList(
-          id: 'recent-id',
-          createUserID: 'user-id',
-          groupID: 'group-id',
-          ttlExpiresDateTime: null,
-          createdDateTime: DateTime(2026, 1, 1),
-        ),
+            id: 'recent-id',
+            createUserID: 'user-id',
+            groupID: 'group-id',
+            ttlExpiresDateTime: null,
+            createdDateTime: DateTime(2026, 1, 1),
+            duplicatedFromGroupShoppingListID: null,
+            shoppingLocationID: null),
       ];
 
       expect(lists.length, 2);

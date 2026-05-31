@@ -144,7 +144,8 @@ class ListTopBar extends ConsumerWidget {
               ),
               tooltip: '設定',
               onPressed: () {
-                analytics.logEvent(name: 'tap_open_app_setting');
+                analytics.logEvent(
+                    name: 'tap_open_app_setting', parameters: null);
                 FocusScope.of(context).unfocus();
                 Navigator.push(
                   context,

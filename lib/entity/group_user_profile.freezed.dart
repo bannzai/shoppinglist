@@ -369,7 +369,7 @@ class _GroupUserProfile extends GroupUserProfile {
       {required this.id,
       required this.groupID,
       required this.userID,
-      this.displayName,
+      required this.displayName,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
       @ServerCreatedTimestamp() this.serverCreatedDateTime,

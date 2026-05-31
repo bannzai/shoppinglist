@@ -51,7 +51,7 @@ class AppPill extends StatelessWidget {
     super.key,
     required this.label,
     required this.onPressed,
-    this.icon,
+    required this.icon,
     this.variant = AppPillVariant.neutral,
     this.large = false,
     this.expanded = false,

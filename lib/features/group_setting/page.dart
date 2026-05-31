@@ -195,39 +195,44 @@ class _GroupSettingBody extends HookConsumerWidget {
                 // (`design_handoff_shoppinglist/preview/screens-groups.jsx` 準拠で、
                 // GroupSettingPage 内のインライン管理を外して詳細画面に集約する)
                 AppCell(
-                  icon: Icons.store_outlined,
-                  title: '買い物する場所',
-                  subtitle: '店舗の登録・編集',
-                  onTap: () {
-                    analytics.logEvent(
-                      name: 'navigate_shopping_location_from_group_setting',
-                      parameters: {'groupID': groupID},
-                    );
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ShoppingLocationPage(groupID: groupID),
-                      ),
-                    );
-                  },
-                ),
+                    icon: Icons.store_outlined,
+                    title: '買い物する場所',
+                    subtitle: '店舗の登録・編集',
+                    onTap: () {
+                      analytics.logEvent(
+                        name: 'navigate_shopping_location_from_group_setting',
+                        parameters: {'groupID': groupID},
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              ShoppingLocationPage(groupID: groupID),
+                        ),
+                      );
+                    },
+                    detail: null,
+                    onSwitch: null,
+                    switchValue: null),
                 AppCell(
-                  icon: Icons.category_outlined,
-                  title: 'カテゴリ',
-                  subtitle: '自動分類のキーワード管理',
-                  onTap: () {
-                    analytics.logEvent(
-                      name: 'navigate_group_category_from_group_setting',
-                      parameters: {'groupID': groupID},
-                    );
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => GroupCategoryPage(groupID: groupID),
-                      ),
-                    );
-                  },
-                ),
+                    icon: Icons.category_outlined,
+                    title: 'カテゴリ',
+                    subtitle: '自動分類のキーワード管理',
+                    onTap: () {
+                      analytics.logEvent(
+                        name: 'navigate_group_category_from_group_setting',
+                        parameters: {'groupID': groupID},
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => GroupCategoryPage(groupID: groupID),
+                        ),
+                      );
+                    },
+                    detail: null,
+                    onSwitch: null,
+                    switchValue: null),
                 const Divider(height: 32),
 
                 // グループ招待セクション

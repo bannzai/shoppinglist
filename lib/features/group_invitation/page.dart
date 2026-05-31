@@ -119,17 +119,19 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                 textAlign: TextAlign.center,
                 maxLength: 8,
                 style: monoTextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                  color: neutral.ink,
-                ).copyWith(letterSpacing: 6),
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        color: neutral.ink,
+                        letterSpacing: null)
+                    .copyWith(letterSpacing: 6),
                 decoration: InputDecoration(
                   hintText: 'ABCD3456',
                   hintStyle: monoTextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w400,
-                    color: neutral.ink4,
-                  ).copyWith(letterSpacing: 6),
+                          fontSize: 28,
+                          fontWeight: FontWeight.w400,
+                          color: neutral.ink4,
+                          letterSpacing: null)
+                      .copyWith(letterSpacing: 6),
                   counterText: '',
                   filled: true,
                   fillColor: neutral.card,
@@ -162,58 +164,62 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: AppPill(
-                  label: isAccepting.value ? '参加中...' : '参加する',
-                  variant: AppPillVariant.accent,
-                  large: true,
-                  expanded: true,
-                  onPressed: isAccepting.value || !isValidCode.value
-                      ? null
-                      : () async {
-                          analytics.logEvent(name: 'tap_join_group');
-                          isAccepting.value = true;
-                          errorMessage.value = null;
-                          // i-invitation-verifying: AppDialogShell ベースで
-                          // 「コードを確認中」のオーバレイを表示する。
-                          // `design_handoff_shoppinglist/preview/screens-groups.jsx`
-                          // 準拠で、サーバー応答中の手触りを伝える。
-                          _showVerifyingDialog(context);
-                          try {
-                            await ref.read(acceptGroupInvitationProvider).call(
-                                invitationCode:
-                                    codeController.text.toUpperCase());
-                            if (context.mounted) {
-                              Navigator.of(context).pop(); // verifying dialog
+                    label: isAccepting.value ? '参加中...' : '参加する',
+                    variant: AppPillVariant.accent,
+                    large: true,
+                    expanded: true,
+                    onPressed: isAccepting.value || !isValidCode.value
+                        ? null
+                        : () async {
+                            analytics.logEvent(
+                                name: 'tap_join_group', parameters: null);
+                            isAccepting.value = true;
+                            errorMessage.value = null;
+                            // i-invitation-verifying: AppDialogShell ベースで
+                            // 「コードを確認中」のオーバレイを表示する。
+                            // `design_handoff_shoppinglist/preview/screens-groups.jsx`
+                            // 準拠で、サーバー応答中の手触りを伝える。
+                            _showVerifyingDialog(context);
+                            try {
+                              await ref
+                                  .read(acceptGroupInvitationProvider)
+                                  .call(
+                                      invitationCode:
+                                          codeController.text.toUpperCase());
+                              if (context.mounted) {
+                                Navigator.of(context).pop(); // verifying dialog
+                              }
+                              if (context.mounted) {
+                                Navigator.of(context)
+                                    .popUntil((route) => route.isFirst);
+                              }
+                            } catch (e) {
+                              errorMessage.value = e.toString();
+                              if (context.mounted) {
+                                Navigator.of(context).pop(); // verifying dialog
+                              }
+                            } finally {
+                              isAccepting.value = false;
                             }
-                            if (context.mounted) {
-                              Navigator.of(context)
-                                  .popUntil((route) => route.isFirst);
-                            }
-                          } catch (e) {
-                            errorMessage.value = e.toString();
-                            if (context.mounted) {
-                              Navigator.of(context).pop(); // verifying dialog
-                            }
-                          } finally {
-                            isAccepting.value = false;
-                          }
-                        },
-                ),
+                          },
+                    icon: null),
               ),
               const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
                 child: AppPill(
-                  label: 'キャンセル',
-                  variant: AppPillVariant.ghost,
-                  large: true,
-                  expanded: true,
-                  onPressed: isAccepting.value
-                      ? null
-                      : () {
-                          analytics.logEvent(name: 'cancel_join_group');
-                          Navigator.pop(context);
-                        },
-                ),
+                    label: 'キャンセル',
+                    variant: AppPillVariant.ghost,
+                    large: true,
+                    expanded: true,
+                    onPressed: isAccepting.value
+                        ? null
+                        : () {
+                            analytics.logEvent(
+                                name: 'cancel_join_group', parameters: null);
+                            Navigator.pop(context);
+                          },
+                    icon: null),
               ),
             ],
           ),

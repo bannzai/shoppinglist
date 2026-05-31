@@ -41,11 +41,11 @@ class AppCell extends StatelessWidget {
     super.key,
     required this.icon,
     required this.title,
-    this.subtitle,
-    this.detail,
-    this.onTap,
-    this.onSwitch,
-    this.switchValue,
+    required this.subtitle,
+    required this.detail,
+    required this.onTap,
+    required this.onSwitch,
+    required this.switchValue,
     this.danger = false,
   });
 

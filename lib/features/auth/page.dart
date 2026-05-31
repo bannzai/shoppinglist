@@ -105,7 +105,8 @@ class _Note extends StatelessWidget {
             style: linkStyle,
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                analytics.logEvent(name: 'tap_auth_terms_of_service');
+                analytics.logEvent(
+                    name: 'tap_auth_terms_of_service', parameters: null);
                 launchUrl(
                   Uri.parse('https://bannzai.github.io/shoppinglist/Terms'),
                   mode: LaunchMode.externalApplication,
@@ -118,7 +119,8 @@ class _Note extends StatelessWidget {
             style: linkStyle,
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                analytics.logEvent(name: 'tap_auth_privacy_policy');
+                analytics.logEvent(
+                    name: 'tap_auth_privacy_policy', parameters: null);
                 launchUrl(
                   Uri.parse(
                       'https://bannzai.github.io/shoppinglist/PrivacyPolicy'),

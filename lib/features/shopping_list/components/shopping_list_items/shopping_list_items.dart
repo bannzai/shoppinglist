@@ -212,11 +212,11 @@ class _GroupedListView extends StatelessWidget {
 
       for (final item in items) {
         children.add(TextShoppingListItemWidget(
-          key: ValueKey(item.id),
-          groupID: groupID,
-          textShoppingListItem: item,
-          shoppingListItems: items,
-        ));
+            key: ValueKey(item.id),
+            groupID: groupID,
+            textShoppingListItem: item,
+            shoppingListItems: items,
+            reorderIndex: null));
       }
     }
 
@@ -233,11 +233,11 @@ class _GroupedListView extends StatelessWidget {
       }
       for (final item in uncategorizedItems) {
         children.add(TextShoppingListItemWidget(
-          key: ValueKey(item.id),
-          groupID: groupID,
-          textShoppingListItem: item,
-          shoppingListItems: uncategorizedItems,
-        ));
+            key: ValueKey(item.id),
+            groupID: groupID,
+            textShoppingListItem: item,
+            shoppingListItems: uncategorizedItems,
+            reorderIndex: null));
       }
     }
 

@@ -99,7 +99,8 @@ class InvitationCodeDialog extends HookWidget {
                   large: true,
                   expanded: true,
                   onPressed: () async {
-                    analytics.logEvent(name: 'tap_copy_list_invite_code');
+                    analytics.logEvent(
+                        name: 'tap_copy_list_invite_code', parameters: null);
                     await Clipboard.setData(
                       ClipboardData(text: invitationCode),
                     );
@@ -120,7 +121,8 @@ class InvitationCodeDialog extends HookWidget {
                   large: true,
                   expanded: true,
                   onPressed: () async {
-                    analytics.logEvent(name: 'tap_share_list_invite_code');
+                    analytics.logEvent(
+                        name: 'tap_share_list_invite_code', parameters: null);
                     final box = context.findRenderObject() as RenderBox?;
                     await SharePlus.instance.share(
                       ShareParams(

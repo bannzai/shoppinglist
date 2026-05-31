@@ -5,7 +5,7 @@ import 'package:shoppinglist/provider/toast.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
 /// どこからでもテキストトーストを表示する。ref / BuildContext 不要。
-void showGlobalToast(String message, {String? title}) {
+void showGlobalToast(String message, {required String? title}) {
   showGlobalToastWidget(ToastTextContent(title: title, message: message));
 }
 

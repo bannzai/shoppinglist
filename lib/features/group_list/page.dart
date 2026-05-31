@@ -107,7 +107,7 @@ class GroupListPage extends ConsumerWidget {
       backgroundColor: isLimitReached ? tokens.neutral.surface2 : tokens.accent,
       foregroundColor: isLimitReached ? tokens.neutral.ink3 : Colors.white,
       onPressed: () {
-        analytics.logEvent(name: 'tap_navigate_group_create');
+        analytics.logEvent(name: 'tap_navigate_group_create', parameters: null);
         if (isLimitReached) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -210,10 +210,10 @@ class _GroupCard extends ConsumerWidget {
                             child: Text(
                               initial,
                               style: monoTextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: tokens.accent,
-                              ),
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: tokens.accent,
+                                  letterSpacing: null),
                             ),
                           ),
                         );

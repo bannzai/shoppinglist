@@ -139,23 +139,24 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                 child: Container(
                   color: neutral.card,
                   child: AppCell(
-                    icon: Icons.notifications_outlined,
-                    title: 'アイテム追加で家族に通知',
-                    subtitle: 'このリストでアイテム追加・チェック切替があったとき',
-                    switchValue: shoppingListState.value.autoNotifyEnabled,
-                    onSwitch: (value) {
-                      analytics.logEvent(
-                        name: 'toggle_list_auto_notify',
-                        parameters: {
-                          'groupID': groupID,
-                          'shoppingListID': shoppingListID,
-                          'value': value.toString(),
-                        },
-                      );
-                      autoSave(shoppingListState.value
-                          .copyWith(autoNotifyEnabled: value));
-                    },
-                  ),
+                      icon: Icons.notifications_outlined,
+                      title: 'アイテム追加で家族に通知',
+                      subtitle: 'このリストでアイテム追加・チェック切替があったとき',
+                      switchValue: shoppingListState.value.autoNotifyEnabled,
+                      onSwitch: (value) {
+                        analytics.logEvent(
+                          name: 'toggle_list_auto_notify',
+                          parameters: {
+                            'groupID': groupID,
+                            'shoppingListID': shoppingListID,
+                            'value': value.toString(),
+                          },
+                        );
+                        autoSave(shoppingListState.value
+                            .copyWith(autoNotifyEnabled: value));
+                      },
+                      detail: null,
+                      onTap: null),
                 ),
               ),
               const SizedBox(height: 14),
@@ -167,34 +168,40 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                   child: Column(
                     children: [
                       AppCell(
-                        icon: Icons.person_add_outlined,
-                        title: 'グループに招待コードを送る',
-                        onTap: isCreatingInvitation.value
-                            ? null
-                            : () => _onTapInvite(
-                                  context: context,
-                                  ref: ref,
-                                  isCreatingInvitation: isCreatingInvitation,
-                                ),
-                      ),
+                          icon: Icons.person_add_outlined,
+                          title: 'グループに招待コードを送る',
+                          onTap: isCreatingInvitation.value
+                              ? null
+                              : () => _onTapInvite(
+                                    context: context,
+                                    ref: ref,
+                                    isCreatingInvitation: isCreatingInvitation,
+                                  ),
+                          detail: null,
+                          onSwitch: null,
+                          subtitle: null,
+                          switchValue: null),
                       const AppDivider(),
                       AppCell(
-                        icon: Icons.people_outlined,
-                        title: 'グループ設定',
-                        onTap: () {
-                          analytics.logEvent(
-                            name: 'tap_navigate_grp_setting',
-                            parameters: {'groupID': groupID},
-                          );
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  GroupSettingPage(groupID: groupID),
-                            ),
-                          );
-                        },
-                      ),
+                          icon: Icons.people_outlined,
+                          title: 'グループ設定',
+                          onTap: () {
+                            analytics.logEvent(
+                              name: 'tap_navigate_grp_setting',
+                              parameters: {'groupID': groupID},
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    GroupSettingPage(groupID: groupID),
+                              ),
+                            );
+                          },
+                          detail: null,
+                          onSwitch: null,
+                          subtitle: null,
+                          switchValue: null),
                     ],
                   ),
                 ),
@@ -352,25 +359,27 @@ class _ShoppingLocationCell extends ConsumerWidget {
       child: Container(
         color: context.tokens.neutral.card,
         child: AppCell(
-          icon: Icons.place_outlined,
-          title: currentName ?? '未設定',
-          detail: '変更',
-          onTap: () async {
-            analytics.logEvent(
-              name: 'tap_change_list_location',
-              parameters: {'groupID': groupID},
-            );
-            final result = await pushShoppingLocationSelectPage(
-              context: context,
-              groupID: groupID,
-              currentLocationID: currentLocationID,
-            );
-            if (!context.mounted) return;
-            if (!result.changed) return;
-            if (result.locationID == currentLocationID) return;
-            onSelected(result.locationID);
-          },
-        ),
+            icon: Icons.place_outlined,
+            title: currentName ?? '未設定',
+            detail: '変更',
+            onTap: () async {
+              analytics.logEvent(
+                name: 'tap_change_list_location',
+                parameters: {'groupID': groupID},
+              );
+              final result = await pushShoppingLocationSelectPage(
+                context: context,
+                groupID: groupID,
+                currentLocationID: currentLocationID,
+              );
+              if (!context.mounted) return;
+              if (!result.changed) return;
+              if (result.locationID == currentLocationID) return;
+              onSelected(result.locationID);
+            },
+            onSwitch: null,
+            subtitle: null,
+            switchValue: null),
       ),
     );
   }
@@ -442,7 +451,8 @@ class _StoragePeriodCard extends StatelessWidget {
               icon: Icons.workspace_premium,
               variant: AppPillVariant.soft,
               onPressed: () {
-                analytics.logEvent(name: 'tap_storage_period_upgrade');
+                analytics.logEvent(
+                    name: 'tap_storage_period_upgrade', parameters: null);
                 showPaywall(context: context);
               },
             ),
@@ -485,16 +495,23 @@ class _ListActionsCard extends ConsumerWidget {
         child: Column(
           children: [
             AppCell(
-              icon: Icons.content_copy_outlined,
-              title: '現在のリストを複製',
-              onTap: () => _duplicate(context: context, ref: ref, items: items),
-            ),
+                icon: Icons.content_copy_outlined,
+                title: '現在のリストを複製',
+                onTap: () =>
+                    _duplicate(context: context, ref: ref, items: items),
+                detail: null,
+                onSwitch: null,
+                subtitle: null,
+                switchValue: null),
             const AppDivider(),
             AppCell(
-              icon: Icons.ios_share_outlined,
-              title: 'リストをエクスポート',
-              onTap: () => _export(context: context, ref: ref, items: items),
-            ),
+                icon: Icons.ios_share_outlined,
+                title: 'リストをエクスポート',
+                onTap: () => _export(context: context, ref: ref, items: items),
+                detail: null,
+                onSwitch: null,
+                subtitle: null,
+                switchValue: null),
           ],
         ),
       ),

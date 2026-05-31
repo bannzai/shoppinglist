@@ -47,20 +47,20 @@ class _SignOutDialogPreviewState extends State<SignOutDialogPreview> {
                   children: [
                     Expanded(
                       child: AppPill(
-                        label: 'キャンセル',
-                        variant: AppPillVariant.ghost,
-                        expanded: true,
-                        onPressed: () => Navigator.pop(dialogContext),
-                      ),
+                          label: 'キャンセル',
+                          variant: AppPillVariant.ghost,
+                          expanded: true,
+                          onPressed: () => Navigator.pop(dialogContext),
+                          icon: null),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: AppPill(
-                        label: 'サインアウト',
-                        variant: AppPillVariant.danger,
-                        expanded: true,
-                        onPressed: () => Navigator.pop(dialogContext),
-                      ),
+                          label: 'サインアウト',
+                          variant: AppPillVariant.danger,
+                          expanded: true,
+                          onPressed: () => Navigator.pop(dialogContext),
+                          icon: null),
                     ),
                   ],
                 ),

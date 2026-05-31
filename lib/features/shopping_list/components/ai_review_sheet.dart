@@ -222,21 +222,21 @@ class _AIReviewSheetState extends State<_AIReviewSheet> {
                   children: [
                     Expanded(
                       child: AppPill(
-                        label: 'キャンセル',
-                        variant: AppPillVariant.ghost,
-                        expanded: true,
-                        onPressed: _cancel,
-                      ),
+                          label: 'キャンセル',
+                          variant: AppPillVariant.ghost,
+                          expanded: true,
+                          onPressed: _cancel,
+                          icon: null),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: AppPill(
-                        label: '$selectedCount 件追加',
-                        variant: AppPillVariant.accent,
-                        large: true,
-                        expanded: true,
-                        onPressed: selectedCount == 0 ? null : _confirm,
-                      ),
+                          label: '$selectedCount 件追加',
+                          variant: AppPillVariant.accent,
+                          large: true,
+                          expanded: true,
+                          onPressed: selectedCount == 0 ? null : _confirm,
+                          icon: null),
                     ),
                   ],
                 ),

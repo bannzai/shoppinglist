@@ -34,23 +34,23 @@ class GroupChipsBar extends StatelessWidget {
           final group = groups[index];
           final selected = group.id == currentGroupID;
           return AppChip(
-            label: group.name ?? 'グループ',
-            active: selected,
-            soft: true,
-            icon: selected ? Icons.check : null,
-            onTap: selected
-                ? null
-                : () {
-                    analytics.logEvent(
-                      name: 'tap_switch_group',
-                      parameters: {
-                        'fromGroupID': currentGroupID,
-                        'toGroupID': group.id,
-                      },
-                    );
-                    onGroupChanged(group.id);
-                  },
-          );
+              label: group.name ?? 'グループ',
+              active: selected,
+              soft: true,
+              icon: selected ? Icons.check : null,
+              onTap: selected
+                  ? null
+                  : () {
+                      analytics.logEvent(
+                        name: 'tap_switch_group',
+                        parameters: {
+                          'fromGroupID': currentGroupID,
+                          'toGroupID': group.id,
+                        },
+                      );
+                      onGroupChanged(group.id);
+                    },
+              dotColor: null);
         },
       ),
     );

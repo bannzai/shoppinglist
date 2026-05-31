@@ -56,7 +56,10 @@ class AddShoppingListItem {
         message: message,
         order: order,
         description: description,
-        color: color);
+        color: color,
+        checkedByUserID: null,
+        imageURL: null,
+        lastEditedByUserID: null);
     await docRef.set(item, SetOptions(merge: true));
     debugPrint('[AddShoppingListItem] 書き込み完了: docRef.id=${docRef.id}');
     return item;

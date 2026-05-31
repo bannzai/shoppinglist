@@ -40,8 +40,8 @@ abstract class GroupShoppingList with _$GroupShoppingList {
     /// グローバル通知設定 (SharedPreferences) と AND 条件で評価する。
     /// 既存ドキュメントにはこのフィールドが存在しないため default で `false` を返す。
     @Default(false) bool autoNotifyEnabled,
-    String? shoppingLocationID,
-    String? duplicatedFromGroupShoppingListID,
+    required String? shoppingLocationID,
+    required String? duplicatedFromGroupShoppingListID,
     @TimestampConverter() required DateTime? ttlExpiresDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,

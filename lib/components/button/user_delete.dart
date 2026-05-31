@@ -29,7 +29,8 @@ class DeleteUserButton extends HookConsumerWidget {
               if (isLoading.value) {
                 return;
               }
-              analytics.logEvent(name: 'tap_show_delete_account');
+              analytics.logEvent(
+                  name: 'tap_show_delete_account', parameters: null);
 
               showDiscardDialog(
                 context,
@@ -38,7 +39,8 @@ class DeleteUserButton extends HookConsumerWidget {
                 actions: [
                   TextButton(
                     onPressed: () async {
-                      analytics.logEvent(name: 'cancel_delete_account');
+                      analytics.logEvent(
+                          name: 'cancel_delete_account', parameters: null);
                       Navigator.of(context).pop();
                     },
                     child: Text(
@@ -53,7 +55,9 @@ class DeleteUserButton extends HookConsumerWidget {
                   TextButton(
                     onPressed: () async {
                       if (!isLoading.value) {
-                        analytics.logEvent(name: 'tap_confirm_delete_account');
+                        analytics.logEvent(
+                            name: 'tap_confirm_delete_account',
+                            parameters: null);
                         isLoading.value = true;
                         await _delete(
                           context,
@@ -105,7 +109,8 @@ class DeleteUserButton extends HookConsumerWidget {
           actions: [
             TextButton(
               onPressed: () async {
-                analytics.logEvent(name: 'cancel_reauth_for_delete');
+                analytics.logEvent(
+                    name: 'cancel_reauth_for_delete', parameters: null);
                 Navigator.of(context).pop();
               },
               child: Text(
@@ -118,7 +123,8 @@ class DeleteUserButton extends HookConsumerWidget {
             ),
             TextButton(
               onPressed: () async {
-                analytics.logEvent(name: 'tap_reauth_for_delete');
+                analytics.logEvent(
+                    name: 'tap_reauth_for_delete', parameters: null);
                 final navigator = Navigator.of(context);
                 if (isAppleLinked) {
                   await appleReauthentification();
@@ -187,7 +193,8 @@ class _CompletedDialog extends StatelessWidget {
             width: 180,
             child: TextButton(
               onPressed: () async {
-                analytics.logEvent(name: 'tap_exit_app_after_delete');
+                analytics.logEvent(
+                    name: 'tap_exit_app_after_delete', parameters: null);
                 exit(0);
               },
               child: Text(

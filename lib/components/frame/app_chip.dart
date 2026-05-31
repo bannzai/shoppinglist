@@ -26,11 +26,11 @@ class AppChip extends StatelessWidget {
   const AppChip({
     super.key,
     required this.label,
-    this.icon,
-    this.dotColor,
+    required this.icon,
+    required this.dotColor,
     this.active = false,
     this.soft = false,
-    this.onTap,
+    required this.onTap,
   });
 
   @override

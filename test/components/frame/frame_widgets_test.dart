@@ -27,19 +27,33 @@ void main() {
     await tester.pumpWidget(_wrap(Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        AppPill(label: 'neutral', onPressed: () {}),
+        AppPill(label: 'neutral', onPressed: () {}, icon: null),
         AppPill(
-            label: 'accent', onPressed: () {}, variant: AppPillVariant.accent),
-        AppPill(label: 'soft', onPressed: () {}, variant: AppPillVariant.soft),
+            label: 'accent',
+            onPressed: () {},
+            variant: AppPillVariant.accent,
+            icon: null),
         AppPill(
-            label: 'ghost', onPressed: () {}, variant: AppPillVariant.ghost),
+            label: 'soft',
+            onPressed: () {},
+            variant: AppPillVariant.soft,
+            icon: null),
         AppPill(
-            label: 'danger', onPressed: () {}, variant: AppPillVariant.danger),
+            label: 'ghost',
+            onPressed: () {},
+            variant: AppPillVariant.ghost,
+            icon: null),
+        AppPill(
+            label: 'danger',
+            onPressed: () {},
+            variant: AppPillVariant.danger,
+            icon: null),
         AppPill(
             label: 'dangerSolid',
             onPressed: () {},
-            variant: AppPillVariant.dangerSolid),
-        const AppPill(label: 'disabled', onPressed: null),
+            variant: AppPillVariant.dangerSolid,
+            icon: null),
+        const AppPill(label: 'disabled', onPressed: null, icon: null),
       ],
     )));
     expect(find.text('neutral'), findsOneWidget);
@@ -49,10 +63,10 @@ void main() {
 
   testWidgets('AppPill: dangerSolid は danger 塗り + 白文字', (tester) async {
     await tester.pumpWidget(_wrap(AppPill(
-      label: '削除',
-      onPressed: () {},
-      variant: AppPillVariant.dangerSolid,
-    )));
+        label: '削除',
+        onPressed: () {},
+        variant: AppPillVariant.dangerSolid,
+        icon: null)));
     final ctx = tester.element(find.byType(AppPill));
     final neutral = ctx.tokens.neutral;
     final material = tester.widget<Material>(
@@ -66,7 +80,7 @@ void main() {
 
   testWidgets('AppPill: large=true で高さ50', (tester) async {
     await tester.pumpWidget(
-      _wrap(AppPill(label: 'CTA', onPressed: () {}, large: true)),
+      _wrap(AppPill(label: 'CTA', onPressed: () {}, large: true, icon: null)),
     );
     final box = tester.getSize(find.text('CTA'));
     expect(box.height, lessThanOrEqualTo(50));
@@ -84,12 +98,12 @@ void main() {
 
   testWidgets('AppCheckbox: checked=false でアイコン非表示、true で表示', (tester) async {
     await tester.pumpWidget(_wrap(
-      const AppCheckbox(checked: false, onChanged: null),
+      const AppCheckbox(checked: false, onChanged: null, color: null),
     ));
     expect(find.byIcon(Icons.check), findsNothing);
 
     await tester.pumpWidget(_wrap(
-      const AppCheckbox(checked: true, onChanged: null),
+      const AppCheckbox(checked: true, onChanged: null, color: null),
     ));
     expect(find.byIcon(Icons.check), findsOneWidget);
   });
@@ -97,9 +111,7 @@ void main() {
   testWidgets('AppCheckbox: タップで onChanged(!checked) が発火', (tester) async {
     bool? received;
     await tester.pumpWidget(_wrap(AppCheckbox(
-      checked: false,
-      onChanged: (v) => received = v,
-    )));
+        checked: false, onChanged: (v) => received = v, color: null)));
     await tester.tap(find.byType(AppCheckbox), warnIfMissed: false);
     expect(received, true);
   });
@@ -107,8 +119,13 @@ void main() {
   testWidgets('AppChip: active のときラベルが太字 600', (tester) async {
     await tester.pumpWidget(_wrap(Column(
       children: [
-        AppChip(label: 'inactive', onTap: () {}),
-        AppChip(label: 'active', active: true, onTap: () {}),
+        AppChip(label: 'inactive', onTap: () {}, dotColor: null, icon: null),
+        AppChip(
+            label: 'active',
+            active: true,
+            onTap: () {},
+            dotColor: null,
+            icon: null),
       ],
     )));
     expect(find.text('inactive'), findsOneWidget);
@@ -116,12 +133,12 @@ void main() {
   });
 
   testWidgets('AppLargeAppBar: subtitle なしで preferredSize 110', (tester) async {
-    const bar = AppLargeAppBar(title: 'タイトル');
+    const bar = AppLargeAppBar(title: 'タイトル', leading: null, subtitle: null);
     expect(bar.preferredSize.height, 110);
   });
 
   testWidgets('AppLargeAppBar: subtitle ありで preferredSize 130', (tester) async {
-    const bar = AppLargeAppBar(title: 'タイトル', subtitle: '補足');
+    const bar = AppLargeAppBar(title: 'タイトル', subtitle: '補足', leading: null);
     expect(bar.preferredSize.height, 130);
   });
 
@@ -132,7 +149,8 @@ void main() {
         accent: AccentPreset.shu,
       ),
       home: const Scaffold(
-        appBar: AppLargeAppBar(title: '設定', subtitle: 'アプリ全般の設定'),
+        appBar:
+            AppLargeAppBar(title: '設定', subtitle: 'アプリ全般の設定', leading: null),
       ),
     ));
     expect(find.text('設定'), findsOneWidget);
@@ -153,14 +171,15 @@ void main() {
   });
 
   testWidgets('AppFrameAppBar: preferredSize 48 + title 描画', (tester) async {
-    const bar = AppFrameAppBar(title: 'カテゴリ');
+    const bar = AppFrameAppBar(title: 'カテゴリ', leading: null, trailing: null);
     expect(bar.preferredSize.height, 48);
     await tester.pumpWidget(MaterialApp(
       theme: buildAppTheme(
         brightness: Brightness.light,
         accent: AccentPreset.shu,
       ),
-      home: const Scaffold(appBar: AppFrameAppBar(title: 'カテゴリ')),
+      home: const Scaffold(
+          appBar: AppFrameAppBar(title: 'カテゴリ', leading: null, trailing: null)),
     ));
     expect(find.text('カテゴリ'), findsOneWidget);
   });
@@ -168,11 +187,13 @@ void main() {
   testWidgets('AppCell: onTap 指定で chev-r 表示・タップ発火', (tester) async {
     var tapped = 0;
     await tester.pumpWidget(_wrap(AppCell(
-      icon: Icons.notifications_active_outlined,
-      title: '通知設定',
-      subtitle: 'プッシュ通知の細かい設定',
-      onTap: () => tapped++,
-    )));
+        icon: Icons.notifications_active_outlined,
+        title: '通知設定',
+        subtitle: 'プッシュ通知の細かい設定',
+        onTap: () => tapped++,
+        detail: null,
+        onSwitch: null,
+        switchValue: null)));
     expect(find.text('通知設定'), findsOneWidget);
     expect(find.text('プッシュ通知の細かい設定'), findsOneWidget);
     expect(find.byIcon(Icons.chevron_right), findsOneWidget);
@@ -183,11 +204,13 @@ void main() {
   testWidgets('AppCell: onSwitch + switchValue 指定で Switch 表示', (tester) async {
     bool? lastValue;
     await tester.pumpWidget(_wrap(AppCell(
-      icon: Icons.notifications_active_outlined,
-      title: '自動通知',
-      switchValue: false,
-      onSwitch: (v) => lastValue = v,
-    )));
+        icon: Icons.notifications_active_outlined,
+        title: '自動通知',
+        switchValue: false,
+        onSwitch: (v) => lastValue = v,
+        detail: null,
+        onTap: null,
+        subtitle: null)));
     expect(find.byType(Switch), findsOneWidget);
     expect(find.byIcon(Icons.chevron_right), findsNothing);
     await tester.tap(find.byType(Switch));
@@ -196,10 +219,14 @@ void main() {
 
   testWidgets('AppCell: danger=true でアイコンが danger 色', (tester) async {
     await tester.pumpWidget(_wrap(const AppCell(
-      icon: Icons.logout,
-      title: 'サインアウト',
-      danger: true,
-    )));
+        icon: Icons.logout,
+        title: 'サインアウト',
+        danger: true,
+        detail: null,
+        onSwitch: null,
+        onTap: null,
+        subtitle: null,
+        switchValue: null)));
     expect(find.text('サインアウト'), findsOneWidget);
   });
 

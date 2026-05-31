@@ -8,15 +8,16 @@ GroupCategory _makeCategory({
   Map<String, int> locationOrders = const {},
 }) {
   return GroupCategory(
-    id: id,
-    groupID: 'group1',
-    userID: 'user1',
-    groupCategoryAxisID: 'axis1',
-    name: 'カテゴリ $id',
-    order: order,
-    locationOrders: locationOrders,
-    keywords: [],
-  );
+      id: id,
+      groupID: 'group1',
+      userID: 'user1',
+      groupCategoryAxisID: 'axis1',
+      name: 'カテゴリ $id',
+      order: order,
+      locationOrders: locationOrders,
+      keywords: [],
+      color: null,
+      iconName: null);
 }
 
 void main() {

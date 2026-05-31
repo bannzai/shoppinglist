@@ -70,7 +70,7 @@ class SettingPage extends HookConsumerWidget {
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () {
-            analytics.logEvent(name: 'tap_close_app_setting');
+            analytics.logEvent(name: 'tap_close_app_setting', parameters: null);
             Navigator.pop(context);
           },
         ),
@@ -152,33 +152,40 @@ class SettingPage extends HookConsumerWidget {
               ]),
               SettingSectionTitle(text: 'グループ', children: [
                 AppCell(
-                  icon: Icons.groups,
-                  title: 'グループ管理',
-                  onTap: () {
-                    analytics.logEvent(
-                        name: 'tap_navigate_group_list', parameters: {});
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const GroupListPage(),
-                      ),
-                    );
-                  },
-                ),
+                    icon: Icons.groups,
+                    title: 'グループ管理',
+                    onTap: () {
+                      analytics.logEvent(
+                          name: 'tap_navigate_group_list', parameters: {});
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const GroupListPage(),
+                        ),
+                      );
+                    },
+                    detail: null,
+                    onSwitch: null,
+                    subtitle: null,
+                    switchValue: null),
                 AppCell(
-                  icon: Icons.group_add,
-                  title: '招待コードでグループに参加',
-                  onTap: () {
-                    analytics.logEvent(
-                        name: 'tap_navigate_invitation', parameters: {});
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const GroupInvitationAcceptPage(),
-                      ),
-                    );
-                  },
-                ),
+                    icon: Icons.group_add,
+                    title: '招待コードでグループに参加',
+                    onTap: () {
+                      analytics.logEvent(
+                          name: 'tap_navigate_invitation', parameters: {});
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const GroupInvitationAcceptPage(),
+                        ),
+                      );
+                    },
+                    detail: null,
+                    onSwitch: null,
+                    subtitle: null,
+                    switchValue: null),
               ]),
               SettingSectionTitle(text: '外観', children: [
                 _ThemeColorTile(),
@@ -193,65 +200,81 @@ class SettingPage extends HookConsumerWidget {
               ),
               SettingSectionTitle(text: 'アプリについて', children: [
                 AppCell(
-                  icon: Icons.description_outlined,
-                  title: '利用規約',
-                  onTap: () {
-                    analytics.logEvent(
-                        name: 'did_select_terms_of_service', parameters: {});
-                    launchUrl(
-                        Uri.parse(
-                            'https://bannzai.github.io/shoppinglist/TermsOfService'),
-                        mode: LaunchMode.externalApplication);
-                  },
-                ),
+                    icon: Icons.description_outlined,
+                    title: '利用規約',
+                    onTap: () {
+                      analytics.logEvent(
+                          name: 'did_select_terms_of_service', parameters: {});
+                      launchUrl(
+                          Uri.parse(
+                              'https://bannzai.github.io/shoppinglist/TermsOfService'),
+                          mode: LaunchMode.externalApplication);
+                    },
+                    detail: null,
+                    onSwitch: null,
+                    subtitle: null,
+                    switchValue: null),
                 const _Divider(),
                 AppCell(
-                  icon: Icons.shield_outlined,
-                  title: 'プライバシーポリシー',
-                  onTap: () {
-                    analytics.logEvent(
-                        name: 'did_select_privacy_policy', parameters: {});
-                    launchUrl(
-                        Uri.parse(
-                            'https://bannzai.github.io/shoppinglist/PrivacyPolicy'),
-                        mode: LaunchMode.externalApplication);
-                  },
-                ),
+                    icon: Icons.shield_outlined,
+                    title: 'プライバシーポリシー',
+                    onTap: () {
+                      analytics.logEvent(
+                          name: 'did_select_privacy_policy', parameters: {});
+                      launchUrl(
+                          Uri.parse(
+                              'https://bannzai.github.io/shoppinglist/PrivacyPolicy'),
+                          mode: LaunchMode.externalApplication);
+                    },
+                    detail: null,
+                    onSwitch: null,
+                    subtitle: null,
+                    switchValue: null),
                 const _Divider(),
                 AppCell(
-                  icon: Icons.gavel_outlined,
-                  title: '特定商法取引法に基づく表記',
-                  onTap: () {
-                    analytics.logEvent(
-                        name: 'did_select_specified_commercial_transaction_act',
-                        parameters: {});
-                    launchUrl(
-                        Uri.parse(
-                            'https://bannzai.github.io/shoppinglist/SpecifiedCommercialTransactionAct'),
-                        mode: LaunchMode.externalApplication);
-                  },
-                ),
+                    icon: Icons.gavel_outlined,
+                    title: '特定商法取引法に基づく表記',
+                    onTap: () {
+                      analytics.logEvent(
+                          name:
+                              'did_select_specified_commercial_transaction_act',
+                          parameters: {});
+                      launchUrl(
+                          Uri.parse(
+                              'https://bannzai.github.io/shoppinglist/SpecifiedCommercialTransactionAct'),
+                          mode: LaunchMode.externalApplication);
+                    },
+                    detail: null,
+                    onSwitch: null,
+                    subtitle: null,
+                    switchValue: null),
                 const _Divider(),
                 AppCell(
-                  icon: Icons.mail_outline,
-                  title: 'お問い合わせ',
-                  onTap: () {
-                    analytics
-                        .logEvent(name: 'tap_open_inquiry', parameters: {});
-                    inquiry();
-                  },
-                ),
+                    icon: Icons.mail_outline,
+                    title: 'お問い合わせ',
+                    onTap: () {
+                      analytics
+                          .logEvent(name: 'tap_open_inquiry', parameters: {});
+                      inquiry();
+                    },
+                    detail: null,
+                    onSwitch: null,
+                    subtitle: null,
+                    switchValue: null),
               ]),
               // E2Eテストでシェイクが使えないSimulator向けの代替入口
               if (kDebugMode)
                 SettingSectionTitle(text: 'デバッグ', children: [
                   AppCell(
-                    icon: Icons.developer_mode,
-                    title: '開発者オプション',
-                    onTap: () {
-                      navigateToDeveloperOptionsPage(context);
-                    },
-                  ),
+                      icon: Icons.developer_mode,
+                      title: '開発者オプション',
+                      onTap: () {
+                        navigateToDeveloperOptionsPage(context);
+                      },
+                      detail: null,
+                      onSwitch: null,
+                      subtitle: null,
+                      switchValue: null),
                 ]),
               // サインアウト: `design_handoff_shoppinglist/preview/screens-settings.jsx`
               // 準拠で破壊的操作扱い (danger 色 + 確認ダイアログ)。
@@ -340,16 +363,16 @@ class _PremiumCard extends ConsumerWidget {
           ),
           if (!isPremium)
             AppPill(
-              label: 'はじめる',
-              variant: AppPillVariant.accent,
-              onPressed: () {
-                analytics.logEvent(
-                  name: 'tap_premium_membership_tile',
-                  parameters: {},
-                );
-                showPaywall(context: context);
-              },
-            ),
+                label: 'はじめる',
+                variant: AppPillVariant.accent,
+                onPressed: () {
+                  analytics.logEvent(
+                    name: 'tap_premium_membership_tile',
+                    parameters: {},
+                  );
+                  showPaywall(context: context);
+                },
+                icon: null),
         ],
       ),
     );
@@ -387,10 +410,10 @@ class _VersionLabelState extends State<_VersionLabel> {
         _label ?? '',
         textAlign: TextAlign.center,
         style: monoTextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w400,
-          color: tokens.neutral.ink3,
-        ),
+            fontSize: 11,
+            fontWeight: FontWeight.w400,
+            color: tokens.neutral.ink3,
+            letterSpacing: null),
       ),
     );
   }
@@ -594,7 +617,7 @@ class _SignOutButton extends ConsumerWidget {
                 ),
           ),
           onPressed: () async {
-            analytics.logEvent(name: 'tap_sign_out');
+            analytics.logEvent(name: 'tap_sign_out', parameters: null);
             // `design_handoff_shoppinglist/preview/screens-list-settings.jsx`
             // の DialogShell 準拠 (overlay + blur + 上から 32% に paper card)。
             final confirmed = await showGeneralDialog<bool>(
@@ -626,22 +649,22 @@ class _SignOutButton extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: AppPill(
-                              label: 'キャンセル',
-                              variant: AppPillVariant.ghost,
-                              expanded: true,
-                              onPressed: () =>
-                                  Navigator.pop(dialogContext, false),
-                            ),
+                                label: 'キャンセル',
+                                variant: AppPillVariant.ghost,
+                                expanded: true,
+                                onPressed: () =>
+                                    Navigator.pop(dialogContext, false),
+                                icon: null),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: AppPill(
-                              label: 'サインアウト',
-                              variant: AppPillVariant.danger,
-                              expanded: true,
-                              onPressed: () =>
-                                  Navigator.pop(dialogContext, true),
-                            ),
+                                label: 'サインアウト',
+                                variant: AppPillVariant.danger,
+                                expanded: true,
+                                onPressed: () =>
+                                    Navigator.pop(dialogContext, true),
+                                icon: null),
                           ),
                         ],
                       ),
@@ -651,7 +674,7 @@ class _SignOutButton extends ConsumerWidget {
               },
             );
             if (confirmed != true) return;
-            analytics.logEvent(name: 'confirm_sign_out');
+            analytics.logEvent(name: 'confirm_sign_out', parameters: null);
             await FirebaseAuth.instance.signOut();
           },
         ),

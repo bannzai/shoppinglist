@@ -21,8 +21,8 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: MaterialApp(
-          theme:
-              buildAppTheme(brightness: Brightness.light, accent: AccentPreset.shu),
+          theme: buildAppTheme(
+              brightness: Brightness.light, accent: AccentPreset.shu),
           home: const Scaffold(body: Stack(children: [ToastOverlay()])),
         ),
       ),
@@ -30,8 +30,7 @@ void main() {
     return container;
   }
 
-  testWidgets('showGlobalToast: 表示され、duration 経過で自動的に消える',
-      (tester) async {
+  testWidgets('showGlobalToast: 表示され、duration 経過で自動的に消える', (tester) async {
     await pumpOverlay(tester);
     expect(find.text('保存しました'), findsNothing);
 
@@ -49,12 +48,12 @@ void main() {
   testWidgets('show 連続: 最新メッセージで即置き換わる', (tester) async {
     await pumpOverlay(tester);
 
-    showGlobalToast('古いメッセージ');
+    showGlobalToast('古いメッセージ', title: null);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 250));
     expect(find.text('古いメッセージ'), findsOneWidget);
 
-    showGlobalToast('新しいメッセージ');
+    showGlobalToast('新しいメッセージ', title: null);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 250));
     expect(find.text('新しいメッセージ'), findsOneWidget);
@@ -68,7 +67,7 @@ void main() {
   testWidgets('dismissGlobalToast: 即座に消える', (tester) async {
     await pumpOverlay(tester);
 
-    showGlobalToast('メッセージ');
+    showGlobalToast('メッセージ', title: null);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 250));
     expect(find.text('メッセージ'), findsOneWidget);

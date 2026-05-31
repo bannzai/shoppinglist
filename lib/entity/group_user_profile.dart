@@ -21,7 +21,7 @@ abstract class GroupUserProfile with _$GroupUserProfile {
     required String id,
     required String groupID,
     required String userID,
-    String? displayName,
+    required String? displayName,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,

@@ -20,8 +20,8 @@ class AppLargeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const AppLargeAppBar({
     super.key,
     required this.title,
-    this.subtitle,
-    this.leading,
+    required this.subtitle,
+    required this.leading,
     this.trailing = const [],
   });
 

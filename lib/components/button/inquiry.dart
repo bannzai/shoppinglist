@@ -77,7 +77,8 @@ class InquiryButton extends ConsumerWidget {
             ),
       ),
       onPressed: () {
-        analytics.logEvent(name: 'problem_unresolved_button_pressed');
+        analytics.logEvent(
+            name: 'problem_unresolved_button_pressed', parameters: null);
         inquiry();
       },
     );

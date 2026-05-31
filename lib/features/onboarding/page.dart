@@ -101,21 +101,21 @@ class OnboardingPage extends HookConsumerWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: AppPill(
-                  label: index.value == slides.length - 1 ? 'はじめる' : '次へ',
-                  variant: AppPillVariant.accent,
-                  large: true,
-                  expanded: true,
-                  onPressed: () {
-                    if (index.value == slides.length - 1) {
-                      finish(reason: 'complete');
-                    } else {
-                      controller.nextPage(
-                        duration: const Duration(milliseconds: 240),
-                        curve: Curves.easeOut,
-                      );
-                    }
-                  },
-                ),
+                    label: index.value == slides.length - 1 ? 'はじめる' : '次へ',
+                    variant: AppPillVariant.accent,
+                    large: true,
+                    expanded: true,
+                    onPressed: () {
+                      if (index.value == slides.length - 1) {
+                        finish(reason: 'complete');
+                      } else {
+                        controller.nextPage(
+                          duration: const Duration(milliseconds: 240),
+                          curve: Curves.easeOut,
+                        );
+                      }
+                    },
+                    icon: null),
               ),
             ),
           ],
@@ -351,10 +351,10 @@ class _AvatarOrbitArt extends StatelessWidget {
               child: Text(
                 label,
                 style: monoTextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    letterSpacing: null),
               ),
             ),
           ),

@@ -116,7 +116,7 @@ class _StarterRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const AppCheckbox(checked: false, onChanged: null),
+            const AppCheckbox(checked: false, onChanged: null, color: null),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -147,11 +147,11 @@ class _HintLine extends StatelessWidget {
       child: Text(
         text,
         style: monoTextStyle(
-          fontSize: 11.5,
-          fontWeight: FontWeight.w400,
-          color: tokens.neutral.ink3,
-          height: 1.4,
-        ),
+            fontSize: 11.5,
+            fontWeight: FontWeight.w400,
+            color: tokens.neutral.ink3,
+            height: 1.4,
+            letterSpacing: null),
       ),
     );
   }

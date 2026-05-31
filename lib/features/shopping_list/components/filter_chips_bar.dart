@@ -35,44 +35,44 @@ class FilterChipsBar extends ConsumerWidget {
         child: Row(
           children: [
             AppChip(
-              label: showChecked.value ? 'チェック済み表示' : 'チェック済み非表示',
-              icon: Icons.check,
-              soft: true,
-              active: !showChecked.value,
-              onTap: () {
-                final next = !showChecked.value;
-                analytics.logEvent(
-                  name: 'toggle_show_checked',
-                  parameters: {
-                    'groupID': groupID,
-                    'shoppingListID': shoppingListID,
-                    'value': next.toString(),
-                  },
-                );
-                showChecked.value = next;
-              },
-            ),
+                label: showChecked.value ? 'チェック済み表示' : 'チェック済み非表示',
+                icon: Icons.check,
+                soft: true,
+                active: !showChecked.value,
+                onTap: () {
+                  final next = !showChecked.value;
+                  analytics.logEvent(
+                    name: 'toggle_show_checked',
+                    parameters: {
+                      'groupID': groupID,
+                      'shoppingListID': shoppingListID,
+                      'value': next.toString(),
+                    },
+                  );
+                  showChecked.value = next;
+                },
+                dotColor: null),
             const SizedBox(width: 6),
             AppChip(
-              label: sortByCategory.value ? 'カテゴリ順' : 'リスト順',
-              icon: Icons.sell_outlined,
-              soft: true,
-              active: sortByCategory.value,
-              onTap: hasCategories
-                  ? () {
-                      final next = !sortByCategory.value;
-                      analytics.logEvent(
-                        name: 'toggle_sort_by_category',
-                        parameters: {
-                          'groupID': groupID,
-                          'shoppingListID': shoppingListID,
-                          'value': next.toString(),
-                        },
-                      );
-                      sortByCategory.value = next;
-                    }
-                  : null,
-            ),
+                label: sortByCategory.value ? 'カテゴリ順' : 'リスト順',
+                icon: Icons.sell_outlined,
+                soft: true,
+                active: sortByCategory.value,
+                onTap: hasCategories
+                    ? () {
+                        final next = !sortByCategory.value;
+                        analytics.logEvent(
+                          name: 'toggle_sort_by_category',
+                          parameters: {
+                            'groupID': groupID,
+                            'shoppingListID': shoppingListID,
+                            'value': next.toString(),
+                          },
+                        );
+                        sortByCategory.value = next;
+                      }
+                    : null,
+                dotColor: null),
           ],
         ),
       ),
