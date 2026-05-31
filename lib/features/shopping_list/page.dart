@@ -7,7 +7,6 @@ import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_sync.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/ai_processing_banner.dart';
-import 'package:shoppinglist/features/shopping_list/components/banners/all_done_banner.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/list_error_card.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/retention_banner.dart';
 import 'package:shoppinglist/features/shopping_list/components/expandable_fab.dart';
@@ -15,7 +14,7 @@ import 'package:shoppinglist/features/shopping_list/components/filter_chips_bar.
 import 'package:shoppinglist/features/shopping_list/components/group_chips_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/list_top_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/notification_member_bar.dart';
-import 'package:shoppinglist/features/shopping_list/components/progress_block.dart';
+import 'package:shoppinglist/features/shopping_list/components/progress_pill.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_body_content.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
 import 'package:shoppinglist/provider/ai_processing.dart';
@@ -324,44 +323,54 @@ class _Body extends HookConsumerWidget {
             Expanded(
               child: Container(
                 color: tokens.neutral.card,
-                child: Column(
+                child: Stack(
                   children: [
-                    FilterChipsBar(
-                      groupID: groupID,
-                      shoppingListID: shoppingListID,
-                      showChecked: showChecked,
-                      sortByCategory: sortByCategory,
-                    ),
-                    if (totalCount > 0)
-                      ProgressBlock(
-                        checkedCount: checkedCount,
-                        totalCount: totalCount,
-                      ),
-                    if (totalCount > 0 && checkedCount == totalCount)
-                      const AllDoneBanner(),
-                    if (aiProcessingType != null)
-                      AIProcessingBanner(type: aiProcessingType),
-                    Expanded(
-                      child: shoppingListItemsAsync.when(
-                        data: (shoppingListItems) => ShoppingListBodyContent(
+                    Column(
+                      children: [
+                        FilterChipsBar(
                           groupID: groupID,
                           shoppingListID: shoppingListID,
-                          shoppingLists: shoppingLists,
-                          shoppingList: shoppingList,
-                          shoppingListItems: shoppingListItems,
-                          showChecked: showChecked.value,
-                          sortByCategory: sortByCategory.value,
-                          onShoppingListIDChanged: onShoppingListIDChanged,
+                          showChecked: showChecked,
+                          sortByCategory: sortByCategory,
                         ),
-                        error: (e, st) => ListErrorCard(
-                          exception: e,
-                          onRetry: () => Retry.of(context).retry(),
+                        if (aiProcessingType != null)
+                          AIProcessingBanner(type: aiProcessingType),
+                        Expanded(
+                          child: shoppingListItemsAsync.when(
+                            data: (shoppingListItems) =>
+                                ShoppingListBodyContent(
+                              groupID: groupID,
+                              shoppingListID: shoppingListID,
+                              shoppingLists: shoppingLists,
+                              shoppingList: shoppingList,
+                              shoppingListItems: shoppingListItems,
+                              showChecked: showChecked.value,
+                              sortByCategory: sortByCategory.value,
+                              onShoppingListIDChanged: onShoppingListIDChanged,
+                            ),
+                            error: (e, st) => ListErrorCard(
+                              exception: e,
+                              onRetry: () => Retry.of(context).retry(),
+                            ),
+                            loading: () => const Loading(),
+                          ),
                         ),
-                        loading: () => const Loading(),
-                      ),
+                        if (!firestoreIsPremium && totalCount > 50)
+                          const RetentionBanner(),
+                      ],
                     ),
-                    if (!firestoreIsPremium && totalCount > 50)
-                      const RetentionBanner(),
+                    // チェック進捗を左下に浮かせる小さなピル（FAB は右下なので対称）。
+                    // 外側 SafeArea が bottom:false のため、ホームインジケータ分を加味する。
+                    if (totalCount > 0)
+                      Positioned(
+                        left: AppTokens.s16,
+                        bottom: AppTokens.s16 +
+                            MediaQuery.of(context).padding.bottom,
+                        child: ProgressPill(
+                          checkedCount: checkedCount,
+                          totalCount: totalCount,
+                        ),
+                      ),
                   ],
                 ),
               ),

@@ -356,6 +356,8 @@ class _PhotoSection extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
 
     // ローカル選択画像があればそれを表示
     if (selectedPhoto.value != null) {
@@ -363,6 +365,7 @@ class _PhotoSection extends HookConsumerWidget {
         context: context,
         colorScheme: colorScheme,
         ref: ref,
+        isPremium: isPremium,
         child: Image.file(
           File(selectedPhoto.value!.path),
           width: double.infinity,
@@ -378,6 +381,7 @@ class _PhotoSection extends HookConsumerWidget {
         context: context,
         colorScheme: colorScheme,
         ref: ref,
+        isPremium: isPremium,
         child: CachedNetworkImage(
           imageUrl: imageURL.value!,
           width: double.infinity,
@@ -399,7 +403,8 @@ class _PhotoSection extends HookConsumerWidget {
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton.icon(
-        onPressed: () => _showImageSourceDialog(context: context, ref: ref),
+        onPressed: () => _showImageSourceDialog(
+            context: context, ref: ref, isPremium: isPremium),
         icon: const Icon(Icons.add_a_photo),
         label: const Text('写真を追加'),
       ),
@@ -410,6 +415,7 @@ class _PhotoSection extends HookConsumerWidget {
     required BuildContext context,
     required ColorScheme colorScheme,
     required WidgetRef ref,
+    required bool isPremium,
     required Widget child,
   }) {
     return Stack(
@@ -427,7 +433,8 @@ class _PhotoSection extends HookConsumerWidget {
               _CircleIconButton(
                 icon: Icons.edit,
                 colorScheme: colorScheme,
-                onTap: () => _showImageSourceDialog(context: context, ref: ref),
+                onTap: () => _showImageSourceDialog(
+                    context: context, ref: ref, isPremium: isPremium),
               ),
               const SizedBox(width: 8),
               // 写真を削除
@@ -453,9 +460,8 @@ class _PhotoSection extends HookConsumerWidget {
   void _showImageSourceDialog({
     required BuildContext context,
     required WidgetRef ref,
+    required bool isPremium,
   }) {
-    final isPremium =
-        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
     if (!isPremium) {
       analytics.logEvent(
           name: 'tap_item_photo_non_premium',

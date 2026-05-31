@@ -40,6 +40,8 @@ class ExpandableFab extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.tokens;
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
     final open = useState(false);
     final controller = useAnimationController(
       duration: const Duration(milliseconds: 280),
@@ -71,7 +73,7 @@ class ExpandableFab extends HookConsumerWidget {
         label: '写真から追加',
         onTap: () {
           close();
-          _showImagePicker(context, ref);
+          _showImagePicker(context, ref, isPremium);
         },
       ),
       _FabAction(
@@ -79,7 +81,7 @@ class ExpandableFab extends HookConsumerWidget {
         label: 'URL から追加',
         onTap: () {
           close();
-          _showURLInputDialog(context, ref);
+          _showURLInputDialog(context, ref, isPremium);
         },
       ),
       _FabAction(
@@ -152,13 +154,11 @@ class ExpandableFab extends HookConsumerWidget {
     );
   }
 
-  void _showImagePicker(BuildContext context, WidgetRef ref) {
+  void _showImagePicker(BuildContext context, WidgetRef ref, bool isPremium) {
     analytics.logEvent(name: 'tap_open_image_picker', parameters: {
       'groupID': groupID,
       'shoppingListID': shoppingListID,
     });
-    final isPremium =
-        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
     final remaining =
         ref.read(remainingImageRecognitionCountProvider(isPremium: isPremium));
     if (remaining <= 0) {
@@ -292,13 +292,12 @@ class ExpandableFab extends HookConsumerWidget {
     }
   }
 
-  void _showURLInputDialog(BuildContext context, WidgetRef ref) {
+  void _showURLInputDialog(
+      BuildContext context, WidgetRef ref, bool isPremium) {
     analytics.logEvent(name: 'tap_open_url_input', parameters: {
       'groupID': groupID,
       'shoppingListID': shoppingListID,
     });
-    final isPremium =
-        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
     final remaining =
         ref.read(remainingURLRecognitionCountProvider(isPremium: isPremium));
     if (remaining <= 0) {
