@@ -254,8 +254,7 @@ class _Body extends HookConsumerWidget {
       if (itemChangeCount.value > 0 && currentUserID != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (context.mounted) {
-            showNotificationSnackBar(
-              context: context,
+            showNotificationToast(
               groupID: groupID,
               shoppingListID: shoppingListID,
               shoppingListName: shoppingList?.name,
