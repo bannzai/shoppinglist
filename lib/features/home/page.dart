@@ -6,7 +6,6 @@ import 'package:shoppinglist/features/shopping_list/page.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/default_group_update.dart';
 import 'package:shoppinglist/style/tokens.dart';
-import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -16,6 +15,7 @@ class HomePage extends HookConsumerWidget {
     final appUserAsync = ref.watch(appUserProvider);
     final appUser = appUserAsync.asData?.value;
     final currentGroupID = useState<String?>(appUser?.defaultGroupID);
+    final currentShoppingListID = useState<String?>(null);
 
     useEffect(() {
       if (appUser?.defaultGroupID != null && currentGroupID.value == null) {
@@ -24,17 +24,10 @@ class HomePage extends HookConsumerWidget {
       return null;
     }, [appUser?.defaultGroupID]);
 
-    useEffect(() {
-      analytics.setCurrentScreen(screenName: 'ShoppingListPage');
-      return null;
-    }, const []);
-
     final groupID = currentGroupID.value;
     if (groupID == null) {
       return const Loading();
     }
-
-    final currentShoppingListID = useState<String?>(null);
 
     return Scaffold(
       backgroundColor: context.tokens.neutral.paper,
