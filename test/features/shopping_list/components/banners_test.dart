@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/ai_processing_banner.dart';
-import 'package:shoppinglist/features/shopping_list/components/banners/all_done_banner.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/list_error_card.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/retention_banner.dart';
 import 'package:shoppinglist/provider/ai_processing.dart';
@@ -17,12 +16,6 @@ Widget _wrap(Widget child) => MaterialApp(
     );
 
 void main() {
-  testWidgets('AllDoneBanner: 祝福テキストが表示される', (tester) async {
-    await tester.pumpWidget(_wrap(const AllDoneBanner()));
-    expect(find.text('全部チェック完了!'), findsOneWidget);
-    expect(find.text('🌿'), findsOneWidget);
-  });
-
   testWidgets('RetentionBanner: 30 日メッセージと「詳しく」が表示される', (tester) async {
     await tester.pumpWidget(_wrap(const RetentionBanner()));
     expect(find.text('無料プランは作成から30日でリストが整理されます'), findsOneWidget);
