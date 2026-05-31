@@ -26,6 +26,8 @@ GroupShoppingList _list(String id, String name) => GroupShoppingList(
       groupID: 'group-1',
       name: name,
       ttlExpiresDateTime: null,
+      shoppingLocationID: null,
+      duplicatedFromGroupShoppingListID: null,
     );
 
 void main() {
