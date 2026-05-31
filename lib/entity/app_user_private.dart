@@ -20,7 +20,7 @@ abstract class AppUserPrivate with _$AppUserPrivate {
   const factory AppUserPrivate({
     required String id,
     required String userID,
-    String? email,
+    required String? email,
     required List<String> fcmTokens,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
