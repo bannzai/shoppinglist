@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
-import 'package:shoppinglist/features/paywall/paywall.dart';
-import 'package:shoppinglist/provider/app_user.dart';
-import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -11,11 +7,19 @@ import 'package:shoppinglist/utils/logger/analytics.dart';
 /// 旧 `ShoppingListAppBar` の `DropdownButton` を置き換えるシート版 UI。
 /// 現在選択中のリストには accent のチェックマークを表示する。
 /// 末尾に「+ 新しいリストを追加」 row を備える。
-class ListPickerSheet extends ConsumerWidget {
+class ListPickerSheet extends StatelessWidget {
   final String groupID;
   final List<GroupShoppingList> shoppingLists;
   final String currentShoppingListID;
   final void Function(String newID) onShoppingListIDChanged;
+
+  /// 「新しいリストを追加」タップ時に呼ぶコールバック。
+  /// 引数 [sheetContext] はこのシート自身の BuildContext で、追加完了後に
+  /// `Navigator.of(sheetContext).pop()` でシートを閉じるために使う。
+  /// appUser やプレミアム判定の Provider はモーダルシートのスコープでは温まらず
+  /// `AsyncLoading` のままになる（appUser が null 扱いになる）ため、実処理は
+  /// 本体ツリー側（ListTopBar）で実行し、ここからは委譲のみ行う。
+  final void Function(BuildContext sheetContext) onCreateNewList;
 
   const ListPickerSheet({
     super.key,
@@ -23,10 +27,11 @@ class ListPickerSheet extends ConsumerWidget {
     required this.shoppingLists,
     required this.currentShoppingListID,
     required this.onShoppingListIDChanged,
+    required this.onCreateNewList,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final tokens = context.tokens;
     return SafeArea(
       top: false,
@@ -83,45 +88,11 @@ class ListPickerSheet extends ConsumerWidget {
               margin: const EdgeInsets.symmetric(vertical: 4),
             ),
             _AddListRow(
-              onTap: () async {
+              onTap: () {
                 analytics.logEvent(name: 'tap_create_new_list', parameters: {
                   'groupID': groupID,
                 });
-                final appUser = ref.read(appUserProvider).asData?.value;
-                if (appUser == null) {
-                  Navigator.of(context).pop();
-                  return;
-                }
-                Navigator.of(context).pop();
-                try {
-                  final newList = await ref
-                      .read(shoppingListAddProvider(groupID: groupID))
-                      .call(
-                        createUserID: appUser.id,
-                        groupID: groupID,
-                        shoppingLocationID: null,
-                        duplicatedFromGroupShoppingListID: null,
-                      );
-                  onShoppingListIDChanged(newList.id);
-                } on ShoppingListLimitExceededException catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(e.toString()),
-                        action: SnackBarAction(
-                          label: 'アップグレード',
-                          onPressed: () => showPaywall(context: context),
-                        ),
-                      ),
-                    );
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
-                  }
-                }
+                onCreateNewList(context);
               },
             ),
           ],

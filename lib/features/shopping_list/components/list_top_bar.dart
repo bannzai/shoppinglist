@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
+import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/settings/page.dart';
 import 'package:shoppinglist/features/shopping_list/components/list_picker_sheet.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
+import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -58,11 +60,55 @@ class ListTopBar extends ConsumerWidget {
                         FocusScope.of(context).unfocus();
                         appShowModalBottomSheet(
                           context: context,
-                          builder: (context) => ListPickerSheet(
+                          builder: (_) => ListPickerSheet(
                             groupID: groupID,
                             shoppingLists: shoppingLists,
                             currentShoppingListID: shoppingListID,
                             onShoppingListIDChanged: onShoppingListIDChanged,
+                            // 実処理は本体ツリー（ここ）で実行する。モーダルシートの
+                            // スコープでは appUserProvider 等が温まらず AsyncLoading の
+                            // ままになるため、シート内で ref.read しても null になる。
+                            onCreateNewList: (sheetContext) async {
+                              final appUser =
+                                  ref.read(appUserProvider).asData?.value;
+                              final sheetNavigator =
+                                  Navigator.of(sheetContext);
+                              final messenger = ScaffoldMessenger.of(context);
+                              if (appUser == null) {
+                                sheetNavigator.pop();
+                                return;
+                              }
+                              try {
+                                final newList = await ref
+                                    .read(shoppingListAddProvider(
+                                        groupID: groupID))
+                                    .call(
+                                      createUserID: appUser.id,
+                                      groupID: groupID,
+                                      shoppingLocationID: null,
+                                      duplicatedFromGroupShoppingListID: null,
+                                    );
+                                sheetNavigator.pop();
+                                onShoppingListIDChanged(newList.id);
+                              } on ShoppingListLimitExceededException catch (e) {
+                                sheetNavigator.pop();
+                                messenger.showSnackBar(
+                                  SnackBar(
+                                    content: Text(e.toString()),
+                                    action: SnackBarAction(
+                                      label: 'アップグレード',
+                                      onPressed: () =>
+                                          showPaywall(context: context),
+                                    ),
+                                  ),
+                                );
+                              } catch (e) {
+                                sheetNavigator.pop();
+                                messenger.showSnackBar(
+                                  SnackBar(content: Text(e.toString())),
+                                );
+                              }
+                            },
                           ),
                         );
                       },
