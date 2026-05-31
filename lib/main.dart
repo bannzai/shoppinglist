@@ -10,6 +10,7 @@ import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/provider/app_provider_container.dart';
 import 'package:shoppinglist/provider/shared_preferences.dart';
 import 'package:shoppinglist/utils/config/environment.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_callback.dart';
@@ -63,10 +64,13 @@ void main() async {
 
     // MEMO: FirebaseCrashlytics#recordFlutterError called dumpErrorToConsole in function.
     // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-    runApp(ProviderScope(
+    appProviderContainer = ProviderContainer(
       overrides: [
         sharedPreferencesProvider.overrideWith((ref) => sharedPreferences),
       ],
+    );
+    runApp(UncontrolledProviderScope(
+      container: appProviderContainer,
       child: const App(),
     ));
   }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));

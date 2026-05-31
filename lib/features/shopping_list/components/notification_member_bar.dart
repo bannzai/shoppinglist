@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
@@ -298,42 +299,26 @@ class _MemberAvatar extends StatelessWidget {
   }
 }
 
-/// 通知送信用 SnackBar を表示する。ソログループ（自分のみ）の場合は表示しない。
+/// 通知送信用トーストを表示する。ソログループ（自分のみ）の場合は表示しない。
 /// `design_handoff_shoppinglist/preview/screens-list.jsx#NotifySnack` 相当。
-/// ink 背景 + 角丸 14、左スワイプ dismiss、5 秒で自動消滅。
-void showNotificationSnackBar({
-  required BuildContext context,
+/// モーダル表示中でも最前面に出すため、グローバルトースト経由で表示する。
+/// ink 背景 + 角丸 14 は `ToastOverlay` の `_ToastFrame` が付与する。5 秒で自動消滅。
+void showNotificationToast({
   required String groupID,
   required String shoppingListID,
   required String? shoppingListName,
   required String currentUserID,
   required List<GroupUserProfile> memberProfiles,
 }) {
-  final otherMembers =
-      memberProfiles.where((p) => p.userID != currentUserID).toList();
+  if (memberProfiles.where((p) => p.userID != currentUserID).isEmpty) return;
 
-  if (otherMembers.isEmpty) return;
-
-  final tokens = Theme.of(context).extension<AppTokens>();
-  final background = tokens?.neutral.ink ?? const Color(0xFF1B1813);
-
-  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: NotificationMemberBar(
-        groupID: groupID,
-        shoppingListID: shoppingListID,
-        shoppingListName: shoppingListName,
-        currentUserID: currentUserID,
-        memberProfiles: memberProfiles,
-      ),
-      duration: const Duration(seconds: 5),
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: background,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      dismissDirection: DismissDirection.startToEnd,
-      elevation: 6,
+  showGlobalToastWidget(
+    NotificationMemberBar(
+      groupID: groupID,
+      shoppingListID: shoppingListID,
+      shoppingListName: shoppingListName,
+      currentUserID: currentUserID,
+      memberProfiles: memberProfiles,
     ),
   );
 }
