@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
@@ -146,7 +145,7 @@ class _ColorSwatch extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               preset.label,
-              style: GoogleFonts.zenKakuGothicNew(
+              style: TextStyle(
                 fontSize: 12,
                 fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
                 color: selected ? neutral.ink : neutral.ink2,

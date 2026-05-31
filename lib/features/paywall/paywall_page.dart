@@ -1,9 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/components/frame/app_pill.dart';
+import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
@@ -406,7 +406,7 @@ class _PaywallPackageTile extends ConsumerWidget {
                         ),
                         child: Text(
                           'おすすめ',
-                          style: GoogleFonts.zenKakuGothicNew(
+                          style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                             color: tokens.accent,
@@ -419,11 +419,10 @@ class _PaywallPackageTile extends ConsumerWidget {
                 const SizedBox(height: 4),
                 Text(
                   package.storeProduct.priceString,
-                  style: GoogleFonts.ibmPlexMono(
+                  style: monoTextStyle(
                     fontSize: 19,
                     fontWeight: FontWeight.w700,
                     color: neutral.ink,
-                    fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                 ),
               ],

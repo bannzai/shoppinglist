@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shoppinglist/components/frame/app_pill.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/group_create.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
+import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -38,7 +38,7 @@ class _PostCreateInvitationDialog extends StatelessWidget {
             ),
             child: Text(
               invitationCode,
-              style: GoogleFonts.ibmPlexMono(
+              style: monoTextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
                 color: tokens.accent,

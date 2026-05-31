@@ -2,10 +2,10 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/frame/app_pill.dart';
 import 'package:shoppinglist/provider/onboarding.dart';
+import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -169,19 +169,18 @@ class _OnboardingSlide extends StatelessWidget {
           // mono eyebrow: `01/03` 形式
           Text(
             '${data.eyebrowIndex.toString().padLeft(2, '0')}/${OnboardingPage._slideCount.toString().padLeft(2, '0')}',
-            style: GoogleFonts.ibmPlexMono(
+            style: monoTextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: tokens.accent,
               letterSpacing: 0.08,
-              fontFeatures: const [FontFeature.tabularFigures()],
             ),
           ),
           const SizedBox(height: 12),
           Text(
             data.title,
             textAlign: TextAlign.center,
-            style: GoogleFonts.zenKakuGothicNew(
+            style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.w800,
               height: 1.25,
@@ -351,7 +350,7 @@ class _AvatarOrbitArt extends StatelessWidget {
               alignment: Alignment.center,
               child: Text(
                 label,
-                style: GoogleFonts.ibmPlexMono(
+                style: monoTextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
