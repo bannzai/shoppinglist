@@ -125,7 +125,8 @@ class ListPickerSheet extends ConsumerWidget {
                       content: Text(e.toString()),
                       action: SnackBarAction(
                         label: 'アップグレード',
-                        onPressed: () => showPaywall(context: navigator.context),
+                        onPressed: () =>
+                            showPaywall(context: navigator.context),
                       ),
                     ),
                   );

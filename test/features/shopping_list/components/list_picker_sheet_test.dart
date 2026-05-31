@@ -29,8 +29,7 @@ GroupShoppingList _list(String id, String name) => GroupShoppingList(
     );
 
 void main() {
-  testWidgets('リスト名・「新しいリストを追加」行を表示し、選択中リストのみチェックを出す',
-      (tester) async {
+  testWidgets('リスト名・「新しいリストを追加」行を表示し、選択中リストのみチェックを出す', (tester) async {
     await tester.pumpWidget(_wrap(
       ListPickerSheet(
         groupID: 'group-1',
