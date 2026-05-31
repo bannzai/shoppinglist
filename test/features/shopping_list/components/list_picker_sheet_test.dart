@@ -61,7 +61,10 @@ void main() {
     await tester.pumpWidget(_wrap(
       ListPickerSheet(
         groupID: 'group-1',
-        shoppingLists: [_list('list-1', '2026-05-28'), _list('list-2', '2026-05-30')],
+        shoppingLists: [
+          _list('list-1', '2026-05-28'),
+          _list('list-2', '2026-05-30')
+        ],
         currentShoppingListID: 'list-2',
         onShoppingListIDChanged: (_) {},
         onCreateNewList: (_) {},

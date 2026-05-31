@@ -144,9 +144,10 @@ void main() {
       addTearDown(container.dispose);
       await container.read(customerInfoProvider.future);
       await container.read(userGroupsProvider.future);
-      await container.read(shoppingLocationsProvider(groupID: mockGroupID).future);
       await container
-          .read(shoppingListsProvider(groupID: mockGroupID, isPremium: true).future);
+          .read(shoppingLocationsProvider(groupID: mockGroupID).future);
+      await container.read(
+          shoppingListsProvider(groupID: mockGroupID, isPremium: true).future);
 
       final plan = container.read(geofenceMonitoringPlanProvider);
       expect(plan.shouldMonitor, isTrue);

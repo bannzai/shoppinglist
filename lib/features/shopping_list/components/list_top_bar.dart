@@ -71,8 +71,7 @@ class ListTopBar extends ConsumerWidget {
                             onCreateNewList: (sheetContext) async {
                               final appUser =
                                   ref.read(appUserProvider).asData?.value;
-                              final sheetNavigator =
-                                  Navigator.of(sheetContext);
+                              final sheetNavigator = Navigator.of(sheetContext);
                               final messenger = ScaffoldMessenger.of(context);
                               if (appUser == null) {
                                 sheetNavigator.pop();
