@@ -102,6 +102,7 @@ class GroupCreatePage extends HookConsumerWidget {
 
     final tokens = context.tokens;
     final neutral = tokens.neutral;
+    final appUser = ref.watch(appUserProvider).asData?.value;
 
     return Scaffold(
       backgroundColor: neutral.paper,
@@ -244,8 +245,6 @@ class GroupCreatePage extends HookConsumerWidget {
                           isCreating.value = true;
                           errorMessage.value = null;
                           try {
-                            final appUser =
-                                ref.read(appUserProvider).asData?.value;
                             if (appUser == null) {
                               throw StateError('AppUser is not available');
                             }

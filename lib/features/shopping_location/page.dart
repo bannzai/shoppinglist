@@ -20,6 +20,8 @@ class ShoppingLocationPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final locationsAsync =
         ref.watch(shoppingLocationsProvider(groupID: groupID));
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
     final tokens = context.tokens;
     final neutral = tokens.neutral;
 
@@ -163,7 +165,7 @@ class ShoppingLocationPage extends ConsumerWidget {
         onPressed: () {
           analytics.logEvent(
               name: 'tap_add_location', parameters: {'groupID': groupID});
-          _showAddDialog(context: context, ref: ref);
+          _showAddDialog(context: context, ref: ref, isPremium: isPremium);
         },
         child: const Icon(Icons.add),
       ),
@@ -173,13 +175,12 @@ class ShoppingLocationPage extends ConsumerWidget {
   void _showAddDialog({
     required BuildContext context,
     required WidgetRef ref,
+    required bool isPremium,
   }) {
     final controller = TextEditingController();
     double? selectedLatitude;
     double? selectedLongitude;
     String selectedAddress = '';
-    final isPremium =
-        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
 
     showDialog(
       context: context,

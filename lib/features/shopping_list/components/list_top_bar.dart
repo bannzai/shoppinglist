@@ -5,6 +5,7 @@ import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/settings/page.dart';
 import 'package:shoppinglist/features/shopping_list/components/list_picker_sheet.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
+import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -33,6 +34,7 @@ class ListTopBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.tokens;
+    final appUser = ref.watch(appUserProvider).asData?.value;
     final memberProfiles =
         ref.watch(groupUserProfilesProvider(groupID: groupID)).asData?.value ??
             const <GroupUserProfile>[];
@@ -63,6 +65,7 @@ class ListTopBar extends ConsumerWidget {
                             shoppingLists: shoppingLists,
                             currentShoppingListID: shoppingListID,
                             onShoppingListIDChanged: onShoppingListIDChanged,
+                            appUser: appUser,
                           ),
                         );
                       },
