@@ -56,10 +56,10 @@ class CategorySectionHeader extends StatelessWidget {
           Text(
             '$doneCount/$totalCount',
             style: monoTextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w400,
-              color: neutral.ink3,
-            ),
+                fontSize: 11,
+                fontWeight: FontWeight.w400,
+                color: neutral.ink3,
+                letterSpacing: null),
           ),
         ],
       ),

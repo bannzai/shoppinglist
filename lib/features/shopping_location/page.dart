@@ -210,8 +210,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                         : null),
                 onTap: () async {
                   analytics.logEvent(
-                    name: 'tap_set_location_on_map',
-                  );
+                      name: 'tap_set_location_on_map', parameters: null);
                   if (!isPremium) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

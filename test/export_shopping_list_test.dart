@@ -7,23 +7,31 @@ void main() {
     test('未チェックアイテムは「・」、チェック済みは「✓」で表示される', () {
       final items = [
         GroupShoppingListItem(
-          id: '1',
-          groupID: 'g1',
-          shoppingListID: 's1',
-          userID: 'u1',
-          message: '牛乳',
-          order: 0,
-          status: GroupShoppingListItemStatus.unchecked,
-        ),
+            id: '1',
+            groupID: 'g1',
+            shoppingListID: 's1',
+            userID: 'u1',
+            message: '牛乳',
+            order: 0,
+            status: GroupShoppingListItemStatus.unchecked,
+            checkedByUserID: null,
+            color: null,
+            description: null,
+            imageURL: null,
+            lastEditedByUserID: null),
         GroupShoppingListItem(
-          id: '2',
-          groupID: 'g1',
-          shoppingListID: 's1',
-          userID: 'u1',
-          message: 'パン',
-          order: 1,
-          status: GroupShoppingListItemStatus.checked,
-        ),
+            id: '2',
+            groupID: 'g1',
+            shoppingListID: 's1',
+            userID: 'u1',
+            message: 'パン',
+            order: 1,
+            status: GroupShoppingListItemStatus.checked,
+            checkedByUserID: null,
+            color: null,
+            description: null,
+            imageURL: null,
+            lastEditedByUserID: null),
       ];
 
       expect(
@@ -48,14 +56,18 @@ void main() {
     test('改行やタブを含む入力は1行にサニタイズされる', () {
       final items = [
         GroupShoppingListItem(
-          id: '1',
-          groupID: 'g1',
-          shoppingListID: 's1',
-          userID: 'u1',
-          message: '牛乳\n2本\t特売',
-          order: 0,
-          status: GroupShoppingListItemStatus.unchecked,
-        ),
+            id: '1',
+            groupID: 'g1',
+            shoppingListID: 's1',
+            userID: 'u1',
+            message: '牛乳\n2本\t特売',
+            order: 0,
+            status: GroupShoppingListItemStatus.unchecked,
+            checkedByUserID: null,
+            color: null,
+            description: null,
+            imageURL: null,
+            lastEditedByUserID: null),
       ];
 
       expect(

@@ -48,7 +48,7 @@ class RetryPage extends ConsumerWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                analytics.logEvent(name: 'tap_retry');
+                analytics.logEvent(name: 'tap_retry', parameters: null);
                 Retry.of(context).retry();
               },
               child: const Text('Retry'),

@@ -59,40 +59,40 @@ class DeleteConfirmDialog extends StatelessWidget {
             children: [
               Expanded(
                 child: AppPill(
-                  label: 'キャンセル',
-                  variant: AppPillVariant.ghost,
-                  large: true,
-                  expanded: true,
-                  onPressed: () {
-                    analytics.logEvent(
-                      name: 'cancel_delete_list',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': shoppingListID,
-                      },
-                    );
-                    Navigator.pop(context);
-                  },
-                ),
+                    label: 'キャンセル',
+                    variant: AppPillVariant.ghost,
+                    large: true,
+                    expanded: true,
+                    onPressed: () {
+                      analytics.logEvent(
+                        name: 'cancel_delete_list',
+                        parameters: {
+                          'groupID': groupID,
+                          'shoppingListID': shoppingListID,
+                        },
+                      );
+                      Navigator.pop(context);
+                    },
+                    icon: null),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: AppPill(
-                  label: '削除',
-                  variant: AppPillVariant.dangerSolid,
-                  large: true,
-                  expanded: true,
-                  onPressed: () {
-                    analytics.logEvent(
-                      name: 'tap_confirm_delete_list',
-                      parameters: {
-                        'groupID': groupID,
-                        'shoppingListID': shoppingListID,
-                      },
-                    );
-                    onConfirm();
-                  },
-                ),
+                    label: '削除',
+                    variant: AppPillVariant.dangerSolid,
+                    large: true,
+                    expanded: true,
+                    onPressed: () {
+                      analytics.logEvent(
+                        name: 'tap_confirm_delete_list',
+                        parameters: {
+                          'groupID': groupID,
+                          'shoppingListID': shoppingListID,
+                        },
+                      );
+                      onConfirm();
+                    },
+                    icon: null),
               ),
             ],
           ),

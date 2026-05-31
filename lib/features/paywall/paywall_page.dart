@@ -39,7 +39,7 @@ class PaywallPage extends ConsumerWidget {
         error: (e, _) => _ErrorBody(
           exception: e,
           onRetry: () {
-            analytics.logEvent(name: 'tap_paywall_retry');
+            analytics.logEvent(name: 'tap_paywall_retry', parameters: null);
             ref.invalidate(offeringsProvider);
           },
         ),
@@ -113,7 +113,8 @@ class _PaywallFooterLinks extends ConsumerWidget {
               style: linkStyle,
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
-                  analytics.logEvent(name: 'tap_paywall_terms');
+                  analytics.logEvent(
+                      name: 'tap_paywall_terms', parameters: null);
                   launchUrl(Uri.parse(_termsUrl),
                       mode: LaunchMode.externalApplication);
                 },
@@ -124,7 +125,8 @@ class _PaywallFooterLinks extends ConsumerWidget {
               style: linkStyle,
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
-                  analytics.logEvent(name: 'tap_paywall_privacy');
+                  analytics.logEvent(
+                      name: 'tap_paywall_privacy', parameters: null);
                   launchUrl(Uri.parse(_privacyUrl),
                       mode: LaunchMode.externalApplication);
                 },
@@ -135,7 +137,8 @@ class _PaywallFooterLinks extends ConsumerWidget {
               style: linkStyle,
               recognizer: TapGestureRecognizer()
                 ..onTap = () async {
-                  analytics.logEvent(name: 'tap_paywall_restore');
+                  analytics.logEvent(
+                      name: 'tap_paywall_restore', parameters: null);
                   try {
                     await Purchases.restorePurchases();
                     if (!context.mounted) return;
@@ -313,10 +316,10 @@ class _ErrorBody extends StatelessWidget {
                     ?.copyWith(color: tokens.neutral.ink2)),
             const SizedBox(height: 16),
             AppPill(
-              label: '再試行',
-              variant: AppPillVariant.accent,
-              onPressed: onRetry,
-            ),
+                label: '再試行',
+                variant: AppPillVariant.accent,
+                onPressed: onRetry,
+                icon: null),
           ],
         ),
       ),
@@ -420,10 +423,10 @@ class _PaywallPackageTile extends ConsumerWidget {
                 Text(
                   package.storeProduct.priceString,
                   style: monoTextStyle(
-                    fontSize: 19,
-                    fontWeight: FontWeight.w700,
-                    color: neutral.ink,
-                  ),
+                      fontSize: 19,
+                      fontWeight: FontWeight.w700,
+                      color: neutral.ink,
+                      letterSpacing: null),
                 ),
               ],
             ),

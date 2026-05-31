@@ -41,39 +41,43 @@ class ShoppingLocationSelectPage extends ConsumerWidget {
           child: AppSectionCard(
             children: [
               AppCell(
-                icon: Icons.block,
-                title: 'なし',
-                detail: currentLocationID == null ? '選択中' : null,
-                onTap: () {
-                  analytics.logEvent(
-                    name: 'select_list_location',
-                    parameters: {'groupID': groupID, 'value': 'none'},
-                  );
-                  Navigator.pop<_LocationSelectResult>(
-                    context,
-                    const _LocationSelectResult(null),
-                  );
-                },
-              ),
-              for (final location in locations)
-                AppCell(
-                  icon: Icons.place_outlined,
-                  title: location.name,
-                  detail: currentLocationID == location.id ? '選択中' : null,
+                  icon: Icons.block,
+                  title: 'なし',
+                  detail: currentLocationID == null ? '選択中' : null,
                   onTap: () {
                     analytics.logEvent(
                       name: 'select_list_location',
-                      parameters: {
-                        'groupID': groupID,
-                        'locationID': location.id,
-                      },
+                      parameters: {'groupID': groupID, 'value': 'none'},
                     );
                     Navigator.pop<_LocationSelectResult>(
                       context,
-                      _LocationSelectResult(location.id),
+                      const _LocationSelectResult(null),
                     );
                   },
-                ),
+                  onSwitch: null,
+                  subtitle: null,
+                  switchValue: null),
+              for (final location in locations)
+                AppCell(
+                    icon: Icons.place_outlined,
+                    title: location.name,
+                    detail: currentLocationID == location.id ? '選択中' : null,
+                    onTap: () {
+                      analytics.logEvent(
+                        name: 'select_list_location',
+                        parameters: {
+                          'groupID': groupID,
+                          'locationID': location.id,
+                        },
+                      );
+                      Navigator.pop<_LocationSelectResult>(
+                        context,
+                        _LocationSelectResult(location.id),
+                      );
+                    },
+                    onSwitch: null,
+                    subtitle: null,
+                    switchValue: null),
             ],
           ),
         ),

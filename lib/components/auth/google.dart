@@ -60,7 +60,8 @@ class AppSignInWithGoogleButton extends HookConsumerWidget {
               ),
               onPressed: () async {
                 if (isLoading.value) return;
-                analytics.logEvent(name: 'tap_sign_in_google');
+                analytics.logEvent(
+                    name: 'tap_sign_in_google', parameters: null);
                 isLoading.value = true;
                 try {
                   await signInWithGoogle();

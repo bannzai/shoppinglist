@@ -61,13 +61,13 @@ GroupShoppingLocation _locationWithCoords() => const GroupShoppingLocation(
 
 // 上記店舗に紐づく active な買い物リスト。
 GroupShoppingList _activeListAtLocation() => GroupShoppingList(
-      id: 'list-001',
-      createUserID: 'user-001',
-      groupID: mockGroupID,
-      status: GroupShoppingListStatus.active,
-      shoppingLocationID: _locationID,
-      ttlExpiresDateTime: null,
-    );
+    id: 'list-001',
+    createUserID: 'user-001',
+    groupID: mockGroupID,
+    status: GroupShoppingListStatus.active,
+    shoppingLocationID: _locationID,
+    ttlExpiresDateTime: null,
+    duplicatedFromGroupShoppingListID: null);
 
 // locationReminderEnabled は sharedPreferences の値から build されるため、
 // SharedPreferences のモック値で有効/無効を制御する。

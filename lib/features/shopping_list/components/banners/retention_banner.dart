@@ -34,7 +34,8 @@ class RetentionBanner extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              analytics.logEvent(name: 'tap_retention_banner_detail');
+              analytics.logEvent(
+                  name: 'tap_retention_banner_detail', parameters: null);
               showPaywall(context: context);
             },
             child: Padding(

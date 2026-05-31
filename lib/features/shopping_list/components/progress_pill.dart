@@ -39,18 +39,18 @@ class ProgressPill extends StatelessWidget {
           TextSpan(
             text: '$checkedCount',
             style: monoTextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: neutral.ink,
-            ),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: neutral.ink,
+                letterSpacing: null),
           ),
           TextSpan(
             text: '/$totalCount',
             style: monoTextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: neutral.ink3,
-            ),
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                color: neutral.ink3,
+                letterSpacing: null),
           ),
         ]),
       ),

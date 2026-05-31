@@ -20,7 +20,7 @@ class GhostItemRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Row(
           children: [
-            const AppCheckbox(checked: false, onChanged: null),
+            const AppCheckbox(checked: false, onChanged: null, color: null),
             const SizedBox(width: 12),
             Expanded(
               child: Text(

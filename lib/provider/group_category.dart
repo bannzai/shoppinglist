@@ -100,15 +100,16 @@ class GroupCategoryAdd {
     final docRef =
         database.newCategoryReference(categoryAxisID: categoryAxisID);
     final category = GroupCategory(
-      id: docRef.id,
-      groupID: groupID,
-      userID: userID,
-      groupCategoryAxisID: categoryAxisID,
-      name: name,
-      order: order,
-      locationOrders: {},
-      keywords: [],
-    );
+        id: docRef.id,
+        groupID: groupID,
+        userID: userID,
+        groupCategoryAxisID: categoryAxisID,
+        name: name,
+        order: order,
+        locationOrders: {},
+        keywords: [],
+        color: null,
+        iconName: null);
     await docRef.set(category, SetOptions(merge: true));
     return category;
   }

@@ -10,33 +10,35 @@ const _testLocationID = 'test-location-001';
 
 List<GroupCategory> _testCategories() => [
       GroupCategory(
-        id: 'cat-vegetables',
-        groupID: _testGroupID,
-        userID: _testUserID,
-        groupCategoryAxisID: _testCategoryAxisID,
-        name: '野菜',
-        order: 0,
-        locationOrders: const {_testLocationID: 1},
-        keywords: const [
-          GroupCategoryKeyword(
-              keyword: 'にんじん',
-              matchingType: GroupCategoryKeywordMatchingType.partial),
-        ],
-      ),
+          id: 'cat-vegetables',
+          groupID: _testGroupID,
+          userID: _testUserID,
+          groupCategoryAxisID: _testCategoryAxisID,
+          name: '野菜',
+          order: 0,
+          locationOrders: const {_testLocationID: 1},
+          keywords: const [
+            GroupCategoryKeyword(
+                keyword: 'にんじん',
+                matchingType: GroupCategoryKeywordMatchingType.partial),
+          ],
+          color: null,
+          iconName: null),
       GroupCategory(
-        id: 'cat-meat',
-        groupID: _testGroupID,
-        userID: _testUserID,
-        groupCategoryAxisID: _testCategoryAxisID,
-        name: '肉',
-        order: 1,
-        locationOrders: const {_testLocationID: 0},
-        keywords: const [
-          GroupCategoryKeyword(
-              keyword: '鶏肉',
-              matchingType: GroupCategoryKeywordMatchingType.partial),
-        ],
-      ),
+          id: 'cat-meat',
+          groupID: _testGroupID,
+          userID: _testUserID,
+          groupCategoryAxisID: _testCategoryAxisID,
+          name: '肉',
+          order: 1,
+          locationOrders: const {_testLocationID: 0},
+          keywords: const [
+            GroupCategoryKeyword(
+                keyword: '鶏肉',
+                matchingType: GroupCategoryKeywordMatchingType.partial),
+          ],
+          color: null,
+          iconName: null),
     ];
 
 void main() {

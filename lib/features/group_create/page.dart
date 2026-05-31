@@ -51,7 +51,8 @@ class _PostCreateInvitationDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () async {
-            analytics.logEvent(name: 'tap_copy_invitation_code_post_create');
+            analytics.logEvent(
+                name: 'tap_copy_invitation_code_post_create', parameters: null);
             await Clipboard.setData(ClipboardData(text: invitationCode));
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -63,7 +64,9 @@ class _PostCreateInvitationDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () async {
-            analytics.logEvent(name: 'tap_share_invitation_code_post_create');
+            analytics.logEvent(
+                name: 'tap_share_invitation_code_post_create',
+                parameters: null);
             await SharePlus.instance.share(
               ShareParams(text: '買い物リストの招待コード: $invitationCode'),
             );
@@ -234,64 +237,65 @@ class GroupCreatePage extends HookConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: AppPill(
-                  label: isCreating.value ? '作成中...' : '作成する',
-                  variant: AppPillVariant.accent,
-                  large: true,
-                  expanded: true,
-                  onPressed: isCreating.value
-                      ? null
-                      : () async {
-                          analytics.logEvent(name: 'tap_create_group');
-                          isCreating.value = true;
-                          errorMessage.value = null;
-                          try {
-                            if (appUser == null) {
-                              throw StateError('AppUser is not available');
-                            }
-                            final groupID =
-                                await ref.read(createGroupProvider).call(
-                                      appUser: appUser,
-                                      name:
-                                          nameController.text.trim().isNotEmpty
-                                              ? nameController.text.trim()
-                                              : null,
-                                      setAsDefault: false,
-                                      iconName: selectedIconName.value,
-                                    );
-                            // 作成後、招待コードを直ちに生成して共有 dialog を表示する。
-                            // `design_handoff_shoppinglist/preview/screens-groups.jsx` 準拠。
+                    label: isCreating.value ? '作成中...' : '作成する',
+                    variant: AppPillVariant.accent,
+                    large: true,
+                    expanded: true,
+                    onPressed: isCreating.value
+                        ? null
+                        : () async {
+                            analytics.logEvent(
+                                name: 'tap_create_group', parameters: null);
+                            isCreating.value = true;
+                            errorMessage.value = null;
                             try {
-                              final invitation = await ref
-                                  .read(createGroupInvitationProvider)
-                                  .call(groupID: groupID);
+                              if (appUser == null) {
+                                throw StateError('AppUser is not available');
+                              }
+                              final groupID = await ref
+                                  .read(createGroupProvider)
+                                  .call(
+                                    appUser: appUser,
+                                    name: nameController.text.trim().isNotEmpty
+                                        ? nameController.text.trim()
+                                        : null,
+                                    setAsDefault: false,
+                                    iconName: selectedIconName.value,
+                                  );
+                              // 作成後、招待コードを直ちに生成して共有 dialog を表示する。
+                              // `design_handoff_shoppinglist/preview/screens-groups.jsx` 準拠。
+                              try {
+                                final invitation = await ref
+                                    .read(createGroupInvitationProvider)
+                                    .call(groupID: groupID);
+                                if (context.mounted) {
+                                  await showDialog<void>(
+                                    context: context,
+                                    builder: (dialogContext) =>
+                                        _PostCreateInvitationDialog(
+                                      invitationCode: invitation.invitationCode,
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                // 招待生成失敗時もグループ作成自体は成功している
+                                // のでエラー表示は SnackBar に留め、画面は閉じる。
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(e.toString())),
+                                  );
+                                }
+                              }
                               if (context.mounted) {
-                                await showDialog<void>(
-                                  context: context,
-                                  builder: (dialogContext) =>
-                                      _PostCreateInvitationDialog(
-                                    invitationCode: invitation.invitationCode,
-                                  ),
-                                );
+                                Navigator.pop(context);
                               }
                             } catch (e) {
-                              // 招待生成失敗時もグループ作成自体は成功している
-                              // のでエラー表示は SnackBar に留め、画面は閉じる。
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(e.toString())),
-                                );
-                              }
+                              errorMessage.value = e.toString();
+                            } finally {
+                              isCreating.value = false;
                             }
-                            if (context.mounted) {
-                              Navigator.pop(context);
-                            }
-                          } catch (e) {
-                            errorMessage.value = e.toString();
-                          } finally {
-                            isCreating.value = false;
-                          }
-                        },
-                ),
+                          },
+                    icon: null),
               ),
             ],
           ),
