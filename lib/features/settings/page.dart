@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shoppinglist/components/button/inquiry.dart';
@@ -24,6 +23,7 @@ import 'package:shoppinglist/provider/geofence.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/notification_setting.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
+import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/local_notification/local_notification.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -386,7 +386,7 @@ class _VersionLabelState extends State<_VersionLabel> {
       child: Text(
         _label ?? '',
         textAlign: TextAlign.center,
-        style: GoogleFonts.ibmPlexMono(
+        style: monoTextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w400,
           color: tokens.neutral.ink3,

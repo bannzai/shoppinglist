@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
+import 'package:shoppinglist/features/paywall/paywall.dart';
+import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -7,19 +11,18 @@ import 'package:shoppinglist/utils/logger/analytics.dart';
 /// 旧 `ShoppingListAppBar` の `DropdownButton` を置き換えるシート版 UI。
 /// 現在選択中のリストには accent のチェックマークを表示する。
 /// 末尾に「+ 新しいリストを追加」 row を備える。
-class ListPickerSheet extends StatelessWidget {
+class ListPickerSheet extends ConsumerWidget {
   final String groupID;
   final List<GroupShoppingList> shoppingLists;
   final String currentShoppingListID;
   final void Function(String newID) onShoppingListIDChanged;
 
-  /// 「新しいリストを追加」タップ時に呼ぶコールバック。
-  /// 引数 [sheetContext] はこのシート自身の BuildContext で、追加完了後に
-  /// `Navigator.of(sheetContext).pop()` でシートを閉じるために使う。
-  /// appUser やプレミアム判定の Provider はモーダルシートのスコープでは温まらず
-  /// `AsyncLoading` のままになる（appUser が null 扱いになる）ため、実処理は
-  /// 本体ツリー側（ListTopBar）で実行し、ここからは委譲のみ行う。
-  final void Function(BuildContext sheetContext) onCreateNewList;
+  /// 本体ツリー（ListTopBar）で取得済みの AppUser を受け取る。
+  /// このシートは appShowModalBottomSheet 経由で root Navigator 側に表示され、
+  /// ページのネスト ProviderScope の外（AppEntityPrepareResolver なし）になる。
+  /// そのためシート内で appUserProvider を watch / read しても cold instance の
+  /// AsyncLoading(null) を返しうる。値は warm な親ツリーから渡す。
+  final AppUser? appUser;
 
   const ListPickerSheet({
     super.key,
@@ -27,12 +30,15 @@ class ListPickerSheet extends StatelessWidget {
     required this.shoppingLists,
     required this.currentShoppingListID,
     required this.onShoppingListIDChanged,
-    required this.onCreateNewList,
+    required this.appUser,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.tokens;
+    // フィールドは null promotion が効かないため、コールバックで `appUser.id` を
+    // 参照できるよう final ローカルに束ねる。
+    final appUser = this.appUser;
     return SafeArea(
       top: false,
       child: Container(
@@ -88,11 +94,47 @@ class ListPickerSheet extends StatelessWidget {
               margin: const EdgeInsets.symmetric(vertical: 4),
             ),
             _AddListRow(
-              onTap: () {
+              onTap: () async {
                 analytics.logEvent(name: 'tap_create_new_list', parameters: {
                   'groupID': groupID,
                 });
-                onCreateNewList(context);
+                if (appUser == null) {
+                  Navigator.of(context).pop();
+                  return;
+                }
+                // pop を await より後に行う。先に pop すると catch 実行時には
+                // context.mounted=false となり、エラー SnackBar / paywall が
+                // 握り潰される。navigator / messenger を await 前に束ねておく。
+                final navigator = Navigator.of(context);
+                final messenger = ScaffoldMessenger.of(context);
+                try {
+                  final newList = await ref
+                      .read(shoppingListAddProvider(groupID: groupID))
+                      .call(
+                        createUserID: appUser.id,
+                        groupID: groupID,
+                        shoppingLocationID: null,
+                        duplicatedFromGroupShoppingListID: null,
+                      );
+                  navigator.pop();
+                  onShoppingListIDChanged(newList.id);
+                } on ShoppingListLimitExceededException catch (e) {
+                  navigator.pop();
+                  messenger.showSnackBar(
+                    SnackBar(
+                      content: Text(e.toString()),
+                      action: SnackBarAction(
+                        label: 'アップグレード',
+                        onPressed: () => showPaywall(context: navigator.context),
+                      ),
+                    ),
+                  );
+                } catch (e) {
+                  navigator.pop();
+                  messenger.showSnackBar(
+                    SnackBar(content: Text(e.toString())),
+                  );
+                }
               },
             ),
           ],

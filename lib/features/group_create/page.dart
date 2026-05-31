@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shoppinglist/components/frame/app_pill.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/group_create.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
+import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -38,7 +38,7 @@ class _PostCreateInvitationDialog extends StatelessWidget {
             ),
             child: Text(
               invitationCode,
-              style: GoogleFonts.ibmPlexMono(
+              style: monoTextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
                 color: tokens.accent,
@@ -102,6 +102,7 @@ class GroupCreatePage extends HookConsumerWidget {
 
     final tokens = context.tokens;
     final neutral = tokens.neutral;
+    final appUser = ref.watch(appUserProvider).asData?.value;
 
     return Scaffold(
       backgroundColor: neutral.paper,
@@ -244,8 +245,6 @@ class GroupCreatePage extends HookConsumerWidget {
                           isCreating.value = true;
                           errorMessage.value = null;
                           try {
-                            final appUser =
-                                ref.read(appUserProvider).asData?.value;
                             if (appUser == null) {
                               throw StateError('AppUser is not available');
                             }
