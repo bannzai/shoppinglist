@@ -102,7 +102,11 @@ class ListPickerSheet extends ConsumerWidget {
                   Navigator.of(context).pop();
                   return;
                 }
-                Navigator.of(context).pop();
+                // pop を await より後に行う。先に pop すると catch 実行時には
+                // context.mounted=false となり、エラー SnackBar / paywall が
+                // 握り潰される。navigator / messenger を await 前に束ねておく。
+                final navigator = Navigator.of(context);
+                final messenger = ScaffoldMessenger.of(context);
                 try {
                   final newList = await ref
                       .read(shoppingListAddProvider(groupID: groupID))
@@ -112,25 +116,25 @@ class ListPickerSheet extends ConsumerWidget {
                         shoppingLocationID: null,
                         duplicatedFromGroupShoppingListID: null,
                       );
+                  navigator.pop();
                   onShoppingListIDChanged(newList.id);
                 } on ShoppingListLimitExceededException catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(e.toString()),
-                        action: SnackBarAction(
-                          label: 'アップグレード',
-                          onPressed: () => showPaywall(context: context),
-                        ),
+                  navigator.pop();
+                  messenger.showSnackBar(
+                    SnackBar(
+                      content: Text(e.toString()),
+                      action: SnackBarAction(
+                        label: 'アップグレード',
+                        onPressed: () =>
+                            showPaywall(context: navigator.context),
                       ),
-                    );
-                  }
+                    ),
+                  );
                 } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
-                  }
+                  navigator.pop();
+                  messenger.showSnackBar(
+                    SnackBar(content: Text(e.toString())),
+                  );
                 }
               },
             ),
