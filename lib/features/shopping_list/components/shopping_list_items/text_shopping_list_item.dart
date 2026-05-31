@@ -35,7 +35,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
     required this.groupID,
     required this.textShoppingListItem,
     required this.shoppingListItems,
-    this.reorderIndex,
+    required this.reorderIndex,
   });
 
   @override

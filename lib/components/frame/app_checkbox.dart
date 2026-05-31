@@ -22,7 +22,7 @@ class AppCheckbox extends StatefulWidget {
     required this.checked,
     required this.onChanged,
     this.size = 22,
-    this.color,
+    required this.color,
   });
 
   @override

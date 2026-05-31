@@ -38,7 +38,7 @@ class ShoppingListPage extends HookConsumerWidget {
     super.key,
     required this.groupID,
     required this.currentShoppingListID,
-    this.onGroupChanged,
+    required this.onGroupChanged,
   });
 
   @override

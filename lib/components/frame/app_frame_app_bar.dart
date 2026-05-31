@@ -21,8 +21,8 @@ class AppFrameAppBar extends StatelessWidget implements PreferredSizeWidget {
   const AppFrameAppBar({
     super.key,
     required this.title,
-    this.leading,
-    this.trailing,
+    required this.leading,
+    required this.trailing,
     this.accent = false,
   });
 

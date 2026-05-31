@@ -26,7 +26,7 @@ ThemeData buildAppTheme({
     FontWeight w, {
     double height = 1.5,
     double ls = -0.005,
-    Color? color,
+    required Color? color,
   }) =>
       TextStyle(
         fontSize: size,
@@ -44,16 +44,19 @@ ThemeData buildAppTheme({
   );
 
   final textTheme = base.copyWith(
-    displayLarge: sans(34, FontWeight.w800, height: 1.15, ls: -0.02),
-    displayMedium: sans(28, FontWeight.w800, height: 1.15, ls: -0.02),
-    headlineSmall: sans(22, FontWeight.w700, height: 1.25, ls: -0.015),
-    titleLarge: sans(17, FontWeight.w700, height: 1.3, ls: -0.01),
-    titleMedium: sans(15, FontWeight.w600, height: 1.4),
-    bodyLarge: sans(15, FontWeight.w400, height: 1.7),
-    bodyMedium: sans(14, FontWeight.w400, height: 1.6),
-    bodySmall: sans(12, FontWeight.w400, height: 1.4),
-    labelLarge: sans(13.5, FontWeight.w600, height: 1.0),
-    labelSmall: sans(11.5, FontWeight.w400, height: 1.4),
+    displayLarge:
+        sans(34, FontWeight.w800, height: 1.15, ls: -0.02, color: null),
+    displayMedium:
+        sans(28, FontWeight.w800, height: 1.15, ls: -0.02, color: null),
+    headlineSmall:
+        sans(22, FontWeight.w700, height: 1.25, ls: -0.015, color: null),
+    titleLarge: sans(17, FontWeight.w700, height: 1.3, ls: -0.01, color: null),
+    titleMedium: sans(15, FontWeight.w600, height: 1.4, color: null),
+    bodyLarge: sans(15, FontWeight.w400, height: 1.7, color: null),
+    bodyMedium: sans(14, FontWeight.w400, height: 1.6, color: null),
+    bodySmall: sans(12, FontWeight.w400, height: 1.4, color: null),
+    labelLarge: sans(13.5, FontWeight.w600, height: 1.0, color: null),
+    labelSmall: sans(11.5, FontWeight.w400, height: 1.4, color: null),
   );
 
   final colorScheme = ColorScheme(
@@ -109,7 +112,7 @@ ThemeData buildAppTheme({
     chipTheme: ChipThemeData(
       backgroundColor: neutral.surface,
       side: BorderSide(color: neutral.divider),
-      labelStyle: sans(12.5, FontWeight.w500, height: 1.0),
+      labelStyle: sans(12.5, FontWeight.w500, height: 1.0, color: null),
       padding: const EdgeInsets.symmetric(horizontal: 12),
       shape: const StadiumBorder(),
     ),
@@ -119,7 +122,7 @@ ThemeData buildAppTheme({
         foregroundColor: Colors.white,
         shape: const StadiumBorder(),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-        textStyle: sans(15, FontWeight.w600, height: 1.0),
+        textStyle: sans(15, FontWeight.w600, height: 1.0, color: null),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
@@ -160,7 +163,7 @@ TextStyle monoTextStyle({
   required FontWeight fontWeight,
   required Color color,
   double height = 1.0,
-  double? letterSpacing,
+  required double? letterSpacing,
 }) =>
     TextStyle(
       fontSize: fontSize,
