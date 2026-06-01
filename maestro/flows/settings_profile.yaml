@@ -12,29 +12,22 @@ appId: com.bannzai.shoppinglist
 # 表示名を入力
 - tapOn: "表示名を入力"
 - inputText: "テストユーザー"
-# hideKeyboardはスクリーン上のリンクを誤タップする可能性があるため、
-# AppBarタイトルの安全な領域をタップしてキーボードを閉じる
-- tapOn:
-    point: "50%,6%"
-- tapOn: "保存"
+# 保存ボタンは廃止。キーボードの完了キーでフォーカスが外れ、その時に自動保存される。
+# （背景タップでは Flutter は unfocus しないため、enter で明示的にフォーカスを外す）
+- pressKey: enter
 - waitForAnimationToEnd
+# フォーカス喪失で自動保存が走り、成功 SnackBar が表示されることを確認する
+- assertVisible: "表示名を更新しました"
 - takeScreenshot: screenshots/settings_02_name_saved
 
-# グループ管理画面に遷移
+# グループ管理画面に遷移（設定からのナビゲーション確認）
 - tapOn: "グループ管理"
 - assertVisible: "グループ管理"
 - takeScreenshot: screenshots/settings_03_group_list
 
-# グループ作成画面に遷移（FABに tooltip: 'グループ作成' を設定済み）
-- tapOn: "グループ作成"
-- assertVisible: "グループ作成"
-- tapOn: "グループ名を入力"
-- inputText: "家族"
-- tapOn:
-    point: "50%,6%"
-- tapOn: "作成する"
-- waitForAnimationToEnd
-- takeScreenshot: screenshots/settings_04_group_created
+# NOTE: グループ作成の検証は専用フロー（group_creation_limit_non_premium.yaml /
+#       premium_group_creation.yaml）に分離している。この設定フローでは
+#       プロフィール（表示名の自動保存）＋設定ナビゲーションの確認に集中する。
 
-# 戻る
+# 設定画面へ戻る
 - pressKey: back
