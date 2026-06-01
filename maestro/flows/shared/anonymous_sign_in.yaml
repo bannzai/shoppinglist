@@ -10,9 +10,17 @@ appId: com.bannzai.shoppinglist
     commands:
       - tapOn: "許可"
       - waitForAnimationToEnd
+# design v2 のオンボーディングをスキップする。clearState 直後は必ず表示されるが、
+# 起動直後のスプラッシュ表示中に when:visible が空振りする race を避けるため、
+# スキップボタンが出るまで明示的に待ってから tap する。
 - extendedWaitUntil:
-    visible: "サインイン"
+    visible: "スキップ"
     timeout: 30000
+- tapOn: "スキップ"
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "匿名サインイン（デバッグ用）"
+    timeout: 90000
 - tapOn: "匿名サインイン（デバッグ用）"
 # サインイン処理の完了を待機（Retryか成功画面が出るまで待つ）
 - waitForAnimationToEnd
@@ -29,6 +37,7 @@ appId: com.bannzai.shoppinglist
     commands:
       - tapOn: "Retry"
       - waitForAnimationToEnd
+# design v2 の空状態（サインイン後のホーム）に到達したことを確認する
 - extendedWaitUntil:
-    visible: "アイテムを追加"
-    timeout: 30000
+    visible: "タップで入力開始"
+    timeout: 60000
