@@ -60,6 +60,46 @@ class SettingPage extends HookConsumerWidget {
       return null;
     }, [myProfile]);
 
+    // 表示名を保存する。保存ボタンは廃止し、TextFieldのフォーカスが外れた時(blur)に
+    // この関数を呼んで自動保存する。保存済みの値と同じ場合は書き込みをスキップし、
+    // 不要な更新を避けて冪等にする。
+    Future<void> saveDisplayName() async {
+      if (isSavingProfile.value ||
+          groupID == null ||
+          currentUserID == null) {
+        return;
+      }
+      final displayName = displayNameController.text;
+      if (displayName == (myProfile?.displayName ?? '')) {
+        return;
+      }
+      analytics.logEvent(
+          name: 'submit_profile_display_name',
+          parameters: {'groupID': groupID});
+      isSavingProfile.value = true;
+      try {
+        await ref
+            .read(groupUserProfileUpdateProvider(groupID: groupID))
+            .call(
+              userID: currentUserID,
+              displayName: displayName,
+            );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('表示名を更新しました')),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.toString())),
+          );
+        }
+      } finally {
+        isSavingProfile.value = false;
+      }
+    }
+
     final tokens = context.tokens;
 
     return Scaffold(
@@ -89,61 +129,22 @@ class SettingPage extends HookConsumerWidget {
                     children: [
                       const Text('表示名'),
                       const SizedBox(height: 4),
-                      TextField(
-                        controller: displayNameController,
-                        decoration: const InputDecoration(
-                          hintText: '表示名を入力',
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: (isSavingProfile.value ||
-                                  groupID == null ||
-                                  currentUserID == null)
-                              ? null
-                              : () async {
-                                  analytics.logEvent(
-                                      name: 'tap_save_profile',
-                                      parameters: {'groupID': groupID});
-                                  isSavingProfile.value = true;
-                                  try {
-                                    await ref
-                                        .read(groupUserProfileUpdateProvider(
-                                            groupID: groupID))
-                                        .call(
-                                          userID: currentUserID,
-                                          displayName:
-                                              displayNameController.text,
-                                        );
-                                    if (context.mounted) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                            content: Text('表示名を更新しました')),
-                                      );
-                                    }
-                                  } catch (e) {
-                                    if (context.mounted) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(content: Text(e.toString())),
-                                      );
-                                    }
-                                  } finally {
-                                    isSavingProfile.value = false;
-                                  }
-                                },
-                          icon: isSavingProfile.value
-                              ? const SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child:
-                                      CircularProgressIndicator(strokeWidth: 2),
-                                )
-                              : const Icon(Icons.save),
-                          label: const Text('保存'),
+                      // フォーカスが外れた時(hasFocus=false)に自動保存する。
+                      // canRequestFocus=false でこのFocus自体は入力対象にならず、
+                      // 子のTextFieldのフォーカス変化の検知だけに使う。
+                      Focus(
+                        canRequestFocus: false,
+                        onFocusChange: (hasFocus) async {
+                          if (hasFocus) {
+                            return;
+                          }
+                          await saveDisplayName();
+                        },
+                        child: TextField(
+                          controller: displayNameController,
+                          decoration: const InputDecoration(
+                            hintText: '表示名を入力',
+                          ),
                         ),
                       ),
                     ],
