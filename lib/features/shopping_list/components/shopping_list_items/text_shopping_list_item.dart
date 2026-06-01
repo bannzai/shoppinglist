@@ -289,22 +289,45 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
             'groupShoppingListItemID': textShoppingListItem.id,
           },
         );
+        // 削除が成功すると Stream 更新でこの Widget は dispose され context.mounted が
+        // false になり得る。await 後に SnackBar 表示・Undo 操作ができるよう、
+        // ScaffoldMessenger と復元用 call クラスを await 前に捕捉しておく。
+        final messenger = ScaffoldMessenger.of(context);
+        final restore = ref.read(restoreShoppingListItemProvider(groupID: groupID));
         try {
-          await ref
-              .read(groupDatabaseProvider(groupID: groupID))
-              .shoppingListItemsReference(
+          await ref.read(deleteShoppingListItemProvider(groupID: groupID)).call(
                 shoppingListID: textShoppingListItem.shoppingListID,
-              )
-              .doc(textShoppingListItem.id)
-              .delete();
+                itemID: textShoppingListItem.id,
+              );
+          messenger
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: const Text('アイテムを削除しました'),
+                duration: const Duration(seconds: 5),
+                action: SnackBarAction(
+                  label: '元に戻す',
+                  onPressed: () {
+                    analytics.logEvent(
+                      name: 'undo_swipe_delete_shopping_list_item',
+                      parameters: {
+                        'groupShoppingListItemID': textShoppingListItem.id,
+                      },
+                    );
+                    restore.call(
+                      shoppingListID: textShoppingListItem.shoppingListID,
+                      item: textShoppingListItem,
+                    );
+                  },
+                ),
+              ),
+            );
           return true;
         } catch (e, st) {
           debugPrint('アイテムの削除に失敗: $e\n$st');
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(e.toString())),
-            );
-          }
+          messenger.showSnackBar(
+            SnackBar(content: Text(e.toString())),
+          );
           return false;
         }
       },
