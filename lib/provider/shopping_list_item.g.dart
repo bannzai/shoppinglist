@@ -344,6 +344,287 @@ class _AddShoppingListItemProviderElement
   String get groupID => (origin as AddShoppingListItemProvider).groupID;
 }
 
+String _$deleteShoppingListItemHash() =>
+    r'890587e2bea3f3f8a6af5917889d5a740a84fdbe';
+
+/// See also [deleteShoppingListItem].
+@ProviderFor(deleteShoppingListItem)
+const deleteShoppingListItemProvider = DeleteShoppingListItemFamily();
+
+/// See also [deleteShoppingListItem].
+class DeleteShoppingListItemFamily extends Family<DeleteShoppingListItem> {
+  /// See also [deleteShoppingListItem].
+  const DeleteShoppingListItemFamily();
+
+  /// See also [deleteShoppingListItem].
+  DeleteShoppingListItemProvider call({
+    required String groupID,
+  }) {
+    return DeleteShoppingListItemProvider(
+      groupID: groupID,
+    );
+  }
+
+  @override
+  DeleteShoppingListItemProvider getProviderOverride(
+    covariant DeleteShoppingListItemProvider provider,
+  ) {
+    return call(
+      groupID: provider.groupID,
+    );
+  }
+
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    groupDatabaseProvider
+  ];
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
+    groupDatabaseProvider,
+    ...?groupDatabaseProvider.allTransitiveDependencies
+  };
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'deleteShoppingListItemProvider';
+}
+
+/// See also [deleteShoppingListItem].
+class DeleteShoppingListItemProvider
+    extends AutoDisposeProvider<DeleteShoppingListItem> {
+  /// See also [deleteShoppingListItem].
+  DeleteShoppingListItemProvider({
+    required String groupID,
+  }) : this._internal(
+          (ref) => deleteShoppingListItem(
+            ref as DeleteShoppingListItemRef,
+            groupID: groupID,
+          ),
+          from: deleteShoppingListItemProvider,
+          name: r'deleteShoppingListItemProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$deleteShoppingListItemHash,
+          dependencies: DeleteShoppingListItemFamily._dependencies,
+          allTransitiveDependencies:
+              DeleteShoppingListItemFamily._allTransitiveDependencies,
+          groupID: groupID,
+        );
+
+  DeleteShoppingListItemProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.groupID,
+  }) : super.internal();
+
+  final String groupID;
+
+  @override
+  Override overrideWith(
+    DeleteShoppingListItem Function(DeleteShoppingListItemRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: DeleteShoppingListItemProvider._internal(
+        (ref) => create(ref as DeleteShoppingListItemRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        groupID: groupID,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<DeleteShoppingListItem> createElement() {
+    return _DeleteShoppingListItemProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is DeleteShoppingListItemProvider && other.groupID == groupID;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, groupID.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin DeleteShoppingListItemRef
+    on AutoDisposeProviderRef<DeleteShoppingListItem> {
+  /// The parameter `groupID` of this provider.
+  String get groupID;
+}
+
+class _DeleteShoppingListItemProviderElement
+    extends AutoDisposeProviderElement<DeleteShoppingListItem>
+    with DeleteShoppingListItemRef {
+  _DeleteShoppingListItemProviderElement(super.provider);
+
+  @override
+  String get groupID => (origin as DeleteShoppingListItemProvider).groupID;
+}
+
+String _$restoreShoppingListItemHash() =>
+    r'4a7a9f510c179c853560b4506d2b6c0c96024fdf';
+
+/// See also [restoreShoppingListItem].
+@ProviderFor(restoreShoppingListItem)
+const restoreShoppingListItemProvider = RestoreShoppingListItemFamily();
+
+/// See also [restoreShoppingListItem].
+class RestoreShoppingListItemFamily extends Family<RestoreShoppingListItem> {
+  /// See also [restoreShoppingListItem].
+  const RestoreShoppingListItemFamily();
+
+  /// See also [restoreShoppingListItem].
+  RestoreShoppingListItemProvider call({
+    required String groupID,
+  }) {
+    return RestoreShoppingListItemProvider(
+      groupID: groupID,
+    );
+  }
+
+  @override
+  RestoreShoppingListItemProvider getProviderOverride(
+    covariant RestoreShoppingListItemProvider provider,
+  ) {
+    return call(
+      groupID: provider.groupID,
+    );
+  }
+
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    groupDatabaseProvider
+  ];
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
+    groupDatabaseProvider,
+    ...?groupDatabaseProvider.allTransitiveDependencies
+  };
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'restoreShoppingListItemProvider';
+}
+
+/// See also [restoreShoppingListItem].
+class RestoreShoppingListItemProvider
+    extends AutoDisposeProvider<RestoreShoppingListItem> {
+  /// See also [restoreShoppingListItem].
+  RestoreShoppingListItemProvider({
+    required String groupID,
+  }) : this._internal(
+          (ref) => restoreShoppingListItem(
+            ref as RestoreShoppingListItemRef,
+            groupID: groupID,
+          ),
+          from: restoreShoppingListItemProvider,
+          name: r'restoreShoppingListItemProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$restoreShoppingListItemHash,
+          dependencies: RestoreShoppingListItemFamily._dependencies,
+          allTransitiveDependencies:
+              RestoreShoppingListItemFamily._allTransitiveDependencies,
+          groupID: groupID,
+        );
+
+  RestoreShoppingListItemProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.groupID,
+  }) : super.internal();
+
+  final String groupID;
+
+  @override
+  Override overrideWith(
+    RestoreShoppingListItem Function(RestoreShoppingListItemRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: RestoreShoppingListItemProvider._internal(
+        (ref) => create(ref as RestoreShoppingListItemRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        groupID: groupID,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<RestoreShoppingListItem> createElement() {
+    return _RestoreShoppingListItemProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is RestoreShoppingListItemProvider && other.groupID == groupID;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, groupID.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin RestoreShoppingListItemRef
+    on AutoDisposeProviderRef<RestoreShoppingListItem> {
+  /// The parameter `groupID` of this provider.
+  String get groupID;
+}
+
+class _RestoreShoppingListItemProviderElement
+    extends AutoDisposeProviderElement<RestoreShoppingListItem>
+    with RestoreShoppingListItemRef {
+  _RestoreShoppingListItemProviderElement(super.provider);
+
+  @override
+  String get groupID => (origin as RestoreShoppingListItemProvider).groupID;
+}
+
 String _$toggleShoppingListItemCheckHash() =>
     r'290724efc9feef517e22306a335a6c6c7b874227';
 
