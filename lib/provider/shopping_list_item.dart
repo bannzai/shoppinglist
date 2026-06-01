@@ -72,6 +72,61 @@ AddShoppingListItem addShoppingListItem(Ref ref, {required String groupID}) {
       database: ref.watch(groupDatabaseProvider(groupID: groupID)));
 }
 
+/// 買い物リストアイテムを削除する。
+///
+/// スワイプ削除など、ユーザーの明示的な削除操作で使用する。
+/// 削除前のアイテムを保持しておけば [RestoreShoppingListItem] で復元できる。
+class DeleteShoppingListItem {
+  final GroupDatabase database;
+
+  DeleteShoppingListItem({required this.database});
+
+  Future<void> call({
+    required String shoppingListID,
+    required String itemID,
+  }) async {
+    await database
+        .shoppingListItemsReference(shoppingListID: shoppingListID)
+        .doc(itemID)
+        .delete();
+  }
+}
+
+@Riverpod(dependencies: [groupDatabase])
+DeleteShoppingListItem deleteShoppingListItem(Ref ref,
+    {required String groupID}) {
+  return DeleteShoppingListItem(
+      database: ref.watch(groupDatabaseProvider(groupID: groupID)));
+}
+
+/// 削除した買い物リストアイテムを、削除前の ID・内容のまま復元する。
+///
+/// スワイプ削除直後の「元に戻す」(Undo) 操作で使用する。
+/// 削除前に保持していた [GroupShoppingListItem] を同じ ID で書き戻すため、
+/// order・status・description などが削除前の状態のまま復元される。
+class RestoreShoppingListItem {
+  final GroupDatabase database;
+
+  RestoreShoppingListItem({required this.database});
+
+  Future<void> call({
+    required String shoppingListID,
+    required GroupShoppingListItem item,
+  }) async {
+    await database
+        .shoppingListItemsReference(shoppingListID: shoppingListID)
+        .doc(item.id)
+        .set(item, SetOptions(merge: true));
+  }
+}
+
+@Riverpod(dependencies: [groupDatabase])
+RestoreShoppingListItem restoreShoppingListItem(Ref ref,
+    {required String groupID}) {
+  return RestoreShoppingListItem(
+      database: ref.watch(groupDatabaseProvider(groupID: groupID)));
+}
+
 class ToggleShoppingListItemCheck {
   final GroupDatabase database;
 
