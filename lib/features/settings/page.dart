@@ -41,7 +41,6 @@ class SettingPage extends HookConsumerWidget {
     final currentUserID = ref.watch(currentUserIDProvider);
 
     final displayNameController = useTextEditingController();
-    final isSavingProfile = useState(false);
 
     // プロフィールのdisplayNameをTextFieldに反映
     final profilesAsync = groupID != null
@@ -64,9 +63,7 @@ class SettingPage extends HookConsumerWidget {
     // この関数を呼んで自動保存する。保存済みの値と同じ場合は書き込みをスキップし、
     // 不要な更新を避けて冪等にする。
     Future<void> saveDisplayName() async {
-      if (isSavingProfile.value ||
-          groupID == null ||
-          currentUserID == null) {
+      if (groupID == null || currentUserID == null) {
         return;
       }
       final displayName = displayNameController.text;
@@ -76,7 +73,6 @@ class SettingPage extends HookConsumerWidget {
       analytics.logEvent(
           name: 'submit_profile_display_name',
           parameters: {'groupID': groupID});
-      isSavingProfile.value = true;
       try {
         await ref
             .read(groupUserProfileUpdateProvider(groupID: groupID))
@@ -95,8 +91,6 @@ class SettingPage extends HookConsumerWidget {
             SnackBar(content: Text(e.toString())),
           );
         }
-      } finally {
-        isSavingProfile.value = false;
       }
     }
 
