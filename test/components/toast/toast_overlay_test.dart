@@ -21,8 +21,8 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: MaterialApp(
-          theme:
-              buildAppTheme(brightness: Brightness.light, accent: AccentPreset.shu),
+          theme: buildAppTheme(
+              brightness: Brightness.light, accent: AccentPreset.shu),
           home: const Scaffold(body: Stack(children: [ToastOverlay()])),
         ),
       ),
@@ -30,8 +30,7 @@ void main() {
     return container;
   }
 
-  testWidgets('showGlobalToast: 表示され、duration 経過で自動的に消える',
-      (tester) async {
+  testWidgets('showGlobalToast: 表示され、duration 経過で自動的に消える', (tester) async {
     await pumpOverlay(tester);
     expect(find.text('保存しました'), findsNothing);
 

@@ -293,7 +293,8 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         // false になり得る。await 後に SnackBar 表示・Undo 操作ができるよう、
         // ScaffoldMessenger と復元用 call クラスを await 前に捕捉しておく。
         final messenger = ScaffoldMessenger.of(context);
-        final restore = ref.read(restoreShoppingListItemProvider(groupID: groupID));
+        final restore =
+            ref.read(restoreShoppingListItemProvider(groupID: groupID));
         try {
           await ref.read(deleteShoppingListItemProvider(groupID: groupID)).call(
                 shoppingListID: textShoppingListItem.shoppingListID,
