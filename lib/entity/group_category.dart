@@ -37,8 +37,8 @@ abstract class GroupCategory with _$GroupCategory {
     /// エントリがない場合は [order] にフォールバックする。
     required Map<String, int> locationOrders,
     required List<GroupCategoryKeyword> keywords,
-    String? color,
-    String? iconName,
+    required String? color,
+    required String? iconName,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,

@@ -34,41 +34,51 @@ void main() {
 
     test('imageURL付きアイテムがJSONにシリアライズされる', () {
       const item = GroupShoppingListItem(
-        id: 'item-1',
-        groupID: 'group-1',
-        shoppingListID: 'list-1',
-        userID: 'user-1',
-        message: '牛乳',
-        order: 0,
-        imageURL: 'https://example.com/photo.jpg',
-      );
+          id: 'item-1',
+          groupID: 'group-1',
+          shoppingListID: 'list-1',
+          userID: 'user-1',
+          message: '牛乳',
+          order: 0,
+          imageURL: 'https://example.com/photo.jpg',
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          lastEditedByUserID: null);
       final json = item.toJson();
       expect(json['imageURL'], 'https://example.com/photo.jpg');
     });
 
     test('copyWithでimageURLを更新できる', () {
       const item = GroupShoppingListItem(
-        id: 'item-1',
-        groupID: 'group-1',
-        shoppingListID: 'list-1',
-        userID: 'user-1',
-        message: '牛乳',
-        order: 0,
-      );
+          id: 'item-1',
+          groupID: 'group-1',
+          shoppingListID: 'list-1',
+          userID: 'user-1',
+          message: '牛乳',
+          order: 0,
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          imageURL: null,
+          lastEditedByUserID: null);
       final updated = item.copyWith(imageURL: 'https://example.com/photo.jpg');
       expect(updated.imageURL, 'https://example.com/photo.jpg');
     });
 
     test('copyWithでimageURLをnullにできる', () {
       const item = GroupShoppingListItem(
-        id: 'item-1',
-        groupID: 'group-1',
-        shoppingListID: 'list-1',
-        userID: 'user-1',
-        message: '牛乳',
-        order: 0,
-        imageURL: 'https://example.com/photo.jpg',
-      );
+          id: 'item-1',
+          groupID: 'group-1',
+          shoppingListID: 'list-1',
+          userID: 'user-1',
+          message: '牛乳',
+          order: 0,
+          imageURL: 'https://example.com/photo.jpg',
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          lastEditedByUserID: null);
       final updated = item.copyWith(imageURL: null);
       expect(updated.imageURL, isNull);
     });

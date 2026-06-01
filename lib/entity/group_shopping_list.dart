@@ -33,8 +33,15 @@ abstract class GroupShoppingList with _$GroupShoppingList {
     required String groupID,
     @Default('') String name,
     @Default(GroupShoppingListStatus.active) GroupShoppingListStatus status,
-    String? shoppingLocationID,
-    String? duplicatedFromGroupShoppingListID,
+
+    /// このリストでのアイテム追加・チェック切替時にグループ全員へ通知 SnackBar を
+    /// 表示するか。`design_handoff_shoppinglist/preview/screens-list-settings.jsx`
+    /// 準拠でリスト単位の設定として持つ。
+    /// グローバル通知設定 (SharedPreferences) と AND 条件で評価する。
+    /// 既存ドキュメントにはこのフィールドが存在しないため default で `false` を返す。
+    @Default(false) bool autoNotifyEnabled,
+    required String? shoppingLocationID,
+    required String? duplicatedFromGroupShoppingListID,
     @TimestampConverter() required DateTime? ttlExpiresDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,

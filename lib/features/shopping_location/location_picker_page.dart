@@ -4,6 +4,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/frame/app_pill.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 /// 地図上で店舗の位置を選択するページ。
@@ -81,8 +83,15 @@ class LocationPickerPage extends HookConsumerWidget {
       }
     }
 
+    final tokens = context.tokens;
+    final neutral = tokens.neutral;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('場所を地図で選択')),
+      backgroundColor: neutral.surface,
+      appBar: AppBar(
+        title: const Text('場所を地図で選択'),
+        backgroundColor: neutral.surface,
+      ),
       body: Stack(
         children: [
           GoogleMap(
@@ -99,57 +108,75 @@ class LocationPickerPage extends HookConsumerWidget {
             myLocationButtonEnabled: true,
             zoomControlsEnabled: false,
           ),
-          // 中央ピン
-          const Center(
+          // 中央ピン（accent カラー、drop shadow 付き）
+          Center(
             child: Padding(
-              padding: EdgeInsets.only(bottom: 36),
-              child: Icon(Icons.location_pin, size: 48, color: Colors.red),
+              padding: const EdgeInsets.only(bottom: 36),
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.25),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Icon(Icons.location_pin, size: 42, color: tokens.accent),
+              ),
             ),
           ),
           // 下部の住所表示カード
           Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
+            bottom: 16,
+            left: 16,
+            right: 16,
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(16),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 8,
-                  ),
-                ],
+                color: neutral.card,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: tokens.cardShadow,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   if (isLoadingAddress.value)
-                    const LinearProgressIndicator()
+                    LinearProgressIndicator(
+                      backgroundColor: neutral.divider2,
+                      valueColor: AlwaysStoppedAnimation<Color>(tokens.accent),
+                    )
                   else if (address.value.isNotEmpty)
                     Text(
                       address.value,
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: neutral.ink,
+                          ),
                       textAlign: TextAlign.center,
                     ),
                   const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
+                  AppPill(
+                      label: 'この場所を設定',
+                      variant: AppPillVariant.accent,
+                      large: true,
+                      expanded: true,
                       onPressed: () {
-                        analytics.logEvent(name: 'tap_confirm_map_location');
+                        analytics.logEvent(
+                          name: 'tap_confirm_map_location',
+                          parameters: {
+                            'hasAddress': address.value.isNotEmpty.toString(),
+                          },
+                        );
                         Navigator.pop(context, (
                           latitude: selectedLatLng.value.latitude,
                           longitude: selectedLatLng.value.longitude,
+                          address: address.value,
                         ));
                       },
-                      child: const Text('この場所を設定'),
-                    ),
-                  ),
+                      icon: null),
                 ],
               ),
             ),

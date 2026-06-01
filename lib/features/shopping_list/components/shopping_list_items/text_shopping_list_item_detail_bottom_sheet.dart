@@ -6,6 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -70,14 +71,14 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
           ),
           const SizedBox(height: 16),
           // メモセクション
-          const Align(
+          Align(
             alignment: Alignment.centerLeft,
             child: Text(
               'メモ',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w700),
             ),
           ),
           const SizedBox(height: 8),
@@ -91,14 +92,14 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
           ),
           const SizedBox(height: 24),
           // 写真セクション
-          const Align(
+          Align(
             alignment: Alignment.centerLeft,
             child: Text(
               '写真',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w700),
             ),
           ),
           const SizedBox(height: 8),
@@ -112,14 +113,14 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
           ),
           const SizedBox(height: 24),
           // カラーセクション
-          const Align(
+          Align(
             alignment: Alignment.centerLeft,
             child: Text(
               'カラー',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w700),
             ),
           ),
           const SizedBox(height: 8),
@@ -309,7 +310,10 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                         },
                         child: Text(
                           '削除',
-                          style: TextStyle(color: colorScheme.error),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(color: colorScheme.error),
                         ),
                       ),
                       TextButton(
@@ -352,6 +356,8 @@ class _PhotoSection extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
 
     // ローカル選択画像があればそれを表示
     if (selectedPhoto.value != null) {
@@ -359,6 +365,7 @@ class _PhotoSection extends HookConsumerWidget {
         context: context,
         colorScheme: colorScheme,
         ref: ref,
+        isPremium: isPremium,
         child: Image.file(
           File(selectedPhoto.value!.path),
           width: double.infinity,
@@ -374,6 +381,7 @@ class _PhotoSection extends HookConsumerWidget {
         context: context,
         colorScheme: colorScheme,
         ref: ref,
+        isPremium: isPremium,
         child: CachedNetworkImage(
           imageUrl: imageURL.value!,
           width: double.infinity,
@@ -395,7 +403,8 @@ class _PhotoSection extends HookConsumerWidget {
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton.icon(
-        onPressed: () => _showImageSourceDialog(context: context, ref: ref),
+        onPressed: () => _showImageSourceDialog(
+            context: context, ref: ref, isPremium: isPremium),
         icon: const Icon(Icons.add_a_photo),
         label: const Text('写真を追加'),
       ),
@@ -406,6 +415,7 @@ class _PhotoSection extends HookConsumerWidget {
     required BuildContext context,
     required ColorScheme colorScheme,
     required WidgetRef ref,
+    required bool isPremium,
     required Widget child,
   }) {
     return Stack(
@@ -423,7 +433,8 @@ class _PhotoSection extends HookConsumerWidget {
               _CircleIconButton(
                 icon: Icons.edit,
                 colorScheme: colorScheme,
-                onTap: () => _showImageSourceDialog(context: context, ref: ref),
+                onTap: () => _showImageSourceDialog(
+                    context: context, ref: ref, isPremium: isPremium),
               ),
               const SizedBox(width: 8),
               // 写真を削除
@@ -449,15 +460,20 @@ class _PhotoSection extends HookConsumerWidget {
   void _showImageSourceDialog({
     required BuildContext context,
     required WidgetRef ref,
+    required bool isPremium,
   }) {
-    final isPremium =
-        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
     if (!isPremium) {
       analytics.logEvent(
           name: 'tap_item_photo_non_premium',
           parameters: {'groupID': groupID, 'itemID': itemID});
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('商品写真の添付はプレミアム機能です')),
+        SnackBar(
+          content: const Text('商品写真の添付はプレミアム機能です'),
+          action: SnackBarAction(
+            label: 'アップグレード',
+            onPressed: () => showPaywall(context: context),
+          ),
+        ),
       );
       return;
     }

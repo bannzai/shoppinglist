@@ -1,0 +1,38 @@
+appId: com.bannzai.shoppinglist
+---
+# プレミアム状態ではリスト複製でも 6 個目以降を作成できることを確認する。
+# non_premium では複製で 6 個目を作ろうとすると SnackBar で遮断される。
+
+- runFlow: shared/anonymous_sign_in.yaml
+- runFlow: shared/grant_premium_via_debug.yaml
+
+# 5 個のリストを作成
+# メニュー → 「買い物リストを追加」（PopupMenuItem）→ BottomSheet 表示 →
+# BottomSheet 内の「買い物リストを追加」ListTile で名前なしリストを作成する。
+- repeat:
+    times: 5
+    commands:
+      - tapOn: "メニュー"
+      - waitForAnimationToEnd
+      - tapOn: "買い物リストを追加"
+      - extendedWaitUntil:
+          visible: "現在の買い物リストを複製"
+          timeout: 5000
+      - tapOn: "買い物リストを追加"
+      - waitForAnimationToEnd
+
+# 現在のリストを複製して 6 個目にする
+# 「現在の買い物リストを複製」は BottomSheet 内にあるため先に BottomSheet を開く必要がある
+- tapOn: "メニュー"
+- waitForAnimationToEnd
+- tapOn: "買い物リストを追加"
+- extendedWaitUntil:
+    visible: "現在の買い物リストを複製"
+    timeout: 5000
+- tapOn: "現在の買い物リストを複製"
+- waitForAnimationToEnd
+
+# non_premium 時の上限 SnackBar が出ないこと
+- assertNotVisible: "無料プランでは1グループあたり5個までリストを作成できます"
+
+- takeScreenshot: screenshots/premium_shopping_list_limit_duplicate_unlocked

@@ -43,15 +43,15 @@ abstract class GroupShoppingListItem with _$GroupShoppingListItem {
     required int order,
     @Default(GroupShoppingListItemStatus.unchecked)
     GroupShoppingListItemStatus status,
-    String? description,
-    String? color,
+    required String? description,
+    required String? color,
 
     /// Firebase Storage上の商品写真のダウンロードURL。プレミアム機能。
-    String? imageURL,
+    required String? imageURL,
     @NullableTimestampConverter() DateTime? reminderDateTime,
-    String? checkedByUserID,
+    required String? checkedByUserID,
     @NullableTimestampConverter() DateTime? lastCheckedDateTime,
-    String? lastEditedByUserID,
+    required String? lastEditedByUserID,
     @NullableTimestampConverter() DateTime? lastEditedDateTime,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,

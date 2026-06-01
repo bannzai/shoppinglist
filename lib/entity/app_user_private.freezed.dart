@@ -367,7 +367,7 @@ class _AppUserPrivate extends AppUserPrivate {
   const _AppUserPrivate(
       {required this.id,
       required this.userID,
-      this.email,
+      required this.email,
       required final List<String> fcmTokens,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,

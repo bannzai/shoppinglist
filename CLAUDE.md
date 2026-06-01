@@ -26,6 +26,10 @@ iOS,Androidアプリをサポートします。Firebase の設定ファイルは
 - 静的解析: `flutter analyze`
 - Maestro E2E テスト: `maestro test maestro/flows/`。 `./maestro` にテストを記載する
 
+#### 実行時引数と launch.json
+- `flutter run` に渡す `--dart-define` や `--flavor` 等の実行時引数を追加・変更した場合は、`.vscode/launch.json` の対応する configuration にも同じ引数を反映すること
+- `.vscode/launch.json` は `.gitignore` 対象だが、VS Code デバッグ起動とコマンドライン実行で条件差を生まないよう常に同期する
+
 ### Firebase
 firebase/ ディレクトリ配下についてです。主にbackendで動くFirebase Functionsの設定です。クライアントから呼ぶ処理は GenKit を使って定義します。AIを使わなくてもGenKitでonCallの関数を定義します。なぜならAPI コンソールがついてきて検証がしやすいから
 

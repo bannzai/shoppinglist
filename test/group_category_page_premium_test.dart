@@ -9,6 +9,8 @@ import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
+import 'package:shoppinglist/style/theme.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 const _testGroupID = 'test-group-001';
@@ -18,25 +20,27 @@ const _testLocationID = 'test-location-001';
 
 List<GroupCategory> _testCategories() => [
       const GroupCategory(
-        id: 'cat-001',
-        groupID: _testGroupID,
-        userID: _testUserID,
-        groupCategoryAxisID: _testCategoryAxisID,
-        name: '食品',
-        order: 0,
-        locationOrders: {},
-        keywords: [],
-      ),
+          id: 'cat-001',
+          groupID: _testGroupID,
+          userID: _testUserID,
+          groupCategoryAxisID: _testCategoryAxisID,
+          name: '食品',
+          order: 0,
+          locationOrders: {},
+          keywords: [],
+          color: null,
+          iconName: null),
       const GroupCategory(
-        id: 'cat-002',
-        groupID: _testGroupID,
-        userID: _testUserID,
-        groupCategoryAxisID: _testCategoryAxisID,
-        name: '日用品',
-        order: 1,
-        locationOrders: {},
-        keywords: [],
-      ),
+          id: 'cat-002',
+          groupID: _testGroupID,
+          userID: _testUserID,
+          groupCategoryAxisID: _testCategoryAxisID,
+          name: '日用品',
+          order: 1,
+          locationOrders: {},
+          keywords: [],
+          color: null,
+          iconName: null),
     ];
 
 /// 非プレミアムユーザー用のprovider overrides
@@ -159,8 +163,10 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: _nonPremiumOverrides(),
-          child: const MaterialApp(
-            home: GroupCategoryPage(groupID: _testGroupID),
+          child: MaterialApp(
+            theme: buildAppTheme(
+                brightness: Brightness.light, accent: AccentPreset.shu),
+            home: const GroupCategoryPage(groupID: _testGroupID),
           ),
         ),
       );
@@ -177,8 +183,10 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: _nonPremiumOverrides(),
-          child: const MaterialApp(
-            home: GroupCategoryPage(groupID: _testGroupID),
+          child: MaterialApp(
+            theme: buildAppTheme(
+                brightness: Brightness.light, accent: AccentPreset.shu),
+            home: const GroupCategoryPage(groupID: _testGroupID),
           ),
         ),
       );

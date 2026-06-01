@@ -1,14 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/features/developer_options/page.dart';
 import 'package:shoppinglist/features/developer_options/shake_detector.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/fcm_notification.dart';
 import 'package:shoppinglist/provider/geofence.dart';
-import 'package:shoppinglist/provider/local_notification.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/root.dart';
+import 'package:shoppinglist/style/theme.dart';
 
 final _navigatorKey = GlobalKey<NavigatorState>();
 
@@ -24,51 +25,63 @@ class _AppState extends ConsumerState<App> {
   @override
   void initState() {
     super.initState();
-    FcmNotificationHandler(navigatorKey: _navigatorKey).initialize();
+    FcmNotificationHandler().initialize();
+
+    // ジオフェンス監視: 監視プランの変化に追従して開始/停止する。
+    // Provider は計算に徹し、副作用（service の開始/停止）はここで起こす（Riverpod 公式 DO）。
+    // build ではなく initState で listenManual するのは、購読を1回だけ確立すれば以降の変化は
+    // listener が追従するため（build 内 ref.listen は fireImmediately 非対応）。
+    // fireImmediately: true で初回プランにも反応し、従来の ref.watch と同じ初回挙動を保つ。
+    ref.listenManual(
+      geofenceMonitoringPlanProvider,
+      (previous, next) {
+        final service = ref.read(geofenceServiceProvider);
+        if (!next.shouldMonitor) {
+          service.stopMonitoring();
+          return;
+        }
+        service.updateMonitoredData(
+          locationsByGroupID: next.locationsByGroupID,
+          activeListsByLocationID: next.activeListsByLocationID,
+        );
+        service.startMonitoring();
+      },
+      fireImmediately: true,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // ローカル通知初期化
-    ref.watch(localNotificationsInitializedProvider);
-    // ジオフェンス監視を開始（条件を満たした場合のみ）
-    ref.watch(geofenceMonitorProvider);
-
     // appUserProvider は UserDatabaseResolver スコープ外では AsyncError になるが、
-    // .asData?.value で安全に null フォールバックし、デフォルト色が使われる
-    final seedColor = resolveThemeColor(
+    // .asData?.value で安全に null フォールバックし、shu（朱）が使われる
+    final accent = resolveAccentPreset(
         ref.watch(appUserProvider).asData?.value.themeColorHex);
 
     return MaterialApp(
       navigatorKey: _navigatorKey,
       title: '買い物リスト',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: seedColor,
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: seedColor,
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-      ),
+      theme: buildAppTheme(brightness: Brightness.light, accent: accent),
+      darkTheme: buildAppTheme(brightness: Brightness.dark, accent: accent),
       themeMode: ThemeMode.system,
-      builder: kDebugMode
-          ? (context, child) {
-              return ShakeDetectorWrapper(
-                onShake: () {
-                  final navigatorContext =
-                      Navigator.of(context, rootNavigator: true).context;
-                  showDeveloperOptionsModal(navigatorContext);
-                },
-                child: child ?? const SizedBox.shrink(),
-              );
-            }
-          : null,
+      builder: (context, child) {
+        Widget content = child ?? const SizedBox.shrink();
+        if (kDebugMode) {
+          content = ShakeDetectorWrapper(
+            onShake: () => showDeveloperOptionsModal(
+              Navigator.of(context, rootNavigator: true).context,
+            ),
+            child: content,
+          );
+        }
+        // ToastOverlay は Navigator(=child) の外側・最前面に置く。
+        // これによりダイアログ/ボトムシートの上にもトーストが表示される。
+        return Stack(
+          children: [
+            content,
+            const ToastOverlay(),
+          ],
+        );
+      },
       home: const RootPage(),
     );
   }

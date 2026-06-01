@@ -1,3 +1,4 @@
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/app_user.dart';
@@ -21,6 +22,7 @@ import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/remote_config_parameter.dart';
 import 'package:shoppinglist/provider/shared_preferences.dart';
 import 'package:shoppinglist/provider/auth_claim.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
@@ -112,8 +114,13 @@ class _NoOpShoppingListItemBatchUpdate extends ShoppingListItemBatchUpdate {
 
 class _NoOpCreateGroupInvitation extends CreateGroupInvitation {
   @override
-  Future<String> call({required String groupID}) async {
-    return 'PREVIEW';
+  Future<({String invitationCode, DateTime expiresDateTime})> call({
+    required String groupID,
+  }) async {
+    return (
+      invitationCode: 'PREVIEW',
+      expiresDateTime: DateTime.now().add(const Duration(days: 7)),
+    );
   }
 }
 
@@ -137,11 +144,13 @@ class _NoOpDefaultGroupUpdate extends DefaultGroupUpdate {
 
 class _NoOpCreateGroup extends CreateGroup {
   @override
-  Future<void> call({
+  Future<String> call({
     required AppUser appUser,
     required String? name,
     required bool setAsDefault,
-  }) async {}
+    required String iconName,
+  }) async =>
+      mockGroupID;
 }
 
 class _NoOpCategoryAxisAdd extends GroupCategoryAxisAdd {
@@ -231,6 +240,7 @@ class _NoOpShoppingLocationAdd extends ShoppingLocationAdd {
   @override
   Future<GroupShoppingLocation> call({
     required String name,
+    required String address,
     required double? latitude,
     required double? longitude,
     required double? geofenceRadiusMeters,
@@ -271,6 +281,10 @@ List<Override> previewProviderOverrides({
     remoteConfigParameterProvider
         .overrideWith((ref) => RemoteConfigParameter()),
     firestoreIsPremiumProvider.overrideWith((ref) => Future.value(false)),
+    // Preview では Purchases SDK 未初期化のため Stream.empty で逃がす。
+    // asData が常に null → `?? false` で isPremium=false に解決される。
+    customerInfoProvider
+        .overrideWith((ref) => const Stream<CustomerInfo>.empty()),
 
     // ユーザー・グループ (non-family)
     appUserProvider.overrideWith((ref) => Stream.value(mockAppUser())),

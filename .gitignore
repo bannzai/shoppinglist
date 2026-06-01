@@ -68,3 +68,5 @@ tmp/implement-issue/
 
 # run-pr-quality-checks skill temp files
 tmp/pr-quality-checks/
+
+.claude/skills/*/.venv/

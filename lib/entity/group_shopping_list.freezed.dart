@@ -19,6 +19,13 @@ mixin _$GroupShoppingList {
   String get groupID;
   String get name;
   GroupShoppingListStatus get status;
+
+  /// このリストでのアイテム追加・チェック切替時にグループ全員へ通知 SnackBar を
+  /// 表示するか。`design_handoff_shoppinglist/preview/screens-list-settings.jsx`
+  /// 準拠でリスト単位の設定として持つ。
+  /// グローバル通知設定 (SharedPreferences) と AND 条件で評価する。
+  /// 既存ドキュメントにはこのフィールドが存在しないため default で `false` を返す。
+  bool get autoNotifyEnabled;
   String? get shoppingLocationID;
   String? get duplicatedFromGroupShoppingListID;
   @TimestampConverter()
@@ -54,6 +61,8 @@ mixin _$GroupShoppingList {
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.status, status) || other.status == status) &&
+            (identical(other.autoNotifyEnabled, autoNotifyEnabled) ||
+                other.autoNotifyEnabled == autoNotifyEnabled) &&
             (identical(other.shoppingLocationID, shoppingLocationID) ||
                 other.shoppingLocationID == shoppingLocationID) &&
             (identical(other.duplicatedFromGroupShoppingListID,
@@ -81,6 +90,7 @@ mixin _$GroupShoppingList {
       groupID,
       name,
       status,
+      autoNotifyEnabled,
       shoppingLocationID,
       duplicatedFromGroupShoppingListID,
       ttlExpiresDateTime,
@@ -91,7 +101,7 @@ mixin _$GroupShoppingList {
 
   @override
   String toString() {
-    return 'GroupShoppingList(id: $id, createUserID: $createUserID, groupID: $groupID, name: $name, status: $status, shoppingLocationID: $shoppingLocationID, duplicatedFromGroupShoppingListID: $duplicatedFromGroupShoppingListID, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingList(id: $id, createUserID: $createUserID, groupID: $groupID, name: $name, status: $status, autoNotifyEnabled: $autoNotifyEnabled, shoppingLocationID: $shoppingLocationID, duplicatedFromGroupShoppingListID: $duplicatedFromGroupShoppingListID, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -107,6 +117,7 @@ abstract mixin class $GroupShoppingListCopyWith<$Res> {
       String groupID,
       String name,
       GroupShoppingListStatus status,
+      bool autoNotifyEnabled,
       String? shoppingLocationID,
       String? duplicatedFromGroupShoppingListID,
       @TimestampConverter() DateTime? ttlExpiresDateTime,
@@ -134,6 +145,7 @@ class _$GroupShoppingListCopyWithImpl<$Res>
     Object? groupID = null,
     Object? name = null,
     Object? status = null,
+    Object? autoNotifyEnabled = null,
     Object? shoppingLocationID = freezed,
     Object? duplicatedFromGroupShoppingListID = freezed,
     Object? ttlExpiresDateTime = freezed,
@@ -163,6 +175,10 @@ class _$GroupShoppingListCopyWithImpl<$Res>
           ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
               as GroupShoppingListStatus,
+      autoNotifyEnabled: null == autoNotifyEnabled
+          ? _self.autoNotifyEnabled
+          : autoNotifyEnabled // ignore: cast_nullable_to_non_nullable
+              as bool,
       shoppingLocationID: freezed == shoppingLocationID
           ? _self.shoppingLocationID
           : shoppingLocationID // ignore: cast_nullable_to_non_nullable
@@ -295,6 +311,7 @@ extension GroupShoppingListPatterns on GroupShoppingList {
             String groupID,
             String name,
             GroupShoppingListStatus status,
+            bool autoNotifyEnabled,
             String? shoppingLocationID,
             String? duplicatedFromGroupShoppingListID,
             @TimestampConverter() DateTime? ttlExpiresDateTime,
@@ -314,6 +331,7 @@ extension GroupShoppingListPatterns on GroupShoppingList {
             _that.groupID,
             _that.name,
             _that.status,
+            _that.autoNotifyEnabled,
             _that.shoppingLocationID,
             _that.duplicatedFromGroupShoppingListID,
             _that.ttlExpiresDateTime,
@@ -347,6 +365,7 @@ extension GroupShoppingListPatterns on GroupShoppingList {
             String groupID,
             String name,
             GroupShoppingListStatus status,
+            bool autoNotifyEnabled,
             String? shoppingLocationID,
             String? duplicatedFromGroupShoppingListID,
             @TimestampConverter() DateTime? ttlExpiresDateTime,
@@ -365,6 +384,7 @@ extension GroupShoppingListPatterns on GroupShoppingList {
             _that.groupID,
             _that.name,
             _that.status,
+            _that.autoNotifyEnabled,
             _that.shoppingLocationID,
             _that.duplicatedFromGroupShoppingListID,
             _that.ttlExpiresDateTime,
@@ -397,6 +417,7 @@ extension GroupShoppingListPatterns on GroupShoppingList {
             String groupID,
             String name,
             GroupShoppingListStatus status,
+            bool autoNotifyEnabled,
             String? shoppingLocationID,
             String? duplicatedFromGroupShoppingListID,
             @TimestampConverter() DateTime? ttlExpiresDateTime,
@@ -415,6 +436,7 @@ extension GroupShoppingListPatterns on GroupShoppingList {
             _that.groupID,
             _that.name,
             _that.status,
+            _that.autoNotifyEnabled,
             _that.shoppingLocationID,
             _that.duplicatedFromGroupShoppingListID,
             _that.ttlExpiresDateTime,
@@ -438,8 +460,9 @@ class _GroupShoppingList extends GroupShoppingList {
       required this.groupID,
       this.name = '',
       this.status = GroupShoppingListStatus.active,
-      this.shoppingLocationID,
-      this.duplicatedFromGroupShoppingListID,
+      this.autoNotifyEnabled = false,
+      required this.shoppingLocationID,
+      required this.duplicatedFromGroupShoppingListID,
       @TimestampConverter() required this.ttlExpiresDateTime,
       @ClientCreatedTimestamp() this.createdDateTime,
       @ClientUpdatedTimestamp() this.updatedDateTime,
@@ -461,6 +484,15 @@ class _GroupShoppingList extends GroupShoppingList {
   @override
   @JsonKey()
   final GroupShoppingListStatus status;
+
+  /// このリストでのアイテム追加・チェック切替時にグループ全員へ通知 SnackBar を
+  /// 表示するか。`design_handoff_shoppinglist/preview/screens-list-settings.jsx`
+  /// 準拠でリスト単位の設定として持つ。
+  /// グローバル通知設定 (SharedPreferences) と AND 条件で評価する。
+  /// 既存ドキュメントにはこのフィールドが存在しないため default で `false` を返す。
+  @override
+  @JsonKey()
+  final bool autoNotifyEnabled;
   @override
   final String? shoppingLocationID;
   @override
@@ -507,6 +539,8 @@ class _GroupShoppingList extends GroupShoppingList {
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.status, status) || other.status == status) &&
+            (identical(other.autoNotifyEnabled, autoNotifyEnabled) ||
+                other.autoNotifyEnabled == autoNotifyEnabled) &&
             (identical(other.shoppingLocationID, shoppingLocationID) ||
                 other.shoppingLocationID == shoppingLocationID) &&
             (identical(other.duplicatedFromGroupShoppingListID,
@@ -534,6 +568,7 @@ class _GroupShoppingList extends GroupShoppingList {
       groupID,
       name,
       status,
+      autoNotifyEnabled,
       shoppingLocationID,
       duplicatedFromGroupShoppingListID,
       ttlExpiresDateTime,
@@ -544,7 +579,7 @@ class _GroupShoppingList extends GroupShoppingList {
 
   @override
   String toString() {
-    return 'GroupShoppingList(id: $id, createUserID: $createUserID, groupID: $groupID, name: $name, status: $status, shoppingLocationID: $shoppingLocationID, duplicatedFromGroupShoppingListID: $duplicatedFromGroupShoppingListID, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingList(id: $id, createUserID: $createUserID, groupID: $groupID, name: $name, status: $status, autoNotifyEnabled: $autoNotifyEnabled, shoppingLocationID: $shoppingLocationID, duplicatedFromGroupShoppingListID: $duplicatedFromGroupShoppingListID, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -562,6 +597,7 @@ abstract mixin class _$GroupShoppingListCopyWith<$Res>
       String groupID,
       String name,
       GroupShoppingListStatus status,
+      bool autoNotifyEnabled,
       String? shoppingLocationID,
       String? duplicatedFromGroupShoppingListID,
       @TimestampConverter() DateTime? ttlExpiresDateTime,
@@ -589,6 +625,7 @@ class __$GroupShoppingListCopyWithImpl<$Res>
     Object? groupID = null,
     Object? name = null,
     Object? status = null,
+    Object? autoNotifyEnabled = null,
     Object? shoppingLocationID = freezed,
     Object? duplicatedFromGroupShoppingListID = freezed,
     Object? ttlExpiresDateTime = freezed,
@@ -618,6 +655,10 @@ class __$GroupShoppingListCopyWithImpl<$Res>
           ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
               as GroupShoppingListStatus,
+      autoNotifyEnabled: null == autoNotifyEnabled
+          ? _self.autoNotifyEnabled
+          : autoNotifyEnabled // ignore: cast_nullable_to_non_nullable
+              as bool,
       shoppingLocationID: freezed == shoppingLocationID
           ? _self.shoppingLocationID
           : shoppingLocationID // ignore: cast_nullable_to_non_nullable

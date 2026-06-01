@@ -1,0 +1,41 @@
+appId: com.bannzai.shoppinglist
+---
+# 開発者オプション画面 → 「プレミアム付与（1日）」ボタンタップ → 完了確認の共通サブフロー。
+#
+# 経緯:
+# Issue #237 (https://github.com/bannzai/shoppinglist/issues/237) で iOS Test Store
+# mock purchase modal 経由の Maestro E2E が flaky と判明したため、
+# Issue #239 (https://github.com/bannzai/shoppinglist/issues/239) で
+# `premium_*.yaml` の前段プレミアム化は本フロー（RC Promotional Entitlement の直接付与）
+# に切り替えた。`shared/mock_purchase.yaml` は `iap_purchase_*.yaml` の実購入検証専用として残す。
+#
+# 実装位置: `lib/features/developer_options/page.dart` の「プレミアム付与（1日）」ボタン
+# (`_ActionTile` + `_execute` パターン)。`functions.grantPromotionalPremium(duration: 'daily')`
+# を呼んで `customerInfoProvider` を invalidate する。
+#
+# Flutter ListTile の title/subtitle が 1 つのセマンティクス要素にマージされるため
+# `assertVisible` の text 単独マッチが iOS で不安定。`extendedWaitUntil` + 部分一致
+# regex で安定化する。
+
+- runFlow: open_developer_options.yaml
+
+- extendedWaitUntil:
+    visible: "プレミアム付与（1日）"
+    timeout: 10000
+- tapOn: "プレミアム付与（1日）"
+
+# `_execute` が完了時に resultMessage.value = '$actionName 完了' を表示する。
+- extendedWaitUntil:
+    visible: "プレミアム付与 完了"
+    timeout: 30000
+
+# 開発者オプション画面から設定タブに戻る。設定画面の scroll 位置は「開発者オプション」
+# 付近のまま残るため、買い物リストタブに切り替えて初期状態に戻す。
+# Flutter BottomNavigationBar のタブラベルは Maestro の text マッチで安定に拾えない
+# （Semantics merge 問題）ため、画面下端の左タブを座標タップする。iPhone 16 Plus
+# (430x932 points) でタブバー左タブ中心がおおよそ 25%,93% 付近。
+- tapOn: "Back"
+- waitForAnimationToEnd
+- tapOn:
+    point: "25%,93%"
+- waitForAnimationToEnd

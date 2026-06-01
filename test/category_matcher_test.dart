@@ -9,39 +9,48 @@ void main() {
     test('完全一致マッチング', () {
       final categories = [
         GroupCategory(
-          id: 'cat1',
-          groupID: 'group1',
-          userID: 'user1',
-          groupCategoryAxisID: 'axis1',
-          name: '野菜',
-          order: 0,
-          locationOrders: {},
-          keywords: [
-            const GroupCategoryKeyword(
-              keyword: 'にんじん',
-              matchingType: GroupCategoryKeywordMatchingType.exact,
-            ),
-          ],
-        ),
+            id: 'cat1',
+            groupID: 'group1',
+            userID: 'user1',
+            groupCategoryAxisID: 'axis1',
+            name: '野菜',
+            order: 0,
+            locationOrders: {},
+            keywords: [
+              const GroupCategoryKeyword(
+                keyword: 'にんじん',
+                matchingType: GroupCategoryKeywordMatchingType.exact,
+              ),
+            ],
+            color: null,
+            iconName: null),
       ];
 
       final items = [
         const GroupShoppingListItem(
-          id: 'item1',
-          groupID: 'group1',
-          shoppingListID: 'list1',
-          userID: 'user1',
-          message: 'にんじん',
-          order: 0,
-        ),
+            id: 'item1',
+            groupID: 'group1',
+            shoppingListID: 'list1',
+            userID: 'user1',
+            message: 'にんじん',
+            order: 0,
+            checkedByUserID: null,
+            color: null,
+            description: null,
+            imageURL: null,
+            lastEditedByUserID: null),
         const GroupShoppingListItem(
-          id: 'item2',
-          groupID: 'group1',
-          shoppingListID: 'list1',
-          userID: 'user1',
-          message: 'にんじんジュース',
-          order: 1,
-        ),
+            id: 'item2',
+            groupID: 'group1',
+            shoppingListID: 'list1',
+            userID: 'user1',
+            message: 'にんじんジュース',
+            order: 1,
+            checkedByUserID: null,
+            color: null,
+            description: null,
+            imageURL: null,
+            lastEditedByUserID: null),
       ];
 
       final result = groupItemsByCategory(
@@ -58,31 +67,36 @@ void main() {
     test('部分一致マッチング', () {
       final categories = [
         GroupCategory(
-          id: 'cat1',
-          groupID: 'group1',
-          userID: 'user1',
-          groupCategoryAxisID: 'axis1',
-          name: '野菜',
-          order: 0,
-          locationOrders: {},
-          keywords: [
-            const GroupCategoryKeyword(
-              keyword: 'にんじん',
-              matchingType: GroupCategoryKeywordMatchingType.partial,
-            ),
-          ],
-        ),
+            id: 'cat1',
+            groupID: 'group1',
+            userID: 'user1',
+            groupCategoryAxisID: 'axis1',
+            name: '野菜',
+            order: 0,
+            locationOrders: {},
+            keywords: [
+              const GroupCategoryKeyword(
+                keyword: 'にんじん',
+                matchingType: GroupCategoryKeywordMatchingType.partial,
+              ),
+            ],
+            color: null,
+            iconName: null),
       ];
 
       final items = [
         const GroupShoppingListItem(
-          id: 'item1',
-          groupID: 'group1',
-          shoppingListID: 'list1',
-          userID: 'user1',
-          message: 'にんじんジュース',
-          order: 0,
-        ),
+            id: 'item1',
+            groupID: 'group1',
+            shoppingListID: 'list1',
+            userID: 'user1',
+            message: 'にんじんジュース',
+            order: 0,
+            checkedByUserID: null,
+            color: null,
+            description: null,
+            imageURL: null,
+            lastEditedByUserID: null),
       ];
 
       final result = groupItemsByCategory(
@@ -97,31 +111,36 @@ void main() {
     test('大文字小文字の区別なし', () {
       final categories = [
         GroupCategory(
-          id: 'cat1',
-          groupID: 'group1',
-          userID: 'user1',
-          groupCategoryAxisID: 'axis1',
-          name: 'Drinks',
-          order: 0,
-          locationOrders: {},
-          keywords: [
-            const GroupCategoryKeyword(
-              keyword: 'Milk',
-              matchingType: GroupCategoryKeywordMatchingType.exact,
-            ),
-          ],
-        ),
+            id: 'cat1',
+            groupID: 'group1',
+            userID: 'user1',
+            groupCategoryAxisID: 'axis1',
+            name: 'Drinks',
+            order: 0,
+            locationOrders: {},
+            keywords: [
+              const GroupCategoryKeyword(
+                keyword: 'Milk',
+                matchingType: GroupCategoryKeywordMatchingType.exact,
+              ),
+            ],
+            color: null,
+            iconName: null),
       ];
 
       final items = [
         const GroupShoppingListItem(
-          id: 'item1',
-          groupID: 'group1',
-          shoppingListID: 'list1',
-          userID: 'user1',
-          message: 'milk',
-          order: 0,
-        ),
+            id: 'item1',
+            groupID: 'group1',
+            shoppingListID: 'list1',
+            userID: 'user1',
+            message: 'milk',
+            order: 0,
+            checkedByUserID: null,
+            color: null,
+            description: null,
+            imageURL: null,
+            lastEditedByUserID: null),
       ];
 
       final result = groupItemsByCategory(
@@ -135,46 +154,52 @@ void main() {
     test('複数カテゴリにマッチ時は先頭カテゴリに分類', () {
       final categories = [
         GroupCategory(
-          id: 'cat1',
-          groupID: 'group1',
-          userID: 'user1',
-          groupCategoryAxisID: 'axis1',
-          name: '野菜',
-          order: 0,
-          locationOrders: {},
-          keywords: [
-            const GroupCategoryKeyword(
-              keyword: 'トマト',
-              matchingType: GroupCategoryKeywordMatchingType.partial,
-            ),
-          ],
-        ),
+            id: 'cat1',
+            groupID: 'group1',
+            userID: 'user1',
+            groupCategoryAxisID: 'axis1',
+            name: '野菜',
+            order: 0,
+            locationOrders: {},
+            keywords: [
+              const GroupCategoryKeyword(
+                keyword: 'トマト',
+                matchingType: GroupCategoryKeywordMatchingType.partial,
+              ),
+            ],
+            color: null,
+            iconName: null),
         GroupCategory(
-          id: 'cat2',
-          groupID: 'group1',
-          userID: 'user1',
-          groupCategoryAxisID: 'axis1',
-          name: '果物',
-          order: 1,
-          locationOrders: {},
-          keywords: [
-            const GroupCategoryKeyword(
-              keyword: 'トマト',
-              matchingType: GroupCategoryKeywordMatchingType.partial,
-            ),
-          ],
-        ),
+            id: 'cat2',
+            groupID: 'group1',
+            userID: 'user1',
+            groupCategoryAxisID: 'axis1',
+            name: '果物',
+            order: 1,
+            locationOrders: {},
+            keywords: [
+              const GroupCategoryKeyword(
+                keyword: 'トマト',
+                matchingType: GroupCategoryKeywordMatchingType.partial,
+              ),
+            ],
+            color: null,
+            iconName: null),
       ];
 
       final items = [
         const GroupShoppingListItem(
-          id: 'item1',
-          groupID: 'group1',
-          shoppingListID: 'list1',
-          userID: 'user1',
-          message: 'トマト',
-          order: 0,
-        ),
+            id: 'item1',
+            groupID: 'group1',
+            shoppingListID: 'list1',
+            userID: 'user1',
+            message: 'トマト',
+            order: 0,
+            checkedByUserID: null,
+            color: null,
+            description: null,
+            imageURL: null,
+            lastEditedByUserID: null),
       ];
 
       final result = groupItemsByCategory(
@@ -189,31 +214,36 @@ void main() {
     test('マッチしないアイテムは未分類', () {
       final categories = [
         GroupCategory(
-          id: 'cat1',
-          groupID: 'group1',
-          userID: 'user1',
-          groupCategoryAxisID: 'axis1',
-          name: '野菜',
-          order: 0,
-          locationOrders: {},
-          keywords: [
-            const GroupCategoryKeyword(
-              keyword: 'にんじん',
-              matchingType: GroupCategoryKeywordMatchingType.exact,
-            ),
-          ],
-        ),
+            id: 'cat1',
+            groupID: 'group1',
+            userID: 'user1',
+            groupCategoryAxisID: 'axis1',
+            name: '野菜',
+            order: 0,
+            locationOrders: {},
+            keywords: [
+              const GroupCategoryKeyword(
+                keyword: 'にんじん',
+                matchingType: GroupCategoryKeywordMatchingType.exact,
+              ),
+            ],
+            color: null,
+            iconName: null),
       ];
 
       final items = [
         const GroupShoppingListItem(
-          id: 'item1',
-          groupID: 'group1',
-          shoppingListID: 'list1',
-          userID: 'user1',
-          message: '牛乳',
-          order: 0,
-        ),
+            id: 'item1',
+            groupID: 'group1',
+            shoppingListID: 'list1',
+            userID: 'user1',
+            message: '牛乳',
+            order: 0,
+            checkedByUserID: null,
+            color: null,
+            description: null,
+            imageURL: null,
+            lastEditedByUserID: null),
       ];
 
       final result = groupItemsByCategory(
@@ -228,21 +258,29 @@ void main() {
     test('カテゴリが空の場合は全て未分類', () {
       final items = [
         const GroupShoppingListItem(
-          id: 'item1',
-          groupID: 'group1',
-          shoppingListID: 'list1',
-          userID: 'user1',
-          message: 'にんじん',
-          order: 0,
-        ),
+            id: 'item1',
+            groupID: 'group1',
+            shoppingListID: 'list1',
+            userID: 'user1',
+            message: 'にんじん',
+            order: 0,
+            checkedByUserID: null,
+            color: null,
+            description: null,
+            imageURL: null,
+            lastEditedByUserID: null),
         const GroupShoppingListItem(
-          id: 'item2',
-          groupID: 'group1',
-          shoppingListID: 'list1',
-          userID: 'user1',
-          message: '牛乳',
-          order: 1,
-        ),
+            id: 'item2',
+            groupID: 'group1',
+            shoppingListID: 'list1',
+            userID: 'user1',
+            message: '牛乳',
+            order: 1,
+            checkedByUserID: null,
+            color: null,
+            description: null,
+            imageURL: null,
+            lastEditedByUserID: null),
       ];
 
       final result = groupItemsByCategory(
@@ -257,20 +295,21 @@ void main() {
     test('アイテムが空の場合は空マップ', () {
       final categories = [
         GroupCategory(
-          id: 'cat1',
-          groupID: 'group1',
-          userID: 'user1',
-          groupCategoryAxisID: 'axis1',
-          name: '野菜',
-          order: 0,
-          locationOrders: {},
-          keywords: [
-            const GroupCategoryKeyword(
-              keyword: 'にんじん',
-              matchingType: GroupCategoryKeywordMatchingType.exact,
-            ),
-          ],
-        ),
+            id: 'cat1',
+            groupID: 'group1',
+            userID: 'user1',
+            groupCategoryAxisID: 'axis1',
+            name: '野菜',
+            order: 0,
+            locationOrders: {},
+            keywords: [
+              const GroupCategoryKeyword(
+                keyword: 'にんじん',
+                matchingType: GroupCategoryKeywordMatchingType.exact,
+              ),
+            ],
+            color: null,
+            iconName: null),
       ];
 
       final result = groupItemsByCategory(

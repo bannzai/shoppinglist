@@ -1,0 +1,40 @@
+appId: com.bannzai.shoppinglist
+---
+# プレミアム状態では位置情報リマインダーを有効化できることを確認する。
+# non_premium 版では SnackBar で遮断される。
+
+- runFlow: shared/anonymous_sign_in.yaml
+- runFlow: shared/grant_premium_via_debug.yaml
+
+# 設定 → 位置情報リマインダー Switch（grant_premium_via_debug.yaml 終了時点で設定画面の
+# 下方にいるため UP 方向にスクロールして位置情報リマインダー ListTile まで戻す）
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+# `位置情報リマインダー` SwitchListTile は title + subtitle + Switch が 1 つの Semantics
+# ノードにマージされ、Maestro の `scrollUntilVisible` の visibility 判定が常に 0 と
+# 報告される (commands.json visibilityPercentageNormalized=0.0)。これは PR #245 以前から
+# 報告されている既知問題で、grant_premium_via_debug.yaml の冒頭コメントと同じ理由。
+# 部分一致 regex で `extendedWaitUntil` + `tapOn` する方が安定する。
+- extendedWaitUntil:
+    visible:
+      text: ".*位置情報リマインダー.*"
+    timeout: 10000
+- tapOn:
+    text: ".*位置情報リマインダー.*"
+    index: 0
+- waitForAnimationToEnd
+
+# non_premium 時の SnackBar が出ないこと
+- assertNotVisible: "位置情報リマインダーはプレミアム機能です"
+
+# 位置情報権限ダイアログが出たら許可する
+- runFlow:
+    when:
+      visible: "許可"
+    commands:
+      - tapOn: "許可"
+      - waitForAnimationToEnd
+
+- takeScreenshot: screenshots/premium_location_reminder_unlocked

@@ -4,14 +4,34 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/features/group_category/category_edit_page.dart';
+import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+
+/// カテゴリ画面用の paper bg Scaffold（loading/error/empty 用）。
+class _CategoryScaffold extends StatelessWidget {
+  final Widget child;
+  const _CategoryScaffold({required this.child});
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.tokens;
+    return Scaffold(
+      backgroundColor: tokens.neutral.paper,
+      appBar: AppBar(
+        title: const Text('カテゴリ'),
+        backgroundColor: tokens.neutral.paper,
+      ),
+      body: child,
+    );
+  }
+}
 
 class GroupCategoryPage extends ConsumerWidget {
   final String groupID;
@@ -28,9 +48,8 @@ class GroupCategoryPage extends ConsumerWidget {
     return axesAsync.when(
       data: (axes) {
         if (axes.isEmpty) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('カテゴリ')),
-            body: Center(
+          return _CategoryScaffold(
+            child: Center(
               child: OutlinedButton.icon(
                 onPressed: () {
                   analytics.logEvent(
@@ -57,14 +76,10 @@ class GroupCategoryPage extends ConsumerWidget {
           axes: axes,
         );
       },
-      error: (e, st) => Scaffold(
-        appBar: AppBar(title: const Text('カテゴリ')),
-        body: Center(child: Text(e.toString())),
-      ),
-      loading: () => Scaffold(
-        appBar: AppBar(title: const Text('カテゴリ')),
-        body: const Center(child: CircularProgressIndicator()),
-      ),
+      error: (e, st) =>
+          _CategoryScaffold(child: Center(child: Text(e.toString()))),
+      loading: () => const _CategoryScaffold(
+          child: Center(child: CircularProgressIndicator())),
     );
   }
 
@@ -188,9 +203,14 @@ class _CategoryListBody extends HookConsumerWidget {
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
 
+    final tokens = context.tokens;
     return categoriesAsync.when(
       data: (categories) => Scaffold(
-        appBar: AppBar(title: const Text('カテゴリ')),
+        backgroundColor: tokens.neutral.paper,
+        appBar: AppBar(
+          title: const Text('カテゴリ'),
+          backgroundColor: tokens.neutral.paper,
+        ),
         body: categories.isEmpty
             ? const Center(child: Text('カテゴリがまだありません'))
             : Column(
@@ -236,8 +256,14 @@ class _CategoryListBody extends HookConsumerWidget {
                             );
                             if (value != null && !isPremium) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
+                                SnackBar(
+                                  content:
+                                      const Text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
+                                  action: SnackBarAction(
+                                    label: 'アップグレード',
+                                    onPressed: () =>
+                                        showPaywall(context: context),
+                                  ),
                                 ),
                               );
                               return;
@@ -275,14 +301,10 @@ class _CategoryListBody extends HookConsumerWidget {
           child: const Icon(Icons.add),
         ),
       ),
-      error: (e, st) => Scaffold(
-        appBar: AppBar(title: const Text('カテゴリ')),
-        body: Center(child: Text(e.toString())),
-      ),
-      loading: () => Scaffold(
-        appBar: AppBar(title: const Text('カテゴリ')),
-        body: const Center(child: CircularProgressIndicator()),
-      ),
+      error: (e, st) =>
+          _CategoryScaffold(child: Center(child: Text(e.toString()))),
+      loading: () => const _CategoryScaffold(
+          child: Center(child: CircularProgressIndicator())),
     );
   }
 
@@ -391,8 +413,12 @@ class _CategoryReorderableList extends ConsumerWidget {
         if (selectedShoppingLocationID != null) {
           if (!isPremium) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
+              SnackBar(
+                content: const Text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
+                action: SnackBarAction(
+                  label: 'アップグレード',
+                  onPressed: () => showPaywall(context: context),
+                ),
               ),
             );
             return;
@@ -469,8 +495,7 @@ class _CategoryReorderableList extends ConsumerWidget {
                 },
               ),
               IconButton(
-                icon: Icon(Icons.delete,
-                    color: Theme.of(context).colorScheme.error),
+                icon: Icon(Icons.delete, color: context.tokens.neutral.danger),
                 onPressed: () {
                   analytics.logEvent(name: 'tap_delete_category', parameters: {
                     'groupID': groupID,
@@ -524,7 +549,10 @@ class _CategoryReorderableList extends ConsumerWidget {
             },
             child: Text(
               '削除',
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: context.tokens.neutral.danger),
             ),
           ),
           TextButton(

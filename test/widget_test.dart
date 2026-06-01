@@ -5,11 +5,12 @@ import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 void main() {
   test('ShoppingList entity smoke test', () {
     final shoppingList = GroupShoppingList(
-      id: 'test-id',
-      createUserID: 'user-id',
-      groupID: 'group-id',
-      ttlExpiresDateTime: null,
-    );
+        id: 'test-id',
+        createUserID: 'user-id',
+        groupID: 'group-id',
+        ttlExpiresDateTime: null,
+        duplicatedFromGroupShoppingListID: null,
+        shoppingLocationID: null);
     expect(shoppingList.id, 'test-id');
     expect(shoppingList.createUserID, 'user-id');
     expect(shoppingList.groupID, 'group-id');
@@ -19,13 +20,17 @@ void main() {
 
   test('ShoppingListItem entity smoke test', () {
     final item = GroupShoppingListItem(
-      id: 'item-id',
-      groupID: 'group-id',
-      shoppingListID: 'shopping-list-id',
-      userID: 'user-id',
-      message: 'Buy milk',
-      order: 0,
-    );
+        id: 'item-id',
+        groupID: 'group-id',
+        shoppingListID: 'shopping-list-id',
+        userID: 'user-id',
+        message: 'Buy milk',
+        order: 0,
+        checkedByUserID: null,
+        color: null,
+        description: null,
+        imageURL: null,
+        lastEditedByUserID: null);
     expect(item.id, 'item-id');
     expect(item.order, 0);
   });
@@ -38,14 +43,24 @@ void main() {
           shoppingListID: 'shopping-list-id',
           userID: 'user-id',
           message: 'Item 1',
-          order: 0),
+          order: 0,
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          imageURL: null,
+          lastEditedByUserID: null),
       GroupShoppingListItem(
           id: '2',
           groupID: 'group-id',
           shoppingListID: 'shopping-list-id',
           userID: 'user-id',
           message: 'Item 2',
-          order: 1),
+          order: 1,
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          imageURL: null,
+          lastEditedByUserID: null),
     ];
     expect(items.nextOrder, 2);
   });
@@ -53,16 +68,18 @@ void main() {
   group('GroupShoppingListItem serialization', () {
     GroupShoppingListItem createTestItem() {
       return GroupShoppingListItem(
-        id: 'item-1',
-        groupID: 'group-1',
-        shoppingListID: 'list-1',
-        userID: 'user-1',
-        message: 'Buy eggs',
-        order: 0,
-        status: GroupShoppingListItemStatus.unchecked,
-        description: 'organic eggs',
-        color: '#FF0000',
-      );
+          id: 'item-1',
+          groupID: 'group-1',
+          shoppingListID: 'list-1',
+          userID: 'user-1',
+          message: 'Buy eggs',
+          order: 0,
+          status: GroupShoppingListItemStatus.unchecked,
+          description: 'organic eggs',
+          color: '#FF0000',
+          checkedByUserID: null,
+          imageURL: null,
+          lastEditedByUserID: null);
     }
 
     test('toJson does not contain type field', () {

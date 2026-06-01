@@ -71,14 +71,14 @@ class InquiryButton extends ConsumerWidget {
       ),
       label: Text(
         'お問い合わせ',
-        style: TextStyle(
-          fontWeight: FontWeight.w300,
-          fontSize: 14,
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w300,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
       ),
       onPressed: () {
-        analytics.logEvent(name: 'problem_unresolved_button_pressed');
+        analytics.logEvent(
+            name: 'problem_unresolved_button_pressed', parameters: null);
         inquiry();
       },
     );

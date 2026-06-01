@@ -29,7 +29,8 @@ class DeleteUserButton extends HookConsumerWidget {
               if (isLoading.value) {
                 return;
               }
-              analytics.logEvent(name: 'tap_show_delete_account');
+              analytics.logEvent(
+                  name: 'tap_show_delete_account', parameters: null);
 
               showDiscardDialog(
                 context,
@@ -38,21 +39,25 @@ class DeleteUserButton extends HookConsumerWidget {
                 actions: [
                   TextButton(
                     onPressed: () async {
-                      analytics.logEvent(name: 'cancel_delete_account');
+                      analytics.logEvent(
+                          name: 'cancel_delete_account', parameters: null);
                       Navigator.of(context).pop();
                     },
                     child: Text(
                       'キャンセル',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w600,
+                          ),
                     ),
                   ),
                   TextButton(
                     onPressed: () async {
                       if (!isLoading.value) {
-                        analytics.logEvent(name: 'tap_confirm_delete_account');
+                        analytics.logEvent(
+                            name: 'tap_confirm_delete_account',
+                            parameters: null);
                         isLoading.value = true;
                         await _delete(
                           context,
@@ -63,7 +68,7 @@ class DeleteUserButton extends HookConsumerWidget {
                       }
                     },
                     child: Text('削除する',
-                        style: TextStyle(
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Theme.of(context).colorScheme.error,
                             fontWeight: FontWeight.w600)),
                   ),
@@ -104,20 +109,22 @@ class DeleteUserButton extends HookConsumerWidget {
           actions: [
             TextButton(
               onPressed: () async {
-                analytics.logEvent(name: 'cancel_reauth_for_delete');
+                analytics.logEvent(
+                    name: 'cancel_reauth_for_delete', parameters: null);
                 Navigator.of(context).pop();
               },
               child: Text(
                 'キャンセル',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ),
             TextButton(
               onPressed: () async {
-                analytics.logEvent(name: 'tap_reauth_for_delete');
+                analytics.logEvent(
+                    name: 'tap_reauth_for_delete', parameters: null);
                 final navigator = Navigator.of(context);
                 if (isAppleLinked) {
                   await appleReauthentification();
@@ -135,10 +142,10 @@ class DeleteUserButton extends HookConsumerWidget {
               },
               child: Text(
                 '再ログインする',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ),
           ],
@@ -167,21 +174,18 @@ class _CompletedDialog extends StatelessWidget {
         children: [
           Text(
             'アカウントを削除しました',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontWeight: FontWeight.w700,
-              fontSize: 16,
-            ),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.w700,
+                ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
           Text(
             'アプリを終了しますか？',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontWeight: FontWeight.w400,
-              fontSize: 14,
-            ),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -189,15 +193,16 @@ class _CompletedDialog extends StatelessWidget {
             width: 180,
             child: TextButton(
               onPressed: () async {
-                analytics.logEvent(name: 'tap_exit_app_after_delete');
+                analytics.logEvent(
+                    name: 'tap_exit_app_after_delete', parameters: null);
                 exit(0);
               },
               child: Text(
                 '終了する',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ),
           ),

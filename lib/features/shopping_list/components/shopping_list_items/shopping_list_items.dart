@@ -3,12 +3,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
+import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_section_header.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
+import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
-import 'package:shoppinglist/style/category_presets.dart';
-import 'package:shoppinglist/style/color.dart';
 
 class ShoppingListItems extends ConsumerWidget {
   final String groupID;
@@ -80,23 +80,18 @@ class _FlatShoppingListItems extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ReorderableList(
       onReorder: (oldIndex, newIndex) {
-        // NOTE: ドラッグ時にリストから要素を一時的に削除するため、newIndex が1つずれるのを調整。
+        // ドラッグ時にリストから要素を一時的に削除するため newIndex がずれるのを調整
         if (oldIndex < newIndex) {
           newIndex -= 1;
         }
-        debugPrint('oldIndex: $oldIndex, newIndex: $newIndex');
-
         final changedItems = [...shoppingListItems];
         final movedItem = changedItems.removeAt(oldIndex);
         changedItems.insert(newIndex, movedItem);
-
-        // 更新したリストに基づき order を再計算
         final orderedItems = changedItems
             .asMap()
             .entries
             .map((entry) => entry.value.copyWith(order: entry.key))
             .toList();
-
         ref.read(shoppingListItemBatchUpdateProvider(groupID: groupID)).call(
               shoppingListID: shoppingListID,
               shoppingListItems: orderedItems,
@@ -105,7 +100,6 @@ class _FlatShoppingListItems extends ConsumerWidget {
       itemCount: shoppingListItems.length,
       itemBuilder: (context, index) {
         final item = shoppingListItems[index];
-
         return TextShoppingListItemWidget(
           key: ValueKey(item.id),
           groupID: groupID,
@@ -174,8 +168,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
   }
 }
 
-/// カテゴリヘッダー付きのグルーピング表示
-/// グルーピング表示時はドラッグ&ドロップを無効にする
+/// カテゴリヘッダー付きのグルーピング表示。グルーピング表示時はドラッグ&ドロップを無効にする。
 class _GroupedListView extends StatelessWidget {
   final String groupID;
   final String shoppingListID;
@@ -194,8 +187,6 @@ class _GroupedListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categoryMap = {for (final c in categories) c.id: c};
-
-    // ロケーション別順序でカテゴリをソート（orderが小さいものから）
     final sortedCategories = sortCategoriesByLocation(
       categories: categories,
       shoppingLocationID: shoppingLocationID,
@@ -209,88 +200,47 @@ class _GroupedListView extends StatelessWidget {
       if (items == null || items.isEmpty) continue;
 
       final category = categoryMap[categoryID]!;
-      children.add(_CategoryHeader(
-        categoryName: category.name,
-        color: category.color,
-        iconName: category.iconName,
-      ));
+      final metrics = ShoppingListItemMetrics.fromItems(items);
+      if (metrics.totalCount > 0) {
+        children.add(CategorySectionHeader(
+          name: category.name,
+          colorHex: category.color,
+          doneCount: metrics.checkedCount,
+          totalCount: metrics.totalCount,
+        ));
+      }
 
       for (final item in items) {
         children.add(TextShoppingListItemWidget(
-          key: ValueKey(item.id),
-          groupID: groupID,
-          textShoppingListItem: item,
-          shoppingListItems: items,
-        ));
+            key: ValueKey(item.id),
+            groupID: groupID,
+            textShoppingListItem: item,
+            shoppingListItems: items,
+            reorderIndex: null));
       }
     }
 
-    // 未分類アイテム
     final uncategorizedItems = grouped[uncategorizedCategoryID];
     if (uncategorizedItems != null && uncategorizedItems.isNotEmpty) {
-      children.add(const _CategoryHeader(categoryName: '未分類'));
-
+      final metrics = ShoppingListItemMetrics.fromItems(uncategorizedItems);
+      if (metrics.totalCount > 0) {
+        children.add(CategorySectionHeader(
+          name: '未分類',
+          colorHex: null,
+          doneCount: metrics.checkedCount,
+          totalCount: metrics.totalCount,
+        ));
+      }
       for (final item in uncategorizedItems) {
         children.add(TextShoppingListItemWidget(
-          key: ValueKey(item.id),
-          groupID: groupID,
-          textShoppingListItem: item,
-          shoppingListItems: uncategorizedItems,
-        ));
+            key: ValueKey(item.id),
+            groupID: groupID,
+            textShoppingListItem: item,
+            shoppingListItems: uncategorizedItems,
+            reorderIndex: null));
       }
     }
 
     return ListView(children: children);
-  }
-}
-
-class _CategoryHeader extends StatelessWidget {
-  final String categoryName;
-  final String? color;
-  final String? iconName;
-
-  const _CategoryHeader({
-    required this.categoryName,
-    this.color,
-    this.iconName,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final categoryColor = color != null ? colorFromHex(color!) : null;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: categoryColor?.withValues(alpha: 0.1) ??
-            colorScheme.surfaceContainerHighest,
-        border: Border(
-          left: categoryColor != null
-              ? BorderSide(color: categoryColor, width: 4)
-              : BorderSide.none,
-          bottom: BorderSide(color: colorScheme.outlineVariant, width: 0.5),
-        ),
-      ),
-      child: Row(
-        children: [
-          if (iconName != null) ...[
-            Icon(
-              categoryIconFromName(iconName),
-              size: 18,
-              color: categoryColor ?? colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(width: 8),
-          ],
-          Text(
-            categoryName,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: categoryColor ?? colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-        ],
-      ),
-    );
   }
 }
