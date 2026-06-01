@@ -1,27 +1,68 @@
 appId: com.bannzai.shoppinglist
 ---
-- runFlow: shared/anonymous_sign_in.yaml
+# 左スワイプ削除 → Undo（元に戻す）の E2E。
+# NOTE: 共通の shared/anonymous_sign_in.yaml は design v2 のオンボーディング表示と
+#       空状態 UI（「タップで入力開始」）にまだ追従していないため、このフローでは
+#       サインインまでを自前で記述する。
+- launchApp:
+    clearState: true
+    clearKeychain: true
+- runFlow:
+    when:
+      visible: "許可"
+    commands:
+      - tapOn: "許可"
+      - waitForAnimationToEnd
+# オンボーディングが表示されたらスキップ
+- runFlow:
+    when:
+      visible: "スキップ"
+    commands:
+      - tapOn: "スキップ"
+      - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "匿名サインイン（デバッグ用）"
+    timeout: 90000
+- tapOn: "匿名サインイン（デバッグ用）"
+- waitForAnimationToEnd
+- runFlow:
+    when:
+      visible: "Retry"
+    commands:
+      - tapOn: "Retry"
+      - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "タップで入力開始"
+    timeout: 60000
 
-# アイテムを追加
-- tapOn: "アイテムを追加"
+# アイテムを追加（空状態の「タップで入力開始」行から入力する）
+- tapOn: "タップで入力開始"
+- waitForAnimationToEnd
 - inputText: "削除テスト用アイテム"
 - pressKey: enter
-# 空アイテムを削除
+# 連続入力で生成される空アイテムを確定して削除
 - pressKey: enter
 - hideKeyboard
 - waitForAnimationToEnd
 - assertVisible: "削除テスト用アイテム"
 - takeScreenshot: screenshots/swipe_delete_01_before
 
-# アイテムをスワイプ削除（左→右方向、Dismissible direction: startToEnd）
-# from でセレクタを指定し、要素中心から RIGHT 方向へスワイプ
+# 左スワイプで削除（Dismissible direction: endToStart）。
+# このアプリでは右スワイプ=チェック切替、左スワイプ=削除（design_v2_list_core.yaml 参照）。
+# テキストは行の左寄りにあるため、行の右端から左へスワイプして dismissThreshold を超える。
 - swipe:
-    from:
-      text: "削除テスト用アイテム"
-    direction: RIGHT
-    duration: 600
+    start: "92%, 28%"
+    end: "8%, 28%"
+    duration: 800
 - waitForAnimationToEnd
 
-# 空リスト状態に戻る
-- assertVisible: "アイテムを追加"
-- takeScreenshot: screenshots/swipe_delete_02_after
+# 削除され、Undo SnackBar が表示される
+- assertNotVisible: "削除テスト用アイテム"
+- assertVisible: "元に戻す"
+- takeScreenshot: screenshots/swipe_delete_02_deleted
+
+# 「元に戻す」で削除前の状態に復元される
+- tapOn: "元に戻す"
+- waitForAnimationToEnd
+- assertVisible: "削除テスト用アイテム"
+- takeScreenshot: screenshots/swipe_delete_03_restored
