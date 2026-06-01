@@ -1,3 +1,8 @@
+---
+paths:
+  - "lib/**/*.dart"
+---
+
 # Firestore FieldValue ルール
 
 ## FieldValue.delete() を使用しない

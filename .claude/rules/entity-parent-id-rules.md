@@ -1,3 +1,8 @@
+---
+paths:
+  - "lib/entity/**/*.dart"
+---
+
 # Entity 親IDルール
 
 ## ルール

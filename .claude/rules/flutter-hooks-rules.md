@@ -1,3 +1,8 @@
+---
+paths:
+  - "lib/**/*.dart"
+---
+
 # Flutter Hooks 規約
 
 ## useEffect のコメント

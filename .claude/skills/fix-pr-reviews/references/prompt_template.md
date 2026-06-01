@@ -12,7 +12,7 @@ PR #{{PR_NUMBER}} ({{PR_URL}}) のレビューコメント対応を行ってく�
 2. `git checkout {{HEAD_BRANCH}}` で PR の head ブランチに切り替え
 3. `gh-pr-comments --no-resolved` で未解決のレビューコメントを取得する
 4. 各コメントから `thread_id`（`PRT_...`形式）、`comment.path`、`comment.line`、`comment.author`、`comment.body` を記録する
-5. `.claude/rules/` と `documents/` の規約ファイルを読み込む
+5. `.claude/rules/` の規約ファイルを読み込む
 6. 各コメントについて `comment.path` のファイルを Read で読み、`comment.line` 周辺のコードを確認する
 7. 各コメントを `.claude/skills/fix-pr-reviews/references/review-evaluation-guide.md` の基準に従って accept / reject / already-fixed に分類する
 8. 分類結果をプランとして記録する（accept/reject/already-fixed の件数と各理由）

@@ -1,3 +1,8 @@
+---
+paths:
+  - "lib/features/**/*.dart"
+---
+
 # Feature README ガイドライン
 
 ## ルール

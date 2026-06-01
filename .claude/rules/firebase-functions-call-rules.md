@@ -1,3 +1,8 @@
+---
+paths:
+  - "lib/**/*.dart"
+---
+
 # Firebase Functions 呼び出しルール
 
 ## クライアント側の呼び出し方式

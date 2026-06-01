@@ -1,3 +1,8 @@
+---
+paths:
+  - "firebase/functions/**/*.ts"
+---
+
 # TypeScript コーディング規約
 
 ## any 型の回避

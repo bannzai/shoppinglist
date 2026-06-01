@@ -7,7 +7,6 @@ feature/premium-issue-{{ISSUE_NUMBER}} の実装がコーディング規約に�
 ### 1. 規約ファイルを読む
 以下のディレクトリ内のファイルをすべて読んで規約を把握する:
 - `.claude/rules/` 配下の全 `.md` ファイル
-- `documents/` 配下の全 `.md` ファイル
 
 ### 2. 変更差分を確認する
 `git diff {{BASE_BRANCH}}...HEAD -- '*.dart' '*.ts'` で変更コードを確認する。

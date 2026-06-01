@@ -9,8 +9,7 @@ PR #{{PR_NUMBER}} ({{PR_URL}}) のコーディング規約チェックと違反�
 ## 手順
 
 1. `.claude/rules/` 配下の全 `.md` ファイルを読み込んで規約を把握する
-2. `documents/` 配下の全 `.md` ファイルを読み込む
-3. `CLAUDE.md` を読み込む
+2. `CLAUDE.md` を読み込む
 4. `git fetch origin`
 5. `git checkout {{HEAD_BRANCH}}`
 6. `git diff origin/{{BASE_BRANCH}}...HEAD -- '*.dart' '*.ts'` で変更コードを取得

@@ -75,7 +75,7 @@ AskUserQuestion で以下を収集する:
 2. 各Feature/README.md を読んで機能概要把握
 3. `maestro/flows/` から既存E2Eフロー一覧取得
 4. `firebase/functions/` の関数定義一覧取得
-5. プロジェクトのCLAUDE.md、documents/ を参照
+5. プロジェクトのCLAUDE.md、.claude/rules/、documents/ を参照
 
 ### 出力
 テスト対象セクションのリスト（各セクションに対象理由を付記）

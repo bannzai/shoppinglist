@@ -1,3 +1,9 @@
+---
+paths:
+  - "lib/**/*.dart"
+  - "firebase/functions/**/*.ts"
+---
+
 # Firestore タイムスタンプ更新ルール
 
 ## サーバータイムスタンプ

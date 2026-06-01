@@ -1,3 +1,8 @@
+---
+paths:
+  - "lib/**/*.dart"
+---
+
 # Riverpod 使用ルール
 
 ## ref.watch と ref.read の使い分け

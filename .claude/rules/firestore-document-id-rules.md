@@ -1,3 +1,9 @@
+---
+paths:
+  - "lib/**/*.dart"
+  - "firebase/functions/**/*.ts"
+---
+
 # Firestore Document ID ルール
 
 ## 基本方針
@@ -44,4 +50,4 @@ class GroupUserProfile {
 }
 ```
 
-Firebase Functions側でも同じフォーマットを使用すること。
+Firebase Functions側でも同じフォーマットを使用すること（`firebase/functions/src/entity/` 配下のヘルパー関数）。
