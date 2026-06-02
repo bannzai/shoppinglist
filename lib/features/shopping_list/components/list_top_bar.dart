@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
-import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/settings/page.dart';
 import 'package:shoppinglist/features/shopping_list/components/list_picker_sheet.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
 import 'package:shoppinglist/provider/app_user.dart';
-import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -14,7 +12,7 @@ import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
 /// ShoppingListPage の最上段（高さ 52）。
 /// `design_handoff_shopping_list/source/screens-list.jsx#ListTopBar` 相当。
-/// 左にリスト名 + ▼（タップでリスト切替シート）、右にアバタースタック + 設定アイコン。
+/// 左にリスト名 + ▼（タップでリスト切替シート）、右にリスト設定（…）と設定アイコン。
 class ListTopBar extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
@@ -35,9 +33,6 @@ class ListTopBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.tokens;
     final appUser = ref.watch(appUserProvider).asData?.value;
-    final memberProfiles =
-        ref.watch(groupUserProfilesProvider(groupID: groupID)).asData?.value ??
-            const <GroupUserProfile>[];
 
     return SizedBox(
       height: 52,
@@ -93,11 +88,6 @@ class ListTopBar extends ConsumerWidget {
                 ),
               ),
             ),
-            if (memberProfiles.isNotEmpty)
-              _AvatarStack(
-                profiles: memberProfiles,
-                cardColor: tokens.neutral.surface,
-              ),
             IconButton(
               key: const Key('list_setting_button'),
               icon: Icon(
@@ -157,101 +147,6 @@ class ListTopBar extends ConsumerWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-/// メンバーアバターを最大 3 つ重ねて表示。超過分は `+N` で表示する。
-class _AvatarStack extends StatelessWidget {
-  final List<GroupUserProfile> profiles;
-  final Color cardColor;
-  static const int _max = 3;
-
-  const _AvatarStack({required this.profiles, required this.cardColor});
-
-  @override
-  Widget build(BuildContext context) {
-    final visible = profiles.take(_max).toList();
-    final overflow = profiles.length - visible.length;
-
-    final children = <Widget>[];
-    for (final (index, profile) in visible.indexed) {
-      children.add(Positioned(
-        left: index * 20.0,
-        child: _Avatar(profile: profile, borderColor: cardColor),
-      ));
-    }
-    if (overflow > 0) {
-      children.add(Positioned(
-        left: visible.length * 20.0,
-        child: _OverflowAvatar(count: overflow, borderColor: cardColor),
-      ));
-    }
-
-    final width = (visible.length + (overflow > 0 ? 1 : 0)) * 20.0 + 8;
-    return SizedBox(
-      width: width,
-      height: 28,
-      child: Stack(children: children),
-    );
-  }
-}
-
-class _Avatar extends StatelessWidget {
-  final GroupUserProfile profile;
-  final Color borderColor;
-  const _Avatar({required this.profile, required this.borderColor});
-
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.tokens;
-    final initial = (profile.displayName?.isNotEmpty ?? false)
-        ? profile.displayName!.substring(0, 1).toUpperCase()
-        : '?';
-    return Container(
-      width: 28,
-      height: 28,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: tokens.accentSoft,
-        border: Border.all(color: borderColor, width: 1.5),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        initial,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: tokens.accentInk,
-            ),
-      ),
-    );
-  }
-}
-
-class _OverflowAvatar extends StatelessWidget {
-  final int count;
-  final Color borderColor;
-  const _OverflowAvatar({required this.count, required this.borderColor});
-
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.tokens;
-    return Container(
-      width: 28,
-      height: 28,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: tokens.neutral.surface2,
-        border: Border.all(color: borderColor, width: 1.5),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        '+$count',
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: tokens.neutral.ink2,
-            ),
       ),
     );
   }
