@@ -53,7 +53,7 @@ class ForceUpdateResolver extends HookConsumerWidget {
           );
         });
       });
-      return const Loading();
+      return Loading(key: resolverChainLoadingKey);
     }
 
     return builder(context);

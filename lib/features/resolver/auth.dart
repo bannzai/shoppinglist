@@ -66,7 +66,7 @@ class AuthResolver extends HookConsumerWidget {
             }
           },
           error: (e, st) => RetryPage(exception: e, stackTrace: st),
-          loading: () => const Loading(),
+          loading: () => Loading(key: resolverChainLoadingKey),
         );
       }(),
     );
