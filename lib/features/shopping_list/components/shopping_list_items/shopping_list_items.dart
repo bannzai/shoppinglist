@@ -79,6 +79,8 @@ class _FlatShoppingListItems extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ReorderableList(
+      // アイテム編集中にリストをスクロール(ドラッグ)したらキーボードを閉じる
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       onReorder: (oldIndex, newIndex) {
         // ドラッグ時にリストから要素を一時的に削除するため newIndex がずれるのを調整
         if (oldIndex < newIndex) {
@@ -241,6 +243,10 @@ class _GroupedListView extends StatelessWidget {
       }
     }
 
-    return ListView(children: children);
+    return ListView(
+      // アイテム編集中にリストをスクロール(ドラッグ)したらキーボードを閉じる
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      children: children,
+    );
   }
 }
