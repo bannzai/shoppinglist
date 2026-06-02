@@ -118,26 +118,31 @@ class SettingPage extends HookConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16.0, vertical: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  // ラベル「表示名」と入力欄を横並び(Row)にする。ラベルを左、
+                  // 入力欄を右のExpandedに置き、値はTextAlign.endで右寄せにして
+                  // 他の設定行(値が右側)とトンマナを揃える。
+                  child: Row(
                     children: [
                       const Text('表示名'),
-                      const SizedBox(height: 4),
-                      // フォーカスが外れた時(hasFocus=false)に自動保存する。
-                      // canRequestFocus=false でこのFocus自体は入力対象にならず、
-                      // 子のTextFieldのフォーカス変化の検知だけに使う。
-                      Focus(
-                        canRequestFocus: false,
-                        onFocusChange: (hasFocus) async {
-                          if (hasFocus) {
-                            return;
-                          }
-                          await saveDisplayName();
-                        },
-                        child: TextField(
-                          controller: displayNameController,
-                          decoration: const InputDecoration(
-                            hintText: '表示名を入力',
+                      const SizedBox(width: 16),
+                      Expanded(
+                        // フォーカスが外れた時(hasFocus=false)に自動保存する。
+                        // canRequestFocus=false でこのFocus自体は入力対象にならず、
+                        // 子のTextFieldのフォーカス変化の検知だけに使う。
+                        child: Focus(
+                          canRequestFocus: false,
+                          onFocusChange: (hasFocus) async {
+                            if (hasFocus) {
+                              return;
+                            }
+                            await saveDisplayName();
+                          },
+                          child: TextField(
+                            controller: displayNameController,
+                            textAlign: TextAlign.end,
+                            decoration: const InputDecoration(
+                              hintText: '表示名を入力',
+                            ),
                           ),
                         ),
                       ),
