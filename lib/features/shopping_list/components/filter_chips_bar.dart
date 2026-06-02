@@ -38,7 +38,8 @@ class FilterChipsBar extends ConsumerWidget {
                 label: showChecked.value ? 'チェック済み表示' : 'チェック済み非表示',
                 icon: Icons.check,
                 soft: true,
-                active: !showChecked.value,
+                // チェック済みが画面に出ている状態(表示中)をハイライトで表す。
+                active: showChecked.value,
                 onTap: () {
                   final next = !showChecked.value;
                   analytics.logEvent(

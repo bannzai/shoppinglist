@@ -149,7 +149,7 @@ class _HintLine extends StatelessWidget {
         style: monoTextStyle(
             fontSize: 11.5,
             fontWeight: FontWeight.w400,
-            color: tokens.neutral.ink3,
+            color: tokens.neutral.ink2,
             height: 1.4,
             letterSpacing: null),
       ),
