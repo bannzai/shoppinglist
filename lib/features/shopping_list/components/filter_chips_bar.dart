@@ -31,7 +31,7 @@ class FilterChipsBar extends ConsumerWidget {
     return SizedBox(
       height: 44,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Row(
           children: [
             AppChip(
