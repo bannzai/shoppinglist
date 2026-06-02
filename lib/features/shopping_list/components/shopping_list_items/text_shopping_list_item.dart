@@ -64,6 +64,9 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
     final neutral = tokens.neutral;
     final isChecked =
         textShoppingListItem.status == GroupShoppingListItemStatus.checked;
+    // 空のメッセージ(新規入力待ちの行・未保存の編集中の行)はチェック対象にしない。
+    // チェックボックスのタップ・右スワイプの両方を無効化するための判定。
+    final isEmptyMessage = textShoppingListItem.message.trim().isEmpty;
     final hasDescription = textShoppingListItem.description != null &&
         textShoppingListItem.description!.isNotEmpty;
     final itemColor = textShoppingListItem.color != null
@@ -109,23 +112,28 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                   color: textShoppingListItem.color != null
                       ? colorFromHex(textShoppingListItem.color!)
                       : tokens.accent,
-                  onChanged: (_) {
-                    analytics.logEvent(
-                        name: 'tap_toggle_item_checkbox',
-                        parameters: {
-                          'groupID': groupID,
-                          'shoppingListID': textShoppingListItem.shoppingListID,
-                          'itemID': textShoppingListItem.id,
-                        });
-                    ref
-                        .read(toggleShoppingListItemCheckProvider(
-                            groupID: groupID))
-                        .call(
-                          shoppingListID: textShoppingListItem.shoppingListID,
-                          item: textShoppingListItem,
-                          userID: currentUserID,
-                        );
-                  },
+                  // 空行は onChanged を null にしてタップを無効化する。
+                  onChanged: isEmptyMessage
+                      ? null
+                      : (_) {
+                          analytics.logEvent(
+                              name: 'tap_toggle_item_checkbox',
+                              parameters: {
+                                'groupID': groupID,
+                                'shoppingListID':
+                                    textShoppingListItem.shoppingListID,
+                                'itemID': textShoppingListItem.id,
+                              });
+                          ref
+                              .read(toggleShoppingListItemCheckProvider(
+                                  groupID: groupID))
+                              .call(
+                                shoppingListID:
+                                    textShoppingListItem.shoppingListID,
+                                item: textShoppingListItem,
+                                userID: currentUserID,
+                              );
+                        },
                 ),
               ),
               const SizedBox(width: 12),
@@ -233,7 +241,10 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
 
     return Dismissible(
       key: ValueKey(textShoppingListItem.id),
-      direction: DismissDirection.horizontal,
+      // 空行は右スワイプでのチェックを禁止し、左スワイプ削除のみ許可する。
+      direction: isEmptyMessage
+          ? DismissDirection.endToStart
+          : DismissDirection.horizontal,
       // i-8 右スワイプでチェックトグル: `design_handoff_shopping_list/README.md` §8
       background: Container(
         color: neutral.ok,
@@ -476,7 +487,8 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
 class _CircleCheckbox extends StatefulWidget {
   final bool checked;
   final Color color;
-  final ValueChanged<bool> onChanged;
+  // null の場合はチェック不可(空行)。タップを無効化し、見た目も薄くする。
+  final ValueChanged<bool>? onChanged;
   const _CircleCheckbox({
     required this.checked,
     required this.color,
@@ -515,11 +527,13 @@ class _CircleCheckboxState extends State<_CircleCheckbox>
   @override
   Widget build(BuildContext context) {
     final tokens = context.tokens;
+    final disabled = widget.onChanged == null;
     return ScaleTransition(
       scale: _scale,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () => widget.onChanged(!widget.checked),
+        onTap:
+            disabled ? null : () => widget.onChanged!(!widget.checked),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 120),
           width: 22,
@@ -528,7 +542,9 @@ class _CircleCheckboxState extends State<_CircleCheckbox>
             shape: BoxShape.circle,
             color: widget.checked ? widget.color : Colors.transparent,
             border: Border.all(
-              color: widget.checked ? widget.color : tokens.neutral.ink4,
+              color: widget.checked
+                  ? widget.color
+                  : (disabled ? tokens.neutral.divider2 : tokens.neutral.ink4),
               width: 1.5,
             ),
           ),
