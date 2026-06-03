@@ -83,20 +83,20 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
     }, [shoppingLists]);
 
     if (appUser == null) {
-      return Loading(key: resolverChainLoadingKey);
+      return LaunchLoading(key: resolverChainLoadingKey);
     }
 
     // isPremium未解決時は初期リスト自動作成判定を実行しない
     if (firestoreIsPremiumAsync.isLoading) {
-      return Loading(key: resolverChainLoadingKey);
+      return LaunchLoading(key: resolverChainLoadingKey);
     }
 
     if (appUserDefaultGroupID == null) {
-      return Loading(key: resolverChainLoadingKey);
+      return LaunchLoading(key: resolverChainLoadingKey);
     }
 
     if (shoppingLists?.valueOrNull?.isEmpty == true) {
-      return Loading(key: resolverChainLoadingKey);
+      return LaunchLoading(key: resolverChainLoadingKey);
     }
     return builder(context);
   }
