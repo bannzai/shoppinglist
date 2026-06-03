@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shoppinglist/components/frame/app_dialog_shell.dart';
+import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
 /// preview 用に GroupInvitation の verifying 状態を即時表示する pseudo page。
@@ -17,7 +17,9 @@ class _GroupInvitationVerifyingPreviewState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       await showGeneralDialog<void>(
         context: context,
         barrierLabel: '招待コードを確認中',

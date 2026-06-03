@@ -3,16 +3,17 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/components/frame/app_pill.dart';
-import 'package:shoppinglist/provider/onboarding.dart';
+import 'package:shoppinglist/components/primitives/app_pill.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 
 /// アプリ初回起動時の 3 スライドオンボーディング。
 /// `design_handoff_shoppinglist/preview/screens-onboarding.jsx` 相当。
 ///
-/// 完走 / スキップで `HasSeenOnboarding.markAsSeen()` を呼び、二度と表示されないようにする。
+/// 完走 / スキップで hasSeenOnboarding を true に保存し、二度と表示されないようにする。
 class OnboardingPage extends HookConsumerWidget {
   const OnboardingPage({super.key});
 
@@ -56,7 +57,10 @@ class OnboardingPage extends HookConsumerWidget {
         'reason': reason,
         'lastIndex': index.value.toString(),
       });
-      await ref.read(hasSeenOnboardingProvider.notifier).markAsSeen();
+      await ref
+          .read(boolSharedPreferencesProvider(key: BoolKey.hasSeenOnboarding)
+              .notifier)
+          .set(value: true);
     }
 
     return Scaffold(

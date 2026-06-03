@@ -3,95 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shoppinglist/components/frame/app_pill.dart';
+import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/group_create.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
-
-/// グループ作成成功後に招待コードを表示する dialog。
-/// `design_handoff_shoppinglist/preview/screens-groups.jsx` 準拠。
-/// コピー / 共有 / 閉じる の 3 アクションを提供する。
-class _PostCreateInvitationDialog extends StatelessWidget {
-  final String invitationCode;
-  const _PostCreateInvitationDialog({required this.invitationCode});
-
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.tokens;
-    final neutral = tokens.neutral;
-    return AlertDialog(
-      backgroundColor: neutral.card,
-      title: const Text('メンバーを招待'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text('招待コードを家族と共有してください'),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: tokens.accentSoft,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              invitationCode,
-              style: monoTextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                color: tokens.accent,
-                letterSpacing: 2,
-              ),
-            ),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () async {
-            analytics.logEvent(
-                name: 'tap_copy_invitation_code_post_create', parameters: null);
-            await Clipboard.setData(ClipboardData(text: invitationCode));
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('招待コードをコピーしました')),
-              );
-            }
-          },
-          child: const Text('コピー'),
-        ),
-        TextButton(
-          onPressed: () async {
-            analytics.logEvent(
-                name: 'tap_share_invitation_code_post_create',
-                parameters: null);
-            await SharePlus.instance.share(
-              ShareParams(text: '買い物リストの招待コード: $invitationCode'),
-            );
-          },
-          child: const Text('共有'),
-        ),
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('閉じる'),
-        ),
-      ],
-    );
-  }
-}
-
-/// `design_handoff_shoppinglist/preview/screens-groups.jsx#GroupCreatePage` の
-/// iconName プリセット 6 種。`Group.iconName` で許容される値。
-const _iconPresets = <({String name, IconData icon, String label})>[
-  (name: 'home', icon: Icons.home_outlined, label: 'いえ'),
-  (name: 'cart', icon: Icons.shopping_cart_outlined, label: 'カート'),
-  (name: 'fork', icon: Icons.restaurant_outlined, label: 'たべる'),
-  (name: 'cookie', icon: Icons.cookie_outlined, label: 'おかし'),
-  (name: 'pets', icon: Icons.pets_outlined, label: 'ペット'),
-  (name: 'bag', icon: Icons.shopping_bag_outlined, label: 'バッグ'),
-];
 
 class GroupCreatePage extends HookConsumerWidget {
   const GroupCreatePage({super.key});
@@ -304,3 +222,85 @@ class GroupCreatePage extends HookConsumerWidget {
     );
   }
 }
+
+/// グループ作成成功後に招待コードを表示する dialog。
+/// `design_handoff_shoppinglist/preview/screens-groups.jsx` 準拠。
+/// コピー / 共有 / 閉じる の 3 アクションを提供する。
+class _PostCreateInvitationDialog extends StatelessWidget {
+  final String invitationCode;
+  const _PostCreateInvitationDialog({required this.invitationCode});
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.tokens;
+    final neutral = tokens.neutral;
+    return AlertDialog(
+      backgroundColor: neutral.card,
+      title: const Text('メンバーを招待'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('招待コードを家族と共有してください'),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: tokens.accentSoft,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              invitationCode,
+              style: monoTextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                color: tokens.accent,
+                letterSpacing: 2,
+              ),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            analytics.logEvent(
+                name: 'tap_copy_invitation_code_post_create', parameters: null);
+            await Clipboard.setData(ClipboardData(text: invitationCode));
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('招待コードをコピーしました')),
+              );
+            }
+          },
+          child: const Text('コピー'),
+        ),
+        TextButton(
+          onPressed: () async {
+            analytics.logEvent(
+                name: 'tap_share_invitation_code_post_create',
+                parameters: null);
+            await SharePlus.instance.share(
+              ShareParams(text: '買い物リストの招待コード: $invitationCode'),
+            );
+          },
+          child: const Text('共有'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('閉じる'),
+        ),
+      ],
+    );
+  }
+}
+
+/// `design_handoff_shoppinglist/preview/screens-groups.jsx#GroupCreatePage` の
+/// iconName プリセット 6 種。`Group.iconName` で許容される値。
+const _iconPresets = <({String name, IconData icon, String label})>[
+  (name: 'home', icon: Icons.home_outlined, label: 'いえ'),
+  (name: 'cart', icon: Icons.shopping_cart_outlined, label: 'カート'),
+  (name: 'fork', icon: Icons.restaurant_outlined, label: 'たべる'),
+  (name: 'cookie', icon: Icons.cookie_outlined, label: 'おかし'),
+  (name: 'pets', icon: Icons.pets_outlined, label: 'ペット'),
+  (name: 'bag', icon: Icons.shopping_bag_outlined, label: 'バッグ'),
+];

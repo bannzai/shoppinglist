@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shoppinglist/components/frame/app_section_card.dart';
+import 'package:shoppinglist/components/primitives/app_section_card.dart';
 
 /// 設定画面用のセクション。タイトル + 子 Cell を `AppSectionCard` でラップする。
 /// 旧実装と API 互換のため `text` / `children` を受け取る。

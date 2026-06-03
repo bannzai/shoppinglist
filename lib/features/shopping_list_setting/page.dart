@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shoppinglist/components/frame/app_cell.dart';
-import 'package:shoppinglist/components/frame/app_divider.dart';
-import 'package:shoppinglist/components/frame/app_pill.dart';
-import 'package:shoppinglist/components/frame/app_section_label.dart';
+import 'package:shoppinglist/components/primitives/app_cell.dart';
+import 'package:shoppinglist/components/primitives/app_divider.dart';
+import 'package:shoppinglist/components/primitives/app_pill.dart';
+import 'package:shoppinglist/components/primitives/app_section_label.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/group_setting/page.dart';
@@ -273,7 +273,9 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     try {
       final invitation =
           await ref.read(createGroupInvitationProvider).call(groupID: groupID);
-      if (!context.mounted) return;
+      if (!context.mounted) {
+        return;
+      }
       await showGeneralDialog<void>(
         context: context,
         barrierLabel: '招待コード',
@@ -372,9 +374,15 @@ class _ShoppingLocationCell extends ConsumerWidget {
                 groupID: groupID,
                 currentLocationID: currentLocationID,
               );
-              if (!context.mounted) return;
-              if (!result.changed) return;
-              if (result.locationID == currentLocationID) return;
+              if (!context.mounted) {
+                return;
+              }
+              if (!result.changed) {
+                return;
+              }
+              if (result.locationID == currentLocationID) {
+                return;
+              }
               onSelected(result.locationID);
             },
             onSwitch: null,

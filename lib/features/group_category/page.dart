@@ -15,24 +15,6 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
-/// カテゴリ画面用の paper bg Scaffold（loading/error/empty 用）。
-class _CategoryScaffold extends StatelessWidget {
-  final Widget child;
-  const _CategoryScaffold({required this.child});
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.tokens;
-    return Scaffold(
-      backgroundColor: tokens.neutral.paper,
-      appBar: AppBar(
-        title: const Text('カテゴリ'),
-        backgroundColor: tokens.neutral.paper,
-      ),
-      body: child,
-    );
-  }
-}
-
 class GroupCategoryPage extends ConsumerWidget {
   final String groupID;
 
@@ -154,6 +136,24 @@ Future<void> _addCategoryAndNavigateToEdit({
   }
 }
 
+/// カテゴリ画面用の paper bg Scaffold（loading/error/empty 用）。
+class _CategoryScaffold extends StatelessWidget {
+  final Widget child;
+  const _CategoryScaffold({required this.child});
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.tokens;
+    return Scaffold(
+      backgroundColor: tokens.neutral.paper,
+      appBar: AppBar(
+        title: const Text('カテゴリ'),
+        backgroundColor: tokens.neutral.paper,
+      ),
+      body: child,
+    );
+  }
+}
+
 class _CategoryListBody extends HookConsumerWidget {
   final String groupID;
   final GroupCategoryAxis axis;
@@ -190,7 +190,9 @@ class _CategoryListBody extends HookConsumerWidget {
                   // ロケーション選択ドロップダウン
                   locationsAsync.when(
                     data: (locations) {
-                      if (locations.isEmpty) return const SizedBox.shrink();
+                      if (locations.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
                       return Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16.0, vertical: 8.0),
@@ -280,7 +282,6 @@ class _CategoryListBody extends HookConsumerWidget {
           child: Center(child: CircularProgressIndicator())),
     );
   }
-
 }
 
 class _CategoryReorderableList extends ConsumerWidget {

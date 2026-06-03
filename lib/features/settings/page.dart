@@ -8,9 +8,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shoppinglist/components/button/inquiry.dart';
 import 'package:shoppinglist/components/button/user_delete.dart';
-import 'package:shoppinglist/components/frame/app_cell.dart';
-import 'package:shoppinglist/components/frame/app_dialog_shell.dart';
-import 'package:shoppinglist/components/frame/app_pill.dart';
+import 'package:shoppinglist/components/primitives/app_cell.dart';
+import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
+import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/features/developer_options/page.dart';
 import 'package:shoppinglist/features/group_invitation/page.dart';
 import 'package:shoppinglist/features/group_list/page.dart';
@@ -18,16 +18,16 @@ import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/settings/components/section.dart';
 import 'package:shoppinglist/features/settings/theme_color_selection_page.dart';
 import 'package:shoppinglist/provider/app_user.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
-import 'package:shoppinglist/provider/geofence.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
-import 'package:shoppinglist/provider/notification_setting.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/local_notification/local_notification.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingPage extends HookConsumerWidget {
@@ -74,9 +74,7 @@ class SettingPage extends HookConsumerWidget {
           name: 'submit_profile_display_name',
           parameters: {'groupID': groupID});
       try {
-        await ref
-            .read(groupUserProfileUpdateProvider(groupID: groupID))
-            .call(
+        await ref.read(groupUserProfileUpdateProvider(groupID: groupID)).call(
               userID: currentUserID,
               displayName: displayName,
             );
@@ -394,7 +392,9 @@ class _VersionLabelState extends State<_VersionLabel> {
   void initState() {
     super.initState();
     PackageInfo.fromPlatform().then((info) {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _label = 'v${info.version} (build ${info.buildNumber})';
       });
@@ -482,7 +482,8 @@ class _ThemeColorTile extends ConsumerWidget {
 class _AutoNotifyToggle extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isEnabled = ref.watch(autoNotifyShoppingListUpdateProvider);
+    final isEnabled = ref.watch(boolSharedPreferencesProvider(
+        key: BoolKey.autoNotifyShoppingListUpdate));
 
     return SwitchListTile(
       title: const Text('買い物リストの更新を通知する'),
@@ -493,7 +494,11 @@ class _AutoNotifyToggle extends ConsumerWidget {
           name: 'tap_toggle_auto_notify',
           parameters: {'enabled': (!isEnabled).toString()},
         );
-        ref.read(autoNotifyShoppingListUpdateProvider.notifier).toggle();
+        ref
+            .read(boolSharedPreferencesProvider(
+                    key: BoolKey.autoNotifyShoppingListUpdate)
+                .notifier)
+            .toggle();
       },
     );
   }
@@ -505,7 +510,8 @@ class _LocationReminderToggle extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
-    final isEnabled = ref.watch(locationReminderEnabledProvider);
+    final isEnabled = ref.watch(
+        boolSharedPreferencesProvider(key: BoolKey.locationReminderEnabled));
 
     return SwitchListTile(
       title: const Text('位置情報リマインダー'),
@@ -569,8 +575,10 @@ class _LocationReminderToggle extends ConsumerWidget {
               }
 
               await ref
-                  .read(locationReminderEnabledProvider.notifier)
-                  .setEnabled(enabled: value);
+                  .read(boolSharedPreferencesProvider(
+                          key: BoolKey.locationReminderEnabled)
+                      .notifier)
+                  .set(value: value);
             }
           : (value) {
               analytics.logEvent(
@@ -673,7 +681,9 @@ class _SignOutButton extends ConsumerWidget {
                 );
               },
             );
-            if (confirmed != true) return;
+            if (confirmed != true) {
+              return;
+            }
             analytics.logEvent(name: 'confirm_sign_out', parameters: null);
             await FirebaseAuth.instance.signOut();
           },

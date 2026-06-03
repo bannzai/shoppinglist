@@ -27,6 +27,8 @@ const categoryIconMap = <String, IconData>{
 };
 
 IconData categoryIconFromName(String? iconName) {
-  if (iconName == null) return Icons.category;
+  if (iconName == null) {
+    return Icons.category;
+  }
   return categoryIconMap[iconName] ?? Icons.category;
 }

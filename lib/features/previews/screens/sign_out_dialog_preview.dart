@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shoppinglist/components/frame/app_dialog_shell.dart';
-import 'package:shoppinglist/components/frame/app_pill.dart';
+import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
+import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
 /// preview 用に sign out 確認 dialog を即時表示する pseudo page。
@@ -16,7 +16,9 @@ class _SignOutDialogPreviewState extends State<SignOutDialogPreview> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       await showGeneralDialog<void>(
         context: context,
         barrierLabel: 'サインアウト確認',
