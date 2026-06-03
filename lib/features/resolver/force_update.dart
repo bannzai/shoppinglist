@@ -39,7 +39,9 @@ class ForceUpdateResolver extends HookConsumerWidget {
 
     if (shouldForceUpdate.value) {
       Future.microtask(() async {
-        if (!context.mounted) return;
+        if (!context.mounted) {
+          return;
+        }
 
         await showOKDialog(context,
             icon: Icons.error,
@@ -53,7 +55,7 @@ class ForceUpdateResolver extends HookConsumerWidget {
           );
         });
       });
-      return LaunchLoading(key: resolverChainLoadingKey);
+      return LaunchLoading.shared();
     }
 
     return builder(context);

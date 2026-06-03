@@ -217,7 +217,9 @@ class _MemberAvatarStack extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shown = members.take(3).toList();
-    if (shown.isEmpty) return const SizedBox.shrink();
+    if (shown.isEmpty) {
+      return const SizedBox.shrink();
+    }
     final width = (shown.length - 1) * _step + _size;
     return SizedBox(
       width: width,
@@ -310,7 +312,9 @@ void showNotificationToast({
   required String currentUserID,
   required List<GroupUserProfile> memberProfiles,
 }) {
-  if (memberProfiles.where((p) => p.userID != currentUserID).isEmpty) return;
+  if (memberProfiles.where((p) => p.userID != currentUserID).isEmpty) {
+    return;
+  }
 
   showGlobalToastWidget(
     NotificationMemberBar(

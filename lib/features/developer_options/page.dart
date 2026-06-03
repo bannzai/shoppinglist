@@ -33,6 +33,22 @@ void navigateToDeveloperOptionsPage(BuildContext context) {
   );
 }
 
+/// 全画面ページ表示用。Scaffold + AppBar を使用。
+class DeveloperOptionsPage extends StatelessWidget {
+  const DeveloperOptionsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('開発者オプション')),
+      body: const Padding(
+        padding: EdgeInsets.all(16),
+        child: _DeveloperOptionsContent(),
+      ),
+    );
+  }
+}
+
 /// モーダル表示用のラッパー。DraggableScrollableSheet を使用。
 class _DeveloperOptionsSheet extends HookConsumerWidget {
   const _DeveloperOptionsSheet();
@@ -52,22 +68,6 @@ class _DeveloperOptionsSheet extends HookConsumerWidget {
           ),
         );
       },
-    );
-  }
-}
-
-/// 全画面ページ表示用。Scaffold + AppBar を使用。
-class DeveloperOptionsPage extends StatelessWidget {
-  const DeveloperOptionsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('開発者オプション')),
-      body: const Padding(
-        padding: EdgeInsets.all(16),
-        child: _DeveloperOptionsContent(),
-      ),
     );
   }
 }

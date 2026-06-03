@@ -10,7 +10,9 @@ part 'auth_claim.g.dart';
 @Riverpod(keepAlive: true, dependencies: [firebaseUserChanges])
 Future<bool> firestoreIsPremium(Ref ref) async {
   final user = ref.watch(firebaseUserChangesProvider).asData?.value;
-  if (user == null) return false;
+  if (user == null) {
+    return false;
+  }
 
   final tokenResult = await user.getIdTokenResult();
   return tokenResult.claims?['isPremium'] == true;

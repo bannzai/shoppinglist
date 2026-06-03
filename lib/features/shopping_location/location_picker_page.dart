@@ -39,7 +39,9 @@ class LocationPickerPage extends HookConsumerWidget {
 
     // 初回: 現在地を取得して地図を移動（既存座標がない場合のみ）
     useEffect(() {
-      if (initialLatitude != null) return null;
+      if (initialLatitude != null) {
+        return null;
+      }
       () async {
         try {
           var permission = await Geolocator.checkPermission();

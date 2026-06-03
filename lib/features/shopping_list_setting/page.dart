@@ -273,7 +273,9 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     try {
       final invitation =
           await ref.read(createGroupInvitationProvider).call(groupID: groupID);
-      if (!context.mounted) return;
+      if (!context.mounted) {
+        return;
+      }
       await showGeneralDialog<void>(
         context: context,
         barrierLabel: '招待コード',
@@ -372,9 +374,15 @@ class _ShoppingLocationCell extends ConsumerWidget {
                 groupID: groupID,
                 currentLocationID: currentLocationID,
               );
-              if (!context.mounted) return;
-              if (!result.changed) return;
-              if (result.locationID == currentLocationID) return;
+              if (!context.mounted) {
+                return;
+              }
+              if (!result.changed) {
+                return;
+              }
+              if (result.locationID == currentLocationID) {
+                return;
+              }
               onSelected(result.locationID);
             },
             onSwitch: null,

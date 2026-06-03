@@ -16,7 +16,9 @@ class _SignOutDialogPreviewState extends State<SignOutDialogPreview> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       await showGeneralDialog<void>(
         context: context,
         barrierLabel: 'サインアウト確認',

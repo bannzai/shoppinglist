@@ -9,52 +9,6 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/invitation_code_validator.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
-/// 招待コード送信中の verifying オーバレイ。
-/// `design_handoff_shoppinglist/preview/screens-groups.jsx` の Invitation Verifying
-/// 状態を AppDialogShell ベースで実装する。barrierDismissible は false で誤閉じを防ぐ。
-void _showVerifyingDialog(BuildContext context) {
-  showGeneralDialog<void>(
-    context: context,
-    barrierLabel: '招待コードを確認中',
-    barrierDismissible: false,
-    barrierColor: Colors.transparent,
-    transitionDuration: const Duration(milliseconds: 160),
-    pageBuilder: (dialogContext, _, __) {
-      final tokens = dialogContext.tokens;
-      return AppDialogShell(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 28,
-              height: 28,
-              child: CircularProgressIndicator(
-                strokeWidth: 2.2,
-                valueColor: AlwaysStoppedAnimation<Color>(tokens.accent),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '招待コードを確認中',
-              style: Theme.of(dialogContext).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'サーバー側でグループへの参加を処理しています。',
-              textAlign: TextAlign.center,
-              style: Theme.of(dialogContext)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(color: tokens.neutral.ink3),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
 class GroupInvitationAcceptPage extends HookConsumerWidget {
   const GroupInvitationAcceptPage({
     super.key,
@@ -227,4 +181,50 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
       ),
     );
   }
+}
+
+/// 招待コード送信中の verifying オーバレイ。
+/// `design_handoff_shoppinglist/preview/screens-groups.jsx` の Invitation Verifying
+/// 状態を AppDialogShell ベースで実装する。barrierDismissible は false で誤閉じを防ぐ。
+void _showVerifyingDialog(BuildContext context) {
+  showGeneralDialog<void>(
+    context: context,
+    barrierLabel: '招待コードを確認中',
+    barrierDismissible: false,
+    barrierColor: Colors.transparent,
+    transitionDuration: const Duration(milliseconds: 160),
+    pageBuilder: (dialogContext, _, __) {
+      final tokens = dialogContext.tokens;
+      return AppDialogShell(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 28,
+              height: 28,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.2,
+                valueColor: AlwaysStoppedAnimation<Color>(tokens.accent),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '招待コードを確認中',
+              style: Theme.of(dialogContext).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'サーバー側でグループへの参加を処理しています。',
+              textAlign: TextAlign.center,
+              style: Theme.of(dialogContext)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(color: tokens.neutral.ink3),
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }

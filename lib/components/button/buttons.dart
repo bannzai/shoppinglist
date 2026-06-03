@@ -44,7 +44,9 @@ class ColorButton extends HookWidget {
               } catch (error) {
                 rethrow;
               } finally {
-                if (context.mounted) isProcessing.value = false;
+                if (context.mounted) {
+                  isProcessing.value = false;
+                }
               }
             },
       child: Stack(

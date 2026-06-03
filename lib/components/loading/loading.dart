@@ -3,19 +3,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/config/environment.dart';
 
-/// 認証〜ホーム到達までの Resolver 連鎖（AuthResolver → UserDatabaseResolver →
-/// AppUserCreateResolver → ForceUpdateResolver → AppEntityPrepareResolver）が
-/// 解決待ちの間に表示する [LaunchLoading] へ共通で付与する key。
-///
-/// 各 Resolver は未解決の間それぞれ独立して LaunchLoading を返すが、段が解決するたびに
-/// その Widget のツリー上の位置（祖先 Widget の型構成）が変わる。key が無いと Flutter は
-/// element を再利用できず、内部の AnimationController（カゴのバウンス等を駆動）が
-/// 破棄・再生成され、アニメーションが 0 から再スタートして「ぶつ切り」に見える。
-/// 連鎖の全段に同一の GlobalKey を付与すると、段をまたいで element を reparent して
-/// State を保持できるためアニメーションが連続する。連鎖内では同時に 1 つしか mount しないため
-/// GlobalKey 重複は発生しない。
-final resolverChainLoadingKey = GlobalKey();
-
 class Loading extends StatelessWidget {
   const Loading({
     super.key,
@@ -55,22 +42,37 @@ class ScaffoldLoading extends StatelessWidget {
 ///
 /// テーマの `neutral.paper` を背景に敷き（黒地ではなくアプリと地続きの和紙色にする）、
 /// 中央で買い物カゴがぽよんと弾むアニメーションと、波打つように順に躍る 3 つのドットを表示する。
-/// 連鎖の各 Resolver がこの Widget を [resolverChainLoadingKey] 付きで返すことで、
-/// 段が解決してツリー位置が変わっても element が reparent され、AnimationController が
-/// 保持されてアニメーションが途切れず連続する。
+///
+/// 連鎖は段が解決するたびに表示中の LaunchLoading のツリー位置（祖先 Widget の型構成）が
+/// 変わる。key 無しだと Flutter は element を再利用できず内部の AnimationController が
+/// 破棄・再生成され、アニメーションが 0 から再スタートして「ぶつ切り」に見える。
+/// [LaunchLoading.shared] は連鎖全段で共有する単一の GlobalKey を付与するため、段をまたいで
+/// element が reparent され State が保持されてアニメーションが連続する。
+///
+/// 注意: [LaunchLoading.shared] は単一 GlobalKey のため、複数の AppResolvers 連鎖
+/// （AppResolvers でラップされる appShowModalBottomSheet 等）が同フレームで LaunchLoading を
+/// 描画すると GlobalKey 重複アサーションが発生しうる。通常はルート連鎖が解決済み（HomePage 表示）
+/// の間にモーダルが開くため同時には起きないが、ルート連鎖が再 loading するケースでは起こり得る。
 class LaunchLoading extends HookWidget {
   const LaunchLoading({super.key});
+
+  /// 認証〜ホーム連鎖の各段で共有する単一の GlobalKey を付与する LaunchLoading。
+  /// 段をまたいで element を reparent させ、アニメーションを途切れず連続させたい連鎖で使う。
+  LaunchLoading.shared() : super(key: _sharedKey);
+
+  /// 連鎖全段で共有する単一の GlobalKey。
+  static final _sharedKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.tokens;
     final accent = tokens.accent;
 
+    final bounce =
+        useAnimationController(duration: const Duration(milliseconds: 560));
     // カゴのバウンス: reverse 往復で上下に弾ませる。マウント時に 1 度だけ開始すれば
     // 以降はループが継続するため依存配列は空にする。テスト時（disableWidgetAnimation）は
     // ループを開始せず静止状態にしてスナップショットを安定させる。
-    final bounce =
-        useAnimationController(duration: const Duration(milliseconds: 560));
     useEffect(() {
       if (!Environment.disableWidgetAnimation) {
         bounce.repeat(reverse: true);
@@ -78,10 +80,10 @@ class LaunchLoading extends HookWidget {
       return null;
     }, const []);
 
-    // ドットの波: 0→1 のループ進行を 3 ドットへ位相をずらして配り、左から順に躍らせる。
-    // 同じ理由で依存配列は空、テスト時はループを開始しない。
     final dots =
         useAnimationController(duration: const Duration(milliseconds: 1100));
+    // ドットの波: 0→1 のループ進行を 3 ドットへ位相をずらして配り、左から順に躍らせる。
+    // 同じ理由で依存配列は空、テスト時はループを開始しない。
     useEffect(() {
       if (!Environment.disableWidgetAnimation) {
         dots.repeat();
@@ -117,7 +119,9 @@ class LaunchLoading extends HookWidget {
                         width: 44,
                         height: 7,
                         decoration: BoxDecoration(
-                          color: tokens.neutral.ink
+                          // 影は常に暗色。neutral.ink はダークモードで明色になり白く光るため
+                          // 固定の墨色を使う。
+                          color: const Color(0xFF1B1813)
                               .withValues(alpha: 0.20 - 0.12 * t),
                           borderRadius: BorderRadius.circular(4),
                         ),
