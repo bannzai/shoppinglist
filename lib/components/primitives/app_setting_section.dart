@@ -28,10 +28,10 @@ class AppSettingSection extends StatelessWidget {
               child: Text(
                 title!,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: neutral.ink3,
-                  letterSpacing: 0.5,
-                  fontWeight: FontWeight.w600,
-                ),
+                      color: neutral.ink3,
+                      letterSpacing: 0.5,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ),
           Container(

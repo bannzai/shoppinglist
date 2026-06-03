@@ -349,9 +349,8 @@ class _PremiumCard extends ConsumerWidget {
             : null,
         color: isPremium ? null : neutral.surface2,
         borderRadius: BorderRadius.circular(14),
-        border: isPremium
-            ? null
-            : Border.all(color: neutral.divider, width: 0.5),
+        border:
+            isPremium ? null : Border.all(color: neutral.divider, width: 0.5),
         boxShadow: isPremium ? tokens.cardShadow : null,
       ),
       child: Row(
@@ -381,18 +380,18 @@ class _PremiumCard extends ConsumerWidget {
                 Text(
                   isPremium ? 'プレミアム会員' : 'プレミアムにアップグレード',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: isPremium ? Colors.white : neutral.ink,
-                  ),
+                        fontWeight: FontWeight.w700,
+                        color: isPremium ? Colors.white : neutral.ink,
+                      ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   isPremium ? 'すべての機能が利用できます' : '5 色テーマ・AI 無制限など',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: isPremium
-                        ? Colors.white.withValues(alpha: 0.85)
-                        : neutral.ink2,
-                  ),
+                        color: isPremium
+                            ? Colors.white.withValues(alpha: 0.85)
+                            : neutral.ink2,
+                      ),
                 ),
               ],
             ),
@@ -477,9 +476,9 @@ class _SignOutButton extends ConsumerWidget {
           label: Text(
             'サインアウト',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: tokens.neutral.danger,
-              fontWeight: FontWeight.w600,
-            ),
+                  color: tokens.neutral.danger,
+                  fontWeight: FontWeight.w600,
+                ),
           ),
           onPressed: () async {
             analytics.logEvent(name: 'tap_sign_out', parameters: null);
@@ -504,7 +503,9 @@ class _SignOutButton extends ConsumerWidget {
                       const SizedBox(height: 12),
                       Text(
                         '再度サインインするまで端末からはリストにアクセスできなくなります。',
-                        style: Theme.of(dialogContext).textTheme.bodyMedium
+                        style: Theme.of(dialogContext)
+                            .textTheme
+                            .bodyMedium
                             ?.copyWith(color: tokens.neutral.ink2),
                       ),
                       const SizedBox(height: 16),
