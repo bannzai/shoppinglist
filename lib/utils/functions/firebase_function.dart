@@ -29,6 +29,8 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     );
   }
 
+  /// 招待コードを使ってグループに参加する。
+  /// 戻り値は参加したグループの ID (Firestore doc ID)。
   Future<String> acceptGroupInvitation({
     required String invitationCode,
   }) async {
@@ -45,6 +47,8 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     return response['data']['groupID'] as String;
   }
 
+  /// base64エンコードした画像をAIで解析し、買い物リストアイテムを生成する。
+  /// 戻り値は生成されたアイテム名のリスト。
   Future<List<String>> generateShoppingListItemsFromImage({
     required String mimeType,
     required String base64Image,
@@ -86,6 +90,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     return list.map((e) => e.toString()).toList();
   }
 
+  /// グループから指定したメンバーを削除する。
   Future<void> removeGroupMember({
     required String groupID,
     required String targetUserID,
@@ -103,6 +108,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     }
   }
 
+  /// 買い物リストの更新を、指定したグループメンバーにプッシュ通知で知らせる。
   Future<void> sendShoppingListUpdateNotification({
     required String groupID,
     required String shoppingListID,
@@ -174,6 +180,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     return response['data']['groupID'] as String;
   }
 
+  /// グループ名を更新する。
   Future<void> updateGroupName({
     required String groupID,
     required String name,
