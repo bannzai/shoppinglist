@@ -5,7 +5,7 @@ import 'package:shoppinglist/features/group_create/page.dart';
 import 'package:shoppinglist/features/group_invitation/page.dart';
 import 'package:shoppinglist/features/group_list/page.dart';
 import 'package:shoppinglist/features/group_setting/page.dart';
-import 'package:shoppinglist/features/group_category/category_edit_page.dart';
+import 'package:shoppinglist/features/group_category_edit/page.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/home/page.dart';
 import 'package:shoppinglist/features/onboarding/page.dart';
