@@ -15,24 +15,6 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
-/// カテゴリ画面用の paper bg Scaffold（loading/error/empty 用）。
-class _CategoryScaffold extends StatelessWidget {
-  final Widget child;
-  const _CategoryScaffold({required this.child});
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.tokens;
-    return Scaffold(
-      backgroundColor: tokens.neutral.paper,
-      appBar: AppBar(
-        title: const Text('カテゴリ'),
-        backgroundColor: tokens.neutral.paper,
-      ),
-      body: child,
-    );
-  }
-}
-
 class GroupCategoryPage extends ConsumerWidget {
   final String groupID;
 
@@ -178,6 +160,24 @@ class GroupCategoryPage extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// カテゴリ画面用の paper bg Scaffold（loading/error/empty 用）。
+class _CategoryScaffold extends StatelessWidget {
+  final Widget child;
+  const _CategoryScaffold({required this.child});
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.tokens;
+    return Scaffold(
+      backgroundColor: tokens.neutral.paper,
+      appBar: AppBar(
+        title: const Text('カテゴリ'),
+        backgroundColor: tokens.neutral.paper,
+      ),
+      body: child,
     );
   }
 }
