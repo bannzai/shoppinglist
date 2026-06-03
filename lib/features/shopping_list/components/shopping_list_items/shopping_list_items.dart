@@ -204,7 +204,7 @@ class _GroupedListView extends StatelessWidget {
       }
 
       final category = categoryMap[categoryID]!;
-      final metrics = ShoppingListItemMetrics.fromItems(items);
+      final metrics = shoppingListItemMetrics(items);
       if (metrics.totalCount > 0) {
         children.add(CategorySectionHeader(
           name: category.name,
@@ -226,7 +226,7 @@ class _GroupedListView extends StatelessWidget {
 
     final uncategorizedItems = grouped[uncategorizedCategoryID];
     if (uncategorizedItems != null && uncategorizedItems.isNotEmpty) {
-      final metrics = ShoppingListItemMetrics.fromItems(uncategorizedItems);
+      final metrics = shoppingListItemMetrics(uncategorizedItems);
       if (metrics.totalCount > 0) {
         children.add(CategorySectionHeader(
           name: '未分類',

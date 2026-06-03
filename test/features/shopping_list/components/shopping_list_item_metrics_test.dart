@@ -23,9 +23,9 @@ GroupShoppingListItem _item({
 }
 
 void main() {
-  group('ShoppingListItemMetrics', () {
+  group('shoppingListItemMetrics', () {
     test('入力用の空行を totalCount に含めない', () {
-      final metrics = ShoppingListItemMetrics.fromItems([
+      final metrics = shoppingListItemMetrics([
         _item(id: '1', message: '牛乳'),
         _item(id: '2', message: ''),
         _item(id: '3', message: '   '),
@@ -36,7 +36,7 @@ void main() {
     });
 
     test('空行以外の checked 件数だけを数える', () {
-      final metrics = ShoppingListItemMetrics.fromItems([
+      final metrics = shoppingListItemMetrics([
         _item(
           id: '1',
           message: '牛乳',
