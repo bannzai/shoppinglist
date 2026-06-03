@@ -45,11 +45,11 @@ class GroupSettingPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final groupAsync = ref.watch(groupProvider(groupID: groupID));
-    final profilesAsync =
+    final groupUserProfilesAsync =
         ref.watch(groupUserProfilesProvider(groupID: groupID));
 
     return groupAsync.when(
-      data: (group) => profilesAsync.when(
+      data: (group) => groupUserProfilesAsync.when(
         data: (profiles) => _GroupSettingBody(
           groupID: groupID,
           group: group,
