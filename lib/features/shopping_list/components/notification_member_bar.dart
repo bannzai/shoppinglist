@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
@@ -299,30 +298,4 @@ class _MemberAvatar extends StatelessWidget {
       ),
     );
   }
-}
-
-/// 通知送信用トーストを表示する。ソログループ（自分のみ）の場合は表示しない。
-/// `design_handoff_shoppinglist/preview/screens-list.jsx#NotifySnack` 相当。
-/// モーダル表示中でも最前面に出すため、グローバルトースト経由で表示する。
-/// ink 背景 + 角丸 14 は `ToastOverlay` の `_ToastFrame` が付与する。5 秒で自動消滅。
-void showNotificationToast({
-  required String groupID,
-  required String shoppingListID,
-  required String? shoppingListName,
-  required String currentUserID,
-  required List<GroupUserProfile> memberProfiles,
-}) {
-  if (memberProfiles.where((p) => p.userID != currentUserID).isEmpty) {
-    return;
-  }
-
-  showGlobalToastWidget(
-    NotificationMemberBar(
-      groupID: groupID,
-      shoppingListID: shoppingListID,
-      shoppingListName: shoppingListName,
-      currentUserID: currentUserID,
-      memberProfiles: memberProfiles,
-    ),
-  );
 }

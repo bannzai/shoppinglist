@@ -12,6 +12,8 @@ import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/resolver/auth.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/app_user.dart';
+import 'package:shoppinglist/provider/current_group_id.dart';
+import 'package:shoppinglist/provider/current_shopping_list_id.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/default_group_update.dart';
 import 'package:shoppinglist/provider/group.dart';
@@ -268,12 +270,27 @@ class _NoOpShoppingLocationDelete extends ShoppingLocationDelete {
   Future<void> call({required String shoppingLocationID}) async {}
 }
 
+/// Preview の選択状態 Notifier。build で mock の groupID を返す。
+class _MockCurrentGroupID extends CurrentGroupID {
+  @override
+  String? build() => mockGroupID;
+}
+
+/// Preview の選択状態 Notifier。build で mock の shoppingListID を返す。
+class _MockCurrentShoppingListID extends CurrentShoppingListID {
+  @override
+  String? build() => mockShoppingListID;
+}
+
 List<Override> previewProviderOverrides({
   required SharedPreferences sharedPreferences,
 }) {
   return [
     // 基盤
     sharedPreferencesProvider.overrideWith((ref) => sharedPreferences),
+    currentGroupIDProvider.overrideWith(() => _MockCurrentGroupID()),
+    currentShoppingListIDProvider
+        .overrideWith(() => _MockCurrentShoppingListID()),
     firebaseUserChangesProvider.overrideWith((ref) => Stream.value(null)),
     currentUserIDProvider.overrideWithValue(mockUserID),
     userDatabaseProvider

@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/shopping_list/page.dart';
 
+/// ShoppingListPage のプレビュー。
+/// currentGroupID / currentShoppingListID は previewProviderOverrides で mock 値に
+/// override されるため、ここでは引数なしで生成する。
 class ShoppingListPreview extends StatelessWidget {
   const ShoppingListPreview({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final currentShoppingListID = ValueNotifier<String?>(mockShoppingListID);
-    return ShoppingListPage(
-      groupID: mockGroupID,
-      currentShoppingListID: currentShoppingListID,
-      onGroupChanged: (_) {},
-    );
-  }
+  Widget build(BuildContext context) => const ShoppingListPage();
 }
