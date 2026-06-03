@@ -317,7 +317,7 @@ class UserDatabaseResolver extends HookConsumerWidget {
         ),
       );
     } else {
-      return const Loading();
+      return LaunchLoading(key: resolverChainLoadingKey);
     }
   }
 }

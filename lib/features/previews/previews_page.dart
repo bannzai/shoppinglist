@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/features/auth/page.dart';
 import 'package:shoppinglist/features/group_create/page.dart';
 import 'package:shoppinglist/features/group_invitation/page.dart';
@@ -26,6 +27,10 @@ class _PreviewEntry {
 }
 
 final _previewEntries = <_PreviewEntry>[
+  _PreviewEntry(
+    title: 'LaunchLoading',
+    builder: (_) => const LaunchLoading(),
+  ),
   _PreviewEntry(
     title: 'OnboardingPage',
     builder: (_) => const OnboardingPage(),
