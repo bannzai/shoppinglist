@@ -117,42 +117,80 @@ class _Note extends StatelessWidget {
           height: 1.5,
         );
 
+    // 利用規約・プライバシーポリシーへのリンクを含む同意文。
+    // 多言語化時はこの 1 文（テンプレート）と各リンクのラベルだけを翻訳対象にすると、
+    // 語順が変わってもリンク位置が文ごとに追従する（en 例: 'By continuing, you agree to the {terms} and {privacy}.'）。
+    const template = '続けることで {terms} と {privacy} に同意したものとみなされます。';
+
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-        children: [
-          TextSpan(text: '続けることで ', style: muted),
-          TextSpan(
-            text: '利用規約',
-            style: linkStyle,
-            recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                analytics.logEvent(
-                    name: 'tap_auth_terms_of_service', parameters: null);
-                launchUrl(
-                  Uri.parse('https://bannzai.github.io/shoppinglist/Terms'),
-                  mode: LaunchMode.externalApplication,
-                );
-              },
-          ),
-          TextSpan(text: ' と ', style: muted),
-          TextSpan(
-            text: 'プライバシーポリシー',
-            style: linkStyle,
-            recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                analytics.logEvent(
-                    name: 'tap_auth_privacy_policy', parameters: null);
-                launchUrl(
-                  Uri.parse(
-                      'https://bannzai.github.io/shoppinglist/PrivacyPolicy'),
-                  mode: LaunchMode.externalApplication,
-                );
-              },
-          ),
-          TextSpan(text: ' に同意したものとみなされます。', style: muted),
-        ],
+        children: _spansFromTemplate(
+          template: template,
+          textStyle: muted,
+          placeholders: {
+            'terms': _linkSpan(
+              text: '利用規約',
+              style: linkStyle,
+              analyticsEventName: 'tap_auth_terms_of_service',
+              url: 'https://bannzai.github.io/shoppinglist/Terms',
+            ),
+            'privacy': _linkSpan(
+              text: 'プライバシーポリシー',
+              style: linkStyle,
+              analyticsEventName: 'tap_auth_privacy_policy',
+              url: 'https://bannzai.github.io/shoppinglist/PrivacyPolicy',
+            ),
+          },
+        ),
       ),
     );
   }
+}
+
+/// プレースホルダ `{name}` を含む 1 文を、name→span の対応に従って InlineSpan 列へ展開する。
+/// 文を 1 翻訳単位に保てるため、多言語化で語順が変わってもリンク位置が文ごとに追従する。
+List<InlineSpan> _spansFromTemplate({
+  required String template,
+  required TextStyle? textStyle,
+  required Map<String, InlineSpan> placeholders,
+}) {
+  final spans = <InlineSpan>[];
+  final pattern = RegExp(r'\{(\w+)\}');
+  var cursor = 0;
+  for (final match in pattern.allMatches(template)) {
+    if (match.start > cursor) {
+      spans.add(
+        TextSpan(
+            text: template.substring(cursor, match.start), style: textStyle),
+      );
+    }
+    spans.add(placeholders[match.group(1)!] ?? const TextSpan());
+    cursor = match.end;
+  }
+  if (cursor < template.length) {
+    spans.add(TextSpan(text: template.substring(cursor), style: textStyle));
+  }
+  return spans;
+}
+
+/// タップで URL を開き、tap イベントを analytics に記録するリンク span を作る。
+TextSpan _linkSpan({
+  required String text,
+  required TextStyle? style,
+  required String analyticsEventName,
+  required String url,
+}) {
+  return TextSpan(
+    text: text,
+    style: style,
+    recognizer: TapGestureRecognizer()
+      ..onTap = () {
+        analytics.logEvent(name: analyticsEventName, parameters: null);
+        launchUrl(
+          Uri.parse(url),
+          mode: LaunchMode.externalApplication,
+        );
+      },
+  );
 }
