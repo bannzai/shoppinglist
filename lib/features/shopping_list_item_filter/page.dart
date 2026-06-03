@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/components/primitives/app_section_card.dart';
+import 'package:shoppinglist/components/primitives/app_setting_section.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -43,19 +43,21 @@ class ShoppingListItemFilterPage extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.only(bottom: 32),
           children: [
-            AppSectionCard(
+            AppSettingSection(
               title: '表示',
               children: [
                 SwitchListTile(
                   title: const Text('チェック済みを表示する'),
                   value: showChecked.value,
                   onChanged: (value) {
-                    analytics
-                        .logEvent(name: 'toggle_show_checked', parameters: {
-                      'groupID': groupID,
-                      'shoppingListID': shoppingListID,
-                      'value': value.toString(),
-                    });
+                    analytics.logEvent(
+                      name: 'toggle_show_checked',
+                      parameters: {
+                        'groupID': groupID,
+                        'shoppingListID': shoppingListID,
+                        'value': value.toString(),
+                      },
+                    );
                     showChecked.value = value;
                   },
                 ),
@@ -65,10 +67,9 @@ class ShoppingListItemFilterPage extends ConsumerWidget {
                       ? null
                       : Text(
                           'カテゴリを 1 つ以上登録すると有効になります',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: neutral.ink3),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(color: neutral.ink3),
                         ),
                   value: sortByCategory.value,
                   onChanged: hasCategories
@@ -93,9 +94,9 @@ class ShoppingListItemFilterPage extends ConsumerWidget {
               child: Text(
                 'チェック済みを非表示にすると、買い物中のリストがコンパクトに見えます。',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: neutral.ink3,
-                      height: 1.5,
-                    ),
+                  color: neutral.ink3,
+                  height: 1.5,
+                ),
               ),
             ),
           ],

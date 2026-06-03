@@ -9,7 +9,7 @@ import 'package:shoppinglist/components/primitives/app_frame_app_bar.dart';
 import 'package:shoppinglist/components/primitives/app_large_app_bar.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/components/primitives/app_round_button.dart';
-import 'package:shoppinglist/components/primitives/app_section_card.dart';
+import 'package:shoppinglist/components/primitives/app_setting_section.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
@@ -157,8 +157,8 @@ void main() {
     expect(find.text('アプリ全般の設定'), findsOneWidget);
   });
 
-  testWidgets('AppSectionCard: title と children が表示される', (tester) async {
-    await tester.pumpWidget(_wrap(const AppSectionCard(
+  testWidgets('AppSettingSection: title と children が表示される', (tester) async {
+    await tester.pumpWidget(_wrap(const AppSettingSection(
       title: 'プロフィール',
       children: [
         ListTile(title: Text('表示名')),
