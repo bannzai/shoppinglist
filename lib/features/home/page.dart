@@ -26,7 +26,7 @@ class HomePage extends HookConsumerWidget {
 
     final groupID = currentGroupID.value;
     if (groupID == null) {
-      return LaunchLoading(key: resolverChainLoadingKey);
+      return LaunchLoading.shared();
     }
 
     return Scaffold(
