@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/features/developer_options/page.dart';
 import 'package:shoppinglist/features/developer_options/shake_detector.dart';
-import 'package:shoppinglist/features/resolver/auth.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/fcm_notification.dart';
 import 'package:shoppinglist/provider/geofence.dart';
@@ -48,29 +47,6 @@ class _AppState extends ConsumerState<App> {
         service.startMonitoring();
       },
       fireImmediately: true,
-    );
-
-    // サインアウト（Auth Stream が未サインインを流した）時に、push 済みの画面
-    // (設定画面など) を全て pop してルートへ戻す。ルートの AuthResolver は同じ
-    // Auth Stream を watch して AuthPage(サインイン画面) を表示するため、pop に
-    // よってサインイン画面が前面に出る。signOut を呼ぶ各画面で個別に Navigator を
-    // 操作せず、Auth Stream を一元監視して画面復帰を一箇所で行う。
-    //
-    // 購読を initState で1回だけ確立するのは geofence 監視と同じ理由。
-    // previous がサインイン済み → next が未サインイン の遷移時のみ pop する
-    // （起動直後の未サインイン状態で無駄に popUntil しないため）。
-    // popUntil は既にルートのみなら no-op で冪等。
-    ref.listenManual(
-      firebaseUserChangesProvider,
-      (previous, next) {
-        final wasSignedIn = previous?.asData?.valueOrNull != null;
-        final user = next.asData?.valueOrNull;
-        // AuthResolver と同じ判定。非デバッグ時の匿名ユーザーは未サインイン扱い。
-        final isSignedOut = user == null || (!kDebugMode && user.isAnonymous);
-        if (wasSignedIn && isSignedOut) {
-          _navigatorKey.currentState?.popUntil((route) => route.isFirst);
-        }
-      },
     );
   }
 
