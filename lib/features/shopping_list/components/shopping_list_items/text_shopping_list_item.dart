@@ -532,8 +532,7 @@ class _CircleCheckboxState extends State<_CircleCheckbox>
       scale: _scale,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap:
-            disabled ? null : () => widget.onChanged!(!widget.checked),
+        onTap: disabled ? null : () => widget.onChanged!(!widget.checked),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 120),
           width: 22,

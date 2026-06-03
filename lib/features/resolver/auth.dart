@@ -13,7 +13,7 @@ import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/features/auth/page.dart';
 import 'package:shoppinglist/features/onboarding/page.dart';
-import 'package:shoppinglist/provider/onboarding.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
 import 'package:shoppinglist/provider/shared_preferences.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 
@@ -33,7 +33,8 @@ class AuthResolver extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final firebaseUserChanges = ref.watch(firebaseUserChangesProvider);
     final sharedPreferences = ref.watch(sharedPreferencesProvider);
-    final hasSeenOnboarding = ref.watch(hasSeenOnboardingProvider);
+    final hasSeenOnboarding = ref
+        .watch(boolSharedPreferencesProvider(key: BoolKey.hasSeenOnboarding));
 
     useEffect(() {
       final userID = firebaseUserChanges.asData?.valueOrNull?.uid;

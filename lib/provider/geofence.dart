@@ -3,36 +3,15 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/features/location_reminder/geofence_service.dart';
-import 'package:shoppinglist/provider/shared_preferences.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/utils/local_notification/local_notification.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 
 part 'geofence.g.dart';
-
-const _locationReminderEnabledKey = 'locationReminderEnabled';
-
-/// 位置情報リマインダーの有効/無効を管理するプロバイダー。
-@Riverpod(keepAlive: true, dependencies: [sharedPreferences])
-class LocationReminderEnabled extends _$LocationReminderEnabled {
-  @override
-  bool build() {
-    return ref.watch(sharedPreferencesProvider).getBool(
-              _locationReminderEnabledKey,
-            ) ??
-        false;
-  }
-
-  /// 設定値を保存する。冪等にするため toggle ではなく値指定。
-  Future<void> setEnabled({required bool enabled}) async {
-    await ref
-        .read(sharedPreferencesProvider)
-        .setBool(_locationReminderEnabledKey, enabled);
-    state = enabled;
-  }
-}
 
 /// GeofenceService のシングルトンインスタンスを提供するプロバイダー。
 @Riverpod(keepAlive: true, dependencies: [localNotificationsPlugin])
@@ -82,7 +61,8 @@ class GeofenceMonitoringPlan {
 GeofenceMonitoringPlan geofenceMonitoringPlan(Ref ref) {
   final isPremium =
       ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
-  final isEnabled = ref.watch(locationReminderEnabledProvider);
+  final isEnabled = ref.watch(
+      boolSharedPreferencesProvider(key: BoolKey.locationReminderEnabled));
   final groups = ref.watch(userGroupsProvider).asData?.value ?? [];
 
   if (!isPremium || !isEnabled || groups.isEmpty) {

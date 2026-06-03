@@ -29,7 +29,7 @@ final geofenceServiceProvider = Provider<GeofenceService>.internal(
 // ignore: unused_element
 typedef GeofenceServiceRef = ProviderRef<GeofenceService>;
 String _$geofenceMonitoringPlanHash() =>
-    r'c779fd1ed8edf53429591b4ff71f70fe9e989845';
+    r'79df2ce57e3986d866462a39f5ccfc7966d669da';
 
 /// ジオフェンス監視に必要なデータを計算するプロバイダー。
 ///
@@ -55,27 +55,5 @@ final geofenceMonitoringPlanProvider =
 // ignore: unused_element
 typedef GeofenceMonitoringPlanRef
     = AutoDisposeProviderRef<GeofenceMonitoringPlan>;
-String _$locationReminderEnabledHash() =>
-    r'0961f83f6995b63f4e2a2b4eb94f8d9e4e45a5b9';
-
-/// 位置情報リマインダーの有効/無効を管理するプロバイダー。
-///
-/// Copied from [LocationReminderEnabled].
-@ProviderFor(LocationReminderEnabled)
-final locationReminderEnabledProvider =
-    NotifierProvider<LocationReminderEnabled, bool>.internal(
-  LocationReminderEnabled.new,
-  name: r'locationReminderEnabledProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$locationReminderEnabledHash,
-  dependencies: <ProviderOrFamily>[sharedPreferencesProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    sharedPreferencesProvider,
-    ...?sharedPreferencesProvider.allTransitiveDependencies
-  },
-);
-
-typedef _$LocationReminderEnabled = Notifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
