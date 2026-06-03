@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_data_sync.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/auth_claim.dart';
@@ -95,29 +96,55 @@ class HomeWidgetSync extends HookConsumerWidget {
       }
     });
 
-    // 現在の買い物リストアイテムの変更を検知して同期。
-    // resolvedShoppingListID が確定している時のみ購読する(空リスト等の未確定時は同期不要)。
-    if (resolvedShoppingListID != null) {
-      ref.listen(
-          textShoppingListItemsProvider(
-            groupID: groupID,
-            shoppingListID: resolvedShoppingListID,
-            showChecked: true,
-          ), (prev, next) {
-        final items = next.valueOrNull;
-        if (items != null) {
-          final lists = shoppingListsAsync.valueOrNull ?? [];
-          final list =
-              lists.firstWhereOrNull((sl) => sl.id == resolvedShoppingListID);
-          HomeWidgetDataSync.syncCurrentShoppingListItems(
-            groupID: groupID,
-            shoppingListID: resolvedShoppingListID,
-            shoppingListName: list?.name ?? '',
-            items: items,
-          );
-        }
-      });
+    // 現在の買い物リストアイテムの同期は、resolvedShoppingListID が確定している時のみ行う。
+    // Riverpod の ref.listen を条件分岐内で呼ぶことを避けるため、非null時のみマウントされる
+    // _HomeWidgetItemSync に切り出し、その中で無条件に ref.listen する。
+    if (resolvedShoppingListID == null) {
+      return builder(context);
     }
+    return _HomeWidgetItemSync(
+      groupID: groupID,
+      shoppingListID: resolvedShoppingListID,
+      shoppingLists: shoppingListsAsync.valueOrNull ?? [],
+      builder: builder,
+    );
+  }
+}
+
+/// resolvedShoppingListID が非nullの時だけマウントされ、現在の買い物リストアイテムの変更を
+/// 検知してウィジェットストレージへ同期する。条件分岐なしで ref.listen するための子 Widget。
+class _HomeWidgetItemSync extends ConsumerWidget {
+  final String groupID;
+  final String shoppingListID;
+  final List<GroupShoppingList> shoppingLists;
+  final Widget Function(BuildContext context) builder;
+
+  const _HomeWidgetItemSync({
+    required this.groupID,
+    required this.shoppingListID,
+    required this.shoppingLists,
+    required this.builder,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(
+        textShoppingListItemsProvider(
+          groupID: groupID,
+          shoppingListID: shoppingListID,
+          showChecked: true,
+        ), (prev, next) {
+      final items = next.valueOrNull;
+      if (items != null) {
+        final list = shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID);
+        HomeWidgetDataSync.syncCurrentShoppingListItems(
+          groupID: groupID,
+          shoppingListID: shoppingListID,
+          shoppingListName: list?.name ?? '',
+          items: items,
+        );
+      }
+    });
 
     return builder(context);
   }
