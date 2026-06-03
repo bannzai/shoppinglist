@@ -136,7 +136,8 @@ class _HomeWidgetItemSync extends ConsumerWidget {
         ), (prev, next) {
       final items = next.valueOrNull;
       if (items != null) {
-        final list = shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID);
+        final list =
+            shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID);
         HomeWidgetDataSync.syncCurrentShoppingListItems(
           groupID: groupID,
           shoppingListID: shoppingListID,
