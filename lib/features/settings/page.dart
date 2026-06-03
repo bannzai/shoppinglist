@@ -74,9 +74,7 @@ class SettingPage extends HookConsumerWidget {
           name: 'submit_profile_display_name',
           parameters: {'groupID': groupID});
       try {
-        await ref
-            .read(groupUserProfileUpdateProvider(groupID: groupID))
-            .call(
+        await ref.read(groupUserProfileUpdateProvider(groupID: groupID)).call(
               userID: currentUserID,
               displayName: displayName,
             );
@@ -510,8 +508,8 @@ class _LocationReminderToggle extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
-    final isEnabled = ref.watch(boolSharedPreferencesProvider(
-        key: BoolKey.locationReminderEnabled));
+    final isEnabled = ref.watch(
+        boolSharedPreferencesProvider(key: BoolKey.locationReminderEnabled));
 
     return SwitchListTile(
       title: const Text('位置情報リマインダー'),

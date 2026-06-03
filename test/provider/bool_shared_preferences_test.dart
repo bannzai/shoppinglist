@@ -22,10 +22,10 @@ void main() {
     test('同じ key は同一の Notifier インスタンスを返す', () async {
       final container = await _container({});
 
-      final first = container
-          .read(boolSharedPreferencesProvider(key: 'foo').notifier);
-      final second = container
-          .read(boolSharedPreferencesProvider(key: 'foo').notifier);
+      final first =
+          container.read(boolSharedPreferencesProvider(key: 'foo').notifier);
+      final second =
+          container.read(boolSharedPreferencesProvider(key: 'foo').notifier);
 
       // 同一 key → family キャッシュにより同じインスタンス。
       expect(identical(first, second), isTrue);
@@ -37,10 +37,10 @@ void main() {
     test('異なる key は別の Notifier インスタンスを返す', () async {
       final container = await _container({});
 
-      final foo = container
-          .read(boolSharedPreferencesProvider(key: 'foo').notifier);
-      final bar = container
-          .read(boolSharedPreferencesProvider(key: 'bar').notifier);
+      final foo =
+          container.read(boolSharedPreferencesProvider(key: 'foo').notifier);
+      final bar =
+          container.read(boolSharedPreferencesProvider(key: 'bar').notifier);
 
       expect(identical(foo, bar), isFalse);
       expect(boolSharedPreferencesProvider(key: 'foo'),
@@ -66,7 +66,8 @@ void main() {
 
       expect(container.read(boolSharedPreferencesProvider(key: 'foo')), isTrue);
       // 別 key は影響を受けない。
-      expect(container.read(boolSharedPreferencesProvider(key: 'bar')), isFalse);
+      expect(
+          container.read(boolSharedPreferencesProvider(key: 'bar')), isFalse);
     });
 
     test('toggle は現在値を反転する', () async {
@@ -78,7 +79,8 @@ void main() {
       expect(container.read(boolSharedPreferencesProvider(key: 'foo')), isTrue);
 
       await notifier.toggle();
-      expect(container.read(boolSharedPreferencesProvider(key: 'foo')), isFalse);
+      expect(
+          container.read(boolSharedPreferencesProvider(key: 'foo')), isFalse);
     });
   });
 }
