@@ -94,9 +94,9 @@ class ShoppingListItemFilterPage extends ConsumerWidget {
               child: Text(
                 'チェック済みを非表示にすると、買い物中のリストがコンパクトに見えます。',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: neutral.ink3,
-                  height: 1.5,
-                ),
+                      color: neutral.ink3,
+                      height: 1.5,
+                    ),
               ),
             ),
           ],

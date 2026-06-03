@@ -1,0 +1,45 @@
+appId: com.bannzai.shoppinglist
+---
+# サインアウト時の挙動を検証する。
+# release/profile では signOut() 後に終了アラート(「サインアウトしました」/「終了する」)を出し
+# exit(0) する。debug では Hot Restart の手間を避けるため終了アラートも exit も行わない。
+#
+# Maestro は debug ビルド(匿名サインインが kDebugMode 限定のため)で動くので、ここでは
+# 「debug ではサインアウト確定後に終了アラートが出ない」ことを確認する（kDebugMode ガードの回帰防止）。
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 設定画面へ遷移する。設定はテキストタブではなく list_top_bar の設定アイコン
+# (tooltip '設定') からの push ルート。settings_profile.yaml と同じ実績パターンで掴む。
+- tapOn:
+    text: "設定.*"
+    index: 0
+- assertVisible: "設定.*"
+- waitForAnimationToEnd
+
+# 「サインアウト」ボタンは設定画面の最下部にあるためスクロールして表示させる。
+- scrollUntilVisible:
+    element:
+      text: "サインアウト"
+    direction: DOWN
+    timeout: 15000
+
+# サインアウト確認ダイアログを開く
+- tapOn: "サインアウト"
+- waitForAnimationToEnd
+# Maestro の text は完全一致(正規表現)。実際の文言は「サインアウトしますか?」(末尾?)なので .* を付ける。
+- assertVisible:
+    text: "サインアウトしますか.*"
+
+# ダイアログ内の確定ボタン「サインアウト」を押す。設定画面側のボタンと文言が重複するため、
+# ダイアログにのみ存在する「キャンセル」の右隣のピルとして一意に特定する。
+- tapOn:
+    text: "サインアウト"
+    rightOf:
+      text: "キャンセル"
+- waitForAnimationToEnd
+
+# debug ビルドでは終了アラート(「終了する」)を出さず exit(0) もしない。
+# 終了アラートが表示されていないこと＝アプリが終了せず debug の no-op 経路を通ったことを確認する。
+- assertNotVisible:
+    text: "終了する"

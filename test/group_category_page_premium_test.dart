@@ -207,8 +207,7 @@ void main() {
   });
 
   group('GroupCategoryPage カテゴリ追加の遷移', () {
-    testWidgets('FABタップでダイアログを出さず編集画面へ直接遷移する',
-        (WidgetTester tester) async {
+    testWidgets('FABタップでダイアログを出さず編集画面へ直接遷移する', (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: _nonPremiumOverrides(),
