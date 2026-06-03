@@ -17,7 +17,9 @@ class _GroupInvitationVerifyingPreviewState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       await showGeneralDialog<void>(
         context: context,
         barrierLabel: '招待コードを確認中',

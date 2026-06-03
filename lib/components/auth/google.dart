@@ -59,7 +59,9 @@ class AppSignInWithGoogleButton extends HookConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
               ),
               onPressed: () async {
-                if (isLoading.value) return;
+                if (isLoading.value) {
+                  return;
+                }
                 analytics.logEvent(
                     name: 'tap_sign_in_google', parameters: null);
                 isLoading.value = true;

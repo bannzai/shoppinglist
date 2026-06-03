@@ -394,7 +394,9 @@ class _VersionLabelState extends State<_VersionLabel> {
   void initState() {
     super.initState();
     PackageInfo.fromPlatform().then((info) {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _label = 'v${info.version} (build ${info.buildNumber})';
       });
@@ -673,7 +675,9 @@ class _SignOutButton extends ConsumerWidget {
                 );
               },
             );
-            if (confirmed != true) return;
+            if (confirmed != true) {
+              return;
+            }
             analytics.logEvent(name: 'confirm_sign_out', parameters: null);
             await FirebaseAuth.instance.signOut();
           },

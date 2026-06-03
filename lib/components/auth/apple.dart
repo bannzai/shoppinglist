@@ -57,7 +57,9 @@ class AppSignInWithAppleButton extends HookConsumerWidget {
               height: 52,
               borderRadius: BorderRadius.circular(14),
               onPressed: () async {
-                if (isLoading.value) return;
+                if (isLoading.value) {
+                  return;
+                }
                 analytics.logEvent(name: 'tap_sign_in_apple', parameters: null);
                 isLoading.value = true;
                 try {

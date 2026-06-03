@@ -199,7 +199,9 @@ class _GroupedListView extends StatelessWidget {
 
     for (final categoryID in sortedCategoryIDs) {
       final items = grouped[categoryID];
-      if (items == null || items.isEmpty) continue;
+      if (items == null || items.isEmpty) {
+        continue;
+      }
 
       final category = categoryMap[categoryID]!;
       final metrics = ShoppingListItemMetrics.fromItems(items);

@@ -111,7 +111,9 @@ class _CategoryEditBody extends HookConsumerWidget {
                   ),
                   onSubmitted: (String value) async {
                     final name = value.trim();
-                    if (name.isEmpty || name == category.name) return;
+                    if (name.isEmpty || name == category.name) {
+                      return;
+                    }
                     analytics.logEvent(
                         name: 'submit_category_name',
                         parameters: {
@@ -380,7 +382,9 @@ class _CategoryEditBody extends HookConsumerWidget {
             TextButton(
               onPressed: () async {
                 final keyword = keywordController.text.trim();
-                if (keyword.isEmpty) return;
+                if (keyword.isEmpty) {
+                  return;
+                }
                 analytics.logEvent(
                     name: 'tap_confirm_add_keyword',
                     parameters: {

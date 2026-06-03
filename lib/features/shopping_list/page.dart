@@ -147,7 +147,9 @@ class _NoListYet extends ConsumerWidget {
             const SizedBox(height: 32),
             FilledButton.icon(
               onPressed: () async {
-                if (appUserID == null) return;
+                if (appUserID == null) {
+                  return;
+                }
                 analytics.logEvent(
                     name: 'tap_create_first_shopping_list',
                     parameters: {'groupID': groupID});
@@ -269,7 +271,9 @@ class _Body extends HookConsumerWidget {
 
     final autoNotify = ref.watch(autoNotifyShoppingListUpdateProvider);
     useEffect(() {
-      if (!autoNotify || currentUserID == null) return null;
+      if (!autoNotify || currentUserID == null) {
+        return null;
+      }
       final listener = AppLifecycleListener(
         onStateChange: (state) {
           if (state == AppLifecycleState.paused && itemChangeCount.value > 0) {
@@ -277,7 +281,9 @@ class _Body extends HookConsumerWidget {
                 .where((p) => p.userID != currentUserID)
                 .map((p) => p.userID)
                 .toList();
-            if (otherMemberIDs.isEmpty) return;
+            if (otherMemberIDs.isEmpty) {
+              return;
+            }
 
             functions.sendShoppingListUpdateNotification(
               groupID: groupID,
