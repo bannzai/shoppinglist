@@ -2,8 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shoppinglist/components/button/inquiry.dart';
@@ -11,23 +9,21 @@ import 'package:shoppinglist/components/button/user_delete.dart';
 import 'package:shoppinglist/components/frame/app_cell.dart';
 import 'package:shoppinglist/components/frame/app_dialog_shell.dart';
 import 'package:shoppinglist/components/frame/app_pill.dart';
+import 'package:shoppinglist/components/frame/app_setting_section.dart';
 import 'package:shoppinglist/features/developer_options/page.dart';
 import 'package:shoppinglist/features/group_invitation/page.dart';
 import 'package:shoppinglist/features/group_list/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
-import 'package:shoppinglist/features/settings/components/section.dart';
-import 'package:shoppinglist/features/settings/theme_color_selection_page.dart';
+import 'package:shoppinglist/features/settings/components/auto_notify_toggle.dart';
+import 'package:shoppinglist/features/settings/components/location_reminder_toggle.dart';
+import 'package:shoppinglist/features/settings/components/theme_color_tile.dart';
 import 'package:shoppinglist/provider/app_user.dart';
-import 'package:shoppinglist/provider/bool_shared_preferences.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
-import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
-import 'package:shoppinglist/utils/local_notification/local_notification.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
-import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingPage extends HookConsumerWidget {
@@ -43,21 +39,21 @@ class SettingPage extends HookConsumerWidget {
     final displayNameController = useTextEditingController();
 
     // プロフィールのdisplayNameをTextFieldに反映
-    final profilesAsync = groupID != null
+    final groupUserProfilesAsync = groupID != null
         ? ref.watch(groupUserProfilesProvider(groupID: groupID))
         : null;
-    final myProfile = profilesAsync?.asData?.value
+    final myGroupUserProfile = groupUserProfilesAsync?.asData?.value
         .where((p) => p.userID == currentUserID)
         .firstOrNull;
 
     // Firestoreからプロフィールデータが初回読み込みされた時にTextFieldへ反映する。
     // displayNameController.textが空の場合のみ設定することで、ユーザーが入力中の値を上書きしない。
     useEffect(() {
-      if (myProfile != null && displayNameController.text.isEmpty) {
-        displayNameController.text = myProfile.displayName ?? '';
+      if (myGroupUserProfile != null && displayNameController.text.isEmpty) {
+        displayNameController.text = myGroupUserProfile.displayName ?? '';
       }
       return null;
-    }, [myProfile]);
+    }, [myGroupUserProfile]);
 
     // 表示名を保存する。保存ボタンは廃止し、TextFieldのフォーカスが外れた時(blur)に
     // この関数を呼んで自動保存する。保存済みの値と同じ場合は書き込みをスキップし、
@@ -67,27 +63,27 @@ class SettingPage extends HookConsumerWidget {
         return;
       }
       final displayName = displayNameController.text;
-      if (displayName == (myProfile?.displayName ?? '')) {
+      if (displayName == (myGroupUserProfile?.displayName ?? '')) {
         return;
       }
       analytics.logEvent(
-          name: 'submit_profile_display_name',
-          parameters: {'groupID': groupID});
+        name: 'submit_profile_display_name',
+        parameters: {'groupID': groupID},
+      );
       try {
-        await ref.read(groupUserProfileUpdateProvider(groupID: groupID)).call(
-              userID: currentUserID,
-              displayName: displayName,
-            );
+        await ref
+            .read(groupUserProfileUpdateProvider(groupID: groupID))
+            .call(userID: currentUserID, displayName: displayName);
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('表示名を更新しました')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('表示名を更新しました')));
         }
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(e.toString())),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(e.toString())));
         }
       }
     }
@@ -112,49 +108,58 @@ class SettingPage extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SettingSectionTitle(text: 'プロフィール', children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
-                  // ラベル「表示名」と入力欄を横並び(Row)にする。ラベルを左、
-                  // 入力欄を右のExpandedに置き、値はTextAlign.endで右寄せにして
-                  // 他の設定行(値が右側)とトンマナを揃える。
-                  child: Row(
-                    children: [
-                      const Text('表示名'),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        // フォーカスが外れた時(hasFocus=false)に自動保存する。
-                        // canRequestFocus=false でこのFocus自体は入力対象にならず、
-                        // 子のTextFieldのフォーカス変化の検知だけに使う。
-                        child: Focus(
-                          canRequestFocus: false,
-                          onFocusChange: (hasFocus) async {
-                            if (hasFocus) {
-                              return;
-                            }
-                            await saveDisplayName();
-                          },
-                          child: TextField(
-                            controller: displayNameController,
-                            textAlign: TextAlign.end,
-                            decoration: const InputDecoration(
-                              hintText: '表示名を入力',
+              AppSettingSection(
+                title: 'プロフィール',
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                    // ラベル「表示名」と入力欄を横並び(Row)にする。ラベルを左、
+                    // 入力欄を右のExpandedに置き、値はTextAlign.endで右寄せにして
+                    // 他の設定行(値が右側)とトンマナを揃える。
+                    child: Row(
+                      children: [
+                        const Text('表示名'),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          // フォーカスが外れた時(hasFocus=false)に自動保存する。
+                          // canRequestFocus=false でこのFocus自体は入力対象にならず、
+                          // 子のTextFieldのフォーカス変化の検知だけに使う。
+                          child: Focus(
+                            canRequestFocus: false,
+                            onFocusChange: (hasFocus) async {
+                              if (hasFocus) {
+                                return;
+                              }
+                              await saveDisplayName();
+                            },
+                            child: TextField(
+                              controller: displayNameController,
+                              textAlign: TextAlign.end,
+                              decoration: const InputDecoration(
+                                hintText: '表示名を入力',
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ]),
-              SettingSectionTitle(text: 'グループ', children: [
-                AppCell(
+                ],
+              ),
+              AppSettingSection(
+                title: 'グループ',
+                children: [
+                  AppCell(
                     icon: Icons.groups,
                     title: 'グループ管理',
                     onTap: () {
                       analytics.logEvent(
-                          name: 'tap_navigate_group_list', parameters: {});
+                        name: 'tap_navigate_group_list',
+                        parameters: {},
+                      );
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -165,13 +170,16 @@ class SettingPage extends HookConsumerWidget {
                     detail: null,
                     onSwitch: null,
                     subtitle: null,
-                    switchValue: null),
-                AppCell(
+                    switchValue: null,
+                  ),
+                  AppCell(
                     icon: Icons.group_add,
                     title: '招待コードでグループに参加',
                     onTap: () {
                       analytics.logEvent(
-                          name: 'tap_navigate_invitation', parameters: {});
+                        name: 'tap_navigate_invitation',
+                        parameters: {},
+                      );
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -183,87 +191,114 @@ class SettingPage extends HookConsumerWidget {
                     detail: null,
                     onSwitch: null,
                     subtitle: null,
-                    switchValue: null),
-              ]),
-              SettingSectionTitle(text: '外観', children: [
-                _ThemeColorTile(),
-              ]),
-              SettingSectionTitle(text: '通知', children: [
-                _AutoNotifyToggle(),
-                _LocationReminderToggle(),
-              ]),
+                    switchValue: null,
+                  ),
+                ],
+              ),
+              AppSettingSection(
+                title: '外観',
+                children: [const ThemeColorTile()],
+              ),
+              AppSettingSection(
+                title: '通知',
+                children: [
+                  const AutoNotifyToggle(),
+                  const LocationReminderToggle(),
+                ],
+              ),
               const Padding(
                 padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
                 child: _PremiumCard(),
               ),
-              SettingSectionTitle(text: 'アプリについて', children: [
-                AppCell(
+              AppSettingSection(
+                title: 'アプリについて',
+                children: [
+                  AppCell(
                     icon: Icons.description_outlined,
                     title: '利用規約',
                     onTap: () {
                       analytics.logEvent(
-                          name: 'did_select_terms_of_service', parameters: {});
+                        name: 'did_select_terms_of_service',
+                        parameters: {},
+                      );
                       launchUrl(
-                          Uri.parse(
-                              'https://bannzai.github.io/shoppinglist/TermsOfService'),
-                          mode: LaunchMode.externalApplication);
+                        Uri.parse(
+                          'https://bannzai.github.io/shoppinglist/TermsOfService',
+                        ),
+                        mode: LaunchMode.externalApplication,
+                      );
                     },
                     detail: null,
                     onSwitch: null,
                     subtitle: null,
-                    switchValue: null),
-                const _Divider(),
-                AppCell(
+                    switchValue: null,
+                  ),
+                  const _Divider(),
+                  AppCell(
                     icon: Icons.shield_outlined,
                     title: 'プライバシーポリシー',
                     onTap: () {
                       analytics.logEvent(
-                          name: 'did_select_privacy_policy', parameters: {});
+                        name: 'did_select_privacy_policy',
+                        parameters: {},
+                      );
                       launchUrl(
-                          Uri.parse(
-                              'https://bannzai.github.io/shoppinglist/PrivacyPolicy'),
-                          mode: LaunchMode.externalApplication);
+                        Uri.parse(
+                          'https://bannzai.github.io/shoppinglist/PrivacyPolicy',
+                        ),
+                        mode: LaunchMode.externalApplication,
+                      );
                     },
                     detail: null,
                     onSwitch: null,
                     subtitle: null,
-                    switchValue: null),
-                const _Divider(),
-                AppCell(
+                    switchValue: null,
+                  ),
+                  const _Divider(),
+                  AppCell(
                     icon: Icons.gavel_outlined,
                     title: '特定商法取引法に基づく表記',
                     onTap: () {
                       analytics.logEvent(
-                          name:
-                              'did_select_specified_commercial_transaction_act',
-                          parameters: {});
+                        name: 'did_select_specified_commercial_transaction_act',
+                        parameters: {},
+                      );
                       launchUrl(
-                          Uri.parse(
-                              'https://bannzai.github.io/shoppinglist/SpecifiedCommercialTransactionAct'),
-                          mode: LaunchMode.externalApplication);
+                        Uri.parse(
+                          'https://bannzai.github.io/shoppinglist/SpecifiedCommercialTransactionAct',
+                        ),
+                        mode: LaunchMode.externalApplication,
+                      );
                     },
                     detail: null,
                     onSwitch: null,
                     subtitle: null,
-                    switchValue: null),
-                const _Divider(),
-                AppCell(
+                    switchValue: null,
+                  ),
+                  const _Divider(),
+                  AppCell(
                     icon: Icons.mail_outline,
                     title: 'お問い合わせ',
                     onTap: () {
-                      analytics
-                          .logEvent(name: 'tap_open_inquiry', parameters: {});
+                      analytics.logEvent(
+                        name: 'tap_open_inquiry',
+                        parameters: {},
+                      );
                       inquiry();
                     },
                     detail: null,
                     onSwitch: null,
                     subtitle: null,
-                    switchValue: null),
-              ]),
+                    switchValue: null,
+                  ),
+                ],
+              ),
               // E2Eテストでシェイクが使えないSimulator向けの代替入口
               if (kDebugMode)
-                SettingSectionTitle(text: 'デバッグ', children: [
-                  AppCell(
+                AppSettingSection(
+                  title: 'デバッグ',
+                  children: [
+                    AppCell(
                       icon: Icons.developer_mode,
                       title: '開発者オプション',
                       onTap: () {
@@ -272,8 +307,10 @@ class SettingPage extends HookConsumerWidget {
                       detail: null,
                       onSwitch: null,
                       subtitle: null,
-                      switchValue: null),
-                ]),
+                      switchValue: null,
+                    ),
+                  ],
+                ),
               // サインアウト: `design_handoff_shoppinglist/preview/screens-settings.jsx`
               // 準拠で破壊的操作扱い (danger 色 + 確認ダイアログ)。
               const _SignOutButton(),
@@ -312,8 +349,9 @@ class _PremiumCard extends ConsumerWidget {
             : null,
         color: isPremium ? null : neutral.surface2,
         borderRadius: BorderRadius.circular(14),
-        border:
-            isPremium ? null : Border.all(color: neutral.divider, width: 0.5),
+        border: isPremium
+            ? null
+            : Border.all(color: neutral.divider, width: 0.5),
         boxShadow: isPremium ? tokens.cardShadow : null,
       ),
       child: Row(
@@ -343,34 +381,35 @@ class _PremiumCard extends ConsumerWidget {
                 Text(
                   isPremium ? 'プレミアム会員' : 'プレミアムにアップグレード',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: isPremium ? Colors.white : neutral.ink,
-                      ),
+                    fontWeight: FontWeight.w700,
+                    color: isPremium ? Colors.white : neutral.ink,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   isPremium ? 'すべての機能が利用できます' : '5 色テーマ・AI 無制限など',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: isPremium
-                            ? Colors.white.withValues(alpha: 0.85)
-                            : neutral.ink2,
-                      ),
+                    color: isPremium
+                        ? Colors.white.withValues(alpha: 0.85)
+                        : neutral.ink2,
+                  ),
                 ),
               ],
             ),
           ),
           if (!isPremium)
             AppPill(
-                label: 'はじめる',
-                variant: AppPillVariant.accent,
-                onPressed: () {
-                  analytics.logEvent(
-                    name: 'tap_premium_membership_tile',
-                    parameters: {},
-                  );
-                  showPaywall(context: context);
-                },
-                icon: null),
+              label: 'はじめる',
+              variant: AppPillVariant.accent,
+              onPressed: () {
+                analytics.logEvent(
+                  name: 'tap_premium_membership_tile',
+                  parameters: {},
+                );
+                showPaywall(context: context);
+              },
+              icon: null,
+            ),
         ],
       ),
     );
@@ -408,194 +447,12 @@ class _VersionLabelState extends State<_VersionLabel> {
         _label ?? '',
         textAlign: TextAlign.center,
         style: monoTextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w400,
-            color: tokens.neutral.ink3,
-            letterSpacing: null),
+          fontSize: 11,
+          fontWeight: FontWeight.w400,
+          color: tokens.neutral.ink3,
+          letterSpacing: null,
+        ),
       ),
-    );
-  }
-}
-
-/// テーマカラー設定のListTile。プレミアムユーザーのみ選択画面へ遷移可能。
-class _ThemeColorTile extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isPremium =
-        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
-
-    return ListTile(
-      title: const Text('テーマカラー'),
-      leading: const Icon(Icons.palette),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: resolveAccentPreset(
-                      ref.watch(appUserProvider).asData?.value.themeColorHex)
-                  .light,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: 8),
-          if (!isPremium)
-            Icon(
-              Icons.lock,
-              size: 16,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-        ],
-      ),
-      onTap: () {
-        analytics.logEvent(
-          name: 'tap_theme_color_setting',
-          parameters: {'isPremium': isPremium.toString()},
-        );
-        if (isPremium) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const ThemeColorSelectionPage(),
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('テーマカラーの変更はプレミアム機能です'),
-              action: SnackBarAction(
-                label: 'アップグレード',
-                onPressed: () => showPaywall(context: context),
-              ),
-            ),
-          );
-        }
-      },
-    );
-  }
-}
-
-class _AutoNotifyToggle extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isEnabled = ref.watch(boolSharedPreferencesProvider(
-        key: BoolKey.autoNotifyShoppingListUpdate));
-
-    return SwitchListTile(
-      title: const Text('買い物リストの更新を通知する'),
-      subtitle: const Text('画面を離れた時にグループメンバーへ自動通知'),
-      value: isEnabled,
-      onChanged: (_) {
-        analytics.logEvent(
-          name: 'tap_toggle_auto_notify',
-          parameters: {'enabled': (!isEnabled).toString()},
-        );
-        ref
-            .read(boolSharedPreferencesProvider(
-                    key: BoolKey.autoNotifyShoppingListUpdate)
-                .notifier)
-            .toggle();
-      },
-    );
-  }
-}
-
-/// 位置情報リマインダーの有効/無効を切り替えるトグル。
-class _LocationReminderToggle extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isPremium =
-        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
-    final isEnabled = ref.watch(
-        boolSharedPreferencesProvider(key: BoolKey.locationReminderEnabled));
-
-    return SwitchListTile(
-      title: const Text('位置情報リマインダー'),
-      subtitle: const Text('店舗の近くに来たら買い物リストを通知'),
-      secondary: Icon(
-        Icons.location_on,
-        color:
-            !isPremium ? Theme.of(context).colorScheme.onSurfaceVariant : null,
-      ),
-      value: isPremium && isEnabled,
-      onChanged: isPremium
-          ? (value) async {
-              analytics.logEvent(
-                name: 'tap_toggle_location_remind',
-                parameters: {
-                  'enabled': value.toString(),
-                  'isPremium': isPremium.toString(),
-                },
-              );
-
-              if (value) {
-                // Android通知権限の確認
-                final androidNotifications = ref
-                    .read(localNotificationsPluginProvider)
-                    .resolvePlatformSpecificImplementation<
-                        AndroidFlutterLocalNotificationsPlugin>();
-                if (await androidNotifications
-                        ?.requestNotificationsPermission() ==
-                    false) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('通知権限を許可すると利用できます'),
-                      ),
-                    );
-                  }
-                  return;
-                }
-
-                // 「常に許可」が必要
-                var permission = await Geolocator.checkPermission();
-                if (permission == LocationPermission.denied ||
-                    permission == LocationPermission.deniedForever) {
-                  permission = await Geolocator.requestPermission();
-                }
-                if (permission == LocationPermission.whileInUse) {
-                  permission = await Geolocator.requestPermission();
-                }
-                if (permission != LocationPermission.always) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'バックグラウンドの位置情報を「常に許可」にすると利用できます',
-                        ),
-                      ),
-                    );
-                  }
-                  return;
-                }
-              }
-
-              await ref
-                  .read(boolSharedPreferencesProvider(
-                          key: BoolKey.locationReminderEnabled)
-                      .notifier)
-                  .set(value: value);
-            }
-          : (value) {
-              analytics.logEvent(
-                name: 'tap_toggle_location_remind',
-                parameters: {
-                  'enabled': value.toString(),
-                  'isPremium': isPremium.toString(),
-                },
-              );
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('位置情報リマインダーはプレミアム機能です'),
-                  action: SnackBarAction(
-                    label: 'アップグレード',
-                    onPressed: () => showPaywall(context: context),
-                  ),
-                ),
-              );
-            },
     );
   }
 }
@@ -618,9 +475,9 @@ class _SignOutButton extends ConsumerWidget {
           label: Text(
             'サインアウト',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: tokens.neutral.danger,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: tokens.neutral.danger,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           onPressed: () async {
             analytics.logEvent(name: 'tap_sign_out', parameters: null);
@@ -645,9 +502,7 @@ class _SignOutButton extends ConsumerWidget {
                       const SizedBox(height: 12),
                       Text(
                         '再度サインインするまで端末からはリストにアクセスできなくなります。',
-                        style: Theme.of(dialogContext)
-                            .textTheme
-                            .bodyMedium
+                        style: Theme.of(dialogContext).textTheme.bodyMedium
                             ?.copyWith(color: tokens.neutral.ink2),
                       ),
                       const SizedBox(height: 16),
@@ -655,22 +510,24 @@ class _SignOutButton extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: AppPill(
-                                label: 'キャンセル',
-                                variant: AppPillVariant.ghost,
-                                expanded: true,
-                                onPressed: () =>
-                                    Navigator.pop(dialogContext, false),
-                                icon: null),
+                              label: 'キャンセル',
+                              variant: AppPillVariant.ghost,
+                              expanded: true,
+                              onPressed: () =>
+                                  Navigator.pop(dialogContext, false),
+                              icon: null,
+                            ),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: AppPill(
-                                label: 'サインアウト',
-                                variant: AppPillVariant.danger,
-                                expanded: true,
-                                onPressed: () =>
-                                    Navigator.pop(dialogContext, true),
-                                icon: null),
+                              label: 'サインアウト',
+                              variant: AppPillVariant.danger,
+                              expanded: true,
+                              onPressed: () =>
+                                  Navigator.pop(dialogContext, true),
+                              icon: null,
+                            ),
                           ),
                         ],
                       ),

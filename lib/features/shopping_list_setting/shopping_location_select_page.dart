@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/frame/app_cell.dart';
-import 'package:shoppinglist/components/frame/app_section_card.dart';
+import 'package:shoppinglist/components/frame/app_setting_section.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -22,8 +22,9 @@ class ShoppingLocationSelectPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final locationsAsync =
-        ref.watch(shoppingLocationsProvider(groupID: groupID));
+    final locationsAsync = ref.watch(
+      shoppingLocationsProvider(groupID: groupID),
+    );
     final neutral = context.tokens.neutral;
     return Scaffold(
       backgroundColor: neutral.paper,
@@ -38,46 +39,48 @@ class ShoppingLocationSelectPage extends ConsumerWidget {
       body: locationsAsync.when(
         data: (locations) => SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(0, 14, 0, 32),
-          child: AppSectionCard(
+          child: AppSettingSection(
             children: [
               AppCell(
-                  icon: Icons.block,
-                  title: 'なし',
-                  detail: currentLocationID == null ? '選択中' : null,
+                icon: Icons.block,
+                title: 'なし',
+                detail: currentLocationID == null ? '選択中' : null,
+                onTap: () {
+                  analytics.logEvent(
+                    name: 'select_list_location',
+                    parameters: {'groupID': groupID, 'value': 'none'},
+                  );
+                  Navigator.pop<_LocationSelectResult>(
+                    context,
+                    const _LocationSelectResult(null),
+                  );
+                },
+                onSwitch: null,
+                subtitle: null,
+                switchValue: null,
+              ),
+              for (final location in locations)
+                AppCell(
+                  icon: Icons.place_outlined,
+                  title: location.name,
+                  detail: currentLocationID == location.id ? '選択中' : null,
                   onTap: () {
                     analytics.logEvent(
                       name: 'select_list_location',
-                      parameters: {'groupID': groupID, 'value': 'none'},
+                      parameters: {
+                        'groupID': groupID,
+                        'locationID': location.id,
+                      },
                     );
                     Navigator.pop<_LocationSelectResult>(
                       context,
-                      const _LocationSelectResult(null),
+                      _LocationSelectResult(location.id),
                     );
                   },
                   onSwitch: null,
                   subtitle: null,
-                  switchValue: null),
-              for (final location in locations)
-                AppCell(
-                    icon: Icons.place_outlined,
-                    title: location.name,
-                    detail: currentLocationID == location.id ? '選択中' : null,
-                    onTap: () {
-                      analytics.logEvent(
-                        name: 'select_list_location',
-                        parameters: {
-                          'groupID': groupID,
-                          'locationID': location.id,
-                        },
-                      );
-                      Navigator.pop<_LocationSelectResult>(
-                        context,
-                        _LocationSelectResult(location.id),
-                      );
-                    },
-                    onSwitch: null,
-                    subtitle: null,
-                    switchValue: null),
+                  switchValue: null,
+                ),
             ],
           ),
         ),
