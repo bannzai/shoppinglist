@@ -77,14 +77,12 @@ void main() {
       expect(_checkboxGesture(tester).onTap, isNull);
     });
 
-    testWidgets('テキストありの行: チェックボックスのタップが有効 (onTap != null)',
-        (tester) async {
+    testWidgets('テキストありの行: チェックボックスのタップが有効 (onTap != null)', (tester) async {
       await _pump(tester, _item(id: 'filled', message: '牛乳'));
       expect(_checkboxGesture(tester).onTap, isNotNull);
     });
 
-    testWidgets('空行: 右スワイプチェックを禁止し左スワイプ削除のみ許可 (endToStart)',
-        (tester) async {
+    testWidgets('空行: 右スワイプチェックを禁止し左スワイプ削除のみ許可 (endToStart)', (tester) async {
       await _pump(tester, _item(id: 'empty', message: ''));
       expect(
         tester.widget<Dismissible>(find.byType(Dismissible)).direction,
