@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
@@ -41,7 +40,12 @@ Future<UserCredential> signInWithApple() async {
 }
 
 class AppSignInWithAppleButton extends HookConsumerWidget {
-  const AppSignInWithAppleButton({super.key});
+  /// サインイン処理の開始/終了を呼び出し元へ通知する。
+  /// 処理中は呼び出し元（AuthPage）が画面全体を LaunchLoading に切り替えるため、
+  /// ボタン自身は処理中インジケータを描画しない。
+  final void Function(bool isLoading) onLoadingChanged;
+
+  const AppSignInWithAppleButton({super.key, required this.onLoadingChanged});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,35 +53,33 @@ class AppSignInWithAppleButton extends HookConsumerWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.center,
-            child: SignInWithAppleButton(
-              height: 52,
-              borderRadius: BorderRadius.circular(14),
-              onPressed: () async {
-                if (isLoading.value) return;
-                analytics.logEvent(name: 'tap_sign_in_apple', parameters: null);
-                isLoading.value = true;
-                try {
-                  await signInWithApple();
-                } on SignInWithAppleAuthorizationException catch (e) {
-                  if (e.code == AuthorizationErrorCode.canceled) {
-                    return;
-                  }
-                  rethrow;
-                } finally {
-                  isLoading.value = false;
-                }
-              },
-            ),
-          ),
-          if (isLoading.value)
-            const Center(
-              child: Loading(),
-            ),
-        ],
+      child: Align(
+        alignment: Alignment.center,
+        child: SignInWithAppleButton(
+          height: 52,
+          borderRadius: BorderRadius.circular(14),
+          onPressed: () async {
+            if (isLoading.value) return;
+            analytics.logEvent(name: 'tap_sign_in_apple', parameters: null);
+            isLoading.value = true;
+            onLoadingChanged(true);
+            try {
+              await signInWithApple();
+              // 成功時はローディングを解除しない（google.dart と同じ理由）。
+            } on SignInWithAppleAuthorizationException catch (e) {
+              isLoading.value = false;
+              onLoadingChanged(false);
+              if (e.code == AuthorizationErrorCode.canceled) {
+                return;
+              }
+              rethrow;
+            } catch (_) {
+              isLoading.value = false;
+              onLoadingChanged(false);
+              rethrow;
+            }
+          },
+        ),
       ),
     );
   }

@@ -2,22 +2,33 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/auth/apple.dart';
 import 'package:shoppinglist/components/auth/google.dart';
+import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 認証画面。OnboardingPage 完了後 / 未認証時に表示される。
 /// `design_handoff_shopping_list/source/screens-onboarding.jsx#AuthPage` 相当。
-class AuthPage extends ConsumerWidget {
+class AuthPage extends HookConsumerWidget {
   const AuthPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isSigningIn = useState(false);
     final tokens = context.tokens;
     final neutral = tokens.neutral;
+
+    // サインイン処理中は画面全体を連鎖と同じ LaunchLoading に切り替える。
+    // resolverChainLoadingKey を共有することで、認証成功後に表示される連鎖側の
+    // LaunchLoading へ element が reparent され、カゴのアニメーションが途切れず連続する。
+    if (isSigningIn.value) {
+      return LaunchLoading(key: resolverChainLoadingKey);
+    }
+
     return Scaffold(
       backgroundColor: neutral.surface,
       body: SafeArea(
@@ -50,16 +61,26 @@ class AuthPage extends ConsumerWidget {
                     ),
               ),
               const Spacer(),
-              const AppSignInWithAppleButton(),
+              AppSignInWithAppleButton(
+                onLoadingChanged: (value) => isSigningIn.value = value,
+              ),
               const SizedBox(height: 10),
-              const AppSignInWithGoogleButton(),
+              AppSignInWithGoogleButton(
+                onLoadingChanged: (value) => isSigningIn.value = value,
+              ),
               if (kDebugMode) ...[
                 const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: ElevatedButton(
                     onPressed: () async {
-                      await FirebaseAuth.instance.signInAnonymously();
+                      isSigningIn.value = true;
+                      try {
+                        await FirebaseAuth.instance.signInAnonymously();
+                      } catch (_) {
+                        isSigningIn.value = false;
+                        rethrow;
+                      }
                     },
                     child: const Text('匿名サインイン（デバッグ用）'),
                   ),
