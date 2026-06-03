@@ -22,6 +22,10 @@ linter:
   # producing the lint.
   rules:
     always_declare_return_types: true
+    # 1行ガードリターン (if (cond) return null;) を多行化する。
+    # body を新しい行へ移すと curly_braces_in_flow_control_structures (flutter_lints で有効)
+    # が連動してブレースを付与するため、最終形は `if (cond) {\n  return null;\n}` になる。
+    always_put_control_body_on_new_line: true
     prefer_single_quotes: true
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule

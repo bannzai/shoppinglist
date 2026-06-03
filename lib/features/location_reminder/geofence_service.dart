@@ -41,7 +41,9 @@ class GeofenceService {
 
   /// 位置情報ストリームの監視を開始する。
   void startMonitoring() {
-    if (_positionSubscription != null) return;
+    if (_positionSubscription != null) {
+      return;
+    }
 
     _positionSubscription = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
@@ -64,7 +66,9 @@ class GeofenceService {
   void _onPositionUpdate(Position position) {
     for (final locations in _monitoredLocations.values) {
       for (final location in locations) {
-        if (location.latitude == null || location.longitude == null) continue;
+        if (location.latitude == null || location.longitude == null) {
+          continue;
+        }
 
         final distance = Geolocator.distanceBetween(
           position.latitude,
@@ -92,7 +96,9 @@ class GeofenceService {
     required GroupShoppingLocation location,
   }) async {
     final lists = _activeShoppingLists[location.id] ?? [];
-    if (lists.isEmpty) return;
+    if (lists.isEmpty) {
+      return;
+    }
 
     analytics.logEvent(
       name: 'geofence_notification_sent',

@@ -101,7 +101,9 @@ class DeleteUserButton extends HookConsumerWidget {
       }
     } on FirebaseAuthException catch (error, stackTrace) {
       if (error.code == 'requires-recent-login') {
-        if (!context.mounted) return;
+        if (!context.mounted) {
+          return;
+        }
         showDiscardDialog(
           context,
           title: '再ログインしてください',
@@ -152,7 +154,9 @@ class DeleteUserButton extends HookConsumerWidget {
         );
       } else {
         errorLogger.recordError(error, stackTrace);
-        if (context.mounted) showErrorAlert(context, error);
+        if (context.mounted) {
+          showErrorAlert(context, error);
+        }
       }
     } catch (error) {
       if (context.mounted) {

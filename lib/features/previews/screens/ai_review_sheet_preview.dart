@@ -17,7 +17,9 @@ class _AIReviewSheetPreviewState extends State<AIReviewSheetPreview> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       await showAIReviewSheet(
         context: context,
         rawNames: const ['牛乳', 'パン', '卵', 'にんじん', '玉ねぎ'],

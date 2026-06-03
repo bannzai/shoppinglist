@@ -51,7 +51,9 @@ class ClientCreatedTimestamp implements JsonConverter<DateTime?, Timestamp?> {
 
   @override
   Timestamp? toJson(DateTime? dateTime) {
-    if (dateTime == null) return Timestamp.fromDate(DateTime.now());
+    if (dateTime == null) {
+      return Timestamp.fromDate(DateTime.now());
+    }
     return Timestamp.fromDate(dateTime);
   }
 }
@@ -71,7 +73,9 @@ class ClientUpdatedTimestamp implements JsonConverter<DateTime?, Timestamp?> {
 
   @override
   Timestamp? toJson(DateTime? date) {
-    if (date == null) return null;
+    if (date == null) {
+      return null;
+    }
     return Timestamp.fromDate(date);
   }
 }
@@ -90,7 +94,9 @@ class ServerCreatedTimestamp implements JsonConverter<DateTime?, dynamic> {
 
   @override
   dynamic toJson(DateTime? dateTime) {
-    if (dateTime == null) return FieldValue.serverTimestamp();
+    if (dateTime == null) {
+      return FieldValue.serverTimestamp();
+    }
     return dateTime;
   }
 }

@@ -258,7 +258,9 @@ class ShoppingLocationPage extends ConsumerWidget {
             TextButton(
               onPressed: () async {
                 final name = controller.text.trim();
-                if (name.isEmpty) return;
+                if (name.isEmpty) {
+                  return;
+                }
                 analytics.logEvent(
                     name: 'tap_confirm_add_location',
                     parameters: {'groupID': groupID});
@@ -319,7 +321,9 @@ class ShoppingLocationPage extends ConsumerWidget {
           TextButton(
             onPressed: () async {
               final name = controller.text.trim();
-              if (name.isEmpty) return;
+              if (name.isEmpty) {
+                return;
+              }
               analytics.logEvent(
                   name: 'tap_save_location',
                   parameters: {'groupID': groupID, 'locationID': location.id});

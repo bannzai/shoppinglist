@@ -111,7 +111,9 @@ class GroupCategoryPage extends ConsumerWidget {
           TextButton(
             onPressed: () async {
               final name = controller.text.trim();
-              if (name.isEmpty) return;
+              if (name.isEmpty) {
+                return;
+              }
               analytics.logEvent(
                   name: 'tap_confirm_add_category',
                   parameters: {'groupID': groupID});
@@ -218,7 +220,9 @@ class _CategoryListBody extends HookConsumerWidget {
                   // ロケーション選択ドロップダウン
                   locationsAsync.when(
                     data: (locations) {
-                      if (locations.isEmpty) return const SizedBox.shrink();
+                      if (locations.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
                       return Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16.0, vertical: 8.0),
@@ -330,7 +334,9 @@ class _CategoryListBody extends HookConsumerWidget {
           TextButton(
             onPressed: () async {
               final name = controller.text.trim();
-              if (name.isEmpty) return;
+              if (name.isEmpty) {
+                return;
+              }
               analytics.logEvent(
                   name: 'tap_confirm_add_category',
                   parameters: {'groupID': groupID});

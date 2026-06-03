@@ -39,7 +39,9 @@ class ForceUpdateResolver extends HookConsumerWidget {
 
     if (shouldForceUpdate.value) {
       Future.microtask(() async {
-        if (!context.mounted) return;
+        if (!context.mounted) {
+          return;
+        }
 
         await showOKDialog(context,
             icon: Icons.error,
