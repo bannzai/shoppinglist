@@ -22,75 +22,76 @@ class AuthPage extends HookConsumerWidget {
     final tokens = context.tokens;
     final neutral = tokens.neutral;
 
-    // サインイン処理中は画面全体を連鎖と同じ LaunchLoading に切り替える。
-    // resolverChainLoadingKey を共有することで、認証成功後に表示される連鎖側の
-    // LaunchLoading へ element が reparent され、カゴのアニメーションが途切れず連続する。
-    if (isSigningIn.value) {
-      return LaunchLoading(key: resolverChainLoadingKey);
-    }
-
     return Scaffold(
       backgroundColor: neutral.surface,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-          child: Column(
-            children: [
-              const Spacer(),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 240),
-                child: Image.asset(
-                  'images/auth/auth_art.png',
-                  fit: BoxFit.contain,
-                ),
-              ),
-              const SizedBox(height: 32),
-              Text(
-                '家族の買い物を、\nひとつのリストへ',
-                style: Theme.of(context).textTheme.displayMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'サインインすると端末をまたいでリストが同期します。'
-                '広告もメールマガジンもありません。',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: neutral.ink2,
-                      height: 1.7,
+      // サインイン処理中は前面に LaunchLoading を重ねる。早期 return ではなく Stack で
+      // 重ねることで、実行中のサインインボタンが unmount されず、キャンセル/失敗時に
+      // 破棄済み hook へ書き込んで処理が固まるのを防ぎつつ処理中表示を出せる。
+      body: Stack(
+        children: [
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+              child: Column(
+                children: [
+                  const Spacer(),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 240),
+                    child: Image.asset(
+                      'images/auth/auth_art.png',
+                      fit: BoxFit.contain,
                     ),
-              ),
-              const Spacer(),
-              AppSignInWithAppleButton(
-                onLoadingChanged: (value) => isSigningIn.value = value,
-              ),
-              const SizedBox(height: 10),
-              AppSignInWithGoogleButton(
-                onLoadingChanged: (value) => isSigningIn.value = value,
-              ),
-              if (kDebugMode) ...[
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      isSigningIn.value = true;
-                      try {
-                        await FirebaseAuth.instance.signInAnonymously();
-                      } catch (_) {
-                        isSigningIn.value = false;
-                        rethrow;
-                      }
-                    },
-                    child: const Text('匿名サインイン（デバッグ用）'),
                   ),
-                ),
-              ],
-              const SizedBox(height: 16),
-              const _Note(),
-            ],
+                  const SizedBox(height: 32),
+                  Text(
+                    '家族の買い物を、\nひとつのリストへ',
+                    style: Theme.of(context).textTheme.displayMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'サインインすると端末をまたいでリストが同期します。'
+                    '広告もメールマガジンもありません。',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: neutral.ink2,
+                          height: 1.7,
+                        ),
+                  ),
+                  const Spacer(),
+                  AppSignInWithAppleButton(
+                    onLoadingChanged: (value) => isSigningIn.value = value,
+                  ),
+                  const SizedBox(height: 10),
+                  AppSignInWithGoogleButton(
+                    onLoadingChanged: (value) => isSigningIn.value = value,
+                  ),
+                  if (kDebugMode) ...[
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          isSigningIn.value = true;
+                          try {
+                            await FirebaseAuth.instance.signInAnonymously();
+                          } catch (_) {
+                            isSigningIn.value = false;
+                            rethrow;
+                          }
+                        },
+                        child: const Text('匿名サインイン（デバッグ用）'),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  const _Note(),
+                ],
+              ),
+            ),
           ),
-        ),
+          if (isSigningIn.value) Positioned.fill(child: LaunchLoading.shared()),
+        ],
       ),
     );
   }
