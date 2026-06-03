@@ -16,18 +16,18 @@ appId: com.bannzai.shoppinglist
 - waitForAnimationToEnd
 - assertVisible: "グループ設定"
 
-# カテゴリ「カテゴリを追加」→カテゴリ作成
+# 「カテゴリを追加」→ ダイアログを挟まず編集画面へ直接遷移し、空名カテゴリが作成される
 - tapOn: "カテゴリを追加"
-- assertVisible: "カテゴリを追加"
-- tapOn: "カテゴリ名（例: 野菜）"
-- inputText: "テスト用"
-- tapOn:
-    text: "追加"
-    index: 0
 - waitForAnimationToEnd
 
 # カテゴリ編集画面
 - assertVisible: "カテゴリ名"
+
+# 編集画面の TextField で名前を入力（旧: 追加ダイアログでの入力を置き換え）
+- tapOn: "カテゴリ名を入力"
+- inputText: "テスト用"
+- hideKeyboard
+- waitForAnimationToEnd
 
 # --- カラー設定テスト ---
 # 赤色（2番目のカラーサークル）をタップ

@@ -205,4 +205,30 @@ void main() {
       expect(find.text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'), findsOneWidget);
     });
   });
+
+  group('GroupCategoryPage カテゴリ追加の遷移', () {
+    testWidgets('FABタップでダイアログを出さず編集画面へ直接遷移する',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: _nonPremiumOverrides(),
+          child: MaterialApp(
+            theme: buildAppTheme(
+                brightness: Brightness.light, accent: AccentPreset.shu),
+            home: const GroupCategoryPage(groupID: _testGroupID),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // カテゴリ追加FABをタップ
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pumpAndSettle();
+
+      // 旧仕様の追加ダイアログ（AlertDialog）は表示されない
+      expect(find.byType(AlertDialog), findsNothing);
+      // 編集画面（AppBarタイトル「カテゴリ編集」）へ遷移している
+      expect(find.text('カテゴリ編集'), findsOneWidget);
+    });
+  });
 }

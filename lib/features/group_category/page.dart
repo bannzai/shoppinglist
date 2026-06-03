@@ -100,85 +100,57 @@ class GroupCategoryPage extends ConsumerWidget {
     }
 
     if (context.mounted) {
-      _showAddCategoryDialog(
+      await _addCategoryAndNavigateToEdit(
         context: context,
         ref: ref,
+        groupID: groupID,
         categoryAxisID: axis.id,
+        order: 0,
       );
     }
   }
+}
 
-  void _showAddCategoryDialog({
-    required BuildContext context,
-    required WidgetRef ref,
-    required String categoryAxisID,
-  }) {
-    final controller = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('カテゴリを追加'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: const InputDecoration(
-            hintText: 'カテゴリ名（例: 野菜）',
+/// カテゴリを空名で即座に作成し、編集画面へ遷移する。
+///
+/// カテゴリ追加時に名前入力ダイアログを挟まず、編集画面の TextField で
+/// 名前・色・アイコン・キーワードをまとめて設定させる。作成直後は name が空のため、
+/// 編集画面の TextField には hint（カテゴリ名を入力）のみが表示される。
+Future<void> _addCategoryAndNavigateToEdit({
+  required BuildContext context,
+  required WidgetRef ref,
+  required String groupID,
+  required String categoryAxisID,
+  required int order,
+}) async {
+  try {
+    final userID = ref.read(userDatabaseProvider).userID;
+    final category =
+        await ref.read(groupCategoryAddProvider(groupID: groupID)).call(
+              groupID: groupID,
+              userID: userID,
+              categoryAxisID: categoryAxisID,
+              name: '',
+              order: order,
+            );
+    if (context.mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => GroupCategoryEditPage(
+            groupID: groupID,
+            categoryAxisID: categoryAxisID,
+            categoryID: category.id,
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              final name = controller.text.trim();
-              if (name.isEmpty) return;
-              analytics.logEvent(
-                  name: 'tap_confirm_add_category',
-                  parameters: {'groupID': groupID});
-              Navigator.pop(dialogContext);
-              try {
-                final userID = ref.read(userDatabaseProvider).userID;
-                final category = await ref
-                    .read(groupCategoryAddProvider(groupID: groupID))
-                    .call(
-                      groupID: groupID,
-                      userID: userID,
-                      categoryAxisID: categoryAxisID,
-                      name: name,
-                      order: 0,
-                    );
-                if (context.mounted) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => GroupCategoryEditPage(
-                        groupID: groupID,
-                        categoryAxisID: categoryAxisID,
-                        categoryID: category.id,
-                      ),
-                    ),
-                  );
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString())),
-                  );
-                }
-              }
-            },
-            child: const Text('追加'),
-          ),
-          TextButton(
-            onPressed: () {
-              analytics.logEvent(
-                  name: 'cancel_add_category',
-                  parameters: {'groupID': groupID});
-              Navigator.pop(dialogContext);
-            },
-            child: const Text('キャンセル'),
-          ),
-        ],
-      ),
-    );
+      );
+    }
+  } catch (e) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
   }
 }
 
@@ -291,11 +263,12 @@ class _CategoryListBody extends HookConsumerWidget {
           onPressed: () {
             analytics.logEvent(
                 name: 'tap_add_category', parameters: {'groupID': groupID});
-            _showAddCategoryDialog(
+            _addCategoryAndNavigateToEdit(
               context: context,
               ref: ref,
+              groupID: groupID,
               categoryAxisID: axis.id,
-              currentCategoryCount: categories.length,
+              order: categories.length,
             );
           },
           child: const Icon(Icons.add),
@@ -308,79 +281,6 @@ class _CategoryListBody extends HookConsumerWidget {
     );
   }
 
-  void _showAddCategoryDialog({
-    required BuildContext context,
-    required WidgetRef ref,
-    required String categoryAxisID,
-    required int currentCategoryCount,
-  }) {
-    final controller = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('カテゴリを追加'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: const InputDecoration(
-            hintText: 'カテゴリ名（例: 野菜）',
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              final name = controller.text.trim();
-              if (name.isEmpty) return;
-              analytics.logEvent(
-                  name: 'tap_confirm_add_category',
-                  parameters: {'groupID': groupID});
-              Navigator.pop(dialogContext);
-              try {
-                final userID = ref.read(userDatabaseProvider).userID;
-                final category = await ref
-                    .read(groupCategoryAddProvider(groupID: groupID))
-                    .call(
-                      groupID: groupID,
-                      userID: userID,
-                      categoryAxisID: categoryAxisID,
-                      name: name,
-                      order: currentCategoryCount,
-                    );
-                if (context.mounted) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => GroupCategoryEditPage(
-                        groupID: groupID,
-                        categoryAxisID: categoryAxisID,
-                        categoryID: category.id,
-                      ),
-                    ),
-                  );
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString())),
-                  );
-                }
-              }
-            },
-            child: const Text('追加'),
-          ),
-          TextButton(
-            onPressed: () {
-              analytics.logEvent(
-                  name: 'cancel_add_category',
-                  parameters: {'groupID': groupID});
-              Navigator.pop(dialogContext);
-            },
-            child: const Text('キャンセル'),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _CategoryReorderableList extends ConsumerWidget {
