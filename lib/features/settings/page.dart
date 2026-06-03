@@ -6,10 +6,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shoppinglist/components/button/inquiry.dart';
 import 'package:shoppinglist/components/button/user_delete.dart';
-import 'package:shoppinglist/components/frame/app_cell.dart';
-import 'package:shoppinglist/components/frame/app_dialog_shell.dart';
-import 'package:shoppinglist/components/frame/app_pill.dart';
-import 'package:shoppinglist/components/frame/app_setting_section.dart';
+import 'package:shoppinglist/components/primitives/app_cell.dart';
+import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
+import 'package:shoppinglist/components/primitives/app_pill.dart';
+import 'package:shoppinglist/components/primitives/app_setting_section.dart';
 import 'package:shoppinglist/features/developer_options/page.dart';
 import 'package:shoppinglist/features/group_invitation/page.dart';
 import 'package:shoppinglist/features/group_list/page.dart';
@@ -431,7 +431,9 @@ class _VersionLabelState extends State<_VersionLabel> {
   void initState() {
     super.initState();
     PackageInfo.fromPlatform().then((info) {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _label = 'v${info.version} (build ${info.buildNumber})';
       });
@@ -536,7 +538,9 @@ class _SignOutButton extends ConsumerWidget {
                 );
               },
             );
-            if (confirmed != true) return;
+            if (confirmed != true) {
+              return;
+            }
             analytics.logEvent(name: 'confirm_sign_out', parameters: null);
             await FirebaseAuth.instance.signOut();
           },

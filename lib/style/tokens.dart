@@ -338,7 +338,9 @@ class AppTokens extends ThemeExtension<AppTokens> {
 
   @override
   AppTokens lerp(ThemeExtension<AppTokens>? other, double t) {
-    if (other is! AppTokens) return this;
+    if (other is! AppTokens) {
+      return this;
+    }
     return AppTokens(
       brightness: t < 0.5 ? brightness : other.brightness,
       accentPreset: t < 0.5 ? accentPreset : other.accentPreset,

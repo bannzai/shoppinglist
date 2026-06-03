@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/components/frame/app_chip.dart';
+import 'package:shoppinglist/components/primitives/app_chip.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 

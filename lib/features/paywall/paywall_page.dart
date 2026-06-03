@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:shoppinglist/components/frame/app_pill.dart';
+import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -141,12 +141,16 @@ class _PaywallFooterLinks extends ConsumerWidget {
                       name: 'tap_paywall_restore', parameters: null);
                   try {
                     await Purchases.restorePurchases();
-                    if (!context.mounted) return;
+                    if (!context.mounted) {
+                      return;
+                    }
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('購入を復元しました')),
                     );
                   } catch (e) {
-                    if (!context.mounted) return;
+                    if (!context.mounted) {
+                      return;
+                    }
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(e.toString())),
                     );
@@ -447,7 +451,9 @@ class _PaywallPackageTile extends ConsumerWidget {
               try {
                 final completed =
                     await ref.read(purchaseProvider).call(package);
-                if (!context.mounted) return;
+                if (!context.mounted) {
+                  return;
+                }
                 if (completed) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('購入ありがとうございました')),
@@ -455,7 +461,9 @@ class _PaywallPackageTile extends ConsumerWidget {
                   Navigator.of(context).pop();
                 }
               } catch (e) {
-                if (!context.mounted) return;
+                if (!context.mounted) {
+                  return;
+                }
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(e.toString())),
                 );

@@ -255,7 +255,9 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                               editedByUserID: currentUserID,
                             );
 
-                        if (context.mounted) Navigator.pop(context);
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                        }
                       } catch (e) {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -513,7 +515,9 @@ class _PhotoSection extends HookConsumerWidget {
   /// 画像を選択する。アップロードは保存ボタン押下時に実行する。
   Future<void> _pickImage({required ImageSource source}) async {
     final photo = await ImagePicker().pickImage(source: source);
-    if (photo == null) return;
+    if (photo == null) {
+      return;
+    }
 
     selectedPhoto.value = photo;
     imageURL.value = null;

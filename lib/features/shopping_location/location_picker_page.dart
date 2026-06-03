@@ -4,7 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/components/frame/app_pill.dart';
+import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -39,7 +39,9 @@ class LocationPickerPage extends HookConsumerWidget {
 
     // 初回: 現在地を取得して地図を移動（既存座標がない場合のみ）
     useEffect(() {
-      if (initialLatitude != null) return null;
+      if (initialLatitude != null) {
+        return null;
+      }
       () async {
         try {
           var permission = await Geolocator.checkPermission();

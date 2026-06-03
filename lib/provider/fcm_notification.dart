@@ -8,13 +8,17 @@ class FcmNotificationHandler {
   bool _isInitialized = false;
 
   void initialize() {
-    if (_isInitialized) return;
+    if (_isInitialized) {
+      return;
+    }
     _isInitialized = true;
 
     // フォアグラウンド通知: グローバルトーストで表示（モーダルの上にも出る）
     FirebaseMessaging.onMessage.listen((message) {
       final notification = message.notification;
-      if (notification == null) return;
+      if (notification == null) {
+        return;
+      }
       showGlobalToast(notification.body ?? '', title: notification.title);
     });
 

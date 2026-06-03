@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shoppinglist/components/frame/app_checkbox.dart';
+import 'package:shoppinglist/components/primitives/app_checkbox.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
 /// 空リストヒント内に並べる「次に追加されそう」な行のプレースホルダ。

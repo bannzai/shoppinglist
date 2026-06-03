@@ -263,18 +263,24 @@ class ExpandableFab extends HookConsumerWidget {
     } finally {
       ref.read(aIProcessingProvider.notifier).end();
     }
-    if (!context.mounted) return;
+    if (!context.mounted) {
+      return;
+    }
     // 既存アイテムに存在しない候補だけ review sheet にかける。
     final candidates = rawItems
         .where((e) => !shoppingListItems.any((item) => item.message == e))
         .toList();
-    if (candidates.isEmpty) return;
+    if (candidates.isEmpty) {
+      return;
+    }
     final reviewed = await showAIReviewSheet(
       context: context,
       rawNames: candidates,
       source: 'image',
     );
-    if (reviewed == null) return;
+    if (reviewed == null) {
+      return;
+    }
     final selected = reviewed.where((c) => c.selected).toList();
     for (var (i, c) in selected.indexed) {
       try {
@@ -335,11 +341,17 @@ class ExpandableFab extends HookConsumerWidget {
     });
     final data = await Clipboard.getData(Clipboard.kTextPlain);
     final text = data?.text;
-    if (text == null) return;
+    if (text == null) {
+      return;
+    }
     final lines = text.split('\n').toSet();
     for (final (index, line) in lines.indexed) {
-      if (line.trim().isEmpty) continue;
-      if (shoppingListItems.any((item) => item.message == line)) continue;
+      if (line.trim().isEmpty) {
+        continue;
+      }
+      if (shoppingListItems.any((item) => item.message == line)) {
+        continue;
+      }
       await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
             shoppingListID: shoppingListID,
             userID: ref.read(currentUserIDProvider)!,
@@ -547,21 +559,29 @@ class _URLInputDialog extends HookConsumerWidget {
                     }
                     ref.read(aIProcessingProvider.notifier).end();
                   }
-                  if (!context.mounted) return;
+                  if (!context.mounted) {
+                    return;
+                  }
                   // URL ダイアログを先に閉じてから review sheet を出す。
                   Navigator.pop(context);
-                  if (!context.mounted) return;
+                  if (!context.mounted) {
+                    return;
+                  }
                   final candidates = rawItems
                       .where((e) => !shoppingListItems
                           .any((existing) => existing.message == e))
                       .toList();
-                  if (candidates.isEmpty) return;
+                  if (candidates.isEmpty) {
+                    return;
+                  }
                   final reviewed = await showAIReviewSheet(
                     context: context,
                     rawNames: candidates,
                     source: 'url',
                   );
-                  if (reviewed == null) return;
+                  if (reviewed == null) {
+                    return;
+                  }
                   final selected = reviewed.where((c) => c.selected).toList();
                   for (var (i, c) in selected.indexed) {
                     try {
