@@ -155,6 +155,14 @@ class LaunchLoading extends HookWidget {
                 );
               },
             ),
+            const SizedBox(height: 16),
+            Text(
+              '準備中...',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: tokens.neutral.ink3),
+            ),
           ],
         ),
       ),
