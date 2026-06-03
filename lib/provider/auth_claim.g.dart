@@ -7,7 +7,7 @@ part of 'auth_claim.dart';
 // **************************************************************************
 
 String _$firestoreIsPremiumHash() =>
-    r'e6118f35a8ac91320b46916ac0c1aff7a77611ee';
+    r'acb7fe84f6a289efa68afdf1f6f65cdbd27a6e5e';
 
 /// Firebase Auth IDトークンの Custom Claims から isPremium を解決するプロバイダー。
 /// Firestoreクエリの表示フィルタに使用する。UI表示用途には customerInfoProvider を使用すること。
