@@ -81,12 +81,12 @@ class AppUserCreateResolver extends HookConsumerWidget {
     return optionalAppUser.when(
       data: (appUser) {
         if (appUser == null) {
-          return LaunchLoading(key: resolverChainLoadingKey);
+          return LaunchLoading.shared();
         }
         return builder(context);
       },
       error: (e, st) => RetryPage(exception: e, stackTrace: st),
-      loading: () => LaunchLoading(key: resolverChainLoadingKey),
+      loading: () => LaunchLoading.shared(),
     );
   }
 }
