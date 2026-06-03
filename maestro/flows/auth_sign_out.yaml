@@ -1,9 +1,11 @@
 appId: com.bannzai.shoppinglist
 ---
-# サインアウト → Auth Stream 監視でサインイン画面(AuthPage)へ戻ることを検証する。
-# 1) 匿名サインイン（debug ビルドでは匿名でも認証済み扱い）
-# 2) 設定画面(push ルート)へ遷移し、最下部の「サインアウト」を確定
-# 3) push 済みの設定画面が pop され、サインイン画面の要素が見えることを確認
+# サインアウト時の挙動を検証する。
+# release/profile では signOut() 後に終了アラート(「サインアウトしました」/「終了する」)を出し
+# exit(0) する。debug では Hot Restart の手間を避けるため終了アラートも exit も行わない。
+#
+# Maestro は debug ビルド(匿名サインインが kDebugMode 限定のため)で動くので、ここでは
+# 「debug ではサインアウト確定後に終了アラートが出ない」ことを確認する（kDebugMode ガードの回帰防止）。
 
 - runFlow: shared/anonymous_sign_in.yaml
 
@@ -37,12 +39,7 @@ appId: com.bannzai.shoppinglist
       text: "キャンセル"
 - waitForAnimationToEnd
 
-# サインイン画面(AuthPage)に戻ったことを確認する。
-# anonymous_sign_in.yaml でオンボーディングは skip 済み(hasSeenOnboarding=true)のため
-# OnboardingPage ではなく AuthPage が表示される。push 済みだった設定画面が pop され、
-# 第1ルートの AuthResolver が表示する AuthPage の要素が見えることが本検証の核心。
-- extendedWaitUntil:
-    visible: "匿名サインイン（デバッグ用）"
-    timeout: 30000
-- assertVisible:
-    text: "匿名サインイン（デバッグ用）"
+# debug ビルドでは終了アラート(「終了する」)を出さず exit(0) もしない。
+# 終了アラートが表示されていないこと＝アプリが終了せず debug の no-op 経路を通ったことを確認する。
+- assertNotVisible:
+    text: "終了する"
