@@ -16,24 +16,6 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
-/// グループ設定画面の loading / error 用に paper bg + 共通 AppBar を持つ Scaffold。
-class _PaperScaffold extends StatelessWidget {
-  final Widget child;
-  const _PaperScaffold({required this.child});
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.tokens;
-    return Scaffold(
-      backgroundColor: tokens.neutral.paper,
-      appBar: AppBar(
-        title: const Text('グループ設定'),
-        backgroundColor: tokens.neutral.paper,
-      ),
-      body: child,
-    );
-  }
-}
-
 class GroupSettingPage extends ConsumerWidget {
   final String groupID;
 
@@ -64,6 +46,24 @@ class GroupSettingPage extends ConsumerWidget {
           _PaperScaffold(child: Center(child: Text(e.toString()))),
       loading: () => const _PaperScaffold(
           child: Center(child: CircularProgressIndicator())),
+    );
+  }
+}
+
+/// グループ設定画面の loading / error 用に paper bg + 共通 AppBar を持つ Scaffold。
+class _PaperScaffold extends StatelessWidget {
+  final Widget child;
+  const _PaperScaffold({required this.child});
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.tokens;
+    return Scaffold(
+      backgroundColor: tokens.neutral.paper,
+      appBar: AppBar(
+        title: const Text('グループ設定'),
+        backgroundColor: tokens.neutral.paper,
+      ),
+      body: child,
     );
   }
 }
