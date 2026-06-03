@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -543,8 +545,72 @@ class _SignOutButton extends ConsumerWidget {
             }
             analytics.logEvent(name: 'confirm_sign_out', parameters: null);
             await FirebaseAuth.instance.signOut();
+            // debug 時は exit(0) すると Hot Restart の手間が増えるため、終了アラートを
+            // 出さず終了もしない（開発者が手動で Hot Restart する想定）。
+            // release/profile 時のみ、サインアウト完了を伝えてアプリを終了する。
+            // アカウント削除フロー(user_delete.dart の _CompletedDialog)と同方針。
+            if (kDebugMode) return;
+            if (!context.mounted) return;
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => const _SignOutCompletedDialog(),
+            );
           },
         ),
+      ),
+    );
+  }
+}
+
+/// サインアウト完了アラート。
+/// release/profile ビルドで `FirebaseAuth.instance.signOut()` 後に表示し、
+/// 「終了する」タップで `exit(0)` する。アカウント削除フローの `_CompletedDialog` と同方針。
+class _SignOutCompletedDialog extends StatelessWidget {
+  const _SignOutCompletedDialog();
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      contentPadding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
+      content: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'サインアウトしました',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.w700,
+                ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'アプリを終了します',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: 180,
+            child: TextButton(
+              onPressed: () async {
+                analytics.logEvent(
+                    name: 'tap_exit_app_after_sign_out', parameters: null);
+                exit(0);
+              },
+              child: Text(
+                '終了する',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
