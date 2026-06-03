@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/components/frame/app_dialog_shell.dart';
-import 'package:shoppinglist/components/frame/app_pill.dart';
+import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
+import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shoppinglist/components/frame/app_pill.dart';
+import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
 /// 買い物リスト読み込み失敗時のエラーカード。

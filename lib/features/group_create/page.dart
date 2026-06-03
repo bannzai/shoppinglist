@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shoppinglist/components/frame/app_pill.dart';
+import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/group_create.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';

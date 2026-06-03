@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shoppinglist/components/frame/app_cell.dart';
-import 'package:shoppinglist/components/frame/app_checkbox.dart';
-import 'package:shoppinglist/components/frame/app_chip.dart';
-import 'package:shoppinglist/components/frame/app_dialog_shell.dart';
-import 'package:shoppinglist/components/frame/app_divider.dart';
-import 'package:shoppinglist/components/frame/app_frame_app_bar.dart';
-import 'package:shoppinglist/components/frame/app_large_app_bar.dart';
-import 'package:shoppinglist/components/frame/app_pill.dart';
-import 'package:shoppinglist/components/frame/app_round_button.dart';
-import 'package:shoppinglist/components/frame/app_section_card.dart';
+import 'package:shoppinglist/components/primitives/app_cell.dart';
+import 'package:shoppinglist/components/primitives/app_checkbox.dart';
+import 'package:shoppinglist/components/primitives/app_chip.dart';
+import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
+import 'package:shoppinglist/components/primitives/app_divider.dart';
+import 'package:shoppinglist/components/primitives/app_frame_app_bar.dart';
+import 'package:shoppinglist/components/primitives/app_large_app_bar.dart';
+import 'package:shoppinglist/components/primitives/app_pill.dart';
+import 'package:shoppinglist/components/primitives/app_round_button.dart';
+import 'package:shoppinglist/components/primitives/app_section_card.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
