@@ -20,15 +20,16 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/auth_claim.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
-import 'package:shoppinglist/provider/notification_setting.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 
 class ShoppingListPage extends HookConsumerWidget {
   final String groupID;
@@ -267,7 +268,8 @@ class _Body extends HookConsumerWidget {
       return null;
     }, [itemChangeCount.value]);
 
-    final autoNotify = ref.watch(autoNotifyShoppingListUpdateProvider);
+    final autoNotify = ref.watch(boolSharedPreferencesProvider(
+        key: BoolKey.autoNotifyShoppingListUpdate));
     useEffect(() {
       if (!autoNotify || currentUserID == null) return null;
       final listener = AppLifecycleListener(
