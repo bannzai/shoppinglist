@@ -13,6 +13,14 @@ import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 /// ShoppingListPage の最上段（高さ 52）。
 /// `design_handoff_shopping_list/source/screens-list.jsx#ListTopBar` 相当。
 /// 左にリスト名 + ▼（タップでリスト切替シート）、右にリスト設定（…）と設定アイコン。
+///
+/// Scaffold の appBar スロットを使わず Column 内の通常 Widget として置いている理由:
+/// - paper/surface の上にフラットに乗せ、下の白い card と段差なく繋ぐハイブリッドサーフェス
+///   デザインのため。AppBar 既定の背景色・elevation・scrolledUnderElevation の色被り・
+///   自動 leading / SafeArea がこのフラット表現と衝突する。
+/// - このバーの上には親(ShoppingListPage)側の GroupChipsBar が並ぶ。appBar スロットは
+///   1画面1つ・最上段固定のため、親子をまたぐこの並び順を表現できない。
+/// - 下のリストは card 内の独立スクロールなので、AppBar のスクロール連動 elevation も不要。
 class ListTopBar extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
