@@ -53,5 +53,5 @@ dev/prod flavor が無いため environment 入力は設けず、bundle id / pac
 - `.github/workflows/flutter-deploy.yml`
 - `ios/scripts/configure_signing_for_ci.rb`
 - `android/app/build.gradle`（release 署名 config）
-- `plans/flutter-deploy-workflow.md`（準備手順の完全版）
+- 準備手順の完全版（Apple / Google / GitHub Secrets）は PR #344 の説明、およびローカルの `.plans/flutter-deploy-workflow.md` にまとめる
 - Riamo `flutter-deploy.yml`（参考元）
