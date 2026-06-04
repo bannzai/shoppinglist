@@ -19,11 +19,13 @@ on:
 env:
   # ビルド番号 = github.run_number + offset。配布実績に合わせて必要なら増やす。
   BUILD_NUMBER_OFFSET: 0
-  # iOS 手動署名で使う provisioning profile 名（Apple Developer で作成する profile 名と一致させる）。
-  # ExportOptions.plist と configure_signing_for_ci.rb の両方がこの値を参照する（SSOT）。
+  # iOS 手動署名の provisioning profile 名。Apple Developer で作成した配布 profile 名と一致させる。
+  # 署名構成自体は project.pbxproj に Xcode で手動設定済み。ここでの値は ExportOptions.plist 生成が参照する。
   IOS_DEVELOPMENT_TEAM: TQPN82UBBY
-  IOS_RUNNER_PROFILE_NAME: 'Shoppinglist AppStore'
-  IOS_WIDGET_PROFILE_NAME: 'Shoppinglist Widget AppStore'
+  # project.pbxproj の Runner Release: PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*] と一致
+  IOS_RUNNER_PROFILE_NAME: 'ShoppingList.Prod.AppStore'
+  # TODO: Widget 拡張を Xcode で Manual 署名にした後、その配布 profile 名に合わせる
+  IOS_WIDGET_PROFILE_NAME: 'ShoppingList.Prod.Widget.AppStore'
 
 jobs:
   prepare-version:
@@ -97,11 +99,7 @@ jobs:
           echo -n "$RUNNER_PROFILE_BASE64" | base64 --decode > "$PROFILE_DIR/runner.mobileprovision"
           echo -n "$WIDGET_PROFILE_BASE64" | base64 --decode > "$PROFILE_DIR/widget.mobileprovision"
 
-      # Release 構成を手動署名へ切替（CI のチェックアウトコピーのみ。ローカル設定は不変）
-      - name: Configure manual signing for Release
-        run: ruby ios/scripts/configure_signing_for_ci.rb
-
-      # ExportOptions.plist を env から生成（profile 名は configure_signing_for_ci.rb と同一値）
+      # ExportOptions.plist を env から生成（profile 名は project.pbxproj の手動署名設定と一致させる）
       - name: Generate ExportOptions.plist
         run: |
           cat > ios/ExportOptions.plist <<PLIST
