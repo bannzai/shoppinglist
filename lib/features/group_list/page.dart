@@ -25,6 +25,15 @@ class GroupListPage extends ConsumerWidget {
     final tokens = context.tokens;
     final neutral = tokens.neutral;
 
+    // 無料プランで作成上限に達しているか。作成済みグループ(自分がオーナー)が上限+1以上で到達。
+    final appUser = appUserAsync.asData?.value;
+    final groups = groupsAsync.asData?.value ?? const <Group>[];
+    final createdGroupCount = appUser == null
+        ? 0
+        : groups.where((group) => group.ownerUserID == appUser.id).length;
+    final isLimitReached =
+        !isPremium && createdGroupCount >= freeAdditionalGroupCreationLimit + 1;
+
     return Scaffold(
       backgroundColor: neutral.paper,
       appBar: AppBar(
@@ -77,59 +86,25 @@ class GroupListPage extends ConsumerWidget {
           Center(child: Text(error.toString())),
         _ => const Center(child: CircularProgressIndicator()),
       },
-      floatingActionButton: _buildFab(
-        context: context,
-        appUserAsync: appUserAsync,
-        groupsAsync: groupsAsync,
-        isPremium: isPremium,
-        tokens: tokens,
-      ),
-    );
-  }
-
-  Widget _buildFab({
-    required BuildContext context,
-    required AsyncValue appUserAsync,
-    required AsyncValue<List<Group>> groupsAsync,
-    required bool isPremium,
-    required AppTokens tokens,
-  }) {
-    final appUser = appUserAsync.asData?.value;
-    final groups = groupsAsync.asData?.value ?? const <Group>[];
-    final createdGroupCount = appUser == null
-        ? 0
-        : groups.where((group) => group.ownerUserID == appUser.id).length;
-    final isLimitReached =
-        !isPremium && createdGroupCount >= freeAdditionalGroupCreationLimit + 1;
-
-    return FloatingActionButton(
-      tooltip: 'グループ作成',
-      backgroundColor: isLimitReached ? tokens.neutral.surface2 : tokens.accent,
-      foregroundColor: isLimitReached ? tokens.neutral.ink3 : Colors.white,
-      onPressed: () {
-        analytics.logEvent(name: 'tap_navigate_group_create', parameters: null);
-        if (isLimitReached) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text(
-                '無料プランではソログループ+1グループまで作成できます。プレミアムにアップグレードすると無制限に作成できます',
-              ),
-              action: SnackBarAction(
-                label: 'アップグレード',
-                onPressed: () => showPaywall(context: context),
-              ),
+      // 上限到達時はFAB自体を非表示にする。上限の案内と解除導線は本文の _FreeLimitBanner が担う。
+      floatingActionButton: isLimitReached
+          ? null
+          : FloatingActionButton(
+              tooltip: 'グループ作成',
+              backgroundColor: tokens.accent,
+              foregroundColor: Colors.white,
+              onPressed: () {
+                analytics.logEvent(
+                    name: 'tap_navigate_group_create', parameters: null);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const GroupCreatePage(),
+                  ),
+                );
+              },
+              child: const Icon(Icons.add),
             ),
-          );
-          return;
-        }
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const GroupCreatePage(),
-          ),
-        );
-      },
-      child: isLimitReached ? const Icon(Icons.lock) : const Icon(Icons.add),
     );
   }
 }
