@@ -155,17 +155,17 @@ jobs:
       # TestFlight アップロード（App Store Connect API Key 認証）
       - name: Upload to TestFlight
         env:
-          IOS_APPSTORE_CONNECT_KEY_ID: ${{ secrets.IOS_APPSTORE_CONNECT_KEY_ID }}
-          IOS_APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.IOS_APPSTORE_CONNECT_ISSUER_ID }}
-          IOS_APPSTORE_CONNECT_API_KEY_P8_BASE64: ${{ secrets.IOS_APPSTORE_CONNECT_API_KEY_P8_BASE64 }}
+          ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
+          ASC_API_KEY_ISSUER_ID: ${{ secrets.ASC_API_KEY_ISSUER_ID }}
+          ASC_API_KEY_P8_BASE64: ${{ secrets.ASC_API_KEY_P8_BASE64 }}
         run: |
           mkdir -p ~/.appstoreconnect/private_keys
-          echo -n "$IOS_APPSTORE_CONNECT_API_KEY_P8_BASE64" | base64 --decode > ~/.appstoreconnect/private_keys/AuthKey_${IOS_APPSTORE_CONNECT_KEY_ID}.p8
+          echo -n "$ASC_API_KEY_P8_BASE64" | base64 --decode > ~/.appstoreconnect/private_keys/AuthKey_${ASC_API_KEY_ID}.p8
           xcrun altool --upload-app \
             -f build/ios/ipa/*.ipa \
             -t ios \
-            --apiKey "$IOS_APPSTORE_CONNECT_KEY_ID" \
-            --apiIssuer "$IOS_APPSTORE_CONNECT_ISSUER_ID"
+            --apiKey "$ASC_API_KEY_ID" \
+            --apiIssuer "$ASC_API_KEY_ISSUER_ID"
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -242,7 +242,7 @@ jobs:
 
       # Google Play サービスアカウント JSON のデコード
       - name: Decode Google Play service account
-        run: echo -n "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_BASE64 }}" | base64 --decode > $RUNNER_TEMP/play-sa.json
+        run: echo -n "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64 }}" | base64 --decode > $RUNNER_TEMP/play-sa.json
 
       - name: Upload to Google Play
         uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1
