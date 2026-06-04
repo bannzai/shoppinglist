@@ -1,0 +1,90 @@
+name: firebase-deploy
+
+# GitHub Actions から Firebase Functions(gen2) を手動デプロイするワークフロー。
+#
+# 方針:
+# - プロジェクト規約「Deploy はユーザーが行う」に従い、push による自動デプロイはせず
+#   workflow_dispatch（手動実行）のみをトリガーとする。
+# - 認証はデプロイ専用サービスアカウントの鍵(JSON)を base64 化した GitHub Secret を
+#   Application Default Credentials (GOOGLE_APPLICATION_CREDENTIALS) として復元して行う。
+# - 対象プロジェクトは .firebaserc の default(= shopping-list-prod-a615c) 単一構成。
+#
+# 事前準備(初回のみ):
+# 1. デプロイ専用 SA を用意し gen2 デプロイに必要な IAM 権限を付与する。
+#    → firebase-functions-deploy-iam-setup スキルで診断・付与できる。
+#      既定 SA: github-firebase-deployer@shopping-list-prod-a615c.iam.gserviceaccount.com
+# 2. SA 鍵 JSON を base64 化し、リポジトリ Secret `FIREBASE_SERVICE_ACCOUNT_BASE64` に登録する。
+#      例: base64 -i service-account.json | pbcopy   # macOS
+
+on:
+  workflow_dispatch:
+    inputs:
+      functions:
+        description: 'デプロイする関数名(カンマ区切り。例: functions:createGroup,functions:acceptGroupInvitation)。deploy_all=true のときは無視'
+        required: false
+        type: string
+      deploy_all:
+        description: '全関数をデプロイする'
+        required: false
+        type: boolean
+        default: false
+
+# 半端な状態を避けるため、デプロイは同時に1本だけ実行する(実行中はキャンセルせず待機させる)。
+concurrency:
+  group: firebase-deploy
+  cancel-in-progress: false
+
+# リポジトリの読み取りのみ。デプロイ認証は SA 鍵で行うため書き込み権限は不要。
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          # firebase/functions/package.json の engines.node に合わせる
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: firebase/functions/package-lock.json
+
+      - name: Install dependencies
+        working-directory: firebase/functions
+        run: npm ci
+
+      - name: Install firebase-tools
+        run: npm install -g firebase-tools
+
+      - name: Restore service account key
+        working-directory: firebase/functions
+        env:
+          FIREBASE_SERVICE_ACCOUNT_BASE64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASE64 }}
+        run: |
+          if [ -z "$FIREBASE_SERVICE_ACCOUNT_BASE64" ]; then
+            echo "::error::Secret FIREBASE_SERVICE_ACCOUNT_BASE64 が未設定です。事前準備を確認してください"
+            exit 1
+          fi
+          # secret/ は firebase/functions/.gitignore 済み(ローカルの Makefile secret と同じ配置)
+          mkdir -p secret
+          echo "$FIREBASE_SERVICE_ACCOUNT_BASE64" | base64 --decode > secret/GOOGLE_APPLICATION_CREDENTIALS.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/firebase/functions/secret/GOOGLE_APPLICATION_CREDENTIALS.json" >> "$GITHUB_ENV"
+
+      - name: Deploy functions
+        working-directory: firebase
+        env:
+          DEPLOY_ALL: ${{ inputs.deploy_all }}
+          DEPLOY_FUNCTIONS: ${{ inputs.functions }}
+        # .firebaserc の default を対象にデプロイ(active project 未指定時は default が使われる)。
+        # firebase.json の predeploy フックで lint + build が自動実行される。
+        run: |
+          if [ "$DEPLOY_ALL" = "true" ]; then
+            firebase deploy --only functions
+          elif [ -n "$DEPLOY_FUNCTIONS" ]; then
+            firebase deploy --only "$DEPLOY_FUNCTIONS"
+          else
+            echo "::error::deploy_all=false のときは functions に対象(例: functions:createGroup)を指定してください"
+            exit 1
+          fi
