@@ -122,6 +122,7 @@ class ListPickerSheet extends ConsumerWidget {
                   navigator.pop();
                   messenger.showSnackBar(
                     SnackBar(
+                      persist: false,
                       content: Text(e.toString()),
                       action: SnackBarAction(
                         label: 'アップグレード',

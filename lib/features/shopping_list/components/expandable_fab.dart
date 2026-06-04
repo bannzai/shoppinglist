@@ -167,6 +167,7 @@ class ExpandableFab extends HookConsumerWidget {
           : freeMonthlyImageRecognitionLimit;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          persist: false,
           content: Text(
               'AI画像認識の月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyImageRecognitionLimit回まで利用できます'}'),
           action: isPremium
@@ -312,6 +313,7 @@ class ExpandableFab extends HookConsumerWidget {
           : freeMonthlyURLRecognitionLimit;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          persist: false,
           content: Text(
               'URL読み取りの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyURLRecognitionLimit回まで利用できます'}'),
           action: isPremium

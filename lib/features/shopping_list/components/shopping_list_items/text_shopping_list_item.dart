@@ -315,6 +315,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
+                persist: false,
                 content: const Text('アイテムを削除しました'),
                 duration: const Duration(seconds: 5),
                 action: SnackBarAction(

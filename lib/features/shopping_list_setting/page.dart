@@ -554,6 +554,7 @@ class _ListActionsCard extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            persist: false,
             content: Text(e.toString()),
             action: SnackBarAction(
               label: 'アップグレード',
@@ -586,6 +587,7 @@ class _ListActionsCard extends ConsumerWidget {
     if (!isPremium) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          persist: false,
           content: const Text('リストのエクスポートはプレミアム機能です。プレミアムにアップグレードすると利用できます'),
           action: SnackBarAction(
             label: 'アップグレード',
