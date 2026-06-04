@@ -70,24 +70,25 @@ class AppNeutralColors {
     required this.checked,
   });
 
-  /// LIGHT モードの中立色。`design_handoff_shopping_list/source/tokens.jsx#LIGHT` と一致させる。
+  /// LIGHT モードの中立色。茶色味を抑え明度差で奥行きを残す（ADR 0018）。
+  /// `design_handoff_shoppinglist/preview/tokens.jsx#LIGHT` と一致させる。
   static const light = AppNeutralColors(
-    paper: Color(0xFFECE5D3),
-    surface: Color(0xFFF8F2E2),
-    surface2: Color(0xFFFFFCF3),
+    paper: Color(0xFFF1EDE4),
+    surface: Color(0xFFF7F4EE),
+    surface2: Color(0xFFFCFAF6),
     card: Color(0xFFFFFFFF),
     ink: Color(0xFF1B1813),
-    ink2: Color(0xFF5A5246),
-    ink3: Color(0xFF948A77),
-    ink4: Color(0xFFBDB39E),
-    divider: Color(0xFFE0D5BC),
-    divider2: Color(0xFFEBE2C9),
+    ink2: Color(0xFF57514A),
+    ink3: Color(0xFF837A6A),
+    ink4: Color(0xFFBBB2A4),
+    divider: Color(0xFFE5DFD3),
+    divider2: Color(0xFFEDE8DE),
     ok: Color(0xFF2F6B43),
     okSoft: Color(0xFFDCEBDF),
     warn: Color(0xFFB47B1F),
     danger: Color(0xFFB53D3D),
     dangerSoft: Color(0xFFF4DEDB),
-    checked: Color(0xFFA89E89),
+    checked: Color(0xFFA39A89),
   );
 
   /// DARK モードの中立色。`design_handoff_shopping_list/source/tokens.jsx#DARK` と一致させる。
