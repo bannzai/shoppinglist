@@ -123,7 +123,7 @@ class SettingPage extends HookConsumerWidget {
                     // 他の設定行(値が右側)とトンマナを揃える。
                     child: Row(
                       children: [
-                        const Text('表示名'),
+                        const Text('自分の表示名'),
                         const SizedBox(width: 16),
                         Expanded(
                           // フォーカスが外れた時(hasFocus=false)に自動保存する。
