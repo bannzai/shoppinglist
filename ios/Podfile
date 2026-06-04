@@ -41,18 +41,19 @@ target 'Runner' do
   target 'RunnerTests' do
     inherit! :search_paths
   end
-end
 
-target 'ShoppingListWidgetExtension' do
-  use_frameworks!
-  use_modular_headers!
-
-  require File.expand_path(File.join('.symlinks', 'plugins', 'firebase_core', 'ios', 'firebase_sdk_version.rb'), File.dirname(File.realpath(__FILE__)))
-  pod 'FirebaseCore'
-  pod 'FirebaseAuth'
-  pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => firebase_sdk_version!
-
-  pod 'home_widget', :path => '.symlinks/plugins/home_widget/ios'
+  # Widget拡張(ShoppingListWidgetExtension)は Runner にネストし search paths のみ継承する。
+  # 拡張を独立した CocoaPods ターゲットにすると GoogleUtilities / GTMSessionFetcher 等が
+  # ターゲットごとに二重ビルドされ、archive 時に
+  #   "Multiple commands produce '.../UninstalledProducts/.../GoogleUtilities.framework'"
+  # で失敗する（Firebase 公式推奨も「Firebase は host app のみに置き、拡張は host のフレームワークを
+  # リンクする」）。search paths は継承されるのでコンパイルでき、リンクは widget ターゲットの
+  # OTHER_LDFLAGS に -framework FirebaseCore/FirebaseAuth/FirebaseFirestore を追加して解決する
+  # （project.pbxproj 側で設定）。実行時は host app が埋め込むフレームワークを
+  # @rpath(@executable_path/../../Frameworks)経由で読み込む。
+  target 'ShoppingListWidgetExtension' do
+    inherit! :search_paths
+  end
 end
 
 post_install do |installer|
@@ -77,6 +78,33 @@ post_install do |installer|
         config.build_settings['DEVELOPMENT_TEAM'] = 'TQPN82UBBY'
       end
     end
+  end
+
+  # Widget拡張(ShoppingListWidgetExtension)は inherit! :search_paths のため自前のリンクフラグを持たず、
+  # Firestore の transitive 依存(absl/grpc 等)の未定義シンボルでリンク失敗する。そこで host app(Runner)の
+  # OTHER_LDFLAGS から「Flutter プラグイン由来のフレームワーク(Flutter エンジンに依存し拡張ではリンク不可)」を
+  # 除いたものを widget に付与し、host app が埋め込むネイティブ Firebase フレームワークをリンク＆実行時参照する
+  # （archive の二重ビルドは inherit により回避済み。Firebase は host app のみに置く公式推奨構成）。
+  # Runner の生成済み OTHER_LDFLAGS を読むので pod 構成が変わっても自動追従する。
+  require 'json'
+  runner_agg = installer.aggregate_targets.find { |t| t.name == 'Pods-Runner' }
+  widget_agg = installer.aggregate_targets.find { |t| t.name == 'Pods-ShoppingListWidgetExtension' }
+  if runner_agg && widget_agg
+    deps_path = File.expand_path(File.join('..', '.flutter-plugins-dependencies'), File.dirname(File.realpath(__FILE__)))
+    flutter_plugins = File.exist?(deps_path) ? ((JSON.parse(File.read(deps_path)).dig('plugins', 'ios') || []).map { |p| p['name'] }) : []
+    exclude = flutter_plugins + ['Flutter']
+    widget_agg.user_targets.each do |user_target|
+      user_target.build_configurations.each do |config|
+        runner_xcconfig = runner_agg.xcconfigs[config.name]
+        next unless runner_xcconfig
+        flags = runner_xcconfig.to_hash['OTHER_LDFLAGS']
+        flags = flags.join(' ') if flags.is_a?(Array)
+        next unless flags
+        exclude.each { |name| flags = flags.gsub(/-framework\s+"#{Regexp.escape(name)}"/, '') }
+        config.build_settings['OTHER_LDFLAGS'] = "$(inherited) #{flags}"
+      end
+    end
+    widget_agg.user_project.save
   end
 end
 
