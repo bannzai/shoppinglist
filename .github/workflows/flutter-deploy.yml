@@ -1,0 +1,266 @@
+name: flutter-deploy
+
+# 手動起動の配布ワークフロー。
+# iOS: 手動署名で IPA をビルドし TestFlight (App Store Connect) へアップロード。
+# Android: リリース署名で AAB をビルドし Google Play internal トラックへアップロード。
+# 単一環境（dev/prod flavor 無し）。秘匿情報は `make secret` と各種 Secrets から CI 上で復元する。
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'ビルド対象プラットフォーム'
+        required: true
+        type: choice
+        options:
+          - ios
+          - android
+          - both
+
+env:
+  # ビルド番号 = github.run_number + offset。配布実績に合わせて必要なら増やす。
+  BUILD_NUMBER_OFFSET: 0
+  # iOS 手動署名の provisioning profile 名。Apple Developer で作成した配布 profile 名と一致させる。
+  # 署名構成自体は project.pbxproj に Xcode で手動設定済み。ここでの値は ExportOptions.plist 生成が参照する。
+  IOS_DEVELOPMENT_TEAM: TQPN82UBBY
+  # project.pbxproj の Runner Release: PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*] と一致
+  IOS_RUNNER_PROFILE_NAME: 'ShoppingList.Prod.AppStore'
+  # project.pbxproj の Widget Release: PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*] と一致
+  IOS_WIDGET_PROFILE_NAME: 'ShoppingList.Widget.Prod.AppStore'
+
+jobs:
+  prepare-version:
+    runs-on: ubuntu-latest
+    outputs:
+      app_version: ${{ steps.version.outputs.app_version }}
+      app_build_number: ${{ steps.version.outputs.app_build_number }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          sparse-checkout: pubspec.yaml
+          sparse-checkout-cone-mode: false
+
+      - name: Resolve app version
+        id: version
+        run: |
+          VERSION_LINE=$(grep '^version:' pubspec.yaml)
+          APP_VERSION=$(echo "$VERSION_LINE" | sed 's/version: *\([^+]*\).*/\1/')
+          APP_BUILD_NUMBER=$((${GITHUB_RUN_NUMBER} + ${BUILD_NUMBER_OFFSET}))
+
+          echo "app_version=${APP_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "app_build_number=${APP_BUILD_NUMBER}" >> "$GITHUB_OUTPUT"
+
+  build-ios:
+    if: inputs.platform == 'ios' || inputs.platform == 'both'
+    needs: prepare-version
+    runs-on: macos-latest
+    # `make secret` がアプリ内シークレット（Firebase 設定 / xcconfig / AdMob / RevenueCat）を復元するための環境変数
+    env:
+      FIREBASE_BASE64_IOS: ${{ secrets.FIREBASE_BASE64_IOS }}
+      FIREBASE_BASE64_ANDROID: ${{ secrets.FIREBASE_BASE64_ANDROID }}
+      XCCONFIG_SECRET: ${{ secrets.XCCONFIG_SECRET }}
+      REVENUE_CAT_PUBLIC_API_KEY: ${{ secrets.REVENUE_CAT_PUBLIC_API_KEY }}
+      IOS_ADMOB_NATIVE_ADVANCE_IDENTIFIER: ${{ secrets.IOS_ADMOB_NATIVE_ADVANCE_IDENTIFIER }}
+      ANDROID_ADMOB_NATIVE_ADVANCE_IDENTIFIER: ${{ secrets.ANDROID_ADMOB_NATIVE_ADVANCE_IDENTIFIER }}
+      IOS_ADMOB_BANNER_IDENTIFIER: ${{ secrets.IOS_ADMOB_BANNER_IDENTIFIER }}
+      ANDROID_ADMOB_BANNER_IDENTIFIER: ${{ secrets.ANDROID_ADMOB_BANNER_IDENTIFIER }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1
+        with:
+          xcode-version: latest-stable
+
+      - uses: subosito/flutter-action@fd55f4c5af5b953cc57a2be44cb082c8f6635e8e # v2.21.0
+        with:
+          channel: stable
+          flutter-version: '3.41.9'
+
+      # アプリ内シークレットを復元（GoogleService-Info.plist / Secret.xcconfig / lib/secret/secret.dart など）
+      - name: Restore app secrets
+        run: make secret
+
+      - run: flutter pub get
+
+      # P12 証明書インポート（apple-actions で自動キーチェーン管理）
+      - name: Import code signing certificate
+        uses: apple-actions/import-codesign-certs@63fff01cd422d4b7b855d40ca1e9d34d2de9427d # v3
+        with:
+          p12-file-base64: ${{ secrets.IOS_P12_CERTIFICATE_BASE64 }}
+          p12-password: ${{ secrets.IOS_P12_PASSWORD }}
+
+      # Provisioning Profile インストール（Runner + Widget Extension の 2 つ）
+      - name: Install Provisioning Profiles
+        env:
+          RUNNER_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          WIDGET_PROFILE_BASE64: ${{ secrets.IOS_WIDGET_PROVISIONING_PROFILE_BASE64 }}
+        run: |
+          PROFILE_DIR=~/Library/MobileDevice/Provisioning\ Profiles
+          mkdir -p "$PROFILE_DIR"
+          echo -n "$RUNNER_PROFILE_BASE64" | base64 --decode > "$PROFILE_DIR/runner.mobileprovision"
+          echo -n "$WIDGET_PROFILE_BASE64" | base64 --decode > "$PROFILE_DIR/widget.mobileprovision"
+
+      # ExportOptions.plist を env から生成（profile 名は project.pbxproj の手動署名設定と一致させる）
+      - name: Generate ExportOptions.plist
+        run: |
+          cat > ios/ExportOptions.plist <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store-connect</string>
+            <key>teamID</key>
+            <string>${IOS_DEVELOPMENT_TEAM}</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>signingCertificate</key>
+            <string>Apple Distribution</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>com.bannzai.shoppinglist</key>
+              <string>${IOS_RUNNER_PROFILE_NAME}</string>
+              <key>com.bannzai.shoppinglist.ShoppingListWidget</key>
+              <string>${IOS_WIDGET_PROFILE_NAME}</string>
+            </dict>
+            <key>uploadSymbols</key>
+            <true/>
+            <key>stripSwiftSymbols</key>
+            <true/>
+            <key>destination</key>
+            <string>export</string>
+          </dict>
+          </plist>
+          PLIST
+          cat ios/ExportOptions.plist
+
+      # Prebuild（flutter build ipa の Dart defines 関連バグ回避のため一度 no-codesign でビルド）
+      - name: Prebuild iOS
+        run: |
+          flutter build ios --release --no-codesign \
+            --build-name=${{ needs.prepare-version.outputs.app_version }} \
+            --build-number=${{ needs.prepare-version.outputs.app_build_number }}
+
+      # IPA ビルド（手動署名 + ExportOptions.plist）
+      - name: Build IPA
+        run: |
+          flutter build ipa --release \
+            --build-name=${{ needs.prepare-version.outputs.app_version }} \
+            --build-number=${{ needs.prepare-version.outputs.app_build_number }} \
+            --export-options-plist=ios/ExportOptions.plist
+
+      # シンボル除去（アップロードサイズ削減。失敗しても続行）
+      - name: Remove symbols from IPA
+        run: find build/ios/ipa -name "*.ipa" -exec zip -d {} "Symbols/*" \; || true
+
+      # TestFlight アップロード（App Store Connect API Key 認証）
+      - name: Upload to TestFlight
+        env:
+          ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
+          ASC_API_KEY_ISSUER_ID: ${{ secrets.ASC_API_KEY_ISSUER_ID }}
+          ASC_API_KEY_P8_BASE64: ${{ secrets.ASC_API_KEY_P8_BASE64 }}
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo -n "$ASC_API_KEY_P8_BASE64" | base64 --decode > ~/.appstoreconnect/private_keys/AuthKey_${ASC_API_KEY_ID}.p8
+          xcrun altool --upload-app \
+            -f build/ios/ipa/*.ipa \
+            -t ios \
+            --apiKey "$ASC_API_KEY_ID" \
+            --apiIssuer "$ASC_API_KEY_ISSUER_ID"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ios-ipa
+          path: build/ios/ipa/*.ipa
+
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -f ~/Library/MobileDevice/Provisioning\ Profiles/runner.mobileprovision || true
+          rm -f ~/Library/MobileDevice/Provisioning\ Profiles/widget.mobileprovision || true
+          rm -f ~/.appstoreconnect/private_keys/AuthKey_*.p8 || true
+
+  build-android:
+    if: inputs.platform == 'android' || inputs.platform == 'both'
+    needs: prepare-version
+    runs-on: ubuntu-latest
+    env:
+      FIREBASE_BASE64_IOS: ${{ secrets.FIREBASE_BASE64_IOS }}
+      FIREBASE_BASE64_ANDROID: ${{ secrets.FIREBASE_BASE64_ANDROID }}
+      XCCONFIG_SECRET: ${{ secrets.XCCONFIG_SECRET }}
+      REVENUE_CAT_PUBLIC_API_KEY: ${{ secrets.REVENUE_CAT_PUBLIC_API_KEY }}
+      IOS_ADMOB_NATIVE_ADVANCE_IDENTIFIER: ${{ secrets.IOS_ADMOB_NATIVE_ADVANCE_IDENTIFIER }}
+      ANDROID_ADMOB_NATIVE_ADVANCE_IDENTIFIER: ${{ secrets.ANDROID_ADMOB_NATIVE_ADVANCE_IDENTIFIER }}
+      IOS_ADMOB_BANNER_IDENTIFIER: ${{ secrets.IOS_ADMOB_BANNER_IDENTIFIER }}
+      ANDROID_ADMOB_BANNER_IDENTIFIER: ${{ secrets.ANDROID_ADMOB_BANNER_IDENTIFIER }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: subosito/flutter-action@fd55f4c5af5b953cc57a2be44cb082c8f6635e8e # v2.21.0
+        with:
+          channel: stable
+          flutter-version: '3.41.9'
+
+      - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # アプリ内シークレットを復元（google-services.json / lib/secret/secret.dart など）
+      - name: Restore app secrets
+        run: make secret
+
+      # Android 署名情報を Secrets から復元
+      - name: Restore signing
+        env:
+          ANDROID_KEY_PROPERTIES_BASE64: ${{ secrets.ANDROID_KEY_PROPERTIES_BASE64 }}
+          ANDROID_RELEASE_JKS_BASE64: ${{ secrets.ANDROID_RELEASE_JKS_BASE64 }}
+        run: |
+          echo -n "$ANDROID_KEY_PROPERTIES_BASE64" | base64 --decode > android/key.properties
+          echo -n "$ANDROID_RELEASE_JKS_BASE64" | base64 --decode > android/app/upload-keystore.jks
+
+      # base64 デコードで生成した keystore の整合性を早期検証する。
+      # Secrets 配信の一時障害で JKS が破損すると signReleaseBundle が分かりにくいエラーで失敗するため、
+      # ビルド前にサイズで検出する。
+      - name: Verify signing files
+        run: |
+          echo "key.properties size: $(wc -c < android/key.properties) bytes"
+          echo "upload-keystore.jks size: $(wc -c < android/app/upload-keystore.jks) bytes"
+          JKS_SIZE=$(wc -c < android/app/upload-keystore.jks)
+          if [ "$JKS_SIZE" -lt 1000 ]; then
+            echo "::error::upload-keystore.jks is suspiciously small ($JKS_SIZE bytes). base64 decode may have produced a corrupted file."
+            exit 1
+          fi
+
+      - run: flutter pub get
+
+      - name: Build App Bundle
+        run: |
+          flutter build appbundle \
+            --release \
+            --build-name=${{ needs.prepare-version.outputs.app_version }} \
+            --build-number=${{ needs.prepare-version.outputs.app_build_number }}
+
+      # Google Play サービスアカウント JSON のデコード
+      - name: Decode Google Play service account
+        run: echo -n "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64 }}" | base64 --decode > $RUNNER_TEMP/play-sa.json
+
+      - name: Upload to Google Play
+        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1
+        with:
+          serviceAccountJson: ${{ runner.temp }}/play-sa.json
+          packageName: com.bannzai.shoppinglist
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          track: internal
+          status: completed
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: android-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -f android/key.properties || true
+          rm -f android/app/upload-keystore.jks || true
+          rm -f $RUNNER_TEMP/play-sa.json || true

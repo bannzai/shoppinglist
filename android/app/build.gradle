@@ -6,6 +6,14 @@ plugins {
     id "com.google.gms.google-services"
 }
 
+// リリース署名情報。CI では key.properties / upload-keystore.jks を GitHub Secrets から復元して配置する。
+// key.properties が無いローカル環境では debug 署名にフォールバックし `flutter run --release` を壊さない。
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.bannzai.shoppinglist"
     compileSdk = Math.max(flutter.compileSdkVersion, 36)
@@ -36,11 +44,24 @@ android {
             project.findProperty("GOOGLE_MAPS_API_KEY") ?: ""
     }
 
+    signingConfigs {
+        release {
+            // key.properties が存在する場合（= CI で Secrets から復元済み）のみ実値をセットする。
+            // 存在しない場合はこの signingConfig は未設定のまま使われない（release は debug にフォールバック）。
+            if (keystorePropertiesFile.exists()) {
+                keyAlias = keystoreProperties['keyAlias']
+                keyPassword = keystoreProperties['keyPassword']
+                storeFile = keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+                storePassword = keystoreProperties['storePassword']
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            // key.properties があればリリース署名（Google Play 配布用）、無ければ debug 署名にフォールバックして
+            // ローカルの `flutter run --release` を維持する。
+            signingConfig = keystorePropertiesFile.exists() ? signingConfigs.release : signingConfigs.debug
         }
     }
 }
