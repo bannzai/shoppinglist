@@ -20,7 +20,8 @@ void main() {
                     SnackBar(
                       content: const Text(message),
                       persist: persist,
-                      action: SnackBarAction(label: 'アップグレード', onPressed: () {}),
+                      action:
+                          SnackBarAction(label: 'アップグレード', onPressed: () {}),
                     ),
                   );
                 },
@@ -35,7 +36,8 @@ void main() {
 
   testWidgets('A: action付きSnackBar(persist未指定=デフォルトtrue)は10秒待っても消えない',
       (tester) async {
-    await pumpButton(tester, persist: null); // 未指定 → action!=null で persist=true
+    await pumpButton(tester,
+        persist: null); // 未指定 → action!=null で persist=true
     await tester.tap(find.text('show'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300)); // 入場アニメ
