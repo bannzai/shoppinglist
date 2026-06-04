@@ -57,9 +57,12 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
     final isCreatingSoloGroup = useRef(false);
 
     // Group未作成の場合に1度だけ作成してAppUserにセットする (ソログループは default icon の 'home')。
-    // 依存配列 [appUser, appUserDefaultGroupID]: appUser取得後かつ defaultGroupID が未設定の時に作成する。
+    // 依存配列 [appUser, appUserDefaultGroupID, createGroup]:
+    //   appUser取得後かつ defaultGroupID が未設定の時に作成する。
     //   成功すると defaultGroupID がセットされ条件を抜けるため再実行されない。
-    //   isCreatingSoloGroup ガードにより、作成中の再emitでは二重に発火しない。
+    //   createGroup は createGroupProvider 由来で widget の生存期間中は同一インスタンスのため
+    //   実質的に再実行は増えないが、Effectが参照する関数なので依存完全性のため明示する。
+    //   isCreatingSoloGroup ガードにより、いずれの再実行でも作成は二重に発火しない。
     useEffect(() {
       if (appUser != null &&
           appUserDefaultGroupID == null &&
@@ -81,7 +84,7 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
         }();
       }
       return null;
-    }, [appUser, appUserDefaultGroupID]);
+    }, [appUser, appUserDefaultGroupID, createGroup]);
 
     useEffect(() {
       void f() async {
