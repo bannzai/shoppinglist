@@ -446,6 +446,7 @@ class _NoListYet extends ConsumerWidget {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
+                        persist: false,
                         content: Text(e.toString()),
                         action: SnackBarAction(
                           label: 'アップグレード',

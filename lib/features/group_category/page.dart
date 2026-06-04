@@ -231,6 +231,7 @@ class _CategoryListBody extends HookConsumerWidget {
                             if (value != null && !isPremium) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
+                                  persist: false,
                                   content:
                                       const Text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
                                   action: SnackBarAction(
@@ -315,6 +316,7 @@ class _CategoryReorderableList extends ConsumerWidget {
           if (!isPremium) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
+                persist: false,
                 content: const Text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
                 action: SnackBarAction(
                   label: 'アップグレード',

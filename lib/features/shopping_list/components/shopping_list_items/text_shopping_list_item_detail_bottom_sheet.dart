@@ -470,6 +470,7 @@ class _PhotoSection extends HookConsumerWidget {
           parameters: {'groupID': groupID, 'itemID': itemID});
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          persist: false,
           content: const Text('商品写真の添付はプレミアム機能です'),
           action: SnackBarAction(
             label: 'アップグレード',

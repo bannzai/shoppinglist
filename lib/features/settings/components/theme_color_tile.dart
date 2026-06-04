@@ -56,6 +56,7 @@ class ThemeColorTile extends ConsumerWidget {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
+              persist: false,
               content: const Text('テーマカラーの変更はプレミアム機能です'),
               action: SnackBarAction(
                 label: 'アップグレード',

@@ -111,6 +111,7 @@ class GroupListPage extends ConsumerWidget {
         if (isLimitReached) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
+              persist: false,
               content: const Text(
                 '無料プランではソログループ+1グループまで作成できます。プレミアムにアップグレードすると無制限に作成できます',
               ),

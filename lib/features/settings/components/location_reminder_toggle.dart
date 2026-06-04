@@ -96,6 +96,7 @@ class LocationReminderToggle extends ConsumerWidget {
               );
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
+                  persist: false,
                   content: const Text('位置情報リマインダーはプレミアム機能です'),
                   action: SnackBarAction(
                     label: 'アップグレード',
