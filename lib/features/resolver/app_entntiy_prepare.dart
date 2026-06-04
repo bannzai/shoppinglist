@@ -50,15 +50,35 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
       return null;
     }, [appUser]);
 
-    // Group未作成の場合は作成してAppUserにセット (ソログループは default icon の 'home')
+    // ソログループ自動作成の二重発火防止フラグ。
+    // createGroup は await せず fire-and-forget のため、完了前(=defaultGroupIDがまだnull)に
+    // appUserストリームが再emitするとこのEffectが再実行され、同一ユーザーに複数のソログループが
+    // 作られてしまう。作成を一度だけ走らせるため in-flight/完了済みを ref で記録する。
+    final isCreatingSoloGroup = useRef(false);
+
+    // Group未作成の場合に1度だけ作成してAppUserにセットする (ソログループは default icon の 'home')。
+    // 依存配列 [appUser, appUserDefaultGroupID]: appUser取得後かつ defaultGroupID が未設定の時に作成する。
+    //   成功すると defaultGroupID がセットされ条件を抜けるため再実行されない。
+    //   isCreatingSoloGroup ガードにより、作成中の再emitでは二重に発火しない。
     useEffect(() {
-      if (appUser != null && appUserDefaultGroupID == null) {
-        createGroup(
-          appUser: appUser,
-          name: null,
-          setAsDefault: true,
-          iconName: 'home',
-        );
+      if (appUser != null &&
+          appUserDefaultGroupID == null &&
+          !isCreatingSoloGroup.value) {
+        isCreatingSoloGroup.value = true;
+        () async {
+          try {
+            await createGroup(
+              appUser: appUser,
+              name: null,
+              setAsDefault: true,
+              iconName: 'home',
+            );
+            // 成功時はフラグを戻さない(defaultGroupID設定で条件を抜けるため再実行されない)。
+          } catch (_) {
+            // 失敗時のみ再試行できるようフラグを戻す。
+            isCreatingSoloGroup.value = false;
+          }
+        }();
       }
       return null;
     }, [appUser, appUserDefaultGroupID]);
