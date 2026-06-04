@@ -89,21 +89,18 @@ describe("createGroup", () => {
       id: "new-group-id",
     };
 
+    const ownedGroupsQuery = { __kind: "ownedGroupsQuery" };
     const mockTransaction = {
-      get: jest.fn().mockResolvedValue(mockUserDoc),
+      get: jest.fn(async (arg: unknown) =>
+        arg === ownedGroupsQuery ? { size: 1 } : mockUserDoc
+      ),
       set: jest.fn(),
     };
 
     mockCollection.mockImplementation((path: string) => {
       if (path === "groups") {
         return {
-          where: jest.fn().mockReturnValue({
-            count: jest.fn().mockReturnValue({
-              get: jest
-                .fn()
-                .mockResolvedValue({ data: () => ({ count: 1 }) }),
-            }),
-          }),
+          where: jest.fn(() => ownedGroupsQuery),
           doc: jest.fn(() => mockGroupRef),
         };
       }
@@ -149,21 +146,18 @@ describe("createGroup", () => {
       id: "new-group-id",
     };
 
+    const ownedGroupsQuery = { __kind: "ownedGroupsQuery" };
     const mockTransaction = {
-      get: jest.fn().mockResolvedValue(mockUserDoc),
+      get: jest.fn(async (arg: unknown) =>
+        arg === ownedGroupsQuery ? { size: 0 } : mockUserDoc
+      ),
       set: jest.fn(),
     };
 
     mockCollection.mockImplementation((path: string) => {
       if (path === "groups") {
         return {
-          where: jest.fn().mockReturnValue({
-            count: jest.fn().mockReturnValue({
-              get: jest
-                .fn()
-                .mockResolvedValue({ data: () => ({ count: 0 }) }),
-            }),
-          }),
+          where: jest.fn(() => ownedGroupsQuery),
           doc: jest.fn(() => mockGroupRef),
         };
       }
@@ -220,25 +214,44 @@ describe("createGroup", () => {
     );
   });
 
-  test("異常系: 無料ユーザーで上限到達時にエラーになる", async () => {
+  test("異常系: 無料ユーザーで上限到達時はトランザクション内で弾かれ書き込みが発生しない", async () => {
     mockCurrentContext.mockReturnValue({
       auth: { uid: "user-1", token: {} },
     });
 
+    const ownedGroupsQuery = { __kind: "ownedGroupsQuery" };
+    const mockTransaction = {
+      get: jest.fn(async (arg: unknown) =>
+        arg === ownedGroupsQuery
+          ? { size: 2 }
+          : { exists: true, data: () => ({ defaultGroupID: "existing-group" }) }
+      ),
+      set: jest.fn(),
+    };
+
     mockCollection.mockImplementation((path: string) => {
       if (path === "groups") {
         return {
-          where: jest.fn().mockReturnValue({
-            count: jest.fn().mockReturnValue({
-              get: jest
-                .fn()
-                .mockResolvedValue({ data: () => ({ count: 2 }) }),
-            }),
-          }),
+          where: jest.fn(() => ownedGroupsQuery),
+          doc: jest.fn(() => ({ id: "new-group-id" })),
         };
+      }
+      if (path === `groups/new-group-id/userProfiles`) {
+        return {
+          doc: jest.fn(() => ({
+            id: `GroupUserProfile_groups_new-group-id_users_user-1`,
+          })),
+        };
+      }
+      if (path === "users") {
+        return { doc: jest.fn(() => ({ id: "user-1" })) };
       }
       return {};
     });
+
+    mockFirestoreInstance.runTransaction = jest
+      .fn()
+      .mockImplementation(async (fn: any) => fn(mockTransaction));
 
     const result = await capturedFlowFn(defaultInput);
 
@@ -246,6 +259,7 @@ describe("createGroup", () => {
     expect(result.error.message).toContain(
       "無料プランではソログループ+1グループ"
     );
+    expect(mockTransaction.set).not.toHaveBeenCalled();
   });
 
   test("正常系: プレミアムユーザーは上限超過時でも作成できる", async () => {
@@ -270,6 +284,8 @@ describe("createGroup", () => {
     mockCollection.mockImplementation((path: string) => {
       if (path === "groups") {
         return {
+          // プレミアムは上限チェックの transaction.get を通らないが、ownedGroupsQuery 構築時に where は呼ばれる
+          where: jest.fn(() => ({ __kind: "ownedGroupsQuery" })),
           doc: jest.fn(() => mockGroupRef),
         };
       }

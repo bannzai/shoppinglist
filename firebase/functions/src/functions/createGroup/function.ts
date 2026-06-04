@@ -97,82 +97,90 @@ const createGroupFlow = ai.defineFlow(
       const firestore = admin.firestore();
       const isPremium = context?.auth?.token?.isPremium === true;
 
-      if (!isPremium) {
-        const ownedGroupCountSnapshot = await firestore
-          .collection("groups")
-          .where("ownerUserID", "==", uid)
-          .count()
-          .get();
-        if (
-          ownedGroupCountSnapshot.data().count >=
-          FREE_ADDITIONAL_GROUP_CREATION_LIMIT + 1
-        ) {
-          return {
-            result: "NG" as const,
-            error: {
-              message: `無料プランではソログループ+${FREE_ADDITIONAL_GROUP_CREATION_LIMIT}グループまで作成できます。プレミアムにアップグレードすると無制限に作成できます`,
-            },
-          };
-        }
-      }
-
-      // createGroup は新規ID払い出しを伴うため非冪等。重複作成は上限チェックとUIの二重送信防止で抑止する。
+      // createGroup は新規ID払い出しを伴うため非冪等。重複作成は上限チェック(同一トランザクション内)とUIの二重送信防止で抑止する。
       const groupRef = firestore.collection("groups").doc();
       const userRef = firestore.collection("users").doc(uid);
       const profileRef = firestore
         .collection(`groups/${groupRef.id}/userProfiles`)
         .doc(`GroupUserProfile_groups_${groupRef.id}_users_${uid}`);
+      const ownedGroupsQuery = firestore
+        .collection("groups")
+        .where("ownerUserID", "==", uid);
 
-      await firestore.runTransaction(async (transaction) => {
-        const userSnapshot = await transaction.get(userRef);
-        const userData = userSnapshot.data() as AppUserData | undefined;
-        const shouldSetDefault =
-          setAsDefault || userData?.defaultGroupID == null;
+      // 上限チェックと作成を同一トランザクションで行い、同時実行による上限すり抜け(レース)を防ぐ。
+      // Firestoreトランザクションは「全read→全write」の順序が必須のため、上限チェックのreadを
+      // write より前に置く。上限超過時は write を行わず理由文字列を返してロールバック相当にする。
+      const limitErrorMessage = await firestore.runTransaction(
+        async (transaction) => {
+          const userSnapshot = await transaction.get(userRef);
+          if (!isPremium) {
+            const ownedGroupsSnapshot = await transaction.get(ownedGroupsQuery);
+            if (
+              ownedGroupsSnapshot.size >=
+              FREE_ADDITIONAL_GROUP_CREATION_LIMIT + 1
+            ) {
+              return `無料プランではソログループ+${FREE_ADDITIONAL_GROUP_CREATION_LIMIT}グループまで作成できます。プレミアムにアップグレードすると無制限に作成できます`;
+            }
+          }
 
-        transaction.set(
-          groupRef,
-          {
-            id: groupRef.id,
-            ownerUserID: uid,
-            memberUserIDs: [uid],
-            name: normalizedName?.length ? normalizedName : null,
-            iconName,
-            createdDateTime: admin.firestore.FieldValue.serverTimestamp(),
-            updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-            serverCreatedDateTime:
-              admin.firestore.FieldValue.serverTimestamp(),
-            serverUpdatedDateTime:
-              admin.firestore.FieldValue.serverTimestamp(),
-          },
-          { merge: true }
-        );
+          const userData = userSnapshot.data() as AppUserData | undefined;
+          const shouldSetDefault =
+            setAsDefault || userData?.defaultGroupID == null;
 
-        transaction.set(
-          profileRef,
-          {
-            id: profileRef.id,
-            groupID: groupRef.id,
-            userID: uid,
-            serverCreatedDateTime:
-              admin.firestore.FieldValue.serverTimestamp(),
-            serverUpdatedDateTime:
-              admin.firestore.FieldValue.serverTimestamp(),
-          },
-          { merge: true }
-        );
-
-        if (shouldSetDefault) {
           transaction.set(
-            userRef,
+            groupRef,
             {
-              defaultGroupID: groupRef.id,
+              id: groupRef.id,
+              ownerUserID: uid,
+              memberUserIDs: [uid],
+              name: normalizedName?.length ? normalizedName : null,
+              iconName,
+              createdDateTime: admin.firestore.FieldValue.serverTimestamp(),
+              updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+              serverCreatedDateTime:
+                admin.firestore.FieldValue.serverTimestamp(),
               serverUpdatedDateTime:
                 admin.firestore.FieldValue.serverTimestamp(),
             },
             { merge: true }
           );
+
+          transaction.set(
+            profileRef,
+            {
+              id: profileRef.id,
+              groupID: groupRef.id,
+              userID: uid,
+              serverCreatedDateTime:
+                admin.firestore.FieldValue.serverTimestamp(),
+              serverUpdatedDateTime:
+                admin.firestore.FieldValue.serverTimestamp(),
+            },
+            { merge: true }
+          );
+
+          if (shouldSetDefault) {
+            transaction.set(
+              userRef,
+              {
+                defaultGroupID: groupRef.id,
+                serverUpdatedDateTime:
+                  admin.firestore.FieldValue.serverTimestamp(),
+              },
+              { merge: true }
+            );
+          }
+
+          return null;
         }
-      });
+      );
+
+      if (limitErrorMessage != null) {
+        return {
+          result: "NG" as const,
+          error: { message: limitErrorMessage },
+        };
+      }
 
       logger.info(`Created group ${groupRef.id} by ${uid}`);
 
