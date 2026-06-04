@@ -24,8 +24,8 @@ env:
   IOS_DEVELOPMENT_TEAM: TQPN82UBBY
   # project.pbxproj の Runner Release: PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*] と一致
   IOS_RUNNER_PROFILE_NAME: 'ShoppingList.Prod.AppStore'
-  # TODO: Widget 拡張を Xcode で Manual 署名にした後、その配布 profile 名に合わせる
-  IOS_WIDGET_PROFILE_NAME: 'ShoppingList.Prod.Widget.AppStore'
+  # project.pbxproj の Widget Release: PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*] と一致
+  IOS_WIDGET_PROFILE_NAME: 'ShoppingList.Widget.Prod.AppStore'
 
 jobs:
   prepare-version:
