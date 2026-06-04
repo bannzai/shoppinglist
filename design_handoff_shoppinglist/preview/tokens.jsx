@@ -1,16 +1,16 @@
 // tokens.jsx — design tokens + theme
 
 const LIGHT = {
-  paper: '#ECE5D3',
-  surface: '#F8F2E2',
-  surface2: '#FFFCF3',
+  paper: '#F1EDE4',
+  surface: '#F7F4EE',
+  surface2: '#FCFAF6',
   card: '#FFFFFF',
   ink: '#1B1813',
-  ink2: '#5A5246',
-  ink3: '#948A77',
-  ink4: '#BDB39E',
-  divider: '#E0D5BC',
-  divider2: '#EBE2C9',
+  ink2: '#57514A',
+  ink3: '#837A6A',
+  ink4: '#BBB2A4',
+  divider: '#E5DFD3',
+  divider2: '#EDE8DE',
   accent: '#C2410C',
   accentSoft: '#FBE4D0',
   accentInk: '#7C2A07',
@@ -19,7 +19,7 @@ const LIGHT = {
   warn: '#B47B1F',
   danger: '#B53D3D',
   dangerSoft: '#F4DEDB',
-  checked: '#A89E89',
+  checked: '#A39A89',
   shadow: '0 1px 0 rgba(27,24,19,0.05), 0 6px 18px rgba(27,24,19,0.04)',
 };
 
