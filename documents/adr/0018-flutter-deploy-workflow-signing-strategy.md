@@ -15,16 +15,15 @@ shoppinglist には CI（`flutter-ci.yml` で lint / codegen / test）はある�
 - **秘匿情報は `make secret`**（Firebase 設定 / `Secret.xcconfig` / AdMob / RevenueCat）で復元する独自方式。
 - **dev/prod flavor が無い単一環境**。
 
-これらを踏まえ、ローカル開発（Automatic 署名・`flutter run`）を壊さずに CI からストア配布できる方式を決める必要がある。
+これらを踏まえ、ローカル開発（特に日常の `flutter run`）への影響を抑えつつ、CI からストア配布できる方式を決める必要がある。
 
 ## Decision
 
-### 1. iOS は CI 実行時のみ手動署名へ切り替える
-`project.pbxproj` はローカル開発用に **Automatic のまま維持**し、commit はしない。
-CI でチェックアウトした作業コピーに対してのみ `ios/scripts/configure_signing_for_ci.rb`（`xcodeproj` gem）を実行し、Release 構成の対象ターゲットを bundle id で判定して手動署名（Manual / Apple Distribution / profile specifier）へ書き換える。
-provisioning profile は Runner / Widget の 2 つをインストールし、profile 名は workflow の `env`（`IOS_RUNNER_PROFILE_NAME` / `IOS_WIDGET_PROFILE_NAME`）を SSOT として ExportOptions.plist と Ruby スクリプトの双方が参照する。
+### 1. iOS は project.pbxproj に手動署名(Manual)をコミットする
+Runner / Widget の Release 構成を Xcode で Manual 署名に設定し、配布 provisioning profile（Runner = `ShoppingList.Prod.AppStore` 等）を `PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]` に指定して `project.pbxproj` に commit する。
+これにより CI は追加の署名書き換え無しで `flutter build ipa` できる。CI は P12 証明書と配布 profile をインストールし、ExportOptions.plist（profile 名は workflow の `env`: `IOS_RUNNER_PROFILE_NAME` / `IOS_WIDGET_PROFILE_NAME` を参照）で export する。
 
-代替案として Riamo 同様に手動署名を `project.pbxproj` に commit する案もあったが、ローカルの Automatic 署名運用を壊すため不採用。
+当初は「ローカルの Automatic を壊さないよう CI 実行時のみ Ruby スクリプトで `project.pbxproj` を書き換える」案を採用したが、(1) CI 時に project を書き換える暗黙処理が分かりにくい、(2) `project.pbxproj` = CI の挙動を一致させたい、という理由で Manual をコミットする方式へ変更した。トレードオフとしてローカルの release / archive ビルドには配布 profile + 証明書が必要になる（Debug の `flutter run` は影響なし）。
 
 ### 2. Android は key.properties の有無で署名を分岐する
 `android/app/build.gradle` に release 署名 config を追加し、`key.properties` が存在する場合（= CI で Secrets から復元済み）のみリリース署名、存在しないローカルでは debug 署名にフォールバックする。これにより `flutter run --release` を含むローカルビルドを壊さない。
@@ -37,21 +36,20 @@ dev/prod flavor が無いため environment 入力は設けず、bundle id / pac
 ## Consequences
 
 **良い点**
-- ローカル開発の署名設定（Automatic）を一切変更せずにストア配布が可能。
+- `project.pbxproj` の署名設定がそのまま CI に効くため挙動が透明で、署名失敗時の切り分けがしやすい（CI 時に project を書き換える暗黙処理が無い）。
 - Android はローカルで `flutter run --release` が従来どおり動く（debug フォールバック）。
 - 既存の `make secret` をそのまま再利用でき、シークレット管理が CI 全体で一貫する。
-- profile 名を env に集約することで ExportOptions と pbxproj 書換の値ズレを防ぐ。
 
 **トレードオフ / 注意点**
-- CI 実行時に `project.pbxproj` を書き換える「暗黙的な前提」が増える。署名失敗時は `configure_signing_for_ci.rb` と committed の pbxproj の差を意識して切り分ける必要がある。
-- provisioning profile 名を Apple Developer 上の実体と workflow の env で**手動一致**させる運用が必要（不一致で署名失敗）。
-- Widget 拡張のぶん profile / App ID / App Group の管理対象が増える。
+- ローカルの release / archive ビルドには配布 profile + Apple Distribution 証明書が必要になる（Debug の `flutter run` は影響なし）。
+- profile 名が `project.pbxproj`（`PROVISIONING_PROFILE_SPECIFIER`）と workflow の `env`（ExportOptions 用）の 2 箇所に存在するため、変更時は両方を一致させる必要がある。
+- Widget 拡張も同様に Manual 署名 + 専用配布 profile の設定が必要（Runner / Widget で 2 つの profile / App ID / App Group を管理）。
 - `Runner.entitlements` の `aps-environment` が `development` のままのため、本番 / TestFlight で Push 通知を使う場合は別途 `production` へ変更が必要（本 ADR の範囲外）。
 - 初回はストア未登録のため、App Store Connect のアプリレコード作成、および Google Play の初回 AAB 手動アップロードが前提となる。
 
 ## 参照
 - `.github/workflows/flutter-deploy.yml`
-- `ios/scripts/configure_signing_for_ci.rb`
+- `ios/Runner.xcodeproj/project.pbxproj`（Runner / Widget Release の手動署名設定）
 - `android/app/build.gradle`（release 署名 config）
 - 準備手順の完全版（Apple / Google / GitHub Secrets）は PR #344 の説明、およびローカルの `.plans/flutter-deploy-workflow.md` にまとめる
 - Riamo `flutter-deploy.yml`（参考元）
