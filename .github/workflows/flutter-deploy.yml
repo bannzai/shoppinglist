@@ -81,6 +81,12 @@ jobs:
 
       - run: flutter pub get
 
+      # ios/.symlinks を .flutter-plugins-dependencies から再生成する。
+      # .symlinks は gitignore 対象でクリーンチェックアウトの CI には無く、pub get でも作られないため、
+      # Podfile 先頭の firebase_sdk_version.rb require が pod install で落ちるのを防ぐ（詳細はスクリプト冒頭）。
+      - name: Link iOS plugin symlinks
+        run: python3 ios/scripts/link_plugin_symlinks.py
+
       # P12 証明書インポート（apple-actions で自動キーチェーン管理）
       - name: Import code signing certificate
         uses: apple-actions/import-codesign-certs@63fff01cd422d4b7b855d40ca1e9d34d2de9427d # v3
