@@ -24,7 +24,7 @@ struct ShoppingListWidgetView: View {
     private var paper: Color {
         colorScheme == .dark
             ? Color(hex: "#13110D")
-            : Color(hex: "#F6F0E2")
+            : Color(hex: "#F1EDE4")
     }
 
     /// card 背景 (現状は未使用だが、今後の Light/Dark 統一のためプロパティとして保持)。

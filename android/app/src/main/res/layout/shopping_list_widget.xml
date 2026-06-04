@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   design_handoff_shoppinglist/preview/widgets-and-micro.jsx#WAndroid 準拠
-  - bg `#F6F0E2`（仕様固定の和紙色）
+  - bg `#F1EDE4`（tokens.dart の AppNeutralColors.light.paper と一致 / ADR 0018）
   - widget_count は IBM Plex Mono 風（android:fontFamily="monospace"）
   - タイトル / count 色は Material You 系の `@android:color/system_accent1_600`
     （アクセント色は Kotlin 側で setTextColor により上書きされる）
@@ -11,7 +11,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="12dp"
-    android:background="#F6F0E2">
+    android:background="#F1EDE4">
 
     <LinearLayout
         android:layout_width="match_parent"
