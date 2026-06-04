@@ -15,6 +15,8 @@ name: firebase-deploy
 #      既定 SA: github-firebase-deployer@shopping-list-prod-a615c.iam.gserviceaccount.com
 # 2. SA 鍵 JSON を base64 化し、リポジトリ Secret `FIREBASE_SERVICE_ACCOUNT_BASE64` に登録する。
 #      例: base64 -i service-account.json | pbcopy   # macOS
+# 3. リポジトリ Variable `APP_ENV` を設定する(本番は prod)。functions の defineString("APP_ENV") 用。
+#    .env.* は .gitignore 対象で CI に存在しないため、deploy 前に Variable から dotenv を生成する。
 
 on:
   workflow_dispatch:
@@ -71,6 +73,19 @@ jobs:
           mkdir -p secret
           echo "$FIREBASE_SERVICE_ACCOUNT_BASE64" | base64 --decode > secret/GOOGLE_APPLICATION_CREDENTIALS.json
           echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/firebase/functions/secret/GOOGLE_APPLICATION_CREDENTIALS.json" >> "$GITHUB_ENV"
+
+      - name: Restore functions env (APP_ENV)
+        working-directory: firebase/functions
+        env:
+          APP_ENV: ${{ vars.APP_ENV }}
+        run: |
+          if [ -z "$APP_ENV" ]; then
+            echo "::error::Variable APP_ENV が未設定です。リポジトリ Variables に APP_ENV(本番は prod) を設定してください"
+            exit 1
+          fi
+          # firebase-functions params(defineString "APP_ENV") が deploy 時に参照する project 別 dotenv。
+          # .env.* は .gitignore 対象で CI には存在しないため Variable から生成する。
+          printf 'APP_ENV=%s\n' "$APP_ENV" > .env.shopping-list-prod-a615c
 
       - name: Deploy functions
         working-directory: firebase
