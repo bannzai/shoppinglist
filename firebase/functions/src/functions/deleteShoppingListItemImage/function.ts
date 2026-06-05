@@ -3,6 +3,7 @@ import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
 import { ai } from "../utils/genkit";
+import { currentAuthUID } from "../utils/currentAuthUID";
 import { appAuthPolicy } from "../utils/authPolicy";
 import {
   DataResponseSchema,
@@ -47,7 +48,7 @@ const deleteShoppingListItemImageFlow = ai.defineFlow(
     outputSchema: ResponseSchema,
   },
   async (input) => {
-    const uid = ai.currentContext()?.auth?.uid;
+    const uid = currentAuthUID();
     if (!uid) {
       return {
         result: "NG" as const,

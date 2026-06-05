@@ -5,6 +5,7 @@ import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
 import { ai } from "../utils/genkit";
+import { currentAuthUID } from "../utils/currentAuthUID";
 import { appAuthPolicy } from "../utils/authPolicy";
 import { DataResponseSchema, ErrorResponseSchema } from "../../entity/response";
 import { UserAIUsageData } from "../../entity/ai_usage";
@@ -96,8 +97,7 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
     const tempFilePath: string | null = null;
 
     // 認証チェック（クライアントからの回避を防ぐため Function 側で強制）
-    const context = ai.currentContext();
-    const uid = context?.auth?.uid;
+    const uid = currentAuthUID();
     if (!uid) {
       return {
         result: "NG" as const,

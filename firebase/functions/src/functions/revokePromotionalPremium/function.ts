@@ -3,6 +3,7 @@ import { onCallGenkit } from "firebase-functions/https";
 import { defineSecret } from "firebase-functions/params";
 import * as z from "zod";
 import { ai } from "../utils/genkit";
+import { currentAuthUID } from "../utils/currentAuthUID";
 import { appAuthPolicy } from "../utils/authPolicy";
 import { developerToken, isDeveloper } from "../../core/developer";
 import {
@@ -34,8 +35,7 @@ const revokePromotionalPremiumFlow = ai.defineFlow(
   },
   async () => {
     try {
-      const context = ai.currentContext();
-      const uid = context?.auth?.uid;
+      const uid = currentAuthUID();
       if (!uid) {
         return {
           result: "NG" as const,
