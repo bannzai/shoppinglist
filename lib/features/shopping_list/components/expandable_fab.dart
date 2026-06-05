@@ -94,59 +94,84 @@ class ExpandableFab extends HookConsumerWidget {
       ),
     ];
 
-    return Stack(
-      alignment: Alignment.bottomRight,
-      clipBehavior: Clip.none,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        if (open.value)
-          Positioned.fill(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: close,
+        // 展開メニュー。FAB の上に積み、open に応じて下端基準で上方向へ伸縮する。
+        // レイアウト内に収めることで Stack 境界外オーバーフローによるタップ不可を解消する。
+        AnimatedBuilder(
+          animation: curve,
+          builder: (context, child) {
+            final t = curve.value.clamp(0.0, 1.0);
+            return ClipRect(
+              child: Align(
+                alignment: Alignment.bottomRight,
+                heightFactor: t,
+                child: Opacity(opacity: t, child: child),
+              ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                for (final action in actions) ...[
+                  _ActionRow(action: action),
+                  const SizedBox(height: 8),
+                ],
+              ],
             ),
           ),
-        for (final (i, action) in actions.indexed)
-          _ActionRow(
-            action: action,
-            animation: curve,
-            offset: (actions.length - i) * 60.0,
-          ),
-        AnimatedBuilder(
-          animation: controller,
-          builder: (_, __) => Transform.rotate(
-            angle: controller.value * 0.785,
-            child: GestureDetector(
-              onLongPress: () {
-                HapticFeedback.mediumImpact();
-                analytics.logEvent(
-                  name: 'long_press_open_fab_menu',
-                  parameters: {
-                    'groupID': groupID,
-                    'shoppingListID': shoppingListID,
-                  },
-                );
-                open.value = true;
+        ),
+        GestureDetector(
+          onLongPress: () {
+            HapticFeedback.mediumImpact();
+            analytics.logEvent(
+              name: 'long_press_open_fab_menu',
+              parameters: {
+                'groupID': groupID,
+                'shoppingListID': shoppingListID,
               },
-              child: FloatingActionButton(
-                backgroundColor: tokens.accent,
-                foregroundColor: Colors.white,
-                shape: const CircleBorder(),
-                onPressed: () {
-                  analytics.logEvent(name: 'tap_add_item_fab', parameters: {
+            );
+            open.value = true;
+          },
+          child: AnimatedBuilder(
+            animation: controller,
+            builder: (_, child) => Transform.rotate(
+              angle: controller.value * 0.785,
+              child: child,
+            ),
+            child: FloatingActionButton(
+              backgroundColor: tokens.accent,
+              foregroundColor: Colors.white,
+              shape: const CircleBorder(),
+              onPressed: () {
+                // メニュー展開中（x 状態）のタップは Row 追加ではなく「閉じる」に倒す。
+                if (open.value) {
+                  analytics.logEvent(name: 'tap_close_fab_menu', parameters: {
                     'groupID': groupID,
                     'shoppingListID': shoppingListID,
                   });
-                  ref.read(addShoppingListItemProvider(groupID: groupID)).call(
-                        shoppingListID: shoppingListID,
-                        userID: ref.read(currentUserIDProvider)!,
-                        message: '',
-                        order: shoppingListItems.nextOrder,
-                        description: null,
-                        color: null,
-                      );
-                },
-                child: const Icon(Icons.add, size: 26),
-              ),
+                  close();
+                  return;
+                }
+                analytics.logEvent(name: 'tap_add_item_fab', parameters: {
+                  'groupID': groupID,
+                  'shoppingListID': shoppingListID,
+                });
+                ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+                      shoppingListID: shoppingListID,
+                      userID: ref.read(currentUserIDProvider)!,
+                      message: '',
+                      order: shoppingListItems.nextOrder,
+                      description: null,
+                      color: null,
+                    );
+              },
+              child: const Icon(Icons.add, size: 26),
             ),
           ),
         ),
@@ -377,62 +402,46 @@ class _FabAction {
   });
 }
 
+/// 展開メニュー 1 行（ラベル + 円形アイコンボタン）。
+/// 伸縮アニメーションは親（`ExpandableFab`）の `ClipRect + Align` 側で行うため、
+/// この行自体はレイアウト内に常駐し、タップ判定を確実に受け取る。
+/// ラベル・余白・アイコンのいずれをタップしても発火するよう、行全体を 1 つのタップ領域にする
+/// （アイコンの 44px だけでなくラベルからもタップできるようにする）。
 class _ActionRow extends StatelessWidget {
   final _FabAction action;
-  final Animation<double> animation;
-  final double offset;
 
-  const _ActionRow({
-    required this.action,
-    required this.animation,
-    required this.offset,
-  });
+  const _ActionRow({required this.action});
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.tokens;
-    return AnimatedBuilder(
-      animation: animation,
-      builder: (context, child) {
-        final translateY = -offset * animation.value;
-        return Transform.translate(
-          offset: Offset(0, translateY),
-          child: Opacity(
-            opacity: animation.value.clamp(0.0, 1.0),
-            child: IgnorePointer(
-              ignoring: animation.value < 0.5,
-              child: child,
-            ),
-          ),
-        );
-      },
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            _ActionLabel(label: action.label),
-            const SizedBox(width: 10),
-            Material(
-              color: tokens.neutral.surface2,
-              shape: const CircleBorder(),
-              child: InkWell(
-                customBorder: const CircleBorder(),
-                onTap: action.onTap,
-                child: SizedBox(
-                  width: 44,
-                  height: 44,
-                  child: Icon(
-                    action.icon,
-                    size: 20,
-                    color: tokens.neutral.ink,
-                  ),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: action.onTap,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          _ActionLabel(label: action.label),
+          const SizedBox(width: 10),
+          Material(
+            color: tokens.neutral.surface2,
+            shape: const CircleBorder(),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: action.onTap,
+              child: SizedBox(
+                width: 44,
+                height: 44,
+                child: Icon(
+                  action.icon,
+                  size: 20,
+                  color: tokens.neutral.ink,
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
