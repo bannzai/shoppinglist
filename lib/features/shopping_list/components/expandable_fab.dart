@@ -209,7 +209,7 @@ class ExpandableFab extends HookConsumerWidget {
     final imagePicker = ImagePicker();
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -225,13 +225,16 @@ class ExpandableFab extends HookConsumerWidget {
                   });
                   final XFile? photo =
                       await imagePicker.pickImage(source: ImageSource.camera);
-                  if (photo != null) {
-                    if (context.mounted) {
-                      await _addShoppingListItemsFromImage(context, ref, photo);
-                    }
-                    if (context.mounted) {
-                      Navigator.of(context).pop();
-                    }
+                  if (photo == null) {
+                    return;
+                  }
+                  // 写真選択直後に画像選択ダイアログを閉じる。
+                  // AI 処理・review sheet は親 context で行う（URL 入力側と統一）。
+                  if (dialogContext.mounted) {
+                    Navigator.of(dialogContext).pop();
+                  }
+                  if (context.mounted) {
+                    await _addShoppingListItemsFromImage(context, ref, photo);
                   }
                 },
               ),
@@ -246,13 +249,16 @@ class ExpandableFab extends HookConsumerWidget {
                   });
                   final XFile? photo =
                       await imagePicker.pickImage(source: ImageSource.gallery);
-                  if (photo != null) {
-                    if (context.mounted) {
-                      await _addShoppingListItemsFromImage(context, ref, photo);
-                    }
-                    if (context.mounted) {
-                      Navigator.of(context).pop();
-                    }
+                  if (photo == null) {
+                    return;
+                  }
+                  // 写真選択直後に画像選択ダイアログを閉じる。
+                  // AI 処理・review sheet は親 context で行う（URL 入力側と統一）。
+                  if (dialogContext.mounted) {
+                    Navigator.of(dialogContext).pop();
+                  }
+                  if (context.mounted) {
+                    await _addShoppingListItemsFromImage(context, ref, photo);
                   }
                 },
               ),
@@ -265,7 +271,7 @@ class ExpandableFab extends HookConsumerWidget {
                   'groupID': groupID,
                   'shoppingListID': shoppingListID,
                 });
-                Navigator.pop(context);
+                Navigator.pop(dialogContext);
               },
               child: const Text('閉じる'),
             ),
@@ -286,6 +292,13 @@ class ExpandableFab extends HookConsumerWidget {
         mimeType: mimeType(file),
         base64Image: base64Image,
       );
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
+      return;
     } finally {
       ref.read(aIProcessingProvider.notifier).end();
     }
@@ -293,12 +306,11 @@ class ExpandableFab extends HookConsumerWidget {
       return;
     }
     // 既存アイテムに存在しない候補だけ review sheet にかける。
+    // 候補が空（画像から読み取れなかった／すべて既存）でも review sheet を開き、
+    // 「候補がありませんでした」を表示して画像が読み取れたか判断できるようにする。
     final candidates = rawItems
         .where((e) => !shoppingListItems.any((item) => item.message == e))
         .toList();
-    if (candidates.isEmpty) {
-      return;
-    }
     final reviewed = await showAIReviewSheet(
       context: context,
       rawNames: candidates,
