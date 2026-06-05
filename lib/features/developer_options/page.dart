@@ -94,6 +94,18 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
     final revenueCatIsPremium = customerInfo?.isPremium ?? false;
     final firestoreIsPremium =
         ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
+    // ④ Paywall 診断用: Offering / Package 構成のダンプ（確認後に削除可）。
+    // 月額・年額が default(/current) Offering に標準 PackageType で入っているか確認する。
+    final offerings = ref.watch(offeringsProvider).asData?.value;
+    final offeringsDump = offerings == null
+        ? 'Offerings: 取得中/未取得'
+        : [
+            'Offerings.all: ${offerings.all.keys.join(', ')}',
+            'current: ${offerings.current?.identifier ?? 'なし'}',
+            for (final entry in offerings.all.entries)
+              for (final package in entry.value.availablePackages)
+                '[${entry.key}] ${package.identifier} / ${package.packageType.name} / ${package.storeProduct.identifier}',
+          ].join('\n');
     // shoppingListsProviderをbuild内でwatchしてデータをロードする
     // （ref.readではAutoDisposeのStreamProviderがAsyncLoadingを返すため）
     final shoppingListsAsync = defaultGroupID != null
@@ -147,6 +159,8 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
             style: Theme.of(context).textTheme.bodySmall),
         Text(
             'Premium(RC): $revenueCatIsPremium / Premium(Claims): $firestoreIsPremium',
+            style: Theme.of(context).textTheme.bodySmall),
+        Text('Offering 構成:\n$offeringsDump',
             style: Theme.of(context).textTheme.bodySmall),
         if (resultMessage.value.isNotEmpty)
           Padding(

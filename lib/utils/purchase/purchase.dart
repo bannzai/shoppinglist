@@ -150,11 +150,11 @@ List<Package> currentOfferingPackages(Ref ref) {
     return [];
   }
 
-  final offering = offerings.all[customerInfo.currentOfferingType.identifier];
-  if (offering != null) {
-    return offering.availablePackages;
-  }
-  return [];
+  // 通常は currentOfferingType.identifier ('default'/'discounted') の Offering を使う。
+  // 当該 identifier が未設定の構成でも RC の "Current" Offering で表示できるよう fallback する。
+  final offering = offerings.all[customerInfo.currentOfferingType.identifier] ??
+      offerings.current;
+  return offering?.availablePackages ?? [];
 }
 
 @Riverpod()

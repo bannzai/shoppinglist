@@ -30,7 +30,7 @@ final offeringsProvider = AutoDisposeFutureProvider<Offerings>.internal(
 // ignore: unused_element
 typedef OfferingsRef = AutoDisposeFutureProviderRef<Offerings>;
 String _$currentOfferingPackagesHash() =>
-    r'a5f231d916ab1a9331b6b80f29c6241e38a0ae62';
+    r'5107fb41411f79b3bf42a35d141a1d7c0d57c0f0';
 
 /// See also [currentOfferingPackages].
 @ProviderFor(currentOfferingPackages)

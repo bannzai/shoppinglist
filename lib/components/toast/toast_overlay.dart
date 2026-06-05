@@ -6,7 +6,10 @@ import 'package:shoppinglist/style/tokens.dart';
 
 /// どこからでもテキストトーストを表示する。ref / BuildContext 不要。
 void showGlobalToast(String message, {required String? title}) {
-  showGlobalToastWidget(ToastTextContent(title: title, message: message));
+  showGlobalToastWidget(
+    ToastTextContent(title: title, message: message),
+    identity: 'text ${title ?? ''} $message',
+  );
 }
 
 /// 任意 Widget をトーストとして表示する（メンバー通知バー等のリッチ内容用）。
@@ -14,10 +17,12 @@ void showGlobalToast(String message, {required String? title}) {
 void showGlobalToastWidget(
   Widget content, {
   Duration duration = const Duration(seconds: 5),
+  Object? identity,
 }) {
   appProviderContainer.read(toastProvider.notifier).show(
         KeyedSubtree(key: UniqueKey(), child: _ToastFrame(child: content)),
         duration: duration,
+        identity: identity,
       );
 }
 

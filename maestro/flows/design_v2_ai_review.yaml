@@ -9,17 +9,19 @@ appId: com.bannzai.shoppinglist
 
 - runFlow: shared/anonymous_sign_in.yaml
 
-# FAB から URL 入力 dialog を開く
-- tapOn:
-    id: "expandable_fab"
+# design v2: FAB タップは行追加、長押しで写真/URL/貼り付けの展開メニューを開く。
+# FAB は右下に配置されるため point 指定で長押しする。
+- longPressOn:
+    point: "92%, 90%"
     optional: true
 - waitForAnimationToEnd
+# 「URL から追加」を選ぶ（行全体がタップ領域）。
 - tapOn:
-    text: "URLから追加"
+    text: "URL から追加"
     optional: true
 - waitForAnimationToEnd
 
 # URL 入力 dialog が出ることを assert (review sheet までは外部 fetch が要るため optional)
 - assertVisible:
-    text: "URL"
+    text: "URLから買い物リストを生成"
     optional: true

@@ -259,6 +259,9 @@ class _ActiveShoppingList extends HookConsumerWidget {
               currentUserID: currentUserID,
               memberProfiles: memberProfiles,
             ),
+            // 同一リストの更新通知は内容が同一（titleText は listName 依存）。
+            // 連続更新でトーストが消えなくなるのを防ぐため identity でまとめる。
+            identity: 'member_bar $shoppingListID',
           );
         });
       }
