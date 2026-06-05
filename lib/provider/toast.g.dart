@@ -6,7 +6,7 @@ part of 'toast.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$toastHash() => r'a200d9dff0b0792f5decbc99a09aa73fe9c94cbd';
+String _$toastHash() => r'aa3f7c6e1401e5adb6596e7db5482906c46f4df2';
 
 /// 画面最前面（モーダルより上）に出すグローバルトーストの表示状態。
 /// `null` のとき非表示。値が入っているとその Widget を描画する。

@@ -15,15 +15,25 @@ part 'toast.g.dart';
 class Toast extends _$Toast {
   Timer? _dismissTimer;
 
+  /// 現在表示中トーストの同一性キー。同一内容の再 show を無視する判定に使う。
+  Object? _currentIdentity;
+
   @override
   Widget? build() {
     ref.onDispose(() => _dismissTimer?.cancel());
     return null;
   }
 
-  /// `content` を `duration` の間だけ表示する。表示中なら即置き換える。
-  void show(Widget content, {Duration duration = const Duration(seconds: 5)}) {
+  /// `content` を `duration` の間だけ表示する。
+  /// `identity` が現在表示中のものと同一なら、再 show を無視してタイマーをリセットしない。
+  /// 同一通知が高頻度で再発行されても、最初の表示から `duration` 後に必ず消すため。
+  void show(Widget content,
+      {Duration duration = const Duration(seconds: 5), Object? identity}) {
+    if (state != null && identity != null && identity == _currentIdentity) {
+      return;
+    }
     _dismissTimer?.cancel();
+    _currentIdentity = identity;
     state = content;
     _dismissTimer = Timer(duration, dismiss);
   }
@@ -31,6 +41,7 @@ class Toast extends _$Toast {
   /// 表示中のトーストを即座に消す。
   void dismiss() {
     _dismissTimer?.cancel();
+    _currentIdentity = null;
     state = null;
   }
 }
