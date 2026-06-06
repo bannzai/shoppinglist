@@ -6,7 +6,6 @@ import 'package:shoppinglist/style/tokens.dart';
 
 Widget _wrap(Widget child) => MaterialApp(
       theme: buildAppTheme(
-        brightness: Brightness.light,
         accent: AccentPreset.shu,
       ),
       home: Scaffold(body: child),

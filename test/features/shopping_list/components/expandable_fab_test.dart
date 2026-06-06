@@ -62,7 +62,6 @@ void main() {
         ],
         child: MaterialApp(
           theme: buildAppTheme(
-            brightness: Brightness.light,
             accent: AccentPreset.shu,
           ),
           home: const Scaffold(

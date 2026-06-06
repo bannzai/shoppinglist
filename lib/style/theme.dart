@@ -9,14 +9,12 @@ const _paltFeatures = <FontFeature>[FontFeature('palt')];
 const _tabularFeatures = <FontFeature>[FontFeature.tabularFigures()];
 
 /// 和紙テイストのデザイントークンから ThemeData を組み立てる。
-/// `MaterialApp.theme` / `darkTheme` から呼び出す。
+/// `MaterialApp.theme` から呼び出す。アプリはライトモード固定。
 ThemeData buildAppTheme({
-  required Brightness brightness,
   required AccentPreset accent,
 }) {
-  final tokens = AppTokens.of(brightness: brightness, accent: accent);
+  final tokens = AppTokens.of(accent: accent);
   final neutral = tokens.neutral;
-  final isDark = brightness == Brightness.dark;
 
   /// fontFamily を指定せず OS 標準フォントを使う。
   /// iOS は San Francisco / Hiragino Sans、Android は Roboto / Noto Sans CJK JP で描画され、
@@ -37,11 +35,10 @@ ThemeData buildAppTheme({
         color: color ?? neutral.ink,
       );
 
-  final base =
-      (isDark ? ThemeData.dark().textTheme : ThemeData.light().textTheme).apply(
-    bodyColor: neutral.ink,
-    displayColor: neutral.ink,
-  );
+  final base = ThemeData.light().textTheme.apply(
+        bodyColor: neutral.ink,
+        displayColor: neutral.ink,
+      );
 
   final textTheme = base.copyWith(
     displayLarge:
@@ -60,13 +57,13 @@ ThemeData buildAppTheme({
   );
 
   final colorScheme = ColorScheme(
-    brightness: brightness,
+    brightness: Brightness.light,
     primary: tokens.accent,
-    onPrimary: isDark ? neutral.ink : Colors.white,
+    onPrimary: Colors.white,
     primaryContainer: tokens.accentSoft,
     onPrimaryContainer: tokens.accentInk,
     secondary: tokens.accent,
-    onSecondary: isDark ? neutral.ink : Colors.white,
+    onSecondary: Colors.white,
     error: neutral.danger,
     onError: Colors.white,
     errorContainer: neutral.dangerSoft,
@@ -88,7 +85,7 @@ ThemeData buildAppTheme({
 
   return ThemeData(
     useMaterial3: true,
-    brightness: brightness,
+    brightness: Brightness.light,
     colorScheme: colorScheme,
     scaffoldBackgroundColor: neutral.surface,
     canvasColor: neutral.surface,

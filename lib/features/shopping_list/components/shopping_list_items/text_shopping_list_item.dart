@@ -558,7 +558,7 @@ class _CircleCheckboxState extends State<_CircleCheckbox>
   }
 }
 
-class TextShoppingListItemTextField extends ConsumerWidget {
+class TextShoppingListItemTextField extends HookConsumerWidget {
   final String groupID;
   final TextEditingController textEditingController;
   final FocusNode focusNode;
@@ -585,12 +585,18 @@ class TextShoppingListItemTextField extends ConsumerWidget {
     final isChecked =
         textShoppingListItem.status == GroupShoppingListItemStatus.checked;
 
+    // RawKeyboardListener 用の FocusNode。build のたびに `FocusNode()` を生成すると、
+    // onSubmitted の Firestore 書き込み → Stream 反映で本 Widget が再ビルドされた際に
+    // TextField のフォーカス親ノードが作り替えられ、Enter 連打中にキーボードが
+    // 閉じ開きする一因になる（かつ dispose されずリークする）。useFocusNode で安定させる。
+    final keyboardListenerFocusNode = useFocusNode();
+
     // KeyboardListener は Mac ハードウェアキーボードにしか反応せず、
     // iOS / Android のソフトキーボードの Backspace を拾えない。
     // 代替 SDK API が安定するまでは RawKeyboardListener を維持する。
     // ignore: deprecated_member_use
     return RawKeyboardListener(
-      focusNode: FocusNode(),
+      focusNode: keyboardListenerFocusNode,
       onKey: (event) {
         if (event.logicalKey == LogicalKeyboardKey.backspace &&
             textEditingController.text.isEmpty) {
@@ -608,6 +614,14 @@ class TextShoppingListItemTextField extends ConsumerWidget {
         minLines: 1,
         maxLines: 7,
         textInputAction: TextInputAction.next,
+        // Enter（TextInputAction.next）押下時、Flutter 既定の挙動は onSubmitted より先に
+        // focusNode.nextFocus() を呼ぶ。次の行はまだ Firestore に作成されておらず存在しないため、
+        // フォーカスが非編集ノードへ移ってソフトキーボードが一旦閉じ、その後 onSubmitted で
+        // 作成された新規行が requestFocus で開き直す——という「開閉」が起きていた。
+        // onEditingComplete を空実装にして既定のフォーカス移動を抑止し、現在行のフォーカスを
+        // 保ったまま onSubmitted で新規行を作成 → 新規行が requestFocus を引き継ぐことで
+        // キーボードを開いたままにする。
+        onEditingComplete: () {},
         decoration: const InputDecoration(
           border: InputBorder.none,
           contentPadding: EdgeInsets.zero,

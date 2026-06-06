@@ -17,8 +17,7 @@ void main() {
     final tokens = Theme.of(context).extension<AppTokens>();
 
     expect(tokens, isNotNull);
-    expect(tokens!.brightness, Brightness.light);
-    expect(tokens.accentPreset, AccentPreset.shu);
+    expect(tokens!.accentPreset, AccentPreset.shu);
   });
 
   testWidgets('PreviewsPage lists onboarding and auth previews',

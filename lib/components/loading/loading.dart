@@ -119,8 +119,7 @@ class LaunchLoading extends HookWidget {
                         width: 44,
                         height: 7,
                         decoration: BoxDecoration(
-                          // 影は常に暗色。neutral.ink はダークモードで明色になり白く光るため
-                          // 固定の墨色を使う。
+                          // 影は常に暗色（墨色）で描く。
                           color: const Color(0xFF1B1813)
                               .withValues(alpha: 0.20 - 0.12 * t),
                           borderRadius: BorderRadius.circular(4),

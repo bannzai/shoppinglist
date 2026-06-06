@@ -36,7 +36,6 @@ Future<void> _pump(WidgetTester tester, GroupShoppingListItem item) async {
       overrides: previewProviderOverrides(sharedPreferences: sharedPreferences),
       child: MaterialApp(
         theme: buildAppTheme(
-          brightness: Brightness.light,
           accent: AccentPreset.shu,
         ),
         home: Scaffold(
@@ -96,6 +95,22 @@ void main() {
         tester.widget<Dismissible>(find.byType(Dismissible)).direction,
         DismissDirection.horizontal,
       );
+    });
+  });
+
+  group('TextShoppingListItemWidget の入力フィールド（Enter でキーボードを閉じない）', () {
+    testWidgets('TextField は textInputAction.next と onEditingComplete を持つ',
+        (tester) async {
+      await _pump(tester, _item(id: 'filled', message: '牛乳'));
+      final textField = tester.widget<TextField>(find.byType(TextField));
+      // Enter で次の行へ移れるようにする。
+      expect(textField.textInputAction, TextInputAction.next);
+      // Flutter 既定の onEditingComplete は onSubmitted より先に nextFocus() を呼び、
+      // まだ Firestore に作成されていない次行ではなく非編集ノードへフォーカスが移って
+      // ソフトキーボードが一旦閉じる。空実装の onEditingComplete でこれを抑止し、
+      // 現在行のフォーカスを保ったままキーボードを開いたままにしている。
+      // この設定が外れると「Enter のたびにキーボードが開閉する」回帰が再発する。
+      expect(textField.onEditingComplete, isNotNull);
     });
   });
 }

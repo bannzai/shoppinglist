@@ -17,7 +17,6 @@ Future<void> _pump(WidgetTester tester, {required bool sortByCategory}) async {
       overrides: previewProviderOverrides(sharedPreferences: sharedPreferences),
       child: MaterialApp(
         theme: buildAppTheme(
-          brightness: Brightness.light,
           accent: AccentPreset.shu,
         ),
         home: Scaffold(

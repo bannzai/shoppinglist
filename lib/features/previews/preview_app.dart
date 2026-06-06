@@ -11,15 +11,8 @@ class PreviewApp extends StatelessWidget {
     return MaterialApp(
       title: 'Preview',
       debugShowCheckedModeBanner: false,
-      theme: buildAppTheme(
-        brightness: Brightness.light,
-        accent: AccentPreset.shu,
-      ),
-      darkTheme: buildAppTheme(
-        brightness: Brightness.dark,
-        accent: AccentPreset.shu,
-      ),
-      themeMode: ThemeMode.system,
+      // アプリはライトモード固定。darkTheme は提供しない。
+      theme: buildAppTheme(accent: AccentPreset.shu),
       home: const PreviewsPage(),
     );
   }

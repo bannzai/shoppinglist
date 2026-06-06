@@ -10,7 +10,6 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: buildAppTheme(
-          brightness: Brightness.light,
           accent: AccentPreset.shu,
         ),
         home: Scaffold(
