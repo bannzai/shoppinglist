@@ -4,6 +4,7 @@ import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
 import * as crypto from "crypto";
 import { ai } from "../utils/genkit";
+import { currentAuthUID } from "../utils/currentAuthUID";
 import { appAuthPolicy } from "../utils/authPolicy";
 import {
   DataResponseSchema,
@@ -54,8 +55,7 @@ const createGroupInvitationFlow = ai.defineFlow(
     const { groupID } = input;
 
     try {
-      const context = ai.currentContext();
-      const uid = context?.auth?.uid;
+      const uid = currentAuthUID();
       if (!uid) {
         return {
           result: "NG" as const,
