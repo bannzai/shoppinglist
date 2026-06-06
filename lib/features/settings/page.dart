@@ -550,8 +550,12 @@ class _SignOutButton extends ConsumerWidget {
             // 出さず終了もしない（開発者が手動で Hot Restart する想定）。
             // release/profile 時のみ、サインアウト完了を伝えてアプリを終了する。
             // アカウント削除フロー(user_delete.dart の _CompletedDialog)と同方針。
-            if (kDebugMode) return;
-            if (!context.mounted) return;
+            if (kDebugMode) {
+              return;
+            }
+            if (!context.mounted) {
+              return;
+            }
             showDialog(
               context: context,
               barrierDismissible: false,
