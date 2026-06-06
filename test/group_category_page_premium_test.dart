@@ -164,8 +164,7 @@ void main() {
         ProviderScope(
           overrides: _nonPremiumOverrides(),
           child: MaterialApp(
-            theme: buildAppTheme(
-                accent: AccentPreset.shu),
+            theme: buildAppTheme(accent: AccentPreset.shu),
             home: const GroupCategoryPage(groupID: _testGroupID),
           ),
         ),
@@ -184,8 +183,7 @@ void main() {
         ProviderScope(
           overrides: _nonPremiumOverrides(),
           child: MaterialApp(
-            theme: buildAppTheme(
-                accent: AccentPreset.shu),
+            theme: buildAppTheme(accent: AccentPreset.shu),
             home: const GroupCategoryPage(groupID: _testGroupID),
           ),
         ),
@@ -212,8 +210,7 @@ void main() {
         ProviderScope(
           overrides: _nonPremiumOverrides(),
           child: MaterialApp(
-            theme: buildAppTheme(
-                accent: AccentPreset.shu),
+            theme: buildAppTheme(accent: AccentPreset.shu),
             home: const GroupCategoryPage(groupID: _testGroupID),
           ),
         ),

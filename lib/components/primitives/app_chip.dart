@@ -40,9 +40,7 @@ class AppChip extends StatelessWidget {
 
     final bg =
         active ? (soft ? tokens.accentSoft : neutral.ink) : neutral.surface;
-    final fg = active
-        ? (soft ? tokens.accent : Colors.white)
-        : neutral.ink2;
+    final fg = active ? (soft ? tokens.accent : Colors.white) : neutral.ink2;
     final disabled = onTap == null;
 
     return Opacity(

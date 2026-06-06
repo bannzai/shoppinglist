@@ -21,8 +21,7 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: MaterialApp(
-          theme: buildAppTheme(
-              accent: AccentPreset.shu),
+          theme: buildAppTheme(accent: AccentPreset.shu),
           home: const Scaffold(body: Stack(children: [ToastOverlay()])),
         ),
       ),
