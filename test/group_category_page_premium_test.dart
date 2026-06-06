@@ -165,7 +165,7 @@ void main() {
           overrides: _nonPremiumOverrides(),
           child: MaterialApp(
             theme: buildAppTheme(
-                brightness: Brightness.light, accent: AccentPreset.shu),
+                accent: AccentPreset.shu),
             home: const GroupCategoryPage(groupID: _testGroupID),
           ),
         ),
@@ -185,7 +185,7 @@ void main() {
           overrides: _nonPremiumOverrides(),
           child: MaterialApp(
             theme: buildAppTheme(
-                brightness: Brightness.light, accent: AccentPreset.shu),
+                accent: AccentPreset.shu),
             home: const GroupCategoryPage(groupID: _testGroupID),
           ),
         ),
@@ -213,7 +213,7 @@ void main() {
           overrides: _nonPremiumOverrides(),
           child: MaterialApp(
             theme: buildAppTheme(
-                brightness: Brightness.light, accent: AccentPreset.shu),
+                accent: AccentPreset.shu),
             home: const GroupCategoryPage(groupID: _testGroupID),
           ),
         ),

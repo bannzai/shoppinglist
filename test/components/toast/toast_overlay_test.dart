@@ -22,7 +22,7 @@ void main() {
         container: container,
         child: MaterialApp(
           theme: buildAppTheme(
-              brightness: Brightness.light, accent: AccentPreset.shu),
+              accent: AccentPreset.shu),
           home: const Scaffold(body: Stack(children: [ToastOverlay()])),
         ),
       ),

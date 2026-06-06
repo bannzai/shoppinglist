@@ -16,7 +16,6 @@ import 'package:shoppinglist/style/tokens.dart';
 /// テーマを適用した最小 MaterialApp で `child` を表示するヘルパー。
 Widget _wrap(Widget child) => MaterialApp(
       theme: buildAppTheme(
-        brightness: Brightness.light,
         accent: AccentPreset.shu,
       ),
       home: Scaffold(body: Center(child: child)),
@@ -145,7 +144,6 @@ void main() {
   testWidgets('AppLargeAppBar: title と subtitle が描画される', (tester) async {
     await tester.pumpWidget(MaterialApp(
       theme: buildAppTheme(
-        brightness: Brightness.light,
         accent: AccentPreset.shu,
       ),
       home: const Scaffold(
@@ -175,7 +173,6 @@ void main() {
     expect(bar.preferredSize.height, 48);
     await tester.pumpWidget(MaterialApp(
       theme: buildAppTheme(
-        brightness: Brightness.light,
         accent: AccentPreset.shu,
       ),
       home: const Scaffold(
@@ -246,7 +243,6 @@ void main() {
   testWidgets('AppDialogShell: child が card 内に表示される', (tester) async {
     await tester.pumpWidget(MaterialApp(
       theme: buildAppTheme(
-        brightness: Brightness.light,
         accent: AccentPreset.shu,
       ),
       home: const Scaffold(

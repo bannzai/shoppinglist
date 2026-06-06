@@ -60,9 +60,8 @@ class _AppState extends ConsumerState<App> {
     return MaterialApp(
       navigatorKey: _navigatorKey,
       title: '買い物リスト',
-      theme: buildAppTheme(brightness: Brightness.light, accent: accent),
-      darkTheme: buildAppTheme(brightness: Brightness.dark, accent: accent),
-      themeMode: ThemeMode.system,
+      // アプリはライトモード固定。darkTheme は提供しない（OS がダークでも常にライト表示）。
+      theme: buildAppTheme(accent: accent),
       builder: (context, child) {
         Widget content = child ?? const SizedBox.shrink();
         if (kDebugMode) {

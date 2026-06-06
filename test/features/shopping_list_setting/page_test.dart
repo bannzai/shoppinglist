@@ -20,7 +20,6 @@ Future<void> _pumpPage(WidgetTester tester) async {
       overrides: previewProviderOverrides(sharedPreferences: sharedPreferences),
       child: MaterialApp(
         theme: buildAppTheme(
-          brightness: Brightness.light,
           accent: AccentPreset.shu,
         ),
         home: ShoppingListSettingPage(

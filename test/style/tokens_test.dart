@@ -17,9 +17,5 @@ void main() {
     test('light: paper < surface < surface2 < card', () {
       expectDepthOrder(AppNeutralColors.light);
     });
-
-    test('dark: paper < surface < surface2 < card', () {
-      expectDepthOrder(AppNeutralColors.dark);
-    });
   });
 }

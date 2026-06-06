@@ -100,7 +100,7 @@ class _ColorSwatch extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.tokens;
     final neutral = tokens.neutral;
-    final color = tokens.isDark ? preset.dark : preset.light;
+    final color = preset.light;
     return Semantics(
       button: true,
       selected: selected,

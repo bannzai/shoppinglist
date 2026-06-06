@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// 和紙テイストの中立色パレット（accent を除く）。LIGHT と DARK で別インスタンスを保持する。
+/// 和紙テイストの中立色パレット（accent を除く）。
 @immutable
 class AppNeutralColors {
   /// アプリ全体の最外側に敷く暖色ベージュ（和紙イメージ）。
@@ -70,7 +70,7 @@ class AppNeutralColors {
     required this.checked,
   });
 
-  /// LIGHT モードの中立色。茶色味を抑え明度差で奥行きを残す（ADR 0018）。
+  /// 中立色。茶色味を抑え明度差で奥行きを残す（ADR 0018）。
   /// `design_handoff_shoppinglist/preview/tokens.jsx#LIGHT` と一致させる。
   static const light = AppNeutralColors(
     paper: Color(0xFFF1EDE4),
@@ -89,26 +89,6 @@ class AppNeutralColors {
     danger: Color(0xFFB53D3D),
     dangerSoft: Color(0xFFF4DEDB),
     checked: Color(0xFFA39A89),
-  );
-
-  /// DARK モードの中立色。`design_handoff_shopping_list/source/tokens.jsx#DARK` と一致させる。
-  static const dark = AppNeutralColors(
-    paper: Color(0xFF13110D),
-    surface: Color(0xFF1B1813),
-    surface2: Color(0xFF221E18),
-    card: Color(0xFF26221C),
-    ink: Color(0xFFF2EDE2),
-    ink2: Color(0xFFBFB6A3),
-    ink3: Color(0xFF847C6B),
-    ink4: Color(0xFF5A5246),
-    divider: Color(0xFF2A251F),
-    divider2: Color(0xFF332D26),
-    ok: Color(0xFF6BB07F),
-    okSoft: Color(0xFF1F3325),
-    warn: Color(0xFFE1B05A),
-    danger: Color(0xFFE47A7A),
-    dangerSoft: Color(0xFF3A2020),
-    checked: Color(0xFF5A5246),
   );
 
   /// `ThemeExtension.lerp` から呼び出されるテーマ遷移用の補間。
@@ -139,11 +119,8 @@ enum AccentPreset {
   shu(
     persistHex: '#C2410C',
     light: Color(0xFFC2410C),
-    dark: Color(0xFFE8743A),
     softLight: Color(0xFFFBE4D0),
-    softDark: Color(0xFF3A2316),
     inkLight: Color(0xFF7C2A07),
-    inkDark: Color(0xFFFCD7BB),
     label: '朱',
   ),
 
@@ -151,11 +128,8 @@ enum AccentPreset {
   matcha(
     persistHex: '#1F6B4E',
     light: Color(0xFF1F6B4E),
-    dark: Color(0xFF6BB07F),
     softLight: Color(0xFFDCEBDF),
-    softDark: Color(0xFF1F3325),
     inkLight: Color(0xFF0F3D2A),
-    inkDark: Color(0xFFB7D9C2),
     label: '抹茶',
   ),
 
@@ -163,11 +137,8 @@ enum AccentPreset {
   ai(
     persistHex: '#0F4C81',
     light: Color(0xFF0F4C81),
-    dark: Color(0xFF5FA0D6),
     softLight: Color(0xFFD8E4F0),
-    softDark: Color(0xFF162B3E),
     inkLight: Color(0xFF0A2E50),
-    inkDark: Color(0xFFC4DAEC),
     label: '藍',
   ),
 
@@ -175,11 +146,8 @@ enum AccentPreset {
   sumi(
     persistHex: '#1B1B1B',
     light: Color(0xFF1B1B1B),
-    dark: Color(0xFFE8E5DD),
     softLight: Color(0xFFE8E5DD),
-    softDark: Color(0xFF33302A),
     inkLight: Color(0xFF000000),
-    inkDark: Color(0xFFF2EDE2),
     label: '墨',
   ),
 
@@ -187,22 +155,16 @@ enum AccentPreset {
   kuchiba(
     persistHex: '#B45309',
     light: Color(0xFFB45309),
-    dark: Color(0xFFE0985A),
     softLight: Color(0xFFF6E1C9),
-    softDark: Color(0xFF3A2812),
     inkLight: Color(0xFF6B2F05),
-    inkDark: Color(0xFFF1D2A8),
     label: '朽葉',
   );
 
   const AccentPreset({
     required this.persistHex,
     required this.light,
-    required this.dark,
     required this.softLight,
-    required this.softDark,
     required this.inkLight,
-    required this.inkDark,
     required this.label,
   });
 
@@ -210,23 +172,14 @@ enum AccentPreset {
   /// 大文字 6 桁固定。`light` の HEX と等価。
   final String persistHex;
 
-  /// LIGHT モード時のアクセント色。
+  /// アクセント色。
   final Color light;
 
-  /// DARK モード時のアクセント色。
-  final Color dark;
-
-  /// LIGHT モード時の薄塗り背景（accentSoft）。
+  /// 薄塗り背景（accentSoft）。
   final Color softLight;
 
-  /// DARK モード時の薄塗り背景。
-  final Color softDark;
-
-  /// LIGHT モード時に accentSoft 上に乗せる濃文字色（accentInk）。
+  /// accentSoft 上に乗せる濃文字色（accentInk）。
   final Color inkLight;
-
-  /// DARK モード時の濃文字色。
-  final Color inkDark;
 
   /// 設定画面に表示する和の伝統色名。
   final String label;
@@ -234,39 +187,32 @@ enum AccentPreset {
 
 /// アプリ全体で参照するデザイントークン。
 /// `Theme.of(context).extension<AppTokens>()!` で取得できる。
-/// neutral 色 / アクセント / cardShadow / brightness をまとめて持つ。
+/// neutral 色 / アクセント / cardShadow をまとめて持つ。
 /// spacing と radius は static 定数として提供する。
 class AppTokens extends ThemeExtension<AppTokens> {
-  /// 現在の輝度。`isDark` で参照する。
-  final Brightness brightness;
-
   /// 選択されているアクセントプリセット。
   final AccentPreset accentPreset;
 
-  /// brightness に対応する中立色パレット。
+  /// 中立色パレット。
   final AppNeutralColors neutral;
 
   /// `t.shadow` 相当のカード用 BoxShadow リスト（フローティング要素のみに使う）。
   final List<BoxShadow> cardShadow;
 
   const AppTokens({
-    required this.brightness,
     required this.accentPreset,
     required this.neutral,
     required this.cardShadow,
   });
 
-  bool get isDark => brightness == Brightness.dark;
+  /// アクセント色。
+  Color get accent => accentPreset.light;
 
-  /// 現在の輝度に応じたアクセント色。
-  Color get accent => isDark ? accentPreset.dark : accentPreset.light;
+  /// accentSoft（薄塗り背景）色。
+  Color get accentSoft => accentPreset.softLight;
 
-  /// 現在の輝度に応じた accentSoft（薄塗り背景）色。
-  Color get accentSoft =>
-      isDark ? accentPreset.softDark : accentPreset.softLight;
-
-  /// 現在の輝度に応じた accentInk（accentSoft 上に乗せる濃文字色）。
-  Color get accentInk => isDark ? accentPreset.inkDark : accentPreset.inkLight;
+  /// accentInk（accentSoft 上に乗せる濃文字色）。
+  Color get accentInk => accentPreset.inkLight;
 
   /// スペーシングスケール。`design_handoff_shopping_list/source/styles.css` の Padding scale と一致。
   static const s2 = 2.0;
@@ -303,37 +249,26 @@ class AppTokens extends ThemeExtension<AppTokens> {
   /// シート・ダイアログ用。
   static const radiusSheet = 18.0;
 
-  /// LIGHT モード時のフローティング影。
+  /// フローティング影。
   static const shadowLight = <BoxShadow>[
     BoxShadow(color: Color(0x0D1B1813), offset: Offset(0, 1)),
     BoxShadow(color: Color(0x0A1B1813), offset: Offset(0, 6), blurRadius: 18),
   ];
 
-  /// DARK モード時のフローティング影。
-  static const shadowDark = <BoxShadow>[
-    BoxShadow(color: Color(0x66000000), offset: Offset(0, 1)),
-    BoxShadow(color: Color(0x4D000000), offset: Offset(0, 6), blurRadius: 18),
-  ];
-
-  /// brightness と accent から AppTokens を組み立てる。
-  /// neutral と cardShadow は brightness で自動決定する。
+  /// accent から AppTokens を組み立てる。
+  /// neutral と cardShadow はライトモード固定。
   factory AppTokens.of({
-    required Brightness brightness,
     required AccentPreset accent,
   }) {
-    final isDark = brightness == Brightness.dark;
     return AppTokens(
-      brightness: brightness,
       accentPreset: accent,
-      neutral: isDark ? AppNeutralColors.dark : AppNeutralColors.light,
-      cardShadow: isDark ? shadowDark : shadowLight,
+      neutral: AppNeutralColors.light,
+      cardShadow: shadowLight,
     );
   }
 
   @override
-  AppTokens copyWith({Brightness? brightness, AccentPreset? accentPreset}) =>
-      AppTokens.of(
-        brightness: brightness ?? this.brightness,
+  AppTokens copyWith({AccentPreset? accentPreset}) => AppTokens.of(
         accent: accentPreset ?? this.accentPreset,
       );
 
@@ -343,7 +278,6 @@ class AppTokens extends ThemeExtension<AppTokens> {
       return this;
     }
     return AppTokens(
-      brightness: t < 0.5 ? brightness : other.brightness,
       accentPreset: t < 0.5 ? accentPreset : other.accentPreset,
       neutral: neutral.lerp(other.neutral, t),
       cardShadow: t < 0.5 ? cardShadow : other.cardShadow,
