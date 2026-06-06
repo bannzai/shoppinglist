@@ -3,6 +3,7 @@ import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
 import { ai } from "../utils/genkit";
+import { currentAuthUID } from "../utils/currentAuthUID";
 import { appAuthPolicy } from "../utils/authPolicy";
 import { DataResponseSchema, ErrorResponseSchema } from "../../entity/response";
 import { UserAIUsageData } from "../../entity/ai_usage";
@@ -29,7 +30,7 @@ const googleAIApiKey = defineSecret("GOOGLE_GENAI_API_KEY");
 
 /** URL解析に使うモデル。環境変数で切り替え可能。 */
 const urlRecognitionModel =
-  process.env.URL_RECOGNITION_MODEL ?? "googleai/gemini-2.0-flash";
+  process.env.URL_RECOGNITION_MODEL ?? "googleai/gemini-2.5-flash";
 
 /** URLの最大文字数。 */
 const maxURLLength = 2048;
@@ -237,7 +238,7 @@ const generateShoppingListItemsFromURLFlow = ai.defineFlow(
     const normalizedURL = input.url.trim();
 
     // 認証チェック（クライアントからの回避を防ぐため Function 側で強制）
-    const uid = ai.currentContext()?.auth?.uid;
+    const uid = currentAuthUID();
     if (!uid) {
       return { result: "NG" as const, error: { message: "認証されていません" } };
     }

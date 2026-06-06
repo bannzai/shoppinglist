@@ -3,6 +3,7 @@ import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
 import { ai } from "../utils/genkit";
+import { currentAuthUID } from "../utils/currentAuthUID";
 import { appAuthPolicy } from "../utils/authPolicy";
 import {
   DataResponseSchema,
@@ -39,8 +40,7 @@ const removeGroupMemberFlow = ai.defineFlow(
     const { groupID, targetUserID } = input;
 
     try {
-      const context = ai.currentContext();
-      const uid = context?.auth?.uid;
+      const uid = currentAuthUID();
       if (!uid) {
         return {
           result: "NG" as const,

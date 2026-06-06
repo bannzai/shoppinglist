@@ -3,6 +3,7 @@ import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
 import { ai } from "../utils/genkit";
+import { currentAuthUID } from "../utils/currentAuthUID";
 import { appAuthPolicy } from "../utils/authPolicy";
 import {
   DataResponseSchema,
@@ -55,8 +56,7 @@ const createShoppingListFlow = ai.defineFlow(
     } = input;
 
     try {
-      const context = ai.currentContext();
-      const uid = context?.auth?.uid;
+      const uid = currentAuthUID();
       if (!uid) {
         return {
           result: "NG" as const,
@@ -92,7 +92,7 @@ const createShoppingListFlow = ai.defineFlow(
         };
       }
 
-      const isPremium = context?.auth?.token?.isPremium === true;
+      const isPremium = ai.currentContext()?.auth?.token?.isPremium === true;
 
       const shoppingListsRef = firestore.collection(
         `groups/${groupID}/shoppingLists`

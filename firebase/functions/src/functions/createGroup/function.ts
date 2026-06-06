@@ -3,6 +3,7 @@ import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
 import { ai } from "../utils/genkit";
+import { currentAuthUID } from "../utils/currentAuthUID";
 import { appAuthPolicy } from "../utils/authPolicy";
 import {
   DataResponseSchema,
@@ -58,8 +59,7 @@ const createGroupFlow = ai.defineFlow(
   },
   async ({ createUserID, name, setAsDefault, iconName }) => {
     try {
-      const context = ai.currentContext();
-      const uid = context?.auth?.uid;
+      const uid = currentAuthUID();
       if (!uid) {
         return {
           result: "NG" as const,
@@ -95,7 +95,7 @@ const createGroupFlow = ai.defineFlow(
       }
 
       const firestore = admin.firestore();
-      const isPremium = context?.auth?.token?.isPremium === true;
+      const isPremium = ai.currentContext()?.auth?.token?.isPremium === true;
 
       // createGroup は新規ID払い出しを伴うため非冪等。重複作成は上限チェック(同一トランザクション内)とUIの二重送信防止で抑止する。
       const groupRef = firestore.collection("groups").doc();

@@ -4,6 +4,7 @@ import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
 import { ai } from "../utils/genkit";
+import { currentAuthUID } from "../utils/currentAuthUID";
 import {
   DataResponseSchema,
   ErrorResponseSchema,
@@ -91,7 +92,7 @@ const uploadShoppingListItemImageFlow = ai.defineFlow(
     outputSchema: ResponseSchema,
   },
   async (input) => {
-    const uid = ai.currentContext()?.auth?.uid;
+    const uid = currentAuthUID();
     if (!uid) {
       return {
         result: "NG" as const,

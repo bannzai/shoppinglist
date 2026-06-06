@@ -116,8 +116,7 @@ void main() {
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
 
-    expect(recordingAdd.callCount, 0,
-        reason: 'メニュー展開中（x 状態）のタップは Row 追加せず閉じる');
+    expect(recordingAdd.callCount, 0, reason: 'メニュー展開中（x 状態）のタップは Row 追加せず閉じる');
   });
 
   testWidgets('② 通常状態の FAB タップは空行を 1 件追加する', (tester) async {
