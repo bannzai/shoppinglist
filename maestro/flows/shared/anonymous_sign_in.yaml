@@ -37,7 +37,8 @@ appId: com.bannzai.shoppinglist
     commands:
       - tapOn: "Retry"
       - waitForAnimationToEnd
-# design v2 の空状態（サインイン後のホーム）に到達したことを確認する
+# サインイン後のホーム(買い物リスト)に到達したことを確認する。
+# 入力は下部の常設コンポーザー(hint「アイテムを追加...」)に集約され、旧「タップで入力開始」行は廃止。
 - extendedWaitUntil:
-    visible: "タップで入力開始"
+    visible: "アイテムを追加"
     timeout: 60000
