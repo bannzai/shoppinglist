@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -584,6 +585,102 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
     final neutral = tokens.neutral;
     final isChecked =
         textShoppingListItem.status == GroupShoppingListItemStatus.checked;
+    final isSubmitting = useRef(false);
+
+    // Return 1 回につきアイテムを追加・更新する非冪等な UI 操作。
+    // 同じ入力からの二重実行だけ isSubmitting で抑止する。
+    Future<void> submitText(String rawValue) async {
+      if (isSubmitting.value) {
+        return;
+      }
+      isSubmitting.value = true;
+      final value = rawValue.replaceAll('\n', '').trim();
+      try {
+        analytics.logEvent(name: 'submit_item_text', parameters: {
+          'groupID': groupID,
+          'itemID': textShoppingListItem.id,
+        });
+        final isDraftRow = textShoppingListItem.message.trim().isEmpty;
+        if (value.isEmpty) {
+          textEditingController.value = const TextEditingValue(
+            text: '',
+            selection: TextSelection.collapsed(offset: 0),
+          );
+          // 空のまま確定 → このアイテムを削除（最後の 1 件であっても削除し、
+          // 0 件の状態は EmptyShoppingListHint に任せる）
+          await ref
+              .read(groupDatabaseProvider(groupID: groupID))
+              .shoppingListItemReference(
+                shoppingListID: textShoppingListItem.shoppingListID,
+                itemID: textShoppingListItem.id,
+              )
+              .delete();
+          return;
+        }
+
+        if (isDraftRow) {
+          // 新規入力中の空行は、同じ TextField / FocusNode を次の空行として残す。
+          // 別の空行へ requestFocus すると iOS のソフトキーボードが一瞬閉じるため。
+          textEditingController.value = const TextEditingValue(
+            text: '',
+            selection: TextSelection.collapsed(offset: 0),
+          );
+          final database = ref.read(groupDatabaseProvider(groupID: groupID));
+          final itemsReference = database.shoppingListItemsReference(
+            shoppingListID: textShoppingListItem.shoppingListID,
+          );
+          final newItemReference = itemsReference.doc();
+          final newItem = GroupShoppingListItem(
+            id: newItemReference.id,
+            groupID: database.groupID,
+            shoppingListID: textShoppingListItem.shoppingListID,
+            userID: currentUserID,
+            message: value,
+            order: textShoppingListItem.order,
+            description: null,
+            color: null,
+            imageURL: null,
+            checkedByUserID: null,
+            lastCheckedDateTime: null,
+            lastEditedByUserID: null,
+            lastEditedDateTime: null,
+          );
+          final draftItem = textShoppingListItem.copyWith(
+            message: '',
+            order: shoppingListItems.nextOrder,
+          );
+          final batch = FirebaseFirestore.instance.batch()
+            ..set(newItemReference, newItem, SetOptions(merge: true))
+            ..set(
+              itemsReference.doc(textShoppingListItem.id),
+              draftItem,
+              SetOptions(merge: true),
+            );
+          await batch.commit();
+          return;
+        }
+
+        textEditingController.value = TextEditingValue(
+          text: value,
+          selection: TextSelection.collapsed(offset: value.length),
+        );
+        await ref.read(updateShoppingListItemProvider(groupID: groupID)).call(
+              shoppingListID: textShoppingListItem.shoppingListID,
+              item: textShoppingListItem.copyWith(message: value),
+              editedByUserID: currentUserID,
+            );
+        await addShoppingListItem.call(
+          shoppingListID: textShoppingListItem.shoppingListID,
+          userID: currentUserID,
+          message: '',
+          order: shoppingListItems.nextOrder,
+          description: null,
+          color: null,
+        );
+      } finally {
+        isSubmitting.value = false;
+      }
+    }
 
     // RawKeyboardListener 用の FocusNode。build のたびに `FocusNode()` を生成すると、
     // onSubmitted の Firestore 書き込み → Stream 反映で本 Widget が再ビルドされた際に
@@ -613,14 +710,11 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
         focusNode: focusNode,
         minLines: 1,
         maxLines: 7,
-        textInputAction: TextInputAction.next,
-        // Enter（TextInputAction.next）押下時、Flutter 既定の挙動は onSubmitted より先に
-        // focusNode.nextFocus() を呼ぶ。次の行はまだ Firestore に作成されておらず存在しないため、
-        // フォーカスが非編集ノードへ移ってソフトキーボードが一旦閉じ、その後 onSubmitted で
-        // 作成された新規行が requestFocus で開き直す——という「開閉」が起きていた。
-        // onEditingComplete を空実装にして既定のフォーカス移動を抑止し、現在行のフォーカスを
-        // 保ったまま onSubmitted で新規行を作成 → 新規行が requestFocus を引き継ぐことで
-        // キーボードを開いたままにする。
+        keyboardType: TextInputType.multiline,
+        textInputAction: TextInputAction.newline,
+        // iOS の Return を TextInputAction.next として送ると EditableText 側で
+        // TextInputConnection が再起動され、ソフトキーボードが閉じることがある。
+        // 改行入力として受け取り、onChanged で確定処理へ変換する。
         onEditingComplete: () {},
         decoration: const InputDecoration(
           border: InputBorder.none,
@@ -640,38 +734,12 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
               decorationColor: neutral.ink4,
               decorationThickness: 1.2,
             ),
-        onSubmitted: (String v) async {
-          analytics.logEvent(name: 'submit_item_text', parameters: {
-            'groupID': groupID,
-            'itemID': textShoppingListItem.id,
-          });
-          final value = v.trim();
-          if (value.isEmpty) {
-            // 空のまま確定 → このアイテムを削除（最後の 1 件であっても削除し、
-            // 0 件の状態は EmptyShoppingListHint に任せる）
-            await ref
-                .read(groupDatabaseProvider(groupID: groupID))
-                .shoppingListItemReference(
-                  shoppingListID: textShoppingListItem.shoppingListID,
-                  itemID: textShoppingListItem.id,
-                )
-                .delete();
-            return;
+        onChanged: (value) {
+          if (value.contains('\n')) {
+            submitText(value);
           }
-          ref.read(updateShoppingListItemProvider(groupID: groupID)).call(
-                shoppingListID: textShoppingListItem.shoppingListID,
-                item: textShoppingListItem.copyWith(message: value),
-                editedByUserID: currentUserID,
-              );
-          addShoppingListItem.call(
-            shoppingListID: textShoppingListItem.shoppingListID,
-            userID: currentUserID,
-            message: '',
-            order: shoppingListItems.nextOrder,
-            description: null,
-            color: null,
-          );
         },
+        onSubmitted: submitText,
       ),
     );
   }
