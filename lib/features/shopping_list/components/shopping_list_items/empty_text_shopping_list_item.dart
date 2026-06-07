@@ -1,30 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/components/primitives/app_checkbox.dart';
-import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/ghost_item_row.dart';
-import 'package:shoppinglist/provider/current_user_id.dart';
-import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
-import 'package:shoppinglist/utils/logger/analytics.dart';
 
 /// 空の買い物リストに表示する「使い方ヒント」ビュー。
 /// `design_handoff_shopping_list/source/screens-list.jsx#ShoppingListEmpty` 相当。
 ///
-/// - 上部に「タップで入力開始できる空行」を 1 つ配置
+/// 入力は画面下部の常設コンポーザーで行うため、ここでは例文(ghost)と操作ヒントのみを示す。
 /// - 中段に GhostItemRow × 5 で例文を表示
 /// - 下部に dashed border のヒントカードで操作方法を説明
-class EmptyTextShoppingListItems extends ConsumerWidget {
-  final String groupID;
-  final String shoppingListID;
-  final List<GroupShoppingListItem> shoppingListItems;
-  const EmptyTextShoppingListItems({
-    super.key,
-    required this.groupID,
-    required this.shoppingListID,
-    required this.shoppingListItems,
-  });
+class EmptyTextShoppingListItems extends StatelessWidget {
+  const EmptyTextShoppingListItems({super.key});
 
   static const _hints = [
     '例: 牛乳 1L',
@@ -35,27 +21,11 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
   ];
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final tokens = context.tokens;
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 8),
       children: [
-        _StarterRow(
-          onTap: () async {
-            analytics.logEvent(name: 'tap_create_first_item', parameters: {
-              'groupID': groupID,
-              'shoppingListID': shoppingListID,
-            });
-            await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
-                  shoppingListID: shoppingListID,
-                  userID: ref.read(currentUserIDProvider)!,
-                  message: '',
-                  order: shoppingListItems.nextOrder,
-                  description: null,
-                  color: null,
-                );
-          },
-        ),
         for (final hint in _hints) GhostItemRow(hint: hint),
         const SizedBox(height: 16),
         Padding(
@@ -81,9 +51,9 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
                           ),
                     ),
                     const SizedBox(height: 6),
-                    _HintLine(text: '・タップしてそのまま入力'),
-                    _HintLine(text: '・return で次の行へ'),
-                    _HintLine(text: '・空行で delete で行を消せます'),
+                    _HintLine(text: '・下の入力欄に書いて return で追加'),
+                    _HintLine(text: '・アイテムをタップして編集'),
+                    _HintLine(text: '・スワイプで削除 / チェック'),
                   ],
                 ),
               ),
@@ -92,45 +62,6 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
         ),
         const SizedBox(height: 16),
       ],
-    );
-  }
-}
-
-/// 入力開始用の最初の空行（タップで `addShoppingListItem(message: '')`）。
-class _StarterRow extends StatelessWidget {
-  final VoidCallback onTap;
-  const _StarterRow({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.tokens;
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(
-          color: tokens.accentSoft.withValues(alpha: 0.4),
-          border: Border(
-            left: BorderSide(color: tokens.accent, width: 2),
-          ),
-        ),
-        child: Row(
-          children: [
-            const AppCheckbox(checked: false, onChanged: null, color: null),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'タップで入力開始',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: tokens.accentInk,
-                      fontWeight: FontWeight.w500,
-                    ),
-              ),
-            ),
-            Icon(Icons.edit_outlined, size: 16, color: tokens.accent),
-          ],
-        ),
-      ),
     );
   }
 }

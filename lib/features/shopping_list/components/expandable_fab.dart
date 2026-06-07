@@ -12,6 +12,7 @@ import 'package:shoppinglist/features/shopping_list/components/ai_review_sheet.d
 import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/ai_usage.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/shopping_list_composer_state.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
@@ -23,7 +24,7 @@ import 'package:shoppinglist/utils/purchase/purchase.dart';
 /// `design_handoff_shopping_list/source/screens-list.jsx#FAB` 相当。
 ///
 /// 閉時: accent の plus 56×56 円。
-/// タップ: 空行を直接追加する（最頻操作）。
+/// タップ: 下部の常設コンポーザーにフォーカスを当てて入力を開始する（最頻操作）。
 /// 長押し: 写真 / URL / テキスト貼り付け の 3 メニューを上方向に展開する。
 class ExpandableFab extends HookConsumerWidget {
   final String groupID;
@@ -162,14 +163,10 @@ class ExpandableFab extends HookConsumerWidget {
                   'groupID': groupID,
                   'shoppingListID': shoppingListID,
                 });
-                ref.read(addShoppingListItemProvider(groupID: groupID)).call(
-                      shoppingListID: shoppingListID,
-                      userID: ref.read(currentUserIDProvider)!,
-                      message: '',
-                      order: shoppingListItems.nextOrder,
-                      description: null,
-                      color: null,
-                    );
+                // 入力は唯一のコンポーザーに集約。空行を作らず、追加モードで
+                // コンポーザーへフォーカスを当ててキーボードを開く。
+                ref.read(editingShoppingListItemIDProvider.notifier).clear();
+                ref.read(composerFocusRequestProvider.notifier).request();
               },
               child: const Icon(Icons.add, size: 26),
             ),

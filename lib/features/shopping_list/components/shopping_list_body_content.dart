@@ -37,11 +37,7 @@ class ShoppingListBodyContent extends StatelessWidget {
     final tokens = context.tokens;
     final isEmpty = shoppingListItems.isEmpty;
     if (showChecked && isEmpty) {
-      return EmptyTextShoppingListItems(
-        groupID: groupID,
-        shoppingListID: shoppingListID,
-        shoppingListItems: shoppingListItems,
-      );
+      return const EmptyTextShoppingListItems();
     }
     return Column(
       children: [

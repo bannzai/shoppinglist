@@ -18,6 +18,7 @@ import 'package:shoppinglist/features/shopping_list/components/list_top_bar.dart
 import 'package:shoppinglist/features/shopping_list/components/notification_member_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/progress_pill.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_body_content.dart';
+import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_composer.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
 import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/app_user.dart';
@@ -310,11 +311,15 @@ class _ActiveShoppingList extends HookConsumerWidget {
             shoppingListID: shoppingListID,
             showChecked: showChecked.value));
       },
-      floatingActionButton: ExpandableFab(
-        groupID: groupID,
-        shoppingListID: shoppingListID,
-        shoppingListItems: shoppingListItemsAsync.asData?.value ?? const [],
-      ),
+      // キーボード表示中(コンポーザーで入力中)は FAB を隠し、入力バーと競合させない。
+      floatingActionButton: MediaQuery.of(context).viewInsets.bottom > 0
+          ? null
+          : ExpandableFab(
+              groupID: groupID,
+              shoppingListID: shoppingListID,
+              shoppingListItems:
+                  shoppingListItemsAsync.asData?.value ?? const [],
+            ),
       // NavBar(surface)の帯 + 白(card)コンテンツ部のハイブリッドサーフェス。
       child: Container(
         color: tokens.neutral.surface,
@@ -385,6 +390,14 @@ class _ActiveShoppingList extends HookConsumerWidget {
                   ],
                 ),
               ),
+            ),
+            // 唯一のテキスト入力欄。スクロール領域の外(直下)に固定し、追加・編集の両方を
+            // ここで行う。Enter 連続追加・編集の間ソフトキーボードを開いたまま維持する。
+            // nextOrder と編集対象の検索のため全件(textShoppingListItems)を渡す。
+            ShoppingListComposer(
+              groupID: groupID,
+              shoppingListID: shoppingListID,
+              shoppingListItems: textShoppingListItems,
             ),
           ],
         ),

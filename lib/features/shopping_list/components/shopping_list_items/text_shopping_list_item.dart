@@ -1,30 +1,29 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item_detail_bottom_sheet.dart';
+import 'package:shoppinglist/provider/shopping_list_composer_state.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
-/// 買い物リストの 1 行。
+/// 買い物リストの 1 行(表示専用)。
 /// `design_handoff_shopping_list/source/screens-list.jsx#ItemRow` 相当。
 ///
 /// 構造:
 /// - 円形 Checkbox（22px stroke 1.5px、チェック ON で pop アニメ scale 1→1.2→1）
-/// - TextField（編集中フォーカス枠なし）
+/// - メッセージ Text（タップで下部コンポーザーに読み込み編集する。行内編集はしない）
 /// - description / imageURL（任意）
 /// - 詳細アイコン
 ///
-/// focused 中は左端に 2px の accent ボーダーと accentSoft 0.4 の背景を出す。
-/// checked 時はテキスト色 `t.checked` + 取り消し線、Checkbox 内 accent 塗り。
-class TextShoppingListItemWidget extends HookConsumerWidget {
+/// このアイテムが編集中(コンポーザーが対象にしている)の間は左端に 2px の accent ボーダーと
+/// accentSoft の背景を出す。checked 時はテキスト色 `t.checked` + 取り消し線、Checkbox 内 accent 塗り。
+class TextShoppingListItemWidget extends ConsumerWidget {
   final String groupID;
   final GroupShoppingListItem textShoppingListItem;
   final List<GroupShoppingListItem> shoppingListItems;
@@ -40,25 +39,6 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final focusNode = useFocusNode();
-    final textEditingController =
-        useTextEditingController(text: textShoppingListItem.message);
-    final isEditing = useState(false);
-
-    useEffect(() {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (textShoppingListItem.message.isEmpty) {
-          focusNode.requestFocus();
-        }
-      });
-      void listener() {
-        isEditing.value = focusNode.hasFocus;
-      }
-
-      focusNode.addListener(listener);
-      return () => focusNode.removeListener(listener);
-    }, []);
-
     final currentUserID = ref.watch(currentUserIDProvider)!;
     final tokens = context.tokens;
     final neutral = tokens.neutral;
@@ -72,7 +52,8 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
     final itemColor = textShoppingListItem.color != null
         ? colorFromHex(textShoppingListItem.color!).withValues(alpha: 0.1)
         : null;
-    final focused = isEditing.value;
+    final focused =
+        ref.watch(editingShoppingListItemIDProvider) == textShoppingListItem.id;
     final backgroundColor = focused
         ? tokens.accentSoft.withValues(alpha: 0.6)
         : itemColor ??
@@ -142,19 +123,38 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 固定高さ(44)を付けると複数行 TextField(maxLines: 7) が枠を上端から
-                    // 埋めて文字が上にずれる。高さを与えず Row の crossAxisAlignment.center
-                    // に縦中央化を任せる（GhostItemRow と同じ仕組み）。行の高さは末尾の
-                    // IconButton(最小 48px) が確保するため、タップ領域は維持される。
+                    // メッセージは表示専用。タップで編集対象IDをセットし、下部コンポーザーへ
+                    // テキストを読み込んで編集する(行内編集はしない)。高さは与えず Row の
+                    // crossAxisAlignment.center に縦中央化を任せ、行高は末尾の IconButton
+                    // (最小 48px)が確保するためタップ領域は維持される。
                     SizedBox(
                       width: double.infinity,
-                      child: TextShoppingListItemTextField(
-                        groupID: groupID,
-                        textEditingController: textEditingController,
-                        focusNode: focusNode,
-                        textShoppingListItem: textShoppingListItem,
-                        shoppingListItems: shoppingListItems,
-                        isEditing: isEditing.value,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          analytics.logEvent(name: 'tap_edit_item', parameters: {
+                            'groupID': groupID,
+                            'itemID': textShoppingListItem.id,
+                          });
+                          ref
+                              .read(editingShoppingListItemIDProvider.notifier)
+                              .edit(textShoppingListItem.id);
+                        },
+                        child: Text(
+                          textShoppingListItem.message,
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: -0.16,
+                                    color:
+                                        isChecked ? neutral.checked : neutral.ink,
+                                    decoration: isChecked
+                                        ? TextDecoration.lineThrough
+                                        : TextDecoration.none,
+                                    decorationColor: neutral.ink4,
+                                    decorationThickness: 1.2,
+                                  ),
+                        ),
                       ),
                     ),
                     if (hasDescription)
@@ -553,125 +553,6 @@ class _CircleCheckboxState extends State<_CircleCheckbox>
               ? const Icon(Icons.check, size: 14, color: Colors.white)
               : null,
         ),
-      ),
-    );
-  }
-}
-
-class TextShoppingListItemTextField extends HookConsumerWidget {
-  final String groupID;
-  final TextEditingController textEditingController;
-  final FocusNode focusNode;
-  final GroupShoppingListItem textShoppingListItem;
-  final List<GroupShoppingListItem> shoppingListItems;
-  final bool isEditing;
-  const TextShoppingListItemTextField({
-    super.key,
-    required this.groupID,
-    required this.textEditingController,
-    required this.focusNode,
-    required this.textShoppingListItem,
-    required this.shoppingListItems,
-    required this.isEditing,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final currentUserID = ref.watch(currentUserIDProvider)!;
-    final addShoppingListItem =
-        ref.watch(addShoppingListItemProvider(groupID: groupID));
-    final tokens = context.tokens;
-    final neutral = tokens.neutral;
-    final isChecked =
-        textShoppingListItem.status == GroupShoppingListItemStatus.checked;
-
-    // RawKeyboardListener 用の FocusNode。build のたびに `FocusNode()` を生成すると、
-    // onSubmitted の Firestore 書き込み → Stream 反映で本 Widget が再ビルドされた際に
-    // TextField のフォーカス親ノードが作り替えられ、Enter 連打中にキーボードが
-    // 閉じ開きする一因になる（かつ dispose されずリークする）。useFocusNode で安定させる。
-    final keyboardListenerFocusNode = useFocusNode();
-
-    // KeyboardListener は Mac ハードウェアキーボードにしか反応せず、
-    // iOS / Android のソフトキーボードの Backspace を拾えない。
-    // 代替 SDK API が安定するまでは RawKeyboardListener を維持する。
-    // ignore: deprecated_member_use
-    return RawKeyboardListener(
-      focusNode: keyboardListenerFocusNode,
-      onKey: (event) {
-        if (event.logicalKey == LogicalKeyboardKey.backspace &&
-            textEditingController.text.isEmpty) {
-          ref
-              .read(groupDatabaseProvider(groupID: groupID))
-              .shoppingListItemsReference(
-                  shoppingListID: textShoppingListItem.shoppingListID)
-              .doc(textShoppingListItem.id)
-              .delete();
-        }
-      },
-      child: TextField(
-        controller: textEditingController,
-        focusNode: focusNode,
-        minLines: 1,
-        maxLines: 7,
-        textInputAction: TextInputAction.next,
-        // Enter（TextInputAction.next）押下時、Flutter 既定の挙動は onSubmitted より先に
-        // focusNode.nextFocus() を呼ぶ。次の行はまだ Firestore に作成されておらず存在しないため、
-        // フォーカスが非編集ノードへ移ってソフトキーボードが一旦閉じ、その後 onSubmitted で
-        // 作成された新規行が requestFocus で開き直す——という「開閉」が起きていた。
-        // onEditingComplete を空実装にして既定のフォーカス移動を抑止し、現在行のフォーカスを
-        // 保ったまま onSubmitted で新規行を作成 → 新規行が requestFocus を引き継ぐことで
-        // キーボードを開いたままにする。
-        onEditingComplete: () {},
-        decoration: const InputDecoration(
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.zero,
-          isCollapsed: true,
-          hintText: 'メモを書く...',
-        ),
-        cursorColor: tokens.accent,
-        cursorWidth: 1.5,
-        cursorOpacityAnimates: true,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-              letterSpacing: -0.16,
-              color: isChecked ? neutral.checked : neutral.ink,
-              decoration:
-                  isChecked ? TextDecoration.lineThrough : TextDecoration.none,
-              decorationColor: neutral.ink4,
-              decorationThickness: 1.2,
-            ),
-        onSubmitted: (String v) async {
-          analytics.logEvent(name: 'submit_item_text', parameters: {
-            'groupID': groupID,
-            'itemID': textShoppingListItem.id,
-          });
-          final value = v.trim();
-          if (value.isEmpty) {
-            // 空のまま確定 → このアイテムを削除（最後の 1 件であっても削除し、
-            // 0 件の状態は EmptyShoppingListHint に任せる）
-            await ref
-                .read(groupDatabaseProvider(groupID: groupID))
-                .shoppingListItemReference(
-                  shoppingListID: textShoppingListItem.shoppingListID,
-                  itemID: textShoppingListItem.id,
-                )
-                .delete();
-            return;
-          }
-          ref.read(updateShoppingListItemProvider(groupID: groupID)).call(
-                shoppingListID: textShoppingListItem.shoppingListID,
-                item: textShoppingListItem.copyWith(message: value),
-                editedByUserID: currentUserID,
-              );
-          addShoppingListItem.call(
-            shoppingListID: textShoppingListItem.shoppingListID,
-            userID: currentUserID,
-            message: '',
-            order: shoppingListItems.nextOrder,
-            description: null,
-            color: null,
-          );
-        },
       ),
     );
   }
