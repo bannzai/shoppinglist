@@ -99,18 +99,18 @@ void main() {
   });
 
   group('TextShoppingListItemWidget の入力フィールド（Enter でキーボードを閉じない）', () {
-    testWidgets('TextField は textInputAction.next と onEditingComplete を持つ',
+    testWidgets('TextField は textInputAction.newline と onChanged を持ち、next/onSubmitted は使わない',
         (tester) async {
       await _pump(tester, _item(id: 'filled', message: '牛乳'));
       final textField = tester.widget<TextField>(find.byType(TextField));
-      // Enter で次の行へ移れるようにする。
-      expect(textField.textInputAction, TextInputAction.next);
-      // Flutter 既定の onEditingComplete は onSubmitted より先に nextFocus() を呼び、
-      // まだ Firestore に作成されていない次行ではなく非編集ノードへフォーカスが移って
-      // ソフトキーボードが一旦閉じる。空実装の onEditingComplete でこれを抑止し、
-      // 現在行のフォーカスを保ったままキーボードを開いたままにしている。
-      // この設定が外れると「Enter のたびにキーボードが開閉する」回帰が再発する。
-      expect(textField.onEditingComplete, isNotNull);
+      // actionable な action（next/done 等）は performAction で入力接続を close→reopen
+      // （flutter#84240）してソフトキーボードを一瞬閉じるため使わない。改行(Enter)は
+      // newline で受け、確定は onChanged の改行検知で行う。この設定が外れると
+      // 「Enter のたびにキーボードが開閉する」回帰が再発する（fix-350 で実機計測して確定）。
+      expect(textField.textInputAction, TextInputAction.newline);
+      expect(textField.onChanged, isNotNull);
+      expect(textField.onSubmitted, isNull);
+      expect(textField.onEditingComplete, isNull);
     });
   });
 }
