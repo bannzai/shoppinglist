@@ -6,6 +6,7 @@ import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/previews/mock/mock_provider_overrides.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
+import 'package:shoppinglist/provider/shopping_list_composer_state.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
@@ -98,19 +99,27 @@ void main() {
     });
   });
 
-  group('TextShoppingListItemWidget の入力フィールド（Enter でキーボードを閉じない）', () {
-    testWidgets('TextField は textInputAction.next と onEditingComplete を持つ',
+  group('TextShoppingListItemWidget は表示専用（行内 TextField を持たない）', () {
+    testWidgets('行は TextField を持たず、メッセージは Text で表示される',
         (tester) async {
       await _pump(tester, _item(id: 'filled', message: '牛乳'));
-      final textField = tester.widget<TextField>(find.byType(TextField));
-      // Enter で次の行へ移れるようにする。
-      expect(textField.textInputAction, TextInputAction.next);
-      // Flutter 既定の onEditingComplete は onSubmitted より先に nextFocus() を呼び、
-      // まだ Firestore に作成されていない次行ではなく非編集ノードへフォーカスが移って
-      // ソフトキーボードが一旦閉じる。空実装の onEditingComplete でこれを抑止し、
-      // 現在行のフォーカスを保ったままキーボードを開いたままにしている。
-      // この設定が外れると「Enter のたびにキーボードが開閉する」回帰が再発する。
-      expect(textField.onEditingComplete, isNotNull);
+      // 入力は下部の常設コンポーザーに集約。行内に TextField があると
+      // performAction(H1) / 行間フォーカス移譲(H2) でキーボードが開閉する回帰が再発する。
+      expect(find.byType(TextField), findsNothing);
+      expect(find.text('牛乳'), findsOneWidget);
+    });
+
+    testWidgets('メッセージをタップすると編集対象IDがセットされる（コンポーザーで編集）',
+        (tester) async {
+      await _pump(tester, _item(id: 'filled', message: '牛乳'));
+      final container = ProviderScope.containerOf(
+          tester.element(find.byType(TextShoppingListItemWidget)));
+      expect(container.read(editingShoppingListItemIDProvider), isNull);
+
+      await tester.tap(find.text('牛乳'));
+      await tester.pump();
+
+      expect(container.read(editingShoppingListItemIDProvider), 'filled');
     });
   });
 }
