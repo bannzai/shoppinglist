@@ -13,6 +13,12 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
+/// 既存アイテムの編集を Enter で確定した後、末尾の入力行（空行）へフォーカスを戻すための
+/// 要求シグナル。値はインクリメントされるカウンタで、空の入力行はこの変化を購読して自身を
+/// requestFocus する。フォーカス移譲先が「新規生成行」ではなく既存の安定した入力行
+/// （GlobalKey で要素=入力接続を保持）なので、移譲してもソフトキーボードは閉じない。
+final shoppingListInputRowFocusRequestProvider = StateProvider<int>((ref) => 0);
+
 /// 買い物リストの 1 行。
 /// `design_handoff_shopping_list/source/screens-list.jsx#ItemRow` 相当。
 ///
@@ -58,6 +64,22 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       focusNode.addListener(listener);
       return () => focusNode.removeListener(listener);
     }, []);
+
+    // 既存アイテムの編集を Enter 確定した後など、入力行へフォーカスを戻す要求(カウンタ増加)を
+    // 受けたら、空行(入力行)を再フォーカスする。依存配列はカウンタのみ — 要求のたびに一度実行する。
+    // 確定済みアイテムが消えた id の GlobalKey 掃除等とは無関係に、空行のみ反応する。
+    final inputRowFocusRequest =
+        ref.watch(shoppingListInputRowFocusRequestProvider);
+    useEffect(() {
+      if (inputRowFocusRequest > 0 && textShoppingListItem.message.isEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (textShoppingListItem.message.isEmpty && focusNode.context != null) {
+            focusNode.requestFocus();
+          }
+        });
+      }
+      return null;
+    }, [inputRowFocusRequest]);
 
     final currentUserID = ref.watch(currentUserIDProvider)!;
     final tokens = context.tokens;
@@ -698,13 +720,32 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
             );
             textEditingController.clear();
           } else {
-            // 既存アイテムの編集確定: 内容を更新するだけ。新規行は作らずフォーカスを
-            // 保持する（移譲しないのでキーボードは閉じない）。
+            // 既存アイテムの編集確定: 内容を更新し、末尾の入力行へフォーカスを移して
+            // 続けて追加できるようにする(origin/main の「Enter で次の入力へ」を踏襲)。
+            // 移譲先は新規生成行ではなく既存の安定した入力行(GlobalKey で要素保持)なので
+            // キーボードは閉じない。入力行が無ければ新規作成する。
             ref.read(updateShoppingListItemProvider(groupID: groupID)).call(
                   shoppingListID: textShoppingListItem.shoppingListID,
                   item: textShoppingListItem.copyWith(message: value),
                   editedByUserID: currentUserID,
                 );
+            final hasInputRow = shoppingListItems.any((item) =>
+                item.id != textShoppingListItem.id &&
+                item.message.trim().isEmpty);
+            if (hasInputRow) {
+              ref
+                  .read(shoppingListInputRowFocusRequestProvider.notifier)
+                  .state++;
+            } else {
+              ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+                    shoppingListID: textShoppingListItem.shoppingListID,
+                    userID: currentUserID,
+                    message: '',
+                    order: shoppingListItems.nextOrder,
+                    description: null,
+                    color: null,
+                  );
+            }
           }
         },
       ),
