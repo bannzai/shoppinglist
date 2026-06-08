@@ -13,6 +13,12 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
+/// 既存アイテムの編集を Enter で確定した後、末尾の入力行（空行）へフォーカスを戻すための
+/// 要求シグナル。値はインクリメントされるカウンタで、空の入力行はこの変化を購読して自身を
+/// requestFocus する。フォーカス移譲先が「新規生成行」ではなく既存の安定した入力行
+/// （GlobalKey で要素=入力接続を保持）なので、移譲してもソフトキーボードは閉じない。
+final shoppingListInputRowFocusRequestProvider = StateProvider<int>((ref) => 0);
+
 /// 買い物リストの 1 行。
 /// `design_handoff_shopping_list/source/screens-list.jsx#ItemRow` 相当。
 ///
@@ -58,6 +64,23 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       focusNode.addListener(listener);
       return () => focusNode.removeListener(listener);
     }, []);
+
+    // 既存アイテムの編集を Enter 確定した後など、入力行へフォーカスを戻す要求(カウンタ増加)を
+    // 受けたら、空行(入力行)を再フォーカスする。依存配列はカウンタのみ — 要求のたびに一度実行する。
+    // 確定済みアイテムが消えた id の GlobalKey 掃除等とは無関係に、空行のみ反応する。
+    final inputRowFocusRequest =
+        ref.watch(shoppingListInputRowFocusRequestProvider);
+    useEffect(() {
+      if (inputRowFocusRequest > 0 && textShoppingListItem.message.isEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (textShoppingListItem.message.isEmpty &&
+              focusNode.context != null) {
+            focusNode.requestFocus();
+          }
+        });
+      }
+      return null;
+    }, [inputRowFocusRequest]);
 
     final currentUserID = ref.watch(currentUserIDProvider)!;
     final tokens = context.tokens;
@@ -578,8 +601,6 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUserID = ref.watch(currentUserIDProvider)!;
-    final addShoppingListItem =
-        ref.watch(addShoppingListItemProvider(groupID: groupID));
     final tokens = context.tokens;
     final neutral = tokens.neutral;
     final isChecked =
@@ -613,15 +634,12 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
         focusNode: focusNode,
         minLines: 1,
         maxLines: 7,
-        textInputAction: TextInputAction.next,
-        // Enter（TextInputAction.next）押下時、Flutter 既定の挙動は onSubmitted より先に
-        // focusNode.nextFocus() を呼ぶ。次の行はまだ Firestore に作成されておらず存在しないため、
-        // フォーカスが非編集ノードへ移ってソフトキーボードが一旦閉じ、その後 onSubmitted で
-        // 作成された新規行が requestFocus で開き直す——という「開閉」が起きていた。
-        // onEditingComplete を空実装にして既定のフォーカス移動を抑止し、現在行のフォーカスを
-        // 保ったまま onSubmitted で新規行を作成 → 新規行が requestFocus を引き継ぐことで
-        // キーボードを開いたままにする。
-        onEditingComplete: () {},
+        // Enter で確定する際、actionable な textInputAction（next/done 等）を使うと
+        // EditableText.performAction が入力接続を close→reopen（flutter#84240）し、iOS では
+        // Enter のたびにソフトキーボードが一瞬閉じて開き直す。これを避けるため action は
+        // newline にして performAction を経由させず、改行が入力されたことを onChanged で
+        // 検知して確定する（fix-350 で iOS 実機計測して確定した原因対策）。
+        textInputAction: TextInputAction.newline,
         decoration: const InputDecoration(
           border: InputBorder.none,
           contentPadding: EdgeInsets.zero,
@@ -640,37 +658,98 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
               decorationColor: neutral.ink4,
               decorationThickness: 1.2,
             ),
-        onSubmitted: (String v) async {
+        // 改行(Enter)を onChanged で検知して確定する。newline では performAction が
+        // 走らないため onSubmitted は使わない。
+        //
+        // キーボード維持の肝（fix-350 で iOS 実機計測して確定）:
+        // 「Firestore ストリームで新規生成された行へフォーカスを移譲する」瞬間に
+        // 入力接続が切れてソフトキーボードが全閉する。これを避けるため、本方式では
+        // 入力行（保存済み message が空の行）のフォーカスを移譲しない。確定テキストは
+        // 別アイテム E として入力行の位置に追加し、入力行自体は空のままフォーカスを
+        // 保ち、次の入力欄として再利用する（E は非空なので auto-focus されない）。
+        onChanged: (String v) {
+          if (!v.contains('\n')) {
+            return;
+          }
+          final value = v.replaceAll('\n', '').trim();
+          // 改行は確定の合図でありテキストには残さない。
+          textEditingController.value = TextEditingValue(
+            text: value,
+            selection: TextSelection.collapsed(offset: value.length),
+          );
           analytics.logEvent(name: 'submit_item_text', parameters: {
             'groupID': groupID,
             'itemID': textShoppingListItem.id,
           });
-          final value = v.trim();
+
+          // 保存済み message が空 = 新規入力用の入力行。非空 = 既存アイテムの編集中。
+          final isInputRow = textShoppingListItem.message.isEmpty;
+
           if (value.isEmpty) {
-            // 空のまま確定 → このアイテムを削除（最後の 1 件であっても削除し、
-            // 0 件の状態は EmptyShoppingListHint に任せる）
-            await ref
-                .read(groupDatabaseProvider(groupID: groupID))
-                .shoppingListItemReference(
-                  shoppingListID: textShoppingListItem.shoppingListID,
-                  itemID: textShoppingListItem.id,
-                )
-                .delete();
+            // 空のまま確定。既存アイテムを空にした場合のみ削除し、入力行(元から空)は
+            // 何もせず入力欄として残す。
+            if (!isInputRow) {
+              ref
+                  .read(groupDatabaseProvider(groupID: groupID))
+                  .shoppingListItemReference(
+                    shoppingListID: textShoppingListItem.shoppingListID,
+                    itemID: textShoppingListItem.id,
+                  )
+                  .delete();
+            }
             return;
           }
-          ref.read(updateShoppingListItemProvider(groupID: groupID)).call(
-                shoppingListID: textShoppingListItem.shoppingListID,
-                item: textShoppingListItem.copyWith(message: value),
-                editedByUserID: currentUserID,
-              );
-          addShoppingListItem.call(
-            shoppingListID: textShoppingListItem.shoppingListID,
-            userID: currentUserID,
-            message: '',
-            order: shoppingListItems.nextOrder,
-            description: null,
-            color: null,
-          );
+
+          if (isInputRow) {
+            // 入力行: 確定テキストを別アイテム E として入力行の位置(order)へ追加し、
+            // 入力行(C)は nextOrder へ繰り下げて E の下に保つ。入力行は空のまま
+            // フォーカスを維持する（移譲しないのでキーボードは閉じない）。
+            ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+                  shoppingListID: textShoppingListItem.shoppingListID,
+                  userID: currentUserID,
+                  message: value,
+                  order: textShoppingListItem.order,
+                  description: null,
+                  color: null,
+                );
+            ref
+                .read(shoppingListItemBatchUpdateProvider(groupID: groupID))
+                .call(
+              shoppingListID: textShoppingListItem.shoppingListID,
+              shoppingListItems: [
+                textShoppingListItem.copyWith(
+                    order: shoppingListItems.nextOrder),
+              ],
+            );
+            textEditingController.clear();
+          } else {
+            // 既存アイテムの編集確定: 内容を更新し、末尾の入力行へフォーカスを移して
+            // 続けて追加できるようにする(origin/main の「Enter で次の入力へ」を踏襲)。
+            // 移譲先は新規生成行ではなく既存の安定した入力行(GlobalKey で要素保持)なので
+            // キーボードは閉じない。入力行が無ければ新規作成する。
+            ref.read(updateShoppingListItemProvider(groupID: groupID)).call(
+                  shoppingListID: textShoppingListItem.shoppingListID,
+                  item: textShoppingListItem.copyWith(message: value),
+                  editedByUserID: currentUserID,
+                );
+            final hasInputRow = shoppingListItems.any((item) =>
+                item.id != textShoppingListItem.id &&
+                item.message.trim().isEmpty);
+            if (hasInputRow) {
+              ref
+                  .read(shoppingListInputRowFocusRequestProvider.notifier)
+                  .state++;
+            } else {
+              ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+                    shoppingListID: textShoppingListItem.shoppingListID,
+                    userID: currentUserID,
+                    message: '',
+                    order: shoppingListItems.nextOrder,
+                    description: null,
+                    color: null,
+                  );
+            }
+          }
         },
       ),
     );
