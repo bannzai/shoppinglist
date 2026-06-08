@@ -99,7 +99,8 @@ void main() {
   });
 
   group('TextShoppingListItemWidget の入力フィールド（Enter でキーボードを閉じない）', () {
-    testWidgets('TextField は textInputAction.newline と onChanged を持ち、next/onSubmitted は使わない',
+    testWidgets(
+        'TextField は textInputAction.newline と onChanged を持ち、next/onSubmitted は使わない',
         (tester) async {
       await _pump(tester, _item(id: 'filled', message: '牛乳'));
       final textField = tester.widget<TextField>(find.byType(TextField));

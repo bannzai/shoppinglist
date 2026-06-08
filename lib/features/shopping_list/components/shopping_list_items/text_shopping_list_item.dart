@@ -73,7 +73,8 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
     useEffect(() {
       if (inputRowFocusRequest > 0 && textShoppingListItem.message.isEmpty) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (textShoppingListItem.message.isEmpty && focusNode.context != null) {
+          if (textShoppingListItem.message.isEmpty &&
+              focusNode.context != null) {
             focusNode.requestFocus();
           }
         });
@@ -711,7 +712,9 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
                   description: null,
                   color: null,
                 );
-            ref.read(shoppingListItemBatchUpdateProvider(groupID: groupID)).call(
+            ref
+                .read(shoppingListItemBatchUpdateProvider(groupID: groupID))
+                .call(
               shoppingListID: textShoppingListItem.shoppingListID,
               shoppingListItems: [
                 textShoppingListItem.copyWith(
