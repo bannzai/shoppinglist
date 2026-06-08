@@ -106,153 +106,145 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
     // ReorderableListView のドラッグ移動中に Material が必要
     final content = Material(
       color: backgroundColor,
-      child: GestureDetector(
-        // i-6 長押し context menu (複製 / メモ追加 / 削除)。
-        // 担当者項目は M-4 の運用ルール 4 で除外。
-        behavior: HitTestBehavior.translucent,
-        onLongPress: () => _showLongPressMenu(
-          context: context,
-          ref: ref,
-          currentUserID: currentUserID,
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border(
-              left: BorderSide(
-                color: focused ? tokens.accent : Colors.transparent,
-                width: 2,
-              ),
+      // 行の長押しは ReorderableDelayedDragStartListener（並び替えドラッグ）に委ねる。
+      // 以前あった長押し context menu(複製/メモ/削除)は、長押しジェスチャが並び替え
+      // ドラッグと競合してドラッグ開始を阻害するため廃止した。削除は左スワイプ、
+      // メモ・カラー編集は末尾の詳細アイコン(more_horiz)から行う。
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            left: BorderSide(
+              color: focused ? tokens.accent : Colors.transparent,
+              width: 2,
             ),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Semantics(
-                label: textShoppingListItem.message,
-                child: _CircleCheckbox(
-                  checked: isChecked,
-                  color: textShoppingListItem.color != null
-                      ? colorFromHex(textShoppingListItem.color!)
-                      : tokens.accent,
-                  // 空行は onChanged を null にしてタップを無効化する。
-                  onChanged: isEmptyMessage
-                      ? null
-                      : (_) {
-                          analytics.logEvent(
-                              name: 'tap_toggle_item_checkbox',
-                              parameters: {
-                                'groupID': groupID,
-                                'shoppingListID':
-                                    textShoppingListItem.shoppingListID,
-                                'itemID': textShoppingListItem.id,
-                              });
-                          ref
-                              .read(toggleShoppingListItemCheckProvider(
-                                  groupID: groupID))
-                              .call(
-                                shoppingListID:
-                                    textShoppingListItem.shoppingListID,
-                                item: textShoppingListItem,
-                                userID: currentUserID,
-                              );
-                        },
-                ),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Semantics(
+              label: textShoppingListItem.message,
+              child: _CircleCheckbox(
+                checked: isChecked,
+                color: textShoppingListItem.color != null
+                    ? colorFromHex(textShoppingListItem.color!)
+                    : tokens.accent,
+                // 空行は onChanged を null にしてタップを無効化する。
+                onChanged: isEmptyMessage
+                    ? null
+                    : (_) {
+                        analytics.logEvent(
+                            name: 'tap_toggle_item_checkbox',
+                            parameters: {
+                              'groupID': groupID,
+                              'shoppingListID':
+                                  textShoppingListItem.shoppingListID,
+                              'itemID': textShoppingListItem.id,
+                            });
+                        ref
+                            .read(toggleShoppingListItemCheckProvider(
+                                groupID: groupID))
+                            .call(
+                              shoppingListID:
+                                  textShoppingListItem.shoppingListID,
+                              item: textShoppingListItem,
+                              userID: currentUserID,
+                            );
+                      },
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 固定高さ(44)を付けると複数行 TextField(maxLines: 7) が枠を上端から
-                    // 埋めて文字が上にずれる。高さを与えず Row の crossAxisAlignment.center
-                    // に縦中央化を任せる（GhostItemRow と同じ仕組み）。行の高さは末尾の
-                    // IconButton(最小 48px) が確保するため、タップ領域は維持される。
-                    SizedBox(
-                      width: double.infinity,
-                      child: TextShoppingListItemTextField(
-                        groupID: groupID,
-                        textEditingController: textEditingController,
-                        focusNode: focusNode,
-                        textShoppingListItem: textShoppingListItem,
-                        shoppingListItems: shoppingListItems,
-                        isEditing: isEditing.value,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 固定高さ(44)を付けると複数行 TextField(maxLines: 7) が枠を上端から
+                  // 埋めて文字が上にずれる。高さを与えず Row の crossAxisAlignment.center
+                  // に縦中央化を任せる（GhostItemRow と同じ仕組み）。行の高さは末尾の
+                  // IconButton(最小 48px) が確保するため、タップ領域は維持される。
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextShoppingListItemTextField(
+                      groupID: groupID,
+                      textEditingController: textEditingController,
+                      focusNode: focusNode,
+                      textShoppingListItem: textShoppingListItem,
+                      shoppingListItems: shoppingListItems,
+                      isEditing: isEditing.value,
+                    ),
+                  ),
+                  if (hasDescription)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Text(
+                        textShoppingListItem.description!,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(color: neutral.ink3),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    if (hasDescription)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Text(
-                          textShoppingListItem.description!,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: neutral.ink3),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                  ],
-                ),
+                ],
               ),
-              if (textShoppingListItem.imageURL != null)
-                Padding(
-                  padding: const EdgeInsets.only(left: 4),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: CachedNetworkImage(
-                      imageUrl: textShoppingListItem.imageURL!,
+            ),
+            if (textShoppingListItem.imageURL != null)
+              Padding(
+                padding: const EdgeInsets.only(left: 4),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: CachedNetworkImage(
+                    imageUrl: textShoppingListItem.imageURL!,
+                    width: 36,
+                    height: 36,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => SizedBox(
                       width: 36,
                       height: 36,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => SizedBox(
-                        width: 36,
-                        height: 36,
-                        child: Center(
-                          child: SizedBox(
-                            width: 14,
-                            height: 14,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(tokens.accent),
-                            ),
+                      child: Center(
+                        child: SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(tokens.accent),
                           ),
                         ),
                       ),
-                      errorWidget: (context, url, error) => Icon(
-                          Icons.broken_image,
-                          size: 18,
-                          color: neutral.ink3),
                     ),
+                    errorWidget: (context, url, error) =>
+                        Icon(Icons.broken_image, size: 18, color: neutral.ink3),
                   ),
                 ),
-              IconButton(
-                tooltip: 'アイテム詳細',
-                onPressed: () {
-                  analytics.logEvent(name: 'tap_open_item_detail', parameters: {
-                    'groupID': groupID,
-                    'itemID': textShoppingListItem.id,
-                  });
-                  appShowModalBottomSheet(
-                    context: context,
-                    builder: (context) {
-                      return TextShoppingListItemDetailBottomSheet(
-                        groupID: groupID,
-                        textShoppingListItem: textShoppingListItem,
-                      );
-                    },
-                  );
-                },
-                icon: Icon(
-                  Icons.more_horiz,
-                  size: 20,
-                  color: isChecked ? neutral.ink4 : neutral.ink3,
-                ),
               ),
-            ],
-          ),
+            IconButton(
+              tooltip: 'アイテム詳細',
+              onPressed: () {
+                analytics.logEvent(name: 'tap_open_item_detail', parameters: {
+                  'groupID': groupID,
+                  'itemID': textShoppingListItem.id,
+                });
+                appShowModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return TextShoppingListItemDetailBottomSheet(
+                      groupID: groupID,
+                      textShoppingListItem: textShoppingListItem,
+                    );
+                  },
+                );
+              },
+              icon: Icon(
+                Icons.more_horiz,
+                size: 20,
+                color: isChecked ? neutral.ink4 : neutral.ink3,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -368,140 +360,6 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         }
       },
       child: widget,
-    );
-  }
-
-  /// i-6 長押し context menu。
-  /// `design_handoff_shopping_list/preview/screens-list.jsx` 準拠で
-  /// 「複製 / メモを追加 / 削除」を BottomSheet で提示する (担当者は除外)。
-  Future<void> _showLongPressMenu({
-    required BuildContext context,
-    required WidgetRef ref,
-    required String currentUserID,
-  }) async {
-    analytics.logEvent(
-      name: 'long_press_shopping_list_item',
-      parameters: {
-        'groupID': groupID,
-        'shoppingListID': textShoppingListItem.shoppingListID,
-        'itemID': textShoppingListItem.id,
-      },
-    );
-    final tokens = context.tokens;
-    await showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: tokens.neutral.card,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
-      ),
-      builder: (sheetContext) {
-        return SafeArea(
-          top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 10),
-              Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: tokens.neutral.divider,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 8),
-              ListTile(
-                leading: Icon(Icons.content_copy, color: tokens.accent),
-                title: const Text('複製'),
-                onTap: () async {
-                  analytics.logEvent(
-                    name: 'duplicate_shopping_list_item_long_press',
-                    parameters: {
-                      'groupID': groupID,
-                      'itemID': textShoppingListItem.id,
-                    },
-                  );
-                  Navigator.pop(sheetContext);
-                  try {
-                    await ref
-                        .read(addShoppingListItemProvider(groupID: groupID))
-                        .call(
-                          shoppingListID: textShoppingListItem.shoppingListID,
-                          userID: currentUserID,
-                          message: textShoppingListItem.message,
-                          order: shoppingListItems.nextOrder,
-                          description: textShoppingListItem.description,
-                          color: textShoppingListItem.color,
-                        );
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(e.toString())),
-                      );
-                    }
-                  }
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.notes, color: tokens.accent),
-                title: const Text('メモを追加'),
-                onTap: () {
-                  analytics.logEvent(
-                    name: 'open_item_detail_from_long_press',
-                    parameters: {
-                      'groupID': groupID,
-                      'itemID': textShoppingListItem.id,
-                    },
-                  );
-                  Navigator.pop(sheetContext);
-                  appShowModalBottomSheet(
-                    context: context,
-                    builder: (_) => TextShoppingListItemDetailBottomSheet(
-                      groupID: groupID,
-                      textShoppingListItem: textShoppingListItem,
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                leading:
-                    Icon(Icons.delete_outline, color: tokens.neutral.danger),
-                title: Text('削除',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(color: tokens.neutral.danger)),
-                onTap: () async {
-                  analytics.logEvent(
-                    name: 'delete_shopping_list_item_long_press',
-                    parameters: {
-                      'groupID': groupID,
-                      'itemID': textShoppingListItem.id,
-                    },
-                  );
-                  Navigator.pop(sheetContext);
-                  try {
-                    await ref
-                        .read(groupDatabaseProvider(groupID: groupID))
-                        .shoppingListItemsReference(
-                          shoppingListID: textShoppingListItem.shoppingListID,
-                        )
-                        .doc(textShoppingListItem.id)
-                        .delete();
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(e.toString())),
-                      );
-                    }
-                  }
-                },
-              ),
-              const SizedBox(height: 8),
-            ],
-          ),
-        );
-      },
     );
   }
 }
@@ -640,6 +498,12 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
         // newline にして performAction を経由させず、改行が入力されたことを onChanged で
         // 検知して確定する（fix-350 で iOS 実機計測して確定した原因対策）。
         textInputAction: TextInputAction.newline,
+        // 非編集(未フォーカス)の行では長押しのテキスト選択を無効化し、長押しを並び替え
+        // ドラッグ(ReorderableDelayedDragStartListener の DelayedMultiDragGestureRecognizer)
+        // に渡す。有効なままだと TextField の長押し選択がジェスチャアリーナで勝ち、行を
+        // 長押ししても iOS 標準の選択メニューが出てドラッグを開始できない(iOS 実機で確認)。
+        // 編集中(フォーカス時)は通常どおりテキスト選択を許可する。
+        enableInteractiveSelection: isEditing,
         decoration: const InputDecoration(
           border: InputBorder.none,
           contentPadding: EdgeInsets.zero,
