@@ -8,6 +8,7 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 /// 入力行(空行)に割り当てる安定した GlobalKey のマップ(item.id をキーにする)。
@@ -31,6 +32,14 @@ void _pruneRowKeys(Iterable<String> currentIDs) {
   final keep = currentIDs.toSet();
   _shoppingListItemRowKeys.removeWhere((id, _) => !keep.contains(id));
 }
+
+/// 買い物リストのスクロール末尾に確保する下方向パディング。
+/// 画面外側の SafeArea が bottom:false（NavBar の帯を下端まで伸ばすため）なので、
+/// ホームインジケータ/iPhone 下部バーの安全領域分を自前で確保し、さらに最終アイテムが
+/// バーに張り付かないよう余白(s24)を上乗せして被りを防ぐ。
+EdgeInsets _listBottomPadding(BuildContext context) => EdgeInsets.only(
+      bottom: MediaQuery.of(context).padding.bottom + AppTokens.s24,
+    );
 
 class ShoppingListItems extends ConsumerWidget {
   final String groupID;
@@ -103,6 +112,7 @@ class _FlatShoppingListItems extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ReorderableList(
+      padding: _listBottomPadding(context),
       // アイテム編集中にリストをスクロール(ドラッグ)したらキーボードを閉じる
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       onReorder: (oldIndex, newIndex) {
@@ -277,6 +287,7 @@ class _GroupedListView extends StatelessWidget {
     }
 
     return ListView(
+      padding: _listBottomPadding(context),
       // アイテム編集中にリストをスクロール(ドラッグ)したらキーボードを閉じる
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       children: children,
