@@ -27,7 +27,8 @@ GroupShoppingListItem _item({required String id, required String message}) {
   );
 }
 
-Future<void> _pump(WidgetTester tester, GroupShoppingListItem item) async {
+Future<void> _pump(WidgetTester tester, GroupShoppingListItem item,
+    {int? reorderIndex}) async {
   // ignore: invalid_use_of_visible_for_testing_member
   SharedPreferences.setMockInitialValues({});
   final sharedPreferences = await SharedPreferences.getInstance();
@@ -43,7 +44,7 @@ Future<void> _pump(WidgetTester tester, GroupShoppingListItem item) async {
             groupID: mockGroupID,
             textShoppingListItem: item,
             shoppingListItems: [item],
-            reorderIndex: null,
+            reorderIndex: reorderIndex,
           ),
         ),
       ),
@@ -98,6 +99,30 @@ void main() {
     });
   });
 
+  group('TextShoppingListItemWidget の長押し挙動（複製メニュー廃止・並び替えドラッグ）', () {
+    testWidgets('長押ししても複製/メモを追加/削除の context menu を出さない', (tester) async {
+      await _pump(tester, _item(id: 'filled', message: '牛乳'));
+      await tester.longPress(find.text('牛乳'));
+      await tester.pumpAndSettle();
+      // 旧長押しメニューの項目が一切表示されないこと（メニュー廃止）。
+      expect(find.text('複製'), findsNothing);
+      expect(find.text('メモを追加'), findsNothing);
+      expect(find.text('削除'), findsNothing);
+    });
+
+    testWidgets(
+        'reorderIndex 指定時は長押しドラッグ用の ReorderableDelayedDragStartListener でラップする',
+        (tester) async {
+      await _pump(tester, _item(id: 'filled', message: '牛乳'), reorderIndex: 0);
+      expect(find.byType(ReorderableDelayedDragStartListener), findsOneWidget);
+    });
+
+    testWidgets('reorderIndex が null（入力行）のときは長押しドラッグ対象にしない', (tester) async {
+      await _pump(tester, _item(id: 'empty', message: ''));
+      expect(find.byType(ReorderableDelayedDragStartListener), findsNothing);
+    });
+  });
+
   group('TextShoppingListItemWidget の入力フィールド（Enter でキーボードを閉じない）', () {
     testWidgets(
         'TextField は textInputAction.newline と onChanged を持ち、next/onSubmitted は使わない',
@@ -112,6 +137,17 @@ void main() {
       expect(textField.onChanged, isNotNull);
       expect(textField.onSubmitted, isNull);
       expect(textField.onEditingComplete, isNull);
+    });
+
+    testWidgets('非編集(未フォーカス)の行はテキスト選択を無効化して長押しを並び替えドラッグに渡す', (tester) async {
+      // filled な行は自動フォーカスされない(空行のみ自動フォーカス)ため isEditing=false。
+      await _pump(tester, _item(id: 'filled', message: '牛乳'));
+      expect(
+        tester
+            .widget<TextField>(find.byType(TextField))
+            .enableInteractiveSelection,
+        isFalse,
+      );
     });
   });
 }
