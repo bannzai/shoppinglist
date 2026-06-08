@@ -26,6 +26,9 @@ abstract class UserAIUsage with _$UserAIUsage {
 
     /// URLからの買い物リスト生成の利用回数
     @Default(0) int urlRecognitionCount,
+
+    /// AIカテゴリ分けの利用回数
+    @Default(0) int categorizeCount,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,
     @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
   }) = _UserAIUsage;
@@ -66,3 +69,9 @@ const int freeMonthlyURLRecognitionLimit = 5;
 
 /// プレミアムユーザーのURL認識月次上限。
 const int premiumMonthlyURLRecognitionLimit = 50;
+
+/// 無料ユーザーのAIカテゴリ分け月次上限。
+const int freeMonthlyCategorizeLimit = 5;
+
+/// プレミアムユーザーのAIカテゴリ分け月次上限。
+const int premiumMonthlyCategorizeLimit = 50;

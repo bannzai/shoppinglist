@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
+import 'package:shoppinglist/entity/group_category_keyword.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -190,4 +191,121 @@ GroupCategoryBatchUpdate groupCategoryBatchUpdate(Ref ref,
     {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupCategoryBatchUpdate(database: database);
+}
+
+/// AIカテゴリ分けの確定結果（アイテム名→カテゴリ名）を Firestore に反映する。
+///
+/// アイテムにカテゴリIDは持たせず、カテゴリのキーワードとのマッチングで分類する
+/// 設計のため、各アイテム名を該当カテゴリの完全一致キーワードとして追記する。
+/// - 軸（[GroupCategoryAxis]）が無ければ「デフォルト」軸を作成する
+/// - assignments の categoryName に一致する既存カテゴリが無ければ作成する
+/// - 各アイテム名を該当カテゴリの完全一致キーワードとして追記する（重複は無視）
+class AICategorizeApply {
+  final GroupDatabase database;
+
+  AICategorizeApply({required this.database});
+
+  Future<void> call({
+    required String groupID,
+    required String userID,
+    required String? categoryAxisID,
+    required List<({String itemName, String categoryName})> assignments,
+  }) async {
+    if (assignments.isEmpty) {
+      return;
+    }
+
+    // 1. 軸を確定（無ければ「デフォルト」軸を作成）
+    final String axisID;
+    if (categoryAxisID != null) {
+      axisID = categoryAxisID;
+    } else {
+      final axisRef = database.newCategoryAxisReference();
+      await axisRef.set(
+        GroupCategoryAxis(
+          id: axisRef.id,
+          groupID: groupID,
+          userID: userID,
+          name: 'デフォルト',
+          order: 0,
+        ),
+        SetOptions(merge: true),
+      );
+      axisID = axisRef.id;
+    }
+
+    // 2. 既存カテゴリを取得し、名前→カテゴリ の対応を作る
+    final existing = (await database
+            .categoriesReference(categoryAxisID: axisID)
+            .orderBy(GroupCategoryFirestoreKeys.order)
+            .get())
+        .docs
+        .map((doc) => doc.data())
+        .toList();
+    final categoryByName = {for (final category in existing) category.name: category};
+    var nextOrder =
+        existing.fold<int>(-1, (max, category) => category.order > max ? category.order : max) + 1;
+
+    // 3. assignments に登場するカテゴリ名のうち未作成のものを作成
+    for (final categoryName in assignments.map((a) => a.categoryName).toSet()) {
+      if (categoryByName.containsKey(categoryName)) {
+        continue;
+      }
+      final docRef = database.newCategoryReference(categoryAxisID: axisID);
+      final category = GroupCategory(
+        id: docRef.id,
+        groupID: groupID,
+        userID: userID,
+        groupCategoryAxisID: axisID,
+        name: categoryName,
+        order: nextOrder++,
+        locationOrders: {},
+        keywords: [],
+        color: null,
+        iconName: null,
+      );
+      await docRef.set(category, SetOptions(merge: true));
+      categoryByName[categoryName] = category;
+    }
+
+    // 4. カテゴリ名ごとに、割り当てられたアイテム名を完全一致キーワードとして追記
+    final itemNamesByCategoryName = <String, List<String>>{};
+    for (final assignment in assignments) {
+      itemNamesByCategoryName
+          .putIfAbsent(assignment.categoryName, () => [])
+          .add(assignment.itemName);
+    }
+    for (final entry in itemNamesByCategoryName.entries) {
+      final docRef = database.categoryReference(
+          categoryAxisID: axisID, categoryID: categoryByName[entry.key]!.id);
+      // 同時編集でキーワードが消えないよう read-modify-write を transaction で行う
+      // （firestore-transaction.md: group 配下の同時書き込み対策）。
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final snapshot = await transaction.get(docRef);
+        final current = snapshot.data();
+        if (current == null) {
+          return;
+        }
+        final existingKeywords =
+            current.keywords.map((keyword) => keyword.keyword).toSet();
+        final addedKeywords = entry.value
+            .where((itemName) => !existingKeywords.contains(itemName))
+            .map((itemName) => GroupCategoryKeyword(
+                  keyword: itemName,
+                  matchingType: GroupCategoryKeywordMatchingType.exact,
+                ));
+        transaction.set(
+          docRef,
+          current.copyWith(keywords: [...current.keywords, ...addedKeywords]),
+          SetOptions(merge: true),
+        );
+      });
+    }
+  }
+}
+
+@Riverpod(dependencies: [groupDatabase])
+AICategorizeApply aiCategorizeApply(Ref ref, {required String groupID}) {
+  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
+  return AICategorizeApply(database: database);
 }

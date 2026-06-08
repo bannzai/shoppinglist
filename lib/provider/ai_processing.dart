@@ -9,6 +9,9 @@ enum AIProcessingType {
 
   /// URL からの抽出。
   url,
+
+  /// 未分類アイテムの AI カテゴリ分け。
+  categorize,
 }
 
 /// 画面横断で「AI 処理中バナー」を表示するためのフラグ。

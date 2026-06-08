@@ -11,6 +11,7 @@ _UserAIUsage _$UserAIUsageFromJson(Map<String, dynamic> json) => _UserAIUsage(
       userID: json['userID'] as String,
       imageRecognitionCount: (json['imageRecognitionCount'] as num).toInt(),
       urlRecognitionCount: (json['urlRecognitionCount'] as num?)?.toInt() ?? 0,
+      categorizeCount: (json['categorizeCount'] as num?)?.toInt() ?? 0,
       serverCreatedDateTime: const ServerCreatedTimestamp()
           .fromJson(json['serverCreatedDateTime']),
       serverUpdatedDateTime: const ServerUpdatedTimestamp()
@@ -23,6 +24,7 @@ Map<String, dynamic> _$UserAIUsageToJson(_UserAIUsage instance) =>
       'userID': instance.userID,
       'imageRecognitionCount': instance.imageRecognitionCount,
       'urlRecognitionCount': instance.urlRecognitionCount,
+      'categorizeCount': instance.categorizeCount,
       'serverCreatedDateTime':
           const ServerCreatedTimestamp().toJson(instance.serverCreatedDateTime),
       'serverUpdatedDateTime':

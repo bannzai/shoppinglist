@@ -37,3 +37,14 @@ int remainingURLRecognitionCount(Ref ref, {required bool isPremium}) {
   final used = aiUsage?.urlRecognitionCount ?? 0;
   return (limit - used).clamp(0, limit);
 }
+
+/// 現在月のAIカテゴリ分けの残り回数を返すProvider。
+@Riverpod(dependencies: [currentMonthAIUsage])
+int remainingCategorizeCount(Ref ref, {required bool isPremium}) {
+  final aiUsage = ref.watch(currentMonthAIUsageProvider).valueOrNull;
+  final limit = isPremium
+      ? premiumMonthlyCategorizeLimit
+      : freeMonthlyCategorizeLimit;
+  final used = aiUsage?.categorizeCount ?? 0;
+  return (limit - used).clamp(0, limit);
+}
