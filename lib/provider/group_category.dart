@@ -242,9 +242,12 @@ class AICategorizeApply {
         .docs
         .map((doc) => doc.data())
         .toList();
-    final categoryByName = {for (final category in existing) category.name: category};
-    var nextOrder =
-        existing.fold<int>(-1, (max, category) => category.order > max ? category.order : max) + 1;
+    final categoryByName = {
+      for (final category in existing) category.name: category
+    };
+    var nextOrder = existing.fold<int>(-1,
+            (max, category) => category.order > max ? category.order : max) +
+        1;
 
     // 3. assignments に登場するカテゴリ名のうち未作成のものを作成
     for (final categoryName in assignments.map((a) => a.categoryName).toSet()) {

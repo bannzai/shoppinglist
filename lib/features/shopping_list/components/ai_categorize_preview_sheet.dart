@@ -144,8 +144,7 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
     analytics.logEvent(
       name: 'confirm_ai_categorize_sheet',
       parameters: {
-        'includedCount':
-            _candidates.where((c) => c.included).length.toString(),
+        'includedCount': _candidates.where((c) => c.included).length.toString(),
       },
     );
     Navigator.pop<List<AICategorizeCandidate>>(context, _candidates);
@@ -165,7 +164,9 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
     // カテゴリ名ごとに候補をまとめる。表示順は _categoryNameOptions に従う。
     final indicesByCategory = <String, List<int>>{};
     for (final (index, candidate) in _candidates.indexed) {
-      indicesByCategory.putIfAbsent(candidate.categoryName, () => []).add(index);
+      indicesByCategory
+          .putIfAbsent(candidate.categoryName, () => [])
+          .add(index);
     }
     final orderedCategoryNames = [
       ..._categoryNameOptions.where(indicesByCategory.containsKey),
@@ -352,9 +353,8 @@ class _CandidateRow extends StatelessWidget {
               candidate.itemName,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: candidate.included ? neutral.ink : neutral.ink3,
-                    decoration: candidate.included
-                        ? null
-                        : TextDecoration.lineThrough,
+                    decoration:
+                        candidate.included ? null : TextDecoration.lineThrough,
                   ),
             ),
           ),

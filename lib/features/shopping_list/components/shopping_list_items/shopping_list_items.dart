@@ -229,8 +229,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
           categories: categories,
         );
 
-        final uncategorizedItems =
-            grouped[uncategorizedCategoryID] ?? const [];
+        final uncategorizedItems = grouped[uncategorizedCategoryID] ?? const [];
         final groupedListView = _GroupedListView(
           groupID: groupID,
           shoppingListID: shoppingListID,

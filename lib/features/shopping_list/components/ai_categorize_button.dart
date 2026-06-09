@@ -117,8 +117,8 @@ class AICategorizeButton extends ConsumerWidget {
             userID: ref.read(currentUserIDProvider)!,
             categoryAxisID: categoryAxisID,
             assignments: included
-                .map((c) =>
-                    (itemName: c.itemName, categoryName: c.categoryName))
+                .map(
+                    (c) => (itemName: c.itemName, categoryName: c.categoryName))
                 .toList(),
           );
       if (context.mounted) {

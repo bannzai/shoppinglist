@@ -42,9 +42,8 @@ int remainingURLRecognitionCount(Ref ref, {required bool isPremium}) {
 @Riverpod(dependencies: [currentMonthAIUsage])
 int remainingCategorizeCount(Ref ref, {required bool isPremium}) {
   final aiUsage = ref.watch(currentMonthAIUsageProvider).valueOrNull;
-  final limit = isPremium
-      ? premiumMonthlyCategorizeLimit
-      : freeMonthlyCategorizeLimit;
+  final limit =
+      isPremium ? premiumMonthlyCategorizeLimit : freeMonthlyCategorizeLimit;
   final used = aiUsage?.categorizeCount ?? 0;
   return (limit - used).clamp(0, limit);
 }
