@@ -48,8 +48,52 @@ void main() {
 
     expect(find.text('りんご'), findsOneWidget);
     expect(find.text('バナナ'), findsOneWidget);
+    // 各候補は編集可能な TextField で表示する。
     expect(find.byType(CheckboxListTile), findsNWidgets(2));
+    expect(find.byType(TextField), findsNWidgets(2));
     // デフォルト全選択のため "2 件追加"。
     expect(find.text('2 件追加'), findsOneWidget);
+  });
+
+  testWidgets('TextField で候補名を編集すると編集後の名前で確定する', (tester) async {
+    // 戻り値を捕捉するため、showAIReviewSheet の結果を保持するホストを pump する。
+    List<AIShoppingListCandidate>? result;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(
+          accent: AccentPreset.shu,
+        ),
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  result = await showAIReviewSheet(
+                    context: context,
+                    rawNames: const ['りんご'],
+                    source: 'test',
+                  );
+                },
+                child: const Text('open'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+
+    // 抽出名を別の表記に書き換える。
+    await tester.enterText(find.byType(TextField), 'あおりんご');
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('1 件追加'));
+    await tester.pumpAndSettle();
+
+    expect(result, isNotNull);
+    expect(result!.length, 1);
+    expect(result!.first.name, 'あおりんご');
+    expect(result!.first.selected, isTrue);
   });
 }
