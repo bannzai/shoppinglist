@@ -8,7 +8,11 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
-Future<void> _pump(WidgetTester tester, {required bool sortByCategory}) async {
+Future<void> _pump(
+  WidgetTester tester, {
+  required bool sortByCategory,
+  bool showChecked = true,
+}) async {
   // ignore: invalid_use_of_visible_for_testing_member
   SharedPreferences.setMockInitialValues({});
   final sharedPreferences = await SharedPreferences.getInstance();
@@ -24,6 +28,7 @@ Future<void> _pump(WidgetTester tester, {required bool sortByCategory}) async {
             groupID: mockGroupID,
             shoppingListID: mockShoppingListID,
             sortByCategory: sortByCategory,
+            showChecked: showChecked,
             shoppingLocationID: null,
           ),
         ),
@@ -66,6 +71,23 @@ void main() {
     testWidgets('カテゴリ表示OFF（フラット・軸あり）ではボタンが出ない', (tester) async {
       await _pump(tester, sortByCategory: false);
       expect(find.textContaining('AIでカテゴリ分け'), findsNothing);
+    });
+  });
+
+  group('ShoppingListItems: チェック済みフィルター', () {
+    // mockShoppingListItems は 牛乳(unchecked)/卵(checked)/食パン(unchecked)。
+    testWidgets('showChecked: true ではチェック済みアイテムも表示される', (tester) async {
+      await _pump(tester, sortByCategory: false, showChecked: true);
+      expect(find.text('牛乳'), findsOneWidget);
+      expect(find.text('卵'), findsOneWidget);
+      expect(find.text('食パン'), findsOneWidget);
+    });
+
+    testWidgets('showChecked: false ではチェック済みアイテムが一覧から消える', (tester) async {
+      await _pump(tester, sortByCategory: false, showChecked: false);
+      expect(find.text('牛乳'), findsOneWidget);
+      expect(find.text('卵'), findsNothing);
+      expect(find.text('食パン'), findsOneWidget);
     });
   });
 }

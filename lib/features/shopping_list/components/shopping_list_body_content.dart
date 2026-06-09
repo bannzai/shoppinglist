@@ -85,6 +85,7 @@ class ShoppingListBodyContent extends StatelessWidget {
             groupID: groupID,
             shoppingListID: shoppingListID,
             sortByCategory: sortByCategory,
+            showChecked: showChecked,
             shoppingLocationID: shoppingList?.shoppingLocationID,
           ),
         ),
