@@ -320,4 +320,79 @@ void main() {
       expect(result.isEmpty, true);
     });
   });
+
+  group('findMatchingCategoryID', () {
+    GroupCategory category({
+      required String id,
+      required int order,
+      required String keyword,
+      required GroupCategoryKeywordMatchingType matchingType,
+    }) =>
+        GroupCategory(
+            id: id,
+            groupID: 'group1',
+            userID: 'user1',
+            groupCategoryAxisID: 'axis1',
+            name: id,
+            order: order,
+            locationOrders: {},
+            keywords: [
+              GroupCategoryKeyword(
+                  keyword: keyword, matchingType: matchingType),
+            ],
+            color: null,
+            iconName: null);
+
+    GroupShoppingListItem item(String message) => GroupShoppingListItem(
+        id: 'item1',
+        groupID: 'group1',
+        shoppingListID: 'list1',
+        userID: 'user1',
+        message: message,
+        order: 0,
+        checkedByUserID: null,
+        color: null,
+        description: null,
+        imageURL: null,
+        lastEditedByUserID: null);
+
+    test('マッチしたカテゴリIDを返す', () {
+      expect(
+        findMatchingCategoryID(
+          item: item('にんじん'),
+          categories: [
+            category(
+                id: 'cat1',
+                order: 0,
+                keyword: 'にんじん',
+                matchingType: GroupCategoryKeywordMatchingType.exact),
+          ],
+        ),
+        'cat1',
+      );
+    });
+
+    test('マッチしない場合は uncategorizedCategoryID', () {
+      expect(
+        findMatchingCategoryID(
+          item: item('牛乳'),
+          categories: [
+            category(
+                id: 'cat1',
+                order: 0,
+                keyword: 'にんじん',
+                matchingType: GroupCategoryKeywordMatchingType.exact),
+          ],
+        ),
+        uncategorizedCategoryID,
+      );
+    });
+
+    test('カテゴリが空なら uncategorizedCategoryID', () {
+      expect(
+        findMatchingCategoryID(item: item('にんじん'), categories: []),
+        uncategorizedCategoryID,
+      );
+    });
+  });
 }
