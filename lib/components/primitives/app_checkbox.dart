@@ -56,7 +56,7 @@ class _AppCheckboxState extends State<AppCheckbox>
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final accent = widget.color ?? tokens.accent;
     return ScaleTransition(
       scale: _scale,

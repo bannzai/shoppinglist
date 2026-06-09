@@ -22,7 +22,7 @@ class GroupListPage extends ConsumerWidget {
     final groupsAsync = ref.watch(userGroupsProvider);
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
 
     // 無料プランで作成上限に達しているか。作成済みグループ(自分がオーナー)が上限+1以上で到達。
@@ -123,7 +123,7 @@ class _GroupCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final profiles =
         ref.watch(groupUserProfilesProvider(groupID: group.id)).asData?.value ??
@@ -265,7 +265,7 @@ class _FreeLimitBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(

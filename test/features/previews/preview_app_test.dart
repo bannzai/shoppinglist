@@ -6,7 +6,7 @@ import 'package:shoppinglist/features/previews/previews_page.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
 void main() {
-  testWidgets('PreviewApp provides AppTokens', (tester) async {
+  testWidgets('PreviewApp provides AppThemeExtension', (tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: PreviewApp(),
@@ -14,7 +14,7 @@ void main() {
     );
 
     final context = tester.element(find.byType(PreviewsPage));
-    final tokens = Theme.of(context).extension<AppTokens>();
+    final tokens = Theme.of(context).extension<AppThemeExtension>();
 
     expect(tokens, isNotNull);
     expect(tokens!.accentPreset, AccentPreset.shu);

@@ -111,7 +111,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
     }, [inputRowFocusRequest]);
 
     final currentUserID = ref.watch(currentUserIDProvider)!;
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final isChecked =
         textShoppingListItem.status == GroupShoppingListItemStatus.checked;
@@ -415,7 +415,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         'itemID': textShoppingListItem.id,
       },
     );
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     await showModalBottomSheet<void>(
       context: context,
       backgroundColor: tokens.neutral.card,
@@ -578,7 +578,7 @@ class _CircleCheckboxState extends State<_CircleCheckbox>
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final disabled = widget.onChanged == null;
     return ScaleTransition(
       scale: _scale,
@@ -629,7 +629,7 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUserID = ref.watch(currentUserIDProvider)!;
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final isChecked =
         textShoppingListItem.status == GroupShoppingListItemStatus.checked;

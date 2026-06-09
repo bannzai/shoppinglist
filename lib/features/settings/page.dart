@@ -90,7 +90,7 @@ class SettingPage extends HookConsumerWidget {
       }
     }
 
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
 
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
@@ -334,7 +334,7 @@ class _PremiumCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
@@ -443,7 +443,7 @@ class _VersionLabelState extends State<_VersionLabel> {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
       child: Text(
@@ -468,7 +468,7 @@ class _SignOutButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: SizedBox(

@@ -125,7 +125,7 @@ class _ShoppingListScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.tokens.neutral.paper,
+      backgroundColor: context.appTheme.neutral.paper,
       floatingActionButton: floatingActionButton,
       body: Retry(
         retry: onRetry,
@@ -187,7 +187,7 @@ class _ActiveShoppingList extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final shoppingList =
         shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID);
 
@@ -374,9 +374,8 @@ class _ActiveShoppingList extends HookConsumerWidget {
                     // 外側 SafeArea が bottom:false のため、ホームインジケータ分を加味する。
                     if (totalCount > 0)
                       Positioned(
-                        left: AppTokens.s16,
-                        bottom: AppTokens.s16 +
-                            MediaQuery.of(context).padding.bottom,
+                        left: 16,
+                        bottom: 16 + MediaQuery.of(context).padding.bottom,
                         child: ProgressPill(
                           checkedCount: checkedCount,
                           totalCount: totalCount,
@@ -401,7 +400,7 @@ class _NoListYet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),

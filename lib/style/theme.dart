@@ -13,7 +13,7 @@ const _tabularFeatures = <FontFeature>[FontFeature.tabularFigures()];
 ThemeData buildAppTheme({
   required AccentPreset accent,
 }) {
-  final tokens = AppTokens.of(accent: accent);
+  final tokens = AppThemeExtension.of(accent: accent);
   final neutral = tokens.neutral;
 
   /// fontFamily を指定せず OS 標準フォントを使う。
@@ -135,7 +135,7 @@ ThemeData buildAppTheme({
     dialogTheme: DialogThemeData(
       backgroundColor: neutral.card,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTokens.radiusSheet),
+        borderRadius: BorderRadius.circular(AppThemeExtension.radiusSheet),
       ),
     ),
     snackBarTheme: SnackBarThemeData(
@@ -143,7 +143,7 @@ ThemeData buildAppTheme({
       contentTextStyle: sans(13, FontWeight.w500, color: neutral.surface),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+        borderRadius: BorderRadius.circular(AppThemeExtension.radiusButton),
       ),
     ),
     dividerTheme:

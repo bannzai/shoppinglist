@@ -13,7 +13,7 @@ class GhostItemRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Opacity(
       opacity: 0.5,
       child: Padding(

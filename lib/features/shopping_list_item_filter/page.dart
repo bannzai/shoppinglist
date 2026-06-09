@@ -24,7 +24,7 @@ class ShoppingListItemFilterPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final hasCategories = ref
         .watch(groupCategoryAxesProvider(groupID: groupID))

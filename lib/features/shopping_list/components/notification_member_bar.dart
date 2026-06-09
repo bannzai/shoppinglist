@@ -35,7 +35,7 @@ class NotificationMemberBar extends HookConsumerWidget {
 
     final sendingUserIDs = useState<Set<String>>({});
     final sentUserIDs = useState<Set<String>>({});
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
 
     final titleText = (shoppingListName != null && shoppingListName!.isNotEmpty)
         ? '「$shoppingListName」が更新されました'

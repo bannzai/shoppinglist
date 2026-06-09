@@ -47,7 +47,7 @@ Future<List<AICategorizeCandidate>?> showAICategorizePreviewSheet({
   return showModalBottomSheet<List<AICategorizeCandidate>>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: context.tokens.neutral.card,
+    backgroundColor: context.appTheme.neutral.card,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
     ),
@@ -126,7 +126,7 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
   Future<void> _pickCategory(int index) async {
     final selected = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: context.tokens.neutral.card,
+      backgroundColor: context.appTheme.neutral.card,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
       ),
@@ -157,7 +157,7 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final includedCount = _candidates.where((c) => c.included).length;
 
@@ -309,7 +309,7 @@ class _CategoryHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 6),
       child: Text(
@@ -337,7 +337,7 @@ class _CandidateRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -413,7 +413,7 @@ class _CategoryPickerSheetState extends State<_CategoryPickerSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     return SafeArea(
       top: false,

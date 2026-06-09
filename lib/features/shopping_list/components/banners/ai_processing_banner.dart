@@ -30,7 +30,7 @@ class _AIProcessingBannerState extends State<AIProcessingBanner>
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final label = switch (widget.type) {
       AIProcessingType.image => '画像から候補を抽出中...',
       AIProcessingType.url => 'URL から候補を抽出中...',

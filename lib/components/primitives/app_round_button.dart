@@ -34,7 +34,7 @@ class AppRoundButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Material(
       color: soft ? tokens.accentSoft : Colors.transparent,
       shape: CircleBorder(

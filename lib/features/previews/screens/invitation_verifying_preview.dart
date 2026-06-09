@@ -27,7 +27,7 @@ class _GroupInvitationVerifyingPreviewState
         barrierColor: Colors.transparent,
         transitionDuration: const Duration(milliseconds: 160),
         pageBuilder: (dialogContext, _, __) {
-          final tokens = dialogContext.tokens;
+          final tokens = dialogContext.appTheme;
           return AppDialogShell(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -66,7 +66,7 @@ class _GroupInvitationVerifyingPreviewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.tokens.neutral.paper,
+      backgroundColor: context.appTheme.neutral.paper,
       appBar: AppBar(title: const Text('Invitation Verifying (Preview)')),
     );
   }

@@ -85,7 +85,7 @@ class LocationPickerPage extends HookConsumerWidget {
       }
     }
 
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
 
     return Scaffold(

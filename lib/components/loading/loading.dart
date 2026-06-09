@@ -65,7 +65,7 @@ class LaunchLoading extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final accent = tokens.accent;
 
     final bounce =

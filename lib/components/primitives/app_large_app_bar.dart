@@ -30,7 +30,7 @@ class AppLargeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final textTheme = Theme.of(context).textTheme;
     return Material(

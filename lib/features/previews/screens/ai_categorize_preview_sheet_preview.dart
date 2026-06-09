@@ -38,7 +38,7 @@ class _AICategorizePreviewSheetPreviewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.tokens.neutral.paper,
+      backgroundColor: context.appTheme.neutral.paper,
       appBar: AppBar(title: const Text('AI Categorize Sheet (Preview)')),
     );
   }

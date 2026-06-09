@@ -21,7 +21,7 @@ class GroupCreatePage extends HookConsumerWidget {
     final errorMessage = useState<String?>(null);
     final selectedIconName = useState<String>('home');
 
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final appUser = ref.watch(appUserProvider).asData?.value;
 
@@ -232,7 +232,7 @@ class _PostCreateInvitationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     return AlertDialog(
       backgroundColor: neutral.card,

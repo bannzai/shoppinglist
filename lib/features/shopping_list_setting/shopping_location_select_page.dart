@@ -25,7 +25,7 @@ class ShoppingLocationSelectPage extends ConsumerWidget {
     final locationsAsync = ref.watch(
       shoppingLocationsProvider(groupID: groupID),
     );
-    final neutral = context.tokens.neutral;
+    final neutral = context.appTheme.neutral;
     return Scaffold(
       backgroundColor: neutral.paper,
       appBar: AppBar(

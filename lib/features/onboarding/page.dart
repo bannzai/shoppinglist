@@ -21,7 +21,7 @@ class OnboardingPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final controller = usePageController();
     final index = useState(0);
 
@@ -136,7 +136,7 @@ class _SlideContent {
   final String title;
   final String body;
   final String assetPath;
-  final Widget Function(AppTokens tokens) fallbackBuilder;
+  final Widget Function(AppThemeExtension tokens) fallbackBuilder;
   const _SlideContent({
     required this.eyebrowIndex,
     required this.title,
@@ -152,7 +152,7 @@ class _OnboardingSlide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -210,7 +210,7 @@ class _OnboardingSlide extends StatelessWidget {
 
 /// スライド 1: 傾いた買い物リスト風カード（accent ボーダー + 行）。
 class _TiltedListArt extends StatelessWidget {
-  final AppTokens tokens;
+  final AppThemeExtension tokens;
   const _TiltedListArt({required this.tokens});
 
   @override
@@ -294,7 +294,7 @@ class _TiltedListArt extends StatelessWidget {
 
 /// スライド 2: dashed orbit 上に 3 つのアバター。
 class _AvatarOrbitArt extends StatelessWidget {
-  final AppTokens tokens;
+  final AppThemeExtension tokens;
   const _AvatarOrbitArt({required this.tokens});
 
   @override
@@ -369,7 +369,7 @@ class _AvatarOrbitArt extends StatelessWidget {
 
 /// スライド 3: SVG ライクな地図 + 中央 pin の halo パルス。
 class _MapHaloArt extends StatefulWidget {
-  final AppTokens tokens;
+  final AppThemeExtension tokens;
   const _MapHaloArt({required this.tokens});
 
   @override
@@ -507,7 +507,7 @@ class _DotsIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
