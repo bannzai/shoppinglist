@@ -39,7 +39,7 @@ class InvitationCodeDialog extends HookWidget {
       return timer.cancel;
     }, const []);
 
-    final neutral = context.tokens.neutral;
+    final neutral = context.appTheme.neutral;
     final remaining = expiresDateTime.difference(now.value);
     final isExpired = remaining.isNegative;
     final remainingText = isExpired

@@ -26,7 +26,7 @@ class _SignOutDialogPreviewState extends State<SignOutDialogPreview> {
         barrierColor: Colors.transparent,
         transitionDuration: const Duration(milliseconds: 160),
         pageBuilder: (dialogContext, _, __) {
-          final tokens = dialogContext.tokens;
+          final tokens = dialogContext.appTheme;
           return AppDialogShell(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -77,7 +77,7 @@ class _SignOutDialogPreviewState extends State<SignOutDialogPreview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.tokens.neutral.paper,
+      backgroundColor: context.appTheme.neutral.paper,
       appBar: AppBar(title: const Text('SignOut Dialog (Preview)')),
     );
   }

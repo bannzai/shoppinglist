@@ -36,7 +36,7 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 8),
       children: [
@@ -103,7 +103,7 @@ class _StarterRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -141,7 +141,7 @@ class _HintLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Padding(
       padding: const EdgeInsets.only(top: 2),
       child: Text(

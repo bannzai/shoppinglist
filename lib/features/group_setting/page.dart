@@ -57,7 +57,7 @@ class _PaperScaffold extends StatelessWidget {
   const _PaperScaffold({required this.child});
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
       appBar: AppBar(
@@ -90,7 +90,7 @@ class _GroupSettingBody extends HookConsumerWidget {
     final isCreatingInvitation = useState(false);
     final isRemovingMember = useState(false);
 
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
 
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
@@ -157,7 +157,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                       trailing: (isOwner && !isProfileOwner)
                           ? IconButton(
                               icon: Icon(Icons.remove_circle,
-                                  color: context.tokens.neutral.danger),
+                                  color: context.appTheme.neutral.danger),
                               onPressed: isRemovingMember.value
                                   ? null
                                   : () {
@@ -329,7 +329,7 @@ class _GroupSettingBody extends HookConsumerWidget {
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
-                  ?.copyWith(color: context.tokens.neutral.danger),
+                  ?.copyWith(color: context.appTheme.neutral.danger),
             ),
           ),
           TextButton(

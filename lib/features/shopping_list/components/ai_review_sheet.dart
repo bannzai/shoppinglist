@@ -48,7 +48,7 @@ Future<List<AIShoppingListCandidate>?> showAIReviewSheet({
   return showModalBottomSheet<List<AIShoppingListCandidate>>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: context.tokens.neutral.card,
+    backgroundColor: context.appTheme.neutral.card,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
     ),
@@ -138,7 +138,7 @@ class _AIReviewSheetState extends State<_AIReviewSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final selectedCount = _candidates.where((c) => c.selected).length;
     return DraggableScrollableSheet(

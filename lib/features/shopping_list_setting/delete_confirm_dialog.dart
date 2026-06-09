@@ -33,7 +33,7 @@ class DeleteConfirmDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final neutral = context.tokens.neutral;
+    final neutral = context.appTheme.neutral;
     return AppDialogShell(
       child: Column(
         mainAxisSize: MainAxisSize.min,

@@ -16,7 +16,7 @@ class ListErrorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Center(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),

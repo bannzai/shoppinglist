@@ -31,7 +31,7 @@ class _AIReviewSheetPreviewState extends State<AIReviewSheetPreview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.tokens.neutral.paper,
+      backgroundColor: context.appTheme.neutral.paper,
       appBar: AppBar(title: const Text('AI Review Sheet (Preview)')),
     );
   }

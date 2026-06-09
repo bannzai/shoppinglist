@@ -186,10 +186,10 @@ enum AccentPreset {
 }
 
 /// アプリ全体で参照するデザイントークン。
-/// `Theme.of(context).extension<AppTokens>()!` で取得できる。
+/// `Theme.of(context).extension<AppThemeExtension>()!` で取得できる。
 /// neutral 色 / アクセント / cardShadow をまとめて持つ。
-/// spacing と radius は static 定数として提供する。
-class AppTokens extends ThemeExtension<AppTokens> {
+/// radius は static 定数として提供する。
+class AppThemeExtension extends ThemeExtension<AppThemeExtension> {
   /// 選択されているアクセントプリセット。
   final AccentPreset accentPreset;
 
@@ -199,7 +199,7 @@ class AppTokens extends ThemeExtension<AppTokens> {
   /// `t.shadow` 相当のカード用 BoxShadow リスト（フローティング要素のみに使う）。
   final List<BoxShadow> cardShadow;
 
-  const AppTokens({
+  const AppThemeExtension({
     required this.accentPreset,
     required this.neutral,
     required this.cardShadow,
@@ -213,20 +213,6 @@ class AppTokens extends ThemeExtension<AppTokens> {
 
   /// accentInk（accentSoft 上に乗せる濃文字色）。
   Color get accentInk => accentPreset.inkLight;
-
-  /// スペーシングスケール。`design_handoff_shopping_list/source/styles.css` の Padding scale と一致。
-  static const s2 = 2.0;
-  static const s4 = 4.0;
-  static const s6 = 6.0;
-  static const s8 = 8.0;
-  static const s10 = 10.0;
-  static const s12 = 12.0;
-  static const s14 = 14.0;
-  static const s16 = 16.0;
-  static const s18 = 18.0;
-  static const s20 = 20.0;
-  static const s24 = 24.0;
-  static const s32 = 32.0;
 
   /// pill / chip 用。
   static const radiusPill = 999.0;
@@ -255,12 +241,12 @@ class AppTokens extends ThemeExtension<AppTokens> {
     BoxShadow(color: Color(0x0A1B1813), offset: Offset(0, 6), blurRadius: 18),
   ];
 
-  /// accent から AppTokens を組み立てる。
+  /// accent から AppThemeExtension を組み立てる。
   /// neutral と cardShadow はライトモード固定。
-  factory AppTokens.of({
+  factory AppThemeExtension.of({
     required AccentPreset accent,
   }) {
-    return AppTokens(
+    return AppThemeExtension(
       accentPreset: accent,
       neutral: AppNeutralColors.light,
       cardShadow: shadowLight,
@@ -268,16 +254,17 @@ class AppTokens extends ThemeExtension<AppTokens> {
   }
 
   @override
-  AppTokens copyWith({AccentPreset? accentPreset}) => AppTokens.of(
+  AppThemeExtension copyWith({AccentPreset? accentPreset}) =>
+      AppThemeExtension.of(
         accent: accentPreset ?? this.accentPreset,
       );
 
   @override
-  AppTokens lerp(ThemeExtension<AppTokens>? other, double t) {
-    if (other is! AppTokens) {
+  AppThemeExtension lerp(ThemeExtension<AppThemeExtension>? other, double t) {
+    if (other is! AppThemeExtension) {
       return this;
     }
-    return AppTokens(
+    return AppThemeExtension(
       accentPreset: t < 0.5 ? accentPreset : other.accentPreset,
       neutral: neutral.lerp(other.neutral, t),
       cardShadow: t < 0.5 ? cardShadow : other.cardShadow,
@@ -285,8 +272,9 @@ class AppTokens extends ThemeExtension<AppTokens> {
   }
 }
 
-/// `context.tokens` で `Theme.of(context).extension<AppTokens>()!` を取得する糖衣。
+/// `context.appTheme` で `Theme.of(context).extension<AppThemeExtension>()!` を取得する糖衣。
 /// `buildAppTheme` 経由で構築された ThemeData の下でのみ使用すること。
-extension AppTokensX on BuildContext {
-  AppTokens get tokens => Theme.of(this).extension<AppTokens>()!;
+extension AppThemeExtensionX on BuildContext {
+  AppThemeExtension get appTheme =>
+      Theme.of(this).extension<AppThemeExtension>()!;
 }

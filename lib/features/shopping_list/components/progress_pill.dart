@@ -20,17 +20,17 @@ class ProgressPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppTokens.s12,
-        vertical: AppTokens.s6,
+        horizontal: 12,
+        vertical: 6,
       ),
       decoration: BoxDecoration(
         color: neutral.card,
-        borderRadius: BorderRadius.circular(AppTokens.radiusPill),
+        borderRadius: BorderRadius.circular(AppThemeExtension.radiusPill),
         border: Border.all(color: neutral.divider),
         boxShadow: tokens.cardShadow,
       ),

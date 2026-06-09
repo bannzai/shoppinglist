@@ -19,7 +19,7 @@ class AppDialogShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final size = MediaQuery.of(context).size;
     return BackdropFilter(

@@ -35,7 +35,7 @@ class ListPickerSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     // フィールドは null promotion が効かないため、コールバックで `appUser.id` を
     // 参照できるよう final ローカルに束ねる。
     final appUser = this.appUser;
@@ -152,7 +152,7 @@ class _AddListRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -187,7 +187,7 @@ class _ListPickerRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return InkWell(
       onTap: onTap,
       child: Padding(

@@ -39,7 +39,7 @@ class ListTopBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final appUser = ref.watch(appUserProvider).asData?.value;
 
     return SizedBox(

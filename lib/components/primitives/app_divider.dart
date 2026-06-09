@@ -17,7 +17,7 @@ class AppDivider extends StatelessWidget {
       padding: EdgeInsets.only(left: inset),
       child: Container(
         height: 0.5,
-        color: context.tokens.neutral.divider,
+        color: context.appTheme.neutral.divider,
       ),
     );
   }

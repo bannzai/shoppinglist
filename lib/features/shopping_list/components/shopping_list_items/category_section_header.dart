@@ -25,7 +25,7 @@ class CategorySectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final dot = colorHex != null ? colorFromHex(colorHex!) : neutral.ink3;
     return Container(

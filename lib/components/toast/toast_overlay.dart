@@ -73,9 +73,9 @@ class _ToastFrame extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Material(
-        color: context.tokens.neutral.ink,
+        color: context.appTheme.neutral.ink,
         elevation: 6,
-        borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+        borderRadius: BorderRadius.circular(AppThemeExtension.radiusButton),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: child,
@@ -98,7 +98,7 @@ class ToastTextContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onInk = context.tokens.neutral.surface;
+    final onInk = context.appTheme.neutral.surface;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
