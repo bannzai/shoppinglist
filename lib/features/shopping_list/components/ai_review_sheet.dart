@@ -7,7 +7,7 @@ import 'package:shoppinglist/utils/logger/analytics.dart';
 /// `design_handoff_shoppinglist/preview/widgets-and-micro.jsx#MicroAIProgress` の
 /// 「NEW バッジ候補リスト」相当。レビュー画面で選択を切り替えて add する。
 class AIShoppingListCandidate {
-  /// 抽出されたアイテム名。
+  /// 抽出されたアイテム名。レビュー画面の TextField で編集できる。
   final String name;
 
   /// レビュー画面でユーザーが選択しているか。
@@ -18,8 +18,11 @@ class AIShoppingListCandidate {
     required this.selected,
   });
 
-  AIShoppingListCandidate copyWith({bool? selected}) =>
-      AIShoppingListCandidate(name: name, selected: selected ?? this.selected);
+  AIShoppingListCandidate copyWith({String? name, bool? selected}) =>
+      AIShoppingListCandidate(
+        name: name ?? this.name,
+        selected: selected ?? this.selected,
+      );
 }
 
 /// AI で抽出した候補を「追加前にレビュー」する Bottom Sheet を表示する。
@@ -68,6 +71,10 @@ class _AIReviewSheet extends StatefulWidget {
 class _AIReviewSheetState extends State<_AIReviewSheet> {
   late List<AIShoppingListCandidate> _candidates;
 
+  /// 各候補のアイテム名を編集するための TextEditingController。
+  /// `_candidates` と同じ index で対応する。
+  late List<TextEditingController> _nameControllers;
+
   @override
   void initState() {
     super.initState();
@@ -79,6 +86,17 @@ class _AIReviewSheetState extends State<_AIReviewSheet> {
     _candidates = distinct
         .map((name) => AIShoppingListCandidate(name: name, selected: true))
         .toList();
+    _nameControllers = _candidates
+        .map((c) => TextEditingController(text: c.name))
+        .toList();
+  }
+
+  @override
+  void dispose() {
+    for (final controller in _nameControllers) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   void _toggle(int index) {
@@ -96,14 +114,19 @@ class _AIReviewSheetState extends State<_AIReviewSheet> {
   }
 
   void _confirm() {
+    // TextField で編集された名前を反映し、空になった候補は除外して返す。
+    final reviewed = [
+      for (final (index, c) in _candidates.indexed)
+        c.copyWith(name: _nameControllers[index].text.trim()),
+    ].where((c) => c.name.isNotEmpty).toList();
     analytics.logEvent(
       name: 'confirm_ai_review_sheet',
       parameters: {
         'source': widget.source,
-        'selectedCount': _candidates.where((c) => c.selected).length.toString(),
+        'selectedCount': reviewed.where((c) => c.selected).length.toString(),
       },
     );
-    Navigator.pop<List<AIShoppingListCandidate>>(context, _candidates);
+    Navigator.pop<List<AIShoppingListCandidate>>(context, reviewed);
   }
 
   void _cancel() {
@@ -207,7 +230,30 @@ class _AIReviewSheetState extends State<_AIReviewSheet> {
                         return CheckboxListTile(
                           value: c.selected,
                           onChanged: (_) => _toggle(index),
-                          title: Text(c.name),
+                          title: TextField(
+                            controller: _nameControllers[index],
+                            maxLines: 1,
+                            textInputAction: TextInputAction.done,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.copyWith(color: neutral.ink),
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.zero,
+                              isCollapsed: true,
+                            ),
+                            cursorColor: tokens.accent,
+                            onSubmitted: (_) {
+                              analytics.logEvent(
+                                name: 'edit_ai_review_candidate',
+                                parameters: {
+                                  'source': widget.source,
+                                  'index': index.toString(),
+                                },
+                              );
+                            },
+                          ),
                           activeColor: tokens.accent,
                           controlAffinity: ListTileControlAffinity.leading,
                         );
