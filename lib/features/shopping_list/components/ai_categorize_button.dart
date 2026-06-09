@@ -37,7 +37,8 @@ class AICategorizeButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+      // リスト先頭のカテゴリセクションと密着しないよう下側に余白を確保する。
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
       child: AppPill(
         label: 'AIでカテゴリ分け（${uncategorizedItems.length}件）',
         icon: Icons.auto_fix_high,
