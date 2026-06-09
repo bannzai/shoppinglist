@@ -33,7 +33,7 @@ Map<String, List<GroupShoppingListItem>> groupItemsByCategory({
   final Map<String, List<GroupShoppingListItem>> grouped = {};
 
   for (final item in items) {
-    final categoryID = _findMatchingCategoryID(
+    final categoryID = findMatchingCategoryID(
       item: item,
       categories: categories,
     );
@@ -44,7 +44,8 @@ Map<String, List<GroupShoppingListItem>> groupItemsByCategory({
 }
 
 /// アイテムにマッチするカテゴリのIDを返す。マッチしない場合はuncategorizedCategoryID。
-String _findMatchingCategoryID({
+/// 複数カテゴリにマッチした場合はcategories先頭（order最小）のカテゴリを優先する。
+String findMatchingCategoryID({
   required GroupShoppingListItem item,
   required List<GroupCategory> categories,
 }) {

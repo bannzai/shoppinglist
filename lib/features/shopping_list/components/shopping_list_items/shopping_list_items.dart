@@ -46,6 +46,11 @@ class ShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final bool sortByCategory;
+
+  /// チェック済みアイテムを一覧に表示するか。
+  /// false のときは textShoppingListItemsProvider が status==unchecked に絞り込む。
+  final bool showChecked;
+
   final String? shoppingLocationID;
 
   const ShoppingListItems({
@@ -53,6 +58,7 @@ class ShoppingListItems extends ConsumerWidget {
     required this.groupID,
     required this.shoppingListID,
     required this.sortByCategory,
+    required this.showChecked,
     required this.shoppingLocationID,
   });
 
@@ -62,7 +68,7 @@ class ShoppingListItems extends ConsumerWidget {
             .watch(textShoppingListItemsProvider(
                 groupID: groupID,
                 shoppingListID: shoppingListID,
-                showChecked: true))
+                showChecked: showChecked))
             .valueOrNull ??
         [];
     // 入力行用 GlobalKey マップから、もう存在しない id を掃除する。

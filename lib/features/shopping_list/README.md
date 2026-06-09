@@ -48,3 +48,28 @@
 - バックエンド: `firebase/functions/src/functions/categorizeShoppingListItems/`
 - 利用回数: `lib/entity/ai_usage.dart` / `lib/provider/ai_usage.dart`（`remainingCategorizeCount`）
 - プレビュー（UI検証）: `lib/features/previews/screens/ai_categorize_preview_sheet_preview.dart`
+
+## 入力行と空行のライフサイクル
+入力行は `message=''` の `GroupShoppingListItem` ドキュメント。テキストはローカルの
+`TextEditingController` に保持し、Enter（改行）で確定して別アイテムに保存する。
+
+- 空行はフォーカスが外れた時に削除する（`text_shopping_list_item.dart` の FocusNode listener）。
+  常駐する空入力行は残さない。
+- フォーカス喪失時、入力途中のテキストがあれば確定保存する（空なら行を削除）。
+- 連続入力（Enter連打）中は入力行にフォーカスが残るためキーボードは閉じず、空行も消えない
+  （キーボード維持は fix-350 の設計を踏襲）。
+- 再入力は FAB（`expandable_fab.dart`：タップで空行追加→auto-focus）または空状態のスターター行から。
+
+## チェック済みフィルター
+`FilterChipsBar` の「チェック済み表示/非表示」は `showChecked`（bool）を
+`ShoppingListBodyContent → ShoppingListItems` と渡し、`textShoppingListItemsProvider` の
+クエリ（`status==unchecked` 絞り込み）に反映する。
+
+## アイテム詳細からのカテゴリ確認・編集
+アイテム詳細シート（`text_shopping_list_item_detail_bottom_sheet.dart`）に、先頭軸
+（`groupCategoryAxes.first`）で `findMatchingCategoryID`（`category_matcher.dart`）により判定した
+現在の分類カテゴリを表示する。
+
+- マッチ時:「カテゴリを編集」→ そのカテゴリの `GroupCategoryEditPage` へ遷移。
+- 未分類時:「カテゴリを管理」→ `GroupCategoryPage`（一覧）へ遷移（キーワード追加で分類されるようになる）。
+- 軸が無い（カテゴリ機能未使用）ときはカテゴリ行を表示しない。
