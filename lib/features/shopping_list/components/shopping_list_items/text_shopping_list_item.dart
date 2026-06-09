@@ -51,16 +51,12 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         useTextEditingController(text: textShoppingListItem.message);
     final isEditing = useState(false);
 
-    // listener は useEffect([]) で 1 度だけ登録され、初回 build の textShoppingListItem に
-    // 固定される。フォーカス喪失時の確定/削除判定には最新の item が必要なので、build ごとに
-    // ref を更新して listener から最新値を読めるようにする。
-    final latestItem = useRef(textShoppingListItem);
-    latestItem.value = textShoppingListItem;
-
     // 初回に空行(入力行)へフォーカスし、フォーカスの有無を isEditing に同期する。加えて、
     // フォーカスが外れた瞬間に「入力途中テキストの確定 or 空行の削除」を行い、常駐する空入力行を
     // 残さない。依存配列は空 — FocusNode のライフサイクルに listener を 1 度だけ登録するため。
-    // 最新の item は latestItem 経由で参照する(クロージャを初回値に固定しない)。
+    // listener が参照する textShoppingListItem は初回 build 値に固定されるが、削除に使う
+    // id/shoppingListID は不変で、確定比較が古い message を見ても起きるのは冪等な再更新だけ
+    // なので問題ない。
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (textShoppingListItem.message.isEmpty) {
@@ -72,22 +68,22 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         if (focusNode.hasFocus) {
           return;
         }
-        final item = latestItem.value;
         final text = textEditingController.text.trim();
         if (text.isEmpty) {
           // 空のままフォーカスが外れた行は削除する(入力行・既存問わず中身がないので残さない)。
           // Backspace 削除と同じく一時行の掃除なので物理削除する。
           ref
               .read(groupDatabaseProvider(groupID: groupID))
-              .shoppingListItemsReference(shoppingListID: item.shoppingListID)
-              .doc(item.id)
+              .shoppingListItemsReference(
+                  shoppingListID: textShoppingListItem.shoppingListID)
+              .doc(textShoppingListItem.id)
               .delete();
-        } else if (text != item.message) {
+        } else if (text != textShoppingListItem.message) {
           // 入力/編集途中のテキストをフォーカス喪失時に確定保存する。Enter 確定が走った直後は
           // message==text となりこの分岐は skip される(二重更新を避ける)。
           ref.read(updateShoppingListItemProvider(groupID: groupID)).call(
-                shoppingListID: item.shoppingListID,
-                item: item.copyWith(message: text),
+                shoppingListID: textShoppingListItem.shoppingListID,
+                item: textShoppingListItem.copyWith(message: text),
                 editedByUserID: ref.read(currentUserIDProvider)!,
               );
         }
