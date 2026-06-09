@@ -86,9 +86,8 @@ class _AIReviewSheetState extends State<_AIReviewSheet> {
     _candidates = distinct
         .map((name) => AIShoppingListCandidate(name: name, selected: true))
         .toList();
-    _nameControllers = _candidates
-        .map((c) => TextEditingController(text: c.name))
-        .toList();
+    _nameControllers =
+        _candidates.map((c) => TextEditingController(text: c.name)).toList();
   }
 
   @override
