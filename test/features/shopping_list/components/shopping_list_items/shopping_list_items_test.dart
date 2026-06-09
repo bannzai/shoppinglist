@@ -55,4 +55,17 @@ void main() {
       );
     });
   });
+
+  group('ShoppingListItems: AIカテゴリ分けボタン', () {
+    // mockCategories はキーワードが空なので、全アイテムが「未分類」になる。
+    testWidgets('カテゴリ表示時、未分類アイテムがあればボタンが出る', (tester) async {
+      await _pump(tester, sortByCategory: true);
+      expect(find.textContaining('AIでカテゴリ分け'), findsOneWidget);
+    });
+
+    testWidgets('カテゴリ表示OFF（フラット・軸あり）ではボタンが出ない', (tester) async {
+      await _pump(tester, sortByCategory: false);
+      expect(find.textContaining('AIでカテゴリ分け'), findsNothing);
+    });
+  });
 }

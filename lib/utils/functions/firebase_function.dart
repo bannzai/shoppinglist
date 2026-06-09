@@ -90,6 +90,36 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     return list.map((e) => e.toString()).toList();
   }
 
+  /// 未分類の買い物アイテムを AI でカテゴリに分類する。
+  /// アイテムにカテゴリIDは持たせず、(アイテム名, カテゴリ名) の対応のみを返す。
+  /// 永続化（キーワード追記・カテゴリ作成）はクライアント側で行う。
+  Future<List<({String name, String categoryName})>>
+      categorizeShoppingListItems({
+    required List<String> itemNames,
+    required List<String> existingCategoryNames,
+  }) async {
+    final result = await httpsCallable('categorizeShoppingListItems').call(
+      {
+        'itemNames': itemNames,
+        'existingCategoryNames': existingCategoryNames,
+      },
+    );
+    debugPrint('categorizeShoppingListItems.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+
+    final list = response['data']['categorizedItems'] as List<dynamic>;
+    return list.map((e) {
+      final map = mapToJSON(e as Map);
+      return (
+        name: map['name'].toString(),
+        categoryName: map['categoryName'].toString(),
+      );
+    }).toList();
+  }
+
   /// グループから指定したメンバーを削除する。
   Future<void> removeGroupMember({
     required String groupID,

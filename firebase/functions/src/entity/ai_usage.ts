@@ -8,6 +8,8 @@ export interface UserAIUsageData {
   imageRecognitionCount: number;
   /** URLからの買い物リスト生成の利用回数 */
   urlRecognitionCount?: number;
+  /** AIカテゴリ分けの利用回数 */
+  categorizeCount?: number;
   /** サーバー側の作成日時 */
   serverCreatedDateTime?: FirebaseFirestore.Timestamp;
   /** サーバー側の更新日時 */
