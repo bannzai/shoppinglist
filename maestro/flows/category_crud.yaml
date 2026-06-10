@@ -74,7 +74,7 @@ appId: com.bannzai.shoppinglist
 - assertVisible: "にんじん"
 
 # カテゴリヘッダー「野菜」が表示されることを確認
-# sortByCategory はデフォルトで true なのでトグル不要。Firestoreデータ同期待ち
+# カテゴリ表示は常時ON固定（Issue #373）。Firestoreデータ同期待ち
 - extendedWaitUntil:
     visible: "野菜"
     timeout: 10000
