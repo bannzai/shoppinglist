@@ -65,6 +65,16 @@
 切り替えUI（`FilterChipsBar` / フィルター画面）は Issue #373 で廃止した。
 `textShoppingListItemsProvider` は常に全件（チェック済み含む）を返す。
 
+## カテゴリ内の並び替え
+カテゴリ表示時は、各カテゴリ（および未分類）セクションごとに独立した `SliverReorderableList`
+を並べ、行の **長押しドラッグでそのセクション内だけ並び替え** できる（`ReorderableDragStartListener`
+が最寄りの `SliverReorderableList` を解決するため、カテゴリをまたぐ移動は構造上発生しない）。
+並び替えは `category_matcher.dart` の `reorderedSectionItems` で、当該セクションのアイテムが持つ
+`order` 値の多重集合を保ったまま新しい並びへ再割り当てし、`shoppingListItemBatchUpdateProvider`
+で永続化する。これにより他カテゴリの順序は不変のまま、当該カテゴリ内の並びだけが変わる。
+フラット表示（`_FlatShoppingListItems`、カテゴリ軸なし）は従来どおり全体を `ReorderableList`
+で並び替える。
+
 ## アイテム詳細からのカテゴリ確認・編集
 アイテム詳細シート（`text_shopping_list_item_detail_bottom_sheet.dart`）に、先頭軸
 （`groupCategoryAxes.first`）で `findMatchingCategoryID`（`category_matcher.dart`）により判定した
