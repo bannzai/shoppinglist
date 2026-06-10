@@ -312,7 +312,11 @@ class _CategoryEditBody extends HookConsumerWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              Row(
+              // チップ3つ + ラベルは AlertDialog の幅に収まらないため Wrap で折り返す
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                runSpacing: 8,
                 children: [
                   const Text('マッチング: '),
                   ChoiceChip(
@@ -334,7 +338,6 @@ class _CategoryEditBody extends HookConsumerWidget {
                       }
                     },
                   ),
-                  const SizedBox(width: 8),
                   ChoiceChip(
                     label: const Text('完全一致'),
                     selected: selectedMatchingType ==
@@ -354,7 +357,6 @@ class _CategoryEditBody extends HookConsumerWidget {
                       }
                     },
                   ),
-                  const SizedBox(width: 8),
                   ChoiceChip(
                     label: const Text('正規表現'),
                     selected: selectedMatchingType ==
