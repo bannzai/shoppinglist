@@ -6,6 +6,7 @@ import 'package:shoppinglist/entity/ai_usage.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/expandable_fab.dart';
+import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/ai_usage.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -46,8 +47,20 @@ class _RecordingAddShoppingListItem extends AddShoppingListItem {
   }
 }
 
+/// AI 処理中状態を固定する `AIProcessing` の差し替え用。
+class _ProcessingAIProcessing extends AIProcessing {
+  final AIProcessingType type;
+  _ProcessingAIProcessing(this.type);
+
+  @override
+  AIProcessingType? build() => type;
+}
+
 void main() {
-  Future<_RecordingAddShoppingListItem> pumpFab(WidgetTester tester) async {
+  Future<_RecordingAddShoppingListItem> pumpFab(
+    WidgetTester tester, {
+    AIProcessingType? aiProcessingType,
+  }) async {
     final recordingAdd = _RecordingAddShoppingListItem();
     await tester.pumpWidget(
       ProviderScope(
@@ -59,6 +72,9 @@ void main() {
           currentUserIDProvider.overrideWithValue('u'),
           addShoppingListItemProvider(groupID: 'g')
               .overrideWith((ref) => recordingAdd),
+          if (aiProcessingType != null)
+            aIProcessingProvider
+                .overrideWith(() => _ProcessingAIProcessing(aiProcessingType)),
         ],
         child: MaterialApp(
           theme: buildAppTheme(
@@ -126,5 +142,32 @@ void main() {
     await tester.pump();
 
     expect(recordingAdd.callCount, 1);
+  });
+
+  testWidgets('AI 処理中は「写真から追加」をタップしてもダイアログが開かない', (tester) async {
+    await pumpFab(tester, aiProcessingType: AIProcessingType.categorize);
+
+    await tester.longPress(find.byType(FloatingActionButton));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.photo_camera_outlined));
+    await tester.pumpAndSettle();
+
+    // onTap が null（無効）なので _showImagePicker は走らず、画像選択ダイアログは開かない。
+    expect(find.text('カメラ'), findsNothing);
+    expect(find.text('フォトライブラリ'), findsNothing);
+  });
+
+  testWidgets('AI 処理中は「URL から追加」をタップしてもダイアログが開かない', (tester) async {
+    await pumpFab(tester, aiProcessingType: AIProcessingType.categorize);
+
+    await tester.longPress(find.byType(FloatingActionButton));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.link));
+    await tester.pumpAndSettle();
+
+    // onTap が null（無効）なので _showURLInputDialog は走らず、URL 入力ダイアログは開かない。
+    expect(find.text('URLから買い物リストを生成'), findsNothing);
   });
 }
