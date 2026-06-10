@@ -388,7 +388,9 @@ class _PremiumCard extends ConsumerWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  isPremium ? 'すべての機能が利用できます' : '5 色テーマ・AI 無制限など',
+                  isPremium
+                      ? 'すべての機能が利用できます'
+                      : '5 色テーマ・画像/URL読み取り回数アップなど',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         color: isPremium
                             ? Colors.white.withValues(alpha: 0.85)

@@ -40,7 +40,7 @@ class AICategorizeButton extends ConsumerWidget {
       // リスト先頭のカテゴリセクションと密着しないよう下側に余白を確保する。
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
       child: AppPill(
-        label: 'AIでカテゴリ分け（${uncategorizedItems.length}件）',
+        label: '自動でカテゴリ分け（${uncategorizedItems.length}件）',
         icon: Icons.auto_fix_high,
         variant: AppPillVariant.accent,
         expanded: true,
@@ -67,7 +67,7 @@ class AICategorizeButton extends ConsumerWidget {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         persist: false,
         content: Text(
-            'AIカテゴリ分けの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyCategorizeLimit回まで利用できます'}'),
+            '自動カテゴリ分けの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyCategorizeLimit回まで利用できます'}'),
         action: isPremium
             ? null
             : SnackBarAction(
