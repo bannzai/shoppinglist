@@ -239,10 +239,11 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
           categories: categories,
         );
 
-        // 入力中の空行(message が空)はカテゴリ分け対象にならないため、ボタンの表示判定と件数から除外する。
+        // 入力中の空行(message が空) や空白のみのアイテムはカテゴリ分け対象にならないため、
+        // ボタンの表示判定と件数から除外する。
         final uncategorizedItems = (grouped[uncategorizedCategoryID] ??
                 const [])
-            .where((item) => item.message.isNotEmpty)
+            .where((item) => item.message.trim().isNotEmpty)
             .toList();
         final groupedListView = _GroupedListView(
           groupID: groupID,
