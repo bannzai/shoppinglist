@@ -50,23 +50,16 @@ EdgeInsets _listBottomPadding(BuildContext context) => EdgeInsets.only(
       bottom: MediaQuery.of(context).padding.bottom + 200,
     );
 
+/// 買い物リストのアイテム一覧。カテゴリ軸があればカテゴリ別グルーピング、無ければフラット表示する。
 class ShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
-  final bool sortByCategory;
-
-  /// チェック済みアイテムを一覧に表示するか。
-  /// false のときは textShoppingListItemsProvider が status==unchecked に絞り込む。
-  final bool showChecked;
-
   final String? shoppingLocationID;
 
   const ShoppingListItems({
     super.key,
     required this.groupID,
     required this.shoppingListID,
-    required this.sortByCategory,
-    required this.showChecked,
     required this.shoppingLocationID,
   });
 
@@ -74,22 +67,20 @@ class ShoppingListItems extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final shoppingListItems = ref
             .watch(textShoppingListItemsProvider(
-                groupID: groupID,
-                shoppingListID: shoppingListID,
-                showChecked: showChecked))
+                groupID: groupID, shoppingListID: shoppingListID))
             .valueOrNull ??
         [];
     final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
 
     return axesAsync.when(
       data: (axes) {
-        if (axes.isEmpty || !sortByCategory) {
+        if (axes.isEmpty) {
           return _FlatShoppingListItems(
             groupID: groupID,
             shoppingListID: shoppingListID,
             shoppingListItems: shoppingListItems,
-            // 軸が無くカテゴリ表示が有効なときだけ、AIにカテゴリ作成から任せるボタンを出す。
-            showCategorizeButton: axes.isEmpty && sortByCategory,
+            // 軸が無いときは、AIにカテゴリ作成から任せるボタンを出す。
+            showCategorizeButton: true,
             categoryAxisID: null,
             existingCategoryNames: const [],
           );

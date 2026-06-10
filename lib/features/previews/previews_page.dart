@@ -13,7 +13,6 @@ import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/previews/screens/ai_categorize_preview_sheet_preview.dart';
 import 'package:shoppinglist/features/previews/screens/ai_review_sheet_preview.dart';
 import 'package:shoppinglist/features/previews/screens/invitation_verifying_preview.dart';
-import 'package:shoppinglist/features/previews/screens/shopping_list_item_filter_preview.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_preview.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_setting_preview.dart';
 import 'package:shoppinglist/features/previews/screens/sign_out_dialog_preview.dart';
@@ -83,10 +82,6 @@ final _previewEntries = <_PreviewEntry>[
       categoryAxisID: mockCategoryAxisID,
       categoryID: mockCategoryID,
     ),
-  ),
-  _PreviewEntry(
-    title: 'ShoppingListItemFilterPage',
-    builder: (_) => const ShoppingListItemFilterPreview(),
   ),
   _PreviewEntry(
     title: 'ShoppingListSettingPage',

@@ -316,23 +316,13 @@ List<Override> previewProviderOverrides({
     // 買い物リスト
     shoppingListsProvider(groupID: mockGroupID, isPremium: false)
         .overrideWith((ref) => Stream.value(mockShoppingLists())),
-    // showChecked: true と false 両方をoverride
     textShoppingListItemsProvider(
       groupID: mockGroupID,
       shoppingListID: mockShoppingListID,
-      showChecked: true,
     ).overrideWith((ref) => Stream.value(mockShoppingListItems())),
     textShoppingListItemsProvider(
       groupID: mockGroupID,
-      shoppingListID: mockShoppingListID,
-      showChecked: false,
-    ).overrideWith((ref) => Stream.value(mockShoppingListItems()
-        .where((e) => e.status == GroupShoppingListItemStatus.unchecked)
-        .toList())),
-    textShoppingListItemsProvider(
-      groupID: mockGroupID,
       shoppingListID: mockShoppingListID2,
-      showChecked: true,
     ).overrideWith((ref) => Stream.value(mockShoppingListItems())),
 
     // カテゴリ

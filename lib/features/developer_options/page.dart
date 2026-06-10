@@ -120,7 +120,6 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
         ? ref.watch(textShoppingListItemsProvider(
             groupID: defaultGroupID,
             shoppingListID: firstShoppingListID,
-            showChecked: false,
           ))
         : null;
     final items = itemsAsync?.asData?.value ?? <GroupShoppingListItem>[];

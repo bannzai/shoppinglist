@@ -8,7 +8,7 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 /// ShoppingListPage のメインコンテンツ部分。
-/// アイテムが空（かつ完了済みも表示する状態）のときは [EmptyTextShoppingListItems] を表示し、
+/// アイテムが空のときは [EmptyTextShoppingListItems] を表示し、
 /// それ以外では複製元リストへのリンク（複製で作られたリストのときのみ）と [ShoppingListItems] を表示する。
 class ShoppingListBodyContent extends StatelessWidget {
   final String groupID;
@@ -16,8 +16,6 @@ class ShoppingListBodyContent extends StatelessWidget {
   final List<GroupShoppingList> shoppingLists;
   final GroupShoppingList? shoppingList;
   final List<GroupShoppingListItem> shoppingListItems;
-  final bool showChecked;
-  final bool sortByCategory;
   final void Function(String newID) onShoppingListIDChanged;
 
   const ShoppingListBodyContent({
@@ -27,16 +25,13 @@ class ShoppingListBodyContent extends StatelessWidget {
     required this.shoppingLists,
     required this.shoppingList,
     required this.shoppingListItems,
-    required this.showChecked,
-    required this.sortByCategory,
     required this.onShoppingListIDChanged,
   });
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.appTheme;
-    final isEmpty = shoppingListItems.isEmpty;
-    if (showChecked && isEmpty) {
+    if (shoppingListItems.isEmpty) {
       return EmptyTextShoppingListItems(
         groupID: groupID,
         shoppingListID: shoppingListID,
@@ -84,8 +79,6 @@ class ShoppingListBodyContent extends StatelessWidget {
           child: ShoppingListItems(
             groupID: groupID,
             shoppingListID: shoppingListID,
-            sortByCategory: sortByCategory,
-            showChecked: showChecked,
             shoppingLocationID: shoppingList?.shoppingLocationID,
           ),
         ),

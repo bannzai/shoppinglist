@@ -20,8 +20,7 @@
 ### 表示条件
 `shopping_list_items.dart` で、未分類アイテムが1件以上あるときボタンを表示する。
 - 入力中の空行（`message` が空のアイテム）は表示条件・件数カウントから除外する。
-- カテゴリ未作成（フラット表示）でも、カテゴリ表示が有効なら表示する（AIがカテゴリ自体を新規作成）。
-- カテゴリ表示OFF（`sortByCategory == false`）のときは表示しない。
+- カテゴリ未作成（フラット表示）でも表示する（AIがカテゴリ自体を新規作成）。
 
 ### フロー
 1. ボタンをタップ。当月の残回数が0なら SnackBar（無料ユーザーはアップグレード導線）を出して終了。
@@ -61,10 +60,10 @@
   （キーボード維持は fix-350 の設計を踏襲）。
 - 再入力は FAB（`expandable_fab.dart`：タップで空行追加→auto-focus）または空状態のスターター行から。
 
-## チェック済みフィルター
-`FilterChipsBar` の「チェック済み表示/非表示」は `showChecked`（bool）を
-`ShoppingListBodyContent → ShoppingListItems` と渡し、`textShoppingListItemsProvider` の
-クエリ（`status==unchecked` 絞り込み）に反映する。
+## チェック済み・カテゴリ表示の固定（Issue #373）
+チェック済みアイテムは常に表示し、カテゴリ軸があれば常にカテゴリ順で表示する。
+切り替えUI（`FilterChipsBar` / フィルター画面）は Issue #373 で廃止した。
+`textShoppingListItemsProvider` は常に全件（チェック済み含む）を返す。
 
 ## アイテム詳細からのカテゴリ確認・編集
 アイテム詳細シート（`text_shopping_list_item_detail_bottom_sheet.dart`）に、先頭軸

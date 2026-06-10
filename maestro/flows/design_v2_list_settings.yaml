@@ -90,16 +90,3 @@ appId: com.bannzai.shoppinglist
     text: "キャンセル"
     optional: true
 - waitForAnimationToEnd
-
-# フィルター画面 (リスト top bar からのアクセスでも可)
-- back
-- tapOn:
-    text: "フィルター"
-    optional: true
-- waitForAnimationToEnd
-- assertVisible:
-    text: "チェック済みを表示する"
-    optional: true
-- assertVisible:
-    text: "カテゴリ順で表示する"
-    optional: true

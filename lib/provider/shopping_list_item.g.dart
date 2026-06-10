@@ -7,7 +7,7 @@ part of 'shopping_list_item.dart';
 // **************************************************************************
 
 String _$textShoppingListItemsHash() =>
-    r'd26df9c9516204a1724030165b0997975c5a7741';
+    r'41d5a6447fdffdbea87bfd829b907e20465a5e22';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,26 +30,32 @@ class _SystemHash {
   }
 }
 
-/// See also [textShoppingListItems].
+/// 買い物リストのアイテム一覧(チェック済み含む全件)を order 昇順で購読する。
+///
+/// Copied from [textShoppingListItems].
 @ProviderFor(textShoppingListItems)
 const textShoppingListItemsProvider = TextShoppingListItemsFamily();
 
-/// See also [textShoppingListItems].
+/// 買い物リストのアイテム一覧(チェック済み含む全件)を order 昇順で購読する。
+///
+/// Copied from [textShoppingListItems].
 class TextShoppingListItemsFamily
     extends Family<AsyncValue<List<GroupShoppingListItem>>> {
-  /// See also [textShoppingListItems].
+  /// 買い物リストのアイテム一覧(チェック済み含む全件)を order 昇順で購読する。
+  ///
+  /// Copied from [textShoppingListItems].
   const TextShoppingListItemsFamily();
 
-  /// See also [textShoppingListItems].
+  /// 買い物リストのアイテム一覧(チェック済み含む全件)を order 昇順で購読する。
+  ///
+  /// Copied from [textShoppingListItems].
   TextShoppingListItemsProvider call({
     required String groupID,
     required String shoppingListID,
-    required bool showChecked,
   }) {
     return TextShoppingListItemsProvider(
       groupID: groupID,
       shoppingListID: shoppingListID,
-      showChecked: showChecked,
     );
   }
 
@@ -60,7 +66,6 @@ class TextShoppingListItemsFamily
     return call(
       groupID: provider.groupID,
       shoppingListID: provider.shoppingListID,
-      showChecked: provider.showChecked,
     );
   }
 
@@ -85,20 +90,22 @@ class TextShoppingListItemsFamily
   String? get name => r'textShoppingListItemsProvider';
 }
 
-/// See also [textShoppingListItems].
+/// 買い物リストのアイテム一覧(チェック済み含む全件)を order 昇順で購読する。
+///
+/// Copied from [textShoppingListItems].
 class TextShoppingListItemsProvider
     extends AutoDisposeStreamProvider<List<GroupShoppingListItem>> {
-  /// See also [textShoppingListItems].
+  /// 買い物リストのアイテム一覧(チェック済み含む全件)を order 昇順で購読する。
+  ///
+  /// Copied from [textShoppingListItems].
   TextShoppingListItemsProvider({
     required String groupID,
     required String shoppingListID,
-    required bool showChecked,
   }) : this._internal(
           (ref) => textShoppingListItems(
             ref as TextShoppingListItemsRef,
             groupID: groupID,
             shoppingListID: shoppingListID,
-            showChecked: showChecked,
           ),
           from: textShoppingListItemsProvider,
           name: r'textShoppingListItemsProvider',
@@ -111,7 +118,6 @@ class TextShoppingListItemsProvider
               TextShoppingListItemsFamily._allTransitiveDependencies,
           groupID: groupID,
           shoppingListID: shoppingListID,
-          showChecked: showChecked,
         );
 
   TextShoppingListItemsProvider._internal(
@@ -123,12 +129,10 @@ class TextShoppingListItemsProvider
     required super.from,
     required this.groupID,
     required this.shoppingListID,
-    required this.showChecked,
   }) : super.internal();
 
   final String groupID;
   final String shoppingListID;
-  final bool showChecked;
 
   @override
   Override overrideWith(
@@ -147,7 +151,6 @@ class TextShoppingListItemsProvider
         debugGetCreateSourceHash: null,
         groupID: groupID,
         shoppingListID: shoppingListID,
-        showChecked: showChecked,
       ),
     );
   }
@@ -162,8 +165,7 @@ class TextShoppingListItemsProvider
   bool operator ==(Object other) {
     return other is TextShoppingListItemsProvider &&
         other.groupID == groupID &&
-        other.shoppingListID == shoppingListID &&
-        other.showChecked == showChecked;
+        other.shoppingListID == shoppingListID;
   }
 
   @override
@@ -171,7 +173,6 @@ class TextShoppingListItemsProvider
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, groupID.hashCode);
     hash = _SystemHash.combine(hash, shoppingListID.hashCode);
-    hash = _SystemHash.combine(hash, showChecked.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -186,9 +187,6 @@ mixin TextShoppingListItemsRef
 
   /// The parameter `shoppingListID` of this provider.
   String get shoppingListID;
-
-  /// The parameter `showChecked` of this provider.
-  bool get showChecked;
 }
 
 class _TextShoppingListItemsProviderElement
@@ -201,8 +199,6 @@ class _TextShoppingListItemsProviderElement
   @override
   String get shoppingListID =>
       (origin as TextShoppingListItemsProvider).shoppingListID;
-  @override
-  bool get showChecked => (origin as TextShoppingListItemsProvider).showChecked;
 }
 
 String _$addShoppingListItemHash() =>

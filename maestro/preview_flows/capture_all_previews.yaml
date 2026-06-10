@@ -128,16 +128,6 @@ appId: com.bannzai.shoppinglist
     end: "90%,50%"
 - waitForAnimationToEnd
 
-# 12. ShoppingListItemFilterPage
-- assertVisible: "Previews"
-- tapOn: "ShoppingListItemFilterPage"
-- waitForAnimationToEnd
-- takeScreenshot: screenshots/12_shopping_list_item_filter_page
-- swipe:
-    start: "1%,50%"
-    end: "90%,50%"
-- waitForAnimationToEnd
-
 # 13. ShoppingListSettingPage
 - assertVisible: "Previews"
 - tapOn: "ShoppingListSettingPage"
