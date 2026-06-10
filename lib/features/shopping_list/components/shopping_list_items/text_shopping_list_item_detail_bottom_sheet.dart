@@ -337,11 +337,9 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                           Navigator.pop(context);
                         }
                       } catch (e) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(e.toString())),
-                          );
-                        }
+                        // シート上の SnackBar は背後の Scaffold に描画されて
+                        // 見えないため、前面に出るグローバルトーストで通知する。
+                        showGlobalToast(e.toString(), title: null);
                       } finally {
                         isSavingImage.value = false;
                       }
@@ -560,17 +558,13 @@ class _PhotoSection extends HookConsumerWidget {
       analytics.logEvent(
           name: 'tap_item_photo_non_premium',
           parameters: {'groupID': groupID, 'itemID': itemID});
+      // シートが閉じられた後でもアクションからペイウォールを開けるよう、
+      // 生存し続ける root Navigator の context を束ねておく。
       final paywallContext = Navigator.of(context, rootNavigator: true).context;
-      showGlobalToastWidget(
-        ToastActionContent(
-          message: '商品写真の添付はプレミアム機能です',
-          actionLabel: 'アップグレード',
-          onAction: () {
-            dismissGlobalToast();
-            showPaywall(context: paywallContext);
-          },
-        ),
-        identity: 'item_photo_non_premium',
+      showGlobalActionToast(
+        message: '商品写真の添付はプレミアム機能です',
+        actionLabel: 'アップグレード',
+        onAction: () => showPaywall(context: paywallContext),
       );
       return;
     }

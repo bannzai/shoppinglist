@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/entity/ai_usage.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
@@ -544,10 +545,10 @@ class _URLInputDialog extends HookConsumerWidget {
                     'shoppingListID': shoppingListID,
                   });
                   final normalizedURL = urlController.text.trim();
+                  // ダイアログ上の SnackBar は背後の Scaffold に描画されて
+                  // 見えないため、前面に出るグローバルトーストで通知する。
                   if (normalizedURL.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('URLを入力してください')),
-                    );
+                    showGlobalToast('URLを入力してください', title: null);
                     return;
                   }
                   final parsedURL = Uri.tryParse(normalizedURL);
@@ -555,9 +556,7 @@ class _URLInputDialog extends HookConsumerWidget {
                       parsedURL.scheme != 'https' ||
                       parsedURL.host.isEmpty ||
                       parsedURL.userInfo.isNotEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('有効なHTTPS URLを入力してください')),
-                    );
+                    showGlobalToast('有効なHTTPS URLを入力してください', title: null);
                     return;
                   }
                   isLoading.value = true;
@@ -570,11 +569,7 @@ class _URLInputDialog extends HookConsumerWidget {
                       url: normalizedURL,
                     );
                   } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(e.toString())),
-                      );
-                    }
+                    showGlobalToast(e.toString(), title: null);
                     return;
                   } finally {
                     if (context.mounted) {

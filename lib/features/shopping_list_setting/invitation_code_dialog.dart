@@ -6,6 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shoppinglist/components/dashed_border_box.dart';
 import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
+import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -104,11 +105,9 @@ class InvitationCodeDialog extends HookWidget {
                     await Clipboard.setData(
                       ClipboardData(text: invitationCode),
                     );
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('招待コードをコピーしました')),
-                      );
-                    }
+                    // ダイアログ上の SnackBar は背後の Scaffold に描画されて
+                    // 見えないため、前面に出るグローバルトーストで通知する。
+                    showGlobalToast('招待コードをコピーしました', title: null);
                   },
                 ),
               ),
