@@ -2,21 +2,16 @@ appId: com.bannzai.shoppinglist
 ---
 # PR-3 List Core の検証:
 # - i-7 (左スワイプ削除) / i-8 (右スワイプチェック切替) を assert
-# - 長押し context menu (複製 / メモを追加 / 削除) が出ることを assert
 # - FAB から空行追加 → 連続入力ができることを確認
+#
+# NOTE: 以前あったアイテム長押し context menu(複製/メモ/削除)は、長押しが並び替え
+# ドラッグと競合するため廃止した。削除は左スワイプで行う。
 
 - runFlow: shared/anonymous_sign_in.yaml
 
-# 初期はリスト空。FAB をタップして展開する。
-- tapOn:
-    id: "expandable_fab"
-    optional: true
-- waitForAnimationToEnd
-
-# 空行追加 (FAB 内のメニューが無くても TextField から開始できる場合あり)
-- tapOn:
-    text: "アイテムを追加"
-    optional: true
+# 初期はリスト空。空の入力行(「タップで入力開始」)をタップして連続入力する。
+# design v2 では「アイテムを追加」FAB ではなく空入力行が追加導線。
+- tapOn: "タップで入力開始"
 - inputText: "牛乳"
 - pressKey: enter
 - inputText: "卵"
@@ -27,15 +22,12 @@ appId: com.bannzai.shoppinglist
 - assertVisible: "牛乳"
 - assertVisible: "卵"
 
-# 長押しで context menu 表示
-- longPressOn: "牛乳"
-- waitForAnimationToEnd
-- assertVisible: "複製"
-- assertVisible: "メモを追加"
-- assertVisible: "削除"
-
-# 「削除」をタップ → 牛乳が消える
-- tapOn: "削除"
+# 左スワイプで削除 (i-7) → 牛乳が消える。
+# 行幅いっぱい(右端→左端)にスワイプして Dismissible の削除閾値(幅の40%)を超える。
+# 左寄せテキスト基準の direction:LEFT だと移動距離が足りず閾値未満で snap back する。
+- swipe:
+    start: "88%, 21%"
+    end: "8%, 21%"
 - waitForAnimationToEnd
 - assertNotVisible: "牛乳"
 
