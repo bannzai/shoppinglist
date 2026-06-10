@@ -303,6 +303,7 @@ class _CategoryEditBody extends HookConsumerWidget {
           title: const Text('キーワードを追加'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextField(
                 controller: keywordController,
@@ -311,72 +312,54 @@ class _CategoryEditBody extends HookConsumerWidget {
                   hintText: 'キーワードを入力',
                 ),
               ),
-              const SizedBox(height: 16),
-              // チップ3つ + ラベルは AlertDialog の幅に収まらないため Wrap で折り返す
-              Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  const Text('マッチング: '),
-                  ChoiceChip(
-                    label: const Text('部分一致'),
-                    selected: selectedMatchingType ==
-                        GroupCategoryKeywordMatchingType.partial,
-                    onSelected: (selected) {
-                      if (selected) {
-                        analytics.logEvent(
-                            name: 'select_match_partial',
-                            parameters: {
-                              'groupID': groupID,
-                              'categoryID': category.id
-                            });
-                        setState(() {
-                          selectedMatchingType =
-                              GroupCategoryKeywordMatchingType.partial;
-                        });
-                      }
-                    },
-                  ),
-                  ChoiceChip(
-                    label: const Text('完全一致'),
-                    selected: selectedMatchingType ==
-                        GroupCategoryKeywordMatchingType.exact,
-                    onSelected: (selected) {
-                      if (selected) {
-                        analytics.logEvent(
-                            name: 'select_match_exact',
-                            parameters: {
-                              'groupID': groupID,
-                              'categoryID': category.id
-                            });
-                        setState(() {
-                          selectedMatchingType =
-                              GroupCategoryKeywordMatchingType.exact;
-                        });
-                      }
-                    },
-                  ),
-                  ChoiceChip(
-                    label: const Text('正規表現'),
-                    selected: selectedMatchingType ==
-                        GroupCategoryKeywordMatchingType.regex,
-                    onSelected: (selected) {
-                      if (selected) {
-                        analytics.logEvent(
-                            name: 'select_match_regex',
-                            parameters: {
-                              'groupID': groupID,
-                              'categoryID': category.id
-                            });
-                        setState(() {
-                          selectedMatchingType =
-                              GroupCategoryKeywordMatchingType.regex;
-                        });
-                      }
-                    },
-                  ),
-                ],
+              const SizedBox(height: 24),
+              Text(
+                'マッチング',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 8),
+              // 部分一致/完全一致/正規表現は排他的な3択なので、関連選択肢を
+              // 1コントロールにまとめた SegmentedButton で均等配置する。
+              SizedBox(
+                width: double.infinity,
+                child: SegmentedButton<GroupCategoryKeywordMatchingType>(
+                  segments: const [
+                    ButtonSegment(
+                      value: GroupCategoryKeywordMatchingType.partial,
+                      label: Text('部分一致'),
+                    ),
+                    ButtonSegment(
+                      value: GroupCategoryKeywordMatchingType.exact,
+                      label: Text('完全一致'),
+                    ),
+                    ButtonSegment(
+                      value: GroupCategoryKeywordMatchingType.regex,
+                      label: Text('正規表現'),
+                    ),
+                  ],
+                  selected: {selectedMatchingType},
+                  showSelectedIcon: false,
+                  onSelectionChanged: (selected) {
+                    final matchingType = selected.first;
+                    analytics.logEvent(
+                      name: switch (matchingType) {
+                        GroupCategoryKeywordMatchingType.partial =>
+                          'select_match_partial',
+                        GroupCategoryKeywordMatchingType.exact =>
+                          'select_match_exact',
+                        GroupCategoryKeywordMatchingType.regex =>
+                          'select_match_regex',
+                      },
+                      parameters: {
+                        'groupID': groupID,
+                        'categoryID': category.id,
+                      },
+                    );
+                    setState(() {
+                      selectedMatchingType = matchingType;
+                    });
+                  },
+                ),
               ),
             ],
           ),
