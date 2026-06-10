@@ -561,11 +561,16 @@ class _PhotoSection extends HookConsumerWidget {
           name: 'tap_item_photo_non_premium',
           parameters: {'groupID': groupID, 'itemID': itemID});
       final paywallContext = Navigator.of(context, rootNavigator: true).context;
-      showForegroundActionToast(
-        context: context,
-        message: '商品写真の添付はプレミアム機能です',
-        actionLabel: 'アップグレード',
-        onAction: () => showPaywall(context: paywallContext),
+      showGlobalToastWidget(
+        ToastActionContent(
+          message: '商品写真の添付はプレミアム機能です',
+          actionLabel: 'アップグレード',
+          onAction: () {
+            dismissGlobalToast();
+            showPaywall(context: paywallContext);
+          },
+        ),
+        identity: 'item_photo_non_premium',
       );
       return;
     }

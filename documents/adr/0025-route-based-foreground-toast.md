@@ -1,4 +1,4 @@
-# 0025. モーダル前面通知に route ベースのトーストを使う
+# 0025. グローバルトーストを route ベースで前面表示する
 
 ## Status
 Accepted
@@ -12,16 +12,16 @@ Accepted
 iOS Simulator の検証で確認された。一方で `showDialog` のような route はシート前面に表示される。
 
 ## Decision
-ボトムシートやダイアログの表示中にユーザー操作から動的に出す通知には、`PopupRoute` ベースの
-前面トーストを使う。
+ボトムシートやダイアログの表示中にユーザー操作から動的に出す通知も、既存の
+`showGlobalToast` / `showGlobalToastWidget` を入口にする。
 
-既存の `ToastOverlay` と `showGlobalToast` はアプリ横断の通常通知として残し、モーダル前面表示が
-必要な箇所は `showForegroundToastWidget` / `showForegroundActionToast` を使い分ける。
+`toastProvider` は引き続き表示内容・自動消滅・identity による重複抑止を管理し、`ToastOverlay` は
+その state を監視して root Navigator の最前面へトースト用 route を積む。これにより、呼び出し側は
+通知の表示先を意識せず、既存のグローバルトースト API を使い続けられる。
 
 ## Consequences
 モーダルやボトムシートを閉じずに、通知を確実に前面へ表示できる。SnackBar と同じ短時間通知の
 見た目を維持しつつ、アップグレードなどのアクションも載せられる。
 
-一方で前面通知は Navigator に route を積むため、通常のグローバルトーストとはライフサイクルが
-異なる。今後モーダル前面通知を追加する場合は、既存の `showGlobalToast` ではなく前面用 API を
-選ぶ必要がある。
+一方で表示層は Navigator に route を積むため、root Navigator key が初期化されていることが前提に
+なる。`ToastOverlay` は `MaterialApp.builder` 内に常駐させ、provider state と route を同期する。

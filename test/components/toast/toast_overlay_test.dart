@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
+import 'package:shoppinglist/provider/app_navigator_key.dart';
 import 'package:shoppinglist/provider/app_provider_container.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -21,6 +22,7 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: MaterialApp(
+          navigatorKey: appNavigatorKey,
           theme: buildAppTheme(accent: AccentPreset.shu),
           home: const Scaffold(body: Stack(children: [ToastOverlay()])),
         ),
@@ -34,7 +36,8 @@ void main() {
     expect(find.text('保存しました'), findsNothing);
 
     showGlobalToast('保存しました', title: '完了');
-    await tester.pump(); // state 反映
+    await tester.pump(); // state 反映と route 同期予約
+    await tester.pump(); // route push
     await tester.pump(const Duration(milliseconds: 250)); // 表示アニメーション
     expect(find.text('保存しました'), findsOneWidget);
     expect(find.text('完了'), findsOneWidget);
@@ -49,10 +52,12 @@ void main() {
 
     showGlobalToast('古いメッセージ', title: null);
     await tester.pump();
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 250));
     expect(find.text('古いメッセージ'), findsOneWidget);
 
     showGlobalToast('新しいメッセージ', title: null);
+    await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 250));
     expect(find.text('新しいメッセージ'), findsOneWidget);
@@ -68,10 +73,12 @@ void main() {
 
     showGlobalToast('メッセージ', title: null);
     await tester.pump();
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 250));
     expect(find.text('メッセージ'), findsOneWidget);
 
     dismissGlobalToast();
+    await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 250));
     expect(find.text('メッセージ'), findsNothing);

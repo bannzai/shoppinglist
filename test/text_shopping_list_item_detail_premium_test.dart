@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item_detail_bottom_sheet.dart';
+import 'package:shoppinglist/provider/app_navigator_key.dart';
+import 'package:shoppinglist/provider/app_provider_container.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/style/theme.dart';
@@ -64,22 +67,34 @@ GroupShoppingListItem _testItem() => const GroupShoppingListItem(
     );
 
 Future<void> _pumpSheet(WidgetTester tester, {required bool premium}) async {
+  final container = ProviderContainer(
+    overrides: [
+      currentUserIDProvider.overrideWithValue(_testUserID),
+      // カテゴリ軸を空にしてカテゴリセクションを省略し、写真セクションのみ検証する。
+      groupCategoryAxesProvider(groupID: _testGroupID)
+          .overrideWith((ref) => Stream.value(const <GroupCategoryAxis>[])),
+      customerInfoProvider.overrideWith(
+          (ref) => Stream.value(_FakeCustomerInfo(premium: premium))),
+    ],
+  );
+  addTearDown(container.dispose);
+  appProviderContainer = container;
+
   await tester.pumpWidget(
-    ProviderScope(
-      overrides: [
-        currentUserIDProvider.overrideWithValue(_testUserID),
-        // カテゴリ軸を空にしてカテゴリセクションを省略し、写真セクションのみ検証する。
-        groupCategoryAxesProvider(groupID: _testGroupID)
-            .overrideWith((ref) => Stream.value(const <GroupCategoryAxis>[])),
-        customerInfoProvider.overrideWith(
-            (ref) => Stream.value(_FakeCustomerInfo(premium: premium))),
-      ],
+    UncontrolledProviderScope(
+      container: container,
       child: MaterialApp(
+        navigatorKey: appNavigatorKey,
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
-          body: TextShoppingListItemDetailBottomSheet(
-            groupID: _testGroupID,
-            textShoppingListItem: _testItem(),
+          body: Stack(
+            children: [
+              TextShoppingListItemDetailBottomSheet(
+                groupID: _testGroupID,
+                textShoppingListItem: _testItem(),
+              ),
+              const ToastOverlay(),
+            ],
           ),
         ),
       ),
@@ -103,11 +118,18 @@ void main() {
 
       await tester.tap(find.text('写真を追加'));
       await tester.pump();
+      await tester.pump();
       await tester.pump(const Duration(milliseconds: 220));
 
       expect(find.text('商品写真の添付はプレミアム機能です'), findsOneWidget);
       expect(find.text('アップグレード'), findsOneWidget);
       expect(find.byType(SnackBar), findsNothing);
+
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pump();
+
+      expect(find.text('商品写真の添付はプレミアム機能です'), findsNothing);
+      expect(find.text('アップグレード'), findsNothing);
     });
 
     testWidgets('プレミアムユーザーの「写真を追加」には王冠マークが表示されない', (WidgetTester tester) async {

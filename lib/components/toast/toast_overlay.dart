@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/provider/app_navigator_key.dart';
 import 'package:shoppinglist/provider/app_provider_container.dart';
 import 'package:shoppinglist/provider/toast.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -33,72 +34,78 @@ void dismissGlobalToast() {
   appProviderContainer.read(toastProvider.notifier).dismiss();
 }
 
-/// モーダル/ボトムシートの前面に route としてトーストを表示する。
+/// `toastProvider` を監視し、root Navigator の最前面へトースト route を積む。
 ///
-/// `MaterialApp.builder` 上の [ToastOverlay] は既存のグローバル通知用に残し、
-/// シート表示中にユーザー操作から動的に出す通知は route 化して確実に前面へ積む。
-void showForegroundToastWidget(
-  BuildContext context,
-  WidgetBuilder builder, {
-  Duration duration = const Duration(seconds: 5),
-}) {
-  final route = _ForegroundToastRoute(builder: builder, duration: duration);
-  unawaited(Navigator.of(context, rootNavigator: true).push(route));
-}
-
-/// アクション付きの前面トーストを表示する。
-void showForegroundActionToast({
-  required BuildContext context,
-  required String message,
-  required String actionLabel,
-  required VoidCallback onAction,
-  Duration duration = const Duration(seconds: 5),
-}) {
-  showForegroundToastWidget(
-    context,
-    (toastContext) => ToastActionContent(
-      message: message,
-      actionLabel: actionLabel,
-      onAction: () {
-        Navigator.of(toastContext).pop();
-        onAction();
-      },
-    ),
-    duration: duration,
-  );
-}
-
-/// `MaterialApp.builder` の `Stack` に常駐し、グローバルトーストを描画する。
-/// ルートが `Positioned` なので **`Stack` の直接の子** として配置すること。
-///
-/// モーダル/ボトムシートの表示中にユーザー操作から動的に出す通知は、
-/// route として前面に積む [showForegroundToastWidget] を使う。
-class ToastOverlay extends ConsumerWidget {
+/// 表示内容・自動消滅・identity による重複抑止は既存どおり [toastProvider] が管理する。
+/// この Widget は provider state を最前面 route に同期する表示層に徹する。
+class ToastOverlay extends ConsumerStatefulWidget {
   const ToastOverlay({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Positioned(
-      left: 0,
-      right: 0,
-      bottom: 0,
-      child: SafeArea(
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 220),
-          transitionBuilder: (child, animation) => FadeTransition(
-            opacity: animation,
-            child: SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0, 0.25),
-                end: Offset.zero,
-              ).animate(animation),
-              child: child,
-            ),
-          ),
-          child: ref.watch(toastProvider) ?? const SizedBox.shrink(),
-        ),
-      ),
+  ConsumerState<ToastOverlay> createState() => _ToastOverlayState();
+}
+
+class _ToastOverlayState extends ConsumerState<ToastOverlay> {
+  ProviderSubscription<Widget?>? _subscription;
+  _GlobalToastRoute? _route;
+
+  @override
+  void initState() {
+    super.initState();
+    _subscription = ref.listenManual<Widget?>(
+      toastProvider,
+      (_, next) => _syncRoute(next),
+      fireImmediately: true,
     );
+  }
+
+  @override
+  void dispose() {
+    _subscription?.close();
+    _removeRoute();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox.shrink();
+  }
+
+  void _syncRoute(Widget? content) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      if (content == null) {
+        _removeRoute();
+        return;
+      }
+
+      final navigator = appNavigatorKey.currentState;
+      if (navigator == null) {
+        return;
+      }
+
+      _removeRoute();
+      final route = _GlobalToastRoute(child: content);
+      _route = route;
+      unawaited(
+        navigator.push(route).whenComplete(() {
+          if (identical(_route, route)) {
+            _route = null;
+          }
+        }),
+      );
+    });
+  }
+
+  void _removeRoute() {
+    final route = _route;
+    if (route == null) {
+      return;
+    }
+    _route = null;
+    route.remove();
   }
 }
 
@@ -124,50 +131,17 @@ class _ToastFrame extends StatelessWidget {
   }
 }
 
-class _ForegroundToastRoute extends PopupRoute<void> {
-  final WidgetBuilder builder;
-  final Duration duration;
-  Timer? _timer;
+class _GlobalToastRoute extends OverlayRoute<void> {
+  final Widget child;
 
-  _ForegroundToastRoute({required this.builder, required this.duration});
+  _GlobalToastRoute({required this.child});
 
   @override
-  bool get barrierDismissible => false;
-
-  @override
-  Color? get barrierColor => null;
-
-  @override
-  String? get barrierLabel => null;
-
-  @override
-  Duration get transitionDuration => const Duration(milliseconds: 220);
-
-  @override
-  Duration get reverseTransitionDuration => const Duration(milliseconds: 160);
-
-  @override
-  void install() {
-    super.install();
-    _timer = Timer(duration, () {
-      if (isActive) {
-        navigator?.removeRoute(this);
-      }
-    });
+  Iterable<OverlayEntry> createOverlayEntries() {
+    return [OverlayEntry(builder: _buildOverlay)];
   }
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget buildPage(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-  ) {
+  Widget _buildOverlay(BuildContext context) {
     return SafeArea(
       child: Stack(
         children: [
@@ -175,30 +149,15 @@ class _ForegroundToastRoute extends PopupRoute<void> {
             left: 0,
             right: 0,
             bottom: 0,
-            child: _ToastFrame(child: builder(context)),
+            child: child,
           ),
         ],
       ),
     );
   }
 
-  @override
-  Widget buildTransitions(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
-    return FadeTransition(
-      opacity: animation,
-      child: SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, 0.25),
-          end: Offset.zero,
-        ).animate(animation),
-        child: child,
-      ),
-    );
+  void remove() {
+    navigator?.removeRoute(this);
   }
 }
 
