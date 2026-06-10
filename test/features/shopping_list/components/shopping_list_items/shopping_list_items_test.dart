@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/previews/mock/mock_provider_overrides.dart';
+import 'package:shoppinglist/features/shopping_list/components/ai_categorize_button.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_items.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
@@ -129,27 +130,30 @@ void main() {
     // mockCategories はキーワードが空なので、全アイテムが「未分類」になる。
     testWidgets('カテゴリ表示時、未分類アイテムがあればボタンが出る', (tester) async {
       await _pump(tester, sortByCategory: true);
-      expect(find.textContaining('自動でカテゴリ分け'), findsOneWidget);
+      expect(find.byType(AICategorizeButton), findsOneWidget);
     });
 
     testWidgets('カテゴリ表示OFF（フラット・軸あり）ではボタンが出ない', (tester) async {
       await _pump(tester, sortByCategory: false);
-      expect(find.textContaining('自動でカテゴリ分け'), findsNothing);
+      expect(find.byType(AICategorizeButton), findsNothing);
     });
 
     testWidgets('入力中の空行のみのときはボタンが出ない', (tester) async {
       await _pumpWithItems(tester, items: [
         _item(id: 'input-row-001', message: '', order: 0),
       ]);
-      expect(find.textContaining('自動でカテゴリ分け'), findsNothing);
+      expect(find.byType(AICategorizeButton), findsNothing);
     });
 
-    testWidgets('入力中の空行は件数カウントから除外される', (tester) async {
+    testWidgets('入力中の空行と空白のみのアイテムは件数カウントから除外される', (tester) async {
       await _pumpWithItems(tester, items: [
         _item(id: 'confirmed-001', message: '牛乳', order: 0),
         _item(id: 'input-row-001', message: '', order: 1),
+        _item(id: 'whitespace-001', message: '   ', order: 2),
       ]);
-      expect(find.text('自動でカテゴリ分け（1件）'), findsOneWidget);
+      final button =
+          tester.widget<AICategorizeButton>(find.byType(AICategorizeButton));
+      expect(button.uncategorizedItems.length, 1);
     });
   });
 
