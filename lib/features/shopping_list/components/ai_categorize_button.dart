@@ -36,6 +36,10 @@ class AICategorizeButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // AI 処理中（実行中バナー表示中）は連打・多重実行を防ぐためボタンを無効化する。
+    // 画像/URL/カテゴリ分けはどれも同じ aIProcessingProvider・同じバナーを共有するため、
+    // いずれかが実行中なら無効化する。
+    final isAIProcessing = ref.watch(aIProcessingProvider) != null;
     return Padding(
       // リスト先頭のカテゴリセクションと密着しないよう下側に余白を確保する。
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
@@ -44,7 +48,7 @@ class AICategorizeButton extends ConsumerWidget {
         icon: Icons.auto_fix_high,
         variant: AppPillVariant.accent,
         expanded: true,
-        onPressed: () => _run(context, ref),
+        onPressed: isAIProcessing ? null : () => _run(context, ref),
       ),
     );
   }

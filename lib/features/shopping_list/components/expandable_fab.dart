@@ -44,6 +44,10 @@ class ExpandableFab extends HookConsumerWidget {
     final tokens = context.appTheme;
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
+    // AI 処理中（実行中バナー表示中）は写真/URL からの抽出を多重起動させない。
+    // 画像/URL/カテゴリ分けはどれも同じ aIProcessingProvider・同じバナーを共有するため、
+    // いずれかが実行中なら写真/URL アクションを無効化する。
+    final isAIProcessing = ref.watch(aIProcessingProvider) != null;
     final open = useState(false);
     final controller = useAnimationController(
       duration: const Duration(milliseconds: 280),
@@ -73,22 +77,29 @@ class ExpandableFab extends HookConsumerWidget {
       _FabAction(
         icon: Icons.photo_camera_outlined,
         label: '写真から追加',
-        onTap: () {
-          close();
-          _showImagePicker(context, ref, isPremium);
-        },
+        // AI 処理中は無効化（dim 表示・タップ不可）。
+        onTap: isAIProcessing
+            ? null
+            : () {
+                close();
+                _showImagePicker(context, ref, isPremium);
+              },
       ),
       _FabAction(
         icon: Icons.link,
         label: 'URL から追加',
-        onTap: () {
-          close();
-          _showURLInputDialog(context, ref, isPremium);
-        },
+        // AI 処理中は無効化（dim 表示・タップ不可）。
+        onTap: isAIProcessing
+            ? null
+            : () {
+                close();
+                _showURLInputDialog(context, ref, isPremium);
+              },
       ),
       _FabAction(
         icon: Icons.content_paste_go_outlined,
         label: 'テキスト貼り付け',
+        // テキスト貼り付けは AI 処理（バナー）を使わないため常に有効。
         onTap: () {
           close();
           _pasteFromClipboard(context, ref);
@@ -408,7 +419,9 @@ class ExpandableFab extends HookConsumerWidget {
 class _FabAction {
   final IconData icon;
   final String label;
-  final VoidCallback onTap;
+
+  /// null のときは無効状態（dim 表示・タップ不可）。
+  final VoidCallback? onTap;
   _FabAction({
     required this.icon,
     required this.label,
@@ -429,33 +442,38 @@ class _ActionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.appTheme;
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: action.onTap,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          _ActionLabel(label: action.label),
-          const SizedBox(width: 10),
-          Material(
-            color: tokens.neutral.surface2,
-            shape: const CircleBorder(),
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: action.onTap,
-              child: SizedBox(
-                width: 44,
-                height: 44,
-                child: Icon(
-                  action.icon,
-                  size: 20,
-                  color: tokens.neutral.ink,
+    // onTap が null のときは無効状態。AppPill と同じ opacity 0.5 で dim 表示する。
+    final disabled = action.onTap == null;
+    return Opacity(
+      opacity: disabled ? 0.5 : 1,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: action.onTap,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            _ActionLabel(label: action.label),
+            const SizedBox(width: 10),
+            Material(
+              color: tokens.neutral.surface2,
+              shape: const CircleBorder(),
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: action.onTap,
+                child: SizedBox(
+                  width: 44,
+                  height: 44,
+                  child: Icon(
+                    action.icon,
+                    size: 20,
+                    color: tokens.neutral.ink,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
