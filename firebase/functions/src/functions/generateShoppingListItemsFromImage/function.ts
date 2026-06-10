@@ -168,7 +168,7 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
       return {
         result: "NG" as const,
         error: {
-          message: `AI画像認識の月間利用回数（${monthlyLimit}回）に達しました`,
+          message: `画像読み取りの月間利用回数（${monthlyLimit}回）に達しました`,
         },
       };
     }
