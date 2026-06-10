@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/provider/app_navigator_key.dart';
@@ -16,7 +14,8 @@ void showGlobalToast(String message, {required String? title}) {
 }
 
 /// 任意 Widget をトーストとして表示する（メンバー通知バー等のリッチ内容用）。
-/// `_ToastFrame` で ink 背景を付け、`UniqueKey` で包んで出入りアニメーションさせる。
+/// `_ToastFrame` で ink 背景を付け、`UniqueKey` で包んで同一内容の再 show でも
+/// 新しい state として描画されるようにする。
 void showGlobalToastWidget(
   Widget content, {
   Duration duration = const Duration(seconds: 5),
@@ -34,10 +33,36 @@ void dismissGlobalToast() {
   appProviderContainer.read(toastProvider.notifier).dismiss();
 }
 
-/// `toastProvider` を監視し、root Navigator の最前面へトースト route を積む。
+/// アクションボタン付きのテキストトーストを表示する（アップグレード導線等）。
+/// アクションのタップでトーストを消してから `onAction` を実行する。
+void showGlobalActionToast({
+  required String message,
+  required String actionLabel,
+  required VoidCallback onAction,
+}) {
+  showGlobalToastWidget(
+    ToastActionContent(
+      message: message,
+      actionLabel: actionLabel,
+      onAction: () {
+        dismissGlobalToast();
+        onAction();
+      },
+    ),
+    identity: 'action $actionLabel $message',
+  );
+}
+
+/// `toastProvider` を監視し、root Navigator の Overlay 最前面へトーストの
+/// `OverlayEntry` を同期する。
 ///
 /// 表示内容・自動消滅・identity による重複抑止は既存どおり [toastProvider] が管理する。
-/// この Widget は provider state を最前面 route に同期する表示層に徹する。
+/// この Widget は provider state を Overlay のエントリに同期する表示層に徹する。
+///
+/// route（`Navigator.push`）で表示しない理由: トースト表示中に呼ばれる
+/// `Navigator.pop`（シートの保存後クローズ等）がシートではなくトーストを pop して
+/// しまうため。`OverlayEntry` は Navigator の pop 履歴に載らず、表示時点の全 route
+/// （ダイアログ/ボトムシート含む）のエントリより上に insert されるため前面に描画される。
 class ToastOverlay extends ConsumerStatefulWidget {
   const ToastOverlay({super.key});
 
@@ -47,14 +72,14 @@ class ToastOverlay extends ConsumerStatefulWidget {
 
 class _ToastOverlayState extends ConsumerState<ToastOverlay> {
   ProviderSubscription<Widget?>? _subscription;
-  _GlobalToastRoute? _route;
+  OverlayEntry? _entry;
 
   @override
   void initState() {
     super.initState();
     _subscription = ref.listenManual<Widget?>(
       toastProvider,
-      (_, next) => _syncRoute(next),
+      (_, next) => _syncEntry(next),
       fireImmediately: true,
     );
   }
@@ -62,7 +87,7 @@ class _ToastOverlayState extends ConsumerState<ToastOverlay> {
   @override
   void dispose() {
     _subscription?.close();
-    _removeRoute();
+    _removeEntry();
     super.dispose();
   }
 
@@ -71,41 +96,60 @@ class _ToastOverlayState extends ConsumerState<ToastOverlay> {
     return const SizedBox.shrink();
   }
 
-  void _syncRoute(Widget? content) {
+  /// provider の state 変化を Overlay のエントリへ反映する。
+  /// post frame にするのは、build/layout 中の Overlay 変更による assert を避けるため。
+  void _syncEntry(Widget? content) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
         return;
       }
+      _removeEntry();
       if (content == null) {
-        _removeRoute();
         return;
       }
-
-      final navigator = appNavigatorKey.currentState;
-      if (navigator == null) {
+      final overlay = appNavigatorKey.currentState?.overlay;
+      if (overlay == null) {
         return;
       }
-
-      _removeRoute();
-      final route = _GlobalToastRoute(child: content);
-      _route = route;
-      unawaited(
-        navigator.push(route).whenComplete(() {
-          if (identical(_route, route)) {
-            _route = null;
-          }
-        }),
+      final entry = OverlayEntry(
+        builder: (context) => _ToastViewport(child: content),
       );
+      _entry = entry;
+      overlay.insert(entry);
     });
   }
 
-  void _removeRoute() {
-    final route = _route;
-    if (route == null) {
-      return;
-    }
-    _route = null;
-    route.remove();
+  void _removeEntry() {
+    _entry?.remove();
+    _entry?.dispose();
+    _entry = null;
+  }
+}
+
+/// Overlay エントリ内でトーストを画面下部に配置する viewport。
+/// トースト以外の領域はタップを透過させ、背後のシート/ページの操作を妨げない。
+/// キーボード表示中は viewInsets ぶん持ち上げ、キーボードの背後に隠れないようにする。
+class _ToastViewport extends StatelessWidget {
+  final Widget child;
+  const _ToastViewport({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: SafeArea(
+        child: Stack(
+          children: [
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: child,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -128,36 +172,6 @@ class _ToastFrame extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class _GlobalToastRoute extends OverlayRoute<void> {
-  final Widget child;
-
-  _GlobalToastRoute({required this.child});
-
-  @override
-  Iterable<OverlayEntry> createOverlayEntries() {
-    return [OverlayEntry(builder: _buildOverlay)];
-  }
-
-  Widget _buildOverlay(BuildContext context) {
-    return SafeArea(
-      child: Stack(
-        children: [
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: child,
-          ),
-        ],
-      ),
-    );
-  }
-
-  void remove() {
-    navigator?.removeRoute(this);
   }
 }
 
@@ -225,21 +239,22 @@ class ToastActionContent extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        InkWell(
-          onTap: onAction,
+        // InkWell のスプラッシュを背景色で潰さないよう、背景は Material 側に持たせる。
+        Material(
+          color: tokens.accent,
           borderRadius: BorderRadius.circular(AppThemeExtension.radiusPill),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: tokens.accent,
-              borderRadius: BorderRadius.circular(AppThemeExtension.radiusPill),
-            ),
-            child: Text(
-              actionLabel,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
+          child: InkWell(
+            onTap: onAction,
+            borderRadius: BorderRadius.circular(AppThemeExtension.radiusPill),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: Text(
+                actionLabel,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
             ),
           ),
         ),

@@ -71,8 +71,9 @@ class _AppState extends ConsumerState<App> {
             child: content,
           );
         }
-        // ToastOverlay は toastProvider を監視し、root Navigator の最前面へ
-        // トースト用 route を積む。
+        // ToastOverlay は toastProvider を監視し、root Navigator の Overlay
+        // 最前面へトーストの OverlayEntry を積む。builder に常駐させるのは
+        // route 遷移に依存せずアプリ起動から監視を確立するため。
         return Stack(
           children: [
             content,

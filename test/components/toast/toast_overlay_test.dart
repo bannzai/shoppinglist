@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -36,8 +38,8 @@ void main() {
     expect(find.text('保存しました'), findsNothing);
 
     showGlobalToast('保存しました', title: '完了');
-    await tester.pump(); // state 反映と route 同期予約
-    await tester.pump(); // route push
+    await tester.pump(); // state 反映と OverlayEntry 同期予約
+    await tester.pump(); // OverlayEntry insert の反映
     await tester.pump(const Duration(milliseconds: 250)); // 表示アニメーション
     expect(find.text('保存しました'), findsOneWidget);
     expect(find.text('完了'), findsOneWidget);
@@ -82,5 +84,51 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 250));
     expect(find.text('メッセージ'), findsNothing);
+  });
+
+  testWidgets('シート表示中の動的発火: シート前面に出て、Navigator.pop はシートを閉じる', (tester) async {
+    await pumpOverlay(tester);
+
+    // モーダルボトムシートを開く（実アプリの appShowModalBottomSheet と同じ showModalBottomSheet route）
+    unawaited(showModalBottomSheet<void>(
+      context: tester.element(find.byType(Scaffold)),
+      isScrollControlled: true,
+      builder: (context) => const SizedBox(
+        height: 400,
+        child: Center(child: Text('シート本体')),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.text('シート本体'), findsOneWidget);
+
+    // シート表示中にアクション付きトーストを動的発火
+    var actionTapped = false;
+    showGlobalToastWidget(
+      ToastActionContent(
+        message: 'シート上トースト',
+        actionLabel: 'アップグレード',
+        onAction: () => actionTapped = true,
+      ),
+      identity: 'test_sheet_toast',
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('シート上トースト'), findsOneWidget);
+
+    // トーストの表示領域はシートと重なる画面下部。タップがトースト側に届くこと＝
+    // ヒットテスト上もシートより前面にあることの検証。
+    await tester.tap(find.text('アップグレード'));
+    expect(actionTapped, isTrue);
+
+    // トースト表示中の pop はトーストではなくシートを閉じる（route 方式の退行防止）
+    appNavigatorKey.currentState!.pop();
+    await tester.pumpAndSettle();
+    expect(find.text('シート本体'), findsNothing);
+    expect(find.text('シート上トースト'), findsOneWidget);
+
+    // 後始末: 自動消滅タイマーを発火させる
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pump();
+    expect(find.text('シート上トースト'), findsNothing);
   });
 }
