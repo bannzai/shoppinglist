@@ -22,6 +22,7 @@ import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/image/image.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:shoppinglist/utils/stdlib/navigator.dart';
 
 class _PresetColor {
   final String label;
@@ -291,6 +292,11 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                             'groupID': groupID,
                             'itemID': textShoppingListItem.id
                           });
+                      // 写真アップロード等の await 中にシートが手動クローズされると、
+                      // 遅延した pop がホームまで剥がして黒画面になるため、
+                      // pop はこのシート自身のルートに限定する (#372)。
+                      final navigator = Navigator.of(context);
+                      final sheetRoute = ModalRoute.of(context);
                       isSavingImage.value = true;
                       try {
                         var nextImageURL = imageURL.value;
@@ -331,9 +337,7 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                               editedByUserID: currentUserID,
                             );
 
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                        }
+                        popRouteSafely(navigator: navigator, route: sheetRoute);
                       } catch (e) {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -341,7 +345,11 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                           );
                         }
                       } finally {
-                        isSavingImage.value = false;
+                        // シートが既に dispose 済み(手動クローズ等)の場合に
+                        // 破棄済みの ValueNotifier へ書き込まないようガードする。
+                        if (context.mounted) {
+                          isSavingImage.value = false;
+                        }
                       }
                     },
               child: isSavingImage.value
