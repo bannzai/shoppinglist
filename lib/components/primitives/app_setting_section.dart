@@ -15,7 +15,7 @@ class AppSettingSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
@@ -37,7 +37,7 @@ class AppSettingSection extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: neutral.card,
-              borderRadius: BorderRadius.circular(AppTokens.radiusCard),
+              borderRadius: BorderRadius.circular(AppThemeExtension.radiusCard),
               border: Border.all(color: neutral.divider, width: 0.5),
               boxShadow: tokens.cardShadow,
             ),

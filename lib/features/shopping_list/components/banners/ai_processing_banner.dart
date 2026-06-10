@@ -30,10 +30,11 @@ class _AIProcessingBannerState extends State<AIProcessingBanner>
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final label = switch (widget.type) {
       AIProcessingType.image => '画像から候補を抽出中...',
       AIProcessingType.url => 'URL から候補を抽出中...',
+      AIProcessingType.categorize => 'カテゴリ分けを実行中...',
     };
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),

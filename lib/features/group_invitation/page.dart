@@ -21,7 +21,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
     final codeController = useTextEditingController();
     final isValidCode = useState(false);
 
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final hasError = errorMessage.value != null;
     final borderColor = hasError
@@ -194,7 +194,7 @@ void _showVerifyingDialog(BuildContext context) {
     barrierColor: Colors.transparent,
     transitionDuration: const Duration(milliseconds: 160),
     pageBuilder: (dialogContext, _, __) {
-      final tokens = dialogContext.tokens;
+      final tokens = dialogContext.appTheme;
       return AppDialogShell(
         child: Column(
           mainAxisSize: MainAxisSize.min,

@@ -1166,5 +1166,142 @@ class _GroupCategoryBatchUpdateProviderElement
   @override
   String get groupID => (origin as GroupCategoryBatchUpdateProvider).groupID;
 }
+
+String _$aiCategorizeApplyHash() => r'a841b666e6f93a6712cfc631d9b3dc5dba3df204';
+
+/// See also [aiCategorizeApply].
+@ProviderFor(aiCategorizeApply)
+const aiCategorizeApplyProvider = AiCategorizeApplyFamily();
+
+/// See also [aiCategorizeApply].
+class AiCategorizeApplyFamily extends Family<AICategorizeApply> {
+  /// See also [aiCategorizeApply].
+  const AiCategorizeApplyFamily();
+
+  /// See also [aiCategorizeApply].
+  AiCategorizeApplyProvider call({
+    required String groupID,
+  }) {
+    return AiCategorizeApplyProvider(
+      groupID: groupID,
+    );
+  }
+
+  @override
+  AiCategorizeApplyProvider getProviderOverride(
+    covariant AiCategorizeApplyProvider provider,
+  ) {
+    return call(
+      groupID: provider.groupID,
+    );
+  }
+
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    groupDatabaseProvider
+  ];
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
+    groupDatabaseProvider,
+    ...?groupDatabaseProvider.allTransitiveDependencies
+  };
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'aiCategorizeApplyProvider';
+}
+
+/// See also [aiCategorizeApply].
+class AiCategorizeApplyProvider extends AutoDisposeProvider<AICategorizeApply> {
+  /// See also [aiCategorizeApply].
+  AiCategorizeApplyProvider({
+    required String groupID,
+  }) : this._internal(
+          (ref) => aiCategorizeApply(
+            ref as AiCategorizeApplyRef,
+            groupID: groupID,
+          ),
+          from: aiCategorizeApplyProvider,
+          name: r'aiCategorizeApplyProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$aiCategorizeApplyHash,
+          dependencies: AiCategorizeApplyFamily._dependencies,
+          allTransitiveDependencies:
+              AiCategorizeApplyFamily._allTransitiveDependencies,
+          groupID: groupID,
+        );
+
+  AiCategorizeApplyProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.groupID,
+  }) : super.internal();
+
+  final String groupID;
+
+  @override
+  Override overrideWith(
+    AICategorizeApply Function(AiCategorizeApplyRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: AiCategorizeApplyProvider._internal(
+        (ref) => create(ref as AiCategorizeApplyRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        groupID: groupID,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<AICategorizeApply> createElement() {
+    return _AiCategorizeApplyProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is AiCategorizeApplyProvider && other.groupID == groupID;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, groupID.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin AiCategorizeApplyRef on AutoDisposeProviderRef<AICategorizeApply> {
+  /// The parameter `groupID` of this provider.
+  String get groupID;
+}
+
+class _AiCategorizeApplyProviderElement
+    extends AutoDisposeProviderElement<AICategorizeApply>
+    with AiCategorizeApplyRef {
+  _AiCategorizeApplyProviderElement(super.provider);
+
+  @override
+  String get groupID => (origin as AiCategorizeApplyProvider).groupID;
+}
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

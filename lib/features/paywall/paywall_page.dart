@@ -20,7 +20,7 @@ class PaywallPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final offerings = ref.watch(offeringsProvider);
 
@@ -93,7 +93,7 @@ class _PaywallFooterLinks extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final linkStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
           color: tokens.accent,
           decoration: TextDecoration.underline,
@@ -170,7 +170,7 @@ class _Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -236,7 +236,7 @@ class _FeatureGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
@@ -263,7 +263,7 @@ class _FeatureRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Row(
       children: [
         Icon(icon, size: 18, color: tokens.accent),
@@ -298,7 +298,7 @@ class _ErrorBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Center(
       child: Container(
         margin: const EdgeInsets.all(24),
@@ -335,7 +335,7 @@ class _NoPlansBody extends StatelessWidget {
   const _NoPlansBody();
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -361,7 +361,7 @@ class _PaywallPackageTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     return Container(
       margin: const EdgeInsets.only(top: 12),

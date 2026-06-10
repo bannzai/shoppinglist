@@ -21,7 +21,7 @@ class AppSectionLabel extends StatelessWidget {
               fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.05,
-              color: context.tokens.neutral.ink2,
+              color: context.appTheme.neutral.ink2,
             ),
       ),
     );

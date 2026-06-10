@@ -1,14 +1,21 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shoppinglist/entity/group_category.dart';
+import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/features/group_category/page.dart';
+import 'package:shoppinglist/features/group_category_edit/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
@@ -60,6 +67,27 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
     final removeImageOnSave = useState<bool>(false);
     final isSavingImage = useState<bool>(false);
 
+    // カテゴリは先頭軸(axes.first)のキーワードマッチで動的に決まる(アイテムはカテゴリIDを持たない)。
+    // appShowModalBottomSheet は AppResolvers でラップされているため build 内の ref.watch が機能する。
+    // 遷移時の ref.read だと AsyncLoading(null) になり得るので、ここで watch して値を確定させる。
+    final categoryAxes =
+        ref.watch(groupCategoryAxesProvider(groupID: groupID)).valueOrNull ??
+            const <GroupCategoryAxis>[];
+    final categoryAxis = categoryAxes.firstOrNull;
+    final categories = categoryAxis == null
+        ? const <GroupCategory>[]
+        : ref
+                .watch(groupCategoriesProvider(
+                    groupID: groupID, categoryAxisID: categoryAxis.id))
+                .valueOrNull ??
+            const <GroupCategory>[];
+    final matchedCategory = categoryAxis == null
+        ? null
+        : categories.firstWhereOrNull((category) =>
+            category.id ==
+            findMatchingCategoryID(
+                item: textShoppingListItem, categories: categories));
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
       child: Column(
@@ -70,6 +98,54 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 16),
+          // カテゴリセクション。軸が無い(カテゴリ機能未使用)ときは表示しない。
+          if (categoryAxis != null) ...[
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'カテゴリ',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w700),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(child: Text(matchedCategory?.name ?? '未分類')),
+                TextButton(
+                  onPressed: () {
+                    analytics.logEvent(
+                      name: matchedCategory != null
+                          ? 'tap_edit_category_from_item'
+                          : 'tap_manage_category_from_item',
+                      parameters: {
+                        'groupID': groupID,
+                        'itemID': textShoppingListItem.id,
+                      },
+                    );
+                    // マッチ時はそのカテゴリの編集ページ、未分類時はカテゴリ一覧へ誘導する。
+                    // シートは閉じずに push する(戻ればメモ等の編集状態を保持したまま戻れる)。
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => matchedCategory != null
+                            ? GroupCategoryEditPage(
+                                groupID: groupID,
+                                categoryAxisID: categoryAxis.id,
+                                categoryID: matchedCategory.id,
+                              )
+                            : GroupCategoryPage(groupID: groupID),
+                      ),
+                    );
+                  },
+                  child: Text(matchedCategory != null ? 'カテゴリを編集' : 'カテゴリを管理'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+          ],
           // メモセクション
           Align(
             alignment: Alignment.centerLeft,

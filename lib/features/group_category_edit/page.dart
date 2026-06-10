@@ -55,7 +55,7 @@ class _EditScaffold extends StatelessWidget {
   const _EditScaffold({required this.child});
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
       appBar: AppBar(
@@ -83,7 +83,7 @@ class _CategoryEditBody extends HookConsumerWidget {
     final nameController = useTextEditingController(text: category.name);
     final isSaving = useState(false);
 
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
       appBar: AppBar(
@@ -243,7 +243,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                   Text(
                     '[DEBUG] locationOrders: ${category.locationOrders}',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: context.tokens.neutral.ink3,
+                          color: context.appTheme.neutral.ink3,
                           fontFamily: 'monospace',
                         ),
                   ),
@@ -272,7 +272,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                       ),
                       trailing: IconButton(
                         icon: Icon(Icons.delete,
-                            color: context.tokens.neutral.danger),
+                            color: context.appTheme.neutral.danger),
                         onPressed: () => _deleteKeyword(
                           context: context,
                           ref: ref,

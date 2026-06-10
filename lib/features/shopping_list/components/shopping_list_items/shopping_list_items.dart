@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/entity/group_category.dart';
+import 'package:shoppinglist/features/shopping_list/components/ai_categorize_button.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_section_header.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
@@ -33,10 +34,23 @@ void _pruneRowKeys(Iterable<String> currentIDs) {
   _shoppingListItemRowKeys.removeWhere((id, _) => !keep.contains(id));
 }
 
+/// 買い物リストのスクロール末尾に確保する下方向パディング。
+/// 画面外側の SafeArea が bottom:false（NavBar の帯を下端まで伸ばすため）なので、
+/// ホームインジケータ/iPhone 下部バーの安全領域分を自前で確保し、さらに最終アイテムが
+/// バーに張り付かないよう余白を上乗せして被りを防ぐ。
+EdgeInsets _listBottomPadding(BuildContext context) => EdgeInsets.only(
+      bottom: MediaQuery.of(context).padding.bottom + 32,
+    );
+
 class ShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final bool sortByCategory;
+
+  /// チェック済みアイテムを一覧に表示するか。
+  /// false のときは textShoppingListItemsProvider が status==unchecked に絞り込む。
+  final bool showChecked;
+
   final String? shoppingLocationID;
 
   const ShoppingListItems({
@@ -44,6 +58,7 @@ class ShoppingListItems extends ConsumerWidget {
     required this.groupID,
     required this.shoppingListID,
     required this.sortByCategory,
+    required this.showChecked,
     required this.shoppingLocationID,
   });
 
@@ -53,7 +68,7 @@ class ShoppingListItems extends ConsumerWidget {
             .watch(textShoppingListItemsProvider(
                 groupID: groupID,
                 shoppingListID: shoppingListID,
-                showChecked: true))
+                showChecked: showChecked))
             .valueOrNull ??
         [];
     // 入力行用 GlobalKey マップから、もう存在しない id を掃除する。
@@ -67,6 +82,10 @@ class ShoppingListItems extends ConsumerWidget {
             groupID: groupID,
             shoppingListID: shoppingListID,
             shoppingListItems: shoppingListItems,
+            // 軸が無くカテゴリ表示が有効なときだけ、AIにカテゴリ作成から任せるボタンを出す。
+            showCategorizeButton: axes.isEmpty && sortByCategory,
+            categoryAxisID: null,
+            existingCategoryNames: const [],
           );
         }
 
@@ -95,15 +114,28 @@ class _FlatShoppingListItems extends ConsumerWidget {
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
 
+  /// 未分類アイテムが全件である（＝カテゴリ未作成）ときに、AIカテゴリ分けボタンを上部に出すか。
+  final bool showCategorizeButton;
+
+  /// AIカテゴリ分けの登録先軸。null なら登録時に「デフォルト」軸を作成する。
+  final String? categoryAxisID;
+
+  /// AIに渡す既存カテゴリ名（フラット表示時は空）。
+  final List<String> existingCategoryNames;
+
   const _FlatShoppingListItems({
     required this.groupID,
     required this.shoppingListID,
     required this.shoppingListItems,
+    this.showCategorizeButton = false,
+    this.categoryAxisID,
+    this.existingCategoryNames = const [],
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ReorderableList(
+    final list = ReorderableList(
+      padding: _listBottomPadding(context),
       // アイテム編集中にリストをスクロール(ドラッグ)したらキーボードを閉じる
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       onReorder: (oldIndex, newIndex) {
@@ -148,6 +180,23 @@ class _FlatShoppingListItems extends ConsumerWidget {
         );
       },
     );
+
+    if (!showCategorizeButton || shoppingListItems.isEmpty) {
+      return list;
+    }
+    // カテゴリ未作成のフラット表示では全アイテムが未分類。AIカテゴリ分けボタンを上部に出す。
+    return Column(
+      children: [
+        AICategorizeButton(
+          groupID: groupID,
+          shoppingListID: shoppingListID,
+          categoryAxisID: categoryAxisID,
+          uncategorizedItems: shoppingListItems,
+          existingCategoryNames: existingCategoryNames,
+        ),
+        Expanded(child: list),
+      ],
+    );
   }
 }
 
@@ -177,10 +226,14 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
     return categoriesAsync.when(
       data: (categories) {
         if (categories.isEmpty) {
+          // 軸はあるがカテゴリが無い → 全アイテムが未分類。AIにカテゴリ作成から任せる。
           return _FlatShoppingListItems(
             groupID: groupID,
             shoppingListID: shoppingListID,
             shoppingListItems: shoppingListItems,
+            showCategorizeButton: true,
+            categoryAxisID: categoryAxisID,
+            existingCategoryNames: const [],
           );
         }
 
@@ -189,12 +242,30 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
           categories: categories,
         );
 
-        return _GroupedListView(
+        final uncategorizedItems = grouped[uncategorizedCategoryID] ?? const [];
+        final groupedListView = _GroupedListView(
           groupID: groupID,
           shoppingListID: shoppingListID,
           categories: categories,
           grouped: grouped,
           shoppingLocationID: isPremium ? shoppingLocationID : null,
+        );
+        if (uncategorizedItems.isEmpty) {
+          return groupedListView;
+        }
+        // 未分類セクションがあるときは、リスト上部に AIカテゴリ分けボタンを出す。
+        return Column(
+          children: [
+            AICategorizeButton(
+              groupID: groupID,
+              shoppingListID: shoppingListID,
+              categoryAxisID: categoryAxisID,
+              uncategorizedItems: uncategorizedItems,
+              existingCategoryNames:
+                  categories.map((category) => category.name).toList(),
+            ),
+            Expanded(child: groupedListView),
+          ],
         );
       },
       error: (e, st) => Center(child: Text(e.toString())),
@@ -285,6 +356,7 @@ class _GroupedListView extends StatelessWidget {
     }
 
     return ListView(
+      padding: _listBottomPadding(context),
       // アイテム編集中にリストをスクロール(ドラッグ)したらキーボードを閉じる
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       children: children,

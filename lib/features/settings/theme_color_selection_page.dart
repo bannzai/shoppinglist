@@ -12,7 +12,7 @@ class ThemeColorSelectionPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final selectedHex =
         ref.watch(appUserProvider).asData?.value.themeColorHex ??
@@ -98,7 +98,7 @@ class _ColorSwatch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final color = preset.light;
     return Semantics(

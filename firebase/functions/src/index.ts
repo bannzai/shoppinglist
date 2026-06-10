@@ -111,3 +111,10 @@ if (
 ) {
   exports.setupTestCategoryLocationOrder = require("./functions/setupTestCategoryLocationOrder/function");
 }
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "categorizeShoppingListItems"
+) {
+  exports.categorizeShoppingListItems = require("./functions/categorizeShoppingListItems/function");
+}

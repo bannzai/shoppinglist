@@ -73,7 +73,7 @@ class ShoppingListPage extends ConsumerWidget {
     return shoppingListsAsync.when(
       data: (lists) {
         if (lists.isEmpty || resolvedShoppingListID == null) {
-          return _ShoppingListShell(
+          return _ShoppingListScaffold(
             groupID: groupID,
             groups: groups,
             onRetry: invalidateLists,
@@ -89,13 +89,13 @@ class ShoppingListPage extends ConsumerWidget {
           firestoreIsPremium: firestoreIsPremium,
         );
       },
-      error: (e, st) => _ShoppingListShell(
+      error: (e, st) => _ShoppingListScaffold(
         groupID: groupID,
         groups: groups,
         onRetry: invalidateLists,
         child: RetryPage(exception: e, stackTrace: st),
       ),
-      loading: () => _ShoppingListShell(
+      loading: () => _ShoppingListScaffold(
         groupID: groupID,
         groups: groups,
         onRetry: invalidateLists,
@@ -107,14 +107,14 @@ class ShoppingListPage extends ConsumerWidget {
 
 /// 単一 Scaffold の共通レイアウト。paper 背景・GroupChipsBar・Retry を提供し、Expanded に child を置く。
 /// 一覧の各状態(空/エラー/ロード/有効)で共有し、Scaffold が二重にならないようにする。
-class _ShoppingListShell extends StatelessWidget {
+class _ShoppingListScaffold extends StatelessWidget {
   final String groupID;
   final List<Group>? groups;
   final VoidCallback onRetry;
   final Widget? floatingActionButton;
   final Widget child;
 
-  const _ShoppingListShell({
+  const _ShoppingListScaffold({
     required this.groupID,
     required this.groups,
     required this.onRetry,
@@ -125,7 +125,7 @@ class _ShoppingListShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.tokens.neutral.paper,
+      backgroundColor: context.appTheme.neutral.paper,
       floatingActionButton: floatingActionButton,
       body: Retry(
         retry: onRetry,
@@ -187,7 +187,7 @@ class _ActiveShoppingList extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final shoppingList =
         shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID);
 
@@ -299,7 +299,7 @@ class _ActiveShoppingList extends HookConsumerWidget {
       return listener.dispose;
     }, [autoNotify, currentUserID, memberProfiles]);
 
-    return _ShoppingListShell(
+    return _ShoppingListScaffold(
       groupID: groupID,
       groups: groups,
       onRetry: () {
@@ -374,9 +374,8 @@ class _ActiveShoppingList extends HookConsumerWidget {
                     // 外側 SafeArea が bottom:false のため、ホームインジケータ分を加味する。
                     if (totalCount > 0)
                       Positioned(
-                        left: AppTokens.s16,
-                        bottom: AppTokens.s16 +
-                            MediaQuery.of(context).padding.bottom,
+                        left: 16,
+                        bottom: 16 + MediaQuery.of(context).padding.bottom,
                         child: ProgressPill(
                           checkedCount: checkedCount,
                           totalCount: totalCount,
@@ -401,7 +400,7 @@ class _NoListYet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),

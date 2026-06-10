@@ -10,6 +10,7 @@ import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/home/page.dart';
 import 'package:shoppinglist/features/onboarding/page.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
+import 'package:shoppinglist/features/previews/screens/ai_categorize_preview_sheet_preview.dart';
 import 'package:shoppinglist/features/previews/screens/ai_review_sheet_preview.dart';
 import 'package:shoppinglist/features/previews/screens/invitation_verifying_preview.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_item_filter_preview.dart';
@@ -94,6 +95,10 @@ final _previewEntries = <_PreviewEntry>[
   _PreviewEntry(
     title: 'AIReviewSheet',
     builder: (_) => const AIReviewSheetPreview(),
+  ),
+  _PreviewEntry(
+    title: 'AICategorizeSheet',
+    builder: (_) => const AICategorizePreviewSheetPreview(),
   ),
   _PreviewEntry(
     title: 'SignOutDialog',

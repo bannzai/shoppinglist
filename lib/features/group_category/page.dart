@@ -142,7 +142,7 @@ class _CategoryScaffold extends StatelessWidget {
   const _CategoryScaffold({required this.child});
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
       appBar: AppBar(
@@ -175,7 +175,7 @@ class _CategoryListBody extends HookConsumerWidget {
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
 
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return categoriesAsync.when(
       data: (categories) => Scaffold(
         backgroundColor: tokens.neutral.paper,
@@ -398,7 +398,8 @@ class _CategoryReorderableList extends ConsumerWidget {
                 },
               ),
               IconButton(
-                icon: Icon(Icons.delete, color: context.tokens.neutral.danger),
+                icon:
+                    Icon(Icons.delete, color: context.appTheme.neutral.danger),
                 onPressed: () {
                   analytics.logEvent(name: 'tap_delete_category', parameters: {
                     'groupID': groupID,
@@ -455,7 +456,7 @@ class _CategoryReorderableList extends ConsumerWidget {
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
-                  ?.copyWith(color: context.tokens.neutral.danger),
+                  ?.copyWith(color: context.appTheme.neutral.danger),
             ),
           ),
           TextButton(

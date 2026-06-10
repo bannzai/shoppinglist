@@ -22,7 +22,7 @@ class ShoppingLocationPage extends ConsumerWidget {
         ref.watch(shoppingLocationsProvider(groupID: groupID));
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
 
     return Scaffold(
@@ -204,9 +204,9 @@ class ShoppingLocationPage extends ConsumerWidget {
                 title: Text(selectedLatitude != null ? '位置設定済み' : '地図で場所を設定'),
                 trailing: !isPremium
                     ? Icon(Icons.lock,
-                        size: 16, color: context.tokens.neutral.ink3)
+                        size: 16, color: context.appTheme.neutral.ink3)
                     : (selectedLatitude != null
-                        ? Icon(Icons.check, color: context.tokens.neutral.ok)
+                        ? Icon(Icons.check, color: context.appTheme.neutral.ok)
                         : null),
                 onTap: () async {
                   analytics.logEvent(
@@ -250,7 +250,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                   style: Theme.of(context)
                       .textTheme
                       .bodySmall
-                      ?.copyWith(color: context.tokens.neutral.ink3),
+                      ?.copyWith(color: context.appTheme.neutral.ink3),
                 ),
               ],
             ],
@@ -394,7 +394,7 @@ class ShoppingLocationPage extends ConsumerWidget {
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
-                  ?.copyWith(color: context.tokens.neutral.danger),
+                  ?.copyWith(color: context.appTheme.neutral.danger),
             ),
           ),
           TextButton(

@@ -356,5 +356,155 @@ class _RemainingURLRecognitionCountProviderElement
   bool get isPremium =>
       (origin as RemainingURLRecognitionCountProvider).isPremium;
 }
+
+String _$remainingCategorizeCountHash() =>
+    r'ea2d6accf69702d375051e9816e4f2c00c11e674';
+
+/// 現在月のAIカテゴリ分けの残り回数を返すProvider。
+///
+/// Copied from [remainingCategorizeCount].
+@ProviderFor(remainingCategorizeCount)
+const remainingCategorizeCountProvider = RemainingCategorizeCountFamily();
+
+/// 現在月のAIカテゴリ分けの残り回数を返すProvider。
+///
+/// Copied from [remainingCategorizeCount].
+class RemainingCategorizeCountFamily extends Family<int> {
+  /// 現在月のAIカテゴリ分けの残り回数を返すProvider。
+  ///
+  /// Copied from [remainingCategorizeCount].
+  const RemainingCategorizeCountFamily();
+
+  /// 現在月のAIカテゴリ分けの残り回数を返すProvider。
+  ///
+  /// Copied from [remainingCategorizeCount].
+  RemainingCategorizeCountProvider call({
+    required bool isPremium,
+  }) {
+    return RemainingCategorizeCountProvider(
+      isPremium: isPremium,
+    );
+  }
+
+  @override
+  RemainingCategorizeCountProvider getProviderOverride(
+    covariant RemainingCategorizeCountProvider provider,
+  ) {
+    return call(
+      isPremium: provider.isPremium,
+    );
+  }
+
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    currentMonthAIUsageProvider
+  ];
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
+    currentMonthAIUsageProvider,
+    ...?currentMonthAIUsageProvider.allTransitiveDependencies
+  };
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'remainingCategorizeCountProvider';
+}
+
+/// 現在月のAIカテゴリ分けの残り回数を返すProvider。
+///
+/// Copied from [remainingCategorizeCount].
+class RemainingCategorizeCountProvider extends AutoDisposeProvider<int> {
+  /// 現在月のAIカテゴリ分けの残り回数を返すProvider。
+  ///
+  /// Copied from [remainingCategorizeCount].
+  RemainingCategorizeCountProvider({
+    required bool isPremium,
+  }) : this._internal(
+          (ref) => remainingCategorizeCount(
+            ref as RemainingCategorizeCountRef,
+            isPremium: isPremium,
+          ),
+          from: remainingCategorizeCountProvider,
+          name: r'remainingCategorizeCountProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$remainingCategorizeCountHash,
+          dependencies: RemainingCategorizeCountFamily._dependencies,
+          allTransitiveDependencies:
+              RemainingCategorizeCountFamily._allTransitiveDependencies,
+          isPremium: isPremium,
+        );
+
+  RemainingCategorizeCountProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.isPremium,
+  }) : super.internal();
+
+  final bool isPremium;
+
+  @override
+  Override overrideWith(
+    int Function(RemainingCategorizeCountRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: RemainingCategorizeCountProvider._internal(
+        (ref) => create(ref as RemainingCategorizeCountRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        isPremium: isPremium,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<int> createElement() {
+    return _RemainingCategorizeCountProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is RemainingCategorizeCountProvider &&
+        other.isPremium == isPremium;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, isPremium.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin RemainingCategorizeCountRef on AutoDisposeProviderRef<int> {
+  /// The parameter `isPremium` of this provider.
+  bool get isPremium;
+}
+
+class _RemainingCategorizeCountProviderElement
+    extends AutoDisposeProviderElement<int> with RemainingCategorizeCountRef {
+  _RemainingCategorizeCountProviderElement(super.provider);
+
+  @override
+  bool get isPremium => (origin as RemainingCategorizeCountProvider).isPremium;
+}
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

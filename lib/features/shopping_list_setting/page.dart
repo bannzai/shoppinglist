@@ -66,7 +66,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
       );
     }
 
-    final neutral = context.tokens.neutral;
+    final neutral = context.appTheme.neutral;
 
     return Scaffold(
       backgroundColor: neutral.paper,
@@ -359,7 +359,7 @@ class _ShoppingLocationCell extends ConsumerWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(14),
       child: Container(
-        color: context.tokens.neutral.card,
+        color: context.appTheme.neutral.card,
         child: AppCell(
             icon: Icons.place_outlined,
             title: currentName ?? '未設定',
@@ -403,7 +403,7 @@ class _StoragePeriodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final neutral = context.tokens.neutral;
+    final neutral = context.appTheme.neutral;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
@@ -499,7 +499,7 @@ class _ListActionsCard extends ConsumerWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(14),
       child: Container(
-        color: context.tokens.neutral.card,
+        color: context.appTheme.neutral.card,
         child: Column(
           children: [
             AppCell(

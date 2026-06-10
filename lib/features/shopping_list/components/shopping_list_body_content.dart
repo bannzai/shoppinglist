@@ -34,7 +34,7 @@ class ShoppingListBodyContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final isEmpty = shoppingListItems.isEmpty;
     if (showChecked && isEmpty) {
       return EmptyTextShoppingListItems(
@@ -85,6 +85,7 @@ class ShoppingListBodyContent extends StatelessWidget {
             groupID: groupID,
             shoppingListID: shoppingListID,
             sortByCategory: sortByCategory,
+            showChecked: showChecked,
             shoppingLocationID: shoppingList?.shoppingLocationID,
           ),
         ),

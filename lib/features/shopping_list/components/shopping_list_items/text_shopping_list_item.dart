@@ -51,6 +51,12 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         useTextEditingController(text: textShoppingListItem.message);
     final isEditing = useState(false);
 
+    // 初回に空行(入力行)へフォーカスし、フォーカスの有無を isEditing に同期する。加えて、
+    // フォーカスが外れた瞬間に「入力途中テキストの確定 or 空行の削除」を行い、常駐する空入力行を
+    // 残さない。依存配列は空 — FocusNode のライフサイクルに listener を 1 度だけ登録するため。
+    // listener が参照する textShoppingListItem は初回 build 値に固定されるが、削除に使う
+    // id/shoppingListID は不変で、確定比較が古い message を見ても起きるのは冪等な再更新だけ
+    // なので問題ない。
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (textShoppingListItem.message.isEmpty) {
@@ -59,6 +65,28 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       });
       void listener() {
         isEditing.value = focusNode.hasFocus;
+        if (focusNode.hasFocus) {
+          return;
+        }
+        final text = textEditingController.text.trim();
+        if (text.isEmpty) {
+          // 空のままフォーカスが外れた行は削除する(入力行・既存問わず中身がないので残さない)。
+          // Backspace 削除と同じく一時行の掃除なので物理削除する。
+          ref
+              .read(groupDatabaseProvider(groupID: groupID))
+              .shoppingListItemsReference(
+                  shoppingListID: textShoppingListItem.shoppingListID)
+              .doc(textShoppingListItem.id)
+              .delete();
+        } else if (text != textShoppingListItem.message) {
+          // 入力/編集途中のテキストをフォーカス喪失時に確定保存する。Enter 確定が走った直後は
+          // message==text となりこの分岐は skip される(二重更新を避ける)。
+          ref.read(updateShoppingListItemProvider(groupID: groupID)).call(
+                shoppingListID: textShoppingListItem.shoppingListID,
+                item: textShoppingListItem.copyWith(message: text),
+                editedByUserID: ref.read(currentUserIDProvider)!,
+              );
+        }
       }
 
       focusNode.addListener(listener);
@@ -83,7 +111,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
     }, [inputRowFocusRequest]);
 
     final currentUserID = ref.watch(currentUserIDProvider)!;
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final isChecked =
         textShoppingListItem.status == GroupShoppingListItemStatus.checked;
@@ -408,7 +436,7 @@ class _CircleCheckboxState extends State<_CircleCheckbox>
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final disabled = widget.onChanged == null;
     return ScaleTransition(
       scale: _scale,
@@ -459,7 +487,7 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUserID = ref.watch(currentUserIDProvider)!;
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final isChecked =
         textShoppingListItem.status == GroupShoppingListItemStatus.checked;

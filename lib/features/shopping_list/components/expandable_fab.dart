@@ -39,7 +39,7 @@ class ExpandableFab extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
     final open = useState(false);
@@ -426,7 +426,7 @@ class _ActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: action.onTap,
@@ -465,7 +465,7 @@ class _ActionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.tokens;
+    final tokens = context.appTheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
