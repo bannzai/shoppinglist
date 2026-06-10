@@ -9,11 +9,17 @@ import 'package:shoppinglist/features/previews/mock/mock_provider_overrides.dart
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
-/// 検証用アイテム。message 以外は固定。
-GroupShoppingListItem _item({required String id, required String message}) {
+/// 検証用アイテム。message / status / color 以外は固定。
+GroupShoppingListItem _item({
+  required String id,
+  required String message,
+  GroupShoppingListItemStatus status = GroupShoppingListItemStatus.unchecked,
+  String? color,
+}) {
   return GroupShoppingListItem(
     id: id,
     groupID: mockGroupID,
@@ -21,9 +27,9 @@ GroupShoppingListItem _item({required String id, required String message}) {
     userID: mockUserID,
     message: message,
     order: 0,
-    status: GroupShoppingListItemStatus.unchecked,
+    status: status,
     checkedByUserID: null,
-    color: null,
+    color: color,
     description: null,
     imageURL: null,
     lastEditedByUserID: null,
@@ -180,7 +186,58 @@ GestureDetector _checkboxGesture(WidgetTester tester) {
   );
 }
 
+/// 行の背景を塗る [Material] を特定する。
+/// 行本体の Material は Dismissible 直下の最外殻なので、深さ優先探索で最初に
+/// 見つかるものを読む（IconButton 等が内側に持つ Material より先に列挙される）。
+Material _rowMaterial(WidgetTester tester) {
+  return tester.widget<Material>(
+    find
+        .descendant(
+          of: find.byType(Dismissible),
+          matching: find.byType(Material),
+        )
+        .first,
+  );
+}
+
 void main() {
+  group('行背景（Issue #374: チェック済み行がカテゴリヘッダーと同化しない）', () {
+    testWidgets('チェック済み行の背景は transparent（divider2 半透過を塗らない）', (tester) async {
+      // divider2 半透過を塗るとカテゴリヘッダーの surface とほぼ同色になり、
+      // セクションの境界が見分けられなくなる回帰を防ぐ。
+      await _pump(
+        tester,
+        _item(
+          id: 'checked',
+          message: '牛乳',
+          status: GroupShoppingListItemStatus.checked,
+        ),
+      );
+      expect(_rowMaterial(tester).color, Colors.transparent);
+    });
+
+    testWidgets('未チェック行の背景も transparent', (tester) async {
+      await _pump(tester, _item(id: 'unchecked', message: '牛乳'));
+      expect(_rowMaterial(tester).color, Colors.transparent);
+    });
+
+    testWidgets('アイテムカラー指定時はチェック状態に関わらずカラー 10% を塗る', (tester) async {
+      await _pump(
+        tester,
+        _item(
+          id: 'colored',
+          message: '牛乳',
+          status: GroupShoppingListItemStatus.checked,
+          color: '#1F6B4E',
+        ),
+      );
+      expect(
+        _rowMaterial(tester).color,
+        colorFromHex('#1F6B4E').withValues(alpha: 0.1),
+      );
+    });
+  });
+
   group('TextShoppingListItemWidget の空行チェック禁止', () {
     testWidgets('空行: チェックボックスのタップが無効 (onTap == null)', (tester) async {
       await _pump(tester, _item(id: 'empty', message: ''));
