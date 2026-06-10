@@ -17,7 +17,7 @@ appId: com.bannzai.shoppinglist
 
 # 制限メッセージが表示されることを確認
 - assertVisible:
-    text: "AI画像認識の月間利用回数（5回）に達しました"
+    text: "画像読み取りの月間利用回数（5回）に達しました"
     optional: true
 
 - takeScreenshot: screenshots/ai_image_recognition_limit_reached

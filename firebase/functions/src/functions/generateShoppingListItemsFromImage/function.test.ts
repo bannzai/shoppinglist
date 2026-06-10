@@ -276,7 +276,7 @@ describe("generateShoppingListItemsFromImage", () => {
 
     expect(result.result).toBe("NG");
     expect(result.error.message).toBe(
-      "AI画像認識の月間利用回数（5回）に達しました"
+      "画像読み取りの月間利用回数（5回）に達しました"
     );
     // AI呼び出しが実行されていないことを確認
     expect(mockStartChat).not.toHaveBeenCalled();
@@ -329,7 +329,7 @@ describe("generateShoppingListItemsFromImage", () => {
 
     expect(result.result).toBe("NG");
     expect(result.error.message).toBe(
-      "AI画像認識の月間利用回数（50回）に達しました"
+      "画像読み取りの月間利用回数（50回）に達しました"
     );
     expect(mockStartChat).not.toHaveBeenCalled();
   });

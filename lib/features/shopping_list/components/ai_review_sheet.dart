@@ -168,7 +168,7 @@ class _AIReviewSheetState extends State<_AIReviewSheet> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'AI で抽出した候補',
+                          '読み取った候補',
                           style:
                               Theme.of(context).textTheme.titleLarge?.copyWith(
                                     color: neutral.ink,

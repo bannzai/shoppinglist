@@ -194,7 +194,7 @@ class ExpandableFab extends HookConsumerWidget {
         SnackBar(
           persist: false,
           content: Text(
-              'AI画像認識の月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyImageRecognitionLimit回まで利用できます'}'),
+              '画像読み取りの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyImageRecognitionLimit回まで利用できます'}'),
           action: isPremium
               ? null
               : SnackBarAction(

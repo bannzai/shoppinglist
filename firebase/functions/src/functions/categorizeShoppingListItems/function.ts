@@ -159,7 +159,7 @@ const categorizeShoppingListItemsFlow = ai.defineFlow(
       return {
         result: "NG" as const,
         error: {
-          message: `AIカテゴリ分けの月間利用回数（${monthlyLimit}回）に達しました`,
+          message: `自動カテゴリ分けの月間利用回数（${monthlyLimit}回）に達しました`,
         },
       };
     }

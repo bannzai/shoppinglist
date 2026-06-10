@@ -188,17 +188,22 @@ class _FlatShoppingListItems extends ConsumerWidget {
       },
     );
 
-    if (!showCategorizeButton || shoppingListItems.isEmpty) {
+    // 入力中の空行(message が空) や空白のみのアイテムはカテゴリ分け対象にならないため、
+    // ボタンの表示判定と件数から除外する。
+    final categorizableItems = shoppingListItems
+        .where((item) => item.message.trim().isNotEmpty)
+        .toList();
+    if (!showCategorizeButton || categorizableItems.isEmpty) {
       return list;
     }
-    // カテゴリ未作成のフラット表示では全アイテムが未分類。AIカテゴリ分けボタンを上部に出す。
+    // カテゴリ未作成のフラット表示では全アイテムが未分類。自動カテゴリ分けボタンを上部に出す。
     return Column(
       children: [
         AICategorizeButton(
           groupID: groupID,
           shoppingListID: shoppingListID,
           categoryAxisID: categoryAxisID,
-          uncategorizedItems: shoppingListItems,
+          uncategorizedItems: categorizableItems,
           existingCategoryNames: existingCategoryNames,
         ),
         Expanded(child: list),
@@ -250,7 +255,12 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
           categories: categories,
         );
 
-        final uncategorizedItems = grouped[uncategorizedCategoryID] ?? const [];
+        // 入力中の空行(message が空) や空白のみのアイテムはカテゴリ分け対象にならないため、
+        // ボタンの表示判定と件数から除外する。
+        final uncategorizedItems =
+            (grouped[uncategorizedCategoryID] ?? const [])
+                .where((item) => item.message.trim().isNotEmpty)
+                .toList();
         final groupedListView = _GroupedListView(
           groupID: groupID,
           shoppingListID: shoppingListID,
@@ -262,7 +272,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
         if (uncategorizedItems.isEmpty) {
           return groupedListView;
         }
-        // 未分類セクションがあるときは、リスト上部に AIカテゴリ分けボタンを出す。
+        // 未分類セクションがあるときは、リスト上部に自動カテゴリ分けボタンを出す。
         return Column(
           children: [
             AICategorizeButton(

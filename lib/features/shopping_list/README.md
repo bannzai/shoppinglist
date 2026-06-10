@@ -13,12 +13,13 @@
 
 ### 画面・コンポーネント
 - `components/ai_categorize_button.dart` (`AICategorizeButton`): 未分類アイテムがあるとき
-  リスト上部に表示する「AIでカテゴリ分け（N件）」ボタン。
+  リスト上部に表示する「自動でカテゴリ分け（N件）」ボタン。
 - `components/ai_categorize_preview_sheet.dart` (`showAICategorizePreviewSheet`): 分類結果を
   カテゴリ別に表示し、各候補のカテゴリ変更・除外ができる確認シート。
 
 ### 表示条件
 `shopping_list_items.dart` で、未分類アイテムが1件以上あるときボタンを表示する。
+- 入力中の空行（`message` が空のアイテム）は表示条件・件数カウントから除外する。
 - カテゴリ未作成（フラット表示）でも、カテゴリ表示が有効なら表示する（AIがカテゴリ自体を新規作成）。
 - カテゴリ表示OFF（`sortByCategory == false`）のときは表示しない。
 

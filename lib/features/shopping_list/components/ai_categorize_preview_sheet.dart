@@ -201,7 +201,7 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'AI のカテゴリ分け',
+                          '自動カテゴリ分け',
                           style:
                               Theme.of(context).textTheme.titleLarge?.copyWith(
                                     color: neutral.ink,
