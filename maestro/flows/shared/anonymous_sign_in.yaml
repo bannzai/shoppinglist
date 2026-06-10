@@ -13,9 +13,11 @@ appId: com.bannzai.shoppinglist
 # design v2 のオンボーディングをスキップする。clearState 直後は必ず表示されるが、
 # 起動直後のスプラッシュ表示中に when:visible が空振りする race を避けるため、
 # スキップボタンが出るまで明示的に待ってから tap する。
+# timeout はホスト高負荷時(複数 Simulator 並走・ビルド同時実行)に cold start が
+# 30 秒を超えて flake するため、後段のサインイン待ちと同じ 90 秒にしている。
 - extendedWaitUntil:
     visible: "スキップ"
-    timeout: 30000
+    timeout: 90000
 - tapOn: "スキップ"
 - waitForAnimationToEnd
 - extendedWaitUntil:

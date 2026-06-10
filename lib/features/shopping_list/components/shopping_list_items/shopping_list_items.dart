@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/features/shopping_list/components/ai_categorize_button.dart';
@@ -11,7 +12,9 @@ import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
-/// 入力行(空行)に割り当てる安定した GlobalKey のマップ(item.id をキーにする)。
+part 'shopping_list_items.g.dart';
+
+/// 入力行(空行)に割り当てる安定した GlobalKey を item.id ごとに保持するレジストリ。
 ///
 /// 入力行で Enter を押すと確定テキストを別アイテムとして「入力行の上」に挿入するため、
 /// 入力行の list index が 1 つ下にずれる。ValueKey だけだと SliverList が index ずれ時に
@@ -21,17 +24,22 @@ import 'package:shoppinglist/utils/purchase/purchase.dart';
 ///
 /// 確定行(非空)には付けない。ReorderableList のドラッグ中は対象行の proxy が複製され、
 /// GlobalKey だと「Duplicate GlobalKey」でクラッシュするため。入力行はドラッグ対象外にする。
-final Map<String, GlobalKey> _shoppingListItemRowKeys = {};
+///
+/// id(Firestore 自動 ID)は再利用されないため、一覧から消えた id の GlobalKey が
+/// 別アイテムへ誤って再アタッチされることはない。GlobalKey を付けるのは実質「リストごとに
+/// 1 つの入力行」だけなのでマップはほぼ増えず、不要 entry の掃除は行わない。
+class ShoppingListItemRowKeys {
+  final Map<String, GlobalKey> _keys = {};
 
-/// [_shoppingListItemRowKeys] から id に対応する GlobalKey を取得(なければ生成)する。
-GlobalKey _rowKey(String id) =>
-    _shoppingListItemRowKeys.putIfAbsent(id, () => GlobalKey());
-
-/// 一覧に存在しない id の GlobalKey を破棄してマップの肥大化を防ぐ。
-void _pruneRowKeys(Iterable<String> currentIDs) {
-  final keep = currentIDs.toSet();
-  _shoppingListItemRowKeys.removeWhere((id, _) => !keep.contains(id));
+  /// id に対応する GlobalKey を取得(なければ生成)する。
+  GlobalKey of(String id) => _keys.putIfAbsent(id, () => GlobalKey());
 }
+
+/// 入力行 GlobalKey レジストリ。アプリ起動中ずっと同一インスタンスを保持する
+/// (リビルドを跨いで GlobalKey を維持しキーボードを閉じさせないため keepAlive)。
+@Riverpod(keepAlive: true)
+ShoppingListItemRowKeys shoppingListItemRowKeys(Ref ref) =>
+    ShoppingListItemRowKeys();
 
 /// 買い物リストのスクロール末尾に確保する下方向パディング。
 /// 画面外側の SafeArea が bottom:false（NavBar の帯を下端まで伸ばすため）なので、
@@ -70,8 +78,6 @@ class ShoppingListItems extends ConsumerWidget {
                 showChecked: showChecked))
             .valueOrNull ??
         [];
-    // 入力行用 GlobalKey マップから、もう存在しない id を掃除する。
-    _pruneRowKeys(shoppingListItems.map((item) => item.id));
     final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
 
     return axesAsync.when(
@@ -133,6 +139,7 @@ class _FlatShoppingListItems extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final rowKeys = ref.watch(shoppingListItemRowKeysProvider);
     final list = ReorderableList(
       padding: _listBottomPadding(context),
       // アイテム編集中にリストをスクロール(ドラッグ)したらキーボードを閉じる
@@ -163,7 +170,7 @@ class _FlatShoppingListItems extends ConsumerWidget {
         // (ドラッグ並べ替え時に proxy と GlobalKey が二重化してクラッシュするのを避ける)。
         final isInputRow = item.message.isEmpty;
         return TextShoppingListItemWidget(
-          key: isInputRow ? _rowKey(item.id) : ValueKey(item.id),
+          key: isInputRow ? rowKeys.of(item.id) : ValueKey(item.id),
           groupID: groupID,
           textShoppingListItem: item,
           shoppingListItems: shoppingListItems,
@@ -212,6 +219,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
+    final rowKeys = ref.watch(shoppingListItemRowKeysProvider);
     final categoriesAsync = ref.watch(groupCategoriesProvider(
         groupID: groupID, categoryAxisID: categoryAxisID));
 
@@ -241,6 +249,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
           categories: categories,
           grouped: grouped,
           shoppingLocationID: isPremium ? shoppingLocationID : null,
+          rowKeys: rowKeys,
         );
         if (uncategorizedItems.isEmpty) {
           return groupedListView;
@@ -278,12 +287,16 @@ class _GroupedListView extends StatelessWidget {
   final Map<String, List<GroupShoppingListItem>> grouped;
   final String? shoppingLocationID;
 
+  /// 入力行に安定した GlobalKey を割り当てるためのレジストリ。
+  final ShoppingListItemRowKeys rowKeys;
+
   const _GroupedListView({
     required this.groupID,
     required this.shoppingListID,
     required this.categories,
     required this.grouped,
     required this.shoppingLocationID,
+    required this.rowKeys,
   });
 
   @override
@@ -317,7 +330,7 @@ class _GroupedListView extends StatelessWidget {
       for (final item in items) {
         children.add(TextShoppingListItemWidget(
             // 入力行(空行)は確定アイテム挿入で index がずれてもフォーカスを保つため GlobalKey。
-            key: item.message.isEmpty ? _rowKey(item.id) : ValueKey(item.id),
+            key: item.message.isEmpty ? rowKeys.of(item.id) : ValueKey(item.id),
             groupID: groupID,
             textShoppingListItem: item,
             shoppingListItems: items,
@@ -339,7 +352,7 @@ class _GroupedListView extends StatelessWidget {
       for (final item in uncategorizedItems) {
         children.add(TextShoppingListItemWidget(
             // 入力行(空行)は確定アイテム挿入で index がずれてもフォーカスを保つため GlobalKey。
-            key: item.message.isEmpty ? _rowKey(item.id) : ValueKey(item.id),
+            key: item.message.isEmpty ? rowKeys.of(item.id) : ValueKey(item.id),
             groupID: groupID,
             textShoppingListItem: item,
             shoppingListItems: uncategorizedItems,
