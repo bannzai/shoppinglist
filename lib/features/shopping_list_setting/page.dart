@@ -314,7 +314,6 @@ class ShoppingListSettingPage extends HookConsumerWidget {
             .read(textShoppingListItemsProvider(
               groupID: groupID,
               shoppingListID: shoppingListID,
-              showChecked: true,
             ))
             .valueOrNull ??
         const <GroupShoppingListItem>[];
@@ -492,7 +491,6 @@ class _ListActionsCard extends ConsumerWidget {
             .watch(textShoppingListItemsProvider(
               groupID: groupID,
               shoppingListID: shoppingListID,
-              showChecked: true,
             ))
             .valueOrNull ??
         const <GroupShoppingListItem>[];

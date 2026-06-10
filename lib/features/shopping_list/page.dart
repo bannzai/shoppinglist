@@ -12,7 +12,6 @@ import 'package:shoppinglist/features/shopping_list/components/banners/ai_proces
 import 'package:shoppinglist/features/shopping_list/components/banners/list_error_card.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/retention_banner.dart';
 import 'package:shoppinglist/features/shopping_list/components/expandable_fab.dart';
-import 'package:shoppinglist/features/shopping_list/components/filter_chips_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/group_chips_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/list_top_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/notification_member_bar.dart';
@@ -167,7 +166,7 @@ class _GroupChips extends ConsumerWidget {
 }
 
 /// 有効な買い物リストが確定している(resolvedShoppingListID 非null)時のみマウントされる本体。
-/// item 系 provider の購読・showChecked/sortByCategory・通知系 useEffect をここで無条件に行うため、
+/// item 系 provider の購読・通知系 useEffect をここで無条件に行うため、
 /// ShoppingListPage 側に条件付き ref.watch を持ち込まずに済む。
 class _ActiveShoppingList extends HookConsumerWidget {
   final String groupID;
@@ -191,24 +190,13 @@ class _ActiveShoppingList extends HookConsumerWidget {
     final shoppingList =
         shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID);
 
-    final showChecked = useState(true);
-    final sortByCategory = useState(true);
-
-    // 表示用: フィルタ(チェック済み表示の ON/OFF)を反映した一覧。FAB とリスト本体に渡す。
+    // チェック済み含む全件。FAB・リスト本体・進捗ピル・変更検知・通知トーストすべてこの一覧を基準にする。
     final shoppingListItemsAsync = ref.watch(textShoppingListItemsProvider(
       groupID: groupID,
       shoppingListID: shoppingListID,
-      showChecked: showChecked.value,
     ));
-    // 集計用: フィルタに関係なく常に全件。進捗ピル・変更検知・通知トーストはフィルタ表示の
-    // ON/OFF に左右されず全件基準で判定する必要があるため、showChecked: true で別途 watch する。
-    final textShoppingListItemsAsync = ref.watch(textShoppingListItemsProvider(
-      groupID: groupID,
-      shoppingListID: shoppingListID,
-      showChecked: true,
-    ));
-    final textShoppingListItems = textShoppingListItemsAsync.valueOrNull ?? [];
-    final itemMetrics = shoppingListItemMetrics(textShoppingListItems);
+    final itemMetrics =
+        shoppingListItemMetrics(shoppingListItemsAsync.valueOrNull ?? []);
     final checkedCount = itemMetrics.checkedCount;
     final totalCount = itemMetrics.totalCount;
 
@@ -225,10 +213,10 @@ class _ActiveShoppingList extends HookConsumerWidget {
     // 全件の取得結果が更新されるたびに「初回ロードか / 以降の変更か」を判定する。
     // 初回(AsyncData 初到達)は通知対象外なのでフラグを倒すだけ、2回目以降の変化で
     // itemChangeCount を増やし、通知トースト / 自動通知のトリガーにする。
-    // 依存配列を textShoppingListItemsAsync にするのは、この Async 値の更新そのものを
-    // アイテム変更イベントとして扱うため(表示フィルタに依存しない全件側を見る)。
+    // 依存配列を shoppingListItemsAsync にするのは、この Async 値の更新そのものを
+    // アイテム変更イベントとして扱うため。
     useEffect(() {
-      if (textShoppingListItemsAsync is AsyncData) {
+      if (shoppingListItemsAsync is AsyncData) {
         if (isInitialLoad.value) {
           isInitialLoad.value = false;
         } else {
@@ -236,7 +224,7 @@ class _ActiveShoppingList extends HookConsumerWidget {
         }
       }
       return null;
-    }, [textShoppingListItemsAsync]);
+    }, [shoppingListItemsAsync]);
 
     // アイテムの変更(2回目以降)を検知したら、家族へ通知を促すトーストを表示する。
     // モーダル表示中でも最前面に出すためグローバルトースト経由で出す。ソログループ(自分のみ)では
@@ -306,9 +294,7 @@ class _ActiveShoppingList extends HookConsumerWidget {
         ref.invalidate(shoppingListsProvider(
             groupID: groupID, isPremium: firestoreIsPremium));
         ref.invalidate(textShoppingListItemsProvider(
-            groupID: groupID,
-            shoppingListID: shoppingListID,
-            showChecked: showChecked.value));
+            groupID: groupID, shoppingListID: shoppingListID));
       },
       floatingActionButton: ExpandableFab(
         groupID: groupID,
@@ -336,12 +322,6 @@ class _ActiveShoppingList extends HookConsumerWidget {
                   children: [
                     Column(
                       children: [
-                        FilterChipsBar(
-                          groupID: groupID,
-                          shoppingListID: shoppingListID,
-                          showChecked: showChecked,
-                          sortByCategory: sortByCategory,
-                        ),
                         if (aiProcessingType != null)
                           AIProcessingBanner(type: aiProcessingType),
                         Expanded(
@@ -353,8 +333,6 @@ class _ActiveShoppingList extends HookConsumerWidget {
                               shoppingLists: shoppingLists,
                               shoppingList: shoppingList,
                               shoppingListItems: shoppingListItems,
-                              showChecked: showChecked.value,
-                              sortByCategory: sortByCategory.value,
                               onShoppingListIDChanged: (newID) => ref
                                   .read(currentShoppingListIDProvider.notifier)
                                   .update(newID),

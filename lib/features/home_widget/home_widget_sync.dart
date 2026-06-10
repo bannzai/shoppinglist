@@ -132,7 +132,6 @@ class _HomeWidgetItemSync extends ConsumerWidget {
         textShoppingListItemsProvider(
           groupID: groupID,
           shoppingListID: shoppingListID,
-          showChecked: true,
         ), (prev, next) {
       final items = next.valueOrNull;
       if (items != null) {

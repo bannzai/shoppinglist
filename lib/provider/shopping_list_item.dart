@@ -7,25 +7,19 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'shopping_list_item.g.dart';
 
+/// 買い物リストのアイテム一覧(チェック済み含む全件)を order 昇順で購読する。
 @Riverpod(dependencies: [groupDatabase])
 Stream<List<GroupShoppingListItem>> textShoppingListItems(Ref ref,
-    {required String groupID,
-    required String shoppingListID,
-    required bool showChecked}) {
-  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
-  Query<GroupShoppingListItem> query =
-      database.shoppingListItemsReference(shoppingListID: shoppingListID);
-  if (!showChecked) {
-    query = query.where(GroupShoppingListItemFirestoreKeys.status,
-        isEqualTo: GroupShoppingListItemStatus.unchecked.name);
-  }
-  return query
+    {required String groupID, required String shoppingListID}) {
+  return ref
+      .watch(groupDatabaseProvider(groupID: groupID))
+      .shoppingListItemsReference(shoppingListID: shoppingListID)
       .orderBy(GroupShoppingListItemFirestoreKeys.order, descending: false)
       .snapshots()
       .map((event) {
     final items = event.docs.map((doc) => doc.data()).toList();
     debugPrint(
-        '[textShoppingListItems] Stream データ取得: アイテム数=${items.length}, showChecked=$showChecked, shoppingListID=$shoppingListID');
+        '[textShoppingListItems] Stream データ取得: アイテム数=${items.length}, shoppingListID=$shoppingListID');
     return items;
   });
 }
