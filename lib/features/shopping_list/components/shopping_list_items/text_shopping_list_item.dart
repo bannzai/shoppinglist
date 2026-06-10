@@ -124,12 +124,13 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         ? colorFromHex(textShoppingListItem.color!).withValues(alpha: 0.1)
         : null;
     final focused = isEditing.value;
+    // チェック済み行に背景は塗らない（screens-list.jsx#ItemRow は checked でも transparent）。
+    // divider2 半透過を塗るとカテゴリヘッダーの surface とほぼ同色になり、チェックを入れると
+    // セクションの境界が見分けられなくなる（Issue #374）。チェック状態は Checkbox 塗り +
+    // 取り消し線 + checked 文字色で表現する。
     final backgroundColor = focused
         ? tokens.accentSoft.withValues(alpha: 0.6)
-        : itemColor ??
-            (isChecked
-                ? neutral.divider2.withValues(alpha: 0.5)
-                : Colors.transparent);
+        : itemColor ?? Colors.transparent;
 
     // ReorderableListView のドラッグ移動中に Material が必要
     final content = Material(
