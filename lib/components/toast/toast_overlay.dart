@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/provider/app_provider_container.dart';
@@ -31,9 +33,46 @@ void dismissGlobalToast() {
   appProviderContainer.read(toastProvider.notifier).dismiss();
 }
 
-/// `MaterialApp.builder` の `Stack` 最前面に常駐し、グローバルトーストを描画する。
-/// Navigator の外側（builder 出力）に置かれるため、ダイアログ/ボトムシートの
-/// 上にも表示される。ルートが `Positioned` なので **`Stack` の直接の子** として配置すること。
+/// モーダル/ボトムシートの前面に route としてトーストを表示する。
+///
+/// `MaterialApp.builder` 上の [ToastOverlay] は既存のグローバル通知用に残し、
+/// シート表示中にユーザー操作から動的に出す通知は route 化して確実に前面へ積む。
+void showForegroundToastWidget(
+  BuildContext context,
+  WidgetBuilder builder, {
+  Duration duration = const Duration(seconds: 5),
+}) {
+  final route = _ForegroundToastRoute(builder: builder, duration: duration);
+  unawaited(Navigator.of(context, rootNavigator: true).push(route));
+}
+
+/// アクション付きの前面トーストを表示する。
+void showForegroundActionToast({
+  required BuildContext context,
+  required String message,
+  required String actionLabel,
+  required VoidCallback onAction,
+  Duration duration = const Duration(seconds: 5),
+}) {
+  showForegroundToastWidget(
+    context,
+    (toastContext) => ToastActionContent(
+      message: message,
+      actionLabel: actionLabel,
+      onAction: () {
+        Navigator.of(toastContext).pop();
+        onAction();
+      },
+    ),
+    duration: duration,
+  );
+}
+
+/// `MaterialApp.builder` の `Stack` に常駐し、グローバルトーストを描画する。
+/// ルートが `Positioned` なので **`Stack` の直接の子** として配置すること。
+///
+/// モーダル/ボトムシートの表示中にユーザー操作から動的に出す通知は、
+/// route として前面に積む [showForegroundToastWidget] を使う。
 class ToastOverlay extends ConsumerWidget {
   const ToastOverlay({super.key});
 
@@ -85,6 +124,84 @@ class _ToastFrame extends StatelessWidget {
   }
 }
 
+class _ForegroundToastRoute extends PopupRoute<void> {
+  final WidgetBuilder builder;
+  final Duration duration;
+  Timer? _timer;
+
+  _ForegroundToastRoute({required this.builder, required this.duration});
+
+  @override
+  bool get barrierDismissible => false;
+
+  @override
+  Color? get barrierColor => null;
+
+  @override
+  String? get barrierLabel => null;
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 220);
+
+  @override
+  Duration get reverseTransitionDuration => const Duration(milliseconds: 160);
+
+  @override
+  void install() {
+    super.install();
+    _timer = Timer(duration, () {
+      if (isActive) {
+        navigator?.removeRoute(this);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
+    return SafeArea(
+      child: Stack(
+        children: [
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _ToastFrame(child: builder(context)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return FadeTransition(
+      opacity: animation,
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 0.25),
+          end: Offset.zero,
+        ).animate(animation),
+        child: child,
+      ),
+    );
+  }
+}
+
 /// 標準テキストトーストの内容（任意タイトル + 本文）。ink 背景上の白系文字。
 class ToastTextContent extends StatelessWidget {
   /// 太字で出すタイトル。null/空なら省略。
@@ -117,6 +234,56 @@ class ToastTextContent extends StatelessWidget {
             style:
                 Theme.of(context).textTheme.bodySmall?.copyWith(color: onInk),
           ),
+      ],
+    );
+  }
+}
+
+/// 本文 + 右側アクションのトースト内容。
+class ToastActionContent extends StatelessWidget {
+  final String message;
+  final String actionLabel;
+  final VoidCallback onAction;
+
+  const ToastActionContent({
+    super.key,
+    required this.message,
+    required this.actionLabel,
+    required this.onAction,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.appTheme;
+    final onInk = tokens.neutral.surface;
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            message,
+            style:
+                Theme.of(context).textTheme.bodySmall?.copyWith(color: onInk),
+          ),
+        ),
+        const SizedBox(width: 12),
+        InkWell(
+          onTap: onAction,
+          borderRadius: BorderRadius.circular(AppThemeExtension.radiusPill),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: tokens.accent,
+              borderRadius: BorderRadius.circular(AppThemeExtension.radiusPill),
+            ),
+            child: Text(
+              actionLabel,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+          ),
+        ),
       ],
     );
   }

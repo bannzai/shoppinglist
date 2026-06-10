@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
@@ -18,6 +19,7 @@ import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/color.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/image/image.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -484,7 +486,21 @@ class _PhotoSection extends HookConsumerWidget {
         onPressed: () => _showImageSourceDialog(
             context: context, ref: ref, isPremium: isPremium),
         icon: const Icon(Icons.add_a_photo),
-        label: const Text('写真を追加'),
+        label: isPremium
+            ? const Text('写真を追加')
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('写真を追加'),
+                  const SizedBox(width: 6),
+                  // 写真添付がプレミアム機能であることを示す王冠。未課金時のみ表示。
+                  Icon(
+                    Icons.workspace_premium,
+                    size: 18,
+                    color: context.appTheme.accent,
+                  ),
+                ],
+              ),
       ),
     );
   }
@@ -544,15 +560,12 @@ class _PhotoSection extends HookConsumerWidget {
       analytics.logEvent(
           name: 'tap_item_photo_non_premium',
           parameters: {'groupID': groupID, 'itemID': itemID});
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          persist: false,
-          content: const Text('商品写真の添付はプレミアム機能です'),
-          action: SnackBarAction(
-            label: 'アップグレード',
-            onPressed: () => showPaywall(context: context),
-          ),
-        ),
+      final paywallContext = Navigator.of(context, rootNavigator: true).context;
+      showForegroundActionToast(
+        context: context,
+        message: '商品写真の添付はプレミアム機能です',
+        actionLabel: 'アップグレード',
+        onAction: () => showPaywall(context: paywallContext),
       );
       return;
     }
