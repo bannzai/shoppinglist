@@ -1,0 +1,44 @@
+appId: com.bannzai.shoppinglist
+---
+# 買い物リスト入力仕様の E2E 検証 (PR #360 / PR #365 の回帰ガード):
+# 1. アイテム入力中に Enter を押すと確定アイテムが積まれ、末尾に空の入力行が残って
+#    フォーカスが維持され、連続で入力できる
+# 2. キーボードのフォーカスが外れたら空の入力行が削除される
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 空リストのスターター行から入力を開始する
+- tapOn: "タップで入力開始"
+- waitForAnimationToEnd
+
+# --- 仕様1: Enter 連続入力 ---
+# Enter のたびに確定アイテムが追加され、入力行 (hint「メモを書く...」) が末尾に残る。
+# フォーカスが入力行から外れていたら 2 件目以降の inputText が入らず assert が落ちる。
+- inputText: "牛乳"
+- pressKey: enter
+- assertVisible: "牛乳"
+# 入力行が残っている (空の TextField は hint が semantics label になる)
+- assertVisible: "メモを書く..."
+- inputText: "卵"
+- pressKey: enter
+- inputText: "パン"
+- pressKey: enter
+- assertVisible: "牛乳"
+- assertVisible: "卵"
+- assertVisible: "パン"
+- assertVisible: "メモを書く..."
+- takeScreenshot: screenshots/enter_input_01_items_added
+
+# --- 仕様2: フォーカス喪失で空行削除 ---
+# リストは keyboardDismissBehavior: onDrag のため、スクロール (ドラッグ) でフォーカスが
+# 外れる。フォーカス喪失時に空の入力行は物理削除される。
+- swipe:
+    start: "50%,40%"
+    end: "50%,60%"
+- waitForAnimationToEnd
+# 空の入力行が消え、確定アイテムは残っている
+- assertNotVisible: "メモを書く..."
+- assertVisible: "牛乳"
+- assertVisible: "卵"
+- assertVisible: "パン"
+- takeScreenshot: screenshots/enter_input_02_empty_row_removed
