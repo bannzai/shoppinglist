@@ -47,7 +47,7 @@ ShoppingListItemRowKeys shoppingListItemRowKeys(Ref ref) =>
 /// ホームインジケータ/iPhone 下部バーの安全領域分を自前で確保し、さらに最終アイテムが
 /// バーに張り付かないよう余白を上乗せして被りを防ぐ。
 EdgeInsets _listBottomPadding(BuildContext context) => EdgeInsets.only(
-      bottom: MediaQuery.of(context).padding.bottom + 32,
+      bottom: MediaQuery.of(context).padding.bottom + 200,
     );
 
 class ShoppingListItems extends ConsumerWidget {

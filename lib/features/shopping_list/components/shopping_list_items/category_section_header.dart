@@ -40,7 +40,7 @@ class CategorySectionHeader extends StatelessWidget {
             decoration: BoxDecoration(color: dot, shape: BoxShape.circle),
           ),
           const SizedBox(width: 8),
-          Flexible(
+          Expanded(
             child: Text(
               name.toUpperCase(),
               maxLines: 1,
