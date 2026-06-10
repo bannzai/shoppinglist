@@ -12,7 +12,7 @@ import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
 /// ShoppingListPage の最上段（高さ 52）。
 /// `design_handoff_shopping_list/source/screens-list.jsx#ListTopBar` 相当。
-/// 左にリスト名 + ▼（タップでリスト切替シート）、右にリスト設定（…）と設定アイコン。
+/// 左にリスト名 + ▼（タップでリスト切替シート）、右にリスト設定とユーザー設定のアイコン。
 ///
 /// Scaffold の appBar スロットを使わず Column 内の通常 Widget として置いている理由:
 /// - paper/surface の上にフラットに乗せ、下の白い card と段差なく繋ぐハイブリッドサーフェス
@@ -98,11 +98,7 @@ class ListTopBar extends ConsumerWidget {
             ),
             IconButton(
               key: const Key('list_setting_button'),
-              icon: Icon(
-                Icons.more_horiz,
-                size: 22,
-                color: tokens.neutral.ink2,
-              ),
+              icon: const _SettingsBadgeIcon(baseIcon: Icons.receipt_long),
               tooltip: 'リスト設定',
               onPressed: shoppingList == null
                   ? null
@@ -135,11 +131,7 @@ class ListTopBar extends ConsumerWidget {
             ),
             IconButton(
               key: const Key('app_settings_button'),
-              icon: Icon(
-                Icons.settings_outlined,
-                size: 22,
-                color: tokens.neutral.ink2,
-              ),
+              icon: const _SettingsBadgeIcon(baseIcon: Icons.person_outline),
               tooltip: '設定',
               onPressed: () {
                 analytics.logEvent(
@@ -155,6 +147,55 @@ class ListTopBar extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// 設定対象を表すベースアイコンの右下に、小さな歯車をZ軸で重ねたアイコン。
+/// 歯車の下にバーの背景色(surface)の縁取り円を敷き、ベースアイコンとの重なりを視覚的に分離する。
+class _SettingsBadgeIcon extends StatelessWidget {
+  /// 設定対象を表すベースアイコン（例: リスト設定ならメモ、ユーザー設定なら人物）。
+  final IconData baseIcon;
+
+  const _SettingsBadgeIcon({required this.baseIcon});
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.appTheme;
+
+    return SizedBox(
+      width: 24,
+      height: 24,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            left: 0,
+            top: 0,
+            child: Icon(
+              baseIcon,
+              size: 22,
+              color: tokens.neutral.ink2,
+            ),
+          ),
+          Positioned(
+            right: -2,
+            bottom: -2,
+            child: Container(
+              padding: const EdgeInsets.all(1),
+              decoration: BoxDecoration(
+                color: tokens.neutral.surface,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.settings,
+                size: 11,
+                color: tokens.neutral.ink2,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
