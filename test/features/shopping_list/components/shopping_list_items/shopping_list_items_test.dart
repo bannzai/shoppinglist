@@ -146,11 +146,11 @@ void main() {
       );
     });
 
-    testWidgets('カテゴリ分類表示の ListView が onDrag で閉じる', (tester) async {
+    testWidgets('カテゴリ分類表示の CustomScrollView が onDrag で閉じる', (tester) async {
       await _pump(tester);
       expect(
         tester
-            .widget<ListView>(find.byType(ListView).first)
+            .widget<CustomScrollView>(find.byType(CustomScrollView).first)
             .keyboardDismissBehavior,
         ScrollViewKeyboardDismissBehavior.onDrag,
       );

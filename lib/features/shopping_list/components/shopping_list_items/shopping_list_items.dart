@@ -288,8 +288,12 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
   }
 }
 
-/// カテゴリヘッダー付きのグルーピング表示。グルーピング表示時はドラッグ&ドロップを無効にする。
-class _GroupedListView extends StatelessWidget {
+/// カテゴリヘッダー付きのグルーピング表示。
+/// カテゴリ(および未分類)セクションごとに独立した [SliverReorderableList] を並べ、
+/// 行の長押しドラッグでの並び替えを **そのセクション内に限定** して許可する。
+/// ([ReorderableDragStartListener] は最寄りの [SliverReorderableList] を解決するため、
+///  カテゴリをまたぐ D&D は構造上発生しない。)
+class _GroupedListView extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupCategory> categories;
@@ -309,71 +313,103 @@ class _GroupedListView extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final categoryMap = {for (final c in categories) c.id: c};
-    final sortedCategories = sortCategoriesByLocation(
+    final sortedCategoryIDs = sortCategoriesByLocation(
       categories: categories,
       shoppingLocationID: shoppingLocationID,
-    );
-    final sortedCategoryIDs = sortedCategories.map((c) => c.id).toList();
+    ).map((c) => c.id).toList();
 
-    final List<Widget> children = [];
+    final slivers = <Widget>[];
 
     for (final categoryID in sortedCategoryIDs) {
       final items = grouped[categoryID];
       if (items == null || items.isEmpty) {
         continue;
       }
-
       final category = categoryMap[categoryID]!;
       final metrics = shoppingListItemMetrics(items);
       if (metrics.totalCount > 0) {
-        children.add(CategorySectionHeader(
-          name: category.name,
-          colorHex: category.color,
-          doneCount: metrics.checkedCount,
-          totalCount: metrics.totalCount,
+        slivers.add(SliverToBoxAdapter(
+          child: CategorySectionHeader(
+            name: category.name,
+            colorHex: category.color,
+            doneCount: metrics.checkedCount,
+            totalCount: metrics.totalCount,
+          ),
         ));
       }
-
-      for (final item in items) {
-        children.add(TextShoppingListItemWidget(
-            // 入力行(空行)は確定アイテム挿入で index がずれてもフォーカスを保つため GlobalKey。
-            key: item.message.isEmpty ? rowKeys.of(item.id) : ValueKey(item.id),
-            groupID: groupID,
-            textShoppingListItem: item,
-            shoppingListItems: items,
-            reorderIndex: null));
-      }
+      slivers.add(_reorderableSection(ref, items));
     }
 
     final uncategorizedItems = grouped[uncategorizedCategoryID];
     if (uncategorizedItems != null && uncategorizedItems.isNotEmpty) {
       final metrics = shoppingListItemMetrics(uncategorizedItems);
       if (metrics.totalCount > 0) {
-        children.add(CategorySectionHeader(
-          name: '未分類',
-          colorHex: null,
-          doneCount: metrics.checkedCount,
-          totalCount: metrics.totalCount,
+        slivers.add(SliverToBoxAdapter(
+          child: CategorySectionHeader(
+            name: '未分類',
+            colorHex: null,
+            doneCount: metrics.checkedCount,
+            totalCount: metrics.totalCount,
+          ),
         ));
       }
-      for (final item in uncategorizedItems) {
-        children.add(TextShoppingListItemWidget(
-            // 入力行(空行)は確定アイテム挿入で index がずれてもフォーカスを保つため GlobalKey。
-            key: item.message.isEmpty ? rowKeys.of(item.id) : ValueKey(item.id),
-            groupID: groupID,
-            textShoppingListItem: item,
-            shoppingListItems: uncategorizedItems,
-            reorderIndex: null));
-      }
+      slivers.add(_reorderableSection(ref, uncategorizedItems));
     }
 
-    return ListView(
-      padding: _listBottomPadding(context),
+    return CustomScrollView(
       // アイテム編集中にリストをスクロール(ドラッグ)したらキーボードを閉じる
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      children: children,
+      slivers: [
+        ...slivers,
+        // SliverReorderableList は padding を持たないため、下端余白を末尾 sliver で確保する。
+        SliverToBoxAdapter(
+          child: SizedBox(height: _listBottomPadding(context).bottom),
+        ),
+      ],
+    );
+  }
+
+  /// 1 セクション(カテゴリ/未分類)のアイテムを、そのセクション内だけで長押しドラッグ
+  /// 並び替えできる [SliverReorderableList] として構築する。
+  Widget _reorderableSection(
+    WidgetRef ref,
+    List<GroupShoppingListItem> sectionItems,
+  ) {
+    return SliverReorderableList(
+      itemCount: sectionItems.length,
+      onReorder: (oldIndex, newIndex) {
+        analytics.logEvent(
+          name: 'reorder_shopping_list_item',
+          parameters: {
+            'groupID': groupID,
+            'shoppingListID': shoppingListID,
+          },
+        );
+        ref.read(shoppingListItemBatchUpdateProvider(groupID: groupID)).call(
+              shoppingListID: shoppingListID,
+              shoppingListItems: reorderedSectionItems(
+                sectionItems: sectionItems,
+                oldIndex: oldIndex,
+                newIndex: newIndex,
+              ),
+            );
+      },
+      itemBuilder: (context, index) {
+        final item = sectionItems[index];
+        // 入力行(空行)は確定アイテム挿入で index がずれてもフォーカスを保つため GlobalKey。
+        // 確定行はドラッグ中の proxy 複製で GlobalKey が二重化しクラッシュするため ValueKey。
+        final isInputRow = item.message.isEmpty;
+        return TextShoppingListItemWidget(
+          key: isInputRow ? rowKeys.of(item.id) : ValueKey(item.id),
+          groupID: groupID,
+          textShoppingListItem: item,
+          shoppingListItems: sectionItems,
+          // 空の入力行はドラッグ対象外(reorderIndex: null)。確定行はセクション内 index を渡す。
+          reorderIndex: isInputRow ? null : index,
+        );
+      },
     );
   }
 }
