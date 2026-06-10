@@ -395,4 +395,65 @@ void main() {
       );
     });
   });
+
+  group('reorderedSectionItems', () {
+    GroupShoppingListItem item(String id, int order) => GroupShoppingListItem(
+          id: id,
+          groupID: 'group1',
+          shoppingListID: 'list1',
+          userID: 'user1',
+          message: id,
+          order: order,
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          imageURL: null,
+          lastEditedByUserID: null,
+        );
+
+    test('先頭→末尾の移動で order 多重集合を保ったまま並びが入れ替わる', () {
+      // カテゴリのアイテムが order {0,2,4} を持つ状態を再現
+      final section = [item('A', 0), item('C', 2), item('E', 4)];
+
+      // 末尾 E(index2) を先頭(index0)へ移動
+      final result = reorderedSectionItems(
+        sectionItems: section,
+        oldIndex: 2,
+        newIndex: 0,
+      );
+
+      // 並び順は [E, A, C]
+      expect(result.map((e) => e.id).toList(), ['E', 'A', 'C']);
+      // order の多重集合は {0,2,4} のまま（昇順に再割り当て）
+      expect(result.map((e) => e.order).toList(), [0, 2, 4]);
+    });
+
+    test('下方向移動は newIndex を 1 補正して反映する', () {
+      final section = [item('A', 0), item('B', 1), item('C', 2)];
+
+      // A(index0) を C の下(onReorder の newIndex=3)へ移動
+      final result = reorderedSectionItems(
+        sectionItems: section,
+        oldIndex: 0,
+        newIndex: 3,
+      );
+
+      expect(result.map((e) => e.id).toList(), ['B', 'C', 'A']);
+      expect(result.map((e) => e.order).toList(), [0, 1, 2]);
+    });
+
+    test('order に飛び・重複があっても多重集合をそのまま保つ', () {
+      // 0,1,3 と飛ぶ / 重複もあり得る前提（group_shopping_list_item.dart の NOTE）
+      final section = [item('A', 1), item('B', 3), item('C', 3)];
+
+      final result = reorderedSectionItems(
+        sectionItems: section,
+        oldIndex: 2,
+        newIndex: 0,
+      );
+
+      expect(result.map((e) => e.id).toList(), ['C', 'A', 'B']);
+      expect(result.map((e) => e.order).toList(), [1, 3, 3]);
+    });
+  });
 }

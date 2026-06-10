@@ -80,3 +80,29 @@ String findMatchingCategoryID({
 
   return uncategorizedCategoryID;
 }
+
+/// セクション(カテゴリ/未分類)内の並び替えを、そのセクションのアイテムが持つ
+/// order 値の多重集合を保ったまま反映した新しいアイテム列を返す。
+///
+/// [oldIndex]/[newIndex] は [SliverReorderableList.onReorder] が渡す生のインデックス。
+/// order 値の多重集合を保つことで、他セクション(カテゴリ)のアイテムが占める order
+/// スロットは変えず、このセクション内の並びだけを変更できる。
+/// (カテゴリ表示は「全アイテムを order 昇順にソート → カテゴリでバケツ分け」して
+///  描画されるため、多重集合を保てば他カテゴリの位置は不変のまま当該カテゴリ内のみ
+///  並びが変わる。)
+List<GroupShoppingListItem> reorderedSectionItems({
+  required List<GroupShoppingListItem> sectionItems,
+  required int oldIndex,
+  required int newIndex,
+}) {
+  // onReorder の仕様: 下方向への移動では一時的に要素が抜けるため newIndex が 1 ずれる。
+  final adjustedNewIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
+  final reordered = [...sectionItems];
+  reordered.insert(adjustedNewIndex, reordered.removeAt(oldIndex));
+  // 既存の order 値を昇順に保ち、新しい並び順へ先頭から再割り当てする。
+  final orderValues = sectionItems.map((item) => item.order).toList()..sort();
+  return [
+    for (final (index, item) in reordered.indexed)
+      item.copyWith(order: orderValues[index]),
+  ];
+}
