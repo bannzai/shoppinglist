@@ -10,6 +10,7 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 part 'shopping_list_items.g.dart';
@@ -145,6 +146,13 @@ class _FlatShoppingListItems extends ConsumerWidget {
       // アイテム編集中にリストをスクロール(ドラッグ)したらキーボードを閉じる
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       onReorder: (oldIndex, newIndex) {
+        analytics.logEvent(
+          name: 'reorder_shopping_list_item',
+          parameters: {
+            'groupID': groupID,
+            'shoppingListID': shoppingListID,
+          },
+        );
         // ドラッグ時にリストから要素を一時的に削除するため newIndex がずれるのを調整
         if (oldIndex < newIndex) {
           newIndex -= 1;
