@@ -4,14 +4,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/features/developer_options/page.dart';
 import 'package:shoppinglist/features/developer_options/shake_detector.dart';
+import 'package:shoppinglist/provider/app_navigator_key.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/fcm_notification.dart';
 import 'package:shoppinglist/provider/geofence.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/root.dart';
 import 'package:shoppinglist/style/theme.dart';
-
-final _navigatorKey = GlobalKey<NavigatorState>();
 
 /// アプリケーションのルートWidget。テーマカラー・ナビゲーション・FCM通知を管理する。
 class App extends ConsumerStatefulWidget {
@@ -58,7 +57,7 @@ class _AppState extends ConsumerState<App> {
         ref.watch(appUserProvider).asData?.value.themeColorHex);
 
     return MaterialApp(
-      navigatorKey: _navigatorKey,
+      navigatorKey: appNavigatorKey,
       title: '買い物リスト',
       // アプリはライトモード固定。darkTheme は提供しない（OS がダークでも常にライト表示）。
       theme: buildAppTheme(accent: accent),
@@ -72,8 +71,9 @@ class _AppState extends ConsumerState<App> {
             child: content,
           );
         }
-        // ToastOverlay は Navigator(=child) の外側・最前面に置く。
-        // これによりダイアログ/ボトムシートの上にもトーストが表示される。
+        // ToastOverlay は toastProvider を監視し、root Navigator の Overlay
+        // 最前面へトーストの OverlayEntry を積む。builder に常駐させるのは
+        // route 遷移に依存せずアプリ起動から監視を確立するため。
         return Stack(
           children: [
             content,

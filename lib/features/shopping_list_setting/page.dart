@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shoppinglist/components/primitives/app_cell.dart';
+import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/components/primitives/app_divider.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/components/primitives/app_section_label.dart';
@@ -288,11 +289,9 @@ class ShoppingListSettingPage extends HookConsumerWidget {
         ),
       );
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
-      }
+      // このページはボトムシート上に表示されるため、SnackBar は背後の
+      // Scaffold に描画されて見えない。前面に出るグローバルトーストで通知する。
+      showGlobalToast(e.toString(), title: null);
     } finally {
       isCreatingInvitation.value = false;
     }
@@ -536,6 +535,11 @@ class _ListActionsCard extends ConsumerWidget {
         'sourceShoppingListID': shoppingListID,
       },
     );
+    // このページはボトムシート上に表示されるため、SnackBar は背後の Scaffold に
+    // 描画されて見えない。前面に出るグローバルトーストで通知する。
+    // シートが閉じられた後でもアクションからペイウォールを開けるよう、
+    // 生存し続ける root Navigator の context を束ねておく。
+    final paywallContext = Navigator.of(context, rootNavigator: true).context;
     try {
       await ref.read(shoppingListDuplicateProvider(groupID: groupID)).call(
             createUserID: shoppingList.createUserID,
@@ -543,30 +547,15 @@ class _ListActionsCard extends ConsumerWidget {
             sourceShoppingList: shoppingList,
             shoppingListItems: items,
           );
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('リストを複製しました')),
-        );
-      }
+      showGlobalToast('リストを複製しました', title: null);
     } on ShoppingListLimitExceededException catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            persist: false,
-            content: Text(e.toString()),
-            action: SnackBarAction(
-              label: 'アップグレード',
-              onPressed: () => showPaywall(context: context),
-            ),
-          ),
-        );
-      }
+      showGlobalActionToast(
+        message: e.toString(),
+        actionLabel: 'アップグレード',
+        onAction: () => showPaywall(context: paywallContext),
+      );
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
-      }
+      showGlobalToast(e.toString(), title: null);
     }
   }
 
@@ -583,15 +572,13 @@ class _ListActionsCard extends ConsumerWidget {
       },
     );
     if (!isPremium) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          persist: false,
-          content: const Text('リストのエクスポートはプレミアム機能です。プレミアムにアップグレードすると利用できます'),
-          action: SnackBarAction(
-            label: 'アップグレード',
-            onPressed: () => showPaywall(context: context),
-          ),
-        ),
+      // シートが閉じられた後でもアクションからペイウォールを開けるよう、
+      // 生存し続ける root Navigator の context を束ねておく。
+      final paywallContext = Navigator.of(context, rootNavigator: true).context;
+      showGlobalActionToast(
+        message: 'リストのエクスポートはプレミアム機能です。プレミアムにアップグレードすると利用できます',
+        actionLabel: 'アップグレード',
+        onAction: () => showPaywall(context: paywallContext),
       );
       return;
     }
@@ -610,11 +597,7 @@ class _ListActionsCard extends ConsumerWidget {
         ),
       );
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
-      }
+      showGlobalToast(e.toString(), title: null);
     }
   }
 }

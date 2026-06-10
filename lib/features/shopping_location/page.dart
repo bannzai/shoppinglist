@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_location/location_picker_page.dart';
@@ -212,15 +213,16 @@ class ShoppingLocationPage extends ConsumerWidget {
                   analytics.logEvent(
                       name: 'tap_set_location_on_map', parameters: null);
                   if (!isPremium) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        persist: false,
-                        content: const Text('位置情報リマインダーはプレミアム機能です'),
-                        action: SnackBarAction(
-                          label: 'アップグレード',
-                          onPressed: () => showPaywall(context: context),
-                        ),
-                      ),
+                    // ダイアログ上の SnackBar は背後の Scaffold に描画されて
+                    // 見えないため、前面に出るグローバルトーストで通知する。
+                    // ダイアログが閉じられた後でもアクションからペイウォールを
+                    // 開けるよう、生存し続ける root Navigator の context を束ねる。
+                    final paywallContext =
+                        Navigator.of(context, rootNavigator: true).context;
+                    showGlobalActionToast(
+                      message: '位置情報リマインダーはプレミアム機能です',
+                      actionLabel: 'アップグレード',
+                      onAction: () => showPaywall(context: paywallContext),
                     );
                     return;
                   }

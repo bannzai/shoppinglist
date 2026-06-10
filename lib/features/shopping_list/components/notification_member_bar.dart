@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
@@ -78,7 +79,6 @@ class NotificationMemberBar extends HookConsumerWidget {
           sendingUserIDs: sendingUserIDs,
           sentUserIDs: sentUserIDs,
           onSendAll: () => _sendNotification(
-            context: context,
             targetUserIDs: otherMembers.map((m) => m.userID).toList(),
             sendingUserIDs: sendingUserIDs,
             sentUserIDs: sentUserIDs,
@@ -91,7 +91,6 @@ class NotificationMemberBar extends HookConsumerWidget {
           sendingUserIDs: sendingUserIDs.value,
           sentUserIDs: sentUserIDs.value,
           onTap: (userID) => _sendNotification(
-            context: context,
             targetUserIDs: [userID],
             sendingUserIDs: sendingUserIDs,
             sentUserIDs: sentUserIDs,
@@ -102,7 +101,6 @@ class NotificationMemberBar extends HookConsumerWidget {
   }
 
   Future<void> _sendNotification({
-    required BuildContext context,
     required List<String> targetUserIDs,
     required ValueNotifier<Set<String>> sendingUserIDs,
     required ValueNotifier<Set<String>> sentUserIDs,
@@ -117,11 +115,9 @@ class NotificationMemberBar extends HookConsumerWidget {
       );
       sentUserIDs.value = {...sentUserIDs.value, ...targetUserIDs};
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
-      }
+      // この通知バー自体がグローバルトースト上に表示されるため、SnackBar は
+      // トーストの背後に隠れる。エラーもグローバルトーストで前面に通知する。
+      showGlobalToast(e.toString(), title: null);
     } finally {
       sendingUserIDs.value = Set.from(sendingUserIDs.value)
         ..removeAll(targetUserIDs);

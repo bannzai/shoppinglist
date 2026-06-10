@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
+import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/group_create.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
@@ -266,11 +267,9 @@ class _PostCreateInvitationDialog extends StatelessWidget {
             analytics.logEvent(
                 name: 'tap_copy_invitation_code_post_create', parameters: null);
             await Clipboard.setData(ClipboardData(text: invitationCode));
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('招待コードをコピーしました')),
-              );
-            }
+            // ダイアログ上の SnackBar は背後の Scaffold に描画されて
+            // 見えないため、前面に出るグローバルトーストで通知する。
+            showGlobalToast('招待コードをコピーしました', title: null);
           },
           child: const Text('コピー'),
         ),
