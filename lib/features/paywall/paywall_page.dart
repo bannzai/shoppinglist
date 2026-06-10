@@ -7,6 +7,7 @@ import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:shoppinglist/utils/stdlib/navigator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// プレミアムプランへのアップグレード画面。
@@ -448,6 +449,10 @@ class _PaywallPackageTile extends ConsumerWidget {
                 name: 'tap_paywall_subscribe',
                 parameters: {'packageType': package.packageType.name},
               );
+              // 購入の await 中に close ボタンで先に閉じられると、遅延した pop が
+              // ホームまで剥がして黒画面になるため、pop は自ルートに限定する (#372)。
+              final navigator = Navigator.of(context);
+              final paywallRoute = ModalRoute.of(context);
               try {
                 final completed =
                     await ref.read(purchaseProvider).call(package);
@@ -458,7 +463,7 @@ class _PaywallPackageTile extends ConsumerWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('購入ありがとうございました')),
                   );
-                  Navigator.of(context).pop();
+                  popRouteSafely(navigator: navigator, route: paywallRoute);
                 }
               } catch (e) {
                 if (!context.mounted) {

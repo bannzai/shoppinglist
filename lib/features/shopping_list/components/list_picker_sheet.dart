@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
@@ -6,12 +7,13 @@ import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:shoppinglist/utils/stdlib/navigator.dart';
 
 /// リスト切替用のボトムシート。
 /// 旧 `ShoppingListAppBar` の `DropdownButton` を置き換えるシート版 UI。
 /// 現在選択中のリストには accent のチェックマークを表示する。
 /// 末尾に「+ 新しいリストを追加」 row を備える。
-class ListPickerSheet extends ConsumerWidget {
+class ListPickerSheet extends HookConsumerWidget {
   final String groupID;
   final List<GroupShoppingList> shoppingLists;
   final String currentShoppingListID;
@@ -39,6 +41,9 @@ class ListPickerSheet extends ConsumerWidget {
     // フィールドは null promotion が効かないため、コールバックで `appUser.id` を
     // 参照できるよう final ローカルに束ねる。
     final appUser = this.appUser;
+    // 新規リスト作成リクエストの実行中フラグ。作成は上限カウント等のサーバー往復を
+    // 伴い時間がかかるため、その間の連打による作成と pop の多重実行を防ぐ (#372)。
+    final isCreatingList = useState(false);
     return SafeArea(
       top: false,
       child: Container(
@@ -93,7 +98,8 @@ class ListPickerSheet extends ConsumerWidget {
               color: tokens.neutral.divider,
               margin: const EdgeInsets.symmetric(vertical: 4),
             ),
-            _AddListRow(
+            ListPickerAddListRow(
+              isCreating: isCreatingList.value,
               onTap: () async {
                 analytics.logEvent(name: 'tap_create_new_list', parameters: {
                   'groupID': groupID,
@@ -105,8 +111,13 @@ class ListPickerSheet extends ConsumerWidget {
                 // pop を await より後に行う。先に pop すると catch 実行時には
                 // context.mounted=false となり、エラー SnackBar / paywall が
                 // 握り潰される。navigator / messenger を await 前に束ねておく。
+                // また、await 中にシートが手動クローズされると遅延した pop が
+                // ホーム(唯一のページルート)まで剥がして黒画面になるため、
+                // pop はこのシート自身のルートに限定する (#372)。
                 final navigator = Navigator.of(context);
                 final messenger = ScaffoldMessenger.of(context);
+                final sheetRoute = ModalRoute.of(context);
+                isCreatingList.value = true;
                 try {
                   final newList = await ref
                       .read(shoppingListAddProvider(groupID: groupID))
@@ -116,10 +127,10 @@ class ListPickerSheet extends ConsumerWidget {
                         shoppingLocationID: null,
                         duplicatedFromGroupShoppingListID: null,
                       );
-                  navigator.pop();
+                  popRouteSafely(navigator: navigator, route: sheetRoute);
                   onShoppingListIDChanged(newList.id);
                 } on ShoppingListLimitExceededException catch (e) {
-                  navigator.pop();
+                  popRouteSafely(navigator: navigator, route: sheetRoute);
                   messenger.showSnackBar(
                     SnackBar(
                       persist: false,
@@ -132,10 +143,16 @@ class ListPickerSheet extends ConsumerWidget {
                     ),
                   );
                 } catch (e) {
-                  navigator.pop();
+                  popRouteSafely(navigator: navigator, route: sheetRoute);
                   messenger.showSnackBar(
                     SnackBar(content: Text(e.toString())),
                   );
+                } finally {
+                  // シートが既に dispose 済み(手動クローズ等)の場合に
+                  // 破棄済みの ValueNotifier へ書き込まないようガードする。
+                  if (context.mounted) {
+                    isCreatingList.value = false;
+                  }
                 }
               },
             ),
@@ -146,20 +163,41 @@ class ListPickerSheet extends ConsumerWidget {
   }
 }
 
-class _AddListRow extends StatelessWidget {
+/// 「+ 新しいリストを追加」行。
+/// [isCreating] の間はタップを無効化しスピナーを表示して、連打による多重実行を防ぐ。
+class ListPickerAddListRow extends StatelessWidget {
+  /// 行タップで新規リスト作成を開始するコールバック。
   final VoidCallback onTap;
-  const _AddListRow({required this.onTap});
+
+  /// 新規リスト作成リクエストの実行中か。
+  final bool isCreating;
+
+  const ListPickerAddListRow({
+    super.key,
+    required this.onTap,
+    required this.isCreating,
+  });
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.appTheme;
     return InkWell(
-      onTap: onTap,
+      onTap: isCreating ? null : onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         child: Row(
           children: [
-            Icon(Icons.add, size: 18, color: tokens.accent),
+            if (isCreating)
+              SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(tokens.accent),
+                ),
+              )
+            else
+              Icon(Icons.add, size: 18, color: tokens.accent),
             const SizedBox(width: 8),
             Text(
               '新しいリストを追加',

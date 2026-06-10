@@ -18,6 +18,7 @@ import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/image/image.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:shoppinglist/utils/stdlib/navigator.dart';
 
 /// `ShoppingListPage` の右下に配置する展開式 FAB。
 /// `design_handoff_shopping_list/source/screens-list.jsx#FAB` 相当。
@@ -560,6 +561,10 @@ class _URLInputDialog extends HookConsumerWidget {
                     );
                     return;
                   }
+                  // 生成の await 中にダイアログが先に閉じられると、遅延した pop が
+                  // ホームまで剥がして黒画面になるため、pop は自ルートに限定する (#372)。
+                  final navigator = Navigator.of(context);
+                  final dialogRoute = ModalRoute.of(context);
                   isLoading.value = true;
                   ref
                       .read(aIProcessingProvider.notifier)
@@ -586,7 +591,7 @@ class _URLInputDialog extends HookConsumerWidget {
                     return;
                   }
                   // URL ダイアログを先に閉じてから review sheet を出す。
-                  Navigator.pop(context);
+                  popRouteSafely(navigator: navigator, route: dialogRoute);
                   if (!context.mounted) {
                     return;
                   }
