@@ -173,9 +173,11 @@ class _FlatShoppingListItems extends ConsumerWidget {
       },
     );
 
-    // 入力中の空行(message が空)はカテゴリ分け対象にならないため、ボタンの表示判定と件数から除外する。
-    final categorizableItems =
-        shoppingListItems.where((item) => item.message.isNotEmpty).toList();
+    // 入力中の空行(message が空) や空白のみのアイテムはカテゴリ分け対象にならないため、
+    // ボタンの表示判定と件数から除外する。
+    final categorizableItems = shoppingListItems
+        .where((item) => item.message.trim().isNotEmpty)
+        .toList();
     if (!showCategorizeButton || categorizableItems.isEmpty) {
       return list;
     }
