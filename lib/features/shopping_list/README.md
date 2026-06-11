@@ -65,15 +65,35 @@
 切り替えUI（`FilterChipsBar` / フィルター画面）は Issue #373 で廃止した。
 `textShoppingListItemsProvider` は常に全件（チェック済み含む）を返す。
 
-## カテゴリ内の並び替え
-カテゴリ表示時は、各カテゴリ（および未分類）セクションごとに独立した `SliverReorderableList`
-を並べ、行の **長押しドラッグでそのセクション内だけ並び替え** できる（`ReorderableDragStartListener`
-が最寄りの `SliverReorderableList` を解決するため、カテゴリをまたぐ移動は構造上発生しない）。
-並び替えは `category_matcher.dart` の `reorderedSectionItems` で、当該セクションのアイテムが持つ
-`order` 値の多重集合を保ったまま新しい並びへ再割り当てし、`shoppingListItemBatchUpdateProvider`
-で永続化する。これにより他カテゴリの順序は不変のまま、当該カテゴリ内の並びだけが変わる。
+## カテゴリ表示の並び替え・カテゴリ間移動
+カテゴリ表示時は、ヘッダーとアイテムを 1 つの `ReorderableListView`（`buildDefaultDragHandles: false`、
+アイテム行のみ `ReorderableDelayedDragStartListener` でラップ）にフラットに並べ、長押しドラッグで
+**同一カテゴリ内の並び替え** と **別カテゴリへの移動** の両方を行える。ヘッダーはドラッグ対象外、
+入力行（空行）もドラッグ対象外。行モデル・ドロップ先カテゴリ判定・order 正規化は
+`category_matcher.dart` の `buildGroupedRows` / `categoryIDForDropPosition` / `dropIndexInTarget` /
+`itemsAfterMove` に切り出している。
+
+- **order**: 移動のたびに、移動後の表示順（カテゴリ順 → カテゴリ内順）で全アイテムの `order` を
+  0..N-1 に正規化し、`shoppingListItemBatchUpdateProvider` で永続化する。
+- **カテゴリ間移動の永続化**: アイテムはカテゴリIDを持たない（`message` × キーワードで分類）ため、
+  別カテゴリへ移したら `MoveItemCategoryKeyword`（`provider/group_category.dart`）で移動先カテゴリに
+  `message` を完全一致(exact)キーワードとして追加し、移動先以外のカテゴリから同 exact を削除する
+  （`keywordsAfterItemMove` が 1 カテゴリ分の付け替えを担う、transaction で read-modify-write）。
+
+### 既知の限界・副作用
+- 同名（`message` が同じ）アイテムは一緒に移動する（キーワードは message 単位）。
+- 手動の部分一致/正規表現でマッチしているアイテムは、移動先に exact を足しても元カテゴリの order が
+  小さいと残るため、移動が効かない場合がある（分類エンジン `findMatchingCategoryID` は変更しない方針）。
+- 表示されていない（アイテム 0 件の）カテゴリへはドラッグで移動できない（ヘッダーが無いため）。
+
 フラット表示（`_FlatShoppingListItems`、カテゴリ軸なし）は従来どおり全体を `ReorderableList`
-で並び替える。
+で並び替える（`reorderedSectionItems` を使用）。
+
+### 検証
+カテゴリ間ドラッグは widget test（`shopping_list_items_cross_category_test.dart`）で、実際に長押し
+ドラッグを駆動して `onReorder` → カテゴリ判定 → `MoveItemCategoryKeyword` 呼び出しまでを検証する
+（行中央は TextField のため、ドラッグ開始は行の左端を掴む）。判定・order・キーワード付け替えの各純粋
+関数は単体テストで担保する。
 
 ## アイテム詳細からのカテゴリ確認・編集
 アイテム詳細シート（`text_shopping_list_item_detail_bottom_sheet.dart`）に、先頭軸
