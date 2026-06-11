@@ -75,6 +75,21 @@
 切り替えUI（`FilterChipsBar` / フィルター画面）は Issue #373 で廃止した。
 `textShoppingListItemsProvider` は常に全件（チェック済み含む）を返す。
 
+## セクション（カテゴリ）単位の並び替え（Issue #386）
+カテゴリ別グルーピング表示（`shopping_list_items.dart` の `_GroupedListView`）では、
+セクションヘッダー（`CategorySectionHeader`）を **長押しドラッグ** するとセクション単位で
+並び替えできる。
+
+- 並び順は `GroupCategory.order`（買い物場所選択時は `locationOrders`、プレミアム限定）へ
+  `groupCategoryBatchUpdateProvider` で永続化され、カテゴリ管理画面（`group_category/page.dart`）の
+  並び順と共有される。
+- アイテムが0件で非表示のカテゴリは、元の相対順序を保ったまま並び直す
+  （`category_matcher.dart` の `reorderCategorySections`）。
+- 「未分類」セクションはカテゴリ実体が無いため常に末尾固定でドラッグ不可。カテゴリを未分類の
+  下へドロップしても未分類の直前に収まる。
+- セクション内のアイテム行のドラッグ並び替えは無効（フラット表示時のみ有効）。
+- E2E: `maestro/flows/category_section_reorder.yaml`（長押しドラッグは超低速 swipe で再現）。
+
 ## アイテム詳細からのカテゴリ確認・編集
 アイテム詳細シート（`text_shopping_list_item_detail_bottom_sheet.dart`）に、先頭軸
 （`groupCategoryAxes.first`）で `findMatchingCategoryID`（`category_matcher.dart`）により判定した

@@ -255,6 +255,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
         final groupedListView = _GroupedListView(
           groupID: groupID,
           shoppingListID: shoppingListID,
+          categoryAxisID: categoryAxisID,
           categories: categories,
           grouped: grouped,
           shoppingLocationID: isPremium ? shoppingLocationID : null,
@@ -288,10 +289,15 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
   }
 }
 
-/// カテゴリヘッダー付きのグルーピング表示。グルーピング表示時はドラッグ&ドロップを無効にする。
-class _GroupedListView extends StatelessWidget {
+/// カテゴリヘッダー付きのグルーピング表示。
+/// セクションヘッダーを長押しドラッグするとセクション(カテゴリ)単位で並び替えできる(Issue #386)。
+/// 並び順は GroupCategory.order(買い物場所選択時は locationOrders)へ永続化され、
+/// カテゴリ管理画面の並び順とも共有される。セクション内のアイテム行のドラッグは無効のまま。
+/// 「未分類」セクションはカテゴリ実体が無いため常に末尾固定でドラッグ不可。
+class _GroupedListView extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
+  final String categoryAxisID;
   final List<GroupCategory> categories;
   final Map<String, List<GroupShoppingListItem>> grouped;
   final String? shoppingLocationID;
@@ -302,6 +308,7 @@ class _GroupedListView extends StatelessWidget {
   const _GroupedListView({
     required this.groupID,
     required this.shoppingListID,
+    required this.categoryAxisID,
     required this.categories,
     required this.grouped,
     required this.shoppingLocationID,
@@ -309,71 +316,138 @@ class _GroupedListView extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final categoryMap = {for (final c in categories) c.id: c};
+  Widget build(BuildContext context, WidgetRef ref) {
     final sortedCategories = sortCategoriesByLocation(
       categories: categories,
       shoppingLocationID: shoppingLocationID,
     );
-    final sortedCategoryIDs = sortedCategories.map((c) => c.id).toList();
+    // アイテムが存在するカテゴリのみセクションとして表示する。
+    final visibleCategories = sortedCategories
+        .where((category) => (grouped[category.id] ?? const []).isNotEmpty)
+        .toList();
 
-    final List<Widget> children = [];
-
-    for (final categoryID in sortedCategoryIDs) {
-      final items = grouped[categoryID];
-      if (items == null || items.isEmpty) {
-        continue;
-      }
-
-      final category = categoryMap[categoryID]!;
+    // ReorderableList の子は「ヘッダー + アイテム行」をまとめた1セクション。
+    final List<Widget> sections = [];
+    for (var sectionIndex = 0;
+        sectionIndex < visibleCategories.length;
+        sectionIndex++) {
+      final category = visibleCategories[sectionIndex];
+      final items = grouped[category.id]!;
       final metrics = shoppingListItemMetrics(items);
-      if (metrics.totalCount > 0) {
-        children.add(CategorySectionHeader(
-          name: category.name,
-          colorHex: category.color,
-          doneCount: metrics.checkedCount,
-          totalCount: metrics.totalCount,
-        ));
-      }
-
-      for (final item in items) {
-        children.add(TextShoppingListItemWidget(
-            // 入力行(空行)は確定アイテム挿入で index がずれてもフォーカスを保つため GlobalKey。
-            key: item.message.isEmpty ? rowKeys.of(item.id) : ValueKey(item.id),
-            groupID: groupID,
-            textShoppingListItem: item,
-            shoppingListItems: items,
-            reorderIndex: null));
-      }
+      sections.add(Column(
+        key: ValueKey(category.id),
+        children: [
+          if (metrics.totalCount > 0)
+            // ヘッダーの長押しでセクションのドラッグを開始する。
+            ReorderableDelayedDragStartListener(
+              index: sectionIndex,
+              child: CategorySectionHeader(
+                name: category.name,
+                colorHex: category.color,
+                doneCount: metrics.checkedCount,
+                totalCount: metrics.totalCount,
+              ),
+            ),
+          for (final item in items)
+            TextShoppingListItemWidget(
+                // ドラッグ中はセクションの proxy が複製されるため、GlobalKey だと
+                // Duplicate GlobalKey でクラッシュする。ドラッグ対象のカテゴリセクション内は
+                // 入力行(通常は未分類に入るため regex キーワード一致等の稀なケース)も ValueKey にする。
+                key: ValueKey(item.id),
+                groupID: groupID,
+                textShoppingListItem: item,
+                shoppingListItems: items,
+                reorderIndex: null),
+        ],
+      ));
     }
 
     final uncategorizedItems = grouped[uncategorizedCategoryID];
     if (uncategorizedItems != null && uncategorizedItems.isNotEmpty) {
       final metrics = shoppingListItemMetrics(uncategorizedItems);
-      if (metrics.totalCount > 0) {
-        children.add(CategorySectionHeader(
-          name: '未分類',
-          colorHex: null,
-          doneCount: metrics.checkedCount,
-          totalCount: metrics.totalCount,
-        ));
-      }
-      for (final item in uncategorizedItems) {
-        children.add(TextShoppingListItemWidget(
-            // 入力行(空行)は確定アイテム挿入で index がずれてもフォーカスを保つため GlobalKey。
-            key: item.message.isEmpty ? rowKeys.of(item.id) : ValueKey(item.id),
-            groupID: groupID,
-            textShoppingListItem: item,
-            shoppingListItems: uncategorizedItems,
-            reorderIndex: null));
-      }
+      sections.add(Column(
+        key: const ValueKey(uncategorizedCategoryID),
+        children: [
+          // 未分類はカテゴリ実体が無く並び順を持たないため、ドラッグリスナーを付けず末尾固定。
+          if (metrics.totalCount > 0)
+            CategorySectionHeader(
+              name: '未分類',
+              colorHex: null,
+              doneCount: metrics.checkedCount,
+              totalCount: metrics.totalCount,
+            ),
+          for (final item in uncategorizedItems)
+            TextShoppingListItemWidget(
+                // 入力行(空行)は確定アイテム挿入で index がずれてもフォーカスを保つため GlobalKey。
+                // 未分類セクションはドラッグ対象外なので proxy 複製による GlobalKey 二重化は起きない。
+                key: item.message.isEmpty
+                    ? rowKeys.of(item.id)
+                    : ValueKey(item.id),
+                groupID: groupID,
+                textShoppingListItem: item,
+                shoppingListItems: uncategorizedItems,
+                reorderIndex: null),
+        ],
+      ));
     }
 
-    return ListView(
+    return ReorderableList(
       padding: _listBottomPadding(context),
       // アイテム編集中にリストをスクロール(ドラッグ)したらキーボードを閉じる
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      children: children,
+      onReorder: (oldIndex, newIndex) {
+        analytics.logEvent(
+          name: 'reorder_category_section',
+          parameters: {
+            'groupID': groupID,
+            'shoppingListID': shoppingListID,
+            'categoryAxisID': categoryAxisID,
+          },
+        );
+        // 「未分類」セクションはドラッグ不可だが、ドロップ先として未分類の後ろが
+        // 指定され得るためカテゴリセクションの範囲に丸める。
+        if (newIndex > visibleCategories.length) {
+          newIndex = visibleCategories.length;
+        }
+        // ドラッグ時にリストから要素を一時的に削除するため newIndex がずれるのを調整
+        if (oldIndex < newIndex) {
+          newIndex -= 1;
+        }
+        if (oldIndex == newIndex) {
+          return;
+        }
+        final reordered = reorderCategorySections(
+          sortedCategories: sortedCategories,
+          visibleCategories: visibleCategories,
+          oldVisibleIndex: oldIndex,
+          newVisibleIndex: newIndex,
+        );
+        final locationID = shoppingLocationID;
+        if (locationID == null) {
+          ref.read(groupCategoryBatchUpdateProvider(groupID: groupID)).call(
+                categoryAxisID: categoryAxisID,
+                categories: reordered
+                    .asMap()
+                    .entries
+                    .map((entry) => entry.value.copyWith(order: entry.key))
+                    .toList(),
+              );
+        } else {
+          // 買い物場所選択時(プレミアム限定で渡される)はその場所専用の並び順だけを更新する。
+          ref.read(groupCategoryBatchUpdateProvider(groupID: groupID)).call(
+                categoryAxisID: categoryAxisID,
+                categories: reordered.asMap().entries.map((entry) {
+                  final updatedLocationOrders =
+                      Map<String, int>.from(entry.value.locationOrders);
+                  updatedLocationOrders[locationID] = entry.key;
+                  return entry.value
+                      .copyWith(locationOrders: updatedLocationOrders);
+                }).toList(),
+              );
+        }
+      },
+      itemCount: sections.length,
+      itemBuilder: (context, index) => sections[index],
     );
   }
 }

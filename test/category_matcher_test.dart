@@ -395,4 +395,80 @@ void main() {
       );
     });
   });
+
+  group('reorderCategorySections', () {
+    GroupCategory category({required String id, required int order}) =>
+        GroupCategory(
+            id: id,
+            groupID: 'group1',
+            userID: 'user1',
+            groupCategoryAxisID: 'axis1',
+            name: id,
+            order: order,
+            locationOrders: {},
+            keywords: [],
+            color: null,
+            iconName: null);
+
+    test('全カテゴリが表示中: 前から後ろへ移動', () {
+      final a = category(id: 'a', order: 0);
+      final b = category(id: 'b', order: 1);
+      final c = category(id: 'c', order: 2);
+      expect(
+        reorderCategorySections(
+          sortedCategories: [a, b, c],
+          visibleCategories: [a, b, c],
+          oldVisibleIndex: 0,
+          newVisibleIndex: 1,
+        ).map((category) => category.id).toList(),
+        ['b', 'a', 'c'],
+      );
+    });
+
+    test('全カテゴリが表示中: 後ろから前へ移動', () {
+      final a = category(id: 'a', order: 0);
+      final b = category(id: 'b', order: 1);
+      final c = category(id: 'c', order: 2);
+      expect(
+        reorderCategorySections(
+          sortedCategories: [a, b, c],
+          visibleCategories: [a, b, c],
+          oldVisibleIndex: 2,
+          newVisibleIndex: 0,
+        ).map((category) => category.id).toList(),
+        ['c', 'a', 'b'],
+      );
+    });
+
+    test('非表示カテゴリ(アイテム0件)は元の相対順序を保つ', () {
+      final a = category(id: 'a', order: 0);
+      final hidden = category(id: 'hidden', order: 1);
+      final b = category(id: 'b', order: 2);
+      final c = category(id: 'c', order: 3);
+      expect(
+        reorderCategorySections(
+          sortedCategories: [a, hidden, b, c],
+          visibleCategories: [a, b, c],
+          oldVisibleIndex: 2,
+          newVisibleIndex: 0,
+        ).map((category) => category.id).toList(),
+        ['c', 'a', 'hidden', 'b'],
+      );
+    });
+
+    test('visible 末尾へ移動すると最後の visible の直後(後続の非表示より前)に入る', () {
+      final a = category(id: 'a', order: 0);
+      final b = category(id: 'b', order: 1);
+      final hidden = category(id: 'hidden', order: 2);
+      expect(
+        reorderCategorySections(
+          sortedCategories: [a, b, hidden],
+          visibleCategories: [a, b],
+          oldVisibleIndex: 0,
+          newVisibleIndex: 1,
+        ).map((category) => category.id).toList(),
+        ['b', 'a', 'hidden'],
+      );
+    });
+  });
 }
