@@ -420,6 +420,13 @@ class _GroupedListView extends HookConsumerWidget {
     // 二重表示を防ぎ「セクションごと持ち上げた」見た目にする。
     final collapsedDraggingCategoryID = useState<String?>(null);
 
+    // ヘッダードラッグの開始 index(SliverReorderableList の _dragIndex と同値。ドラッグ中は
+    // 不変)。onReorderEnd の「同位置ドロップ」判定を、framework が onReorder を呼ぶ条件
+    // (fromIndex != toIndex)の正確な補集合にするために保持する。rows から再計算すると
+    // ドラッグ中の stream emit で index がずれた場合に framework 側の判定と食い違い、
+    // どちらの経路でも畳みが解除されない恐れがあるため、開始時の値をそのまま使う。
+    final draggingHeaderRowIndex = useRef<int?>(null);
+
     // 楽観 order を stream に重ねて再ソートする（order を指定されていないアイテムは自分の order）。
     final effectiveItems = pending == null
         ? shoppingListItems
@@ -511,20 +518,22 @@ class _GroupedListView extends HookConsumerWidget {
           final row = rows[index];
           if (row is GroupedHeaderRow && row.categoryID != null) {
             collapsedDraggingCategoryID.value = row.categoryID;
+            draggingHeaderRowIndex.value = index;
           }
         },
-        // 同位置ドロップでは onReorder が呼ばれない(SliverReorderableList の仕様)ため、
-        // ここで畳みを解除する。移動を伴うドロップは onReorder 側で楽観順の適用と同時に
-        // 解除する(離した直後に旧位置で再展開されるチラつきを防ぐ)。
+        // 同位置ドロップでは onReorder が呼ばれない(SliverReorderableList は
+        // fromIndex != toIndex のときだけ呼ぶ)ため、その補集合にあたる
+        // 「開始 index == ドロップ index」のときここで畳みを解除する。比較する両 index は
+        // framework が onReorder の要否判定に使う _dragIndex / _insertIndex と同値のため、
+        // すべてのドロップ経路で onReorder とここのどちらかが必ず畳みを解除する
+        // (ポインタキャンセルのみ外側の Listener が受け持つ)。移動を伴うドロップを
+        // ここで解除しないのは、ドロップアニメーション中に旧位置でセクションが
+        // 一瞬再展開されるチラつきを防ぎ、楽観順の適用と同一フレームで戻すため。
         onReorderEnd: (insertIndex) {
-          final collapsedCategoryID = collapsedDraggingCategoryID.value;
-          if (collapsedCategoryID == null) {
+          if (collapsedDraggingCategoryID.value == null) {
             return;
           }
-          if (insertIndex ==
-              rows.indexWhere((row) =>
-                  row is GroupedHeaderRow &&
-                  row.categoryID == collapsedCategoryID)) {
+          if (insertIndex == draggingHeaderRowIndex.value) {
             collapsedDraggingCategoryID.value = null;
           }
         },
