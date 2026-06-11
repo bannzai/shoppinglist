@@ -75,19 +75,61 @@
 切り替えUI（`FilterChipsBar` / フィルター画面）は Issue #373 で廃止した。
 `textShoppingListItemsProvider` は常に全件（チェック済み含む）を返す。
 
+## カテゴリ表示の並び替え・カテゴリ間移動
+カテゴリ表示時は、ヘッダーとアイテムを 1 つの `ReorderableListView`（`buildDefaultDragHandles: false`、
+アイテム行のみ `ReorderableDelayedDragStartListener` でラップ）にフラットに並べ、長押しドラッグで
+**同一カテゴリ内の並び替え** と **別カテゴリへの移動** の両方を行える。ヘッダーはドラッグ対象外、
+入力行（空行）もドラッグ対象外。行モデル・ドロップ先カテゴリ判定・order 正規化は
+`category_matcher.dart` の `buildGroupedRows` / `categoryIDForDropPosition` / `dropIndexInTarget` /
+`itemsAfterMove` に切り出している。
+
+- **order**: 移動のたびに、移動後の表示順（カテゴリ順 → カテゴリ内順）で全アイテムの `order` を
+  0..N-1 に正規化し、`shoppingListItemBatchUpdateProvider` で永続化する。
+- **カテゴリ間移動の永続化**: アイテムはカテゴリIDを持たない（`message` × キーワードで分類）ため、
+  別カテゴリへ移したら `MoveItemCategoryKeyword`（`provider/group_category.dart`）で移動先カテゴリに
+  `message` を完全一致(exact)キーワードとして追加し、移動先以外のカテゴリから同 exact を削除する
+  （`keywordsAfterItemMove` が 1 カテゴリ分の付け替えを担う、transaction で read-modify-write）。
+- **楽観的ローカル状態（ドロップ後のチラつき防止）**: `ReorderableListView` は `onReorder` 内で表示元
+  データを同期更新する前提だが、本実装は永続化を Firestore stream 反映に委ねるため、そのままだと
+  ドロップ後に一旦古い並びへ戻り（さらにカテゴリ間移動では order=batch とキーワード=transaction が
+  二段で反映され）チラつく。これを防ぐため `_GroupedListView`（`HookConsumerWidget`）が `onReorder`
+  時に楽観状態（`_OptimisticReorder`: 全アイテムの新 order と移動アイテムの分類上書き）を同期セットして
+  即座に新しい並び・分類で描画し、stream が同じ状態に追いついたら（`_optimisticReflected`）破棄する。
+  書き込み失敗時は破棄して永続化された実状態を表示する（ロールバック）。
+
+### 既知の限界・副作用
+- 同名（`message` が同じ）アイテムは一緒に移動する（キーワードは message 単位）。
+- 手動の部分一致/正規表現でマッチしているアイテムは、移動先に exact を足しても元カテゴリの order が
+  小さいと残るため、移動が効かない場合がある（分類エンジン `findMatchingCategoryID` は変更しない方針）。
+- 表示されていない（アイテム 0 件の）カテゴリへはドラッグで移動できない（ヘッダーが無いため）。
+
+フラット表示（`_FlatShoppingListItems`、カテゴリ軸なし）は従来どおり全体を `ReorderableList`
+で並び替える（`reorderedSectionItems` を使用）。
+
+### 検証
+カテゴリ間ドラッグは widget test（`shopping_list_items_cross_category_test.dart`）で、実際に長押し
+ドラッグを駆動して `onReorder` → カテゴリ判定 → `MoveItemCategoryKeyword` 呼び出しまでを検証する
+（行中央は TextField のため、ドラッグ開始は行の左端を掴む）。判定・order・キーワード付け替えの各純粋
+関数は単体テストで担保する。
+
 ## セクション（カテゴリ）単位の並び替え（Issue #386）
-カテゴリ別グルーピング表示（`shopping_list_items.dart` の `_GroupedListView`）では、
-セクションヘッダー（`CategorySectionHeader`）を **長押しドラッグ** するとセクション単位で
-並び替えできる。
+カテゴリ別グルーピング表示では、セクションヘッダー（`CategorySectionHeader`）を **長押しドラッグ**
+するとセクション単位で並び替えできる。アイテム単位の D&D と同じ統合 `ReorderableListView` 上で、
+掴んだ行がヘッダーならセクション並び替え、アイテムならアイテム移動として扱う。
 
 - 並び順は `GroupCategory.order`（買い物場所選択時は `locationOrders`、プレミアム限定）へ
   `groupCategoryBatchUpdateProvider` で永続化され、カテゴリ管理画面（`group_category/page.dart`）の
   並び順と共有される。
 - アイテムが0件で非表示のカテゴリは、元の相対順序を保ったまま並び直す
-  （`category_matcher.dart` の `reorderCategorySections`）。
+  （`category_matcher.dart` の `reorderCategorySections`。ヘッダーのドロップ位置→挿入先 index の
+  変換は `sectionInsertIndexForHeaderDrop`）。
 - 「未分類」セクションはカテゴリ実体が無いため常に末尾固定でドラッグ不可。カテゴリを未分類の
   下へドロップしても未分類の直前に収まる。
-- セクション内のアイテム行のドラッグ並び替えは無効（フラット表示時のみ有効）。
+- ドロップ直後はアイテム移動と同様に楽観の表示順（カテゴリID列）を同期適用し、stream が
+  追いついたら破棄する（チラつき防止）。失敗時は破棄してロールバック。
+- 統合リストのため、ドラッグ中に持ち上がるのはヘッダー行のみ（セクション全体は持ち上がらない）。
+  ヘッダー行の proxy 複製にアイテム行は含まれないため、入力行の GlobalKey（fix-350）は
+  セクションドラッグ中も安全に維持される。
 - E2E: `maestro/flows/category_section_reorder.yaml`（長押しドラッグは超低速 swipe で再現）。
 
 ## アイテム詳細からのカテゴリ確認・編集

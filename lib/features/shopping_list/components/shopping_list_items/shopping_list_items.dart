@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
@@ -241,23 +243,24 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
           );
         }
 
-        final grouped = groupItemsByCategory(
-          items: shoppingListItems,
-          categories: categories,
-        );
-
         // 入力中の空行(message が空) や空白のみのアイテムはカテゴリ分け対象にならないため、
-        // ボタンの表示判定と件数から除外する。
-        final uncategorizedItems =
-            (grouped[uncategorizedCategoryID] ?? const [])
-                .where((item) => item.message.trim().isNotEmpty)
-                .toList();
+        // ボタンの表示判定と件数から除外する。グルーピング自体は楽観状態を持つ
+        // [_GroupedListView] 側で行うため、ここでは未分類件数だけを直接算出する。
+        final uncategorizedItems = shoppingListItems
+            .where((item) =>
+                item.message.trim().isNotEmpty &&
+                findMatchingCategoryID(
+                      item: item,
+                      categories: categories,
+                    ) ==
+                    uncategorizedCategoryID)
+            .toList();
         final groupedListView = _GroupedListView(
           groupID: groupID,
           shoppingListID: shoppingListID,
           categoryAxisID: categoryAxisID,
           categories: categories,
-          grouped: grouped,
+          shoppingListItems: shoppingListItems,
           shoppingLocationID: isPremium ? shoppingLocationID : null,
           rowKeys: rowKeys,
         );
@@ -289,17 +292,102 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
   }
 }
 
+/// カテゴリ表示の D&D 直後に同期適用するローカルな並び・分類の楽観状態。
+///
+/// `ReorderableListView.onReorder` は本来コールバック内で表示元データを同期更新する前提だが、
+/// 本アプリは onReorder で Firestore に書くだけで表示元(stream)はその場で変わらない。そのため
+/// ドロップ完了後に一旦古い並びで再描画され、直後に stream 反映で新並びへ切り替わってチラつく。
+/// この楽観状態を onReorder で同期セットして即座に新並び・新分類で描画し、stream が追いついたら破棄する。
+class _OptimisticReorder {
+  /// 移動後の全アイテムの新しい order(item.id → order)。
+  final Map<String, int> orderByItemID;
+
+  /// 移動アイテム(と同 message のアイテム)の所属カテゴリ上書き(item.id → categoryID, null=未分類)。
+  /// 分類はカテゴリの keyword で決まり stream 反映が遅れる(transaction=サーバ往復)ため、
+  /// 追いつくまで分類を上書きして二段反映によるチラつきを防ぐ。
+  final Map<String, String?> categoryOverrideByItemID;
+
+  const _OptimisticReorder({
+    required this.orderByItemID,
+    required this.categoryOverrideByItemID,
+  });
+}
+
+/// 楽観状態が Firestore stream に反映され切ったかを判定する。
+///
+/// order(全アイテム)と分類上書き(移動アイテム)の両方が stream と一致したら true。
+/// order(batch=ローカルキャッシュ即時)が先に一致しても分類(keyword)が未反映の間は false を返すため、
+/// 分類上書きを維持し続けてチラつきを防ぐ。stream に存在しない id(他端末の削除等)は無視する。
+bool _optimisticReflected({
+  required _OptimisticReorder pending,
+  required List<GroupShoppingListItem> streamItems,
+  required List<GroupCategory> categories,
+}) {
+  final byID = {for (final it in streamItems) it.id: it};
+  for (final entry in pending.orderByItemID.entries) {
+    final streamItem = byID[entry.key];
+    if (streamItem == null) {
+      continue;
+    }
+    if (streamItem.order != entry.value) {
+      return false;
+    }
+  }
+  for (final entry in pending.categoryOverrideByItemID.entries) {
+    final streamItem = byID[entry.key];
+    if (streamItem == null) {
+      continue;
+    }
+    final matched =
+        findMatchingCategoryID(item: streamItem, categories: categories);
+    if (matched != (entry.value ?? uncategorizedCategoryID)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/// セクション並び替えの楽観の表示順が Firestore stream に反映され切ったかを判定する。
+///
+/// [pendingCategoryIDOrder](楽観の表示順) と stream 由来の表示順 [sortedStreamCategories] を、
+/// 双方に存在するカテゴリだけで比較し、順序が一致したら true。片方にしか無いカテゴリ
+/// (楽観窓中の他端末でのカテゴリ追加・削除等)は比較対象外にして、クリア漏れで固まるのを防ぐ。
+bool _sectionOrderReflected({
+  required List<String> pendingCategoryIDOrder,
+  required List<GroupCategory> sortedStreamCategories,
+}) {
+  final pendingIDSet = pendingCategoryIDOrder.toSet();
+  final streamIDs = [
+    for (final category in sortedStreamCategories)
+      if (pendingIDSet.contains(category.id)) category.id,
+  ];
+  final streamIDSet = streamIDs.toSet();
+  return listEquals(
+    [
+      for (final categoryID in pendingCategoryIDOrder)
+        if (streamIDSet.contains(categoryID)) categoryID,
+    ],
+    streamIDs,
+  );
+}
+
 /// カテゴリヘッダー付きのグルーピング表示。
-/// セクションヘッダーを長押しドラッグするとセクション(カテゴリ)単位で並び替えできる(Issue #386)。
-/// 並び順は GroupCategory.order(買い物場所選択時は locationOrders)へ永続化され、
-/// カテゴリ管理画面の並び順とも共有される。セクション内のアイテム行のドラッグは無効のまま。
-/// 「未分類」セクションはカテゴリ実体が無いため常に末尾固定でドラッグ不可。
-class _GroupedListView extends ConsumerWidget {
+/// ヘッダーとアイテムを 1 つの [ReorderableListView] にフラットに並べ、長押しドラッグで
+/// 「同一カテゴリ内の並び替え」「別カテゴリへの移動」(アイテム行)と「セクション(カテゴリ)単位の
+/// 並び替え」(ヘッダー行、Issue #386)を行える。
+///
+/// 既定のドラッグハンドルは無効化し(`buildDefaultDragHandles: false`)、確定アイテム行と
+/// カテゴリヘッダー行のみ [ReorderableDelayedDragStartListener] でラップする(入力行と
+/// 「未分類」ヘッダーはドラッグ対象外)。アイテムを別カテゴリへドロップした場合は、移動先
+/// カテゴリへ message を完全一致キーワードとして付け替えて分類を変更し、order は移動後の
+/// 表示順で全体を 0..N-1 に正規化して永続化する。セクション並び替えは GroupCategory.order
+/// (買い物場所選択時は locationOrders)へ永続化され、カテゴリ管理画面の並び順とも共有される。
+class _GroupedListView extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final String categoryAxisID;
   final List<GroupCategory> categories;
-  final Map<String, List<GroupShoppingListItem>> grouped;
+  final List<GroupShoppingListItem> shoppingListItems;
   final String? shoppingLocationID;
 
   /// 入力行に安定した GlobalKey を割り当てるためのレジストリ。
@@ -310,144 +398,310 @@ class _GroupedListView extends ConsumerWidget {
     required this.shoppingListID,
     required this.categoryAxisID,
     required this.categories,
-    required this.grouped,
+    required this.shoppingListItems,
     required this.shoppingLocationID,
     required this.rowKeys,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final sortedCategories = sortCategoriesByLocation(
+    // カテゴリ表示の D&D 直後に同期適用する楽観状態。ドロップ後に新しい並び・分類で即描画し、
+    // Firestore stream が追いつくまでの一瞬を覆ってチラつきを防ぐ。
+    final optimistic = useState<_OptimisticReorder?>(null);
+    final pending = optimistic.value;
+
+    // セクション並び替え(Issue #386)直後に同期適用する楽観の表示順(全カテゴリのID列)。
+    // GroupCategory.order(または locationOrders)の stream 反映が追いつくまでの一瞬を覆う。
+    final optimisticSectionOrder = useState<List<String>?>(null);
+    final pendingSectionOrder = optimisticSectionOrder.value;
+
+    // 楽観 order を stream に重ねて再ソートする（order を指定されていないアイテムは自分の order）。
+    final effectiveItems = pending == null
+        ? shoppingListItems
+        : ([...shoppingListItems]..sort((a, b) =>
+            (pending.orderByItemID[a.id] ?? a.order)
+                .compareTo(pending.orderByItemID[b.id] ?? b.order)));
+
+    final streamSortedCategories = sortCategoriesByLocation(
       categories: categories,
       shoppingLocationID: shoppingLocationID,
     );
-    // アイテムが存在するカテゴリのみセクションとして表示する。
-    final visibleCategories = sortedCategories
-        .where((category) => (grouped[category.id] ?? const []).isNotEmpty)
-        .toList();
 
-    // ReorderableList の子は「ヘッダー + アイテム行」をまとめた1セクション。
-    final List<Widget> sections = [];
-    for (var sectionIndex = 0;
-        sectionIndex < visibleCategories.length;
-        sectionIndex++) {
-      final category = visibleCategories[sectionIndex];
-      final items = grouped[category.id]!;
-      final metrics = shoppingListItemMetrics(items);
-      sections.add(Column(
-        key: ValueKey(category.id),
-        children: [
-          if (metrics.totalCount > 0)
-            // ヘッダーの長押しでセクションのドラッグを開始する。
-            ReorderableDelayedDragStartListener(
-              index: sectionIndex,
-              child: CategorySectionHeader(
-                name: category.name,
-                colorHex: category.color,
-                doneCount: metrics.checkedCount,
-                totalCount: metrics.totalCount,
-              ),
-            ),
-          for (final item in items)
-            TextShoppingListItemWidget(
-                // ドラッグ中はセクションの proxy が複製されるため、GlobalKey だと
-                // Duplicate GlobalKey でクラッシュする。ドラッグ対象のカテゴリセクション内は
-                // 入力行(通常は未分類に入るため regex キーワード一致等の稀なケース)も ValueKey にする。
-                key: ValueKey(item.id),
-                groupID: groupID,
-                textShoppingListItem: item,
-                shoppingListItems: items,
-                reorderIndex: null),
-        ],
-      ));
+    // 楽観状態が Firestore stream に反映され切ったら破棄して通常表示へ戻す。
+    // 依存配列は stream（shoppingListItems / categories）。onReorder での楽観セットでは
+    // 依存が変わらず再実行されないため、stream emit のタイミングでのみ整合判定する。
+    useEffect(() {
+      if (pending != null &&
+          _optimisticReflected(
+            pending: pending,
+            streamItems: shoppingListItems,
+            categories: categories,
+          )) {
+        optimistic.value = null;
+      }
+      if (pendingSectionOrder != null &&
+          _sectionOrderReflected(
+            pendingCategoryIDOrder: pendingSectionOrder,
+            sortedStreamCategories: streamSortedCategories,
+          )) {
+        optimisticSectionOrder.value = null;
+      }
+      return null;
+    }, [shoppingListItems, categories]);
+    // セクション並び替えの楽観の表示順を stream 由来の表示順に重ねる。
+    // 楽観に無いカテゴリ(楽観窓中に追加された等)は末尾に元の表示順のまま置く。
+    final List<GroupCategory> sortedCategories;
+    if (pendingSectionOrder == null) {
+      sortedCategories = streamSortedCategories;
+    } else {
+      final streamCategoryByID = {
+        for (final category in streamSortedCategories) category.id: category
+      };
+      sortedCategories = [
+        for (final categoryID in pendingSectionOrder)
+          if (streamCategoryByID.containsKey(categoryID))
+            streamCategoryByID[categoryID]!,
+        ...streamSortedCategories
+            .where((category) => !pendingSectionOrder.contains(category.id)),
+      ];
     }
+    final categoryMap = {for (final c in categories) c.id: c};
+    final grouped = groupItemsByCategory(
+      items: effectiveItems,
+      categories: categories,
+      categoryOverrideByItemID: pending?.categoryOverrideByItemID,
+    );
+    final rows = buildGroupedRows(
+      sortedCategories: sortedCategories,
+      grouped: grouped,
+    );
+    // ヘッダー行を持つ(=セクションとして見えている)カテゴリ列。ヘッダードラッグの
+    // 移動元・移動先 index はこの列に対するものとして解釈する。
+    final headerCategories = [
+      for (final category in sortedCategories)
+        if ((grouped[category.id] ?? const []).isNotEmpty &&
+            shoppingListItemMetrics(grouped[category.id]!).totalCount > 0)
+          category,
+    ];
 
-    final uncategorizedItems = grouped[uncategorizedCategoryID];
-    if (uncategorizedItems != null && uncategorizedItems.isNotEmpty) {
-      final metrics = shoppingListItemMetrics(uncategorizedItems);
-      sections.add(Column(
-        key: const ValueKey(uncategorizedCategoryID),
-        children: [
-          // 未分類はカテゴリ実体が無く並び順を持たないため、ドラッグリスナーを付けず末尾固定。
-          if (metrics.totalCount > 0)
-            CategorySectionHeader(
-              name: '未分類',
-              colorHex: null,
-              doneCount: metrics.checkedCount,
-              totalCount: metrics.totalCount,
-            ),
-          for (final item in uncategorizedItems)
-            TextShoppingListItemWidget(
-                // 入力行(空行)は確定アイテム挿入で index がずれてもフォーカスを保つため GlobalKey。
-                // 未分類セクションはドラッグ対象外なので proxy 複製による GlobalKey 二重化は起きない。
-                key: item.message.isEmpty
-                    ? rowKeys.of(item.id)
-                    : ValueKey(item.id),
-                groupID: groupID,
-                textShoppingListItem: item,
-                shoppingListItems: uncategorizedItems,
-                reorderIndex: null),
-        ],
-      ));
-    }
-
-    return ReorderableList(
+    return ReorderableListView.builder(
       padding: _listBottomPadding(context),
       // アイテム編集中にリストをスクロール(ドラッグ)したらキーボードを閉じる
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      onReorder: (oldIndex, newIndex) {
-        analytics.logEvent(
-          name: 'reorder_category_section',
-          parameters: {
-            'groupID': groupID,
-            'shoppingListID': shoppingListID,
-            'categoryAxisID': categoryAxisID,
-          },
-        );
-        // 「未分類」セクションはドラッグ不可だが、ドロップ先として未分類の後ろが
-        // 指定され得るためカテゴリセクションの範囲に丸める。
-        if (newIndex > visibleCategories.length) {
-          newIndex = visibleCategories.length;
-        }
-        // ドラッグ時にリストから要素を一時的に削除するため newIndex がずれるのを調整
-        if (oldIndex < newIndex) {
-          newIndex -= 1;
-        }
-        if (oldIndex == newIndex) {
-          return;
-        }
-        final reordered = reorderCategorySections(
-          sortedCategories: sortedCategories,
-          visibleCategories: visibleCategories,
-          oldVisibleIndex: oldIndex,
-          newVisibleIndex: newIndex,
-        );
-        final locationID = shoppingLocationID;
-        if (locationID == null) {
-          ref.read(groupCategoryBatchUpdateProvider(groupID: groupID)).call(
-                categoryAxisID: categoryAxisID,
-                categories: reordered
-                    .asMap()
-                    .entries
-                    .map((entry) => entry.value.copyWith(order: entry.key))
-                    .toList(),
+      // 既定のドラッグハンドルを無効化し、確定アイテム行とカテゴリヘッダー行のみ
+      // ReorderableDelayedDragStartListener でラップして長押しドラッグを有効にする。
+      buildDefaultDragHandles: false,
+      itemCount: rows.length,
+      itemBuilder: (context, index) {
+        final row = rows[index];
+        switch (row) {
+          case GroupedHeaderRow(:final categoryID):
+            // 未分類はカテゴリ実体が無く並び順を持たないため、ドラッグ対象外で常に末尾。
+            if (categoryID == null) {
+              return KeyedSubtree(
+                key: ValueKey('header_$uncategorizedCategoryID'),
+                child: _header(categoryMap, grouped, categoryID),
               );
-        } else {
-          // 買い物場所選択時(プレミアム限定で渡される)はその場所専用の並び順だけを更新する。
-          ref.read(groupCategoryBatchUpdateProvider(groupID: groupID)).call(
-                categoryAxisID: categoryAxisID,
-                categories: reordered.asMap().entries.map((entry) {
-                  final updatedLocationOrders =
-                      Map<String, int>.from(entry.value.locationOrders);
-                  updatedLocationOrders[locationID] = entry.key;
-                  return entry.value
-                      .copyWith(locationOrders: updatedLocationOrders);
-                }).toList(),
-              );
+            }
+            // カテゴリヘッダーは長押しでセクション(カテゴリ)単位の並び替えを開始する(Issue #386)。
+            return ReorderableDelayedDragStartListener(
+              key: ValueKey('header_$categoryID'),
+              index: index,
+              child: _header(categoryMap, grouped, categoryID),
+            );
+          case GroupedItemRow(:final item, :final categoryID):
+            final isInputRow = item.message.isEmpty;
+            final tile = TextShoppingListItemWidget(
+              // 入力行(空行)は確定アイテム挿入で index がずれてもフォーカスを保つため GlobalKey。
+              // 確定行はドラッグ中の proxy 複製で GlobalKey が二重化しクラッシュするため ValueKey。
+              key: isInputRow ? rowKeys.of(item.id) : ValueKey(item.id),
+              groupID: groupID,
+              textShoppingListItem: item,
+              // 同一カテゴリのアイテム列(Enter 確定の nextOrder 計算に使う)。
+              shoppingListItems:
+                  grouped[categoryID ?? uncategorizedCategoryID] ?? const [],
+              // 統合リストでは行自身は listener を持たず、外側でラップする。
+              reorderIndex: null,
+            );
+            // 入力行はドラッグ対象外。確定行のみ長押しドラッグでラップする。
+            if (isInputRow) {
+              return KeyedSubtree(
+                  key: ValueKey('item_${item.id}'), child: tile);
+            }
+            return ReorderableDelayedDragStartListener(
+              key: ValueKey('item_${item.id}'),
+              index: index,
+              child: tile,
+            );
         }
       },
-      itemCount: sections.length,
-      itemBuilder: (context, index) => sections[index],
+      onReorder: (oldIndex, newIndex) {
+        // 掴んだ行がヘッダーならセクション(カテゴリ)単位の並び替え、アイテムなら
+        // アイテムの並び替え・カテゴリ間移動として扱う。
+        switch (rows[oldIndex]) {
+          case GroupedHeaderRow(:final categoryID):
+            {
+              if (categoryID == null) {
+                return; // 未分類ヘッダーはドラッグ不可。通常起き得ないが防御。
+              }
+              analytics.logEvent(
+                name: 'reorder_category_section',
+                parameters: {
+                  'groupID': groupID,
+                  'shoppingListID': shoppingListID,
+                  'categoryAxisID': categoryAxisID,
+                },
+              );
+              final oldVisibleIndex = headerCategories
+                  .indexWhere((category) => category.id == categoryID);
+              final newVisibleIndex = sectionInsertIndexForHeaderDrop(
+                rows: rows,
+                oldIndex: oldIndex,
+                newIndex: newIndex,
+              );
+              if (oldVisibleIndex < 0 || newVisibleIndex == oldVisibleIndex) {
+                return; // 位置が変わらないドロップは書き込まない(冪等)。
+              }
+              final reordered = reorderCategorySections(
+                sortedCategories: sortedCategories,
+                visibleCategories: headerCategories,
+                oldVisibleIndex: oldVisibleIndex,
+                newVisibleIndex: newVisibleIndex,
+              );
+
+              // 楽観の表示順を同期セットし、ドロップ直後から新しいセクション順で描画する。
+              final appliedSectionOrder =
+                  reordered.map((category) => category.id).toList();
+              optimisticSectionOrder.value = appliedSectionOrder;
+
+              // 永続化失敗時は楽観の表示順を破棄し stream の実状態へ戻す(ロールバック)。
+              // 後続の別操作で楽観状態が差し替わっている場合は消さない。
+              void rollbackIfCurrent(Object error, StackTrace stackTrace) {
+                debugPrint('[reorder] セクション並び永続化失敗: $error\n$stackTrace');
+                if (optimisticSectionOrder.value == appliedSectionOrder) {
+                  optimisticSectionOrder.value = null;
+                }
+              }
+
+              final locationID = shoppingLocationID;
+              if (locationID == null) {
+                ref
+                    .read(groupCategoryBatchUpdateProvider(groupID: groupID))
+                    .call(
+                      categoryAxisID: categoryAxisID,
+                      categories: reordered
+                          .asMap()
+                          .entries
+                          .map(
+                              (entry) => entry.value.copyWith(order: entry.key))
+                          .toList(),
+                    )
+                    .catchError(rollbackIfCurrent);
+              } else {
+                // 買い物場所選択時(プレミアム限定で渡される)はその場所専用の並び順だけを更新する。
+                ref
+                    .read(groupCategoryBatchUpdateProvider(groupID: groupID))
+                    .call(
+                      categoryAxisID: categoryAxisID,
+                      categories: reordered.asMap().entries.map((entry) {
+                        final updatedLocationOrders =
+                            Map<String, int>.from(entry.value.locationOrders);
+                        updatedLocationOrders[locationID] = entry.key;
+                        return entry.value
+                            .copyWith(locationOrders: updatedLocationOrders);
+                      }).toList(),
+                    )
+                    .catchError(rollbackIfCurrent);
+              }
+            }
+          case final GroupedItemRow moved:
+            {
+              analytics.logEvent(
+                name: 'reorder_shopping_list_item',
+                parameters: {
+                  'groupID': groupID,
+                  'shoppingListID': shoppingListID,
+                },
+              );
+              final toCategoryID = categoryIDForDropPosition(
+                rows: rows,
+                oldIndex: oldIndex,
+                newIndex: newIndex,
+              );
+              final orderedItems = itemsAfterMove(
+                sortedCategories: sortedCategories,
+                grouped: grouped,
+                movedItem: moved.item,
+                fromCategoryID: moved.categoryID,
+                toCategoryID: toCategoryID,
+                dropIndexInTargetValue: dropIndexInTarget(
+                  rows: rows,
+                  oldIndex: oldIndex,
+                  newIndex: newIndex,
+                  toCategoryID: toCategoryID,
+                ),
+              );
+
+              // 楽観状態を同期セットし、ドロップ直後から新しい並び・分類で描画する
+              // (ReorderableListView は onReorder 内で表示元データを同期更新する前提のため)。
+              // 分類上書きは同 message の全アイテムに広げる(キーワード方式で連動して移動するため)。
+              final applied = _OptimisticReorder(
+                orderByItemID: {for (final it in orderedItems) it.id: it.order},
+                categoryOverrideByItemID: {
+                  for (final it in effectiveItems)
+                    if (it.message == moved.item.message) it.id: toCategoryID,
+                },
+              );
+              optimistic.value = applied;
+
+              // 永続化失敗時は楽観状態を破棄し、実際に永続化された stream の状態を表示する
+              // (= ロールバック)。後続の別操作で楽観状態が差し替わっている場合は消さない。
+              void rollbackIfCurrent(Object error, StackTrace stackTrace) {
+                debugPrint('[reorder] 永続化失敗: $error\n$stackTrace');
+                if (optimistic.value == applied) {
+                  optimistic.value = null;
+                }
+              }
+
+              // 別カテゴリへ移動した場合のみ、完全一致キーワードを付け替えて分類を変更する。
+              if (toCategoryID != moved.categoryID) {
+                ref
+                    .read(moveItemCategoryKeywordProvider(groupID: groupID))
+                    .call(
+                      categoryAxisID: categoryAxisID,
+                      itemMessage: moved.item.message,
+                      destinationCategoryID: toCategoryID,
+                      categories: categories,
+                    )
+                    .catchError(rollbackIfCurrent);
+              }
+              ref
+                  .read(shoppingListItemBatchUpdateProvider(groupID: groupID))
+                  .call(
+                    shoppingListID: shoppingListID,
+                    shoppingListItems: orderedItems,
+                  )
+                  .catchError(rollbackIfCurrent);
+            }
+        }
+      },
+    );
+  }
+
+  /// カテゴリID(null=未分類)から見出し行を生成する。
+  Widget _header(
+    Map<String, GroupCategory> categoryMap,
+    Map<String, List<GroupShoppingListItem>> grouped,
+    String? categoryID,
+  ) {
+    final items = grouped[categoryID ?? uncategorizedCategoryID] ?? const [];
+    final metrics = shoppingListItemMetrics(items);
+    final category = categoryID == null ? null : categoryMap[categoryID];
+    return CategorySectionHeader(
+      name: category?.name ?? '未分類',
+      colorHex: category?.color,
+      doneCount: metrics.checkedCount,
+      totalCount: metrics.totalCount,
     );
   }
 }

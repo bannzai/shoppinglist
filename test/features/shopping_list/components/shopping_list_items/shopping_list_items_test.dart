@@ -301,11 +301,11 @@ void main() {
       );
     });
 
-    testWidgets('カテゴリ分類表示の ReorderableList が onDrag で閉じる', (tester) async {
+    testWidgets('カテゴリ分類表示の ReorderableListView が onDrag で閉じる', (tester) async {
       await _pump(tester);
       expect(
         tester
-            .widget<ReorderableList>(find.byType(ReorderableList))
+            .widget<ReorderableListView>(find.byType(ReorderableListView))
             .keyboardDismissBehavior,
         ScrollViewKeyboardDismissBehavior.onDrag,
       );
@@ -391,6 +391,24 @@ void main() {
       expect(
         recorder.lastCategories!.map((category) => category.order).toList(),
         [0, 1],
+      );
+    });
+
+    testWidgets('ドロップ直後、stream 未更新でも楽観的にセクション順が入れ替わる', (tester) async {
+      // stream(Stream.value)は再 emit しないため、楽観の表示順が破棄されず維持される。
+      // 牛乳(食品)が洗剤(日用品)より下に来ていれば楽観反映できている。
+      await _pumpSectionReorder(tester);
+      final foodHeader = find.byType(CategorySectionHeader).first;
+      final dailySectionBottom = tester.getBottomLeft(find.text('洗剤')).dy + 40;
+      await _longPressDragHeader(
+        tester,
+        header: foodHeader,
+        offset: Offset(0, dailySectionBottom - tester.getCenter(foodHeader).dy),
+      );
+      expect(
+        tester.getCenter(find.text('牛乳')).dy,
+        greaterThan(tester.getCenter(find.text('洗剤')).dy),
+        reason: '牛乳(食品)が洗剤(日用品)より上のまま＝楽観のセクション順が反映されていない',
       );
     });
   });
