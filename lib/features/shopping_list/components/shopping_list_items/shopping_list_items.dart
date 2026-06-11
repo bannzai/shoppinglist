@@ -255,6 +255,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
         final groupedListView = _GroupedListView(
           groupID: groupID,
           shoppingListID: shoppingListID,
+          categoryAxisID: categoryAxisID,
           categories: categories,
           grouped: grouped,
           shoppingLocationID: isPremium ? shoppingLocationID : null,
@@ -289,13 +290,17 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
 }
 
 /// カテゴリヘッダー付きのグルーピング表示。
-/// カテゴリ(および未分類)セクションごとに独立した [SliverReorderableList] を並べ、
-/// 行の長押しドラッグでの並び替えを **そのセクション内に限定** して許可する。
-/// ([ReorderableDragStartListener] は最寄りの [SliverReorderableList] を解決するため、
-///  カテゴリをまたぐ D&D は構造上発生しない。)
+/// ヘッダーとアイテムを 1 つの [ReorderableListView] にフラットに並べ、長押しドラッグで
+/// 「同一カテゴリ内の並び替え」と「別カテゴリへの移動」の両方を許可する。
+///
+/// ヘッダーはドラッグ対象外にする(`buildDefaultDragHandles: false` + アイテム行のみ
+/// [ReorderableDelayedDragStartListener] でラップ)。別カテゴリへドロップした場合は、移動先
+/// カテゴリへ message を完全一致キーワードとして付け替えて分類を変更する。order は移動後の
+/// 表示順で全体を 0..N-1 に正規化して永続化する。
 class _GroupedListView extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
+  final String categoryAxisID;
   final List<GroupCategory> categories;
   final Map<String, List<GroupShoppingListItem>> grouped;
   final String? shoppingLocationID;
@@ -306,6 +311,7 @@ class _GroupedListView extends ConsumerWidget {
   const _GroupedListView({
     required this.groupID,
     required this.shoppingListID,
+    required this.categoryAxisID,
     required this.categories,
     required this.grouped,
     required this.shoppingLocationID,
@@ -314,72 +320,67 @@ class _GroupedListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoryMap = {for (final c in categories) c.id: c};
-    final sortedCategoryIDs = sortCategoriesByLocation(
+    final sortedCategories = sortCategoriesByLocation(
       categories: categories,
       shoppingLocationID: shoppingLocationID,
-    ).map((c) => c.id).toList();
+    );
+    final categoryMap = {for (final c in categories) c.id: c};
+    final rows = buildGroupedRows(
+      sortedCategories: sortedCategories,
+      grouped: grouped,
+    );
 
-    final slivers = <Widget>[];
-
-    for (final categoryID in sortedCategoryIDs) {
-      final items = grouped[categoryID];
-      if (items == null || items.isEmpty) {
-        continue;
-      }
-      final category = categoryMap[categoryID]!;
-      final metrics = shoppingListItemMetrics(items);
-      if (metrics.totalCount > 0) {
-        slivers.add(SliverToBoxAdapter(
-          child: CategorySectionHeader(
-            name: category.name,
-            colorHex: category.color,
-            doneCount: metrics.checkedCount,
-            totalCount: metrics.totalCount,
-          ),
-        ));
-      }
-      slivers.add(_reorderableSection(ref, items));
-    }
-
-    final uncategorizedItems = grouped[uncategorizedCategoryID];
-    if (uncategorizedItems != null && uncategorizedItems.isNotEmpty) {
-      final metrics = shoppingListItemMetrics(uncategorizedItems);
-      if (metrics.totalCount > 0) {
-        slivers.add(SliverToBoxAdapter(
-          child: CategorySectionHeader(
-            name: '未分類',
-            colorHex: null,
-            doneCount: metrics.checkedCount,
-            totalCount: metrics.totalCount,
-          ),
-        ));
-      }
-      slivers.add(_reorderableSection(ref, uncategorizedItems));
-    }
-
-    return CustomScrollView(
+    return ReorderableListView.builder(
+      padding: _listBottomPadding(context),
       // アイテム編集中にリストをスクロール(ドラッグ)したらキーボードを閉じる
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      slivers: [
-        ...slivers,
-        // SliverReorderableList は padding を持たないため、下端余白を末尾 sliver で確保する。
-        SliverToBoxAdapter(
-          child: SizedBox(height: _listBottomPadding(context).bottom),
-        ),
-      ],
-    );
-  }
-
-  /// 1 セクション(カテゴリ/未分類)のアイテムを、そのセクション内だけで長押しドラッグ
-  /// 並び替えできる [SliverReorderableList] として構築する。
-  Widget _reorderableSection(
-    WidgetRef ref,
-    List<GroupShoppingListItem> sectionItems,
-  ) {
-    return SliverReorderableList(
-      itemCount: sectionItems.length,
+      // ヘッダーをドラッグ不可にするため既定のドラッグハンドルを無効化し、アイテム行のみ
+      // ReorderableDelayedDragStartListener でラップして長押しドラッグを有効にする。
+      buildDefaultDragHandles: false,
+      itemCount: rows.length,
+      itemBuilder: (context, index) {
+        final row = rows[index];
+        switch (row) {
+          case GroupedHeaderRow(:final categoryID):
+            return KeyedSubtree(
+              key: ValueKey('header_${categoryID ?? uncategorizedCategoryID}'),
+              child: _header(categoryMap, categoryID),
+            );
+          case GroupedItemRow(:final item, :final categoryID):
+            final isInputRow = item.message.isEmpty;
+            final tile = TextShoppingListItemWidget(
+              // 入力行(空行)は確定アイテム挿入で index がずれてもフォーカスを保つため GlobalKey。
+              // 確定行はドラッグ中の proxy 複製で GlobalKey が二重化しクラッシュするため ValueKey。
+              key: isInputRow ? rowKeys.of(item.id) : ValueKey(item.id),
+              groupID: groupID,
+              textShoppingListItem: item,
+              // 同一カテゴリのアイテム列(Enter 確定の nextOrder 計算に使う)。
+              shoppingListItems:
+                  grouped[categoryID ?? uncategorizedCategoryID] ?? const [],
+              // 統合リストでは行自身は listener を持たず、外側でラップする。
+              reorderIndex: null,
+            );
+            // 入力行はドラッグ対象外。確定行のみ長押しドラッグでラップする。
+            if (isInputRow) {
+              return KeyedSubtree(
+                  key: ValueKey('item_${item.id}'), child: tile);
+            }
+            return ReorderableDelayedDragStartListener(
+              key: ValueKey('item_${item.id}'),
+              index: index,
+              child: tile,
+            );
+        }
+      },
       onReorder: (oldIndex, newIndex) {
+        // [調査ログ] カテゴリまたぎ D&D の切り分け用。onReorder 発火と来た index(ヘッダー込み)。
+        debugPrint(
+            '[reorder] onReorder oldIndex=$oldIndex newIndex=$newIndex rows=${rows.length}');
+        final moved = rows[oldIndex];
+        if (moved is! GroupedItemRow) {
+          debugPrint('[reorder] moved がヘッダー → 中断');
+          return; // ヘッダーはドラッグ不可。通常起き得ないが防御。
+        }
         analytics.logEvent(
           name: 'reorder_shopping_list_item',
           parameters: {
@@ -387,29 +388,69 @@ class _GroupedListView extends ConsumerWidget {
             'shoppingListID': shoppingListID,
           },
         );
-        ref.read(shoppingListItemBatchUpdateProvider(groupID: groupID)).call(
-              shoppingListID: shoppingListID,
-              shoppingListItems: reorderedSectionItems(
-                sectionItems: sectionItems,
-                oldIndex: oldIndex,
-                newIndex: newIndex,
-              ),
-            );
-      },
-      itemBuilder: (context, index) {
-        final item = sectionItems[index];
-        // 入力行(空行)は確定アイテム挿入で index がずれてもフォーカスを保つため GlobalKey。
-        // 確定行はドラッグ中の proxy 複製で GlobalKey が二重化しクラッシュするため ValueKey。
-        final isInputRow = item.message.isEmpty;
-        return TextShoppingListItemWidget(
-          key: isInputRow ? rowKeys.of(item.id) : ValueKey(item.id),
-          groupID: groupID,
-          textShoppingListItem: item,
-          shoppingListItems: sectionItems,
-          // 空の入力行はドラッグ対象外(reorderIndex: null)。確定行はセクション内 index を渡す。
-          reorderIndex: isInputRow ? null : index,
+        final toCategoryID = categoryIDForDropPosition(
+          rows: rows,
+          oldIndex: oldIndex,
+          newIndex: newIndex,
         );
+        // [調査ログ] 移動元/移動先。同じだと「移動」にならず並び替え扱い。
+        debugPrint(
+            '[reorder] message="${moved.item.message}" from=${moved.categoryID} '
+            'to=$toCategoryID crossCategory=${toCategoryID != moved.categoryID}');
+        final orderedItems = itemsAfterMove(
+          sortedCategories: sortedCategories,
+          grouped: grouped,
+          movedItem: moved.item,
+          fromCategoryID: moved.categoryID,
+          toCategoryID: toCategoryID,
+          dropIndexInTargetValue: dropIndexInTarget(
+            rows: rows,
+            oldIndex: oldIndex,
+            newIndex: newIndex,
+            toCategoryID: toCategoryID,
+          ),
+        );
+        // 別カテゴリへ移動した場合のみ、完全一致キーワードを付け替えて分類を変更する。
+        if (toCategoryID != moved.categoryID) {
+          ref
+              .read(moveItemCategoryKeywordProvider(groupID: groupID))
+              .call(
+                categoryAxisID: categoryAxisID,
+                itemMessage: moved.item.message,
+                destinationCategoryID: toCategoryID,
+                categories: categories,
+              )
+              // [調査ログ] fire-and-forget で握り潰していた成否を拾う。
+              .then((_) => debugPrint('[reorder] キーワード付け替え成功 to=$toCategoryID'))
+              .catchError((Object error, StackTrace stackTrace) {
+            debugPrint('[reorder] キーワード付け替え失敗: $error\n$stackTrace');
+          });
+        }
+        ref
+            .read(shoppingListItemBatchUpdateProvider(groupID: groupID))
+            .call(
+              shoppingListID: shoppingListID,
+              shoppingListItems: orderedItems,
+            )
+            .then((_) =>
+                debugPrint('[reorder] order 永続化成功 (${orderedItems.length}件)'))
+            .catchError((Object error, StackTrace stackTrace) {
+          debugPrint('[reorder] order 永続化失敗: $error\n$stackTrace');
+        });
       },
+    );
+  }
+
+  /// カテゴリID(null=未分類)から見出し行を生成する。
+  Widget _header(Map<String, GroupCategory> categoryMap, String? categoryID) {
+    final items = grouped[categoryID ?? uncategorizedCategoryID] ?? const [];
+    final metrics = shoppingListItemMetrics(items);
+    final category = categoryID == null ? null : categoryMap[categoryID];
+    return CategorySectionHeader(
+      name: category?.name ?? '未分類',
+      colorHex: category?.color,
+      doneCount: metrics.checkedCount,
+      totalCount: metrics.totalCount,
     );
   }
 }
