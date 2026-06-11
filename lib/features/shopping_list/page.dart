@@ -318,6 +318,9 @@ class _ActiveShoppingList extends HookConsumerWidget {
             child: CreateListFab(
               groupID: groupID,
               appUser: ref.watch(appUserProvider).asData?.value,
+              shoppingList: shoppingList,
+              shoppingListItems:
+                  shoppingListItemsAsync.asData?.value ?? const [],
             ),
           ),
           const SizedBox(height: 12),
