@@ -138,7 +138,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       // 行の長押しは ReorderableDelayedDragStartListener（並び替えドラッグ）に委ねる。
       // 以前あった長押し context menu(複製/メモ/削除)は、長押しジェスチャが並び替え
       // ドラッグと競合してドラッグ開始を阻害するため廃止した。削除は左スワイプ、
-      // メモ・カラー編集は末尾の詳細アイコン(more_horiz)から行う。
+      // 説明・カラー編集は末尾の詳細アイコン(more_horiz)から行う。
       child: Container(
         decoration: BoxDecoration(
           border: Border(
@@ -205,50 +205,15 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                     ),
                   ),
                   if (hasDescription)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: Text(
-                        textShoppingListItem.description!,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(color: neutral.ink3),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                    ShoppingListItemDescriptionText(
+                      description: textShoppingListItem.description!,
                     ),
                 ],
               ),
             ),
             if (textShoppingListItem.imageURL != null)
-              Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: CachedNetworkImage(
-                    imageUrl: textShoppingListItem.imageURL!,
-                    width: 36,
-                    height: 36,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => SizedBox(
-                      width: 36,
-                      height: 36,
-                      child: Center(
-                        child: SizedBox(
-                          width: 14,
-                          height: 14,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(tokens.accent),
-                          ),
-                        ),
-                      ),
-                    ),
-                    errorWidget: (context, url, error) =>
-                        Icon(Icons.broken_image, size: 18, color: neutral.ink3),
-                  ),
-                ),
+              ShoppingListItemThumbnail(
+                imageURL: textShoppingListItem.imageURL!,
               ),
             IconButton(
               tooltip: 'アイテム詳細',
@@ -389,6 +354,79 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         }
       },
       child: widget,
+    );
+  }
+}
+
+/// アイテムの説明（[GroupShoppingListItem.description]）を message の下に表示するテキスト。
+/// 一覧では 1 行に省略表示し、全文はアイテム詳細シートで確認・編集する。
+class ShoppingListItemDescriptionText extends StatelessWidget {
+  /// 表示する説明文。
+  final String description;
+
+  const ShoppingListItemDescriptionText({
+    super.key,
+    required this.description,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Text(
+        description,
+        style: Theme.of(context)
+            .textTheme
+            .bodySmall
+            ?.copyWith(color: context.appTheme.neutral.ink3),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+}
+
+/// アイテムに添付された商品写真（[GroupShoppingListItem.imageURL]）のサムネイル。
+/// 一覧の行末、詳細アイコン(more_horiz)の左に小さく表示する。
+class ShoppingListItemThumbnail extends StatelessWidget {
+  /// 商品写真のダウンロードURL。
+  final String imageURL;
+
+  const ShoppingListItemThumbnail({
+    super.key,
+    required this.imageURL,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.appTheme;
+    return Padding(
+      padding: const EdgeInsets.only(left: 4),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: CachedNetworkImage(
+          imageUrl: imageURL,
+          width: 36,
+          height: 36,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => SizedBox(
+            width: 36,
+            height: 36,
+            child: Center(
+              child: SizedBox(
+                width: 14,
+                height: 14,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(tokens.accent),
+                ),
+              ),
+            ),
+          ),
+          errorWidget: (context, url, error) =>
+              Icon(Icons.broken_image, size: 18, color: tokens.neutral.ink3),
+        ),
+      ),
     );
   }
 }
