@@ -111,9 +111,24 @@ class GroupDatabase {
             fromFirestore: GroupShoppingList.fromFirestore,
             toFirestore: GroupShoppingList.toFirestore,
           );
-  Future<int> countOfGroupShoppingLists() async {
+
+  /// 指定日(ローカルタイム)に作成された買い物リスト数を返す。
+  /// 同日内のリスト名連番(`yyyy-MM-dd (N)`)の採番に使用する。
+  /// 日付が変われば 0 に戻るため、日付をまたいで連番が増え続けることはない。
+  Future<int> countOfGroupShoppingListsCreatedOn(
+      {required DateTime date}) async {
+    final startOfDay = DateTime(date.year, date.month, date.day);
     final aggregated = await FirebaseFirestore.instance
         .collection(_CollectionPath.shoppingLists(groupID: groupID))
+        .where(
+          GroupShoppingListFirestoreKeys.createdDateTime,
+          isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay),
+        )
+        .where(
+          GroupShoppingListFirestoreKeys.createdDateTime,
+          isLessThan:
+              Timestamp.fromDate(startOfDay.add(const Duration(days: 1))),
+        )
         .count()
         .get();
     return aggregated.count ?? 0;
