@@ -213,15 +213,37 @@ class _RecordingCategoryBatchUpdate extends GroupCategoryBatchUpdate {
   }
 }
 
+/// 行編集の確定保存(フォーカス喪失保存)を記録するフェイク。
+class _RecordingUpdateShoppingListItem extends UpdateShoppingListItem {
+  _RecordingUpdateShoppingListItem()
+      : super(database: GroupDatabase(groupID: _sectionReorderGroupID));
+
+  /// 最後に保存されたアイテム。未呼び出しなら null。
+  GroupShoppingListItem? lastItem;
+
+  @override
+  Future<void> call({
+    required String shoppingListID,
+    required GroupShoppingListItem item,
+    required String editedByUserID,
+  }) async {
+    lastItem = item;
+  }
+}
+
 /// セクション並び替えテスト用の ShoppingListItems を pump する。
 /// 食品(牛乳・卵・食パン)・日用品(洗剤)の2カテゴリ + 未分類(ガムテープ)の3セクション構成。
 /// 食品を3件にして、ヘッダードラッグ proxy のプレビュー上限(先頭2件)を検証できるようにする。
-Future<_RecordingCategoryBatchUpdate> _pumpSectionReorder(
-    WidgetTester tester) async {
+Future<
+    ({
+      _RecordingCategoryBatchUpdate categoryBatch,
+      _RecordingUpdateShoppingListItem itemUpdate,
+    })> _pumpSectionReorder(WidgetTester tester) async {
   // ignore: invalid_use_of_visible_for_testing_member
   SharedPreferences.setMockInitialValues({});
   final sharedPreferences = await SharedPreferences.getInstance();
   final recorder = _RecordingCategoryBatchUpdate();
+  final itemUpdateRecorder = _RecordingUpdateShoppingListItem();
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
@@ -260,6 +282,8 @@ Future<_RecordingCategoryBatchUpdate> _pumpSectionReorder(
             ])),
         groupCategoryBatchUpdateProvider(groupID: _sectionReorderGroupID)
             .overrideWith((ref) => recorder),
+        updateShoppingListItemProvider(groupID: _sectionReorderGroupID)
+            .overrideWith((ref) => itemUpdateRecorder),
       ],
       child: MaterialApp(
         theme: buildAppTheme(
@@ -276,7 +300,7 @@ Future<_RecordingCategoryBatchUpdate> _pumpSectionReorder(
     ),
   );
   await tester.pumpAndSettle();
-  return recorder;
+  return (categoryBatch: recorder, itemUpdate: itemUpdateRecorder);
 }
 
 /// セクションヘッダーを長押ししてから offset 分ドラッグして離す。
@@ -380,7 +404,7 @@ void main() {
     });
 
     testWidgets('ヘッダーの長押しドラッグでセクションが並び替わり order が振り直される', (tester) async {
-      final recorder = await _pumpSectionReorder(tester);
+      final recorders = await _pumpSectionReorder(tester);
 
       // 先頭セクション(食品)のヘッダーを、2番目のセクション(日用品)の下端より下までドラッグする。
       final foodHeader = find.byType(CategorySectionHeader).first;
@@ -391,15 +415,38 @@ void main() {
         offset: Offset(0, dailySectionBottom - tester.getCenter(foodHeader).dy),
       );
 
-      expect(recorder.lastCategoryAxisID, _sectionReorderAxisID);
+      expect(recorders.categoryBatch.lastCategoryAxisID, _sectionReorderAxisID);
       expect(
-        recorder.lastCategories!.map((category) => category.name).toList(),
+        recorders.categoryBatch.lastCategories!
+            .map((category) => category.name)
+            .toList(),
         ['日用品', '食品'],
       );
       expect(
-        recorder.lastCategories!.map((category) => category.order).toList(),
+        recorders.categoryBatch.lastCategories!
+            .map((category) => category.order)
+            .toList(),
         [0, 1],
       );
+    });
+
+    testWidgets('行の編集中にヘッダードラッグを開始しても未確定テキストが保存される', (tester) async {
+      final recorders = await _pumpSectionReorder(tester);
+      // 牛乳の行を編集して Enter 未確定のままにする。
+      await tester.enterText(find.widgetWithText(TextField, '牛乳'), '低脂肪牛乳');
+      await tester.pump();
+
+      // 食品ヘッダーの長押しドラッグを開始して少し動かして離す。
+      final foodHeader = find.byType(CategorySectionHeader).first;
+      final gesture = await tester.startGesture(tester.getCenter(foodHeader));
+      await tester.pump(kLongPressTimeout + kPressTimeout);
+      await gesture.moveBy(const Offset(0, 30));
+      await tester.pump(const Duration(milliseconds: 100));
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      // 畳み(行の unmount)より先に unfocus でフォーカス喪失保存が走り、編集内容が失われない。
+      expect(recorders.itemUpdate.lastItem?.message, '低脂肪牛乳');
     });
 
     testWidgets('ヘッダードラッグ中はセクションを畳み、proxy に先頭2件だけが出る', (tester) async {

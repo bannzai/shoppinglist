@@ -517,6 +517,12 @@ class _GroupedListView extends HookConsumerWidget {
         onReorderStart: (index) {
           final row = rows[index];
           if (row is GroupedHeaderRow && row.categoryID != null) {
+            // 畳むとセクション内の行が unmount され、編集中(Enter 未確定)の行はフォーカス
+            // 喪失保存が走らないまま入力テキストが破棄され得る。先に unfocus して行側の
+            // フォーカス喪失保存(text_shopping_list_item.dart の FocusNode listener)を
+            // 発火させてから畳む。フォーカス変更の listener 通知は microtask で行われ、
+            // 次フレームの unmount より先に実行される。
+            FocusManager.instance.primaryFocus?.unfocus();
             collapsedDraggingCategoryID.value = row.categoryID;
             draggingHeaderRowIndex.value = index;
           }
