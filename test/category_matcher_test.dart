@@ -456,4 +456,115 @@ void main() {
       expect(result.map((e) => e.order).toList(), [1, 3, 3]);
     });
   });
+
+  group('カテゴリまたぎ D&D', () {
+    GroupCategory cat(String id, int order) => GroupCategory(
+          id: id,
+          groupID: 'group1',
+          userID: 'user1',
+          groupCategoryAxisID: 'axis1',
+          name: id,
+          order: order,
+          locationOrders: {},
+          keywords: [],
+          color: null,
+          iconName: null,
+        );
+
+    GroupShoppingListItem item(String id, int order) => GroupShoppingListItem(
+          id: id,
+          groupID: 'group1',
+          shoppingListID: 'list1',
+          userID: 'user1',
+          message: id,
+          order: order,
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          imageURL: null,
+          lastEditedByUserID: null,
+        );
+
+    final sortedCategories = [cat('cat1', 0), cat('cat2', 1)];
+    // cat1: [a, b], cat2: [c], 未分類: [d]
+    Map<String, List<GroupShoppingListItem>> grouped() => {
+          'cat1': [item('a', 0), item('b', 1)],
+          'cat2': [item('c', 2)],
+          uncategorizedCategoryID: [item('d', 3)],
+        };
+
+    test('buildGroupedRows はヘッダー+アイテムを表示順に並べ未分類を末尾に置く', () {
+      final rows = buildGroupedRows(
+          sortedCategories: sortedCategories, grouped: grouped());
+      // 期待: H(cat1), a, b, H(cat2), c, H(未分類), d
+      expect(rows.length, 7);
+      expect((rows[0] as GroupedHeaderRow).categoryID, 'cat1');
+      expect((rows[1] as GroupedItemRow).item.id, 'a');
+      expect((rows[2] as GroupedItemRow).item.id, 'b');
+      expect((rows[3] as GroupedHeaderRow).categoryID, 'cat2');
+      expect((rows[4] as GroupedItemRow).item.id, 'c');
+      expect((rows[5] as GroupedHeaderRow).categoryID, isNull); // 未分類
+      expect((rows[6] as GroupedItemRow).item.id, 'd');
+    });
+
+    test('categoryIDForDropPosition: cat1の a を cat2 末尾へドロップすると cat2', () {
+      final rows = buildGroupedRows(
+          sortedCategories: sortedCategories, grouped: grouped());
+      // a(index1) を cat2 の c の下(未分類ヘッダーの直前 index5)へ
+      final dest =
+          categoryIDForDropPosition(rows: rows, oldIndex: 1, newIndex: 5);
+      expect(dest, 'cat2');
+    });
+
+    test('categoryIDForDropPosition: 末尾(未分類)へドロップすると null', () {
+      final rows = buildGroupedRows(
+          sortedCategories: sortedCategories, grouped: grouped());
+      // a(index1) を末尾(未分類 d の下、newIndex=7)へ
+      final dest =
+          categoryIDForDropPosition(rows: rows, oldIndex: 1, newIndex: 7);
+      expect(dest, isNull);
+    });
+
+    test('itemsAfterMove: a を cat2 へ移すと全体 order が 0..N-1 に正規化される', () {
+      final g = grouped();
+      final rows =
+          buildGroupedRows(sortedCategories: sortedCategories, grouped: g);
+      final dest =
+          categoryIDForDropPosition(rows: rows, oldIndex: 1, newIndex: 5);
+      final result = itemsAfterMove(
+        sortedCategories: sortedCategories,
+        grouped: g,
+        movedItem: item('a', 0),
+        fromCategoryID: 'cat1',
+        toCategoryID: dest,
+        dropIndexInTargetValue: dropIndexInTarget(
+            rows: rows, oldIndex: 1, newIndex: 5, toCategoryID: dest),
+      );
+      // 表示順: cat1[b], cat2[c, a], 未分類[d] → b,c,a,d に order 0,1,2,3
+      expect(result.map((e) => e.id).toList(), ['b', 'c', 'a', 'd']);
+      expect(result.map((e) => e.order).toList(), [0, 1, 2, 3]);
+    });
+
+    test('itemsAfterMove: 未分類の d を cat1 先頭へ移す', () {
+      final g = grouped();
+      final rows =
+          buildGroupedRows(sortedCategories: sortedCategories, grouped: g);
+      // d(index6) を cat1 の a の上(newIndex=1)へ
+      final dest =
+          categoryIDForDropPosition(rows: rows, oldIndex: 6, newIndex: 1);
+      final result = itemsAfterMove(
+        sortedCategories: sortedCategories,
+        grouped: g,
+        movedItem: item('d', 3),
+        fromCategoryID: null,
+        toCategoryID: dest,
+        dropIndexInTargetValue: dropIndexInTarget(
+            rows: rows, oldIndex: 6, newIndex: 1, toCategoryID: dest),
+      );
+      expect(dest, 'cat1');
+      // cat1[d, a, b], cat2[c], 未分類[] → d,a,b,c
+      expect(result.map((e) => e.id).toList(), ['d', 'a', 'b', 'c']);
+      expect(result.map((e) => e.order).toList(), [0, 1, 2, 3]);
+    });
+  });
 }
