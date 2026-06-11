@@ -131,7 +131,7 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                     // マッチ時はそのカテゴリの編集ページへ。未分類時はカテゴリ選択
                     // モードの一覧へ誘導し、行タップでこのアイテムを既存カテゴリへ
                     // 割り当てる(アイテム名をそのカテゴリのキーワードに追記する)。
-                    // シートは閉じずに push する(戻ればメモ等の編集状態を保持したまま戻れる)。
+                    // シートは閉じずに push する(戻れば説明等の編集状態を保持したまま戻れる)。
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -154,11 +154,11 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
             ),
             const SizedBox(height: 24),
           ],
-          // メモセクション
+          // 説明セクション
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'メモ',
+              '説明',
               style: Theme.of(context)
                   .textTheme
                   .titleMedium
@@ -169,6 +169,9 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
           TextField(
             controller: descriptionController,
             maxLines: 4,
+            // 一覧（アイテム行の message 下）に 1 行で表示するため 80 文字に制限する。
+            // 80 文字を超える既存データは表示・保存とも切り詰めない（入力のみ制限）。
+            maxLength: 80,
             decoration: const InputDecoration(
               hintText: '補足説明を入力',
               border: OutlineInputBorder(),
