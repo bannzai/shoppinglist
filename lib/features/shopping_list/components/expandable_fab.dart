@@ -10,6 +10,7 @@ import 'package:shoppinglist/entity/ai_usage.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list/components/ai_review_sheet.dart';
+import 'package:shoppinglist/features/shopping_list/components/fab_action_menu.dart';
 import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/ai_usage.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
@@ -74,8 +75,8 @@ class ExpandableFab extends HookConsumerWidget {
 
     void close() => open.value = false;
 
-    final actions = <_FabAction>[
-      _FabAction(
+    final actions = <FabMenuAction>[
+      FabMenuAction(
         icon: Icons.photo_camera_outlined,
         label: '写真から追加',
         // AI 処理中は無効化（dim 表示・タップ不可）。
@@ -86,7 +87,7 @@ class ExpandableFab extends HookConsumerWidget {
                 _showImagePicker(context, ref, isPremium);
               },
       ),
-      _FabAction(
+      FabMenuAction(
         icon: Icons.link,
         label: 'URL から追加',
         // AI 処理中は無効化（dim 表示・タップ不可）。
@@ -97,7 +98,7 @@ class ExpandableFab extends HookConsumerWidget {
                 _showURLInputDialog(context, ref, isPremium);
               },
       ),
-      _FabAction(
+      FabMenuAction(
         icon: Icons.content_paste_go_outlined,
         label: 'テキスト貼り付け',
         // テキスト貼り付けは AI 処理（バナー）を使わないため常に有効。
@@ -113,33 +114,7 @@ class ExpandableFab extends HookConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         // 展開メニュー。FAB の上に積み、open に応じて下端基準で上方向へ伸縮する。
-        // レイアウト内に収めることで Stack 境界外オーバーフローによるタップ不可を解消する。
-        AnimatedBuilder(
-          animation: curve,
-          builder: (context, child) {
-            final t = curve.value.clamp(0.0, 1.0);
-            return ClipRect(
-              child: Align(
-                alignment: Alignment.bottomRight,
-                heightFactor: t,
-                child: Opacity(opacity: t, child: child),
-              ),
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                for (final action in actions) ...[
-                  _ActionRow(action: action),
-                  const SizedBox(height: 8),
-                ],
-              ],
-            ),
-          ),
-        ),
+        FabActionMenu(animation: curve, actions: actions),
         GestureDetector(
           onLongPress: () {
             HapticFeedback.mediumImpact();
@@ -421,93 +396,6 @@ class ExpandableFab extends HookConsumerWidget {
             color: null,
           );
     }
-  }
-}
-
-class _FabAction {
-  final IconData icon;
-  final String label;
-
-  /// null のときは無効状態（dim 表示・タップ不可）。
-  final VoidCallback? onTap;
-  _FabAction({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-}
-
-/// 展開メニュー 1 行（ラベル + 円形アイコンボタン）。
-/// 伸縮アニメーションは親（`ExpandableFab`）の `ClipRect + Align` 側で行うため、
-/// この行自体はレイアウト内に常駐し、タップ判定を確実に受け取る。
-/// ラベル・余白・アイコンのいずれをタップしても発火するよう、行全体を 1 つのタップ領域にする
-/// （アイコンの 44px だけでなくラベルからもタップできるようにする）。
-class _ActionRow extends StatelessWidget {
-  final _FabAction action;
-
-  const _ActionRow({required this.action});
-
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.appTheme;
-    // onTap が null のときは無効状態。AppPill と同じ opacity 0.5 で dim 表示する。
-    final disabled = action.onTap == null;
-    return Opacity(
-      opacity: disabled ? 0.5 : 1,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: action.onTap,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            _ActionLabel(label: action.label),
-            const SizedBox(width: 10),
-            Material(
-              color: tokens.neutral.surface2,
-              shape: const CircleBorder(),
-              child: InkWell(
-                customBorder: const CircleBorder(),
-                onTap: action.onTap,
-                child: SizedBox(
-                  width: 44,
-                  height: 44,
-                  child: Icon(
-                    action.icon,
-                    size: 20,
-                    color: tokens.neutral.ink,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ActionLabel extends StatelessWidget {
-  final String label;
-  const _ActionLabel({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.appTheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: tokens.neutral.ink,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: tokens.neutral.surface,
-            ),
-      ),
-    );
   }
 }
 

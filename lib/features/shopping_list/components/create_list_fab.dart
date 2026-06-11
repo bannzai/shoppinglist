@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/app_user.dart';
+import 'package:shoppinglist/entity/group_shopping_list.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
+import 'package:shoppinglist/features/shopping_list/components/fab_action_menu.dart';
 import 'package:shoppinglist/provider/current_shopping_list_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -18,6 +22,11 @@ import 'package:shoppinglist/utils/logger/analytics.dart';
 /// 2. 作成したリストへ表示を切り替え
 /// 3. 空アイテムを 1 件追加（入力行の auto-focus 機構でそのままキーボード入力に入れる。
 ///    `TextShoppingListItemWidget` 参照）
+///
+/// 長押しで以下 3 アクションのメニューを上方向に展開する（`ExpandableFab` と同じ操作系）:
+/// - 今日の日付でリストを追加（タップと同じ連鎖）
+/// - 現在のリストを複製（全アイテムを引き継ぐ）
+/// - 未チェックのみ引き継いで複製（チェック済みアイテムは引き継がない）
 class CreateListFab extends HookConsumerWidget {
   final String groupID;
 
@@ -25,10 +34,19 @@ class CreateListFab extends HookConsumerWidget {
   /// 未ロード（null）の間はタップしても何もしない。
   final AppUser? appUser;
 
+  /// 表示中の買い物リスト。複製アクションの複製元になる。
+  /// 未取得（null）の間は複製アクションを無効化（dim 表示）する。
+  final GroupShoppingList? shoppingList;
+
+  /// 表示中リストのアイテム一覧（チェック済み含む全件）。複製アクションで引き継ぐ。
+  final List<GroupShoppingListItem> shoppingListItems;
+
   const CreateListFab({
     super.key,
     required this.groupID,
     required this.appUser,
+    required this.shoppingList,
+    required this.shoppingListItems,
   });
 
   @override
@@ -37,110 +55,332 @@ class CreateListFab extends HookConsumerWidget {
     // フィールドは null promotion が効かないため、コールバックで `appUser.id` を
     // 参照できるよう final ローカルに束ねる。
     final appUser = this.appUser;
-    // 新規リスト作成リクエストの実行中フラグ。作成は上限カウント等のサーバー往復を
+    final shoppingList = this.shoppingList;
+    // 新規リスト作成・複製リクエストの実行中フラグ。作成は上限カウント等のサーバー往復を
     // 伴い時間がかかるため、その間の連打による多重作成を防ぐ。
     final isCreating = useState(false);
-
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        color: tokens.neutral.card,
-        shape: BoxShape.circle,
-        border: Border.all(color: tokens.neutral.divider),
-        boxShadow: tokens.cardShadow,
+    final open = useState(false);
+    final controller = useAnimationController(
+      duration: const Duration(milliseconds: 280),
+      reverseDuration: const Duration(milliseconds: 200),
+    );
+    final curve = useMemoized(
+      () => CurvedAnimation(
+        parent: controller,
+        curve: Curves.easeOutBack,
+        reverseCurve: Curves.easeIn,
       ),
-      child: Material(
-        color: Colors.transparent,
-        shape: const CircleBorder(),
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: isCreating.value || appUser == null
-              ? null
-              : () async {
-                  analytics.logEvent(
-                    name: 'tap_create_list_fab',
-                    parameters: {'groupID': groupID},
-                  );
-                  final messenger = ScaffoldMessenger.of(context);
-                  // リスト作成が Stream へ反映されると、_ActiveShoppingList が
-                  // 先頭リストフォールバック(resolveShoppingListID)で新リストへ
-                  // 切り替わり ValueKey 差し替えでこの widget ごと破棄される。
-                  // 破棄後の ref.read は使えないため、await を挟む前に
-                  // call クラスと notifier を束縛しておく。
-                  final shoppingListAdd =
-                      ref.read(shoppingListAddProvider(groupID: groupID));
-                  final addShoppingListItem =
-                      ref.read(addShoppingListItemProvider(groupID: groupID));
-                  final currentShoppingListIDNotifier =
-                      ref.read(currentShoppingListIDProvider.notifier);
-                  isCreating.value = true;
-                  try {
-                    final newShoppingList = await shoppingListAdd(
-                      createUserID: appUser.id,
-                      groupID: groupID,
-                      shoppingLocationID: null,
-                      duplicatedFromGroupShoppingListID: null,
-                    );
-                    // 作成直後のリストは空なので order は先頭の 0
-                    // (`List<GroupShoppingListItem>.nextOrder` の空リスト値)。
-                    // この空アイテムが新リストの入力行として mount され、
-                    // auto-focus でそのままキーボード入力に入れる。
-                    await addShoppingListItem(
-                      shoppingListID: newShoppingList.id,
-                      userID: appUser.id,
-                      message: '',
-                      order: 0,
-                      description: null,
-                      color: null,
-                    );
-                    // 先頭フォールバックと同じ結果になるが、明示選択として
-                    // 記録しグループ切替等の揺れに備える(冪等)。
-                    currentShoppingListIDNotifier.update(newShoppingList.id);
-                  } on ShoppingListLimitExceededException catch (e) {
-                    messenger.showSnackBar(
-                      SnackBar(
-                        persist: false,
-                        content: Text(e.toString()),
-                        action: SnackBarAction(
-                          label: 'アップグレード',
-                          onPressed: () => showPaywall(context: context),
+      [controller],
+    );
+
+    // 展開メニューの開閉に合わせてアニメーションを駆動する（`ExpandableFab` と同じ機構）。
+    // 依存配列は open.value のみ — 開閉の変化イベントだけで forward/reverse を切り替える。
+    useEffect(() {
+      if (open.value) {
+        controller.forward();
+      } else {
+        controller.reverse();
+      }
+      return null;
+    }, [open.value]);
+
+    void close() => open.value = false;
+
+    final actions = <FabMenuAction>[
+      FabMenuAction(
+        icon: Icons.today_outlined,
+        label: '今日の日付でリストを追加',
+        // AppUser 未ロード・実行中は無効化（dim 表示・タップ不可）。
+        onTap: appUser == null || isCreating.value
+            ? null
+            : () {
+                analytics.logEvent(
+                  name: 'tap_create_list_menu_today',
+                  parameters: {'groupID': groupID},
+                );
+                close();
+                _createTodayList(
+                  context: context,
+                  ref: ref,
+                  appUser: appUser,
+                  isCreating: isCreating,
+                );
+              },
+      ),
+      FabMenuAction(
+        icon: Icons.content_copy_outlined,
+        label: '現在のリストを複製',
+        // AppUser・複製元リスト未ロード・実行中は無効化（dim 表示・タップ不可）。
+        onTap: appUser == null || shoppingList == null || isCreating.value
+            ? null
+            : () {
+                analytics.logEvent(
+                  name: 'tap_duplicate_list_from_fab',
+                  parameters: {
+                    'groupID': groupID,
+                    'sourceShoppingListID': shoppingList.id,
+                  },
+                );
+                close();
+                _duplicateCurrentList(
+                  context: context,
+                  ref: ref,
+                  appUser: appUser,
+                  sourceShoppingList: shoppingList,
+                  isCreating: isCreating,
+                  uncheckedOnly: false,
+                );
+              },
+      ),
+      FabMenuAction(
+        icon: Icons.check_box_outline_blank,
+        label: '未チェックのみ引き継いで複製',
+        // AppUser・複製元リスト未ロード・実行中は無効化（dim 表示・タップ不可）。
+        onTap: appUser == null || shoppingList == null || isCreating.value
+            ? null
+            : () {
+                analytics.logEvent(
+                  name: 'tap_duplicate_unchecked_from_fab',
+                  parameters: {
+                    'groupID': groupID,
+                    'sourceShoppingListID': shoppingList.id,
+                  },
+                );
+                close();
+                _duplicateCurrentList(
+                  context: context,
+                  ref: ref,
+                  appUser: appUser,
+                  sourceShoppingList: shoppingList,
+                  isCreating: isCreating,
+                  uncheckedOnly: true,
+                );
+              },
+      ),
+    ];
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        // 展開メニュー。FAB の上に積み、open に応じて下端基準で上方向へ伸縮する。
+        FabActionMenu(animation: curve, actions: actions),
+        Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: tokens.neutral.card,
+            shape: BoxShape.circle,
+            border: Border.all(color: tokens.neutral.divider),
+            boxShadow: tokens.cardShadow,
+          ),
+          child: Material(
+            color: Colors.transparent,
+            shape: const CircleBorder(),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onLongPress: isCreating.value || appUser == null
+                  ? null
+                  : () {
+                      HapticFeedback.mediumImpact();
+                      analytics.logEvent(
+                        name: 'long_press_open_create_list_menu',
+                        parameters: {'groupID': groupID},
+                      );
+                      open.value = true;
+                    },
+              onTap: isCreating.value || appUser == null
+                  ? null
+                  : () {
+                      // メニュー展開中（x 状態）のタップはリスト作成ではなく「閉じる」に倒す。
+                      if (open.value) {
+                        analytics.logEvent(
+                          name: 'tap_close_create_list_menu',
+                          parameters: {'groupID': groupID},
+                        );
+                        close();
+                        return;
+                      }
+                      analytics.logEvent(
+                        name: 'tap_create_list_fab',
+                        parameters: {'groupID': groupID},
+                      );
+                      _createTodayList(
+                        context: context,
+                        ref: ref,
+                        appUser: appUser,
+                        isCreating: isCreating,
+                      );
+                    },
+              child: Center(
+                child: isCreating.value
+                    ? SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(tokens.accent),
                         ),
+                      )
+                    // 閉時は合成アイコン、メニュー展開中は x（閉じる）。
+                    // `ExpandableFab` と同じ AnimatedSwitcher の回転+フェードで入れ替える。
+                    : AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+                        transitionBuilder: (child, animation) =>
+                            RotationTransition(
+                          turns:
+                              Tween(begin: 0.85, end: 1.0).animate(animation),
+                          child:
+                              FadeTransition(opacity: animation, child: child),
+                        ),
+                        child: open.value
+                            ? Icon(
+                                Icons.close,
+                                key: const ValueKey(true),
+                                size: 22,
+                                color: tokens.accent,
+                              )
+                            : const _AddListIcon(key: ValueKey(false)),
                       ),
-                    );
-                  } catch (e) {
-                    messenger.showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
-                  } finally {
-                    // 破棄済みの ValueNotifier へ書き込まないようガードする。
-                    if (context.mounted) {
-                      isCreating.value = false;
-                    }
-                  }
-                },
-          child: Center(
-            child: isCreating.value
-                ? SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(tokens.accent),
-                    ),
-                  )
-                : const _AddListIcon(),
+              ),
+            ),
           ),
         ),
-      ),
+      ],
     );
+  }
+
+  /// 今日の日付名でリストを作成 → 表示切替 → 空アイテム追加まで連鎖する（従来のタップ動作）。
+  Future<void> _createTodayList({
+    required BuildContext context,
+    required WidgetRef ref,
+    required AppUser appUser,
+    required ValueNotifier<bool> isCreating,
+  }) async {
+    final messenger = ScaffoldMessenger.of(context);
+    // リスト作成が Stream へ反映されると、_ActiveShoppingList が
+    // 先頭リストフォールバック(resolveShoppingListID)で新リストへ
+    // 切り替わり ValueKey 差し替えでこの widget ごと破棄される。
+    // 破棄後の ref.read は使えないため、await を挟む前に
+    // call クラスと notifier を束縛しておく。
+    final shoppingListAdd = ref.read(shoppingListAddProvider(groupID: groupID));
+    final addShoppingListItem =
+        ref.read(addShoppingListItemProvider(groupID: groupID));
+    final currentShoppingListIDNotifier =
+        ref.read(currentShoppingListIDProvider.notifier);
+    isCreating.value = true;
+    try {
+      final newShoppingList = await shoppingListAdd(
+        createUserID: appUser.id,
+        groupID: groupID,
+        shoppingLocationID: null,
+        duplicatedFromGroupShoppingListID: null,
+      );
+      // 作成直後のリストは空なので order は先頭の 0
+      // (`List<GroupShoppingListItem>.nextOrder` の空リスト値)。
+      // この空アイテムが新リストの入力行として mount され、
+      // auto-focus でそのままキーボード入力に入れる。
+      await addShoppingListItem(
+        shoppingListID: newShoppingList.id,
+        userID: appUser.id,
+        message: '',
+        order: 0,
+        description: null,
+        color: null,
+      );
+      // 先頭フォールバックと同じ結果になるが、明示選択として
+      // 記録しグループ切替等の揺れに備える(冪等)。
+      currentShoppingListIDNotifier.update(newShoppingList.id);
+    } on ShoppingListLimitExceededException catch (e) {
+      messenger.showSnackBar(
+        SnackBar(
+          persist: false,
+          content: Text(e.toString()),
+          action: SnackBarAction(
+            label: 'アップグレード',
+            onPressed: () => showPaywall(context: context),
+          ),
+        ),
+      );
+    } catch (e) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    } finally {
+      // 破棄済みの ValueNotifier へ書き込まないようガードする。
+      if (context.mounted) {
+        isCreating.value = false;
+      }
+    }
+  }
+
+  /// 表示中のリストを複製し、複製先リストへ表示を切り替える。
+  /// [uncheckedOnly] が true のときは未チェックのアイテムだけを引き継ぐ。
+  Future<void> _duplicateCurrentList({
+    required BuildContext context,
+    required WidgetRef ref,
+    required AppUser appUser,
+    required GroupShoppingList sourceShoppingList,
+    required ValueNotifier<bool> isCreating,
+    required bool uncheckedOnly,
+  }) async {
+    final messenger = ScaffoldMessenger.of(context);
+    // 複製が Stream へ反映されると _ActiveShoppingList の ValueKey 差し替えで
+    // この widget ごと破棄されるため、await を挟む前に call クラスと notifier を
+    // 束縛しておく（_createTodayList と同じ理由）。
+    final shoppingListDuplicate =
+        ref.read(shoppingListDuplicateProvider(groupID: groupID));
+    final currentShoppingListIDNotifier =
+        ref.read(currentShoppingListIDProvider.notifier);
+    isCreating.value = true;
+    try {
+      final newShoppingList = await shoppingListDuplicate(
+        createUserID: appUser.id,
+        groupID: groupID,
+        sourceShoppingList: sourceShoppingList,
+        shoppingListItems: uncheckedOnly
+            ? shoppingListItems
+                .where((item) =>
+                    item.status == GroupShoppingListItemStatus.unchecked)
+                .toList()
+            : shoppingListItems,
+      );
+      currentShoppingListIDNotifier.update(newShoppingList.id);
+      messenger.showSnackBar(
+        SnackBar(
+          persist: false,
+          content: const Text('リストを複製しました'),
+        ),
+      );
+    } on ShoppingListLimitExceededException catch (e) {
+      messenger.showSnackBar(
+        SnackBar(
+          persist: false,
+          content: Text(e.toString()),
+          action: SnackBarAction(
+            label: 'アップグレード',
+            onPressed: () => showPaywall(context: context),
+          ),
+        ),
+      );
+    } catch (e) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    } finally {
+      // 破棄済みの ValueNotifier へ書き込まないようガードする。
+      if (context.mounted) {
+        isCreating.value = false;
+      }
+    }
   }
 }
 
 /// 買い物リスト（receipt）アイコンの右上に + バッジを重ねた合成アイコン。
 /// バッジはボタン背景と同色の縁取りで本体アイコンとの重なりを切り抜いて見せる。
 class _AddListIcon extends StatelessWidget {
-  const _AddListIcon();
+  const _AddListIcon({super.key});
 
   @override
   Widget build(BuildContext context) {
