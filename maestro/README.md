@@ -107,7 +107,6 @@ maestro --platform android hierarchy --output tmp/mock-purchase-modal-android.xm
 | `iap_purchase_annual.yaml` | annual 購入後に「プレミアム会員: 有効」を assert | RC Test Store |
 | `iap_purchase_lifetime.yaml` | lifetime 購入後に「プレミアム会員: 有効」を assert | RC Test Store |
 | `premium_theme_color_setting.yaml` | premium 後のテーマカラー画面遷移 | grant_premium_via_debug |
-| `premium_export_shopping_list.yaml` | premium 後のリストエクスポート実行 | grant_premium_via_debug |
 | `premium_group_creation.yaml` | premium 後の 2 個目グループ作成 | grant_premium_via_debug |
 | `premium_item_photo_attachment.yaml` | premium 後のアイテム写真添付導線 | grant_premium_via_debug |
 | `premium_location_reminder.yaml` | premium 後の位置情報リマインダー有効化 | grant_premium_via_debug |
