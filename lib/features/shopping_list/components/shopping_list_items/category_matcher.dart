@@ -27,17 +27,25 @@ List<GroupCategory> sortCategoriesByLocation({
 /// カテゴリIDごとにアイテムをグルーピングする。
 /// 複数カテゴリにマッチした場合はorderが小さい（先頭の）カテゴリに分類。
 /// マッチしないアイテムは「未分類」（key=uncategorizedCategoryID）グループに入る。
+///
+/// [categoryOverrideByItemID] が指定され、ある item.id を含む場合は、キーワードマッチ
+/// ではなくその上書き値（null=未分類）を所属カテゴリに使う。カテゴリ間 D&D 直後に、
+/// キーワード(stream)が追いつくまでの一瞬を新しい分類で覆う楽観表示に使う。
 Map<String, List<GroupShoppingListItem>> groupItemsByCategory({
   required List<GroupShoppingListItem> items,
   required List<GroupCategory> categories,
+  Map<String, String?>? categoryOverrideByItemID,
 }) {
   final Map<String, List<GroupShoppingListItem>> grouped = {};
 
   for (final item in items) {
-    final categoryID = findMatchingCategoryID(
-      item: item,
-      categories: categories,
-    );
+    final categoryID = categoryOverrideByItemID != null &&
+            categoryOverrideByItemID.containsKey(item.id)
+        ? (categoryOverrideByItemID[item.id] ?? uncategorizedCategoryID)
+        : findMatchingCategoryID(
+            item: item,
+            categories: categories,
+          );
     grouped.putIfAbsent(categoryID, () => []).add(item);
   }
 

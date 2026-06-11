@@ -64,6 +64,81 @@ void main() {
       expect(result[uncategorizedCategoryID]?.first.id, 'item2');
     });
 
+    test('categoryOverrideByItemID 指定時はキーワードマッチより上書きを優先する', () {
+      final categories = [
+        GroupCategory(
+            id: 'cat-veg',
+            groupID: 'group1',
+            userID: 'user1',
+            groupCategoryAxisID: 'axis1',
+            name: '野菜',
+            order: 0,
+            locationOrders: {},
+            keywords: [
+              const GroupCategoryKeyword(
+                keyword: 'にんじん',
+                matchingType: GroupCategoryKeywordMatchingType.exact,
+              ),
+            ],
+            color: null,
+            iconName: null),
+        GroupCategory(
+            id: 'cat-meat',
+            groupID: 'group1',
+            userID: 'user1',
+            groupCategoryAxisID: 'axis1',
+            name: '肉',
+            order: 1,
+            locationOrders: {},
+            keywords: const [],
+            color: null,
+            iconName: null),
+      ];
+
+      final items = [
+        // キーワード上は「にんじん」→ cat-veg にマッチするが、上書きで cat-meat に置く。
+        const GroupShoppingListItem(
+            id: 'item-carrot',
+            groupID: 'group1',
+            shoppingListID: 'list1',
+            userID: 'user1',
+            message: 'にんじん',
+            order: 0,
+            checkedByUserID: null,
+            color: null,
+            description: null,
+            imageURL: null,
+            lastEditedByUserID: null),
+        // 上書きで未分類(null)に置く。
+        const GroupShoppingListItem(
+            id: 'item-unknown',
+            groupID: 'group1',
+            shoppingListID: 'list1',
+            userID: 'user1',
+            message: 'なぞ',
+            order: 1,
+            checkedByUserID: null,
+            color: null,
+            description: null,
+            imageURL: null,
+            lastEditedByUserID: null),
+      ];
+
+      final result = groupItemsByCategory(
+        items: items,
+        categories: categories,
+        categoryOverrideByItemID: const {
+          'item-carrot': 'cat-meat',
+          'item-unknown': null,
+        },
+      );
+
+      expect(result['cat-veg'], isNull,
+          reason: 'にんじんは上書きで cat-meat に移ったので cat-veg は空のはず');
+      expect(result['cat-meat']?.single.id, 'item-carrot');
+      expect(result[uncategorizedCategoryID]?.single.id, 'item-unknown');
+    });
+
     test('部分一致マッチング', () {
       final categories = [
         GroupCategory(
