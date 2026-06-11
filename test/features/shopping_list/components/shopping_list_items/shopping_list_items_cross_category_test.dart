@@ -195,4 +195,29 @@ void main() {
         reason: 'カテゴリ間ドラッグで moveItemCategoryKeyword が呼ばれていない');
     expect(spies.move.calls.last.destinationCategoryID, 'cat-meat');
   });
+
+  testWidgets('カテゴリ間移動後、stream 未更新でも楽観的に 肉 セクションへ表示される', (tester) async {
+    // stream(Stream.value)は再 emit しないため、楽観状態が破棄されず維持される。
+    // にんじんが 肉 ヘッダーより下＝肉セクション内に来ていれば楽観反映できている。
+    await pump(tester);
+    await longPressDrag(
+        tester, find.byKey(const ValueKey('item_item-carrot')), 400);
+    expect(
+      tester.getCenter(find.text('にんじん')).dy,
+      greaterThan(tester.getCenter(find.text('肉')).dy),
+      reason: 'にんじんが 肉 ヘッダーより上にある＝楽観反映されず元の 野菜 セクションのまま',
+    );
+  });
+
+  testWidgets('同一カテゴリ内移動後、stream 未更新でも楽観的に並びが入れ替わる', (tester) async {
+    // トマト(野菜の2番目)を上へドラッグして にんじん の上へ。楽観 order で並びが先に反映される。
+    await pump(tester);
+    await longPressDrag(
+        tester, find.byKey(const ValueKey('item_item-tomato')), -60);
+    expect(
+      tester.getCenter(find.text('トマト')).dy,
+      lessThan(tester.getCenter(find.text('にんじん')).dy),
+      reason: 'トマトが にんじん より下のまま＝楽観 order が反映されていない',
+    );
+  });
 }

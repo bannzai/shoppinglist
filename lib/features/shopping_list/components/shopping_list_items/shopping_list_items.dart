@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
@@ -241,23 +242,24 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
           );
         }
 
-        final grouped = groupItemsByCategory(
-          items: shoppingListItems,
-          categories: categories,
-        );
-
         // 入力中の空行(message が空) や空白のみのアイテムはカテゴリ分け対象にならないため、
-        // ボタンの表示判定と件数から除外する。
-        final uncategorizedItems =
-            (grouped[uncategorizedCategoryID] ?? const [])
-                .where((item) => item.message.trim().isNotEmpty)
-                .toList();
+        // ボタンの表示判定と件数から除外する。グルーピング自体は楽観状態を持つ
+        // [_GroupedListView] 側で行うため、ここでは未分類件数だけを直接算出する。
+        final uncategorizedItems = shoppingListItems
+            .where((item) =>
+                item.message.trim().isNotEmpty &&
+                findMatchingCategoryID(
+                      item: item,
+                      categories: categories,
+                    ) ==
+                    uncategorizedCategoryID)
+            .toList();
         final groupedListView = _GroupedListView(
           groupID: groupID,
           shoppingListID: shoppingListID,
           categoryAxisID: categoryAxisID,
           categories: categories,
-          grouped: grouped,
+          shoppingListItems: shoppingListItems,
           shoppingLocationID: isPremium ? shoppingLocationID : null,
           rowKeys: rowKeys,
         );
@@ -289,6 +291,61 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
   }
 }
 
+/// カテゴリ表示の D&D 直後に同期適用するローカルな並び・分類の楽観状態。
+///
+/// `ReorderableListView.onReorder` は本来コールバック内で表示元データを同期更新する前提だが、
+/// 本アプリは onReorder で Firestore に書くだけで表示元(stream)はその場で変わらない。そのため
+/// ドロップ完了後に一旦古い並びで再描画され、直後に stream 反映で新並びへ切り替わってチラつく。
+/// この楽観状態を onReorder で同期セットして即座に新並び・新分類で描画し、stream が追いついたら破棄する。
+class _OptimisticReorder {
+  /// 移動後の全アイテムの新しい order(item.id → order)。
+  final Map<String, int> orderByItemID;
+
+  /// 移動アイテム(と同 message のアイテム)の所属カテゴリ上書き(item.id → categoryID, null=未分類)。
+  /// 分類はカテゴリの keyword で決まり stream 反映が遅れる(transaction=サーバ往復)ため、
+  /// 追いつくまで分類を上書きして二段反映によるチラつきを防ぐ。
+  final Map<String, String?> categoryOverrideByItemID;
+
+  const _OptimisticReorder({
+    required this.orderByItemID,
+    required this.categoryOverrideByItemID,
+  });
+}
+
+/// 楽観状態が Firestore stream に反映され切ったかを判定する。
+///
+/// order(全アイテム)と分類上書き(移動アイテム)の両方が stream と一致したら true。
+/// order(batch=ローカルキャッシュ即時)が先に一致しても分類(keyword)が未反映の間は false を返すため、
+/// 分類上書きを維持し続けてチラつきを防ぐ。stream に存在しない id(他端末の削除等)は無視する。
+bool _optimisticReflected({
+  required _OptimisticReorder pending,
+  required List<GroupShoppingListItem> streamItems,
+  required List<GroupCategory> categories,
+}) {
+  final byID = {for (final it in streamItems) it.id: it};
+  for (final entry in pending.orderByItemID.entries) {
+    final streamItem = byID[entry.key];
+    if (streamItem == null) {
+      continue;
+    }
+    if (streamItem.order != entry.value) {
+      return false;
+    }
+  }
+  for (final entry in pending.categoryOverrideByItemID.entries) {
+    final streamItem = byID[entry.key];
+    if (streamItem == null) {
+      continue;
+    }
+    final matched =
+        findMatchingCategoryID(item: streamItem, categories: categories);
+    if (matched != (entry.value ?? uncategorizedCategoryID)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 /// カテゴリヘッダー付きのグルーピング表示。
 /// ヘッダーとアイテムを 1 つの [ReorderableListView] にフラットに並べ、長押しドラッグで
 /// 「同一カテゴリ内の並び替え」と「別カテゴリへの移動」の両方を許可する。
@@ -297,12 +354,12 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
 /// [ReorderableDelayedDragStartListener] でラップ)。別カテゴリへドロップした場合は、移動先
 /// カテゴリへ message を完全一致キーワードとして付け替えて分類を変更する。order は移動後の
 /// 表示順で全体を 0..N-1 に正規化して永続化する。
-class _GroupedListView extends ConsumerWidget {
+class _GroupedListView extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final String categoryAxisID;
   final List<GroupCategory> categories;
-  final Map<String, List<GroupShoppingListItem>> grouped;
+  final List<GroupShoppingListItem> shoppingListItems;
   final String? shoppingLocationID;
 
   /// 入力行に安定した GlobalKey を割り当てるためのレジストリ。
@@ -313,18 +370,50 @@ class _GroupedListView extends ConsumerWidget {
     required this.shoppingListID,
     required this.categoryAxisID,
     required this.categories,
-    required this.grouped,
+    required this.shoppingListItems,
     required this.shoppingLocationID,
     required this.rowKeys,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // カテゴリ表示の D&D 直後に同期適用する楽観状態。ドロップ後に新しい並び・分類で即描画し、
+    // Firestore stream が追いつくまでの一瞬を覆ってチラつきを防ぐ。
+    final optimistic = useState<_OptimisticReorder?>(null);
+    final pending = optimistic.value;
+
+    // 楽観 order を stream に重ねて再ソートする（order を指定されていないアイテムは自分の order）。
+    final effectiveItems = pending == null
+        ? shoppingListItems
+        : ([...shoppingListItems]..sort((a, b) =>
+            (pending.orderByItemID[a.id] ?? a.order)
+                .compareTo(pending.orderByItemID[b.id] ?? b.order)));
+
+    // 楽観状態が Firestore stream に反映され切ったら破棄して通常表示へ戻す。
+    // 依存配列は stream（shoppingListItems / categories）。onReorder での楽観セットでは
+    // 依存が変わらず再実行されないため、stream emit のタイミングでのみ整合判定する。
+    useEffect(() {
+      if (pending != null &&
+          _optimisticReflected(
+            pending: pending,
+            streamItems: shoppingListItems,
+            categories: categories,
+          )) {
+        optimistic.value = null;
+      }
+      return null;
+    }, [shoppingListItems, categories]);
+
     final sortedCategories = sortCategoriesByLocation(
       categories: categories,
       shoppingLocationID: shoppingLocationID,
     );
     final categoryMap = {for (final c in categories) c.id: c};
+    final grouped = groupItemsByCategory(
+      items: effectiveItems,
+      categories: categories,
+      categoryOverrideByItemID: pending?.categoryOverrideByItemID,
+    );
     final rows = buildGroupedRows(
       sortedCategories: sortedCategories,
       grouped: grouped,
@@ -344,7 +433,7 @@ class _GroupedListView extends ConsumerWidget {
           case GroupedHeaderRow(:final categoryID):
             return KeyedSubtree(
               key: ValueKey('header_${categoryID ?? uncategorizedCategoryID}'),
-              child: _header(categoryMap, categoryID),
+              child: _header(categoryMap, grouped, categoryID),
             );
           case GroupedItemRow(:final item, :final categoryID):
             final isInputRow = item.message.isEmpty;
@@ -373,12 +462,8 @@ class _GroupedListView extends ConsumerWidget {
         }
       },
       onReorder: (oldIndex, newIndex) {
-        // [調査ログ] カテゴリまたぎ D&D の切り分け用。onReorder 発火と来た index(ヘッダー込み)。
-        debugPrint(
-            '[reorder] onReorder oldIndex=$oldIndex newIndex=$newIndex rows=${rows.length}');
         final moved = rows[oldIndex];
         if (moved is! GroupedItemRow) {
-          debugPrint('[reorder] moved がヘッダー → 中断');
           return; // ヘッダーはドラッグ不可。通常起き得ないが防御。
         }
         analytics.logEvent(
@@ -393,10 +478,6 @@ class _GroupedListView extends ConsumerWidget {
           oldIndex: oldIndex,
           newIndex: newIndex,
         );
-        // [調査ログ] 移動元/移動先。同じだと「移動」にならず並び替え扱い。
-        debugPrint(
-            '[reorder] message="${moved.item.message}" from=${moved.categoryID} '
-            'to=$toCategoryID crossCategory=${toCategoryID != moved.categoryID}');
         final orderedItems = itemsAfterMove(
           sortedCategories: sortedCategories,
           grouped: grouped,
@@ -410,6 +491,28 @@ class _GroupedListView extends ConsumerWidget {
             toCategoryID: toCategoryID,
           ),
         );
+
+        // 楽観状態を同期セットし、ドロップ直後から新しい並び・分類で描画する
+        // (ReorderableListView は onReorder 内で表示元データを同期更新する前提のため)。
+        // 分類上書きは同 message の全アイテムに広げる(キーワード方式で連動して移動するため)。
+        final applied = _OptimisticReorder(
+          orderByItemID: {for (final it in orderedItems) it.id: it.order},
+          categoryOverrideByItemID: {
+            for (final it in effectiveItems)
+              if (it.message == moved.item.message) it.id: toCategoryID,
+          },
+        );
+        optimistic.value = applied;
+
+        // 永続化失敗時は楽観状態を破棄し、実際に永続化された stream の状態を表示する
+        // (= ロールバック)。後続の別操作で楽観状態が差し替わっている場合は消さない。
+        void rollbackIfCurrent(Object error, StackTrace stackTrace) {
+          debugPrint('[reorder] 永続化失敗: $error\n$stackTrace');
+          if (optimistic.value == applied) {
+            optimistic.value = null;
+          }
+        }
+
         // 別カテゴリへ移動した場合のみ、完全一致キーワードを付け替えて分類を変更する。
         if (toCategoryID != moved.categoryID) {
           ref
@@ -420,11 +523,7 @@ class _GroupedListView extends ConsumerWidget {
                 destinationCategoryID: toCategoryID,
                 categories: categories,
               )
-              // [調査ログ] fire-and-forget で握り潰していた成否を拾う。
-              .then((_) => debugPrint('[reorder] キーワード付け替え成功 to=$toCategoryID'))
-              .catchError((Object error, StackTrace stackTrace) {
-            debugPrint('[reorder] キーワード付け替え失敗: $error\n$stackTrace');
-          });
+              .catchError(rollbackIfCurrent);
         }
         ref
             .read(shoppingListItemBatchUpdateProvider(groupID: groupID))
@@ -432,17 +531,17 @@ class _GroupedListView extends ConsumerWidget {
               shoppingListID: shoppingListID,
               shoppingListItems: orderedItems,
             )
-            .then((_) =>
-                debugPrint('[reorder] order 永続化成功 (${orderedItems.length}件)'))
-            .catchError((Object error, StackTrace stackTrace) {
-          debugPrint('[reorder] order 永続化失敗: $error\n$stackTrace');
-        });
+            .catchError(rollbackIfCurrent);
       },
     );
   }
 
   /// カテゴリID(null=未分類)から見出し行を生成する。
-  Widget _header(Map<String, GroupCategory> categoryMap, String? categoryID) {
+  Widget _header(
+    Map<String, GroupCategory> categoryMap,
+    Map<String, List<GroupShoppingListItem>> grouped,
+    String? categoryID,
+  ) {
     final items = grouped[categoryID ?? uncategorizedCategoryID] ?? const [];
     final metrics = shoppingListItemMetrics(items);
     final category = categoryID == null ? null : categoryMap[categoryID];
