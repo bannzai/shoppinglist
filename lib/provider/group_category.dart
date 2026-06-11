@@ -312,3 +312,93 @@ AICategorizeApply aiCategorizeApply(Ref ref, {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return AICategorizeApply(database: database);
 }
+
+/// アイテム移動に伴う、1 カテゴリのキーワード付け替え結果を返す純粋関数。
+///
+/// [category] が移動先([destinationCategoryID])なら [itemMessage] を完全一致(exact)キーワード
+/// として追加する(既に同じ exact があれば変更なし)。移動先以外なら [itemMessage] の exact
+/// キーワードを削除する(手動の partial/regex は触らない)。変更が生じない場合は null を返す。
+List<GroupCategoryKeyword>? keywordsAfterItemMove({
+  required GroupCategory category,
+  required String itemMessage,
+  required String? destinationCategoryID,
+}) {
+  final keywords = [...category.keywords];
+  if (category.id == destinationCategoryID) {
+    final alreadyHasExact = keywords.any((keyword) =>
+        keyword.keyword == itemMessage &&
+        keyword.matchingType == GroupCategoryKeywordMatchingType.exact);
+    if (alreadyHasExact) {
+      return null;
+    }
+    keywords.add(GroupCategoryKeyword(
+      keyword: itemMessage,
+      matchingType: GroupCategoryKeywordMatchingType.exact,
+    ));
+    return keywords;
+  }
+  final lengthBeforeRemove = keywords.length;
+  keywords.removeWhere((keyword) =>
+      keyword.keyword == itemMessage &&
+      keyword.matchingType == GroupCategoryKeywordMatchingType.exact);
+  return keywords.length == lengthBeforeRemove ? null : keywords;
+}
+
+/// アイテム(message)の所属カテゴリを、完全一致(exact)キーワードの付け替えで変更する。
+///
+/// カテゴリをまたぐ D&D で「別カテゴリへ移す」永続化に使う。アイテムはカテゴリIDを持たず
+/// message とキーワードのマッチで分類されるため、同名(message)のアイテムは同じカテゴリへ
+/// 分類される(キーワードは message 単位)。手動の partial/regex は変更しない(削除対象は exact
+/// のみ)ため、partial/regex で別カテゴリにマッチしているアイテムは移動が効かない場合がある
+/// (分類エンジン findMatchingCategoryID を変えない方針による既知の限界)。
+class MoveItemCategoryKeyword {
+  final GroupDatabase database;
+
+  MoveItemCategoryKeyword({required this.database});
+
+  Future<void> call({
+    required String categoryAxisID,
+    required String itemMessage,
+    required String? destinationCategoryID,
+    required List<GroupCategory> categories,
+  }) async {
+    // group 配下の同時書き込みでキーワードが失われないよう transaction で read-modify-write する
+    // (firestore-transaction.md)。
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      // transaction の制約により read を全て先に行う。
+      final currentByCategoryID = <String, GroupCategory>{};
+      for (final category in categories) {
+        final snapshot = await transaction.get(database.categoryReference(
+            categoryAxisID: categoryAxisID, categoryID: category.id));
+        final current = snapshot.data();
+        if (current != null) {
+          currentByCategoryID[category.id] = current;
+        }
+      }
+
+      for (final entry in currentByCategoryID.entries) {
+        final updatedKeywords = keywordsAfterItemMove(
+          category: entry.value,
+          itemMessage: itemMessage,
+          destinationCategoryID: destinationCategoryID,
+        );
+        if (updatedKeywords == null) {
+          continue; // 変更なし → 書き込まない(冪等)
+        }
+        transaction.set(
+          database.categoryReference(
+              categoryAxisID: categoryAxisID, categoryID: entry.key),
+          entry.value.copyWith(keywords: updatedKeywords),
+          SetOptions(merge: true),
+        );
+      }
+    });
+  }
+}
+
+@Riverpod(dependencies: [groupDatabase])
+MoveItemCategoryKeyword moveItemCategoryKeyword(Ref ref,
+    {required String groupID}) {
+  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
+  return MoveItemCategoryKeyword(database: database);
+}

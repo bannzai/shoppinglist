@@ -1303,5 +1303,146 @@ class _AiCategorizeApplyProviderElement
   @override
   String get groupID => (origin as AiCategorizeApplyProvider).groupID;
 }
+
+String _$moveItemCategoryKeywordHash() =>
+    r'90d6a93a3f3ded7817a269f24d5b1596a077c413';
+
+/// See also [moveItemCategoryKeyword].
+@ProviderFor(moveItemCategoryKeyword)
+const moveItemCategoryKeywordProvider = MoveItemCategoryKeywordFamily();
+
+/// See also [moveItemCategoryKeyword].
+class MoveItemCategoryKeywordFamily extends Family<MoveItemCategoryKeyword> {
+  /// See also [moveItemCategoryKeyword].
+  const MoveItemCategoryKeywordFamily();
+
+  /// See also [moveItemCategoryKeyword].
+  MoveItemCategoryKeywordProvider call({
+    required String groupID,
+  }) {
+    return MoveItemCategoryKeywordProvider(
+      groupID: groupID,
+    );
+  }
+
+  @override
+  MoveItemCategoryKeywordProvider getProviderOverride(
+    covariant MoveItemCategoryKeywordProvider provider,
+  ) {
+    return call(
+      groupID: provider.groupID,
+    );
+  }
+
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    groupDatabaseProvider
+  ];
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
+    groupDatabaseProvider,
+    ...?groupDatabaseProvider.allTransitiveDependencies
+  };
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'moveItemCategoryKeywordProvider';
+}
+
+/// See also [moveItemCategoryKeyword].
+class MoveItemCategoryKeywordProvider
+    extends AutoDisposeProvider<MoveItemCategoryKeyword> {
+  /// See also [moveItemCategoryKeyword].
+  MoveItemCategoryKeywordProvider({
+    required String groupID,
+  }) : this._internal(
+          (ref) => moveItemCategoryKeyword(
+            ref as MoveItemCategoryKeywordRef,
+            groupID: groupID,
+          ),
+          from: moveItemCategoryKeywordProvider,
+          name: r'moveItemCategoryKeywordProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$moveItemCategoryKeywordHash,
+          dependencies: MoveItemCategoryKeywordFamily._dependencies,
+          allTransitiveDependencies:
+              MoveItemCategoryKeywordFamily._allTransitiveDependencies,
+          groupID: groupID,
+        );
+
+  MoveItemCategoryKeywordProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.groupID,
+  }) : super.internal();
+
+  final String groupID;
+
+  @override
+  Override overrideWith(
+    MoveItemCategoryKeyword Function(MoveItemCategoryKeywordRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: MoveItemCategoryKeywordProvider._internal(
+        (ref) => create(ref as MoveItemCategoryKeywordRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        groupID: groupID,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<MoveItemCategoryKeyword> createElement() {
+    return _MoveItemCategoryKeywordProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is MoveItemCategoryKeywordProvider && other.groupID == groupID;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, groupID.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin MoveItemCategoryKeywordRef
+    on AutoDisposeProviderRef<MoveItemCategoryKeyword> {
+  /// The parameter `groupID` of this provider.
+  String get groupID;
+}
+
+class _MoveItemCategoryKeywordProviderElement
+    extends AutoDisposeProviderElement<MoveItemCategoryKeyword>
+    with MoveItemCategoryKeywordRef {
+  _MoveItemCategoryKeywordProviderElement(super.provider);
+
+  @override
+  String get groupID => (origin as MoveItemCategoryKeywordProvider).groupID;
+}
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
