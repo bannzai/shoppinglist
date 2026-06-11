@@ -11,6 +11,7 @@ import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/ai_processing_banner.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/list_error_card.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/retention_banner.dart';
+import 'package:shoppinglist/features/shopping_list/components/create_list_fab.dart';
 import 'package:shoppinglist/features/shopping_list/components/expandable_fab.dart';
 import 'package:shoppinglist/features/shopping_list/components/group_chips_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/list_top_bar.dart';
@@ -296,10 +297,26 @@ class _ActiveShoppingList extends HookConsumerWidget {
         ref.invalidate(textShoppingListItemsProvider(
             groupID: groupID, shoppingListID: shoppingListID));
       },
-      floatingActionButton: ExpandableFab(
-        groupID: groupID,
-        shoppingListID: shoppingListID,
-        shoppingListItems: shoppingListItemsAsync.asData?.value ?? const [],
+      // ダブル FAB: 上がリスト作成（CreateListFab）、下がアイテム入力（ExpandableFab）。
+      // CreateListFab(48px) は ExpandableFab(56px) と中心が揃うよう右に 4px 寄せる。
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: CreateListFab(
+              groupID: groupID,
+              appUser: ref.watch(appUserProvider).asData?.value,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ExpandableFab(
+            groupID: groupID,
+            shoppingListID: shoppingListID,
+            shoppingListItems: shoppingListItemsAsync.asData?.value ?? const [],
+          ),
+        ],
       ),
       // NavBar(surface)の帯 + 白(card)コンテンツ部のハイブリッドサーフェス。
       child: Container(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:shoppinglist/components/primitives/app_cell.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/components/primitives/app_divider.dart';
@@ -11,7 +10,6 @@ import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/group_setting/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
-import 'package:shoppinglist/features/shopping_list/utils/export_text_formatter.dart';
 import 'package:shoppinglist/features/shopping_list_setting/delete_confirm_dialog.dart';
 import 'package:shoppinglist/features/shopping_list_setting/invitation_code_dialog.dart';
 import 'package:shoppinglist/features/shopping_list_setting/shopping_location_select_page.dart';
@@ -32,7 +30,7 @@ import 'package:shoppinglist/utils/purchase/purchase.dart';
 /// 3. 保存期間 (アップグレード Pill 付きカード。`isPremium=false` 時のみ Pill 表示)
 /// 4. 通知 (autoNotify AppCell。Web SSOT 未拡張だが UX 上残す)
 /// 5. 共有 (1 card に 2 AppCell + AppDivider — 招待コード送付 / グループ設定)
-/// 6. リストの操作 (1 card に 2 AppCell — 複製 / エクスポート。Web SSOT 未拡張だが UX 上残す)
+/// 6. リストの操作 (1 card に 1 AppCell — 複製。Web SSOT 未拡張だが UX 上残す)
 /// 7. 削除ボタン (AppPill danger large)
 class ShoppingListSettingPage extends HookConsumerWidget {
   final String groupID;
@@ -213,7 +211,6 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                 groupID: groupID,
                 shoppingListID: shoppingListID,
                 shoppingList: shoppingListState.value,
-                isPremium: isPremium,
               ),
               const SizedBox(height: 14),
               // SSOT: screens-list-settings.jsx L55-61
@@ -469,19 +466,17 @@ class _StoragePeriodCard extends StatelessWidget {
   }
 }
 
-/// 「リストの操作」セクションの 1 card 2 Cell。
-/// `_duplicate` / `_export` のロジックは旧 `_ListActionsSection` (PR #283) から踏襲。
+/// 「リストの操作」セクションの 1 card 1 Cell。
+/// `_duplicate` のロジックは旧 `_ListActionsSection` (PR #283) から踏襲。
 class _ListActionsCard extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final GroupShoppingList shoppingList;
-  final bool isPremium;
 
   const _ListActionsCard({
     required this.groupID,
     required this.shoppingListID,
     required this.shoppingList,
-    required this.isPremium,
   });
 
   @override
@@ -504,15 +499,6 @@ class _ListActionsCard extends ConsumerWidget {
                 title: '現在のリストを複製',
                 onTap: () =>
                     _duplicate(context: context, ref: ref, items: items),
-                detail: null,
-                onSwitch: null,
-                subtitle: null,
-                switchValue: null),
-            const AppDivider(),
-            AppCell(
-                icon: Icons.ios_share_outlined,
-                title: 'リストをエクスポート',
-                onTap: () => _export(context: context, ref: ref, items: items),
                 detail: null,
                 onSwitch: null,
                 subtitle: null,
@@ -553,48 +539,6 @@ class _ListActionsCard extends ConsumerWidget {
         message: e.toString(),
         actionLabel: 'アップグレード',
         onAction: () => showPaywall(context: paywallContext),
-      );
-    } catch (e) {
-      showGlobalToast(e.toString(), title: null);
-    }
-  }
-
-  Future<void> _export({
-    required BuildContext context,
-    required WidgetRef ref,
-    required List<GroupShoppingListItem> items,
-  }) async {
-    analytics.logEvent(
-      name: 'tap_export_shopping_list',
-      parameters: {
-        'groupID': groupID,
-        'shoppingListID': shoppingListID,
-      },
-    );
-    if (!isPremium) {
-      // シートが閉じられた後でもアクションからペイウォールを開けるよう、
-      // 生存し続ける root Navigator の context を束ねておく。
-      final paywallContext = Navigator.of(context, rootNavigator: true).context;
-      showGlobalActionToast(
-        message: 'リストのエクスポートはプレミアム機能です。プレミアムにアップグレードすると利用できます',
-        actionLabel: 'アップグレード',
-        onAction: () => showPaywall(context: paywallContext),
-      );
-      return;
-    }
-    try {
-      final box = context.findRenderObject() as RenderBox?;
-      if (box == null) {
-        throw StateError('共有シートの表示位置を取得できませんでした');
-      }
-      await SharePlus.instance.share(
-        ShareParams(
-          text: buildShoppingListExportText(
-            shoppingListName: shoppingList.name,
-            shoppingListItems: items,
-          ),
-          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
-        ),
       );
     } catch (e) {
       showGlobalToast(e.toString(), title: null);

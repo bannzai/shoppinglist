@@ -49,6 +49,16 @@
 - 利用回数: `lib/entity/ai_usage.dart` / `lib/provider/ai_usage.dart`（`remainingCategorizeCount`）
 - プレビュー（UI検証）: `lib/features/previews/screens/ai_categorize_preview_sheet_preview.dart`
 
+## 右下のダブル FAB
+右下には 2 つのボタンを縦に並べる。
+
+- 下（メイン・accent 塗り・鉛筆アイコン）: `expandable_fab.dart`（`ExpandableFab`）。
+  タップで空行追加→auto-focus。長押しで写真 / URL / テキスト貼り付けメニューを展開。
+- 上（白地・リスト+バッジの合成アイコン）: `create_list_fab.dart`（`CreateListFab`）。
+  タップで「リスト作成（日付名で自動命名）→ 作成リストへ切替 → 空アイテム追加→auto-focus」
+  まで連鎖し、新しい買い物の開始をワンタップにする。無料プランの上限超過時は
+  SnackBar（アップグレード導線付き）を表示する。
+
 ## 入力行と空行のライフサイクル
 入力行は `message=''` の `GroupShoppingListItem` ドキュメント。テキストはローカルの
 `TextEditingController` に保持し、Enter（改行）で確定して別アイテムに保存する。
