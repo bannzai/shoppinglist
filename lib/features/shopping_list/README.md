@@ -49,6 +49,16 @@
 - 利用回数: `lib/entity/ai_usage.dart` / `lib/provider/ai_usage.dart`（`remainingCategorizeCount`）
 - プレビュー（UI検証）: `lib/features/previews/screens/ai_categorize_preview_sheet_preview.dart`
 
+## 右下のダブル FAB
+右下には 2 つのボタンを縦に並べる。
+
+- 下（メイン・accent 塗り・鉛筆アイコン）: `expandable_fab.dart`（`ExpandableFab`）。
+  タップで空行追加→auto-focus。長押しで写真 / URL / テキスト貼り付けメニューを展開。
+- 上（白地・リスト+バッジの合成アイコン）: `create_list_fab.dart`（`CreateListFab`）。
+  タップで「リスト作成（日付名で自動命名）→ 作成リストへ切替 → 空アイテム追加→auto-focus」
+  まで連鎖し、新しい買い物の開始をワンタップにする。無料プランの上限超過時は
+  SnackBar（アップグレード導線付き）を表示する。
+
 ## 入力行と空行のライフサイクル
 入力行は `message=''` の `GroupShoppingListItem` ドキュメント。テキストはローカルの
 `TextEditingController` に保持し、Enter（改行）で確定して別アイテムに保存する。
@@ -101,6 +111,26 @@
 ドラッグを駆動して `onReorder` → カテゴリ判定 → `MoveItemCategoryKeyword` 呼び出しまでを検証する
 （行中央は TextField のため、ドラッグ開始は行の左端を掴む）。判定・order・キーワード付け替えの各純粋
 関数は単体テストで担保する。
+
+## セクション（カテゴリ）単位の並び替え（Issue #386）
+カテゴリ別グルーピング表示では、セクションヘッダー（`CategorySectionHeader`）を **長押しドラッグ**
+するとセクション単位で並び替えできる。アイテム単位の D&D と同じ統合 `ReorderableListView` 上で、
+掴んだ行がヘッダーならセクション並び替え、アイテムならアイテム移動として扱う。
+
+- 並び順は `GroupCategory.order`（買い物場所選択時は `locationOrders`、プレミアム限定）へ
+  `groupCategoryBatchUpdateProvider` で永続化され、カテゴリ管理画面（`group_category/page.dart`）の
+  並び順と共有される。
+- アイテムが0件で非表示のカテゴリは、元の相対順序を保ったまま並び直す
+  （`category_matcher.dart` の `reorderCategorySections`。ヘッダーのドロップ位置→挿入先 index の
+  変換は `sectionInsertIndexForHeaderDrop`）。
+- 「未分類」セクションはカテゴリ実体が無いため常に末尾固定でドラッグ不可。カテゴリを未分類の
+  下へドロップしても未分類の直前に収まる。
+- ドロップ直後はアイテム移動と同様に楽観の表示順（カテゴリID列）を同期適用し、stream が
+  追いついたら破棄する（チラつき防止）。失敗時は破棄してロールバック。
+- 統合リストのため、ドラッグ中に持ち上がるのはヘッダー行のみ（セクション全体は持ち上がらない）。
+  ヘッダー行の proxy 複製にアイテム行は含まれないため、入力行の GlobalKey（fix-350）は
+  セクションドラッグ中も安全に維持される。
+- E2E: `maestro/flows/category_section_reorder.yaml`（長押しドラッグは超低速 swipe で再現）。
 
 ## アイテム詳細からのカテゴリ確認・編集
 アイテム詳細シート（`text_shopping_list_item_detail_bottom_sheet.dart`）に、先頭軸

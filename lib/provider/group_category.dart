@@ -193,6 +193,58 @@ GroupCategoryBatchUpdate groupCategoryBatchUpdate(Ref ref,
   return GroupCategoryBatchUpdate(database: database);
 }
 
+/// 指定カテゴリに完全一致キーワードを1件追記する。
+///
+/// アイテムにカテゴリIDを持たせず、カテゴリのキーワードとのマッチングで分類する
+/// 設計のため、未分類アイテムを既存カテゴリへ割り当てる操作は「アイテム名を
+/// そのカテゴリの完全一致キーワードとして追記する」ことで実現する。
+/// 同時編集でキーワードが消えないよう read-modify-write を transaction で行う
+/// （firestore-transaction.md）。既に同じキーワードが存在する場合は何もしない（冪等）。
+class GroupCategoryKeywordAdd {
+  final GroupDatabase database;
+
+  GroupCategoryKeywordAdd({required this.database});
+
+  Future<void> call({
+    required String categoryAxisID,
+    required String categoryID,
+    required String keyword,
+  }) async {
+    final docRef = database.categoryReference(
+        categoryAxisID: categoryAxisID, categoryID: categoryID);
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final snapshot = await transaction.get(docRef);
+      final current = snapshot.data();
+      if (current == null) {
+        return;
+      }
+      final alreadyExists =
+          current.keywords.any((existing) => existing.keyword == keyword);
+      if (alreadyExists) {
+        return;
+      }
+      transaction.set(
+        docRef,
+        current.copyWith(keywords: [
+          ...current.keywords,
+          GroupCategoryKeyword(
+            keyword: keyword,
+            matchingType: GroupCategoryKeywordMatchingType.exact,
+          ),
+        ]),
+        SetOptions(merge: true),
+      );
+    });
+  }
+}
+
+@Riverpod(dependencies: [groupDatabase])
+GroupCategoryKeywordAdd groupCategoryKeywordAdd(Ref ref,
+    {required String groupID}) {
+  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
+  return GroupCategoryKeywordAdd(database: database);
+}
+
 /// AIカテゴリ分けの確定結果（アイテム名→カテゴリ名）を Firestore に反映する。
 ///
 /// アイテムにカテゴリIDは持たせず、カテゴリのキーワードとのマッチングで分類する

@@ -6,6 +6,10 @@ import * as z from "zod";
 import { ai } from "../utils/genkit";
 import { currentAuthUID } from "../utils/currentAuthUID";
 import {
+  hasPremiumEntitlement,
+  revenueCatSecretApiKey,
+} from "../utils/premium";
+import {
   DataResponseSchema,
   ErrorResponseSchema,
 } from "../../entity/response";
@@ -40,19 +44,6 @@ const firestoreIDPattern = /^[A-Za-z0-9_-]{1,128}$/;
 /** base64文字列フォーマット（padding込み）。 */
 const base64Pattern =
   /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
-
-/** Firebase Auth Custom Claimsからプレミアム判定を行う。 */
-async function hasPremiumEntitlement(uid: string): Promise<boolean> {
-  try {
-    return (await admin.auth().getUser(uid)).customClaims?.["isPremium"] === true;
-  } catch (error) {
-    logger.error("hasPremiumEntitlement failed", {
-      uid,
-      errorName: error instanceof Error ? error.name : "unknown",
-    });
-    return false;
-  }
-}
 
 /** グループメンバーシップ検証用。 */
 interface GroupData {
@@ -195,4 +186,9 @@ const uploadShoppingListItemImageFlow = ai.defineFlow(
   }
 );
 
-module.exports = onCallGenkit(uploadShoppingListItemImageFlow);
+module.exports = onCallGenkit(
+  {
+    secrets: [revenueCatSecretApiKey],
+  },
+  uploadShoppingListItemImageFlow
+);

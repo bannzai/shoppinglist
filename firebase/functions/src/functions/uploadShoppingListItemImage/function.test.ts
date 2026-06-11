@@ -2,7 +2,6 @@ const mockCollection = jest.fn();
 const mockFirestoreInstance = {
   collection: mockCollection,
 };
-const mockGetUser = jest.fn();
 const mockCurrentContext = jest.fn();
 const mockSave = jest.fn().mockResolvedValue(undefined);
 const mockGetDownloadURL = jest
@@ -12,12 +11,19 @@ const mockGetDownloadURL = jest
 jest.mock("firebase-admin", () => ({
   __esModule: true,
   default: {
-    auth: () => ({ getUser: mockGetUser }),
     firestore: () => mockFirestoreInstance,
     storage: () => ({
       bucket: () => ({ file: () => ({ save: mockSave }) }),
     }),
   },
+}));
+
+// RevenueCat プレミアム判定のモック
+const mockHasPremiumEntitlement = jest.fn();
+jest.mock("../utils/premium", () => ({
+  hasPremiumEntitlement: (...args: unknown[]) =>
+    mockHasPremiumEntitlement(...args),
+  revenueCatSecretApiKey: { value: () => "test-rc-secret-key" },
 }));
 
 let capturedFlowFn: (input: {
@@ -41,7 +47,7 @@ jest.mock("firebase-admin/storage", () => ({
   getDownloadURL: mockGetDownloadURL,
 }));
 jest.mock("firebase-functions/https", () => ({
-  onCallGenkit: (flow: any) => flow,
+  onCallGenkit: (_opts: any, flow: any) => flow,
 }));
 jest.mock("firebase-functions", () => ({ logger: { error: jest.fn() } }));
 
@@ -94,7 +100,7 @@ describe("uploadShoppingListItemImage", () => {
 
   test("正常系: プレミアムユーザーが画像アップロードできる", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
-    mockGetUser.mockResolvedValue({ customClaims: { isPremium: true } });
+    mockHasPremiumEntitlement.mockResolvedValue(true);
     setupFirestoreMock({ memberUserIDs: ["user-1"], itemExists: true });
 
     const result = await capturedFlowFn(defaultInput);
@@ -115,7 +121,7 @@ describe("uploadShoppingListItemImage", () => {
 
   test("異常系: 非プレミアムユーザーはエラー", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
-    mockGetUser.mockResolvedValue({ customClaims: { isPremium: false } });
+    mockHasPremiumEntitlement.mockResolvedValue(false);
 
     const result = await capturedFlowFn(defaultInput);
 
@@ -125,7 +131,7 @@ describe("uploadShoppingListItemImage", () => {
 
   test("異常系: 非メンバーはエラー", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
-    mockGetUser.mockResolvedValue({ customClaims: { isPremium: true } });
+    mockHasPremiumEntitlement.mockResolvedValue(true);
     setupFirestoreMock({ memberUserIDs: ["user-2"], itemExists: true });
 
     const result = await capturedFlowFn(defaultInput);
@@ -136,7 +142,7 @@ describe("uploadShoppingListItemImage", () => {
 
   test("異常系: 対象itemが存在しない場合エラー", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
-    mockGetUser.mockResolvedValue({ customClaims: { isPremium: true } });
+    mockHasPremiumEntitlement.mockResolvedValue(true);
     setupFirestoreMock({ memberUserIDs: ["user-1"], itemExists: false });
 
     const result = await capturedFlowFn(defaultInput);
@@ -147,7 +153,7 @@ describe("uploadShoppingListItemImage", () => {
 
   test("異常系: 非許可MIME typeでエラー", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
-    mockGetUser.mockResolvedValue({ customClaims: { isPremium: true } });
+    mockHasPremiumEntitlement.mockResolvedValue(true);
     setupFirestoreMock({ memberUserIDs: ["user-1"], itemExists: true });
 
     const result = await capturedFlowFn({
@@ -161,7 +167,7 @@ describe("uploadShoppingListItemImage", () => {
 
   test("異常系: 空の画像データでエラー", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
-    mockGetUser.mockResolvedValue({ customClaims: { isPremium: true } });
+    mockHasPremiumEntitlement.mockResolvedValue(true);
     setupFirestoreMock({ memberUserIDs: ["user-1"], itemExists: true });
 
     const result = await capturedFlowFn({
@@ -175,7 +181,7 @@ describe("uploadShoppingListItemImage", () => {
 
   test("異常系: 不正なbase64フォーマットでエラー", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
-    mockGetUser.mockResolvedValue({ customClaims: { isPremium: true } });
+    mockHasPremiumEntitlement.mockResolvedValue(true);
     setupFirestoreMock({ memberUserIDs: ["user-1"], itemExists: true });
 
     const result = await capturedFlowFn({

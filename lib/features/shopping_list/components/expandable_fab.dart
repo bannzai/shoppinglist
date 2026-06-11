@@ -24,7 +24,8 @@ import 'package:shoppinglist/utils/stdlib/navigator.dart';
 /// `ShoppingListPage` の右下に配置する展開式 FAB。
 /// `design_handoff_shopping_list/source/screens-list.jsx#FAB` 相当。
 ///
-/// 閉時: accent の plus 56×56 円。
+/// 閉時: accent の鉛筆（アイテム入力）56×56 円。リスト作成の `CreateListFab` と
+/// 縦に並べるダブル FAB 構成のメイン側。
 /// タップ: 空行を直接追加する（最頻操作）。
 /// 長押し: 写真 / URL / テキスト貼り付け の 3 メニューを上方向に展開する。
 class ExpandableFab extends HookConsumerWidget {
@@ -44,6 +45,10 @@ class ExpandableFab extends HookConsumerWidget {
     final tokens = context.appTheme;
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
+    // AI 処理中（実行中バナー表示中）は写真/URL からの抽出を多重起動させない。
+    // 画像/URL/カテゴリ分けはどれも同じ aIProcessingProvider・同じバナーを共有するため、
+    // いずれかが実行中なら写真/URL アクションを無効化する。
+    final isAIProcessing = ref.watch(aIProcessingProvider) != null;
     final open = useState(false);
     final controller = useAnimationController(
       duration: const Duration(milliseconds: 280),
@@ -73,22 +78,29 @@ class ExpandableFab extends HookConsumerWidget {
       _FabAction(
         icon: Icons.photo_camera_outlined,
         label: '写真から追加',
-        onTap: () {
-          close();
-          _showImagePicker(context, ref, isPremium);
-        },
+        // AI 処理中は無効化（dim 表示・タップ不可）。
+        onTap: isAIProcessing
+            ? null
+            : () {
+                close();
+                _showImagePicker(context, ref, isPremium);
+              },
       ),
       _FabAction(
         icon: Icons.link,
         label: 'URL から追加',
-        onTap: () {
-          close();
-          _showURLInputDialog(context, ref, isPremium);
-        },
+        // AI 処理中は無効化（dim 表示・タップ不可）。
+        onTap: isAIProcessing
+            ? null
+            : () {
+                close();
+                _showURLInputDialog(context, ref, isPremium);
+              },
       ),
       _FabAction(
         icon: Icons.content_paste_go_outlined,
         label: 'テキスト貼り付け',
+        // テキスト貼り付けは AI 処理（バナー）を使わないため常に有効。
         onTap: () {
           close();
           _pasteFromClipboard(context, ref);
@@ -140,40 +152,47 @@ class ExpandableFab extends HookConsumerWidget {
             );
             open.value = true;
           },
-          child: AnimatedBuilder(
-            animation: controller,
-            builder: (_, child) => Transform.rotate(
-              angle: controller.value * 0.785,
-              child: child,
-            ),
-            child: FloatingActionButton(
-              backgroundColor: tokens.accent,
-              foregroundColor: Colors.white,
-              shape: const CircleBorder(),
-              onPressed: () {
-                // メニュー展開中（x 状態）のタップは Row 追加ではなく「閉じる」に倒す。
-                if (open.value) {
-                  analytics.logEvent(name: 'tap_close_fab_menu', parameters: {
-                    'groupID': groupID,
-                    'shoppingListID': shoppingListID,
-                  });
-                  close();
-                  return;
-                }
-                analytics.logEvent(name: 'tap_add_item_fab', parameters: {
+          child: FloatingActionButton(
+            backgroundColor: tokens.accent,
+            foregroundColor: Colors.white,
+            shape: const CircleBorder(),
+            onPressed: () {
+              // メニュー展開中（x 状態）のタップは Row 追加ではなく「閉じる」に倒す。
+              if (open.value) {
+                analytics.logEvent(name: 'tap_close_fab_menu', parameters: {
                   'groupID': groupID,
                   'shoppingListID': shoppingListID,
                 });
-                ref.read(addShoppingListItemProvider(groupID: groupID)).call(
-                      shoppingListID: shoppingListID,
-                      userID: ref.read(currentUserIDProvider)!,
-                      message: '',
-                      order: shoppingListItems.nextOrder,
-                      description: null,
-                      color: null,
-                    );
-              },
-              child: const Icon(Icons.add, size: 26),
+                close();
+                return;
+              }
+              analytics.logEvent(name: 'tap_add_item_fab', parameters: {
+                'groupID': groupID,
+                'shoppingListID': shoppingListID,
+              });
+              ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+                    shoppingListID: shoppingListID,
+                    userID: ref.read(currentUserIDProvider)!,
+                    message: '',
+                    order: shoppingListItems.nextOrder,
+                    description: null,
+                    color: null,
+                  );
+            },
+            // 閉時は鉛筆（アイテム入力）、メニュー展開中は x（閉じる）。
+            // 旧実装は + を 45° 回転して x に見せていたが、鉛筆は回転で意味が
+            // 出ないため AnimatedSwitcher の回転+フェードでアイコン自体を入れ替える。
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              transitionBuilder: (child, animation) => RotationTransition(
+                turns: Tween(begin: 0.85, end: 1.0).animate(animation),
+                child: FadeTransition(opacity: animation, child: child),
+              ),
+              child: Icon(
+                open.value ? Icons.close : Icons.edit,
+                key: ValueKey(open.value),
+                size: 24,
+              ),
             ),
           ),
         ),
@@ -408,7 +427,9 @@ class ExpandableFab extends HookConsumerWidget {
 class _FabAction {
   final IconData icon;
   final String label;
-  final VoidCallback onTap;
+
+  /// null のときは無効状態（dim 表示・タップ不可）。
+  final VoidCallback? onTap;
   _FabAction({
     required this.icon,
     required this.label,
@@ -429,33 +450,38 @@ class _ActionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.appTheme;
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: action.onTap,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          _ActionLabel(label: action.label),
-          const SizedBox(width: 10),
-          Material(
-            color: tokens.neutral.surface2,
-            shape: const CircleBorder(),
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: action.onTap,
-              child: SizedBox(
-                width: 44,
-                height: 44,
-                child: Icon(
-                  action.icon,
-                  size: 20,
-                  color: tokens.neutral.ink,
+    // onTap が null のときは無効状態。AppPill と同じ opacity 0.5 で dim 表示する。
+    final disabled = action.onTap == null;
+    return Opacity(
+      opacity: disabled ? 0.5 : 1,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: action.onTap,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            _ActionLabel(label: action.label),
+            const SizedBox(width: 10),
+            Material(
+              color: tokens.neutral.surface2,
+              shape: const CircleBorder(),
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: action.onTap,
+                child: SizedBox(
+                  width: 44,
+                  height: 44,
+                  child: Icon(
+                    action.icon,
+                    size: 20,
+                    color: tokens.neutral.ink,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

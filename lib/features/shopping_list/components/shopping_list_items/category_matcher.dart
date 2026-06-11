@@ -23,6 +23,33 @@ List<GroupCategory> sortCategoriesByLocation({
     });
 }
 
+/// セクション並び替えの結果を全カテゴリに反映した並び順のリストを返す。
+/// [visibleCategories] は表示中(アイテムが存在する)カテゴリのみからなる [sortedCategories] の部分列。
+/// [oldVisibleIndex] の visible カテゴリを、visible リストから取り除いた後の
+/// [newVisibleIndex] の位置(末尾なら visible 最後尾の直後)へ移動する。
+/// アイテム0件で非表示のカテゴリは、移動先の前後関係を保ったまま元の相対順序を維持する。
+List<GroupCategory> reorderCategorySections({
+  required List<GroupCategory> sortedCategories,
+  required List<GroupCategory> visibleCategories,
+  required int oldVisibleIndex,
+  required int newVisibleIndex,
+}) {
+  final movedCategory = visibleCategories[oldVisibleIndex];
+  final reordered = [...sortedCategories]
+    ..removeWhere((category) => category.id == movedCategory.id);
+  final visibleWithoutMoved = [...visibleCategories]
+    ..removeWhere((category) => category.id == movedCategory.id);
+  // 移動先の visible カテゴリの直前に挿入する。visible 末尾へ移動した場合は
+  // 最後の visible カテゴリの直後(その後ろの非表示カテゴリより前)に挿入する。
+  final insertIndex = newVisibleIndex < visibleWithoutMoved.length
+      ? reordered.indexWhere(
+          (category) => category.id == visibleWithoutMoved[newVisibleIndex].id)
+      : reordered.indexWhere(
+              (category) => category.id == visibleWithoutMoved.last.id) +
+          1;
+  return reordered..insert(insertIndex, movedCategory);
+}
+
 /// アイテムのmessageとカテゴリのキーワードをマッチングし、
 /// カテゴリIDごとにアイテムをグルーピングする。
 /// 複数カテゴリにマッチした場合はorderが小さい（先頭の）カテゴリに分類。
@@ -217,6 +244,30 @@ int dropIndexInTarget({
   for (var i = 0; i < insertAt && i < working.length; i++) {
     final row = working[i];
     if (row is GroupedItemRow && row.categoryID == toCategoryID) {
+      count++;
+    }
+  }
+  return count;
+}
+
+/// ヘッダー行のドロップ位置から、移動先セクションの挿入 index を返す。
+///
+/// 返り値は「ドラッグしたヘッダー自身を除いた、ヘッダー行を持つカテゴリ列」に対する挿入位置で、
+/// [reorderCategorySections] の `newVisibleIndex` にそのまま渡せる。
+/// ドロップ位置(挿入位置)より上にあるカテゴリヘッダー(未分類ヘッダーは除く)の個数。
+/// セクションの途中へドロップした場合はそのセクションの直後に入る。
+int sectionInsertIndexForHeaderDrop({
+  required List<GroupedRow> rows,
+  required int oldIndex,
+  required int newIndex,
+}) {
+  final working = [...rows]..removeAt(oldIndex);
+  final insertAt = oldIndex < newIndex ? newIndex - 1 : newIndex;
+
+  var count = 0;
+  for (var i = 0; i < insertAt && i < working.length; i++) {
+    final row = working[i];
+    if (row is GroupedHeaderRow && row.categoryID != null) {
       count++;
     }
   }

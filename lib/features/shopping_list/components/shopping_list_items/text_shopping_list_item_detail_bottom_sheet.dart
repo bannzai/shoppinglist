@@ -128,7 +128,9 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                         'itemID': textShoppingListItem.id,
                       },
                     );
-                    // マッチ時はそのカテゴリの編集ページ、未分類時はカテゴリ一覧へ誘導する。
+                    // マッチ時はそのカテゴリの編集ページへ。未分類時はカテゴリ選択
+                    // モードの一覧へ誘導し、行タップでこのアイテムを既存カテゴリへ
+                    // 割り当てる(アイテム名をそのカテゴリのキーワードに追記する)。
                     // シートは閉じずに push する(戻ればメモ等の編集状態を保持したまま戻れる)。
                     Navigator.push(
                       context,
@@ -139,7 +141,10 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                                 categoryAxisID: categoryAxis.id,
                                 categoryID: matchedCategory.id,
                               )
-                            : GroupCategoryPage(groupID: groupID),
+                            : GroupCategoryPage(
+                                groupID: groupID,
+                                selectionForItem: textShoppingListItem,
+                              ),
                       ),
                     );
                   },

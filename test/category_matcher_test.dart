@@ -600,6 +600,36 @@ void main() {
       expect(dest, isNull);
     });
 
+    // rows: H(cat1)=0, a=1, b=2, H(cat2)=3, c=4, H(未分類)=5, d=6
+    test('sectionInsertIndexForHeaderDrop: 先頭ヘッダーを2セクション目の下へ → 1', () {
+      final rows = buildGroupedRows(
+          sortedCategories: sortedCategories, grouped: grouped());
+      // H(cat1) を c の下(H(未分類) の手前、newIndex=5)へ
+      expect(
+        sectionInsertIndexForHeaderDrop(rows: rows, oldIndex: 0, newIndex: 5),
+        1,
+      );
+    });
+
+    test('sectionInsertIndexForHeaderDrop: 2番目のヘッダーを先頭へ → 0', () {
+      final rows = buildGroupedRows(
+          sortedCategories: sortedCategories, grouped: grouped());
+      expect(
+        sectionInsertIndexForHeaderDrop(rows: rows, oldIndex: 3, newIndex: 0),
+        0,
+      );
+    });
+
+    test('sectionInsertIndexForHeaderDrop: 未分類の下へドロップしても最後のカテゴリの直後に丸まる', () {
+      final rows = buildGroupedRows(
+          sortedCategories: sortedCategories, grouped: grouped());
+      // H(cat1) を末尾(未分類 d の下、newIndex=7)へ。未分類ヘッダーは数えないため 1。
+      expect(
+        sectionInsertIndexForHeaderDrop(rows: rows, oldIndex: 0, newIndex: 7),
+        1,
+      );
+    });
+
     test('itemsAfterMove: a を cat2 へ移すと全体 order が 0..N-1 に正規化される', () {
       final g = grouped();
       final rows =
@@ -640,6 +670,82 @@ void main() {
       // cat1[d, a, b], cat2[c], 未分類[] → d,a,b,c
       expect(result.map((e) => e.id).toList(), ['d', 'a', 'b', 'c']);
       expect(result.map((e) => e.order).toList(), [0, 1, 2, 3]);
+    });
+  });
+
+  group('reorderCategorySections', () {
+    GroupCategory category({required String id, required int order}) =>
+        GroupCategory(
+            id: id,
+            groupID: 'group1',
+            userID: 'user1',
+            groupCategoryAxisID: 'axis1',
+            name: id,
+            order: order,
+            locationOrders: {},
+            keywords: [],
+            color: null,
+            iconName: null);
+
+    test('全カテゴリが表示中: 前から後ろへ移動', () {
+      final a = category(id: 'a', order: 0);
+      final b = category(id: 'b', order: 1);
+      final c = category(id: 'c', order: 2);
+      expect(
+        reorderCategorySections(
+          sortedCategories: [a, b, c],
+          visibleCategories: [a, b, c],
+          oldVisibleIndex: 0,
+          newVisibleIndex: 1,
+        ).map((category) => category.id).toList(),
+        ['b', 'a', 'c'],
+      );
+    });
+
+    test('全カテゴリが表示中: 後ろから前へ移動', () {
+      final a = category(id: 'a', order: 0);
+      final b = category(id: 'b', order: 1);
+      final c = category(id: 'c', order: 2);
+      expect(
+        reorderCategorySections(
+          sortedCategories: [a, b, c],
+          visibleCategories: [a, b, c],
+          oldVisibleIndex: 2,
+          newVisibleIndex: 0,
+        ).map((category) => category.id).toList(),
+        ['c', 'a', 'b'],
+      );
+    });
+
+    test('非表示カテゴリ(アイテム0件)は元の相対順序を保つ', () {
+      final a = category(id: 'a', order: 0);
+      final hidden = category(id: 'hidden', order: 1);
+      final b = category(id: 'b', order: 2);
+      final c = category(id: 'c', order: 3);
+      expect(
+        reorderCategorySections(
+          sortedCategories: [a, hidden, b, c],
+          visibleCategories: [a, b, c],
+          oldVisibleIndex: 2,
+          newVisibleIndex: 0,
+        ).map((category) => category.id).toList(),
+        ['c', 'a', 'hidden', 'b'],
+      );
+    });
+
+    test('visible 末尾へ移動すると最後の visible の直後(後続の非表示より前)に入る', () {
+      final a = category(id: 'a', order: 0);
+      final b = category(id: 'b', order: 1);
+      final hidden = category(id: 'hidden', order: 2);
+      expect(
+        reorderCategorySections(
+          sortedCategories: [a, b, hidden],
+          visibleCategories: [a, b],
+          oldVisibleIndex: 0,
+          newVisibleIndex: 1,
+        ).map((category) => category.id).toList(),
+        ['b', 'a', 'hidden'],
+      );
     });
   });
 }

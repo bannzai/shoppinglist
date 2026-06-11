@@ -222,7 +222,7 @@ class _Hero extends StatelessWidget {
   }
 }
 
-/// 6 項目の特典リスト。
+/// 5 項目の特典リスト。
 class _FeatureGrid extends StatelessWidget {
   const _FeatureGrid();
 
@@ -231,7 +231,6 @@ class _FeatureGrid extends StatelessWidget {
     (Icons.photo_camera_outlined, '写真からのアイテム抽出（月 50 回）'),
     (Icons.auto_fix_high, 'URL からのアイテム抽出（月 50 回）'),
     (Icons.palette_outlined, '5 色のテーマカラー'),
-    (Icons.ios_share_outlined, 'リストのエクスポート'),
     (Icons.all_inclusive, 'リスト保存期間が無制限'),
   ];
 

@@ -1,12 +1,17 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
+import 'package:shoppinglist/entity/group_category_keyword.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/previews/mock/mock_provider_overrides.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/ai_categorize_button.dart';
+import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_section_header.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_items.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -134,6 +139,156 @@ Future<void> _pumpWithItems(
   await tester.pumpAndSettle();
 }
 
+/// セクション並び替えテスト用のグループID・軸ID。previewProviderOverrides が override 済みの
+/// mockGroupID（mockCategories は keywords 空）と重複 override しないよう専用IDにする。
+const _sectionReorderGroupID = 'section-reorder-group';
+const _sectionReorderAxisID = 'section-reorder-axis';
+
+/// セクション並び替えテスト用に、指定キーワード(完全一致)を1つ持つカテゴリを生成する。
+GroupCategory _categoryWithKeyword({
+  required String id,
+  required String name,
+  required int order,
+  required String keyword,
+}) =>
+    GroupCategory(
+      id: id,
+      groupID: _sectionReorderGroupID,
+      userID: mockUserID,
+      groupCategoryAxisID: _sectionReorderAxisID,
+      name: name,
+      order: order,
+      locationOrders: {},
+      keywords: [
+        GroupCategoryKeyword(
+          keyword: keyword,
+          matchingType: GroupCategoryKeywordMatchingType.exact,
+        ),
+      ],
+      color: null,
+      iconName: null,
+    );
+
+/// セクション並び替えテスト用の確定済みアイテムを生成する。
+GroupShoppingListItem _sectionItem({
+  required String id,
+  required String message,
+  required int order,
+}) =>
+    GroupShoppingListItem(
+      id: id,
+      groupID: _sectionReorderGroupID,
+      shoppingListID: mockShoppingListID,
+      userID: mockUserID,
+      message: message,
+      order: order,
+      status: GroupShoppingListItemStatus.unchecked,
+      checkedByUserID: null,
+      color: null,
+      description: null,
+      imageURL: null,
+      lastEditedByUserID: null,
+    );
+
+/// セクション並び替えの永続化呼び出しを記録するフェイク。
+class _RecordingCategoryBatchUpdate extends GroupCategoryBatchUpdate {
+  _RecordingCategoryBatchUpdate()
+      : super(database: GroupDatabase(groupID: _sectionReorderGroupID));
+
+  /// 最後に call へ渡された並び替え後のカテゴリリスト。未呼び出しなら null。
+  List<GroupCategory>? lastCategories;
+
+  /// 最後に call へ渡された軸ID。未呼び出しなら null。
+  String? lastCategoryAxisID;
+
+  @override
+  Future<void> call({
+    required String categoryAxisID,
+    required List<GroupCategory> categories,
+  }) async {
+    lastCategoryAxisID = categoryAxisID;
+    lastCategories = categories;
+  }
+}
+
+/// セクション並び替えテスト用の ShoppingListItems を pump する。
+/// 食品(牛乳)・日用品(洗剤)の2カテゴリ + 未分類(ガムテープ)の3セクション構成。
+Future<_RecordingCategoryBatchUpdate> _pumpSectionReorder(
+    WidgetTester tester) async {
+  // ignore: invalid_use_of_visible_for_testing_member
+  SharedPreferences.setMockInitialValues({});
+  final sharedPreferences = await SharedPreferences.getInstance();
+  final recorder = _RecordingCategoryBatchUpdate();
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        ...previewProviderOverrides(sharedPreferences: sharedPreferences),
+        groupCategoryAxesProvider(groupID: _sectionReorderGroupID)
+            .overrideWith((ref) => Stream.value([
+                  const GroupCategoryAxis(
+                    id: _sectionReorderAxisID,
+                    groupID: _sectionReorderGroupID,
+                    userID: mockUserID,
+                    name: '売り場',
+                    order: 0,
+                  ),
+                ])),
+        groupCategoriesProvider(
+          groupID: _sectionReorderGroupID,
+          categoryAxisID: _sectionReorderAxisID,
+        ).overrideWith((ref) => Stream.value([
+              _categoryWithKeyword(
+                  id: 'cat-food', name: '食品', order: 0, keyword: '牛乳'),
+              _categoryWithKeyword(
+                  id: 'cat-daily', name: '日用品', order: 1, keyword: '洗剤'),
+            ])),
+        textShoppingListItemsProvider(
+          groupID: _sectionReorderGroupID,
+          shoppingListID: mockShoppingListID,
+        ).overrideWith((ref) => Stream.value([
+              _sectionItem(id: 'item-milk', message: '牛乳', order: 0),
+              _sectionItem(id: 'item-soap', message: '洗剤', order: 1),
+              _sectionItem(id: 'item-tape', message: 'ガムテープ', order: 2),
+            ])),
+        groupCategoryBatchUpdateProvider(groupID: _sectionReorderGroupID)
+            .overrideWith((ref) => recorder),
+      ],
+      child: MaterialApp(
+        theme: buildAppTheme(
+          accent: AccentPreset.shu,
+        ),
+        home: Scaffold(
+          body: ShoppingListItems(
+            groupID: _sectionReorderGroupID,
+            shoppingListID: mockShoppingListID,
+            shoppingLocationID: null,
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+  return recorder;
+}
+
+/// セクションヘッダーを長押ししてから offset 分ドラッグして離す。
+Future<void> _longPressDragHeader(
+  WidgetTester tester, {
+  required Finder header,
+  required Offset offset,
+}) async {
+  final gesture = await tester.startGesture(tester.getCenter(header));
+  // ReorderableDelayedDragStartListener の長押し判定を満たすまで待つ。
+  await tester.pump(kLongPressTimeout + kPressTimeout);
+  // 一度に動かすとドラッグ更新が発火しないことがあるため分割して動かす。
+  for (var i = 0; i < 5; i++) {
+    await gesture.moveBy(offset / 5);
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+  await gesture.up();
+  await tester.pumpAndSettle();
+}
+
 void main() {
   group('ShoppingListItems: スクロールでキーボードを閉じる', () {
     testWidgets('フラット表示の ReorderableList が onDrag で閉じる', (tester) async {
@@ -196,6 +351,65 @@ void main() {
       expect(find.text('牛乳'), findsOneWidget);
       expect(find.text('卵'), findsOneWidget);
       expect(find.text('食パン'), findsOneWidget);
+    });
+  });
+
+  group('ShoppingListItems: セクション並び替え (Issue #386)', () {
+    testWidgets('カテゴリ2つ + 未分類の3セクションが表示される', (tester) async {
+      await _pumpSectionReorder(tester);
+      expect(find.byType(CategorySectionHeader), findsNWidgets(3));
+    });
+
+    testWidgets('カテゴリセクションのヘッダーのみドラッグリスナーが付く（未分類は対象外）', (tester) async {
+      await _pumpSectionReorder(tester);
+      expect(
+        find.ancestor(
+          of: find.byType(CategorySectionHeader),
+          matching: find.byType(ReorderableDelayedDragStartListener),
+        ),
+        findsNWidgets(2),
+      );
+    });
+
+    testWidgets('ヘッダーの長押しドラッグでセクションが並び替わり order が振り直される', (tester) async {
+      final recorder = await _pumpSectionReorder(tester);
+
+      // 先頭セクション(食品)のヘッダーを、2番目のセクション(日用品)の下端より下までドラッグする。
+      final foodHeader = find.byType(CategorySectionHeader).first;
+      final dailySectionBottom = tester.getBottomLeft(find.text('洗剤')).dy + 40;
+      await _longPressDragHeader(
+        tester,
+        header: foodHeader,
+        offset: Offset(0, dailySectionBottom - tester.getCenter(foodHeader).dy),
+      );
+
+      expect(recorder.lastCategoryAxisID, _sectionReorderAxisID);
+      expect(
+        recorder.lastCategories!.map((category) => category.name).toList(),
+        ['日用品', '食品'],
+      );
+      expect(
+        recorder.lastCategories!.map((category) => category.order).toList(),
+        [0, 1],
+      );
+    });
+
+    testWidgets('ドロップ直後、stream 未更新でも楽観的にセクション順が入れ替わる', (tester) async {
+      // stream(Stream.value)は再 emit しないため、楽観の表示順が破棄されず維持される。
+      // 牛乳(食品)が洗剤(日用品)より下に来ていれば楽観反映できている。
+      await _pumpSectionReorder(tester);
+      final foodHeader = find.byType(CategorySectionHeader).first;
+      final dailySectionBottom = tester.getBottomLeft(find.text('洗剤')).dy + 40;
+      await _longPressDragHeader(
+        tester,
+        header: foodHeader,
+        offset: Offset(0, dailySectionBottom - tester.getCenter(foodHeader).dy),
+      );
+      expect(
+        tester.getCenter(find.text('牛乳')).dy,
+        greaterThan(tester.getCenter(find.text('洗剤')).dy),
+        reason: '牛乳(食品)が洗剤(日用品)より上のまま＝楽観のセクション順が反映されていない',
+      );
     });
   });
 }

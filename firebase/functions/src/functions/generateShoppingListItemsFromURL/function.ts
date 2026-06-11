@@ -5,6 +5,10 @@ import * as z from "zod";
 import { ai } from "../utils/genkit";
 import { currentAuthUID } from "../utils/currentAuthUID";
 import { appAuthPolicy } from "../utils/authPolicy";
+import {
+  hasPremiumEntitlement,
+  revenueCatSecretApiKey,
+} from "../utils/premium";
 import { DataResponseSchema, ErrorResponseSchema } from "../../entity/response";
 import { UserAIUsageData } from "../../entity/ai_usage";
 import { defineSecret } from "firebase-functions/params";
@@ -195,19 +199,6 @@ async function safeFetchHTML({
   });
 }
 
-/** Firebase Auth Custom Claimsからプレミアム判定を行う。 */
-async function hasPremiumEntitlement(uid: string): Promise<boolean> {
-  try {
-    return (await admin.auth().getUser(uid)).customClaims?.["premium"] === true;
-  } catch (error) {
-    logger.error("hasPremiumEntitlement failed", {
-      uid,
-      errorName: error instanceof Error ? error.name : "unknown",
-    });
-    return false;
-  }
-}
-
 /**
  * URLからWebページを取得し、AIで買い物リストアイテムを生成するFunction。
  *
@@ -385,7 +376,7 @@ const generateShoppingListItemsFromURLFlow = ai.defineFlow(
 module.exports = onCallGenkit(
   {
     authPolicy: appAuthPolicy("generateShoppingListItemsFromURL"),
-    secrets: [googleAIApiKey],
+    secrets: [googleAIApiKey, revenueCatSecretApiKey],
   },
   generateShoppingListItemsFromURLFlow
 );

@@ -11,6 +11,7 @@ import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/ai_processing_banner.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/list_error_card.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/retention_banner.dart';
+import 'package:shoppinglist/features/shopping_list/components/create_list_fab.dart';
 import 'package:shoppinglist/features/shopping_list/components/expandable_fab.dart';
 import 'package:shoppinglist/features/shopping_list/components/group_chips_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/list_top_bar.dart';
@@ -190,6 +191,16 @@ class _ActiveShoppingList extends HookConsumerWidget {
     final shoppingList =
         shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID);
 
+    // 表示リスト切替に使う notifier を build 時に束ねる。
+    // この notifier を子(ListTopBar / ListPickerSheet)へ渡す onShoppingListIDChanged
+    // クロージャに閉じ込める。リスト作成が Stream へ反映されると、この
+    // _ActiveShoppingList は先頭フォールバックで新リストへ ValueKey 差し替え再構築され
+    // 破棄される。クロージャ内で `ref` を直接使うと、破棄後にシート側から呼ばれた時に
+    // "Cannot use ref after the widget was disposed" になる。notifier 自体は provider
+    // (親 ShoppingListPage が watch 継続)が保持し続けるため、破棄後でも安全に使える。
+    final currentShoppingListIDNotifier =
+        ref.watch(currentShoppingListIDProvider.notifier);
+
     // チェック済み含む全件。FAB・リスト本体・進捗ピル・変更検知・通知トーストすべてこの一覧を基準にする。
     final shoppingListItemsAsync = ref.watch(textShoppingListItemsProvider(
       groupID: groupID,
@@ -296,10 +307,26 @@ class _ActiveShoppingList extends HookConsumerWidget {
         ref.invalidate(textShoppingListItemsProvider(
             groupID: groupID, shoppingListID: shoppingListID));
       },
-      floatingActionButton: ExpandableFab(
-        groupID: groupID,
-        shoppingListID: shoppingListID,
-        shoppingListItems: shoppingListItemsAsync.asData?.value ?? const [],
+      // ダブル FAB: 上がリスト作成（CreateListFab）、下がアイテム入力（ExpandableFab）。
+      // CreateListFab(48px) は ExpandableFab(56px) と中心が揃うよう右に 4px 寄せる。
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: CreateListFab(
+              groupID: groupID,
+              appUser: ref.watch(appUserProvider).asData?.value,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ExpandableFab(
+            groupID: groupID,
+            shoppingListID: shoppingListID,
+            shoppingListItems: shoppingListItemsAsync.asData?.value ?? const [],
+          ),
+        ],
       ),
       // NavBar(surface)の帯 + 白(card)コンテンツ部のハイブリッドサーフェス。
       child: Container(
@@ -311,9 +338,8 @@ class _ActiveShoppingList extends HookConsumerWidget {
               shoppingListID: shoppingListID,
               shoppingLists: shoppingLists,
               shoppingList: shoppingList,
-              onShoppingListIDChanged: (newID) => ref
-                  .read(currentShoppingListIDProvider.notifier)
-                  .update(newID),
+              onShoppingListIDChanged: (newID) =>
+                  currentShoppingListIDNotifier.update(newID),
             ),
             Expanded(
               child: Container(
@@ -333,9 +359,8 @@ class _ActiveShoppingList extends HookConsumerWidget {
                               shoppingLists: shoppingLists,
                               shoppingList: shoppingList,
                               shoppingListItems: shoppingListItems,
-                              onShoppingListIDChanged: (newID) => ref
-                                  .read(currentShoppingListIDProvider.notifier)
-                                  .update(newID),
+                              onShoppingListIDChanged: (newID) =>
+                                  currentShoppingListIDNotifier.update(newID),
                             ),
                             error: (e, st) => ListErrorCard(
                               exception: e,

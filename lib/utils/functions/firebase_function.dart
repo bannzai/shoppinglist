@@ -273,7 +273,11 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
   /// RevenueCat Promotions API経由で付与済みのプレミアムEntitlementを取り消す。
   /// 開発者オプションでのテスト用（実購入由来のEntitlementには影響しない）。
   Future<void> revokePromotionalPremium() async {
-    final result = await httpsCallable('revokePromotionalPremium').call();
+    // 引数なし call() は data が null になり、GenKit の inputSchema
+    // z.object({}) の検証が INTERNAL で落ちるため空オブジェクトを渡す。
+    final result = await httpsCallable('revokePromotionalPremium').call(
+      <String, dynamic>{},
+    );
     debugPrint('revokePromotionalPremium.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {

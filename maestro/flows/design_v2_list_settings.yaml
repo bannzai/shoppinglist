@@ -57,9 +57,6 @@ appId: com.bannzai.shoppinglist
 - assertVisible:
     text: "現在のリストを複製"
     optional: true
-- assertVisible:
-    text: "リストをエクスポート"
-    optional: true
 
 # 招待コード dialog (招待コード送付 タップ → 招待コード + 有効期限が表示される)
 - tapOn:
