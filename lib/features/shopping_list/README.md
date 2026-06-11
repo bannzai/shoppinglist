@@ -79,6 +79,13 @@
   別カテゴリへ移したら `MoveItemCategoryKeyword`（`provider/group_category.dart`）で移動先カテゴリに
   `message` を完全一致(exact)キーワードとして追加し、移動先以外のカテゴリから同 exact を削除する
   （`keywordsAfterItemMove` が 1 カテゴリ分の付け替えを担う、transaction で read-modify-write）。
+- **楽観的ローカル状態（ドロップ後のチラつき防止）**: `ReorderableListView` は `onReorder` 内で表示元
+  データを同期更新する前提だが、本実装は永続化を Firestore stream 反映に委ねるため、そのままだと
+  ドロップ後に一旦古い並びへ戻り（さらにカテゴリ間移動では order=batch とキーワード=transaction が
+  二段で反映され）チラつく。これを防ぐため `_GroupedListView`（`HookConsumerWidget`）が `onReorder`
+  時に楽観状態（`_OptimisticReorder`: 全アイテムの新 order と移動アイテムの分類上書き）を同期セットして
+  即座に新しい並び・分類で描画し、stream が同じ状態に追いついたら（`_optimisticReflected`）破棄する。
+  書き込み失敗時は破棄して永続化された実状態を表示する（ロールバック）。
 
 ### 既知の限界・副作用
 - 同名（`message` が同じ）アイテムは一緒に移動する（キーワードは message 単位）。
