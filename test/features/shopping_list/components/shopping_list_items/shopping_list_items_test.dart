@@ -13,6 +13,7 @@ import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/ai_categorize_button.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_section_header.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_items.dart';
+import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
@@ -144,12 +145,12 @@ Future<void> _pumpWithItems(
 const _sectionReorderGroupID = 'section-reorder-group';
 const _sectionReorderAxisID = 'section-reorder-axis';
 
-/// セクション並び替えテスト用に、指定キーワード(完全一致)を1つ持つカテゴリを生成する。
-GroupCategory _categoryWithKeyword({
+/// セクション並び替えテスト用に、指定キーワード(完全一致)を持つカテゴリを生成する。
+GroupCategory _categoryWithKeywords({
   required String id,
   required String name,
   required int order,
-  required String keyword,
+  required List<String> keywords,
 }) =>
     GroupCategory(
       id: id,
@@ -160,10 +161,11 @@ GroupCategory _categoryWithKeyword({
       order: order,
       locationOrders: {},
       keywords: [
-        GroupCategoryKeyword(
-          keyword: keyword,
-          matchingType: GroupCategoryKeywordMatchingType.exact,
-        ),
+        for (final keyword in keywords)
+          GroupCategoryKeyword(
+            keyword: keyword,
+            matchingType: GroupCategoryKeywordMatchingType.exact,
+          ),
       ],
       color: null,
       iconName: null,
@@ -211,14 +213,37 @@ class _RecordingCategoryBatchUpdate extends GroupCategoryBatchUpdate {
   }
 }
 
+/// 行編集の確定保存(フォーカス喪失保存)を記録するフェイク。
+class _RecordingUpdateShoppingListItem extends UpdateShoppingListItem {
+  _RecordingUpdateShoppingListItem()
+      : super(database: GroupDatabase(groupID: _sectionReorderGroupID));
+
+  /// 最後に保存されたアイテム。未呼び出しなら null。
+  GroupShoppingListItem? lastItem;
+
+  @override
+  Future<void> call({
+    required String shoppingListID,
+    required GroupShoppingListItem item,
+    required String editedByUserID,
+  }) async {
+    lastItem = item;
+  }
+}
+
 /// セクション並び替えテスト用の ShoppingListItems を pump する。
-/// 食品(牛乳)・日用品(洗剤)の2カテゴリ + 未分類(ガムテープ)の3セクション構成。
-Future<_RecordingCategoryBatchUpdate> _pumpSectionReorder(
-    WidgetTester tester) async {
+/// 食品(牛乳・卵・食パン)・日用品(洗剤)の2カテゴリ + 未分類(ガムテープ)の3セクション構成。
+/// 食品を3件にして、ヘッダードラッグ proxy のプレビュー上限(先頭2件)を検証できるようにする。
+Future<
+    ({
+      _RecordingCategoryBatchUpdate categoryBatch,
+      _RecordingUpdateShoppingListItem itemUpdate,
+    })> _pumpSectionReorder(WidgetTester tester) async {
   // ignore: invalid_use_of_visible_for_testing_member
   SharedPreferences.setMockInitialValues({});
   final sharedPreferences = await SharedPreferences.getInstance();
   final recorder = _RecordingCategoryBatchUpdate();
+  final itemUpdateRecorder = _RecordingUpdateShoppingListItem();
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
@@ -237,21 +262,28 @@ Future<_RecordingCategoryBatchUpdate> _pumpSectionReorder(
           groupID: _sectionReorderGroupID,
           categoryAxisID: _sectionReorderAxisID,
         ).overrideWith((ref) => Stream.value([
-              _categoryWithKeyword(
-                  id: 'cat-food', name: '食品', order: 0, keyword: '牛乳'),
-              _categoryWithKeyword(
-                  id: 'cat-daily', name: '日用品', order: 1, keyword: '洗剤'),
+              _categoryWithKeywords(
+                  id: 'cat-food',
+                  name: '食品',
+                  order: 0,
+                  keywords: ['牛乳', '卵', '食パン']),
+              _categoryWithKeywords(
+                  id: 'cat-daily', name: '日用品', order: 1, keywords: ['洗剤']),
             ])),
         textShoppingListItemsProvider(
           groupID: _sectionReorderGroupID,
           shoppingListID: mockShoppingListID,
         ).overrideWith((ref) => Stream.value([
               _sectionItem(id: 'item-milk', message: '牛乳', order: 0),
-              _sectionItem(id: 'item-soap', message: '洗剤', order: 1),
-              _sectionItem(id: 'item-tape', message: 'ガムテープ', order: 2),
+              _sectionItem(id: 'item-egg', message: '卵', order: 1),
+              _sectionItem(id: 'item-bread', message: '食パン', order: 2),
+              _sectionItem(id: 'item-soap', message: '洗剤', order: 3),
+              _sectionItem(id: 'item-tape', message: 'ガムテープ', order: 4),
             ])),
         groupCategoryBatchUpdateProvider(groupID: _sectionReorderGroupID)
             .overrideWith((ref) => recorder),
+        updateShoppingListItemProvider(groupID: _sectionReorderGroupID)
+            .overrideWith((ref) => itemUpdateRecorder),
       ],
       child: MaterialApp(
         theme: buildAppTheme(
@@ -268,7 +300,7 @@ Future<_RecordingCategoryBatchUpdate> _pumpSectionReorder(
     ),
   );
   await tester.pumpAndSettle();
-  return recorder;
+  return (categoryBatch: recorder, itemUpdate: itemUpdateRecorder);
 }
 
 /// セクションヘッダーを長押ししてから offset 分ドラッグして離す。
@@ -372,7 +404,7 @@ void main() {
     });
 
     testWidgets('ヘッダーの長押しドラッグでセクションが並び替わり order が振り直される', (tester) async {
-      final recorder = await _pumpSectionReorder(tester);
+      final recorders = await _pumpSectionReorder(tester);
 
       // 先頭セクション(食品)のヘッダーを、2番目のセクション(日用品)の下端より下までドラッグする。
       final foodHeader = find.byType(CategorySectionHeader).first;
@@ -383,15 +415,64 @@ void main() {
         offset: Offset(0, dailySectionBottom - tester.getCenter(foodHeader).dy),
       );
 
-      expect(recorder.lastCategoryAxisID, _sectionReorderAxisID);
+      expect(recorders.categoryBatch.lastCategoryAxisID, _sectionReorderAxisID);
       expect(
-        recorder.lastCategories!.map((category) => category.name).toList(),
+        recorders.categoryBatch.lastCategories!
+            .map((category) => category.name)
+            .toList(),
         ['日用品', '食品'],
       );
       expect(
-        recorder.lastCategories!.map((category) => category.order).toList(),
+        recorders.categoryBatch.lastCategories!
+            .map((category) => category.order)
+            .toList(),
         [0, 1],
       );
+    });
+
+    testWidgets('行の編集中にヘッダードラッグを開始しても未確定テキストが保存される', (tester) async {
+      final recorders = await _pumpSectionReorder(tester);
+      // 牛乳の行を編集して Enter 未確定のままにする。
+      await tester.enterText(find.widgetWithText(TextField, '牛乳'), '低脂肪牛乳');
+      await tester.pump();
+
+      // 食品ヘッダーの長押しドラッグを開始して少し動かして離す。
+      final foodHeader = find.byType(CategorySectionHeader).first;
+      final gesture = await tester.startGesture(tester.getCenter(foodHeader));
+      await tester.pump(kLongPressTimeout + kPressTimeout);
+      await gesture.moveBy(const Offset(0, 30));
+      await tester.pump(const Duration(milliseconds: 100));
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      // 畳み(行の unmount)より先に unfocus でフォーカス喪失保存が走り、編集内容が失われない。
+      expect(recorders.itemUpdate.lastItem?.message, '低脂肪牛乳');
+    });
+
+    testWidgets('ヘッダードラッグ中はセクションを畳み、proxy に先頭2件だけが出る', (tester) async {
+      await _pumpSectionReorder(tester);
+      // pump 直後は 食品3件 + 洗剤 + ガムテープ の5行。
+      expect(find.byType(TextShoppingListItemWidget), findsNWidgets(5));
+
+      final foodHeader = find.byType(CategorySectionHeader).first;
+      final gesture = await tester.startGesture(tester.getCenter(foodHeader));
+      await tester.pump(kLongPressTimeout + kPressTimeout);
+      await gesture.moveBy(const Offset(0, 30));
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // リスト側の食品セクションは畳まれ、proxy のプレビューに先頭2件(牛乳・卵)だけが出る。
+      // 行は 洗剤 + ガムテープ(リスト) + 牛乳 + 卵(proxy プレビュー) の4つになる。
+      expect(find.byType(TextShoppingListItemWidget), findsNWidgets(4));
+      expect(find.text('牛乳'), findsOneWidget);
+      expect(find.text('卵'), findsOneWidget);
+      expect(find.text('食パン'), findsNothing,
+          reason: '3件目はプレビュー上限(2件)の対象外で、リスト側は畳まれているため表示されない');
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+      // ドロップ後は畳みが解除され、全アイテムが再表示される。
+      expect(find.byType(TextShoppingListItemWidget), findsNWidgets(5));
+      expect(find.text('食パン'), findsOneWidget);
     });
 
     testWidgets('ドロップ直後、stream 未更新でも楽観的にセクション順が入れ替わる', (tester) async {
