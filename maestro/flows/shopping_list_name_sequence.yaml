@@ -1,0 +1,57 @@
+appId: com.bannzai.shoppinglist
+---
+# Issue #388 回帰テスト: 買い物リスト名の連番は「同じ日付に作成済みのリスト数」で採番する。
+# - 当日初回のリストは日付のみ（YYYY-MM-DD、連番カッコなし）
+# - 同じ日に追加作成すると (1) (2) と採番される
+#
+# 「日付が違えば連番をリセットする（日付をまたいで増え続けない）」採番ロジックは
+# test/group_shopping_list_name_test.dart で担保する。ここでは実機の Firestore
+# count クエリ（同日範囲の where 二段）込みで同日採番が動き、名前がトップバー /
+# リスト切替シートに反映されることを確認する。
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 自動作成された初回リスト名は日付のみ（連番カッコなし）
+- assertVisible:
+    text: "[0-9]{4}-[0-9]{2}-[0-9]{2}"
+- takeScreenshot: tmp/388_01_first_list_date_only
+
+# トップバーのリスト名をタップしてリスト切替シートを開く
+- tapOn:
+    text: "[0-9]{4}-[0-9]{2}-[0-9]{2}"
+- assertVisible: "新しいリストを追加"
+- takeScreenshot: tmp/388_02_picker_one_list
+
+# 2件目を作成 → 同日なので (1) が付く
+- tapOn: "新しいリストを追加"
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      text: "[0-9]{4}-[0-9]{2}-[0-9]{2} \\(1\\)"
+    timeout: 15000
+# ピッカー作成後に "Cannot use ref after the widget was disposed" 等の
+# 内部エラー SnackBar が出ないこと(page.dart の notifier 束縛修正の回帰防止)
+- assertNotVisible:
+    text: ".*Cannot use.*"
+- assertNotVisible:
+    text: ".*Bad state.*"
+- takeScreenshot: tmp/388_03_second_list_seq1
+
+# もう一度ピッカーを開き、日付 / 日付(1) の 2 リストが並ぶことを確認
+- tapOn:
+    text: "[0-9]{4}-[0-9]{2}-[0-9]{2} \\(1\\)"
+- assertVisible: "新しいリストを追加"
+- takeScreenshot: tmp/388_04_picker_two_lists
+
+# 3件目を作成 → (2)
+- tapOn: "新しいリストを追加"
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      text: "[0-9]{4}-[0-9]{2}-[0-9]{2} \\(2\\)"
+    timeout: 15000
+- assertNotVisible:
+    text: ".*Cannot use.*"
+- assertNotVisible:
+    text: ".*Bad state.*"
+- takeScreenshot: tmp/388_05_third_list_seq2

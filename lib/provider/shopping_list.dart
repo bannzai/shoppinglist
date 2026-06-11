@@ -37,6 +37,20 @@ class ShoppingListLimitExceededException implements Exception {
 /// プレミアム判定を返す関数型。
 typedef IsPremiumResolver = bool Function();
 
+/// 買い物リストの名前を生成する。
+///
+/// 同じ日付に作成済みのリストが無ければ `yyyy-MM-dd`、既にあれば名前の重複を
+/// 避けるため `yyyy-MM-dd (N)` を返す（[sameDateCount] が連番 N）。
+/// [sameDateCount] は「同じ日付に作成済みの買い物リスト数」であり、日付が変われば
+/// 0 に戻るため、日付をまたいで連番が増え続けることはない（Issue #388）。
+String groupShoppingListName({
+  required DateTime createdDate,
+  required int sameDateCount,
+}) {
+  final formattedDate = DateFormat('yyyy-MM-dd').format(createdDate);
+  return sameDateCount == 0 ? formattedDate : '$formattedDate ($sameDateCount)';
+}
+
 /// 買い物リスト一覧を取得するプロバイダー。
 /// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
 /// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
@@ -90,14 +104,17 @@ class ShoppingListAdd {
     }
 
     final docRef = database.newGroupShoppingListReference();
-    final count = await database.countOfGroupShoppingLists();
+    final createdDate = DateTime.now();
+    final sameDateCount =
+        await database.countOfGroupShoppingListsCreatedOn(date: createdDate);
     final shoppingList = GroupShoppingList(
       id: docRef.id,
       createUserID: createUserID,
       groupID: groupID,
-      name: count == 0
-          ? DateFormat('yyyy-MM-dd').format(DateTime.now())
-          : '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ($count)',
+      name: groupShoppingListName(
+        createdDate: createdDate,
+        sameDateCount: sameDateCount,
+      ),
       status: GroupShoppingListStatus.active,
       ttlExpiresDateTime: null,
       shoppingLocationID: shoppingLocationID,
