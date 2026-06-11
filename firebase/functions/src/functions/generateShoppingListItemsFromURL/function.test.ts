@@ -20,17 +20,20 @@ const firestoreFunction = Object.assign(
   }
 );
 
-const mockGetUser = jest.fn();
-
 jest.mock("firebase-admin", () => ({
   __esModule: true,
   default: {
     firestore: firestoreFunction,
     initializeApp: jest.fn(),
-    auth: jest.fn(() => ({
-      getUser: mockGetUser,
-    })),
   },
+}));
+
+// RevenueCat プレミアム判定のモック
+const mockHasPremiumEntitlement = jest.fn();
+jest.mock("../utils/premium", () => ({
+  hasPremiumEntitlement: (...args: unknown[]) =>
+    mockHasPremiumEntitlement(...args),
+  revenueCatSecretApiKey: { value: () => "test-rc-secret-key" },
 }));
 
 // genkit のモック
@@ -159,7 +162,7 @@ describe("generateShoppingListItemsFromURL", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     // デフォルト: 無料ユーザー
-    mockGetUser.mockResolvedValue({ customClaims: {} });
+    mockHasPremiumEntitlement.mockResolvedValue(false);
     // デフォルト: DNS lookup → パブリックIP
     mockLookup.mockResolvedValue({ address: "93.184.216.34" });
     // デフォルト: Genkit からの正常レスポンス
@@ -320,7 +323,7 @@ describe("generateShoppingListItemsFromURL", () => {
 
   test("異常系: 無料ユーザーの上限（5回）到達でエラーになる", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
-    mockGetUser.mockResolvedValue({ customClaims: {} });
+    mockHasPremiumEntitlement.mockResolvedValue(false);
 
     const aiUsageRef = { id: "aiUsageRef" };
     setupTransactionMock(aiUsageRef, {
@@ -341,7 +344,7 @@ describe("generateShoppingListItemsFromURL", () => {
 
   test("正常系: プレミアムユーザーは50回まで利用可能", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "premium-user" } });
-    mockGetUser.mockResolvedValue({ customClaims: { premium: true } });
+    mockHasPremiumEntitlement.mockResolvedValue(true);
 
     const aiUsageRef = { id: "aiUsageRef" };
     const { txUpdate } = setupTransactionMock(aiUsageRef, {
@@ -359,7 +362,7 @@ describe("generateShoppingListItemsFromURL", () => {
 
   test("異常系: プレミアムユーザーの上限（50回）到達でエラーになる", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "premium-user" } });
-    mockGetUser.mockResolvedValue({ customClaims: { premium: true } });
+    mockHasPremiumEntitlement.mockResolvedValue(true);
 
     const aiUsageRef = { id: "aiUsageRef" };
     setupTransactionMock(aiUsageRef, {

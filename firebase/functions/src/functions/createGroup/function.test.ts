@@ -61,6 +61,14 @@ jest.mock("firebase-functions/params", () => ({
   defineString: jest.fn(() => ({ value: () => "" })),
 }));
 
+// RevenueCat プレミアム判定のモック
+const mockHasPremiumEntitlement = jest.fn();
+jest.mock("../utils/premium", () => ({
+  hasPremiumEntitlement: (...args: unknown[]) =>
+    mockHasPremiumEntitlement(...args),
+  revenueCatSecretApiKey: { value: () => "test-rc-secret-key" },
+}));
+
 // モジュール読み込み
 require("./function");
 
@@ -73,6 +81,8 @@ const defaultInput = {
 describe("createGroup", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // デフォルト: 無料ユーザー
+    mockHasPremiumEntitlement.mockResolvedValue(false);
   });
 
   test("正常系: グループを作成できる", async () => {
@@ -264,8 +274,9 @@ describe("createGroup", () => {
 
   test("正常系: プレミアムユーザーは上限超過時でも作成できる", async () => {
     mockCurrentContext.mockReturnValue({
-      auth: { uid: "user-1", token: { isPremium: true } },
+      auth: { uid: "user-1", token: {} },
     });
+    mockHasPremiumEntitlement.mockResolvedValue(true);
 
     const mockUserDoc = {
       exists: true,

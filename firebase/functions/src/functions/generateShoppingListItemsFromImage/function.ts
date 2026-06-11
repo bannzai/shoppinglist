@@ -7,6 +7,10 @@ import * as z from "zod";
 import { ai } from "../utils/genkit";
 import { currentAuthUID } from "../utils/currentAuthUID";
 import { appAuthPolicy } from "../utils/authPolicy";
+import {
+  hasPremiumEntitlement,
+  revenueCatSecretApiKey,
+} from "../utils/premium";
 import { DataResponseSchema, ErrorResponseSchema } from "../../entity/response";
 import { UserAIUsageData } from "../../entity/ai_usage";
 import fs from "fs";
@@ -41,20 +45,6 @@ const freeMonthlyImageRecognitionLimit = 5;
 
 /** プレミアムユーザーのAI画像認識月次上限。 */
 const premiumMonthlyImageRecognitionLimit = 50;
-
-/** Firebase Auth Custom Claimsからプレミアム判定を行う。 */
-async function hasPremiumEntitlement(uid: string): Promise<boolean> {
-  try {
-    const userRecord = await admin.auth().getUser(uid);
-    return userRecord.customClaims?.["premium"] === true;
-  } catch (error) {
-    logger.error("hasPremiumEntitlement failed", {
-      uid,
-      errorName: error instanceof Error ? error.name : "unknown",
-    });
-    return false;
-  }
-}
 
 // 一時ファイルを削除する関数
 async function cleanupTemporaryImage(filePath: string): Promise<void> {
@@ -282,7 +272,7 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
 module.exports = onCallGenkit(
   {
     authPolicy: appAuthPolicy("generateShoppingListItemsFromImage"),
-    secrets: [googleAIApiKey],
+    secrets: [googleAIApiKey, revenueCatSecretApiKey],
   },
   generateShoppingListItemsFromImageFlow
 );

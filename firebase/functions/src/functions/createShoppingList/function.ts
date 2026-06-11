@@ -6,6 +6,10 @@ import { ai } from "../utils/genkit";
 import { currentAuthUID } from "../utils/currentAuthUID";
 import { appAuthPolicy } from "../utils/authPolicy";
 import {
+  hasPremiumEntitlement,
+  revenueCatSecretApiKey,
+} from "../utils/premium";
+import {
   DataResponseSchema,
   ErrorResponseSchema,
 } from "../../entity/response";
@@ -92,7 +96,7 @@ const createShoppingListFlow = ai.defineFlow(
         };
       }
 
-      const isPremium = ai.currentContext()?.auth?.token?.isPremium === true;
+      const isPremium = await hasPremiumEntitlement(uid);
 
       const shoppingListsRef = firestore.collection(
         `groups/${groupID}/shoppingLists`
@@ -166,6 +170,7 @@ const createShoppingListFlow = ai.defineFlow(
 module.exports = onCallGenkit(
   {
     authPolicy: appAuthPolicy("createShoppingList"),
+    secrets: [revenueCatSecretApiKey],
   },
   createShoppingListFlow
 );
