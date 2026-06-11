@@ -24,7 +24,8 @@ import 'package:shoppinglist/utils/stdlib/navigator.dart';
 /// `ShoppingListPage` の右下に配置する展開式 FAB。
 /// `design_handoff_shopping_list/source/screens-list.jsx#FAB` 相当。
 ///
-/// 閉時: accent の plus 56×56 円。
+/// 閉時: accent の鉛筆（アイテム入力）56×56 円。リスト作成の `CreateListFab` と
+/// 縦に並べるダブル FAB 構成のメイン側。
 /// タップ: 空行を直接追加する（最頻操作）。
 /// 長押し: 写真 / URL / テキスト貼り付け の 3 メニューを上方向に展開する。
 class ExpandableFab extends HookConsumerWidget {
@@ -140,40 +141,47 @@ class ExpandableFab extends HookConsumerWidget {
             );
             open.value = true;
           },
-          child: AnimatedBuilder(
-            animation: controller,
-            builder: (_, child) => Transform.rotate(
-              angle: controller.value * 0.785,
-              child: child,
-            ),
-            child: FloatingActionButton(
-              backgroundColor: tokens.accent,
-              foregroundColor: Colors.white,
-              shape: const CircleBorder(),
-              onPressed: () {
-                // メニュー展開中（x 状態）のタップは Row 追加ではなく「閉じる」に倒す。
-                if (open.value) {
-                  analytics.logEvent(name: 'tap_close_fab_menu', parameters: {
-                    'groupID': groupID,
-                    'shoppingListID': shoppingListID,
-                  });
-                  close();
-                  return;
-                }
-                analytics.logEvent(name: 'tap_add_item_fab', parameters: {
+          child: FloatingActionButton(
+            backgroundColor: tokens.accent,
+            foregroundColor: Colors.white,
+            shape: const CircleBorder(),
+            onPressed: () {
+              // メニュー展開中（x 状態）のタップは Row 追加ではなく「閉じる」に倒す。
+              if (open.value) {
+                analytics.logEvent(name: 'tap_close_fab_menu', parameters: {
                   'groupID': groupID,
                   'shoppingListID': shoppingListID,
                 });
-                ref.read(addShoppingListItemProvider(groupID: groupID)).call(
-                      shoppingListID: shoppingListID,
-                      userID: ref.read(currentUserIDProvider)!,
-                      message: '',
-                      order: shoppingListItems.nextOrder,
-                      description: null,
-                      color: null,
-                    );
-              },
-              child: const Icon(Icons.add, size: 26),
+                close();
+                return;
+              }
+              analytics.logEvent(name: 'tap_add_item_fab', parameters: {
+                'groupID': groupID,
+                'shoppingListID': shoppingListID,
+              });
+              ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+                    shoppingListID: shoppingListID,
+                    userID: ref.read(currentUserIDProvider)!,
+                    message: '',
+                    order: shoppingListItems.nextOrder,
+                    description: null,
+                    color: null,
+                  );
+            },
+            // 閉時は鉛筆（アイテム入力）、メニュー展開中は x（閉じる）。
+            // 旧実装は + を 45° 回転して x に見せていたが、鉛筆は回転で意味が
+            // 出ないため AnimatedSwitcher の回転+フェードでアイコン自体を入れ替える。
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              transitionBuilder: (child, animation) => RotationTransition(
+                turns: Tween(begin: 0.85, end: 1.0).animate(animation),
+                child: FadeTransition(opacity: animation, child: child),
+              ),
+              child: Icon(
+                open.value ? Icons.close : Icons.edit,
+                key: ValueKey(open.value),
+                size: 24,
+              ),
             ),
           ),
         ),
