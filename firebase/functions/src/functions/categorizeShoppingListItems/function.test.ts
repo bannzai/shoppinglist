@@ -20,17 +20,20 @@ const firestoreFunction = Object.assign(
   }
 );
 
-const mockGetUser = jest.fn();
-
 jest.mock("firebase-admin", () => ({
   __esModule: true,
   default: {
     firestore: firestoreFunction,
     initializeApp: jest.fn(),
-    auth: jest.fn(() => ({
-      getUser: mockGetUser,
-    })),
   },
+}));
+
+// RevenueCat プレミアム判定のモック
+const mockHasPremiumEntitlement = jest.fn();
+jest.mock("../utils/premium", () => ({
+  hasPremiumEntitlement: (...args: unknown[]) =>
+    mockHasPremiumEntitlement(...args),
+  revenueCatSecretApiKey: { value: () => "test-rc-secret-key" },
 }));
 
 // genkit のモック
@@ -108,7 +111,7 @@ describe("categorizeShoppingListItems", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     // デフォルト: 無料ユーザー
-    mockGetUser.mockResolvedValue({ customClaims: {} });
+    mockHasPremiumEntitlement.mockResolvedValue(false);
     // デフォルト: Genkit からの正常レスポンス
     mockGenerate.mockResolvedValue({
       output: {
@@ -239,6 +242,42 @@ describe("categorizeShoppingListItems", () => {
 
     expect(result.result).toBe("NG");
     expect(result.error.message).toContain("月間利用回数");
+    expect(mockGenerate).not.toHaveBeenCalled();
+  });
+
+  test("プレミアムユーザーは無料上限(5回)超過後も利用できる", async () => {
+    mockCurrentContext.mockReturnValue({ auth: { uid: "premium-user" } });
+    mockHasPremiumEntitlement.mockResolvedValue(true);
+    const { txUpdate } = setupTransactionMock(
+      { id: "aiUsageRef" },
+      { exists: true, data: { categorizeCount: 5 } }
+    );
+
+    const result = await capturedFlowFn({
+      itemNames: ["にんじん", "牛乳"],
+      existingCategoryNames: [],
+    });
+
+    expect(result.result).toBe("OK");
+    expect(mockHasPremiumEntitlement).toHaveBeenCalledWith("premium-user");
+    expect(txUpdate).toHaveBeenCalled();
+  });
+
+  test("プレミアムユーザーも月次上限(50回)に達したら NG を返す", async () => {
+    mockCurrentContext.mockReturnValue({ auth: { uid: "premium-user" } });
+    mockHasPremiumEntitlement.mockResolvedValue(true);
+    setupTransactionMock(
+      { id: "aiUsageRef" },
+      { exists: true, data: { categorizeCount: 50 } }
+    );
+
+    const result = await capturedFlowFn({
+      itemNames: ["にんじん"],
+      existingCategoryNames: [],
+    });
+
+    expect(result.result).toBe("NG");
+    expect(result.error.message).toContain("50回");
     expect(mockGenerate).not.toHaveBeenCalled();
   });
 

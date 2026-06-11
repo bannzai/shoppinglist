@@ -1,21 +1,18 @@
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
-import { defineSecret } from "firebase-functions/params";
 import * as z from "zod";
 import { ai } from "../utils/genkit";
 import { currentAuthUID } from "../utils/currentAuthUID";
 import { appAuthPolicy } from "../utils/authPolicy";
+import {
+  PREMIUM_ENTITLEMENT_IDENTIFIER,
+  revenueCatSecretApiKey,
+} from "../utils/premium";
 import { developerToken, isDeveloper } from "../../core/developer";
 import {
   DataResponseSchema,
   ErrorResponseSchema,
 } from "../../entity/response";
-
-/// RevenueCat Secret API Key。Promotions APIのrevoke呼び出しに使用する。Secret Manager 経由で取得。
-const revenueCatSecretApiKey = defineSecret("REVENUECAT_SECRET_API_KEY");
-
-/// RevenueCatのプレミアムEntitlement識別子。
-const PREMIUM_ENTITLEMENT_IDENTIFIER = "Premium";
 
 const ResponseSchema = z.union([
   DataResponseSchema.extend({

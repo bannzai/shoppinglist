@@ -6,6 +6,10 @@ import { ai } from "../utils/genkit";
 import { currentAuthUID } from "../utils/currentAuthUID";
 import { appAuthPolicy } from "../utils/authPolicy";
 import {
+  hasPremiumEntitlement,
+  revenueCatSecretApiKey,
+} from "../utils/premium";
+import {
   DataResponseSchema,
   ErrorResponseSchema,
 } from "../../entity/response";
@@ -95,7 +99,7 @@ const createGroupFlow = ai.defineFlow(
       }
 
       const firestore = admin.firestore();
-      const isPremium = ai.currentContext()?.auth?.token?.isPremium === true;
+      const isPremium = await hasPremiumEntitlement(uid);
 
       // createGroup は新規ID払い出しを伴うため非冪等。重複作成は上限チェック(同一トランザクション内)とUIの二重送信防止で抑止する。
       const groupRef = firestore.collection("groups").doc();
@@ -208,6 +212,7 @@ const createGroupFlow = ai.defineFlow(
 module.exports = onCallGenkit(
   {
     authPolicy: appAuthPolicy("createGroup"),
+    secrets: [revenueCatSecretApiKey],
   },
   createGroupFlow
 );

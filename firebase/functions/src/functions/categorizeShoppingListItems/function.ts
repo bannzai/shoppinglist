@@ -5,6 +5,10 @@ import * as z from "zod";
 import { ai } from "../utils/genkit";
 import { currentAuthUID } from "../utils/currentAuthUID";
 import { appAuthPolicy } from "../utils/authPolicy";
+import {
+  hasPremiumEntitlement,
+  revenueCatSecretApiKey,
+} from "../utils/premium";
 import { DataResponseSchema, ErrorResponseSchema } from "../../entity/response";
 import { UserAIUsageData } from "../../entity/ai_usage";
 import { defineSecret } from "firebase-functions/params";
@@ -45,19 +49,6 @@ const CategorizationSchema = z.object({
     z.object({ name: z.string(), categoryName: z.string() })
   ),
 });
-
-/** Firebase Auth Custom Claimsからプレミアム判定を行う。 */
-async function hasPremiumEntitlement(uid: string): Promise<boolean> {
-  try {
-    return (await admin.auth().getUser(uid)).customClaims?.["premium"] === true;
-  } catch (error) {
-    logger.error("hasPremiumEntitlement failed", {
-      uid,
-      errorName: error instanceof Error ? error.name : "unknown",
-    });
-    return false;
-  }
-}
 
 /**
  * 買い物リストの未分類アイテムを「野菜」「肉」等のカテゴリに分類するFunction。
@@ -227,7 +218,7 @@ const categorizeShoppingListItemsFlow = ai.defineFlow(
 module.exports = onCallGenkit(
   {
     authPolicy: appAuthPolicy("categorizeShoppingListItems"),
-    secrets: [googleAIApiKey],
+    secrets: [googleAIApiKey, revenueCatSecretApiKey],
   },
   categorizeShoppingListItemsFlow
 );
