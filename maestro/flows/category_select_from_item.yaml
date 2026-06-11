@@ -1,0 +1,130 @@
+appId: com.bannzai.shoppinglist
+---
+# 未分類アイテムから既存カテゴリをタップ選択して割り当てる機能の E2E（PR #387）
+#
+# 検証項目:
+# 1. 未分類アイテムのアイテム詳細シートに「未分類」+「カテゴリを管理」ボタンが出る
+# 2. 「カテゴリを管理」→ カテゴリ一覧が選択モード（AppBar タイトル「カテゴリを選択」）で開く
+# 3. 選択モードでカテゴリ行をタップ → アイテム名がそのカテゴリの完全一致キーワードに追記され、
+#    シートに戻りカテゴリ表示が「未分類」→「飲料」、ボタンが「カテゴリを管理」→「カテゴリを編集」に更新される
+# 4. 買い物リスト上でもアイテムが当該カテゴリのセクションに移動する（キーワード永続化の確認）
+#
+# UI 前提（手動検証で確認した現行 design v2 UI。既存 category_* flow のカテゴリ作成ダイアログや
+# 「アイテムを追加」は stale なので踏襲しない）:
+# - アイテム入力は「タップで入力開始」、カテゴリ作成は編集ページ直行＋名前は onSubmitted(Enter) 保存
+# - カテゴリ管理はグループ設定内のタイル「カテゴリ」から別画面遷移する
+#
+# セレクタ注意: グループ行・タイル・カテゴリセクションヘッダは複数行テキストが1要素に
+# 結合されて公開される（例: "名前未設定\nデフォルト\nメンバー 1人"）。maestro の text は
+# 完全一致のため、結合要素は (?s) DOTALL の部分一致正規表現で指定する。
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# --- セットアップ: キーワード無しのカテゴリ「飲料」を作成（juice をマッチさせない） ---
+
+# 設定（人型アイコン）を開く。「リスト設定」と部分一致しないよう完全一致で限定する。
+- tapOn:
+    text: "^設定$"
+- waitForAnimationToEnd
+- tapOn: "グループ管理"
+- waitForAnimationToEnd
+# グループ一覧から既定グループ（名前未設定）を開く。行は結合テキストのため正規表現で指定。
+- tapOn:
+    text: "(?s).*名前未設定.*"
+- waitForAnimationToEnd
+- assertVisible: "グループ設定"
+
+# グループ設定内のタイル「カテゴリ」からカテゴリ管理画面へ（タイルは結合テキスト）
+- tapOn:
+    text: "(?s).*自動分類のキーワード管理.*"
+- waitForAnimationToEnd
+- assertVisible: "カテゴリを追加"
+
+# カテゴリ追加（空名で作成され、そのまま編集ページへ遷移する）
+- tapOn: "カテゴリを追加"
+- waitForAnimationToEnd
+- assertVisible: "カテゴリ名"
+# 名前を入力し、Enter(onSubmitted) で保存する。キーワードは追加しない。
+- tapOn: "カテゴリ名を入力"
+- inputText: "飲料"
+- pressKey: enter
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/category_select_01_category_created
+
+# 買い物リストまで戻る（編集→カテゴリ一覧→グループ設定→グループ管理→設定→閉じる）
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+- assertVisible: "タップで入力開始"
+
+# --- 未分類アイテム「juice」を追加 ---
+- tapOn: "タップで入力開始"
+- inputText: "juice"
+- pressKey: enter
+# 2回目の Enter で空の入力行を削除して入力行を畳み、hideKeyboard で閉じる。
+# このアプリの入力行はフォーカス固定設計のため tap で外すと再フォーカスされる
+# （item_detail_and_delete.yaml と同じ手順）。
+- pressKey: enter
+- hideKeyboard
+- waitForAnimationToEnd
+# juice はどのキーワードにもマッチしないので「未分類」セクションに入る。
+# セクションヘッダ「未分類\n0/1」は結合テキストのため正規表現で待つ。
+- extendedWaitUntil:
+    visible: "(?s).*未分類.*"
+    timeout: 10000
+- assertVisible: "juice"
+- takeScreenshot: screenshots/category_select_02_uncategorized_item
+
+# --- 本検証: アイテム詳細 → カテゴリを管理 → 選択モード → 飲料を選択 ---
+
+# juice 行のアイテム詳細（…）からシートを開く（空入力行削除済みで juice のみ）
+- tapOn: "アイテム詳細"
+- waitForAnimationToEnd
+# 未分類アイテムのシート: カテゴリ「未分類」+「カテゴリを管理」
+- assertVisible: "カテゴリを管理"
+- takeScreenshot: screenshots/category_select_03_sheet_uncategorized
+
+# 「カテゴリを管理」→ カテゴリ一覧が選択モードで開く
+- tapOn: "カテゴリを管理"
+- waitForAnimationToEnd
+# 選択モードの決定的証跡: AppBar タイトルが「カテゴリを選択」
+- assertVisible: "カテゴリを選択"
+- takeScreenshot: screenshots/category_select_04_selection_mode
+
+# 「飲料」行をタップ → juice を飲料の完全一致キーワードに追記し、シートへ pop して戻る。
+# 行「飲料\nキーワード: 0件」は結合テキストのため正規表現で指定（行本体中央をタップ）。
+- tapOn:
+    text: "(?s).*飲料.*"
+- waitForAnimationToEnd
+# ref.watch によりシートのカテゴリ表示が自動更新される。Firestore 反映待ち。
+- extendedWaitUntil:
+    visible: "カテゴリを編集"
+    timeout: 10000
+# 「カテゴリを編集」が出る = juice が飲料にマッチ = 割り当て成功
+- assertVisible:
+    text: "(?s).*飲料.*"
+- assertNotVisible: "カテゴリを管理"
+- takeScreenshot: screenshots/category_select_05_sheet_assigned
+
+# --- 買い物リスト上でも juice が「飲料」セクションへ移動したことを確認 ---
+# シートを閉じる（保存ボタンでアイテムを保存しつつ閉じる）
+- tapOn: "保存"
+- waitForAnimationToEnd
+# 一覧のセクションヘッダが「飲料\n0/1」に変わる（結合要素のため正規表現で待つ）
+- extendedWaitUntil:
+    visible: "(?s).*飲料.*"
+    timeout: 10000
+- assertVisible: "juice"
+- takeScreenshot: screenshots/category_select_06_list_categorized
