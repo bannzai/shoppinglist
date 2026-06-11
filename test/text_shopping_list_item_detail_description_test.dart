@@ -68,12 +68,9 @@ Future<void> _pumpSheet(
       child: MaterialApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
-          // maxLength のカウンタ分を含めても収まるようスクロール可能にして検証する。
-          body: SingleChildScrollView(
-            child: TextShoppingListItemDetailBottomSheet(
-              groupID: _testGroupID,
-              textShoppingListItem: _testItem(description: description),
-            ),
+          body: TextShoppingListItemDetailBottomSheet(
+            groupID: _testGroupID,
+            textShoppingListItem: _testItem(description: description),
           ),
         ),
       ),
@@ -103,6 +100,17 @@ void main() {
       expect(
         tester.widget<TextField>(find.byType(TextField)).controller!.text,
         'あ' * 100,
+      );
+    });
+
+    testWidgets('シート本体はスクロール可能（キーボード表示中でも保存ボタンへ到達できる）', (tester) async {
+      await _pumpSheet(tester, description: null);
+      expect(
+        find.descendant(
+          of: find.byType(TextShoppingListItemDetailBottomSheet),
+          matching: find.byType(SingleChildScrollView),
+        ),
+        findsOneWidget,
       );
     });
   });
