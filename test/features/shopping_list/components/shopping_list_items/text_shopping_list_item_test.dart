@@ -13,12 +13,14 @@ import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
-/// 検証用アイテム。message / status / color 以外は固定。
+/// 検証用アイテム。message / status / color / description / imageURL 以外は固定。
 GroupShoppingListItem _item({
   required String id,
   required String message,
   GroupShoppingListItemStatus status = GroupShoppingListItemStatus.unchecked,
   String? color,
+  String? description,
+  String? imageURL,
 }) {
   return GroupShoppingListItem(
     id: id,
@@ -30,8 +32,8 @@ GroupShoppingListItem _item({
     status: status,
     checkedByUserID: null,
     color: color,
-    description: null,
-    imageURL: null,
+    description: description,
+    imageURL: imageURL,
     lastEditedByUserID: null,
   );
 }
@@ -235,6 +237,43 @@ void main() {
         _rowMaterial(tester).color,
         colorFromHex('#1F6B4E').withValues(alpha: 0.1),
       );
+    });
+  });
+
+  group('説明 (description) と商品写真サムネイルの一覧表示', () {
+    testWidgets('description 設定時は説明テキストを表示する', (tester) async {
+      await _pump(
+        tester,
+        _item(id: 'desc', message: '牛乳', description: '低脂肪 1L'),
+      );
+      expect(find.byType(ShoppingListItemDescriptionText), findsOneWidget);
+    });
+
+    testWidgets('description 未設定時は説明テキストを表示しない', (tester) async {
+      await _pump(tester, _item(id: 'no-desc', message: '牛乳'));
+      expect(find.byType(ShoppingListItemDescriptionText), findsNothing);
+    });
+
+    testWidgets('imageURL 設定時はサムネイルを詳細アイコン (3点リーダー) の左に表示する', (tester) async {
+      await _pump(
+        tester,
+        _item(
+          id: 'img',
+          message: '牛乳',
+          imageURL: 'https://example.com/item.jpg',
+        ),
+      );
+      expect(find.byType(ShoppingListItemThumbnail), findsOneWidget);
+      // 行末の more_horiz (3点リーダー) より左に位置すること。
+      expect(
+        tester.getCenter(find.byType(ShoppingListItemThumbnail)).dx,
+        lessThan(tester.getCenter(find.byIcon(Icons.more_horiz)).dx),
+      );
+    });
+
+    testWidgets('imageURL 未設定時はサムネイルを表示しない', (tester) async {
+      await _pump(tester, _item(id: 'no-img', message: '牛乳'));
+      expect(find.byType(ShoppingListItemThumbnail), findsNothing);
     });
   });
 

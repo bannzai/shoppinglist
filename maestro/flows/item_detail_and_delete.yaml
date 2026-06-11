@@ -16,8 +16,8 @@ appId: com.bannzai.shoppinglist
 # 詳細ボトムシートを開く（info アイコンに tooltip: 'アイテム詳細' を設定済み）
 - tapOn: "アイテム詳細"
 
-# メモを入力
-- assertVisible: "メモ"
+# 説明を入力（80文字以内）
+- assertVisible: "説明"
 - tapOn: "補足説明を入力"
 - inputText: "キッコーマンの丸大豆"
 
@@ -32,7 +32,7 @@ appId: com.bannzai.shoppinglist
 
 # 再度詳細を開いて削除
 - tapOn: "アイテム詳細"
-- assertVisible: "メモ"
+- assertVisible: "説明"
 - tapOn: "削除"
 - assertVisible: "このアイテムを削除しますか？"
 - tapOn:
