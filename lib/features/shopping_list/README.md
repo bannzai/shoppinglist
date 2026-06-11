@@ -136,6 +136,15 @@
   入力行の GlobalKey（fix-350）はセクションドラッグ中も二重化しない。
 - E2E: `maestro/flows/category_section_reorder.yaml`（長押しドラッグは超低速 swipe で再現）。
 
+## アイテムの説明 (description) と商品写真の一覧表示
+アイテム詳細シートで「説明」（`description`・80文字以内）と商品写真（`imageURL`・プレミアム機能）を
+設定できる。設定されている場合は一覧のアイテム行にも表示する。
+
+- 説明: message の下に 1 行で省略表示（`ShoppingListItemDescriptionText`）。
+  80文字制限は詳細シートの入力時のみ（既存の80文字超データは切り詰めない）。
+- 商品写真: 行末の詳細アイコン（3点リーダー）の左に 36px のサムネイルで表示
+  （`ShoppingListItemThumbnail`）。
+
 ## アイテム詳細からのカテゴリ確認・編集
 アイテム詳細シート（`text_shopping_list_item_detail_bottom_sheet.dart`）に、先頭軸
 （`groupCategoryAxes.first`）で `findMatchingCategoryID`（`category_matcher.dart`）により判定した

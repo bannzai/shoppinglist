@@ -91,22 +91,82 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
             findMatchingCategoryID(
                 item: textShoppingListItem, categories: categories));
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            textShoppingListItem.message,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 16),
-          // カテゴリセクション。軸が無い(カテゴリ機能未使用)ときは表示しない。
-          if (categoryAxis != null) ...[
+    // シート(appShowModalBottomSheet)は固定高でキーボードの viewInsets を考慮しないため、
+    // 説明入力中はキーボードが保存ボタンを覆って到達できなくなる。キーボード高さ分の
+    // 下余白を持つスクロールにして、入力中でも保存ボタンまでスクロールできるようにする。
+    return SingleChildScrollView(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              textShoppingListItem.message,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 16),
+            // カテゴリセクション。軸が無い(カテゴリ機能未使用)ときは表示しない。
+            if (categoryAxis != null) ...[
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'カテゴリ',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium
+                      ?.copyWith(fontWeight: FontWeight.w700),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(child: Text(matchedCategory?.name ?? '未分類')),
+                  TextButton(
+                    onPressed: () {
+                      analytics.logEvent(
+                        name: matchedCategory != null
+                            ? 'tap_edit_category_from_item'
+                            : 'tap_manage_category_from_item',
+                        parameters: {
+                          'groupID': groupID,
+                          'itemID': textShoppingListItem.id,
+                        },
+                      );
+                      // マッチ時はそのカテゴリの編集ページへ。未分類時はカテゴリ選択
+                      // モードの一覧へ誘導し、行タップでこのアイテムを既存カテゴリへ
+                      // 割り当てる(アイテム名をそのカテゴリのキーワードに追記する)。
+                      // シートは閉じずに push する(戻れば説明等の編集状態を保持したまま戻れる)。
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => matchedCategory != null
+                              ? GroupCategoryEditPage(
+                                  groupID: groupID,
+                                  categoryAxisID: categoryAxis.id,
+                                  categoryID: matchedCategory.id,
+                                )
+                              : GroupCategoryPage(
+                                  groupID: groupID,
+                                  selectionForItem: textShoppingListItem,
+                                ),
+                        ),
+                      );
+                    },
+                    child:
+                        Text(matchedCategory != null ? 'カテゴリを編集' : 'カテゴリを管理'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+            ],
+            // 説明セクション
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'カテゴリ',
+                '説明',
                 style: Theme.of(context)
                     .textTheme
                     .titleMedium
@@ -114,313 +174,268 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
               ),
             ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(child: Text(matchedCategory?.name ?? '未分類')),
-                TextButton(
-                  onPressed: () {
-                    analytics.logEvent(
-                      name: matchedCategory != null
-                          ? 'tap_edit_category_from_item'
-                          : 'tap_manage_category_from_item',
-                      parameters: {
-                        'groupID': groupID,
-                        'itemID': textShoppingListItem.id,
-                      },
-                    );
-                    // マッチ時はそのカテゴリの編集ページへ。未分類時はカテゴリ選択
-                    // モードの一覧へ誘導し、行タップでこのアイテムを既存カテゴリへ
-                    // 割り当てる(アイテム名をそのカテゴリのキーワードに追記する)。
-                    // シートは閉じずに push する(戻ればメモ等の編集状態を保持したまま戻れる)。
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => matchedCategory != null
-                            ? GroupCategoryEditPage(
-                                groupID: groupID,
-                                categoryAxisID: categoryAxis.id,
-                                categoryID: matchedCategory.id,
-                              )
-                            : GroupCategoryPage(
-                                groupID: groupID,
-                                selectionForItem: textShoppingListItem,
-                              ),
-                      ),
-                    );
-                  },
-                  child: Text(matchedCategory != null ? 'カテゴリを編集' : 'カテゴリを管理'),
-                ),
-              ],
+            TextField(
+              controller: descriptionController,
+              maxLines: 4,
+              // 一覧（アイテム行の message 下）に 1 行で表示するため 80 文字に制限する。
+              // 80 文字を超える既存データは表示・保存とも切り詰めない（入力のみ制限）。
+              maxLength: 80,
+              decoration: const InputDecoration(
+                hintText: '補足説明を入力',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 24),
-          ],
-          // メモセクション
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'メモ',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.w700),
-            ),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: descriptionController,
-            maxLines: 4,
-            decoration: const InputDecoration(
-              hintText: '補足説明を入力',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 24),
-          // 写真セクション
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              '写真',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.w700),
-            ),
-          ),
-          const SizedBox(height: 8),
-          _PhotoSection(
-            groupID: groupID,
-            itemID: textShoppingListItem.id,
-            imageURL: imageURL,
-            selectedPhoto: selectedPhoto,
-            removeImageOnSave: removeImageOnSave,
-            originalImageURL: originalImageURL,
-          ),
-          const SizedBox(height: 24),
-          // カラーセクション
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'カラー',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.w700),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              // 色なしボタン
-              Semantics(
-                label: '色なし',
-                child: GestureDetector(
-                  onTap: () {
-                    analytics.logEvent(
-                        name: 'tap_item_remove_color',
-                        parameters: {
-                          'groupID': groupID,
-                          'itemID': textShoppingListItem.id
-                        });
-                    selectedColor.value = null;
-                  },
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: selectedColor.value == null
-                            ? colorScheme.onSurface
-                            : colorScheme.outline,
-                        width: selectedColor.value == null ? 2 : 1,
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.block,
-                      size: 20,
-                      color: colorScheme.outline,
-                    ),
-                  ),
-                ),
+            // 写真セクション
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '写真',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
-              // プリセットカラー
-              for (final preset in _presetColors)
+            ),
+            const SizedBox(height: 8),
+            _PhotoSection(
+              groupID: groupID,
+              itemID: textShoppingListItem.id,
+              imageURL: imageURL,
+              selectedPhoto: selectedPhoto,
+              removeImageOnSave: removeImageOnSave,
+              originalImageURL: originalImageURL,
+            ),
+            const SizedBox(height: 24),
+            // カラーセクション
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'カラー',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w700),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                // 色なしボタン
                 Semantics(
-                  label: preset.label,
+                  label: '色なし',
                   child: GestureDetector(
                     onTap: () {
                       analytics.logEvent(
-                          name: 'tap_item_select_color',
+                          name: 'tap_item_remove_color',
                           parameters: {
                             'groupID': groupID,
-                            'itemID': textShoppingListItem.id,
-                            'color': preset.hex
+                            'itemID': textShoppingListItem.id
                           });
-                      selectedColor.value = preset.hex;
+                      selectedColor.value = null;
                     },
                     child: Container(
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: colorFromHex(preset.hex),
                         border: Border.all(
-                          color: selectedColor.value == preset.hex
+                          color: selectedColor.value == null
                               ? colorScheme.onSurface
-                              : Colors.transparent,
-                          width: 2,
+                              : colorScheme.outline,
+                          width: selectedColor.value == null ? 2 : 1,
                         ),
                       ),
-                      child: selectedColor.value == preset.hex
-                          ? Icon(
-                              Icons.check,
-                              size: 20,
-                              color: colorScheme.onPrimary,
-                            )
-                          : null,
+                      child: Icon(
+                        Icons.block,
+                        size: 20,
+                        color: colorScheme.outline,
+                      ),
                     ),
                   ),
                 ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          // 保存ボタン
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: isSavingImage.value
-                  ? null
-                  : () async {
-                      analytics.logEvent(
-                          name: 'tap_save_item_detail',
-                          parameters: {
-                            'groupID': groupID,
-                            'itemID': textShoppingListItem.id
-                          });
-                      // 写真アップロード等の await 中にシートが手動クローズされると、
-                      // 遅延した pop がホームまで剥がして黒画面になるため、
-                      // pop はこのシート自身のルートに限定する (#372)。
-                      final navigator = Navigator.of(context);
-                      final sheetRoute = ModalRoute.of(context);
-                      isSavingImage.value = true;
-                      try {
-                        var nextImageURL = imageURL.value;
+                // プリセットカラー
+                for (final preset in _presetColors)
+                  Semantics(
+                    label: preset.label,
+                    child: GestureDetector(
+                      onTap: () {
+                        analytics.logEvent(
+                            name: 'tap_item_select_color',
+                            parameters: {
+                              'groupID': groupID,
+                              'itemID': textShoppingListItem.id,
+                              'color': preset.hex
+                            });
+                        selectedColor.value = preset.hex;
+                      },
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: colorFromHex(preset.hex),
+                          border: Border.all(
+                            color: selectedColor.value == preset.hex
+                                ? colorScheme.onSurface
+                                : Colors.transparent,
+                            width: 2,
+                          ),
+                        ),
+                        child: selectedColor.value == preset.hex
+                            ? Icon(
+                                Icons.check,
+                                size: 20,
+                                color: colorScheme.onPrimary,
+                              )
+                            : null,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            // 保存ボタン
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: isSavingImage.value
+                    ? null
+                    : () async {
+                        analytics.logEvent(
+                            name: 'tap_save_item_detail',
+                            parameters: {
+                              'groupID': groupID,
+                              'itemID': textShoppingListItem.id
+                            });
+                        // 写真アップロード等の await 中にシートが手動クローズされると、
+                        // 遅延した pop がホームまで剥がして黒画面になるため、
+                        // pop はこのシート自身のルートに限定する (#372)。
+                        final navigator = Navigator.of(context);
+                        final sheetRoute = ModalRoute.of(context);
+                        isSavingImage.value = true;
+                        try {
+                          var nextImageURL = imageURL.value;
 
-                        if (selectedPhoto.value != null) {
-                          final file = File(selectedPhoto.value!.path);
-                          nextImageURL =
-                              await functions.uploadShoppingListItemImage(
-                            groupID: groupID,
-                            shoppingListID: textShoppingListItem.shoppingListID,
-                            itemID: textShoppingListItem.id,
-                            mimeType: mimeType(file),
-                            base64Image: await base64CompressImage(file),
-                          );
-                        } else if (removeImageOnSave.value &&
-                            originalImageURL != null) {
-                          await functions.deleteShoppingListItemImage(
-                            groupID: groupID,
-                            shoppingListID: textShoppingListItem.shoppingListID,
-                            itemID: textShoppingListItem.id,
-                          );
-                          nextImageURL = null;
-                        }
-
-                        final description = descriptionController.text.trim();
-                        ref
-                            .read(updateShoppingListItemProvider(
-                                groupID: groupID))
-                            .call(
+                          if (selectedPhoto.value != null) {
+                            final file = File(selectedPhoto.value!.path);
+                            nextImageURL =
+                                await functions.uploadShoppingListItemImage(
+                              groupID: groupID,
                               shoppingListID:
                                   textShoppingListItem.shoppingListID,
-                              item: textShoppingListItem.copyWith(
-                                description:
-                                    description.isEmpty ? null : description,
-                                color: selectedColor.value,
-                                imageURL: nextImageURL,
-                              ),
-                              editedByUserID: currentUserID,
+                              itemID: textShoppingListItem.id,
+                              mimeType: mimeType(file),
+                              base64Image: await base64CompressImage(file),
                             );
+                          } else if (removeImageOnSave.value &&
+                              originalImageURL != null) {
+                            await functions.deleteShoppingListItemImage(
+                              groupID: groupID,
+                              shoppingListID:
+                                  textShoppingListItem.shoppingListID,
+                              itemID: textShoppingListItem.id,
+                            );
+                            nextImageURL = null;
+                          }
 
-                        popRouteSafely(navigator: navigator, route: sheetRoute);
-                      } catch (e) {
-                        // シート上の SnackBar は背後の Scaffold に描画されて
-                        // 見えないため、前面に出るグローバルトーストで通知する。
-                        showGlobalToast(e.toString(), title: null);
-                      } finally {
-                        // シートが既に dispose 済み(手動クローズ等)の場合に
-                        // 破棄済みの ValueNotifier へ書き込まないようガードする。
-                        if (context.mounted) {
-                          isSavingImage.value = false;
-                        }
-                      }
-                    },
-              child: isSavingImage.value
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('保存'),
-            ),
-          ),
-          const SizedBox(height: 12),
-          // 削除ボタン
-          SizedBox(
-            width: double.infinity,
-            child: TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: colorScheme.error,
-              ),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (dialogContext) => AlertDialog(
-                    title: const Text('このアイテムを削除しますか？'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          analytics.logEvent(
-                              name: 'tap_confirm_delete_item',
-                              parameters: {
-                                'groupID': groupID,
-                                'itemID': textShoppingListItem.id
-                              });
+                          final description = descriptionController.text.trim();
                           ref
-                              .read(groupDatabaseProvider(groupID: groupID))
-                              .shoppingListItemsReference(
+                              .read(updateShoppingListItemProvider(
+                                  groupID: groupID))
+                              .call(
                                 shoppingListID:
                                     textShoppingListItem.shoppingListID,
-                              )
-                              .doc(textShoppingListItem.id)
-                              .delete();
-                          Navigator.pop(dialogContext);
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          '削除',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(color: colorScheme.error),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(dialogContext);
-                        },
-                        child: const Text('キャンセル'),
-                      ),
-                    ],
-                  ),
-                );
-              },
-              child: const Text('削除'),
+                                item: textShoppingListItem.copyWith(
+                                  description:
+                                      description.isEmpty ? null : description,
+                                  color: selectedColor.value,
+                                  imageURL: nextImageURL,
+                                ),
+                                editedByUserID: currentUserID,
+                              );
+
+                          popRouteSafely(
+                              navigator: navigator, route: sheetRoute);
+                        } catch (e) {
+                          // シート上の SnackBar は背後の Scaffold に描画されて
+                          // 見えないため、前面に出るグローバルトーストで通知する。
+                          showGlobalToast(e.toString(), title: null);
+                        } finally {
+                          // シートが既に dispose 済み(手動クローズ等)の場合に
+                          // 破棄済みの ValueNotifier へ書き込まないようガードする。
+                          if (context.mounted) {
+                            isSavingImage.value = false;
+                          }
+                        }
+                      },
+                child: isSavingImage.value
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('保存'),
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 12),
+            // 削除ボタン
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: colorScheme.error,
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (dialogContext) => AlertDialog(
+                      title: const Text('このアイテムを削除しますか？'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            analytics.logEvent(
+                                name: 'tap_confirm_delete_item',
+                                parameters: {
+                                  'groupID': groupID,
+                                  'itemID': textShoppingListItem.id
+                                });
+                            ref
+                                .read(groupDatabaseProvider(groupID: groupID))
+                                .shoppingListItemsReference(
+                                  shoppingListID:
+                                      textShoppingListItem.shoppingListID,
+                                )
+                                .doc(textShoppingListItem.id)
+                                .delete();
+                            Navigator.pop(dialogContext);
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            '削除',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(color: colorScheme.error),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(dialogContext);
+                          },
+                          child: const Text('キャンセル'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                child: const Text('削除'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
