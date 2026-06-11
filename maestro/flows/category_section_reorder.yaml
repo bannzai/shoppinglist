@@ -1,0 +1,131 @@
+appId: com.bannzai.shoppinglist
+---
+# カテゴリセクション並び替え (Issue #386)
+# 買い物リスト画面でセクションヘッダーを長押しドラッグすると、セクション(カテゴリ)単位で
+# 並び替えできることを確認する。
+#
+# テクニック:
+# - Maestro には長押し→ドラッグの専用コマンドが無いため、長押し判定(500ms)の間の移動量が
+#   タッチスロップ(18pt)内に収まる超低速 swipe (duration 10000ms) で長押しドラッグを再現する
+# - ReorderableList は各セクションを Semantics(container: true) で包むため、accessibility label
+#   は「ヘッダー名\nカウント\nアイテム…」に結合される。(?s) 付き regex で先頭一致させる
+# - iOS には back キーが無いため、戻りは左上シェブロンの座標タップで行う
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# --- セットアップ: カテゴリ2つ作成 ---
+# リスト設定 → グループ設定 → カテゴリ
+- tapOn: "リスト設定"
+- waitForAnimationToEnd
+- tapOn: "グループ設定"
+- waitForAnimationToEnd
+# AppCell の accessibility label は「カテゴリ\n自動分類のキーワード管理」(改行結合)
+- tapOn: "(?s)カテゴリ.*"
+- waitForAnimationToEnd
+
+# カテゴリ1: 乳製品 (キーワード: 牛乳)
+- tapOn: "カテゴリを追加"
+- waitForAnimationToEnd
+- assertVisible: "カテゴリ編集"
+- tapOn: "カテゴリ名を入力"
+- inputText: "乳製品"
+- pressKey: enter
+- waitForAnimationToEnd
+- tapOn: "キーワードを追加"
+- inputText: "牛乳"
+- tapOn:
+    text: "追加"
+    index: 0
+- waitForAnimationToEnd
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+
+# カテゴリ2: 肉 (キーワード: 牛肉) — カテゴリ一覧の FAB から追加
+- tapOn:
+    point: "90%,93%"
+- waitForAnimationToEnd
+- assertVisible: "カテゴリ編集"
+- tapOn: "カテゴリ名を入力"
+- inputText: "肉"
+- pressKey: enter
+- waitForAnimationToEnd
+- tapOn: "キーワードを追加"
+- inputText: "牛肉"
+- tapOn:
+    text: "追加"
+    index: 0
+- waitForAnimationToEnd
+
+# 買い物リスト画面へは再起動で戻る(シェブロン連打よりも安定するため)
+- launchApp
+- waitForAnimationToEnd
+
+# --- アイテム追加: 牛乳(乳製品) / 牛肉(肉) / ガムテープ(未分類) ---
+- tapOn: "タップで入力開始"
+- inputText: "牛乳"
+- pressKey: enter
+- inputText: "牛肉"
+- pressKey: enter
+- inputText: "ガムテープ"
+- pressKey: enter
+- hideKeyboard
+- waitForAnimationToEnd
+
+# 3セクション構成: 乳製品 → 肉 → 未分類 (上部に自動カテゴリ分けボタン)
+- assertVisible: "(?s)乳製品.*"
+- assertVisible: "(?s)肉.*"
+- assertVisible: "(?s)未分類.*"
+- takeScreenshot: screenshots/category_section_reorder_01_before
+
+# --- 並び替え1: 乳製品ヘッダーを肉セクションの下まで長押しドラッグ ---
+- swipe:
+    start: "30%, 21%"
+    end: "30%, 40%"
+    duration: 10000
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/category_section_reorder_02_after
+- assertVisible:
+    text: "(?s)乳製品.*"
+    below:
+      text: "(?s)肉.*"
+
+# --- 並び替え2: 肉ヘッダーを未分類の下までドラッグ → 未分類は末尾固定のため直前に収まる ---
+- swipe:
+    start: "30%, 21%"
+    end: "30%, 55%"
+    duration: 10000
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/category_section_reorder_03_clamp
+- assertVisible:
+    text: "(?s)肉.*"
+    below:
+      text: "(?s)乳製品.*"
+- assertVisible:
+    text: "(?s)未分類.*"
+    below:
+      text: "(?s)肉.*"
+
+# --- 未分類ヘッダーはドラッグできない(末尾固定のまま) ---
+- swipe:
+    start: "30%, 41%"
+    end: "30%, 10%"
+    duration: 10000
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/category_section_reorder_04_uncategorized_fixed
+- assertVisible:
+    text: "(?s)未分類.*"
+    below:
+      text: "(?s)肉.*"
+
+# --- 永続化: 再起動後も並び順(乳製品→肉→未分類)が保持されている ---
+- launchApp
+- waitForAnimationToEnd
+- assertVisible:
+    text: "(?s)肉.*"
+    below:
+      text: "(?s)乳製品.*"
+- assertVisible:
+    text: "(?s)未分類.*"
+    below:
+      text: "(?s)肉.*"
