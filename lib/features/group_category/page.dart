@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/group_category_edit/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
@@ -18,19 +19,27 @@ import 'package:shoppinglist/utils/purchase/purchase.dart';
 class GroupCategoryPage extends ConsumerWidget {
   final String groupID;
 
+  /// 非nullのとき「カテゴリ選択モード」。指定アイテムを既存カテゴリへ
+  /// 割り当てる目的で開かれており、行タップでアイテム名をそのカテゴリの
+  /// キーワードに追記してpopする。nullのときは従来どおり閲覧・管理のみ。
+  final GroupShoppingListItem? selectionForItem;
+
   const GroupCategoryPage({
     super.key,
     required this.groupID,
+    this.selectionForItem,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
+    final title = selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ';
 
     return axesAsync.when(
       data: (axes) {
         if (axes.isEmpty) {
           return _CategoryScaffold(
+            title: title,
             child: Center(
               child: OutlinedButton.icon(
                 onPressed: () {
@@ -56,12 +65,14 @@ class GroupCategoryPage extends ConsumerWidget {
           groupID: groupID,
           axis: axis,
           axes: axes,
+          selectionForItem: selectionForItem,
         );
       },
-      error: (e, st) =>
-          _CategoryScaffold(child: Center(child: Text(e.toString()))),
-      loading: () => const _CategoryScaffold(
-          child: Center(child: CircularProgressIndicator())),
+      error: (e, st) => _CategoryScaffold(
+          title: title, child: Center(child: Text(e.toString()))),
+      loading: () => _CategoryScaffold(
+          title: title,
+          child: const Center(child: CircularProgressIndicator())),
     );
   }
 
@@ -139,14 +150,15 @@ Future<void> _addCategoryAndNavigateToEdit({
 /// カテゴリ画面用の paper bg Scaffold（loading/error/empty 用）。
 class _CategoryScaffold extends StatelessWidget {
   final Widget child;
-  const _CategoryScaffold({required this.child});
+  final String title;
+  const _CategoryScaffold({required this.child, this.title = 'カテゴリ'});
   @override
   Widget build(BuildContext context) {
     final tokens = context.appTheme;
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
       appBar: AppBar(
-        title: const Text('カテゴリ'),
+        title: Text(title),
         backgroundColor: tokens.neutral.paper,
       ),
       body: child,
@@ -158,11 +170,13 @@ class _CategoryListBody extends HookConsumerWidget {
   final String groupID;
   final GroupCategoryAxis axis;
   final List<GroupCategoryAxis> axes;
+  final GroupShoppingListItem? selectionForItem;
 
   const _CategoryListBody({
     required this.groupID,
     required this.axis,
     required this.axes,
+    required this.selectionForItem,
   });
 
   @override
@@ -180,7 +194,7 @@ class _CategoryListBody extends HookConsumerWidget {
       data: (categories) => Scaffold(
         backgroundColor: tokens.neutral.paper,
         appBar: AppBar(
-          title: const Text('カテゴリ'),
+          title: Text(selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ'),
           backgroundColor: tokens.neutral.paper,
         ),
         body: categories.isEmpty
@@ -258,6 +272,7 @@ class _CategoryListBody extends HookConsumerWidget {
                       categories: categories,
                       selectedShoppingLocationID: selectedLocationID.value,
                       isPremium: isPremium,
+                      selectionForItem: selectionForItem,
                     ),
                   ),
                 ],
@@ -277,10 +292,12 @@ class _CategoryListBody extends HookConsumerWidget {
           child: const Icon(Icons.add),
         ),
       ),
-      error: (e, st) =>
-          _CategoryScaffold(child: Center(child: Text(e.toString()))),
-      loading: () => const _CategoryScaffold(
-          child: Center(child: CircularProgressIndicator())),
+      error: (e, st) => _CategoryScaffold(
+          title: selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ',
+          child: Center(child: Text(e.toString()))),
+      loading: () => _CategoryScaffold(
+          title: selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ',
+          child: const Center(child: CircularProgressIndicator())),
     );
   }
 }
@@ -291,6 +308,7 @@ class _CategoryReorderableList extends ConsumerWidget {
   final List<GroupCategory> categories;
   final String? selectedShoppingLocationID;
   final bool isPremium;
+  final GroupShoppingListItem? selectionForItem;
 
   const _CategoryReorderableList({
     required this.groupID,
@@ -298,6 +316,7 @@ class _CategoryReorderableList extends ConsumerWidget {
     required this.categories,
     required this.selectedShoppingLocationID,
     required this.isPremium,
+    required this.selectionForItem,
   });
 
   @override
@@ -369,6 +388,38 @@ class _CategoryReorderableList extends ConsumerWidget {
             category.color != null ? colorFromHex(category.color!) : null;
         return ListTile(
           key: ValueKey(category.id),
+          // 選択モード(selectionForItem != null)のときだけ行タップを有効化し、
+          // アイテム名をこのカテゴリの完全一致キーワードに追記してpopする。
+          // 非選択モードでは null のままで、従来どおり編集/削除ボタンのみ反応する。
+          onTap: selectionForItem == null
+              ? null
+              : () async {
+                  analytics.logEvent(
+                    name: 'select_category_for_item',
+                    parameters: {
+                      'groupID': groupID,
+                      'categoryID': category.id,
+                    },
+                  );
+                  try {
+                    await ref
+                        .read(groupCategoryKeywordAddProvider(groupID: groupID))
+                        .call(
+                          categoryAxisID: categoryAxisID,
+                          categoryID: category.id,
+                          keyword: selectionForItem!.message,
+                        );
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
+                    }
+                  }
+                },
           leading: Icon(
             categoryIconFromName(category.iconName),
             color: categoryColor,
