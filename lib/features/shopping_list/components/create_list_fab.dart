@@ -17,16 +17,14 @@ import 'package:shoppinglist/utils/logger/analytics.dart';
 /// 買い物リストアイコンに + バッジを重ねた合成アイコン([_AddListIcon])の白地円形ボタンで、
 /// accent 塗りのアイテム追加 FAB と役割の違いを見せる。
 ///
-/// タップで以下を連鎖し、「新しい買い物を始める」をワンタップにする:
-/// 1. リストを作成（名前は日付の自動命名。`ShoppingListAdd` 参照）
-/// 2. 作成したリストへ表示を切り替え
-/// 3. 空アイテムを 1 件追加（入力行の auto-focus 機構でそのままキーボード入力に入れる。
-///    `TextShoppingListItemWidget` 参照）
-///
-/// 長押しで以下 3 アクションのメニューを上方向に展開する（`ExpandableFab` と同じ操作系）:
-/// - 今日の日付でリストを追加（タップと同じ連鎖）
+/// タップで以下 3 アクションのメニューを上方向に展開する（`ExpandableFab` と同じ展開機構）:
+/// - 今日の日付でリストを追加（リスト作成 → 表示切替 → 空アイテム 1 件追加まで連鎖し、
+///   入力行の auto-focus 機構でそのままキーボード入力に入れる。
+///   `ShoppingListAdd` / `TextShoppingListItemWidget` 参照）
 /// - 現在のリストを複製（全アイテムを引き継ぐ）
 /// - 未チェックのみ引き継いで複製（チェック済みアイテムは引き継がない）
+///
+/// 展開中（x 状態）にもう一度タップするとメニューを閉じる。
 class CreateListFab extends HookConsumerWidget {
   final String groupID;
 
@@ -179,20 +177,11 @@ class CreateListFab extends HookConsumerWidget {
             shape: const CircleBorder(),
             child: InkWell(
               customBorder: const CircleBorder(),
-              onLongPress: isCreating.value || appUser == null
-                  ? null
-                  : () {
-                      HapticFeedback.mediumImpact();
-                      analytics.logEvent(
-                        name: 'long_press_open_create_list_menu',
-                        parameters: {'groupID': groupID},
-                      );
-                      open.value = true;
-                    },
+              // タップでメニューを開閉する。展開中（x 状態）なら閉じ、それ以外は展開する。
+              // リスト作成（今日の日付）はメニュー内の先頭アクションに集約している。
               onTap: isCreating.value || appUser == null
                   ? null
                   : () {
-                      // メニュー展開中（x 状態）のタップはリスト作成ではなく「閉じる」に倒す。
                       if (open.value) {
                         analytics.logEvent(
                           name: 'tap_close_create_list_menu',
@@ -201,16 +190,12 @@ class CreateListFab extends HookConsumerWidget {
                         close();
                         return;
                       }
+                      HapticFeedback.mediumImpact();
                       analytics.logEvent(
-                        name: 'tap_create_list_fab',
+                        name: 'tap_open_create_list_menu',
                         parameters: {'groupID': groupID},
                       );
-                      _createTodayList(
-                        context: context,
-                        ref: ref,
-                        appUser: appUser,
-                        isCreating: isCreating,
-                      );
+                      open.value = true;
                     },
               child: Center(
                 child: isCreating.value
