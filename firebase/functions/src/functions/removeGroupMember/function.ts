@@ -93,6 +93,11 @@ const removeGroupMemberFlow = ai.defineFlow(
           return;
         }
 
+        // Firestoreトランザクションは全てのreadを全てのwriteより前に実行する必要があるため、
+        // defaultGroupID判定に使う対象ユーザーのreadを書き込みより先に済ませる。
+        const userRef = firestore.collection("users").doc(targetUserID);
+        const userDoc = await transaction.get(userRef);
+
         transaction.update(groupRef, {
           memberUserIDs: admin.firestore.FieldValue.arrayRemove(targetUserID),
           updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
@@ -106,8 +111,6 @@ const removeGroupMemberFlow = ai.defineFlow(
         transaction.delete(profileRef);
 
         // 対象ユーザーの defaultGroupID が当該グループの場合はnullに更新
-        const userRef = firestore.collection("users").doc(targetUserID);
-        const userDoc = await transaction.get(userRef);
         if (userDoc.exists) {
           const userData = userDoc.data();
           if (userData?.defaultGroupID === groupID) {
