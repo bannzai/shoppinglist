@@ -6,7 +6,7 @@ part 'group_shopping_list.g.dart';
 part 'group_shopping_list.freezed.dart';
 
 /// 無料ユーザーのグループあたりアクティブリスト数上限。
-const int freeGroupActiveShoppingListLimit = 5;
+const int freeGroupActiveShoppingListLimit = 20;
 
 abstract class GroupShoppingListFirestoreKeys {
   static const createdDateTime = 'createdDateTime';
