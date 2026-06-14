@@ -46,7 +46,7 @@ firebase/ ディレクトリ配下についてです。主にbackendで動くFir
 Firebase Functions の規約です
 - 原則: onDocumentCreated,onDocumentUpdated によるトリガーによる処理を禁止します。コードがトレースしにくくなり、思わぬタイミングで発動してしまうのでコントロールがむず痒いためです
 - 原則: クライアントから呼ぶ Functions は GenKit を使用して定義します
-- Deployはユーザーが行うので禁止
+- Deployはユーザーが行うので禁止。ただしユーザーに deploy を依頼する際は、実行すべき deploy コマンド（対象関数を絞ったもの・実行ディレクトリ込み）を必ず提示すること
 
 ### コーディング規約
 - Entityのフィールド名は省略せず、長くても実態がわかる名前をつける（例: `categoryID` ではなく `groupShoppingListItemCategoryID`）

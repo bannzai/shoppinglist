@@ -161,29 +161,6 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     }
   }
 
-  /// サーバー側で上限チェックを行った上で買い物リストを作成する。
-  Future<String> createShoppingList({
-    required String groupID,
-    required String createUserID,
-    required String? shoppingLocationID,
-    required String? duplicatedFromGroupShoppingListID,
-  }) async {
-    final result = await httpsCallable('createShoppingList').call(
-      {
-        'groupID': groupID,
-        'createUserID': createUserID,
-        'shoppingLocationID': shoppingLocationID,
-        'duplicatedFromGroupShoppingListID': duplicatedFromGroupShoppingListID,
-      },
-    );
-    debugPrint('createShoppingList.result: ${result.data}');
-    final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
-    return response['data']['shoppingListID'] as String;
-  }
-
   /// サーバー側で上限チェックを行った上でグループを作成する。
   /// `iconName` は `design_handoff_shoppinglist/preview/screens-groups.jsx#GroupCreatePage`
   /// で許容される 6 種 (home/cart/fork/cookie/pets/bag) のいずれか。

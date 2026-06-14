@@ -3,41 +3,21 @@ appId: com.bannzai.shoppinglist
 - runFlow: shared/anonymous_sign_in.yaml
 
 # 1個目のリストは初期作成済み（anonymous_sign_inで作成される）
-# 残り4個を追加して合計5個にする
+# 残り19個を追加して合計20個（freeGroupActiveShoppingListLimit）にする
+- repeat:
+    times: 19
+    commands:
+      - tapOn: "メニュー"
+      - tapOn: "買い物リストを追加"
+      - waitForAnimationToEnd
+      - tapOn: "買い物リストを追加"
+      - waitForAnimationToEnd
 
-# 2個目
-- tapOn: "メニュー"
-- tapOn: "買い物リストを追加"
-- waitForAnimationToEnd
-- tapOn: "買い物リストを追加"
-- waitForAnimationToEnd
-
-# 3個目
-- tapOn: "メニュー"
-- tapOn: "買い物リストを追加"
-- waitForAnimationToEnd
-- tapOn: "買い物リストを追加"
-- waitForAnimationToEnd
-
-# 4個目
-- tapOn: "メニュー"
-- tapOn: "買い物リストを追加"
-- waitForAnimationToEnd
-- tapOn: "買い物リストを追加"
-- waitForAnimationToEnd
-
-# 5個目
-- tapOn: "メニュー"
-- tapOn: "買い物リストを追加"
-- waitForAnimationToEnd
-- tapOn: "買い物リストを追加"
-- waitForAnimationToEnd
-
-# 6個目を複製で試みる（上限超過） — SnackBarが表示されるはず
+# 21個目を複製で試みる（上限超過） — SnackBarが表示されるはず
 - tapOn: "メニュー"
 - tapOn: "買い物リストを追加"
 - waitForAnimationToEnd
 - tapOn: "現在の買い物リストを複製"
 - waitForAnimationToEnd
-- assertVisible: "無料プランでは1グループあたり5個までリストを作成できます。プレミアムにアップグレードすると無制限に作成できます"
+- assertVisible: "無料プランでは1グループあたり20個までリストを作成できます。プレミアムにアップグレードすると無制限に作成できます"
 - takeScreenshot: screenshots/shopping_list_limit_duplicate_01_exceeded

@@ -65,13 +65,6 @@ if (
 
 if (
   !process.env.FUNCTION_NAME ||
-  process.env.FUNCTION_NAME === "createShoppingList"
-) {
-  exports.createShoppingList = require("./functions/createShoppingList/function");
-}
-
-if (
-  !process.env.FUNCTION_NAME ||
   process.env.FUNCTION_NAME === "createGroup"
 ) {
   exports.createGroup = require("./functions/createGroup/function");
