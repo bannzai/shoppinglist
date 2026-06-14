@@ -9,6 +9,7 @@ import {
   slackBotToken,
   slackInquiryChannelID,
   postSlackMessage,
+  uploadFileToSlackThread,
 } from "../utils/slack";
 import {
   InquiryCategorySchema,
@@ -100,13 +101,28 @@ const submitInquiryFlow = ai.defineFlow(
       // Slack 通知。失敗してもお問い合わせ保存自体は成立させ、結果は slackNotified に記録する。
       let slackNotified = false;
       try {
-        await postSlackMessage({
+        const threadTs = await postSlackMessage({
           token: slackBotToken.value(),
           channel: slackInquiryChannelID.value(),
           text: buildInquirySlackText(inquiry),
           blocks: buildInquirySlackBlocks(inquiry),
         });
         slackNotified = true;
+        // スナップショットをスレッドにファイル添付する(復元コマンド --file の入力に使える)。
+        // 添付失敗は通知本体の成否に影響させないため握りつぶしてログのみ残す。
+        if (snapshotJson && threadTs) {
+          try {
+            await uploadFileToSlackThread({
+              token: slackBotToken.value(),
+              channel: slackInquiryChannelID.value(),
+              threadTs,
+              filename: `inquiry_snapshot_${inquiryRef.id}.json`,
+              content: snapshotJson,
+            });
+          } catch (error) {
+            logger.error("uploadFileToSlackThread failed", error);
+          }
+        }
       } catch (error) {
         logger.error("postSlackMessage failed", error);
       }

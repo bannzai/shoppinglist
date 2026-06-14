@@ -45,3 +45,79 @@ export async function postSlackMessage(args: {
   }
   return result.ts ?? "";
 }
+
+/** files.getUploadURLExternal のレスポンス(参照するフィールドのみ)。 */
+interface SlackUploadURLResponse {
+  ok: boolean;
+  error?: string;
+  upload_url?: string;
+  file_id?: string;
+}
+
+/** Slack の指定スレッドへテキストファイルを添付する(3ステップアップロード)。
+ * files:write スコープが必要。スナップショット JSON 等の添付に使う。 */
+export async function uploadFileToSlackThread(args: {
+  token: string;
+  channel: string;
+  threadTs: string;
+  filename: string;
+  content: string;
+}): Promise<void> {
+  // 1. アップロード URL とファイル ID を取得する。
+  const getUrlResponse = await fetch(
+    `${SLACK_API_BASE}/files.getUploadURLExternal`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${args.token}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        filename: args.filename,
+        length: String(Buffer.byteLength(args.content, "utf8")),
+      }),
+    }
+  );
+  const getUrlResult = (await getUrlResponse.json()) as SlackUploadURLResponse;
+  if (!getUrlResult.ok || !getUrlResult.upload_url || !getUrlResult.file_id) {
+    throw new Error(
+      `Slack files.getUploadURLExternal error: ${getUrlResult.error ?? "unknown"}`
+    );
+  }
+
+  // 2. 取得した URL へファイル本体を POST する。
+  const uploadResponse = await fetch(getUrlResult.upload_url, {
+    method: "POST",
+    headers: { "Content-Type": "application/octet-stream" },
+    body: args.content,
+  });
+  if (!uploadResponse.ok) {
+    throw new Error(`Slack file upload failed: ${uploadResponse.status}`);
+  }
+
+  // 3. アップロードを完了し、指定スレッドへ共有する。
+  const completeResponse = await fetch(
+    `${SLACK_API_BASE}/files.completeUploadExternal`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${args.token}`,
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify({
+        files: [{ id: getUrlResult.file_id, title: args.filename }],
+        channel_id: args.channel,
+        thread_ts: args.threadTs,
+      }),
+    }
+  );
+  const completeResult = (await completeResponse.json()) as {
+    ok: boolean;
+    error?: string;
+  };
+  if (!completeResult.ok) {
+    throw new Error(
+      `Slack files.completeUploadExternal error: ${completeResult.error ?? "unknown"}`
+    );
+  }
+}
