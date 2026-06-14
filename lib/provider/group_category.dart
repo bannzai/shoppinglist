@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shoppinglist/utils/firestore/firestore.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_category_keyword.dart';
@@ -174,7 +175,7 @@ class GroupCategoryBatchUpdate {
     required String categoryAxisID,
     required List<GroupCategory> categories,
   }) async {
-    final batch = FirebaseFirestore.instance.batch();
+    final batch = firestore.batch();
 
     for (final category in categories) {
       final docRef = database.categoryReference(
@@ -212,7 +213,7 @@ class GroupCategoryKeywordAdd {
   }) async {
     final docRef = database.categoryReference(
         categoryAxisID: categoryAxisID, categoryID: categoryID);
-    await FirebaseFirestore.instance.runTransaction((transaction) async {
+    await firestore.runTransaction((transaction) async {
       final snapshot = await transaction.get(docRef);
       final current = snapshot.data();
       if (current == null) {
@@ -335,7 +336,7 @@ class AICategorizeApply {
           categoryAxisID: axisID, categoryID: categoryByName[entry.key]!.id);
       // 同時編集でキーワードが消えないよう read-modify-write を transaction で行う
       // （firestore-transaction.md: group 配下の同時書き込み対策）。
-      await FirebaseFirestore.instance.runTransaction((transaction) async {
+      await firestore.runTransaction((transaction) async {
         final snapshot = await transaction.get(docRef);
         final current = snapshot.data();
         if (current == null) {
@@ -416,7 +417,7 @@ class MoveItemCategoryKeyword {
   }) async {
     // group 配下の同時書き込みでキーワードが失われないよう transaction で read-modify-write する
     // (firestore-transaction.md)。
-    await FirebaseFirestore.instance.runTransaction((transaction) async {
+    await firestore.runTransaction((transaction) async {
       // transaction の制約により read を全て先に行う。
       final currentByCategoryID = <String, GroupCategory>{};
       for (final category in categories) {

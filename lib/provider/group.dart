@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shoppinglist/utils/firestore/firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/entity/group.dart';
@@ -19,7 +20,7 @@ class GroupNameUpdate {
 
   Future<void> call({required String name}) async {
     final docRef = database.groupReference();
-    await FirebaseFirestore.instance.runTransaction((transaction) async {
+    await firestore.runTransaction((transaction) async {
       final snapshot = await transaction.get(docRef);
       final currentGroup = snapshot.data()!;
       transaction.set(

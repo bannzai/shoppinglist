@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shoppinglist/utils/firestore/firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -33,7 +34,7 @@ FutureOr<void> homeWidgetBackgroundCallback(Uri? uri) async {
         ? GroupShoppingListItemStatus.unchecked
         : GroupShoppingListItemStatus.checked;
 
-    final docRef = FirebaseFirestore.instance
+    final docRef = firestore
         .collection('/groups/$groupID/shoppingLists/$shoppingListID/items')
         .doc(itemID);
     await docRef.set({'status': newStatus.name}, SetOptions(merge: true));
