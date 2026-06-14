@@ -8,6 +8,7 @@ import 'package:shoppinglist/features/group_setting/page.dart';
 import 'package:shoppinglist/features/group_category_edit/page.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/home/page.dart';
+import 'package:shoppinglist/features/inquiry/page.dart';
 import 'package:shoppinglist/features/onboarding/page.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/previews/screens/ai_categorize_preview_sheet_preview.dart';
@@ -50,6 +51,10 @@ final _previewEntries = <_PreviewEntry>[
   _PreviewEntry(
     title: 'SettingPage',
     builder: (_) => const SettingPage(),
+  ),
+  _PreviewEntry(
+    title: 'InquiryPage',
+    builder: (_) => const InquiryPage(),
   ),
   _PreviewEntry(
     title: 'GroupListPage',
