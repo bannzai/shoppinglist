@@ -32,6 +32,11 @@ class InquiryPage extends HookConsumerWidget {
     final isSubmitting = useState(false);
     final errorMessage = useState<String?>(null);
 
+    // 入力欄の変更で送信ボタンの活性状態を再評価するため、コントローラを購読して
+    // テキスト変更のたびに build を走らせる。
+    useListenable(emailController);
+    useListenable(contentController);
+
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
 
@@ -86,6 +91,12 @@ class InquiryPage extends HookConsumerWidget {
         isSubmitting.value = false;
       }
     }
+
+    // 必須項目(メールアドレス・種類・内容)が未入力の間は送信ボタンを無効にする。
+    // メール形式の不正は「未入力」ではないので submit() 内でチェックする。
+    final isFormFilled = emailController.text.trim().isNotEmpty &&
+        contentController.text.trim().isNotEmpty &&
+        selectedCategory.value != null;
 
     return Scaffold(
       backgroundColor: neutral.paper,
@@ -206,7 +217,8 @@ class InquiryPage extends HookConsumerWidget {
                   variant: AppPillVariant.accent,
                   large: true,
                   expanded: true,
-                  onPressed: isSubmitting.value ? null : submit,
+                  onPressed:
+                      (isSubmitting.value || !isFormFilled) ? null : submit,
                   icon: null,
                 ),
               ),

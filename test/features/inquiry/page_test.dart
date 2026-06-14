@@ -39,13 +39,29 @@ void main() {
     );
   });
 
-  testWidgets('未入力で送信してもバリデーションで画面に留まる', (tester) async {
+  testWidgets('必須項目が未入力のとき送信ボタンは無効(onPressed=null)', (tester) async {
     await _pumpInquiryPage(tester);
 
-    await tester.tap(find.byType(AppPill));
+    expect(tester.widget<AppPill>(find.byType(AppPill)).onPressed, isNull);
+  });
+
+  testWidgets('メール・内容・種類が揃うと送信ボタンが有効になる', (tester) async {
+    await _pumpInquiryPage(tester);
+
+    // メール(先頭の TextField)と内容(末尾の TextField)を入力する。
+    await tester.enterText(find.byType(TextField).first, 'test@example.com');
+    await tester.enterText(find.byType(TextField).last, 'テスト内容');
+    // カテゴリ選択(Wrap 内の先頭チップ)をタップする。
+    await tester.tap(
+      find
+          .descendant(
+            of: find.byType(Wrap),
+            matching: find.byType(GestureDetector),
+          )
+          .first,
+    );
     await tester.pump();
 
-    // 送信(Functions 呼び出し)へ進まず、画面に留まる(Navigator.pop されない)。
-    expect(find.byType(InquiryPage), findsOneWidget);
+    expect(tester.widget<AppPill>(find.byType(AppPill)).onPressed, isNotNull);
   });
 }
