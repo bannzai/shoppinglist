@@ -1,0 +1,45 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "shoppinglist(dev)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--debug",
+        "--dart-define=SHOPPINGLIST_DEVELOPER_TOKEN=${env:SHOPPINGLIST_DEVELOPER_TOKEN}",
+        "--dart-define=REVENUECAT_TEST_STORE_API_KEY=${env:REVENUECAT_TEST_STORE_API_KEY}"
+      ]
+    },
+    {
+      "name": "shoppinglist(dev, development DB)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--debug",
+        "--dart-define=SHOPPINGLIST_DEVELOPER_TOKEN=${env:SHOPPINGLIST_DEVELOPER_TOKEN}",
+        "--dart-define=REVENUECAT_TEST_STORE_API_KEY=${env:REVENUECAT_TEST_STORE_API_KEY}",
+        "--dart-define=FIRESTORE_DATABASE_ID=development"
+      ]
+    },
+    {
+      "name": "shoppinglist (profile mode)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "shoppinglist (release mode)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "release"
+    }
+  ]
+}
