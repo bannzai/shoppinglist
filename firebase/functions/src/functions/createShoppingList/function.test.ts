@@ -251,10 +251,10 @@ describe("createShoppingList", () => {
       return {};
     });
 
-    // transaction.get: activeリスト5件（上限到達）
+    // transaction.get: activeリスト20件（上限到達）
     mockTransactionGet.mockImplementation((queryOrRef: any) => {
       if (queryOrRef === mockActiveQuery) {
-        return Promise.resolve({ size: 5 });
+        return Promise.resolve({ size: 20 });
       }
       return Promise.resolve({ size: 0 });
     });
@@ -262,7 +262,7 @@ describe("createShoppingList", () => {
     const result = await capturedFlowFn(defaultInput);
 
     expect(result.result).toBe("NG");
-    expect(result.error.message).toContain("5個まで");
+    expect(result.error.message).toContain("20個まで");
   });
 
   test("正常系: プレミアムユーザーは上限を超えても作成できる", async () => {

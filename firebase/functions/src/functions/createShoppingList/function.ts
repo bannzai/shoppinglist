@@ -15,7 +15,7 @@ import {
 } from "../../entity/response";
 
 /// 無料ユーザーのグループあたりアクティブリスト数上限。
-const FREE_GROUP_ACTIVE_SHOPPING_LIST_LIMIT = 5;
+const FREE_GROUP_ACTIVE_SHOPPING_LIST_LIMIT = 20;
 
 /// グループデータの型定義。
 interface GroupData {
