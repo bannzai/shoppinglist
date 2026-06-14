@@ -102,6 +102,7 @@ function setupFirestoreMocks(aiUsageRef: any) {
 }
 
 import { EventEmitter } from "node:events";
+import * as https from "node:https";
 
 /** node:https.request のモックレスポンスを構築するヘルパー。 */
 function setupHttpsRequestMock(overrides: {
@@ -549,5 +550,41 @@ describe("generateShoppingListItemsFromURL", () => {
         (item: string) => item.length > 0 && item.length <= 100
       )
     ).toBe(true);
+  });
+
+  test("回帰: lookupコールバックが autoSelectFamily(all:true) でも有効なアドレスを返す", async () => {
+    mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
+    mockLookup.mockResolvedValue({ address: "93.184.216.34" });
+
+    const aiUsageRef = { id: "aiUsageRef" };
+    setupTransactionMock(aiUsageRef, {
+      exists: true,
+      data: { urlRecognitionCount: 0 },
+    });
+
+    // safeFetchHTML が new https.Agent({ lookup }) に渡す lookup 関数をキャプチャする
+    let capturedLookup:
+      | ((hostname: string, options: any, callback: any) => void)
+      | undefined;
+    (https.Agent as unknown as jest.Mock).mockImplementation((opts: any) => {
+      capturedLookup = opts?.lookup;
+      return { destroy: jest.fn() };
+    });
+
+    await capturedFlowFn({ url: "https://example.com/recipe" });
+
+    expect(capturedLookup).toBeDefined();
+
+    // Node.js 20+ の autoSelectFamily では all:true で呼ばれ LookupAddress[] を期待する
+    const allCallback = jest.fn();
+    capturedLookup!("example.com", { all: true }, allCallback);
+    expect(allCallback).toHaveBeenCalledWith(null, [
+      { address: "93.184.216.34", family: 4 },
+    ]);
+
+    // all:false では従来通り単一アドレス形式を返す
+    const singleCallback = jest.fn();
+    capturedLookup!("example.com", { all: false }, singleCallback);
+    expect(singleCallback).toHaveBeenCalledWith(null, "93.184.216.34", 4);
   });
 });

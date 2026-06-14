@@ -298,4 +298,61 @@ describe("removeGroupMember", () => {
       "オーナーが設定されていないグループでは操作できません"
     );
   });
+
+  test("回帰: トランザクション内で全read→全writeの順序を守る（read-after-write違反を起こさない）", async () => {
+    mockCurrentContext.mockReturnValue({ auth: { uid: "owner-user" } });
+
+    const mockGroupRef = {
+      get: jest.fn().mockResolvedValue({
+        exists: true,
+        data: () => ({
+          ownerUserID: "owner-user",
+          memberUserIDs: ["owner-user", "target-user"],
+        }),
+      }),
+      collection: jest.fn().mockReturnValue({
+        doc: jest.fn().mockReturnValue({ id: "profile-doc" }),
+      }),
+    };
+    const mockUserRef = {
+      get: jest.fn().mockResolvedValue({
+        exists: true,
+        data: () => ({ defaultGroupID: "group-1" }),
+      }),
+    };
+    mockCollection.mockImplementation((path: string) => {
+      if (path === "groups") return { doc: jest.fn(() => mockGroupRef) };
+      if (path === "users") return { doc: jest.fn(() => mockUserRef) };
+      return {};
+    });
+
+    // 本物のFirestoreの制約を再現: 1つでもwriteした後にreadを呼んだらthrowする
+    mockRunTransaction.mockImplementation(async (fn: any) => {
+      let hasWritten = false;
+      const mockTransaction = {
+        get: jest.fn((ref: any) => {
+          if (hasWritten) {
+            throw new Error(
+              "Firestore transactions require all reads to be executed before all writes."
+            );
+          }
+          return ref.get();
+        }),
+        update: jest.fn(() => {
+          hasWritten = true;
+        }),
+        delete: jest.fn(() => {
+          hasWritten = true;
+        }),
+      };
+      return fn(mockTransaction);
+    });
+
+    const result = await capturedFlowFn({
+      groupID: "group-1",
+      targetUserID: "target-user",
+    });
+
+    expect(result.result).toBe("OK");
+  });
 });

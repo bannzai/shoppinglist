@@ -115,9 +115,16 @@ async function safeFetchHTML({
 }): Promise<{ ok: true; html: string } | { ok: false; error: string }> {
   return new Promise((resolve) => {
     const agent = new https.Agent({
-      lookup: (_hostname, _options, callback) => {
-        // DNS Rebinding対策: 事前解決済みIPを強制使用し、再度の名前解決を防ぐ
-        callback(null, resolvedIP, resolvedIP.includes(":") ? 6 : 4);
+      lookup: (_hostname, options, callback) => {
+        // DNS Rebinding対策: 事前解決済みIPを強制使用し、再度の名前解決を防ぐ。
+        // Node.js 20+ では autoSelectFamily がデフォルト有効で lookup が all:true で呼ばれ、
+        // コールバックは LookupAddress[] を期待する。all:false の単一形式と両方に対応する。
+        const family = resolvedIP.includes(":") ? 6 : 4;
+        if (options.all) {
+          callback(null, [{ address: resolvedIP, family }]);
+        } else {
+          callback(null, resolvedIP, family);
+        }
       },
     });
 
