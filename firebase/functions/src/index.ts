@@ -118,3 +118,10 @@ if (
 ) {
   exports.categorizeShoppingListItems = require("./functions/categorizeShoppingListItems/function");
 }
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "submitInquiry"
+) {
+  exports.submitInquiry = require("./functions/submitInquiry/function");
+}

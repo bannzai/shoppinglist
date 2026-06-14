@@ -44,6 +44,12 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // お問い合わせ: クライアントから直接 read/write しない (submitInquiry Function の Admin SDK 経由のみ)。
+    // ユーザーデータのスナップショットを含むため、本人にも直接読ませない。
+    match /inquiries/{inquiryID} {
+      allow read, write: if false;
+    }
+
     match /groups/{groupID} {
       allow read, update, delete: if isMember(resource.data.memberUserIDs);
       // グループ作成は Cloud Functions (createGroup) 経由でのみ許可する
