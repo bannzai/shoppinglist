@@ -1,16 +1,16 @@
 appId: com.bannzai.shoppinglist
 ---
-# プレミアム状態では 1 グループあたり 6 個目以降のリストも作成できることを確認する。
-# non_premium では 6 個目で SnackBar「無料プランでは 5 個まで」で遮断される。
+# プレミアム状態では 1 グループあたり 21 個目以降のリストも作成できることを確認する。
+# non_premium では 21 個目で SnackBar「無料プランでは 20 個まで」で遮断される。
 
 - runFlow: shared/anonymous_sign_in.yaml
 - runFlow: shared/grant_premium_via_debug.yaml
 
-# 6 個のリストを連続追加する（non_premium では 6 個目で block される）
+# 21 個のリストを連続追加する（初期 1 個と合わせ 22 個。non_premium では 21 個目で block される）
 # メニュー → 「買い物リストを追加」（PopupMenuItem）→ BottomSheet 表示 →
 # BottomSheet 内の「買い物リストを追加」ListTile で名前なしリストを作成する。
 - repeat:
-    times: 6
+    times: 21
     commands:
       - tapOn: "メニュー"
       - waitForAnimationToEnd
@@ -22,6 +22,6 @@ appId: com.bannzai.shoppinglist
       - waitForAnimationToEnd
 
 # non_premium 時の上限 SnackBar が出ないこと
-- assertNotVisible: "無料プランでは1グループあたり5個までリストを作成できます"
+- assertNotVisible: "無料プランでは1グループあたり20個までリストを作成できます"
 
 - takeScreenshot: screenshots/premium_shopping_list_limit_unlocked
