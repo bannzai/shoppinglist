@@ -303,6 +303,51 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
       throw Exception(response['error']['message']);
     }
   }
+
+  /// レシート画像をFirebase Storageにアップロードし、ダウンロードURLを返す。
+  Future<String> uploadReceiptImage({
+    required String groupID,
+    required String shoppingListID,
+    required String receiptID,
+    required String mimeType,
+    required String base64Image,
+  }) async {
+    final result = await httpsCallable('uploadReceiptImage').call(
+      {
+        'groupID': groupID,
+        'shoppingListID': shoppingListID,
+        'receiptID': receiptID,
+        'mimeType': mimeType,
+        'base64Image': base64Image,
+      },
+    );
+    // token付きURLを含む可能性があるためresult.dataはログ出力しない
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+    return response['data']['imageURL'] as String;
+  }
+
+  /// レシート画像をFirebase Storageから削除する。
+  Future<void> deleteReceiptImage({
+    required String groupID,
+    required String shoppingListID,
+    required String receiptID,
+  }) async {
+    final result = await httpsCallable('deleteReceiptImage').call(
+      {
+        'groupID': groupID,
+        'shoppingListID': shoppingListID,
+        'receiptID': receiptID,
+      },
+    );
+    debugPrint('deleteReceiptImage.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+  }
 }
 
 // Map<String, dynamic>.fromだけだとネストした子要素が_Map<Object? Object?>のままになる
