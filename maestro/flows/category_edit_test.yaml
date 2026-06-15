@@ -50,3 +50,11 @@ appId: com.bannzai.shoppinglist
     point: "20%,50%"
 - waitForAnimationToEnd
 - takeScreenshot: screenshots/category_edit_icon_set
+
+# --- 自動保存（画面離脱）テスト ---
+# 「完了」を押さず戻っても、入力したカテゴリ名が一覧に反映されている
+# （useOnDisappear による画面離脱時の自動保存を検証）
+- tapOn:
+    point: "8%,8%"
+- waitForAnimationToEnd
+- assertVisible: "テスト用"
