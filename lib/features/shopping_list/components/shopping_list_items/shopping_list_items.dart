@@ -177,9 +177,12 @@ class _FlatShoppingListItems extends ConsumerWidget {
           shoppingListItems: shoppingListItems,
           // 空の入力行はドラッグ対象外にする(GlobalKey の proxy 二重化回避 + 空行の並べ替えは無意味)。
           reorderIndex: isInputRow ? null : index,
-          // フラット表示はカテゴリ未作成 or 軸ロード中で全アイテムが未分類。確定済み行に
-          // 「カテゴリ +」を出し、タップでカテゴリ選択(無ければ作成)へ誘導する。
-          showAddCategoryButton: item.message.trim().isNotEmpty,
+          // 「カテゴリ +」はカテゴリ不在が確定したフラット表示(showCategorizeButton=true)
+          // でのみ出す。カテゴリ軸/一覧のロード中フォールバックでは出さない — 既存カテゴリが
+          // あるリストでも一時的に全行がフラット表示されるため、その間に分類済みアイテムへ
+          // チップを出すと誤って別カテゴリへ割り当てられてしまう。
+          showAddCategoryButton:
+              showCategorizeButton && item.message.trim().isNotEmpty,
         );
       },
     );

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,6 +24,9 @@ import 'package:shoppinglist/style/tokens.dart';
 /// カテゴリ軸なしテスト用のグループID。previewProviderOverrides が override 済みの
 /// mockGroupID（軸あり）と重複 override しないよう専用IDにする。
 const _noCategoryAxisGroupID = 'no-category-axis-group';
+
+/// カテゴリ軸ロード中(AsyncLoading)フォールバックのテスト用グループID。
+const _loadingGroupID = 'loading-category-axis-group';
 
 /// カテゴリ軸あり（previewProviderOverrides のデフォルト）で ShoppingListItems を pump する。
 Future<void> _pump(WidgetTester tester) async {
@@ -397,6 +402,44 @@ void main() {
         find.byType(AddCategoryChip),
         findsNWidgets(mockShoppingListItems().length),
       );
+    });
+
+    testWidgets('カテゴリ軸ロード中のフォールバックではチップを出さない', (tester) async {
+      // 軸が未確定(ロード中)の間は _FlatShoppingListItems がフォールバック表示される。
+      // 既存カテゴリがあるリストでも一時的に全行がフラット表示されるため、分類済みアイテムへの
+      // 誤割り当てを防ぐ目的でチップは出さない(カテゴリ不在が確定したときのみ出す)。
+      // ignore: invalid_use_of_visible_for_testing_member
+      SharedPreferences.setMockInitialValues({});
+      final sharedPreferences = await SharedPreferences.getInstance();
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            ...previewProviderOverrides(sharedPreferences: sharedPreferences),
+            // never-emit のストリームで軸を AsyncLoading に固定する。
+            groupCategoryAxesProvider(groupID: _loadingGroupID).overrideWith(
+              (ref) => StreamController<List<GroupCategoryAxis>>().stream,
+            ),
+            textShoppingListItemsProvider(
+              groupID: _loadingGroupID,
+              shoppingListID: mockShoppingListID,
+            ).overrideWith((ref) => Stream.value(mockShoppingListItems())),
+          ],
+          child: MaterialApp(
+            theme: buildAppTheme(accent: AccentPreset.shu),
+            home: Scaffold(
+              body: ShoppingListItems(
+                groupID: _loadingGroupID,
+                shoppingListID: mockShoppingListID,
+                shoppingLocationID: null,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      // ロード中フォールバックでアイテム行は出るが、チップは出ない。
+      expect(find.byType(TextShoppingListItemWidget), findsWidgets);
+      expect(find.byType(AddCategoryChip), findsNothing);
     });
   });
 
