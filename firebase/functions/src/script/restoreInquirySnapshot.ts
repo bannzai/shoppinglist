@@ -13,12 +13,15 @@ import { SnapshotEntry, restoreSnapshot } from "../entity/snapshot";
  *   GOOGLE_APPLICATION_CREDENTIALS=secret/GOOGLE_APPLICATION_CREDENTIALS.json \
  *     npm run script-restore-inquiry-snapshot -- <inquiryID> [--apply]
  *
- *   # Slack からダウンロードしたスナップショット JSON ファイルから復元
+ *   # Slack からダウンロードしたスナップショット JSON ファイルから、別 uid に載せ替えて復元
  *   GOOGLE_APPLICATION_CREDENTIALS=secret/GOOGLE_APPLICATION_CREDENTIALS.json \
- *     npm run script-restore-inquiry-snapshot -- --file ./inquiry_snapshot_xxx.json [--apply]
+ *     npm run script-restore-inquiry-snapshot -- --file ./inquiry_snapshot_xxx.json \
+ *       --target-uid <devの匿名uid> [--apply]
  *
  * - 読み元: 問い合わせ ID 指定時は (default) データベースの inquiries/{id}.snapshotJson。
  *   --file 指定時はそのローカル JSON ファイル(Slack 添付をダウンロードしたもの)。
+ * - --target-uid: スナップショット内の元 uid を指定 uid に載せ替える。別端末(匿名サインインで
+ *   別 uid になる dev 端末)で本人視点として再現する用途。未指定なら元 uid のまま復元。
  * - 書き先: 既定で named database `development`(prod の (default) は汚さない)。--db で上書き可。
  * - 既定はドライラン(復元対象の一覧表示のみ)。--apply で実書き込み。set(merge:true) で冪等。
  * - 書き先が (default) の場合のみ ALLOW_PROD_RESTORE=true を要求する(本番誤爆防止)。
@@ -43,11 +46,13 @@ function parseArgs(argv: string[]): {
   filePath: string | null;
   apply: boolean;
   targetDatabase: string;
+  targetUid: string | null;
 } {
   let inquiryID: string | null = null;
   let filePath: string | null = null;
   let apply = false;
   let targetDatabase = DEFAULT_TARGET_DATABASE;
+  let targetUid: string | null = null;
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === "--apply") {
@@ -56,11 +61,36 @@ function parseArgs(argv: string[]): {
       filePath = argv[++i] ?? null;
     } else if (arg === "--db") {
       targetDatabase = argv[++i] ?? DEFAULT_TARGET_DATABASE;
+    } else if (arg === "--target-uid") {
+      targetUid = argv[++i] ?? null;
     } else if (!arg.startsWith("--") && inquiryID == null) {
       inquiryID = arg;
     }
   }
-  return { inquiryID, filePath, apply, targetDatabase };
+  return { inquiryID, filePath, apply, targetDatabase, targetUid };
+}
+
+/** スナップショット内の元 uid を target uid に載せ替える。
+ * users/{uid} エントリから元 uid を特定し、全 path とデータ(JSON)中の文字列を置換する。
+ * uid は一意な長い文字列なので単純な全文字列置換で誤爆しない。
+ * 別端末(匿名サインインで uid が変わる)で本人視点として再現するために使う。 */
+function remapUid(entries: SnapshotEntry[], targetUid: string): SnapshotEntry[] {
+  const userEntry = entries.find((entry) => /^users\/[^/]+$/.test(entry.path));
+  if (!userEntry) {
+    throw new Error(
+      "スナップショットに users/{uid} が無く uid 載せ替えできません"
+    );
+  }
+  const originalUid = userEntry.path.split("/")[1];
+  if (originalUid === targetUid) {
+    return entries;
+  }
+  return entries.map((entry) => ({
+    path: entry.path.split(originalUid).join(targetUid),
+    data: JSON.parse(
+      JSON.stringify(entry.data).split(originalUid).join(targetUid)
+    ) as Record<string, unknown>,
+  }));
 }
 
 /** 問い合わせ ID または JSON ファイルからスナップショット entries を取得する。 */
@@ -95,7 +125,7 @@ async function loadEntries(
 }
 
 async function main(): Promise<void> {
-  const { inquiryID, filePath, apply, targetDatabase } = parseArgs(
+  const { inquiryID, filePath, apply, targetDatabase, targetUid } = parseArgs(
     process.argv.slice(2)
   );
 
@@ -111,10 +141,13 @@ async function main(): Promise<void> {
 
   admin.initializeApp();
 
-  const entries = await loadEntries(inquiryID, filePath);
+  const rawEntries = await loadEntries(inquiryID, filePath);
+  const entries = targetUid ? remapUid(rawEntries, targetUid) : rawEntries;
   const source = filePath ? `file=${filePath}` : `inquiry=${inquiryID}`;
   console.log(
-    `${source} target_database=${targetDatabase} documents=${entries.length} apply=${apply}`
+    `${source} target_database=${targetDatabase} target_uid=${
+      targetUid ?? "(原本のまま)"
+    } documents=${entries.length} apply=${apply}`
   );
   for (const entry of entries) {
     console.log(`  ${entry.path}`);
