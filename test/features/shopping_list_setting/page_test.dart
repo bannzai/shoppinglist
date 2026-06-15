@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppinglist/components/primitives/app_cell.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/components/primitives/app_section_label.dart';
+import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/previews/mock/mock_provider_overrides.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
@@ -36,7 +37,7 @@ Future<void> _pumpPage(WidgetTester tester) async {
 }
 
 void main() {
-  testWidgets('design v2 6 セクション label が UPPERCASE で表示される', (tester) async {
+  testWidgets('design v2 セクション label が UPPERCASE で表示される', (tester) async {
     await _pumpPage(tester);
 
     // AppSectionLabel は `toUpperCase()` で大文字化されるため、検証側も大文字で照合する。
@@ -49,6 +50,7 @@ void main() {
         containsAll(<String>[
           'リスト名',
           '買い物する場所',
+          'カテゴリ',
           '保存期間',
           '通知',
           '共有',
@@ -93,5 +95,19 @@ void main() {
     // SSOT: screens-list-settings.jsx L55-61 (dangerSoft 背景 + danger 文字)
     expect(find.text('このリストを削除'), findsOneWidget);
     expect(find.byIcon(Icons.delete_outline), findsOneWidget);
+  });
+
+  testWidgets('カテゴリ Cell タップで GroupCategoryPage に遷移する', (tester) async {
+    await _pumpPage(tester);
+    final categoryCell = tester
+        .widgetList<AppCell>(find.byType(AppCell))
+        .where((c) => c.icon == Icons.category_outlined)
+        .firstOrNull;
+    expect(categoryCell, isNotNull, reason: 'カテゴリ Cell が AppCell として描画されているべき');
+
+    await tester.tap(find.byWidget(categoryCell!));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(GroupCategoryPage), findsOneWidget);
   });
 }
