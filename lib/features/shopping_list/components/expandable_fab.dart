@@ -50,6 +50,8 @@ class ExpandableFab extends HookConsumerWidget {
     // 画像/URL/カテゴリ分けはどれも同じ aIProcessingProvider・同じバナーを共有するため、
     // いずれかが実行中なら写真/URL アクションを無効化する。
     final isAIProcessing = ref.watch(aIProcessingProvider) != null;
+    // 状態 Provider は build 内で watch して変数として参照する（callback 内で read しない）。
+    final currentUserID = ref.watch(currentUserIDProvider);
     final open = useState(false);
     final controller = useAnimationController(
       duration: const Duration(milliseconds: 280),
@@ -119,7 +121,7 @@ class ExpandableFab extends HookConsumerWidget {
           close();
           ref.read(addShoppingListItemProvider(groupID: groupID)).call(
                 shoppingListID: shoppingListID,
-                userID: ref.read(currentUserIDProvider)!,
+                userID: currentUserID!,
                 message: '',
                 order: shoppingListItems.nextOrder,
                 description: null,
