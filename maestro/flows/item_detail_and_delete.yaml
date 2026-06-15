@@ -35,9 +35,9 @@ appId: com.bannzai.shoppinglist
 - assertVisible: "キッコーマンの丸大豆"
 - takeScreenshot: screenshots/item_detail_01_with_memo_color
 
-# 削除
+# 削除（タイトル右上のゴミ箱アイコン。tooltip: 'アイテムを削除'）
 - assertVisible: "説明"
-- tapOn: "削除"
+- tapOn: "アイテムを削除"
 - assertVisible: "このアイテムを削除しますか？"
 - tapOn:
     text: "削除"

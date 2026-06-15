@@ -160,8 +160,8 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                 item: textShoppingListItem, categories: categories));
 
     // シート(appShowModalBottomSheet)は固定高でキーボードの viewInsets を考慮しないため、
-    // 説明入力中はキーボードが保存ボタンを覆って到達できなくなる。キーボード高さ分の
-    // 下余白を持つスクロールにして、入力中でも保存ボタンまでスクロールできるようにする。
+    // 説明入力中はキーボードが下部のカラー等を覆って到達できなくなる。キーボード高さ分の
+    // 下余白を持つスクロールにして、入力中でも下部の項目までスクロールできるようにする。
     return SingleChildScrollView(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -171,9 +171,75 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              textShoppingListItem.message,
-              style: Theme.of(context).textTheme.titleMedium,
+            // タイトル行: 中央にアイテム名、右上に削除(ゴミ箱)アイコンを置く。
+            // 左に IconButton と同じ幅の余白を入れてタイトルを視覚的に中央へ寄せる。
+            Row(
+              children: [
+                const SizedBox(width: 48),
+                Expanded(
+                  child: Text(
+                    textShoppingListItem.message,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                IconButton(
+                  tooltip: 'アイテムを削除',
+                  icon: Icon(Icons.delete_outline, color: colorScheme.error),
+                  onPressed: () {
+                    analytics.logEvent(
+                      name: 'tap_delete_item',
+                      parameters: {
+                        'groupID': groupID,
+                        'itemID': textShoppingListItem.id,
+                      },
+                    );
+                    showDialog(
+                      context: context,
+                      builder: (dialogContext) => AlertDialog(
+                        title: const Text('このアイテムを削除しますか？'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              analytics.logEvent(
+                                  name: 'tap_confirm_delete_item',
+                                  parameters: {
+                                    'groupID': groupID,
+                                    'itemID': textShoppingListItem.id
+                                  });
+                              // 削除後の dispose で自動保存が走りアイテムが復活するのを防ぐ。
+                              skipSave.value = true;
+                              ref
+                                  .read(groupDatabaseProvider(groupID: groupID))
+                                  .shoppingListItemsReference(
+                                    shoppingListID:
+                                        textShoppingListItem.shoppingListID,
+                                  )
+                                  .doc(textShoppingListItem.id)
+                                  .delete();
+                              Navigator.pop(dialogContext);
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              '削除',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(color: colorScheme.error),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(dialogContext);
+                            },
+                            child: const Text('キャンセル'),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             // カテゴリセクション。軸が無い(カテゴリ機能未使用)ときは表示しない。
@@ -363,62 +429,6 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                     ),
                   ),
               ],
-            ),
-            const SizedBox(height: 24),
-            // 削除ボタン
-            SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  foregroundColor: colorScheme.error,
-                ),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (dialogContext) => AlertDialog(
-                      title: const Text('このアイテムを削除しますか？'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            analytics.logEvent(
-                                name: 'tap_confirm_delete_item',
-                                parameters: {
-                                  'groupID': groupID,
-                                  'itemID': textShoppingListItem.id
-                                });
-                            // 削除後の dispose で自動保存が走りアイテムが復活するのを防ぐ。
-                            skipSave.value = true;
-                            ref
-                                .read(groupDatabaseProvider(groupID: groupID))
-                                .shoppingListItemsReference(
-                                  shoppingListID:
-                                      textShoppingListItem.shoppingListID,
-                                )
-                                .doc(textShoppingListItem.id)
-                                .delete();
-                            Navigator.pop(dialogContext);
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            '削除',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(color: colorScheme.error),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(dialogContext);
-                          },
-                          child: const Text('キャンセル'),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                child: const Text('削除'),
-              ),
             ),
           ],
         ),
