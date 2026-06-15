@@ -323,11 +323,11 @@ Future<void> _longPressDragHeader(
 
 void main() {
   group('ShoppingListItems: スクロールでキーボードを閉じる', () {
-    testWidgets('フラット表示の ReorderableList が onDrag で閉じる', (tester) async {
+    testWidgets('フラット表示の ReorderableListView が onDrag で閉じる', (tester) async {
       await _pumpFlat(tester);
       expect(
         tester
-            .widget<ReorderableList>(find.byType(ReorderableList))
+            .widget<ReorderableListView>(find.byType(ReorderableListView))
             .keyboardDismissBehavior,
         ScrollViewKeyboardDismissBehavior.onDrag,
       );

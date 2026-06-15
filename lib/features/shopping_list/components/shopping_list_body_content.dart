@@ -82,12 +82,14 @@ class ShoppingListBodyContent extends StatelessWidget {
             groupID: groupID,
             shoppingListID: shoppingListID,
             shoppingLocationID: shoppingList?.shoppingLocationID,
+            // 買い物が始まった/終わった後（チェック済みが1件以上）にのみ、リストの
+            // 最終アイテム直後（footer）にレシート登録の導線を出す。
+            footer: shoppingListItemMetrics(shoppingListItems).checkedCount > 0
+                ? ReceiptSection(
+                    groupID: groupID, shoppingListID: shoppingListID)
+                : null,
           ),
         ),
-        // 買い物が始まった/終わった後（チェック済みが1件以上）にのみ、リスト末尾に
-        // レシート登録の導線を出す。
-        if (shoppingListItemMetrics(shoppingListItems).checkedCount > 0)
-          ReceiptSection(groupID: groupID, shoppingListID: shoppingListID),
       ],
     );
   }

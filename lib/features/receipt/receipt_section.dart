@@ -130,9 +130,6 @@ class ReceiptSection extends ConsumerWidget {
                 },
               ),
             ),
-            // 左下に浮く ProgressPill（page.dart, bottom: 16 + SafeArea, 高さ約30）と
-            // サムネが重ならないよう、ピル + ホームインジケータ分の下余白を確保する。
-            SizedBox(height: 42 + MediaQuery.of(context).padding.bottom),
           ],
         ],
       ),
