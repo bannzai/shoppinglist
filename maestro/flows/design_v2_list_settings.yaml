@@ -1,7 +1,8 @@
 appId: com.bannzai.shoppinglist
 ---
 # ShoppingListSettingPage (design v2 SSOT 準拠) の検証:
-# - 6 セクション label (UPPERCASE) が表示される
+# - 7 セクション label (UPPERCASE) が表示される
+# - カテゴリ Cell タップで GroupCategoryPage に遷移する
 # - 共有セクションが 1 card 2 Cell 構成 (招待 / グループ設定) で表示される
 # - 「アイテム追加で家族に通知」AppCell が表示される
 # - 削除ダイアログに body 文 (件数) と「このリストを削除しますか?」が表示される
@@ -25,6 +26,9 @@ appId: com.bannzai.shoppinglist
     text: "買い物する場所"
     optional: true
 - assertVisible:
+    text: "カテゴリ"
+    optional: true
+- assertVisible:
     text: "保存期間"
     optional: true
 - assertVisible:
@@ -36,6 +40,21 @@ appId: com.bannzai.shoppinglist
 - assertVisible:
     text: "リストの操作"
     optional: true
+
+# カテゴリ Cell (買い物する場所 直後の独立セクション) タップで GroupCategoryPage に遷移
+- assertVisible:
+    text: "自動分類のキーワード管理"
+    optional: true
+- tapOn:
+    text: "自動分類のキーワード管理"
+    optional: true
+- waitForAnimationToEnd
+# 遷移確認: 設定画面の Cell subtitle が消える (GroupCategoryPage に切り替わった)
+- assertNotVisible:
+    text: "自動分類のキーワード管理"
+    optional: true
+- back
+- waitForAnimationToEnd
 
 # 共有セクション 2 Cell
 - assertVisible:
