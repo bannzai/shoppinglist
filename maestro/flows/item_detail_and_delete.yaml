@@ -25,13 +25,17 @@ appId: com.bannzai.shoppinglist
 # カラー円に Semantics(label: preset.label) を設定済み
 - tapOn: "赤"
 
-# 保存（ボタンはキーボードの上に常に固定表示）
-- tapOn: "保存"
+# 保存ボタンは廃止。シート外(スクリム上部)をタップして閉じると変更が自動保存される
+- tapOn:
+    point: "50%,5%"
 - waitForAnimationToEnd
+
+# 再度詳細を開いて、説明・カラーが自動保存されていることを確認
+- tapOn: "アイテム詳細"
+- assertVisible: "キッコーマンの丸大豆"
 - takeScreenshot: screenshots/item_detail_01_with_memo_color
 
-# 再度詳細を開いて削除
-- tapOn: "アイテム詳細"
+# 削除
 - assertVisible: "説明"
 - tapOn: "削除"
 - assertVisible: "このアイテムを削除しますか？"
