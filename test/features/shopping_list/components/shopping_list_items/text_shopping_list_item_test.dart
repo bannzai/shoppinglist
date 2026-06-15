@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
+import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/features/previews/mock/mock_provider_overrides.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
@@ -450,6 +453,39 @@ void main() {
         tester.getCenter(find.byType(AddCategoryChip)).dx,
         lessThan(tester.getCenter(find.byIcon(Icons.more_horiz)).dx),
       );
+    });
+
+    testWidgets('編集中(Enter未確定)の最新テキストでカテゴリ選択を開く', (tester) async {
+      // 既存行を Enter せず編集したままチップを押すと、build 時点の古い message ではなく
+      // 入力欄の最新テキストが選択モードへ渡ることを検証する。
+      // 遷移先 GroupCategoryPage が Firestore に触れないよう、カテゴリ軸を空に override して
+      // 空状態(カテゴリ追加のみ)を描画させ、selectionForItem だけを確認する。
+      await _pump(
+        tester,
+        _item(id: 'editing', message: '牛乳'),
+        showAddCategoryButton: true,
+        extraOverrides: [
+          groupCategoryAxesProvider(groupID: mockGroupID).overrideWith(
+            (ref) => Stream.value(const <GroupCategoryAxis>[]),
+          ),
+          // チップタップ時の push でフォーカスが外れ、編集中テキストの確定保存が走る。
+          // 本物の DB は Firebase 未初期化で落ちるため記録フェイクへ差し替える。
+          groupDatabaseProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => _RecordingGroupDatabase()),
+          updateShoppingListItemProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => _RecordingUpdateShoppingListItem()),
+        ],
+      );
+      await tester.enterText(find.byType(TextField), '低脂肪牛乳');
+      await tester.pump();
+      await tester.tap(find.byType(AddCategoryChip));
+      await tester.pumpAndSettle();
+      final page = tester.widget<GroupCategoryPage>(
+        find.byType(GroupCategoryPage),
+      );
+      expect(page.selectionForItem?.message, '低脂肪牛乳');
     });
   });
 

@@ -229,12 +229,21 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                       'itemID': textShoppingListItem.id,
                     },
                   );
+                  // 既存行を Enter 未確定で編集中のままチップを押した場合、build 時点の
+                  // 古い message ではなく入力欄の最新テキストでカテゴリ選択を開く。push に伴う
+                  // フォーカス喪失で同じ値が確定保存される(FocusNode listener)ため、選択先の
+                  // キーワード追加と保存後の message が一致する。空のときは保存済み値に委ねる。
+                  final editedMessage = textEditingController.text.trim();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => GroupCategoryPage(
                         groupID: groupID,
-                        selectionForItem: textShoppingListItem,
+                        selectionForItem: editedMessage.isEmpty
+                            ? textShoppingListItem
+                            : textShoppingListItem.copyWith(
+                                message: editedMessage,
+                              ),
                       ),
                     ),
                   );
