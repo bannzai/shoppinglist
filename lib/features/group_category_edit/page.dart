@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -8,6 +10,7 @@ import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/hooks/use_on_disappear.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupCategoryEditPage extends ConsumerWidget {
@@ -82,6 +85,32 @@ class _CategoryEditBody extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final nameController = useTextEditingController(text: category.name);
     final isSaving = useState(false);
+
+    // disappear 時に未保存のカテゴリ名を保存するための更新オブジェクトを build 時にキャプチャする。
+    // useOnDisappear の closure は Widget unmount 後にも呼ばれ ref を使えないため、ここで掴む。
+    final update = ref.watch(groupCategoryUpdateProvider(groupID: groupID));
+
+    // 画面離脱・アプリの background 移行時に、未保存のカテゴリ名を保存する。
+    // 名前以外(色/アイコン/キーワード)は操作時に即時保存されるため、ここでは名前のみ扱う。
+    // category は毎 build 最新が closure に渡る(useOnDisappear が最新版を呼ぶ)ため、
+    // copyWith(name:) は直近で永続化された色/アイコンを保持したまま名前だけ差し替える。
+    useOnDisappear(() {
+      final name = nameController.text.trim();
+      if (name.isEmpty || name == category.name) {
+        return;
+      }
+      analytics.logEvent(
+        name: 'auto_save_category_name',
+        parameters: {'groupID': groupID, 'categoryID': category.id},
+      );
+      unawaited(
+        update.call(
+          categoryAxisID: categoryAxisID,
+          categoryID: category.id,
+          category: category.copyWith(name: name),
+        ),
+      );
+    });
 
     final tokens = context.appTheme;
     return Scaffold(
