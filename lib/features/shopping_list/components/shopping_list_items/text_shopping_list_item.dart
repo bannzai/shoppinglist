@@ -475,32 +475,37 @@ class AddCategoryChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.appTheme;
+    // 背景の装飾は Ink に持たせ、その内側の InkWell でタップ波紋を描く。
+    // InkWell の child に背景色付き Container を置くと波紋が Container に隠れるため
+    // (Material のインクは子の手前に描かれない)、Ink + InkWell + Padding 構成にする。
     return Semantics(
       button: true,
       label: 'カテゴリを追加',
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            color: tokens.accentSoft.withValues(alpha: 0.6),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: tokens.accent.withValues(alpha: 0.4)),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'カテゴリ',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: tokens.accentInk,
-                    ),
-              ),
-              const SizedBox(width: 2),
-              Icon(Icons.add, size: 14, color: tokens.accentInk),
-            ],
+      child: Ink(
+        decoration: BoxDecoration(
+          color: tokens.accentSoft.withValues(alpha: 0.6),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: tokens.accent.withValues(alpha: 0.4)),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(14),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'カテゴリ',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: tokens.accentInk,
+                      ),
+                ),
+                const SizedBox(width: 2),
+                Icon(Icons.add, size: 14, color: tokens.accentInk),
+              ],
+            ),
           ),
         ),
       ),
