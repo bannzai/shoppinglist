@@ -25,10 +25,10 @@ import 'package:shoppinglist/utils/stdlib/navigator.dart';
 /// `ShoppingListPage` の右下に配置する展開式 FAB。
 /// `design_handoff_shopping_list/source/screens-list.jsx#FAB` 相当。
 ///
-/// 閉時: accent の鉛筆（アイテム入力）56×56 円。リスト作成の `CreateListFab` と
+/// 閉時: accent の add_task（アイテム追加）56×56 円。リスト作成の `CreateListFab` と
 /// 縦に並べるダブル FAB 構成のメイン側。
-/// タップ: 空行を直接追加する（最頻操作）。
-/// 長押し: 写真 / URL / テキスト貼り付け の 3 メニューを上方向に展開する。
+/// タップ: 1行追加 / 写真 / URL / テキスト貼り付け のメニューを上方向に展開する。
+/// 長押し: 反応しない。
 class ExpandableFab extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
@@ -107,6 +107,26 @@ class ExpandableFab extends HookConsumerWidget {
           _pasteFromClipboard(context, ref);
         },
       ),
+      FabMenuAction(
+        icon: Icons.add,
+        label: '1行追加',
+        // 空行を直接追加する最頻操作。AI 処理を使わないため常に有効。
+        onTap: () {
+          analytics.logEvent(name: 'tap_add_item_fab', parameters: {
+            'groupID': groupID,
+            'shoppingListID': shoppingListID,
+          });
+          close();
+          ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+                shoppingListID: shoppingListID,
+                userID: ref.read(currentUserIDProvider)!,
+                message: '',
+                order: shoppingListItems.nextOrder,
+                description: null,
+                color: null,
+              );
+        },
+      ),
     ];
 
     return Column(
@@ -115,24 +135,19 @@ class ExpandableFab extends HookConsumerWidget {
       children: [
         // 展開メニュー。FAB の上に積み、open に応じて下端基準で上方向へ伸縮する。
         FabActionMenu(animation: curve, actions: actions),
+        // 長押しは無反応にする。FloatingActionButton(InkWell) は onLongPress 未設定だと
+        // 「長押し→指離し」がタップに退化してメニューが開いてしまうため、GestureDetector の
+        // 空 onLongPress でジェスチャーアリーナの長押しを勝たせて握りつぶす。
+        // タップ（FAB の onPressed）だけがメニュー開閉に効くようにする。
         GestureDetector(
-          onLongPress: () {
-            HapticFeedback.mediumImpact();
-            analytics.logEvent(
-              name: 'long_press_open_fab_menu',
-              parameters: {
-                'groupID': groupID,
-                'shoppingListID': shoppingListID,
-              },
-            );
-            open.value = true;
-          },
+          onLongPress: () {},
           child: FloatingActionButton(
             backgroundColor: tokens.accent,
             foregroundColor: Colors.white,
             shape: const CircleBorder(),
+            // タップでメニューを開閉する。
             onPressed: () {
-              // メニュー展開中（x 状態）のタップは Row 追加ではなく「閉じる」に倒す。
+              // メニュー展開中（x 状態）のタップは閉じるに倒す。
               if (open.value) {
                 analytics.logEvent(name: 'tap_close_fab_menu', parameters: {
                   'groupID': groupID,
@@ -141,22 +156,14 @@ class ExpandableFab extends HookConsumerWidget {
                 close();
                 return;
               }
-              analytics.logEvent(name: 'tap_add_item_fab', parameters: {
+              analytics.logEvent(name: 'tap_open_fab_menu', parameters: {
                 'groupID': groupID,
                 'shoppingListID': shoppingListID,
               });
-              ref.read(addShoppingListItemProvider(groupID: groupID)).call(
-                    shoppingListID: shoppingListID,
-                    userID: ref.read(currentUserIDProvider)!,
-                    message: '',
-                    order: shoppingListItems.nextOrder,
-                    description: null,
-                    color: null,
-                  );
+              open.value = true;
             },
-            // 閉時は鉛筆（アイテム入力）、メニュー展開中は x（閉じる）。
-            // 旧実装は + を 45° 回転して x に見せていたが、鉛筆は回転で意味が
-            // 出ないため AnimatedSwitcher の回転+フェードでアイコン自体を入れ替える。
+            // 閉時は add_task（アイテム追加）、メニュー展開中は x（閉じる）。
+            // AnimatedSwitcher の回転+フェードでアイコン自体を入れ替える。
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               transitionBuilder: (child, animation) => RotationTransition(
@@ -164,7 +171,7 @@ class ExpandableFab extends HookConsumerWidget {
                 child: FadeTransition(opacity: animation, child: child),
               ),
               child: Icon(
-                open.value ? Icons.close : Icons.edit,
+                open.value ? Icons.close : Icons.add_task,
                 key: ValueKey(open.value),
                 size: 24,
               ),
