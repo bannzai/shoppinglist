@@ -8,6 +8,7 @@ import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/components/primitives/app_section_label.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/group_setting/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list_setting/delete_confirm_dialog.dart';
@@ -27,11 +28,12 @@ import 'package:shoppinglist/utils/purchase/purchase.dart';
 /// セクション構成 (上から):
 /// 1. リスト名 (card-bg 入力欄 + 「確定キーで保存されます」hint)
 /// 2. 買い物する場所 (単独 AppCell、タップで `ShoppingLocationSelectPage` 遷移)
-/// 3. 保存期間 (アップグレード Pill 付きカード。`isPremium=false` 時のみ Pill 表示)
-/// 4. 通知 (autoNotify AppCell。Web SSOT 未拡張だが UX 上残す)
-/// 5. 共有 (1 card に 2 AppCell + AppDivider — 招待コード送付 / グループ設定)
-/// 6. リストの操作 (1 card に 1 AppCell — 複製。Web SSOT 未拡張だが UX 上残す)
-/// 7. 削除ボタン (AppPill danger large)
+/// 3. カテゴリ (単独 AppCell、タップで `GroupCategoryPage` 遷移。カテゴリは groupID 単位で共通)
+/// 4. 保存期間 (アップグレード Pill 付きカード。`isPremium=false` 時のみ Pill 表示)
+/// 5. 通知 (autoNotify AppCell。Web SSOT 未拡張だが UX 上残す)
+/// 6. 共有 (1 card に 2 AppCell + AppDivider — 招待コード送付 / グループ設定)
+/// 7. リストの操作 (1 card に 1 AppCell — 複製。Web SSOT 未拡張だが UX 上残す)
+/// 8. 削除ボタン (AppPill danger large)
 class ShoppingListSettingPage extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
@@ -126,6 +128,33 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                 currentLocationID: shoppingListState.value.shoppingLocationID,
                 onSelected: (newID) => autoSave(
                   shoppingListState.value.copyWith(shoppingLocationID: newID),
+                ),
+              ),
+              const SizedBox(height: 14),
+              const AppSectionLabel(text: 'カテゴリ'),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  color: neutral.card,
+                  child: AppCell(
+                      icon: Icons.category_outlined,
+                      title: 'カテゴリ',
+                      subtitle: '自動分類のキーワード管理',
+                      onTap: () {
+                        analytics.logEvent(
+                          name: 'navigate_category_from_list_setting',
+                          parameters: {'groupID': groupID},
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => GroupCategoryPage(groupID: groupID),
+                          ),
+                        );
+                      },
+                      detail: null,
+                      onSwitch: null,
+                      switchValue: null),
                 ),
               ),
               const SizedBox(height: 14),
