@@ -328,26 +328,6 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     }
     return response['data']['imageURL'] as String;
   }
-
-  /// レシート画像をFirebase Storageから削除する。
-  Future<void> deleteReceiptImage({
-    required String groupID,
-    required String shoppingListID,
-    required String receiptID,
-  }) async {
-    final result = await httpsCallable('deleteReceiptImage').call(
-      {
-        'groupID': groupID,
-        'shoppingListID': shoppingListID,
-        'receiptID': receiptID,
-      },
-    );
-    debugPrint('deleteReceiptImage.result: ${result.data}');
-    final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
-  }
 }
 
 // Map<String, dynamic>.fromだけだとネストした子要素が_Map<Object? Object?>のままになる

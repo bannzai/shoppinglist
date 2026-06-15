@@ -50,7 +50,6 @@ class _ReceiptEditSheet extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
     final currentUserID = ref.watch(currentUserIDProvider);
     final selectedPhoto = useState<XFile?>(null);
     final imageURL = useState<String?>(receipt?.imageURL);
@@ -175,49 +174,6 @@ class _ReceiptEditSheet extends HookConsumerWidget {
       }
     }
 
-    Future<void> delete() async {
-      // showDialog の await を跨ぐ前に、自ルートを閉じる参照を束ねておく（黒画面対策 #372 と同じ）。
-      final navigator = Navigator.of(context);
-      final sheetRoute = ModalRoute.of(context);
-      final confirmed = await showDialog<bool>(
-        context: context,
-        builder: (dialogContext) => AlertDialog(
-          title: const Text('このレシートを削除しますか？'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('キャンセル'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext, true),
-              child: Text('削除', style: TextStyle(color: colorScheme.error)),
-            ),
-          ],
-        ),
-      );
-      if (confirmed != true) {
-        return;
-      }
-      analytics.logEvent(
-        name: 'tap_confirm_delete_receipt',
-        parameters: {'groupID': groupID, 'receiptID': receipt!.id},
-      );
-      isSaving.value = true;
-      try {
-        await ref.read(deleteReceiptProvider(groupID: groupID)).call(
-              shoppingListID: shoppingListID,
-              receiptID: receipt!.id,
-            );
-        popRouteSafely(navigator: navigator, route: sheetRoute);
-      } catch (e) {
-        showGlobalToast(e.toString(), title: null);
-      } finally {
-        if (context.mounted) {
-          isSaving.value = false;
-        }
-      }
-    }
-
     return SingleChildScrollView(
       padding:
           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -270,14 +226,6 @@ class _ReceiptEditSheet extends HookConsumerWidget {
                     )
                   : const Text('保存'),
             ),
-            if (receipt != null) ...[
-              const SizedBox(height: 12),
-              TextButton(
-                style: TextButton.styleFrom(foregroundColor: colorScheme.error),
-                onPressed: isSaving.value ? null : delete,
-                child: const Text('削除'),
-              ),
-            ],
           ],
         ),
       ),

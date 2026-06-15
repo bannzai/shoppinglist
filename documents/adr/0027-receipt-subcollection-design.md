@@ -13,7 +13,8 @@
 ### データ設計
 - Firestore: `receipts` サブコレクション（Entity: `GroupShoppingListReceipt`）に `imageURL`・`amount`・`memo` と親IDを保持
 - Storage: `groups/{groupID}/shoppingLists/{shoppingListID}/receipts/{receiptID}/photo` に画像を保存
-- Storage アクセスは `uploadReceiptImage` / `deleteReceiptImage` Functions（Admin SDK）経由のみ（既存の商品写真添付と同じ方式）
+- Storage アクセスは `uploadReceiptImage` Function（Admin SDK）経由のみ（既存の商品写真添付と同じ方式）
+- レシートは登録・編集のみで削除機能は提供しない（`firestore.rules` も `create` / `update` のみ許可）
 
 ### 代替案
 - `GroupShoppingList` Entity に `receiptImageURL` フィールドを1つ追加する案 → 複数枚に対応できないため不採用

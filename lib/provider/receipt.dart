@@ -3,7 +3,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/entity/group_shopping_list_receipt.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
-import 'package:shoppinglist/utils/functions/firebase_function.dart';
 
 part 'receipt.g.dart';
 
@@ -86,31 +85,3 @@ class UpdateReceipt {
 @Riverpod(dependencies: [groupDatabase])
 UpdateReceipt updateReceipt(Ref ref, {required String groupID}) =>
     UpdateReceipt(database: ref.watch(groupDatabaseProvider(groupID: groupID)));
-
-/// レシートを削除する。
-///
-/// Storage 上の画像（Functions 経由）と Firestore ドキュメントの両方を削除する。
-/// 画像削除・ドキュメント削除はどちらも冪等なため、再実行しても安全。
-class DeleteReceipt {
-  final GroupDatabase database;
-
-  DeleteReceipt({required this.database});
-
-  Future<void> call({
-    required String shoppingListID,
-    required String receiptID,
-  }) async {
-    await functions.deleteReceiptImage(
-      groupID: database.groupID,
-      shoppingListID: shoppingListID,
-      receiptID: receiptID,
-    );
-    await database
-        .receiptReference(shoppingListID: shoppingListID, receiptID: receiptID)
-        .delete();
-  }
-}
-
-@Riverpod(dependencies: [groupDatabase])
-DeleteReceipt deleteReceipt(Ref ref, {required String groupID}) =>
-    DeleteReceipt(database: ref.watch(groupDatabaseProvider(groupID: groupID)));
