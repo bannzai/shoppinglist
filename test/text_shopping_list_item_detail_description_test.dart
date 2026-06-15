@@ -4,9 +4,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item_detail_bottom_sheet.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
@@ -33,6 +35,18 @@ class _FakeEntitlementInfos implements EntitlementInfos {
   @override
   dynamic noSuchMethod(Invocation invocation) =>
       throw UnimplementedError(invocation.memberName.toString());
+}
+
+/// シートを閉じる時の自動保存(useOnDisappear)が Firestore を触らないようにする no-op。
+class _NoOpUpdate extends UpdateShoppingListItem {
+  _NoOpUpdate() : super(database: GroupDatabase(groupID: _testGroupID));
+
+  @override
+  Future<void> call({
+    required String shoppingListID,
+    required GroupShoppingListItem item,
+    required String editedByUserID,
+  }) async {}
 }
 
 /// description 以外は固定の検証用アイテム。
@@ -64,6 +78,9 @@ Future<void> _pumpSheet(
             .overrideWith((ref) => Stream.value(const <GroupCategoryAxis>[])),
         customerInfoProvider
             .overrideWith((ref) => Stream.value(_FakeCustomerInfo())),
+        // シートを閉じる時の自動保存が Firestore を触らないよう no-op に差し替える。
+        updateShoppingListItemProvider(groupID: _testGroupID)
+            .overrideWith((ref) => _NoOpUpdate()),
       ],
       child: MaterialApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
@@ -103,7 +120,7 @@ void main() {
       );
     });
 
-    testWidgets('シート本体はスクロール可能（キーボード表示中でも保存ボタンへ到達できる）', (tester) async {
+    testWidgets('シート本体はスクロール可能（キーボード表示中でも下部の項目へ到達できる）', (tester) async {
       await _pumpSheet(tester, description: null);
       expect(
         find.descendant(
