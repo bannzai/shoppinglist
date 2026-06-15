@@ -209,6 +209,35 @@ describe("generateShoppingListItemsFromImage", () => {
     expect(txUpdate).not.toHaveBeenCalled();
   });
 
+  test("境界: function callのargsが空でも空配列でOKを返す（INTERNAL化を防ぐ）", async () => {
+    mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
+    // 画像から何も読み取れず args が空オブジェクトで返るケースを再現する
+    mockSendMessage.mockResolvedValue({
+      response: {
+        functionCalls: () => [{ args: {} }],
+      },
+    });
+
+    const aiUsageRef = { id: "aiUsageRef" };
+    const txGet = jest.fn().mockResolvedValue({
+      exists: true,
+      data: () => ({ imageRecognitionCount: 0 }),
+    });
+    mockRunTransaction.mockImplementation(async (handler: any) =>
+      handler({ get: txGet, update: jest.fn(), set: jest.fn() })
+    );
+
+    setupFirestoreMocks(aiUsageRef);
+
+    const result = await capturedFlowFn({
+      mimeType: "image/jpeg",
+      base64Image: "dGVzdA==",
+    });
+
+    expect(result.result).toBe("OK");
+    expect(result.data.shoppingListItems).toEqual([]);
+  });
+
   test("異常系: 未認証ユーザーがエラーになる", async () => {
     mockCurrentContext.mockReturnValue(undefined);
 
