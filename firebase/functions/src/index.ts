@@ -86,6 +86,20 @@ if (
 
 if (
   !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "uploadReceiptImage"
+) {
+  exports.uploadReceiptImage = require("./functions/uploadReceiptImage/function");
+}
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "deleteReceiptImage"
+) {
+  exports.deleteReceiptImage = require("./functions/deleteReceiptImage/function");
+}
+
+if (
+  !process.env.FUNCTION_NAME ||
   process.env.FUNCTION_NAME === "grantPromotionalPremium"
 ) {
   exports.grantPromotionalPremium = require("./functions/grantPromotionalPremium/function");
