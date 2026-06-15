@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/features/group_category/category_empty_state.dart';
 import 'package:shoppinglist/features/group_category_edit/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
@@ -40,21 +41,17 @@ class GroupCategoryPage extends ConsumerWidget {
         if (axes.isEmpty) {
           return _CategoryScaffold(
             title: title,
-            child: Center(
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  analytics.logEvent(
-                      name: 'tap_add_first_category',
-                      parameters: {'groupID': groupID});
-                  _addCategoryWithAutoAxis(
-                    context: context,
-                    ref: ref,
-                    existingAxes: axes,
-                  );
-                },
-                icon: const Icon(Icons.add),
-                label: const Text('カテゴリを追加'),
-              ),
+            child: CategoryEmptyState(
+              onAddCategory: () {
+                analytics.logEvent(
+                    name: 'tap_add_first_category',
+                    parameters: {'groupID': groupID});
+                _addCategoryWithAutoAxis(
+                  context: context,
+                  ref: ref,
+                  existingAxes: axes,
+                );
+              },
             ),
           );
         }
@@ -197,8 +194,10 @@ class _CategoryListBody extends HookConsumerWidget {
           title: Text(selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ'),
           backgroundColor: tokens.neutral.paper,
         ),
+        // カテゴリ0件時も価値訴求カードを表示する。追加導線は Scaffold の
+        // FloatingActionButton が担うため onAddCategory は null（カード内ボタンは出さない）。
         body: categories.isEmpty
-            ? const Center(child: Text('カテゴリがまだありません'))
+            ? const CategoryEmptyState(onAddCategory: null)
             : Column(
                 children: [
                   // ロケーション選択ドロップダウン
