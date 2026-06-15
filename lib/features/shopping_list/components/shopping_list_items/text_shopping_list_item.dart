@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item_detail_bottom_sheet.dart';
@@ -36,12 +37,18 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
   final List<GroupShoppingListItem> shoppingListItems;
   final int? reorderIndex;
 
+  /// 未分類アイテムの行に「カテゴリ +」ボタンを出すか。タップで [GroupCategoryPage] の
+  /// カテゴリ選択モードへ遷移し、このアイテムを既存カテゴリへ割り当てられる。
+  /// カテゴリにマッチ済み(分類済み)の行・入力行(空メッセージ)では false にする。
+  final bool showAddCategoryButton;
+
   const TextShoppingListItemWidget({
     super.key,
     required this.groupID,
     required this.textShoppingListItem,
     required this.shoppingListItems,
     required this.reorderIndex,
+    this.showAddCategoryButton = false,
   });
 
   @override
@@ -211,6 +218,38 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                 ],
               ),
             ),
+            if (showAddCategoryButton) ...[
+              const SizedBox(width: 8),
+              AddCategoryChip(
+                onTap: () {
+                  analytics.logEvent(
+                    name: 'tap_add_category_from_item_row',
+                    parameters: {
+                      'groupID': groupID,
+                      'itemID': textShoppingListItem.id,
+                    },
+                  );
+                  // 既存行を Enter 未確定で編集中のままチップを押した場合、build 時点の
+                  // 古い message ではなく入力欄の最新テキストでカテゴリ選択を開く。push に伴う
+                  // フォーカス喪失で同じ値が確定保存される(FocusNode listener)ため、選択先の
+                  // キーワード追加と保存後の message が一致する。空のときは保存済み値に委ねる。
+                  final editedMessage = textEditingController.text.trim();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => GroupCategoryPage(
+                        groupID: groupID,
+                        selectionForItem: editedMessage.isEmpty
+                            ? textShoppingListItem
+                            : textShoppingListItem.copyWith(
+                                message: editedMessage,
+                              ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
             if (textShoppingListItem.imageURL != null)
               ShoppingListItemThumbnail(
                 imageURL: textShoppingListItem.imageURL!,
@@ -425,6 +464,58 @@ class ShoppingListItemThumbnail extends StatelessWidget {
           ),
           errorWidget: (context, url, error) =>
               Icon(Icons.broken_image, size: 18, color: tokens.neutral.ink3),
+        ),
+      ),
+    );
+  }
+}
+
+/// 未分類アイテムの行に表示する「カテゴリ +」ショートカットボタン。
+///
+/// タップで [GroupCategoryPage] のカテゴリ選択モード(`selectionForItem`)へ push する。
+/// 一覧でカテゴリを選ぶと、アイテム名がそのカテゴリの完全一致キーワードに追記され、
+/// このアイテムがそのカテゴリへ分類される（割り当て処理は [GroupCategoryPage] 側に集約）。
+class AddCategoryChip extends StatelessWidget {
+  /// 「カテゴリ +」タップ時に実行する遷移処理。
+  final VoidCallback onTap;
+
+  const AddCategoryChip({super.key, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.appTheme;
+    // 背景の装飾は Ink に持たせ、その内側の InkWell でタップ波紋を描く。
+    // InkWell の child に背景色付き Container を置くと波紋が Container に隠れるため
+    // (Material のインクは子の手前に描かれない)、Ink + InkWell + Padding 構成にする。
+    return Semantics(
+      button: true,
+      label: 'カテゴリを追加',
+      child: Ink(
+        decoration: BoxDecoration(
+          color: tokens.accentSoft.withValues(alpha: 0.6),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: tokens.accent.withValues(alpha: 0.4)),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(14),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'カテゴリ',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: tokens.accentInk,
+                      ),
+                ),
+                const SizedBox(width: 2),
+                Icon(Icons.add, size: 14, color: tokens.accentInk),
+              ],
+            ),
+          ),
         ),
       ),
     );

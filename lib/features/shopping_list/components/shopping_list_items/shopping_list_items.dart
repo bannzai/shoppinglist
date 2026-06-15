@@ -177,6 +177,12 @@ class _FlatShoppingListItems extends ConsumerWidget {
           shoppingListItems: shoppingListItems,
           // 空の入力行はドラッグ対象外にする(GlobalKey の proxy 二重化回避 + 空行の並べ替えは無意味)。
           reorderIndex: isInputRow ? null : index,
+          // 「カテゴリ +」はカテゴリ不在が確定したフラット表示(showCategorizeButton=true)
+          // でのみ出す。カテゴリ軸/一覧のロード中フォールバックでは出さない — 既存カテゴリが
+          // あるリストでも一時的に全行がフラット表示されるため、その間に分類済みアイテムへ
+          // チップを出すと誤って別カテゴリへ割り当てられてしまう。
+          showAddCategoryButton:
+              showCategorizeButton && item.message.trim().isNotEmpty,
         );
       },
     );
@@ -622,6 +628,10 @@ class _GroupedListView extends HookConsumerWidget {
                     grouped[categoryID ?? uncategorizedCategoryID] ?? const [],
                 // 統合リストでは行自身は listener を持たず、外側でラップする。
                 reorderIndex: null,
+                // 未分類セクション(categoryID == null)の確定済み行にのみ「カテゴリ +」を出す。
+                // 入力行(空メッセージ)・分類済み行では出さない。
+                showAddCategoryButton:
+                    categoryID == null && item.message.trim().isNotEmpty,
               );
               // 入力行はドラッグ対象外。確定行のみ長押しドラッグでラップする。
               if (isInputRow) {
