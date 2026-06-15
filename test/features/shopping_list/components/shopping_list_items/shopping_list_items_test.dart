@@ -375,6 +375,31 @@ void main() {
     });
   });
 
+  group('ShoppingListItems: 未分類アイテムの「カテゴリ +」ボタン', () {
+    testWidgets('カテゴリ表示では未分類セクションの確定行にのみチップが出る', (tester) async {
+      // 食品(牛乳・卵・食パン)・日用品(洗剤)は分類済み、ガムテープのみ未分類。
+      await _pumpSectionReorder(tester);
+      expect(find.byType(AddCategoryChip), findsOneWidget);
+      // チップはガムテープ(未分類)の行にある。
+      expect(
+        find.ancestor(
+          of: find.byType(AddCategoryChip),
+          matching: find.byType(TextShoppingListItemWidget),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('フラット表示では全確定アイテムにチップが出る', (tester) async {
+      // カテゴリ軸なし = 全アイテム未分類。mockShoppingListItems の確定件数すべてに出る。
+      await _pumpFlat(tester);
+      expect(
+        find.byType(AddCategoryChip),
+        findsNWidgets(mockShoppingListItems().length),
+      );
+    });
+  });
+
   group('ShoppingListItems: チェック済みアイテムの表示', () {
     // mockShoppingListItems は 牛乳(unchecked)/卵(checked)/食パン(unchecked)。
     // チェック済み表示の切り替えは Issue #373 で廃止し、常に全件表示する。

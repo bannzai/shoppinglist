@@ -146,6 +146,7 @@ Future<void> _pump(
   WidgetTester tester,
   GroupShoppingListItem item, {
   int? reorderIndex,
+  bool showAddCategoryButton = false,
   List<Override> extraOverrides = const [],
 }) async {
   // ignore: invalid_use_of_visible_for_testing_member
@@ -168,6 +169,7 @@ Future<void> _pump(
             textShoppingListItem: item,
             shoppingListItems: [item],
             reorderIndex: reorderIndex,
+            showAddCategoryButton: showAddCategoryButton,
           ),
         ),
       ),
@@ -420,6 +422,34 @@ void main() {
       // shoppingListItems に空行が無いので、末尾に空の入力行が新規作成される。
       expect(add.calls.single.message, isEmpty);
       expect(add.calls.single.order, 1);
+    });
+  });
+
+  group('「カテゴリ +」ボタン (AddCategoryChip)', () {
+    testWidgets('showAddCategoryButton: true でカテゴリ追加チップを表示する', (tester) async {
+      await _pump(
+        tester,
+        _item(id: 'uncategorized', message: '牛乳'),
+        showAddCategoryButton: true,
+      );
+      expect(find.byType(AddCategoryChip), findsOneWidget);
+    });
+
+    testWidgets('showAddCategoryButton: false ではチップを表示しない', (tester) async {
+      await _pump(tester, _item(id: 'categorized', message: '牛乳'));
+      expect(find.byType(AddCategoryChip), findsNothing);
+    });
+
+    testWidgets('チップは行末の詳細アイコン (more_horiz) より左に置く', (tester) async {
+      await _pump(
+        tester,
+        _item(id: 'uncategorized', message: '牛乳'),
+        showAddCategoryButton: true,
+      );
+      expect(
+        tester.getCenter(find.byType(AddCategoryChip)).dx,
+        lessThan(tester.getCenter(find.byIcon(Icons.more_horiz)).dx),
+      );
     });
   });
 
