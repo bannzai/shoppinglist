@@ -4,12 +4,9 @@
 Accepted
 
 ## Context
-カテゴリ編集画面（`lib/features/group_category_edit/page.dart`）では、カテゴリ名が「保存待ち」状態になっていた。
+アイテム詳細シート（`text_shopping_list_item_detail_bottom_sheet.dart`）には「保存」ボタンがあり、説明・カラー・写真の変更は保存ボタンを押すまで永続化されなかった。押さずにシートを閉じる／アプリを離れると入力が失われる。カテゴリ編集画面（`group_category_edit/page.dart`）も同様で、カテゴリ名はキーボードの「完了」（`onSubmitted`）を押した時だけ保存されていた（色・アイコン・キーワードは操作時に即時保存）。
 
-- 色・アイコン・キーワードは操作した瞬間に `groupCategoryUpdateProvider` 経由で即時保存される。
-- カテゴリ名（`TextEditingController`）はキーボードの「完了」（`onSubmitted`）を押した時だけ保存され、名前を入力しただけで「完了」を押さずに戻る／アプリを離れると入力が失われる。
-
-「保存ボタンを押さなくても、画面を離れる時・アプリが離れる時に変更があれば保存してほしい」という要件を、複数の詳細画面で再利用できる形で実現する必要があった。
+「保存ボタンを押さなくても、画面を離れる時・アプリが離れる時に変更があれば保存してほしい」という要件を、複数の詳細画面で再利用できる形で実現する必要があった。あわせて手動の「保存」ボタン／「保存しました」フィードバックは廃止する。
 
 実装方式を検討する中で、hooks_riverpod 固有の制約が判明した。
 
@@ -59,7 +56,9 @@ Accepted
 
 ## 参照
 - `lib/utils/hooks/use_on_disappear.dart`
+- `lib/features/shopping_list/components/shopping_list_items/text_shopping_list_item_detail_bottom_sheet.dart`（保存ボタン廃止＋自動保存。写真アップロード等の async 値は dispose 前に同期キャプチャし、削除時は `skipSave` で自動保存を抑止）
 - `lib/features/group_category_edit/page.dart`
 - `test/features/group_category_edit/auto_save_on_disappear_test.dart`
+- `test/features/shopping_list/components/shopping_list_items/item_detail_auto_save_on_disappear_test.dart`
 - 既存パターン: `lib/features/shopping_list/page.dart`（`useEffect` + `AppLifecycleListener(onStateChange: paused)`）
 - 関連 ADR: [0022](0022-shopping-list-keyboard-fixed-input-row.md)（Flutter widget ライフサイクル系の設計判断）
