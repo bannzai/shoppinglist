@@ -10,6 +10,7 @@ import 'package:shoppinglist/entity/app_user_private.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_list_receipt.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
@@ -27,6 +28,9 @@ abstract class _CollectionPath {
   static String shoppingListItems(
           {required String groupID, required String shoppingListID}) =>
       '/groups/$groupID/shoppingLists/$shoppingListID/items';
+  static String receipts(
+          {required String groupID, required String shoppingListID}) =>
+      '/groups/$groupID/shoppingLists/$shoppingListID/receipts';
   static String shoppingLocations({required String groupID}) =>
       '/groups/$groupID/shoppingLocations';
   static String userCategoryAxes({required String groupID}) =>
@@ -191,6 +195,43 @@ class GroupDatabase {
           .withConverter(
             fromFirestore: GroupShoppingListItem.fromFirestore,
             toFirestore: GroupShoppingListItem.toFirestore,
+          );
+
+  /// 買い物リストに紐づくレシートのコレクション参照。
+  CollectionReference<GroupShoppingListReceipt> receiptsReference(
+          {required String shoppingListID}) =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.receipts(
+              groupID: groupID, shoppingListID: shoppingListID))
+          .withConverter(
+            fromFirestore: GroupShoppingListReceipt.fromFirestore,
+            toFirestore: GroupShoppingListReceipt.toFirestore,
+          );
+
+  /// 既存レシートのドキュメント参照。
+  DocumentReference<GroupShoppingListReceipt> receiptReference({
+    required String shoppingListID,
+    required String receiptID,
+  }) =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.receipts(
+              groupID: groupID, shoppingListID: shoppingListID))
+          .doc(receiptID)
+          .withConverter(
+            fromFirestore: GroupShoppingListReceipt.fromFirestore,
+            toFirestore: GroupShoppingListReceipt.toFirestore,
+          );
+
+  /// 自動生成 ID を持つ新規レシートのドキュメント参照。
+  DocumentReference<GroupShoppingListReceipt> newReceiptReference(
+          {required String shoppingListID}) =>
+      FirebaseFirestore.instance
+          .collection(_CollectionPath.receipts(
+              groupID: groupID, shoppingListID: shoppingListID))
+          .doc()
+          .withConverter(
+            fromFirestore: GroupShoppingListReceipt.fromFirestore,
+            toFirestore: GroupShoppingListReceipt.toFirestore,
           );
 
   CollectionReference<GroupShoppingLocation> shoppingLocationsReference() =>
