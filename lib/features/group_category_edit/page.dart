@@ -84,7 +84,6 @@ class _CategoryEditBody extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final nameController = useTextEditingController(text: category.name);
-    final isSaving = useState(false);
 
     // disappear 時に未保存のカテゴリ名を保存するための更新オブジェクトを build 時にキャプチャする。
     // useOnDisappear の closure は Widget unmount 後にも呼ばれ ref を使えないため、ここで掴む。
@@ -138,41 +137,6 @@ class _CategoryEditBody extends HookConsumerWidget {
                   decoration: const InputDecoration(
                     hintText: 'カテゴリ名を入力',
                   ),
-                  onSubmitted: (String value) async {
-                    final name = value.trim();
-                    if (name.isEmpty || name == category.name) {
-                      return;
-                    }
-                    analytics.logEvent(
-                        name: 'submit_category_name',
-                        parameters: {
-                          'groupID': groupID,
-                          'categoryID': category.id
-                        });
-                    isSaving.value = true;
-                    try {
-                      await ref
-                          .read(groupCategoryUpdateProvider(groupID: groupID))
-                          .call(
-                            categoryAxisID: categoryAxisID,
-                            categoryID: category.id,
-                            category: category.copyWith(name: name),
-                          );
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('保存しました')),
-                        );
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString())),
-                        );
-                      }
-                    } finally {
-                      isSaving.value = false;
-                    }
-                  },
                 ),
                 const SizedBox(height: 24),
                 Text('カテゴリカラー',
