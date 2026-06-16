@@ -76,7 +76,7 @@ class UpdateReceipt {
           receiptID: receipt.id,
         )
         .set(
-          receipt.copyWith(updatedDateTime: DateTime.now()),
+          receipt,
           SetOptions(merge: true),
         );
   }
