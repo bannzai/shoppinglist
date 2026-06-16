@@ -136,7 +136,7 @@ class _ReceiptEditSheet extends HookConsumerWidget {
           await ref.read(addReceiptProvider(groupID: groupID)).call(
                 shoppingListID: shoppingListID,
                 receiptID: receiptID,
-                createUserID: userID,
+                userID: userID,
                 imageURL: uploadedImageURL,
                 amount: amount,
                 memo: memo.isEmpty ? null : memo,

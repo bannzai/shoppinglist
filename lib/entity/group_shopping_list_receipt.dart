@@ -22,7 +22,7 @@ abstract class GroupShoppingListReceipt with _$GroupShoppingListReceipt {
     required String id,
     required String groupID,
     required String shoppingListID,
-    required String createUserID,
+    required String userID,
 
     /// Firebase Storage 上のレシート画像のダウンロードURL。
     required String? imageURL,

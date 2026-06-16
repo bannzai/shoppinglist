@@ -37,7 +37,7 @@ class AddReceipt {
   Future<void> call({
     required String shoppingListID,
     required String receiptID,
-    required String createUserID,
+    required String userID,
     required String? imageURL,
     required int? amount,
     required String? memo,
@@ -49,7 +49,7 @@ class AddReceipt {
             id: receiptID,
             groupID: database.groupID,
             shoppingListID: shoppingListID,
-            createUserID: createUserID,
+            userID: userID,
             imageURL: imageURL,
             amount: amount,
             memo: memo,

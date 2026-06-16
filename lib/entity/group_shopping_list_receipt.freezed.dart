@@ -17,7 +17,7 @@ mixin _$GroupShoppingListReceipt {
   String get id;
   String get groupID;
   String get shoppingListID;
-  String get createUserID;
+  String get userID;
 
   /// Firebase Storage 上のレシート画像のダウンロードURL。
   String? get imageURL;
@@ -56,8 +56,7 @@ mixin _$GroupShoppingListReceipt {
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.shoppingListID, shoppingListID) ||
                 other.shoppingListID == shoppingListID) &&
-            (identical(other.createUserID, createUserID) ||
-                other.createUserID == createUserID) &&
+            (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.imageURL, imageURL) ||
                 other.imageURL == imageURL) &&
             (identical(other.amount, amount) || other.amount == amount) &&
@@ -79,7 +78,7 @@ mixin _$GroupShoppingListReceipt {
       id,
       groupID,
       shoppingListID,
-      createUserID,
+      userID,
       imageURL,
       amount,
       memo,
@@ -90,7 +89,7 @@ mixin _$GroupShoppingListReceipt {
 
   @override
   String toString() {
-    return 'GroupShoppingListReceipt(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, createUserID: $createUserID, imageURL: $imageURL, amount: $amount, memo: $memo, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListReceipt(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, imageURL: $imageURL, amount: $amount, memo: $memo, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -104,7 +103,7 @@ abstract mixin class $GroupShoppingListReceiptCopyWith<$Res> {
       {String id,
       String groupID,
       String shoppingListID,
-      String createUserID,
+      String userID,
       String? imageURL,
       int? amount,
       String? memo,
@@ -130,7 +129,7 @@ class _$GroupShoppingListReceiptCopyWithImpl<$Res>
     Object? id = null,
     Object? groupID = null,
     Object? shoppingListID = null,
-    Object? createUserID = null,
+    Object? userID = null,
     Object? imageURL = freezed,
     Object? amount = freezed,
     Object? memo = freezed,
@@ -152,9 +151,9 @@ class _$GroupShoppingListReceiptCopyWithImpl<$Res>
           ? _self.shoppingListID
           : shoppingListID // ignore: cast_nullable_to_non_nullable
               as String,
-      createUserID: null == createUserID
-          ? _self.createUserID
-          : createUserID // ignore: cast_nullable_to_non_nullable
+      userID: null == userID
+          ? _self.userID
+          : userID // ignore: cast_nullable_to_non_nullable
               as String,
       imageURL: freezed == imageURL
           ? _self.imageURL
@@ -285,7 +284,7 @@ extension GroupShoppingListReceiptPatterns on GroupShoppingListReceipt {
             String id,
             String groupID,
             String shoppingListID,
-            String createUserID,
+            String userID,
             String? imageURL,
             int? amount,
             String? memo,
@@ -303,7 +302,7 @@ extension GroupShoppingListReceiptPatterns on GroupShoppingListReceipt {
             _that.id,
             _that.groupID,
             _that.shoppingListID,
-            _that.createUserID,
+            _that.userID,
             _that.imageURL,
             _that.amount,
             _that.memo,
@@ -335,7 +334,7 @@ extension GroupShoppingListReceiptPatterns on GroupShoppingListReceipt {
             String id,
             String groupID,
             String shoppingListID,
-            String createUserID,
+            String userID,
             String? imageURL,
             int? amount,
             String? memo,
@@ -352,7 +351,7 @@ extension GroupShoppingListReceiptPatterns on GroupShoppingListReceipt {
             _that.id,
             _that.groupID,
             _that.shoppingListID,
-            _that.createUserID,
+            _that.userID,
             _that.imageURL,
             _that.amount,
             _that.memo,
@@ -383,7 +382,7 @@ extension GroupShoppingListReceiptPatterns on GroupShoppingListReceipt {
             String id,
             String groupID,
             String shoppingListID,
-            String createUserID,
+            String userID,
             String? imageURL,
             int? amount,
             String? memo,
@@ -400,7 +399,7 @@ extension GroupShoppingListReceiptPatterns on GroupShoppingListReceipt {
             _that.id,
             _that.groupID,
             _that.shoppingListID,
-            _that.createUserID,
+            _that.userID,
             _that.imageURL,
             _that.amount,
             _that.memo,
@@ -422,7 +421,7 @@ class _GroupShoppingListReceipt implements GroupShoppingListReceipt {
       {required this.id,
       required this.groupID,
       required this.shoppingListID,
-      required this.createUserID,
+      required this.userID,
       required this.imageURL,
       required this.amount,
       required this.memo,
@@ -440,7 +439,7 @@ class _GroupShoppingListReceipt implements GroupShoppingListReceipt {
   @override
   final String shoppingListID;
   @override
-  final String createUserID;
+  final String userID;
 
   /// Firebase Storage 上のレシート画像のダウンロードURL。
   @override
@@ -491,8 +490,7 @@ class _GroupShoppingListReceipt implements GroupShoppingListReceipt {
             (identical(other.groupID, groupID) || other.groupID == groupID) &&
             (identical(other.shoppingListID, shoppingListID) ||
                 other.shoppingListID == shoppingListID) &&
-            (identical(other.createUserID, createUserID) ||
-                other.createUserID == createUserID) &&
+            (identical(other.userID, userID) || other.userID == userID) &&
             (identical(other.imageURL, imageURL) ||
                 other.imageURL == imageURL) &&
             (identical(other.amount, amount) || other.amount == amount) &&
@@ -514,7 +512,7 @@ class _GroupShoppingListReceipt implements GroupShoppingListReceipt {
       id,
       groupID,
       shoppingListID,
-      createUserID,
+      userID,
       imageURL,
       amount,
       memo,
@@ -525,7 +523,7 @@ class _GroupShoppingListReceipt implements GroupShoppingListReceipt {
 
   @override
   String toString() {
-    return 'GroupShoppingListReceipt(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, createUserID: $createUserID, imageURL: $imageURL, amount: $amount, memo: $memo, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListReceipt(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, imageURL: $imageURL, amount: $amount, memo: $memo, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -541,7 +539,7 @@ abstract mixin class _$GroupShoppingListReceiptCopyWith<$Res>
       {String id,
       String groupID,
       String shoppingListID,
-      String createUserID,
+      String userID,
       String? imageURL,
       int? amount,
       String? memo,
@@ -567,7 +565,7 @@ class __$GroupShoppingListReceiptCopyWithImpl<$Res>
     Object? id = null,
     Object? groupID = null,
     Object? shoppingListID = null,
-    Object? createUserID = null,
+    Object? userID = null,
     Object? imageURL = freezed,
     Object? amount = freezed,
     Object? memo = freezed,
@@ -589,9 +587,9 @@ class __$GroupShoppingListReceiptCopyWithImpl<$Res>
           ? _self.shoppingListID
           : shoppingListID // ignore: cast_nullable_to_non_nullable
               as String,
-      createUserID: null == createUserID
-          ? _self.createUserID
-          : createUserID // ignore: cast_nullable_to_non_nullable
+      userID: null == userID
+          ? _self.userID
+          : userID // ignore: cast_nullable_to_non_nullable
               as String,
       imageURL: freezed == imageURL
           ? _self.imageURL
