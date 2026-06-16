@@ -303,6 +303,29 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
       throw Exception(response['error']['message']);
     }
   }
+
+  /// レシート画像をFirebase Storageにアップロードし、ダウンロードURLを返す。
+  Future<String> uploadReceiptImage({
+    required String groupID,
+    required String shoppingListID,
+    required String receiptID,
+    required String base64Image,
+  }) async {
+    final result = await httpsCallable('uploadReceiptImage').call(
+      {
+        'groupID': groupID,
+        'shoppingListID': shoppingListID,
+        'receiptID': receiptID,
+        'base64Image': base64Image,
+      },
+    );
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+    // Storage path を返す（download URL は Firestore に保存しない）。
+    return response['data']['storagePath'] as String;
+  }
 }
 
 // Map<String, dynamic>.fromだけだとネストした子要素が_Map<Object? Object?>のままになる

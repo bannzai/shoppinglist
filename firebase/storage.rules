@@ -6,5 +6,13 @@ service firebase.storage {
       allow read: if false;
       allow write: if false;
     }
+
+    // レシート画像。書き込みは Cloud Function (Admin SDK) 経由のみ。
+    // 読み取りは認証済みグループメンバーに許可（クライアントが storagePath から取得）。
+    match /groups/{groupID}/shoppingLists/{shoppingListID}/receipts/{fileName} {
+      allow read: if request.auth != null
+        && request.auth.uid in firestore.get(/databases/(default)/documents/groups/$(groupID)).data.memberUserIDs;
+      allow write: if false;
+    }
   }
 }

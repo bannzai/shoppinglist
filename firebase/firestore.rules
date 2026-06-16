@@ -75,6 +75,13 @@ service cloud.firestore {
         match /items/{itemID} {
           allow read, write: if isGroupMember();
         }
+
+        // レシートのメタデータ（金額・メモ）。画像本体は Storage に保存し
+        // Cloud Functions 経由でのみアクセスする（storage.rules を参照）。
+        // レシートは登録・編集のみで削除は行わないため、delete は許可しない。
+        match /receipts/{receiptID} {
+          allow read, create, update: if isGroupMember();
+        }
       }
     }
   }

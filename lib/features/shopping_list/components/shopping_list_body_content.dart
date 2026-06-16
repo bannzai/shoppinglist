@@ -2,7 +2,9 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/features/receipt/receipt_section.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/empty_text_shopping_list_item.dart';
+import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_items.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -80,6 +82,12 @@ class ShoppingListBodyContent extends StatelessWidget {
             groupID: groupID,
             shoppingListID: shoppingListID,
             shoppingLocationID: shoppingList?.shoppingLocationID,
+            // 買い物が始まった/終わった後（チェック済みが1件以上）にのみ、リストの
+            // 最終アイテム直後（footer）にレシート登録の導線を出す。
+            footer: shoppingListItemMetrics(shoppingListItems).checkedCount > 0
+                ? ReceiptSection(
+                    groupID: groupID, shoppingListID: shoppingListID)
+                : null,
           ),
         ),
       ],

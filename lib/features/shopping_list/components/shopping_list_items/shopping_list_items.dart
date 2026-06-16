@@ -58,11 +58,16 @@ class ShoppingListItems extends ConsumerWidget {
   final String shoppingListID;
   final String? shoppingLocationID;
 
+  /// リストの最後（最終アイテムの下）に表示する footer（レシートセクション等）。
+  /// スクロールに追従し、並び替え対象には含まれない。
+  final Widget? footer;
+
   const ShoppingListItems({
     super.key,
     required this.groupID,
     required this.shoppingListID,
     required this.shoppingLocationID,
+    this.footer,
   });
 
   @override
@@ -85,6 +90,7 @@ class ShoppingListItems extends ConsumerWidget {
             showCategorizeButton: true,
             categoryAxisID: null,
             existingCategoryNames: const [],
+            footer: footer,
           );
         }
 
@@ -95,6 +101,7 @@ class ShoppingListItems extends ConsumerWidget {
           shoppingListItems: shoppingListItems,
           categoryAxisID: axis.id,
           shoppingLocationID: shoppingLocationID,
+          footer: footer,
         );
       },
       error: (e, st) => Center(child: Text(e.toString())),
@@ -102,6 +109,7 @@ class ShoppingListItems extends ConsumerWidget {
         groupID: groupID,
         shoppingListID: shoppingListID,
         shoppingListItems: shoppingListItems,
+        footer: footer,
       ),
     );
   }
@@ -122,6 +130,9 @@ class _FlatShoppingListItems extends ConsumerWidget {
   /// AIに渡す既存カテゴリ名（フラット表示時は空）。
   final List<String> existingCategoryNames;
 
+  /// リスト末尾に表示する footer（レシートセクション等）。
+  final Widget? footer;
+
   const _FlatShoppingListItems({
     required this.groupID,
     required this.shoppingListID,
@@ -129,13 +140,18 @@ class _FlatShoppingListItems extends ConsumerWidget {
     this.showCategorizeButton = false,
     this.categoryAxisID,
     this.existingCategoryNames = const [],
+    this.footer,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final rowKeys = ref.watch(shoppingListItemRowKeysProvider);
-    final list = ReorderableList(
+    final list = ReorderableListView.builder(
       padding: _listBottomPadding(context),
+      // 最終アイテムの下に表示する footer（レシートセクション等）。並び替え対象外。
+      footer: footer,
+      // 行ごとに ReorderableDelayedDragStartListener を自前で付けるため既定ハンドルは無効化。
+      buildDefaultDragHandles: false,
       // アイテム編集中にリストをスクロール(ドラッグ)したらキーボードを閉じる
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       onReorder: (oldIndex, newIndex) {
@@ -219,12 +235,16 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
   final String categoryAxisID;
   final String? shoppingLocationID;
 
+  /// リスト末尾に表示する footer（レシートセクション等）。
+  final Widget? footer;
+
   const _CategorizedShoppingListItems({
     required this.groupID,
     required this.shoppingListID,
     required this.shoppingListItems,
     required this.categoryAxisID,
     required this.shoppingLocationID,
+    this.footer,
   });
 
   @override
@@ -246,6 +266,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
             showCategorizeButton: true,
             categoryAxisID: categoryAxisID,
             existingCategoryNames: const [],
+            footer: footer,
           );
         }
 
@@ -269,6 +290,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
           shoppingListItems: shoppingListItems,
           shoppingLocationID: isPremium ? shoppingLocationID : null,
           rowKeys: rowKeys,
+          footer: footer,
         );
         if (uncategorizedItems.isEmpty) {
           return groupedListView;
@@ -293,6 +315,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
         groupID: groupID,
         shoppingListID: shoppingListID,
         shoppingListItems: shoppingListItems,
+        footer: footer,
       ),
     );
   }
@@ -399,6 +422,9 @@ class _GroupedListView extends HookConsumerWidget {
   /// 入力行に安定した GlobalKey を割り当てるためのレジストリ。
   final ShoppingListItemRowKeys rowKeys;
 
+  /// リスト末尾に表示する footer（レシートセクション等）。
+  final Widget? footer;
+
   const _GroupedListView({
     required this.groupID,
     required this.shoppingListID,
@@ -407,6 +433,7 @@ class _GroupedListView extends HookConsumerWidget {
     required this.shoppingListItems,
     required this.shoppingLocationID,
     required this.rowKeys,
+    this.footer,
   });
 
   @override
@@ -513,6 +540,8 @@ class _GroupedListView extends HookConsumerWidget {
       },
       child: ReorderableListView.builder(
         padding: _listBottomPadding(context),
+        // 最終アイテムの下に表示する footer（レシートセクション等）。並び替え対象外。
+        footer: footer,
         // アイテム編集中にリストをスクロール(ドラッグ)したらキーボードを閉じる
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         // 既定のドラッグハンドルを無効化し、確定アイテム行とカテゴリヘッダー行のみ
