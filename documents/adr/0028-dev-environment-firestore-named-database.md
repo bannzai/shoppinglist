@@ -1,7 +1,9 @@
 # 0028. dev 環境を Firestore named database `development` で用意し dart-define で接続切替
 
 ## Status
-Accepted
+Superseded by [[0030-separate-dev-prod-firebase-projects]] (Issue #410)
+
+named database `development` + dart-define `FIRESTORE_DATABASE_ID` 方式は、バックエンド(`admin.firestore()`)が named DB 非対応で dev と整合しないため廃止し、別 Firebase プロジェクトによる完全分離(本 ADR の選択肢A)へ移行した。
 
 ## Context
 ADR 0027 でお問い合わせ送信時に「問い合わせ時点の DB スナップショット」を `inquiries/{id}.snapshotJson` に保存し、復元コマンドで書き戻せるようにした。しかしこのアプリは Firebase プロジェクトが `shopping-list-prod-a615c` の1つだけで、dev 専用の DB が存在しなかった。そのため復元先が本番 `(default)` データベースしかなく、「問い合わせユーザーの状態を再現する」ために復元すると本番データを汚すリスクがあった。
