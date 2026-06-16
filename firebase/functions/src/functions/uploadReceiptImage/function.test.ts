@@ -4,9 +4,6 @@ const mockFirestoreInstance = {
 };
 const mockCurrentContext = jest.fn();
 const mockSave = jest.fn().mockResolvedValue(undefined);
-const mockGetDownloadURL = jest
-  .fn()
-  .mockResolvedValue("https://example.com/receipt-photo.jpg");
 
 jest.mock("firebase-admin", () => ({
   __esModule: true,
@@ -30,7 +27,6 @@ let capturedFlowFn: (input: {
   groupID: string;
   shoppingListID: string;
   receiptID: string;
-  mimeType: string;
   base64Image: string;
 }) => Promise<any>;
 
@@ -42,9 +38,6 @@ jest.mock("../utils/genkit", () => ({
     },
     currentContext: mockCurrentContext,
   },
-}));
-jest.mock("firebase-admin/storage", () => ({
-  getDownloadURL: mockGetDownloadURL,
 }));
 jest.mock("firebase-functions/https", () => ({
   onCallGenkit: (_opts: any, flow: any) => flow,
@@ -84,7 +77,6 @@ const defaultInput = {
   groupID: "group-1",
   shoppingListID: "list-1",
   receiptID: "receipt-1",
-  mimeType: "image/jpeg",
   // "hello" の base64 (8文字 → padding込み)
   base64Image: "aGVsbG8=",
 };
@@ -102,7 +94,9 @@ describe("uploadReceiptImage", () => {
     const result = await capturedFlowFn(defaultInput);
 
     expect(result.result).toBe("OK");
-    expect(result.data.imageURL).toContain("https://");
+    expect(result.data.storagePath).toBe(
+      "groups/group-1/shoppingLists/list-1/receipts/receipt-1.jpeg",
+    );
     expect(mockSave).toHaveBeenCalled();
   });
 
@@ -145,20 +139,6 @@ describe("uploadReceiptImage", () => {
 
     expect(result.result).toBe("NG");
     expect(result.error.message).toBe("対象の買い物リストが存在しません");
-  });
-
-  test("異常系: 非許可MIME typeでエラー", async () => {
-    mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
-    mockHasPremiumEntitlement.mockResolvedValue(true);
-    setupFirestoreMock({ memberUserIDs: ["user-1"], listExists: true });
-
-    const result = await capturedFlowFn({
-      ...defaultInput,
-      mimeType: "image/gif",
-    });
-
-    expect(result.result).toBe("NG");
-    expect(result.error.message).toBe("画像形式がサポートされていません");
   });
 
   test("異常系: 空の画像データでエラー", async () => {

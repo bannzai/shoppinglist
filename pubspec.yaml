@@ -39,7 +39,8 @@ dependencies:
   firebase_remote_config: 
   cloud_firestore:
   cloud_functions:
-  firebase_crashlytics: 
+  firebase_storage:
+  firebase_crashlytics:
   purchases_flutter: ^9.16.1
 
   crypto:

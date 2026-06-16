@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -8,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/entity/group_shopping_list_receipt.dart';
+import 'package:shoppinglist/features/receipt/receipt_image.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/receipt.dart';
@@ -52,7 +52,7 @@ class _ReceiptEditSheet extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUserID = ref.watch(currentUserIDProvider);
     final selectedPhoto = useState<XFile?>(null);
-    final imageURL = useState<String?>(receipt?.imageURL);
+    final storagePath = useState<String?>(receipt?.storagePath);
     final isSaving = useState<bool>(false);
     final amountController = useTextEditingController(
       text: receipt?.amount?.toString() ?? '',
@@ -126,37 +126,36 @@ class _ReceiptEditSheet extends HookConsumerWidget {
               .newReceiptReference(shoppingListID: shoppingListID)
               .id;
           final file = File(selectedPhoto.value!.path);
-          final uploadedImageURL = await functions.uploadReceiptImage(
+          final uploadedStoragePath = await functions.uploadReceiptImage(
             groupID: groupID,
             shoppingListID: shoppingListID,
             receiptID: receiptID,
-            mimeType: mimeType(file),
             base64Image: await base64CompressImage(file),
           );
           await ref.read(addReceiptProvider(groupID: groupID)).call(
                 shoppingListID: shoppingListID,
                 receiptID: receiptID,
                 userID: userID,
-                imageURL: uploadedImageURL,
+                storagePath: uploadedStoragePath,
                 amount: amount,
                 memo: memo.isEmpty ? null : memo,
               );
         } else {
-          // 編集: 画像が差し替えられていればアップロードして URL を更新する。
-          var nextImageURL = imageURL.value;
+          // 編集: 画像が差し替えられていればアップロードする。storage path は receiptID
+          // から決定的に決まるため、再アップロードは同じパスを上書きする。
+          var nextStoragePath = storagePath.value;
           if (selectedPhoto.value != null) {
             final file = File(selectedPhoto.value!.path);
-            nextImageURL = await functions.uploadReceiptImage(
+            nextStoragePath = await functions.uploadReceiptImage(
               groupID: groupID,
               shoppingListID: shoppingListID,
               receiptID: receipt!.id,
-              mimeType: mimeType(file),
               base64Image: await base64CompressImage(file),
             );
           }
           await ref.read(updateReceiptProvider(groupID: groupID)).call(
                 receipt: receipt!.copyWith(
-                  imageURL: nextImageURL,
+                  storagePath: nextStoragePath,
                   amount: amount,
                   memo: memo.isEmpty ? null : memo,
                 ),
@@ -191,7 +190,7 @@ class _ReceiptEditSheet extends HookConsumerWidget {
             const SizedBox(height: 16),
             _ReceiptImageField(
               selectedPhoto: selectedPhoto.value,
-              imageURL: imageURL.value,
+              storagePath: storagePath.value,
               onTapChange: showImageSourceSheet,
             ),
             const SizedBox(height: 16),
@@ -236,12 +235,12 @@ class _ReceiptEditSheet extends HookConsumerWidget {
 /// レシート画像のプレビュー / 選択フィールド。
 class _ReceiptImageField extends StatelessWidget {
   final XFile? selectedPhoto;
-  final String? imageURL;
+  final String? storagePath;
   final VoidCallback onTapChange;
 
   const _ReceiptImageField({
     required this.selectedPhoto,
-    required this.imageURL,
+    required this.storagePath,
     required this.onTapChange,
   });
 
@@ -258,22 +257,13 @@ class _ReceiptImageField extends StatelessWidget {
         ),
       );
     }
-    if (imageURL != null) {
+    if (storagePath != null) {
       return _preview(
         context,
-        CachedNetworkImage(
-          imageUrl: imageURL!,
+        ReceiptImage(
+          storagePath: storagePath,
           width: double.infinity,
           height: 220,
-          fit: BoxFit.cover,
-          placeholder: (context, url) => const SizedBox(
-            height: 220,
-            child: Center(child: CircularProgressIndicator()),
-          ),
-          errorWidget: (context, url, error) => const SizedBox(
-            height: 220,
-            child: Center(child: Icon(Icons.broken_image, size: 48)),
-          ),
         ),
       );
     }

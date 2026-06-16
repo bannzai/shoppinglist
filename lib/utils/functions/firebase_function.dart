@@ -309,7 +309,6 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     required String groupID,
     required String shoppingListID,
     required String receiptID,
-    required String mimeType,
     required String base64Image,
   }) async {
     final result = await httpsCallable('uploadReceiptImage').call(
@@ -317,16 +316,15 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
         'groupID': groupID,
         'shoppingListID': shoppingListID,
         'receiptID': receiptID,
-        'mimeType': mimeType,
         'base64Image': base64Image,
       },
     );
-    // token付きURLを含む可能性があるためresult.dataはログ出力しない
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
       throw Exception(response['error']['message']);
     }
-    return response['data']['imageURL'] as String;
+    // Storage path を返す（download URL は Firestore に保存しない）。
+    return response['data']['storagePath'] as String;
   }
 }
 

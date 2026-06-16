@@ -1,5 +1,4 @@
 import admin from "firebase-admin";
-import { getDownloadURL } from "firebase-admin/storage";
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
@@ -17,19 +16,10 @@ import {
 const ResponseSchema = z.union([
   DataResponseSchema.extend({
     data: z.object({
-      imageURL: z.string(),
+      storagePath: z.string(),
     }),
   }),
   ErrorResponseSchema,
-]);
-
-/** サポートする画像MIME typeの集合。 */
-const allowedMimeTypes = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/heic",
-  "image/heif",
 ]);
 
 /** 画像の最大バイトサイズ（10MB）。 */
@@ -63,7 +53,6 @@ interface GroupData {
  *   "groupID": "group-id",
  *   "shoppingListID": "list-id",
  *   "receiptID": "receipt-id",
- *   "mimeType": "image/jpeg",
  *   "base64Image": "<base64エンコードされた画像データ>"
  * }
  * ```
@@ -72,7 +61,10 @@ interface GroupData {
  * - 認証必須・プレミアムユーザーのみ
  * - グループメンバーのみ
  * - 対象の買い物リストが存在すること
- * - 画像: JPEG/PNG/WebP/HEIC/HEIF、10MB以下
+ * - 画像: 10MB以下（クライアントで JPEG 圧縮済み）
+ *
+ * 画像は storage path に保存し、download URL は返さず storagePath を返す。
+ * クライアントは storagePath から（storage.rules でグループメンバーに read 許可）取得する。
  */
 const uploadReceiptImageFlow = ai.defineFlow(
   {
@@ -81,7 +73,6 @@ const uploadReceiptImageFlow = ai.defineFlow(
       groupID: z.string().regex(firestoreIDPattern),
       shoppingListID: z.string().regex(firestoreIDPattern),
       receiptID: z.string().regex(firestoreIDPattern),
-      mimeType: z.string(),
       base64Image: z.string().max(maxBase64Chars),
     }),
     outputSchema: ResponseSchema,
@@ -129,13 +120,6 @@ const uploadReceiptImageFlow = ai.defineFlow(
       };
     }
 
-    if (!allowedMimeTypes.has(input.mimeType)) {
-      return {
-        result: "NG" as const,
-        error: { message: "画像形式がサポートされていません" },
-      };
-    }
-
     const normalizedBase64 = input.base64Image.trim();
     if (
       normalizedBase64.length === 0 ||
@@ -158,18 +142,19 @@ const uploadReceiptImageFlow = ai.defineFlow(
     }
 
     try {
-      const storagePath = `groups/${input.groupID}/shoppingLists/${input.shoppingListID}/receipts/${input.receiptID}/photo`;
+      const storagePath = `groups/${input.groupID}/shoppingLists/${input.shoppingListID}/receipts/${input.receiptID}.jpeg`;
       const file = admin.storage().bucket().file(storagePath);
 
       await file.save(imageBuffer, {
         metadata: {
-          contentType: input.mimeType,
+          // クライアントは base64CompressImage で常に JPEG を送るため固定。
+          contentType: "image/jpeg",
         },
       });
 
       return {
         result: "OK" as const,
-        data: { imageURL: await getDownloadURL(file) },
+        data: { storagePath },
       };
     } catch (error) {
       logger.error("uploadReceiptImage failed", {

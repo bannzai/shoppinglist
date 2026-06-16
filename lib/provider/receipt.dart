@@ -38,7 +38,7 @@ class AddReceipt {
     required String shoppingListID,
     required String receiptID,
     required String userID,
-    required String? imageURL,
+    required String? storagePath,
     required int? amount,
     required String? memo,
   }) async {
@@ -50,7 +50,7 @@ class AddReceipt {
             groupID: database.groupID,
             shoppingListID: shoppingListID,
             userID: userID,
-            imageURL: imageURL,
+            storagePath: storagePath,
             amount: amount,
             memo: memo,
           ),

@@ -24,8 +24,11 @@ abstract class GroupShoppingListReceipt with _$GroupShoppingListReceipt {
     required String shoppingListID,
     required String userID,
 
-    /// Firebase Storage 上のレシート画像のダウンロードURL。
-    required String? imageURL,
+    /// Firebase Storage 上のレシート画像のパス。
+    /// 例: groups/{groupID}/shoppingLists/{shoppingListID}/receipts/{receiptID}.jpeg
+    /// download URL は Firestore に保存せず、表示時に storagePath から getDownloadURL で
+    /// 都度取得する（storage.rules でグループメンバーのみ read 許可）。
+    required String? storagePath,
 
     /// レシートの金額（円・整数）。
     required int? amount,

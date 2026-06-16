@@ -13,7 +13,7 @@ _GroupShoppingListReceipt _$GroupShoppingListReceiptFromJson(
       groupID: json['groupID'] as String,
       shoppingListID: json['shoppingListID'] as String,
       userID: json['userID'] as String,
-      imageURL: json['imageURL'] as String?,
+      storagePath: json['storagePath'] as String?,
       amount: (json['amount'] as num?)?.toInt(),
       memo: json['memo'] as String?,
       createdDateTime: const ClientCreatedTimestamp()
@@ -33,7 +33,7 @@ Map<String, dynamic> _$GroupShoppingListReceiptToJson(
       'groupID': instance.groupID,
       'shoppingListID': instance.shoppingListID,
       'userID': instance.userID,
-      'imageURL': instance.imageURL,
+      'storagePath': instance.storagePath,
       'amount': instance.amount,
       'memo': instance.memo,
       'createdDateTime':

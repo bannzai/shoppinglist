@@ -1,8 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/receipt/receipt_edit_sheet.dart';
+import 'package:shoppinglist/features/receipt/receipt_image.dart';
 import 'package:shoppinglist/provider/receipt.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -81,7 +81,9 @@ class ReceiptSection extends ConsumerWidget {
               ),
             ],
           ),
-          if (receipts.isNotEmpty) ...[
+          // 非プレミアムはレシート全体が Paywall 対象のため、サムネ（画像内容）も
+          // 表示しない。プレミアムのみ登録済みサムネを横スクロールで表示する。
+          if (isPremium && receipts.isNotEmpty) ...[
             const SizedBox(height: 4),
             SizedBox(
               height: 84,
@@ -109,21 +111,10 @@ class ReceiptSection extends ConsumerWidget {
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: CachedNetworkImage(
-                        imageUrl: receipt.imageURL ?? '',
+                      child: ReceiptImage(
+                        storagePath: receipt.storagePath,
                         width: 84,
                         height: 84,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => const SizedBox(
-                          width: 84,
-                          height: 84,
-                          child: Center(child: CircularProgressIndicator()),
-                        ),
-                        errorWidget: (context, url, error) => const SizedBox(
-                          width: 84,
-                          height: 84,
-                          child: Icon(Icons.broken_image),
-                        ),
                       ),
                     ),
                   );

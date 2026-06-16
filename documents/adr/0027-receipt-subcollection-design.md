@@ -11,10 +11,12 @@
 レシートを `groups/{groupID}/shoppingLists/{shoppingListID}/receipts/{receiptID}` のサブコレクションとして管理する。
 
 ### データ設計
-- Firestore: `receipts` サブコレクション（Entity: `GroupShoppingListReceipt`）に `imageURL`・`amount`・`memo` と親IDを保持
-- Storage: `groups/{groupID}/shoppingLists/{shoppingListID}/receipts/{receiptID}/photo` に画像を保存
-- Storage アクセスは `uploadReceiptImage` Function（Admin SDK）経由のみ（既存の商品写真添付と同じ方式）
+- Firestore: `receipts` サブコレクション（Entity: `GroupShoppingListReceipt`）に `storagePath`・`amount`・`memo` と親IDを保持
+- Storage: `groups/{groupID}/shoppingLists/{shoppingListID}/receipts/{receiptID}.jpeg`（receiptID から決定的に決まるパス）に画像を保存
+- 書き込みは `uploadReceiptImage` Function（Admin SDK）経由のみ。**download URL は Firestore に保存せず**、Function は storage path を返す（永続 bearer URL の流出を避けるため）
+- 読み取りは `storage.rules` で認証済みグループメンバーに read 許可し、クライアントが storagePath から都度 `getDownloadURL` で取得する
 - レシートは登録・編集のみで削除機能は提供しない（`firestore.rules` も `create` / `update` のみ許可）
+- 画像配信の将来的な Cloudflare R2 移行（custom claim + Worker による path ベース認可）は別 issue で検討する
 
 ### 代替案
 - `GroupShoppingList` Entity に `receiptImageURL` フィールドを1つ追加する案 → 複数枚に対応できないため不採用

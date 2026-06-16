@@ -19,8 +19,11 @@ mixin _$GroupShoppingListReceipt {
   String get shoppingListID;
   String get userID;
 
-  /// Firebase Storage 上のレシート画像のダウンロードURL。
-  String? get imageURL;
+  /// Firebase Storage 上のレシート画像のパス。
+  /// 例: groups/{groupID}/shoppingLists/{shoppingListID}/receipts/{receiptID}.jpeg
+  /// download URL は Firestore に保存せず、表示時に storagePath から getDownloadURL で
+  /// 都度取得する（storage.rules でグループメンバーのみ read 許可）。
+  String? get storagePath;
 
   /// レシートの金額（円・整数）。
   int? get amount;
@@ -57,8 +60,8 @@ mixin _$GroupShoppingListReceipt {
             (identical(other.shoppingListID, shoppingListID) ||
                 other.shoppingListID == shoppingListID) &&
             (identical(other.userID, userID) || other.userID == userID) &&
-            (identical(other.imageURL, imageURL) ||
-                other.imageURL == imageURL) &&
+            (identical(other.storagePath, storagePath) ||
+                other.storagePath == storagePath) &&
             (identical(other.amount, amount) || other.amount == amount) &&
             (identical(other.memo, memo) || other.memo == memo) &&
             (identical(other.createdDateTime, createdDateTime) ||
@@ -79,7 +82,7 @@ mixin _$GroupShoppingListReceipt {
       groupID,
       shoppingListID,
       userID,
-      imageURL,
+      storagePath,
       amount,
       memo,
       createdDateTime,
@@ -89,7 +92,7 @@ mixin _$GroupShoppingListReceipt {
 
   @override
   String toString() {
-    return 'GroupShoppingListReceipt(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, imageURL: $imageURL, amount: $amount, memo: $memo, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListReceipt(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, storagePath: $storagePath, amount: $amount, memo: $memo, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -104,7 +107,7 @@ abstract mixin class $GroupShoppingListReceiptCopyWith<$Res> {
       String groupID,
       String shoppingListID,
       String userID,
-      String? imageURL,
+      String? storagePath,
       int? amount,
       String? memo,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -130,7 +133,7 @@ class _$GroupShoppingListReceiptCopyWithImpl<$Res>
     Object? groupID = null,
     Object? shoppingListID = null,
     Object? userID = null,
-    Object? imageURL = freezed,
+    Object? storagePath = freezed,
     Object? amount = freezed,
     Object? memo = freezed,
     Object? createdDateTime = freezed,
@@ -155,9 +158,9 @@ class _$GroupShoppingListReceiptCopyWithImpl<$Res>
           ? _self.userID
           : userID // ignore: cast_nullable_to_non_nullable
               as String,
-      imageURL: freezed == imageURL
-          ? _self.imageURL
-          : imageURL // ignore: cast_nullable_to_non_nullable
+      storagePath: freezed == storagePath
+          ? _self.storagePath
+          : storagePath // ignore: cast_nullable_to_non_nullable
               as String?,
       amount: freezed == amount
           ? _self.amount
@@ -285,7 +288,7 @@ extension GroupShoppingListReceiptPatterns on GroupShoppingListReceipt {
             String groupID,
             String shoppingListID,
             String userID,
-            String? imageURL,
+            String? storagePath,
             int? amount,
             String? memo,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -303,7 +306,7 @@ extension GroupShoppingListReceiptPatterns on GroupShoppingListReceipt {
             _that.groupID,
             _that.shoppingListID,
             _that.userID,
-            _that.imageURL,
+            _that.storagePath,
             _that.amount,
             _that.memo,
             _that.createdDateTime,
@@ -335,7 +338,7 @@ extension GroupShoppingListReceiptPatterns on GroupShoppingListReceipt {
             String groupID,
             String shoppingListID,
             String userID,
-            String? imageURL,
+            String? storagePath,
             int? amount,
             String? memo,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -352,7 +355,7 @@ extension GroupShoppingListReceiptPatterns on GroupShoppingListReceipt {
             _that.groupID,
             _that.shoppingListID,
             _that.userID,
-            _that.imageURL,
+            _that.storagePath,
             _that.amount,
             _that.memo,
             _that.createdDateTime,
@@ -383,7 +386,7 @@ extension GroupShoppingListReceiptPatterns on GroupShoppingListReceipt {
             String groupID,
             String shoppingListID,
             String userID,
-            String? imageURL,
+            String? storagePath,
             int? amount,
             String? memo,
             @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -400,7 +403,7 @@ extension GroupShoppingListReceiptPatterns on GroupShoppingListReceipt {
             _that.groupID,
             _that.shoppingListID,
             _that.userID,
-            _that.imageURL,
+            _that.storagePath,
             _that.amount,
             _that.memo,
             _that.createdDateTime,
@@ -422,7 +425,7 @@ class _GroupShoppingListReceipt implements GroupShoppingListReceipt {
       required this.groupID,
       required this.shoppingListID,
       required this.userID,
-      required this.imageURL,
+      required this.storagePath,
       required this.amount,
       required this.memo,
       @ClientCreatedTimestamp() this.createdDateTime,
@@ -441,9 +444,12 @@ class _GroupShoppingListReceipt implements GroupShoppingListReceipt {
   @override
   final String userID;
 
-  /// Firebase Storage 上のレシート画像のダウンロードURL。
+  /// Firebase Storage 上のレシート画像のパス。
+  /// 例: groups/{groupID}/shoppingLists/{shoppingListID}/receipts/{receiptID}.jpeg
+  /// download URL は Firestore に保存せず、表示時に storagePath から getDownloadURL で
+  /// 都度取得する（storage.rules でグループメンバーのみ read 許可）。
   @override
-  final String? imageURL;
+  final String? storagePath;
 
   /// レシートの金額（円・整数）。
   @override
@@ -491,8 +497,8 @@ class _GroupShoppingListReceipt implements GroupShoppingListReceipt {
             (identical(other.shoppingListID, shoppingListID) ||
                 other.shoppingListID == shoppingListID) &&
             (identical(other.userID, userID) || other.userID == userID) &&
-            (identical(other.imageURL, imageURL) ||
-                other.imageURL == imageURL) &&
+            (identical(other.storagePath, storagePath) ||
+                other.storagePath == storagePath) &&
             (identical(other.amount, amount) || other.amount == amount) &&
             (identical(other.memo, memo) || other.memo == memo) &&
             (identical(other.createdDateTime, createdDateTime) ||
@@ -513,7 +519,7 @@ class _GroupShoppingListReceipt implements GroupShoppingListReceipt {
       groupID,
       shoppingListID,
       userID,
-      imageURL,
+      storagePath,
       amount,
       memo,
       createdDateTime,
@@ -523,7 +529,7 @@ class _GroupShoppingListReceipt implements GroupShoppingListReceipt {
 
   @override
   String toString() {
-    return 'GroupShoppingListReceipt(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, imageURL: $imageURL, amount: $amount, memo: $memo, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListReceipt(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, storagePath: $storagePath, amount: $amount, memo: $memo, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
   }
 }
 
@@ -540,7 +546,7 @@ abstract mixin class _$GroupShoppingListReceiptCopyWith<$Res>
       String groupID,
       String shoppingListID,
       String userID,
-      String? imageURL,
+      String? storagePath,
       int? amount,
       String? memo,
       @ClientCreatedTimestamp() DateTime? createdDateTime,
@@ -566,7 +572,7 @@ class __$GroupShoppingListReceiptCopyWithImpl<$Res>
     Object? groupID = null,
     Object? shoppingListID = null,
     Object? userID = null,
-    Object? imageURL = freezed,
+    Object? storagePath = freezed,
     Object? amount = freezed,
     Object? memo = freezed,
     Object? createdDateTime = freezed,
@@ -591,9 +597,9 @@ class __$GroupShoppingListReceiptCopyWithImpl<$Res>
           ? _self.userID
           : userID // ignore: cast_nullable_to_non_nullable
               as String,
-      imageURL: freezed == imageURL
-          ? _self.imageURL
-          : imageURL // ignore: cast_nullable_to_non_nullable
+      storagePath: freezed == storagePath
+          ? _self.storagePath
+          : storagePath // ignore: cast_nullable_to_non_nullable
               as String?,
       amount: freezed == amount
           ? _self.amount
