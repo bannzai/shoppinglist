@@ -1,15 +1,17 @@
 import admin = require("firebase-admin");
 
 console.log("THIS IS NOT TEST ENVIRONMENT");
+// Functions ランタイムが設定する project id から Storage バケット名を導出し、
+// プロジェクト(dev/prod)ごとに正しいバケットを参照する。ハードコードしない。
+// gen2 では GCLOUD_PROJECT / GOOGLE_CLOUD_PROJECT のいずれかが設定されるためフォールバックする。
+const projectId = process.env.GCLOUD_PROJECT ?? process.env.GOOGLE_CLOUD_PROJECT;
+const storageBucket = `gs://${projectId}.firebasestorage.app`;
+console.log(`initializeApp storageBucket=${storageBucket}`);
 if (process.env.ENV === "local") {
   console.log("THIS IS LOCAL ENVIRONMENT");
-  admin.initializeApp({
-    storageBucket: "gs://shopping-list-prod-a615c.firebasestorage.app",
-  });
+  admin.initializeApp({ storageBucket });
 } else {
-  admin.initializeApp({
-    storageBucket: "gs://shopping-list-prod-a615c.firebasestorage.app",
-  });
+  admin.initializeApp({ storageBucket });
 }
 
 admin.firestore().settings({ ignoreUndefinedProperties: true });
