@@ -7,20 +7,30 @@ name: firebase-deploy
 #   workflow_dispatch（手動実行）のみをトリガーとする。
 # - 認証はデプロイ専用サービスアカウントの鍵(JSON)を base64 化した GitHub Secret を
 #   Application Default Credentials (GOOGLE_APPLICATION_CREDENTIALS) として復元して行う。
-# - 対象プロジェクトは .firebaserc の default(= shopping-list-prod-a615c) 単一構成。
+# - 対象プロジェクトは入力 project(dev/prod) で選択し、--project で .firebaserc の alias を指定する(Issue #410 / ADR 0030)。
+# - dev/prod の切替は GitHub Environments で行う。同名 Secret FIREBASE_SERVICE_ACCOUNT_BASE64 を
+#   environment(dev/prod)単位で出し分ける(_DEV/_PROD のような名前分けはしない)。
 #
 # 事前準備(初回のみ):
-# 1. デプロイ専用 SA を用意し gen2 デプロイに必要な IAM 権限を付与する。
+# 1. dev/prod それぞれにデプロイ専用 SA を用意し gen2 デプロイに必要な IAM 権限を付与する。
 #    → firebase-functions-deploy-iam-setup スキルで診断・付与できる。
-#      既定 SA: github-firebase-deployer@shopping-list-prod-a615c.iam.gserviceaccount.com
-# 2. SA 鍵 JSON を base64 化し、リポジトリ Secret `FIREBASE_SERVICE_ACCOUNT_BASE64` に登録する。
+#      既定 SA: github-firebase-deployer@<projectId>.iam.gserviceaccount.com
+# 2. GitHub の Environments(dev / prod)を作成し、各 environment の Secret として
+#    FIREBASE_SERVICE_ACCOUNT_BASE64(その project の SA 鍵 JSON を base64 化)を登録する。
 #      例: base64 -i service-account.json | pbcopy   # macOS
-# 3. リポジトリ Variable `APP_ENV` を設定する(本番は prod)。functions の defineString("APP_ENV") 用。
-#    .env.* は .gitignore 対象で CI に存在しないため、deploy 前に Variable から dotenv を生成する。
+# 3. APP_ENV は deploy 対象 project(dev/prod) から導出するため Variable は不要(.env.<projectId> を CI で生成)。
 
 on:
   workflow_dispatch:
     inputs:
+      project:
+        description: 'デプロイ先プロジェクト'
+        required: true
+        type: choice
+        options:
+          - dev
+          - prod
+        default: dev
       functions:
         description: 'デプロイする関数名(カンマ区切り。例: functions:createGroup,functions:acceptGroupInvitation)。deploy_all=true のときは無視'
         required: false
@@ -43,6 +53,8 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # dev/prod の Secret(FIREBASE_SERVICE_ACCOUNT_BASE64)を environment 単位で出し分ける。
+    environment: ${{ inputs.project }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
@@ -60,13 +72,25 @@ jobs:
       - name: Install firebase-tools
         run: npm install -g firebase-tools
 
+      - name: Resolve project
+        id: resolve
+        env:
+          PROJECT: ${{ inputs.project }}
+        run: |
+          if [ "$PROJECT" = "prod" ]; then
+            echo "project_id=shoppinglist-prod" >> "$GITHUB_OUTPUT"
+          else
+            echo "project_id=shoppinglist-dev" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Restore service account key
         working-directory: firebase/functions
         env:
+          # environment(dev/prod)単位で値が出し分けられる同名 Secret。
           FIREBASE_SERVICE_ACCOUNT_BASE64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASE64 }}
         run: |
           if [ -z "$FIREBASE_SERVICE_ACCOUNT_BASE64" ]; then
-            echo "::error::Secret FIREBASE_SERVICE_ACCOUNT_BASE64 が未設定です。事前準備を確認してください"
+            echo "::error::Secret FIREBASE_SERVICE_ACCOUNT_BASE64 が未設定です(GitHub Environment '${{ inputs.project }}' に登録してください)"
             exit 1
           fi
           # secret/ は firebase/functions/.gitignore 済み(ローカルの Makefile secret と同じ配置)
@@ -77,28 +101,25 @@ jobs:
       - name: Restore functions env (APP_ENV)
         working-directory: firebase/functions
         env:
-          APP_ENV: ${{ vars.APP_ENV }}
+          PROJECT: ${{ inputs.project }}
+          PROJECT_ID: ${{ steps.resolve.outputs.project_id }}
         run: |
-          if [ -z "$APP_ENV" ]; then
-            echo "::error::Variable APP_ENV が未設定です。リポジトリ Variables に APP_ENV(本番は prod) を設定してください"
-            exit 1
-          fi
-          # firebase-functions params(defineString "APP_ENV") が deploy 時に参照する project 別 dotenv。
-          # .env.* は .gitignore 対象で CI には存在しないため Variable から生成する。
-          printf 'APP_ENV=%s\n' "$APP_ENV" > .env.shopping-list-prod-a615c
+          # firebase-functions params(defineString "APP_ENV") が参照する project 別 dotenv を生成する。
+          # APP_ENV は deploy 対象(dev/prod)そのもの。.env.* は .gitignore 対象で CI には存在しない。
+          printf 'APP_ENV=%s\n' "$PROJECT" > ".env.${PROJECT_ID}"
 
       - name: Deploy functions
         working-directory: firebase
         env:
           DEPLOY_ALL: ${{ inputs.deploy_all }}
           DEPLOY_FUNCTIONS: ${{ inputs.functions }}
-        # .firebaserc の default を対象にデプロイ(active project 未指定時は default が使われる)。
-        # firebase.json の predeploy フックで lint + build が自動実行される。
+          PROJECT_ID: ${{ steps.resolve.outputs.project_id }}
+        # --project で .firebaserc の alias(dev/prod)を明示。firebase.json の predeploy で lint + build。
         run: |
           if [ "$DEPLOY_ALL" = "true" ]; then
-            firebase deploy --only functions
+            firebase deploy --only functions --project "$PROJECT_ID"
           elif [ -n "$DEPLOY_FUNCTIONS" ]; then
-            firebase deploy --only "$DEPLOY_FUNCTIONS"
+            firebase deploy --only "$DEPLOY_FUNCTIONS" --project "$PROJECT_ID"
           else
             echo "::error::deploy_all=false のときは functions に対象(例: functions:createGroup)を指定してください"
             exit 1

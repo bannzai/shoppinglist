@@ -3,7 +3,7 @@ name: flutter-deploy
 # 手動起動の配布ワークフロー。
 # iOS: 手動署名で IPA をビルドし TestFlight (App Store Connect) へアップロード。
 # Android: リリース署名で AAB をビルドし Google Play internal トラックへアップロード。
-# 単一環境（dev/prod flavor 無し）。秘匿情報は `make secret` と各種 Secrets から CI 上で復元する。
+# 配布は release=prod のみ(Issue #410 / ADR 0030)。秘匿情報は `make secret`(secrets.FIREBASE_BASE64_* には prod 値を登録)と各種 Secrets から CI 上で復元する。
 on:
   workflow_dispatch:
     inputs:

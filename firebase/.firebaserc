@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "shopping-list-prod-a615c"
+    "default": "shoppinglist-dev",
+    "dev": "shoppinglist-dev",
+    "prod": "shoppinglist-prod"
   }
 }
