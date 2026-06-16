@@ -58,6 +58,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            // dev Firebase プロジェクト(package=com.bannzai.shoppinglist.dev)に対応(Issue #410 / ADR 0030)。
+            // namespace(=R class package)は据え置き、applicationId のみ .dev を付与する。
+            // google-services.json は src/debug/(dev) を google-services plugin が優先採用する。
+            applicationIdSuffix = ".dev"
+        }
         release {
             // key.properties があればリリース署名（Google Play 配布用）、無ければ debug 署名にフォールバックして
             // ローカルの `flutter run --release` を維持する。

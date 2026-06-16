@@ -1,7 +1,14 @@
 import AppIntents
 import Foundation
 
+// dev(Debug)ビルドは本番と App Group / UserDefaults を分離する(Issue #410 / ADR 0030)。
+// Dart の app_identity.appGroupId / iOS entitlements の $(APP_GROUP_ID) と一致させる。
+// Widget の Debug build config には SWIFT_ACTIVE_COMPILATION_CONDITIONS に DEBUG が入っている。
+#if DEBUG
+let widgetAppGroupId = "group.com.bannzai.shoppinglist.dev"
+#else
 let widgetAppGroupId = "group.com.bannzai.shoppinglist"
+#endif
 
 @available(iOS 17.0, *)
 struct ShoppingListConfigurationIntent: WidgetConfigurationIntent {

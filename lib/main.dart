@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/provider/app_provider_container.dart';
 import 'package:shoppinglist/provider/shared_preferences.dart';
+import 'package:shoppinglist/utils/config/app_identity.dart' as app_identity;
 import 'package:shoppinglist/utils/config/environment.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_callback.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_data_sync.dart';
@@ -39,7 +40,7 @@ void main() async {
 
     // Keychain sharing の設定 (iOS/macOSでのみ有効)
     await FirebaseAuth.instance.setSettings(
-      userAccessGroup: 'TQPN82UBBY.com.bannzai.shoppinglist',
+      userAccessGroup: app_identity.keychainAccessGroup,
     );
 
     // ホーム画面ウィジェットの設定

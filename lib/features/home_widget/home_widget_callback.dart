@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_data_sync.dart';
+import 'package:shoppinglist/utils/config/app_identity.dart' as app_identity;
 
 @pragma('vm:entry-point')
 FutureOr<void> homeWidgetBackgroundCallback(Uri? uri) async {
@@ -20,7 +21,7 @@ FutureOr<void> homeWidgetBackgroundCallback(Uri? uri) async {
 
     await Firebase.initializeApp();
     await FirebaseAuth.instance.setSettings(
-      userAccessGroup: 'TQPN82UBBY.com.bannzai.shoppinglist',
+      userAccessGroup: app_identity.keychainAccessGroup,
     );
     await HomeWidget.setAppGroupId(HomeWidgetDataSync.appGroupId);
 
