@@ -86,6 +86,49 @@ Future<void> _pumpFlat(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
+/// カテゴリ軸なしのグループで任意のアイテムリストをフラット表示で pump する。
+/// スクロールでキーボードが閉じる挙動を検証するため、件数を呼び出し側で指定できるようにする。
+Future<void> _pumpFlatWithItems(
+  WidgetTester tester, {
+  required List<GroupShoppingListItem> items,
+}) async {
+  // ignore: invalid_use_of_visible_for_testing_member
+  SharedPreferences.setMockInitialValues({});
+  final sharedPreferences = await SharedPreferences.getInstance();
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        ...previewProviderOverrides(sharedPreferences: sharedPreferences),
+        groupCategoryAxesProvider(groupID: _noCategoryAxisGroupID)
+            .overrideWith((ref) => Stream.value(const <GroupCategoryAxis>[])),
+        textShoppingListItemsProvider(
+          groupID: _noCategoryAxisGroupID,
+          shoppingListID: mockShoppingListID,
+        ).overrideWith((ref) => Stream.value(items)),
+      ],
+      child: MaterialApp(
+        theme: buildAppTheme(
+          accent: AccentPreset.shu,
+        ),
+        home: Scaffold(
+          body: ShoppingListItems(
+            groupID: _noCategoryAxisGroupID,
+            shoppingListID: mockShoppingListID,
+            shoppingLocationID: null,
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+/// 現在ツリーに存在する TextField のいずれかがフォーカスを保持しているか。
+/// ソフトキーボードが表示状態かどうかの代理判定として使う。
+bool _anyFieldFocused(WidgetTester tester) => tester
+    .widgetList<EditableText>(find.byType(EditableText))
+    .any((editable) => editable.focusNode.hasFocus);
+
 /// 空行除外テスト用のリストID。previewProviderOverrides が override 済みの
 /// mockShoppingListID と重複 override しないよう専用IDにする。
 const _customShoppingListID = 'input-row-test-shopping-list';
@@ -328,7 +371,8 @@ Future<void> _longPressDragHeader(
 
 void main() {
   group('ShoppingListItems: スクロールでキーボードを閉じる', () {
-    testWidgets('フラット表示の ReorderableListView が onDrag で閉じる', (tester) async {
+    testWidgets('フラット表示の ReorderableListView に onDrag プロパティが設定されている',
+        (tester) async {
       await _pumpFlat(tester);
       expect(
         tester
@@ -338,7 +382,8 @@ void main() {
       );
     });
 
-    testWidgets('カテゴリ分類表示の ReorderableListView が onDrag で閉じる', (tester) async {
+    testWidgets('カテゴリ分類表示の ReorderableListView に onDrag プロパティが設定されている',
+        (tester) async {
       await _pump(tester);
       expect(
         tester
@@ -346,6 +391,51 @@ void main() {
             .keyboardDismissBehavior,
         ScrollViewKeyboardDismissBehavior.onDrag,
       );
+    });
+
+    testWidgets('フラット表示: アイテム編集中にドラッグでスクロールするとフォーカスが外れる（キーボードが閉じる）',
+        (tester) async {
+      // ドラッグで ScrollUpdateNotification(dragDetails 付き) を発火させるため、
+      // ビューポートを超える件数のアイテムでスクロール可能にする。
+      await _pumpFlatWithItems(tester, items: [
+        for (var i = 0; i < 30; i++)
+          _item(id: 'flat-scroll-$i', message: 'アイテム$i', order: i),
+      ]);
+
+      // 先頭付近のアイテムをタップしてフォーカス（= ソフトキーボード表示状態）にする。
+      await tester.tap(find.widgetWithText(TextField, 'アイテム2'));
+      await tester.pump();
+      expect(_anyFieldFocused(tester), isTrue,
+          reason: 'タップ後は TextField にフォーカスが当たる');
+
+      // ドラッグでスクロールする。少量にしてフォーカス中の行が画面外に消えて
+      // 破棄される（=フォーカスが消えるだけ）状態と区別する。
+      await tester.drag(
+          find.byType(ReorderableListView), const Offset(0, -120));
+      await tester.pump();
+
+      expect(_anyFieldFocused(tester), isFalse,
+          reason: 'スクロール(ドラッグ)で onDrag が unfocus を呼び、フォーカスが外れる');
+    });
+
+    testWidgets('カテゴリ分類表示: アイテム編集中にドラッグでスクロールするとフォーカスが外れる（キーボードが閉じる）',
+        (tester) async {
+      await _pumpWithItems(tester, items: [
+        for (var i = 0; i < 30; i++)
+          _item(id: 'grouped-scroll-$i', message: 'アイテム$i', order: i),
+      ]);
+
+      await tester.tap(find.widgetWithText(TextField, 'アイテム2'));
+      await tester.pump();
+      expect(_anyFieldFocused(tester), isTrue,
+          reason: 'タップ後は TextField にフォーカスが当たる');
+
+      await tester.drag(
+          find.byType(ReorderableListView), const Offset(0, -120));
+      await tester.pump();
+
+      expect(_anyFieldFocused(tester), isFalse,
+          reason: 'スクロール(ドラッグ)で onDrag が unfocus を呼び、フォーカスが外れる');
     });
   });
 
