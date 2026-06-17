@@ -388,8 +388,8 @@ class _CategoryReorderableList extends ConsumerWidget {
         return ListTile(
           key: ValueKey(category.id),
           // 選択モード(selectionForItem != null)のときだけ行タップを有効化し、
-          // アイテム名をこのカテゴリの完全一致キーワードに追記してpopする。
-          // 非選択モードでは null のままで、従来どおり編集/削除ボタンのみ反応する。
+          // アイテムを選んだカテゴリへ移してpopする。非選択モードでは null のままで、
+          // 従来どおり編集/削除ボタンのみ反応する。
           onTap: selectionForItem == null
               ? null
               : () async {
@@ -401,12 +401,18 @@ class _CategoryReorderableList extends ConsumerWidget {
                     },
                   );
                   try {
+                    // アイテムはカテゴリIDを持たず message とキーワードのマッチで
+                    // 分類されるため、「選んだカテゴリへ変更」は移動先へ完全一致
+                    // キーワードを追加し、他カテゴリから同名の完全一致キーワードを
+                    // 削除する(= カテゴリ間 D&D と同じ付け替え)。これにより既に別
+                    // カテゴリへ分類済みのアイテムでも選んだカテゴリへ正しく移動する。
                     await ref
-                        .read(groupCategoryKeywordAddProvider(groupID: groupID))
+                        .read(moveItemCategoryKeywordProvider(groupID: groupID))
                         .call(
                           categoryAxisID: categoryAxisID,
-                          categoryID: category.id,
-                          keyword: selectionForItem!.message,
+                          itemMessage: selectionForItem!.message,
+                          destinationCategoryID: category.id,
+                          categories: categories,
                         );
                     if (context.mounted) {
                       Navigator.pop(context);

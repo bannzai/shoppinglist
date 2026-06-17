@@ -85,35 +85,37 @@ List<Override> _baseOverrides() => [
           .overrideWith((ref) => Stream.value(const [])),
     ];
 
-/// 選択モードで呼ばれたキーワード追記の引数を記録するスパイ。
-class _SpyKeywordAdd extends GroupCategoryKeywordAdd {
-  _SpyKeywordAdd() : super(database: GroupDatabase(groupID: _testGroupID));
+/// 選択モードで呼ばれたカテゴリ付け替えの引数を記録するスパイ。
+class _SpyMoveItemCategoryKeyword extends MoveItemCategoryKeyword {
+  _SpyMoveItemCategoryKeyword()
+      : super(database: GroupDatabase(groupID: _testGroupID));
 
   int callCount = 0;
-  String? calledCategoryID;
-  String? calledKeyword;
+  String? calledDestinationCategoryID;
+  String? calledItemMessage;
 
   @override
   Future<void> call({
     required String categoryAxisID,
-    required String categoryID,
-    required String keyword,
+    required String itemMessage,
+    required String? destinationCategoryID,
+    required List<GroupCategory> categories,
   }) async {
     callCount += 1;
-    calledCategoryID = categoryID;
-    calledKeyword = keyword;
+    calledDestinationCategoryID = destinationCategoryID;
+    calledItemMessage = itemMessage;
   }
 }
 
 void main() {
   group('GroupCategoryPage カテゴリ選択モード', () {
-    testWidgets('選択モードではタイトルが「カテゴリを選択」になり、行タップでキーワード追記が呼ばれる', (tester) async {
-      final spy = _SpyKeywordAdd();
+    testWidgets('選択モードではタイトルが「カテゴリを選択」になり、行タップでカテゴリ付け替えが呼ばれる', (tester) async {
+      final spy = _SpyMoveItemCategoryKeyword();
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
             ..._baseOverrides(),
-            groupCategoryKeywordAddProvider(groupID: _testGroupID)
+            moveItemCategoryKeywordProvider(groupID: _testGroupID)
                 .overrideWith((ref) => spy),
           ],
           child: MaterialApp(
@@ -135,17 +137,17 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(spy.callCount, 1);
-      expect(spy.calledCategoryID, 'cat-002');
-      expect(spy.calledKeyword, 'juice');
+      expect(spy.calledDestinationCategoryID, 'cat-002');
+      expect(spy.calledItemMessage, 'juice');
     });
 
-    testWidgets('通常モードではタイトルが「カテゴリ」で、行タップしてもキーワード追記は呼ばれない', (tester) async {
-      final spy = _SpyKeywordAdd();
+    testWidgets('通常モードではタイトルが「カテゴリ」で、行タップしてもカテゴリ付け替えは呼ばれない', (tester) async {
+      final spy = _SpyMoveItemCategoryKeyword();
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
             ..._baseOverrides(),
-            groupCategoryKeywordAddProvider(groupID: _testGroupID)
+            moveItemCategoryKeywordProvider(groupID: _testGroupID)
                 .overrideWith((ref) => spy),
           ],
           child: MaterialApp(
@@ -160,7 +162,7 @@ void main() {
       expect(find.text('カテゴリ'), findsOneWidget);
       expect(find.text('カテゴリを選択'), findsNothing);
 
-      // 行をタップしても onTap は無効（キーワード追記は呼ばれない）
+      // 行をタップしても onTap は無効（カテゴリ付け替えは呼ばれない）
       await tester.tap(find.text('飲料'));
       await tester.pumpAndSettle();
 
