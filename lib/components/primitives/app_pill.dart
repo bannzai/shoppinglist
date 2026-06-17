@@ -47,6 +47,10 @@ class AppPill extends StatelessWidget {
   /// 既定は false（中身に合わせて最小幅）。
   final bool expanded;
 
+  /// label の後ろ（末尾）に表示するアイコン（任意）。プレミアム王冠など、
+  /// ボタン内に補助的なバッジを収めたいときに使う。色は前景色 (fg) に合わせる。
+  final IconData? trailingIcon;
+
   const AppPill({
     super.key,
     required this.label,
@@ -55,6 +59,7 @@ class AppPill extends StatelessWidget {
     this.variant = AppPillVariant.neutral,
     this.large = false,
     this.expanded = false,
+    this.trailingIcon,
   });
 
   @override
@@ -123,6 +128,10 @@ class AppPill extends StatelessWidget {
                       letterSpacing: -0.005,
                     ),
                   ),
+                  if (trailingIcon != null) ...[
+                    const SizedBox(width: 6),
+                    Icon(trailingIcon, size: large ? 18 : 16, color: fg),
+                  ],
                 ],
               ),
             ),
