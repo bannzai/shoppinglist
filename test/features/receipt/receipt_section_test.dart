@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:shoppinglist/entity/group_shopping_list_receipt.dart';
+import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/features/receipt/receipt_section.dart';
-import 'package:shoppinglist/provider/receipt.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
@@ -46,23 +45,21 @@ class _FakeEntitlementInfo implements EntitlementInfo {
       throw UnimplementedError(invocation.memberName.toString());
 }
 
-Future<void> _pumpSection(
+Future<void> _pumpAddButton(
   WidgetTester tester, {
   required bool premium,
-  required List<GroupShoppingListReceipt> receipts,
 }) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
         customerInfoProvider.overrideWith(
-            (ref) => Stream.value(_FakeCustomerInfo(premium: premium))),
-        receiptsProvider(groupID: _testGroupID, shoppingListID: _testListID)
-            .overrideWith((ref) => Stream.value(receipts)),
+          (ref) => Stream.value(_FakeCustomerInfo(premium: premium)),
+        ),
       ],
       child: MaterialApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: const Scaffold(
-          body: ReceiptSection(
+          body: ReceiptAddButton(
             groupID: _testGroupID,
             shoppingListID: _testListID,
           ),
@@ -74,19 +71,26 @@ Future<void> _pumpSection(
 }
 
 void main() {
-  group('ReceiptSection プレミアム表示', () {
+  group('ReceiptAddButton プレミアム表示', () {
     testWidgets('非プレミアムユーザーには王冠マークと追加ボタンが表示される', (WidgetTester tester) async {
-      await _pumpSection(tester, premium: false, receipts: const []);
+      await _pumpAddButton(tester, premium: false);
 
-      expect(find.byIcon(Icons.workspace_premium), findsOneWidget);
-      expect(find.byIcon(Icons.add_a_photo), findsOneWidget);
+      expect(find.byType(AppPill), findsOneWidget);
+      // 王冠は AppPill の外ではなくボタン内（子孫）に収める。
+      expect(
+        find.descendant(
+          of: find.byType(AppPill),
+          matching: find.byIcon(Icons.workspace_premium),
+        ),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('プレミアムユーザーには王冠マークが表示されない', (WidgetTester tester) async {
-      await _pumpSection(tester, premium: true, receipts: const []);
+    testWidgets('プレミアムユーザーには追加ボタンのみで王冠マークは表示されない', (WidgetTester tester) async {
+      await _pumpAddButton(tester, premium: true);
 
+      expect(find.byType(AppPill), findsOneWidget);
       expect(find.byIcon(Icons.workspace_premium), findsNothing);
-      expect(find.byIcon(Icons.add_a_photo), findsOneWidget);
     });
   });
 }
