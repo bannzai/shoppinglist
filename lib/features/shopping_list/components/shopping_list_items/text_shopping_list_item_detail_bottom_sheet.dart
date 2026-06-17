@@ -12,7 +12,6 @@ import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
-import 'package:shoppinglist/features/group_category_edit/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
@@ -262,35 +261,30 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                     onPressed: () {
                       analytics.logEvent(
                         name: matchedCategory != null
-                            ? 'tap_edit_category_from_item'
-                            : 'tap_manage_category_from_item',
+                            ? 'tap_change_category_from_item'
+                            : 'tap_select_category_from_item',
                         parameters: {
                           'groupID': groupID,
                           'itemID': textShoppingListItem.id,
                         },
                       );
-                      // マッチ時はそのカテゴリの編集ページへ。未分類時はカテゴリ選択
-                      // モードの一覧へ誘導し、行タップでこのアイテムを既存カテゴリへ
-                      // 割り当てる(アイテム名をそのカテゴリのキーワードに追記する)。
-                      // シートは閉じずに push する(戻れば説明等の編集状態を保持したまま戻れる)。
+                      // マッチ済み・未分類のどちらもカテゴリ選択モードの一覧へ誘導する。
+                      // 一覧で行をタップするとこのアイテムを選んだカテゴリへ移し(アイテム名の
+                      // 完全一致キーワードを付け替える)、一覧で新規カテゴリを追加してそのまま
+                      // 選ぶこともできる。シートは閉じずに push する(戻れば説明等の編集状態を
+                      // 保持したまま戻れる)。
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => matchedCategory != null
-                              ? GroupCategoryEditPage(
-                                  groupID: groupID,
-                                  categoryAxisID: categoryAxis.id,
-                                  categoryID: matchedCategory.id,
-                                )
-                              : GroupCategoryPage(
-                                  groupID: groupID,
-                                  selectionForItem: textShoppingListItem,
-                                ),
+                          builder: (context) => GroupCategoryPage(
+                            groupID: groupID,
+                            selectionForItem: textShoppingListItem,
+                          ),
                         ),
                       );
                     },
                     child:
-                        Text(matchedCategory != null ? 'カテゴリを編集' : 'カテゴリを管理'),
+                        Text(matchedCategory != null ? 'カテゴリを変更' : 'カテゴリを選択'),
                   ),
                 ],
               ),
