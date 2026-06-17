@@ -40,6 +40,9 @@ class ShoppingListBodyContent extends StatelessWidget {
         shoppingListItems: shoppingListItems,
       );
     }
+    // 買い物が始まった/終わった後（チェック済みが1件以上）にのみレシートの導線を出す。
+    final hasCheckedItem =
+        shoppingListItemMetrics(shoppingListItems).checkedCount > 0;
     return Column(
       children: [
         if (shoppingList?.duplicatedFromGroupShoppingListID != null) ...[
@@ -77,15 +80,18 @@ class ShoppingListBodyContent extends StatelessWidget {
           ),
           const SizedBox(height: 6),
         ],
+        // レシート追加の導線は、長いリストでも気づけるよう上部（AIカテゴリ分けボタンの
+        // 直上）に控えめな pill で出す。登録済みサムネは引き続き最下部（footer）に表示する。
+        if (hasCheckedItem)
+          ReceiptAddButton(groupID: groupID, shoppingListID: shoppingListID),
         Expanded(
           child: ShoppingListItems(
             groupID: groupID,
             shoppingListID: shoppingListID,
             shoppingLocationID: shoppingList?.shoppingLocationID,
-            // 買い物が始まった/終わった後（チェック済みが1件以上）にのみ、リストの
-            // 最終アイテム直後（footer）にレシート登録の導線を出す。
-            footer: shoppingListItemMetrics(shoppingListItems).checkedCount > 0
-                ? ReceiptSection(
+            // 登録済みレシートのサムネイルを最終アイテム直後（footer）に表示する。
+            footer: hasCheckedItem
+                ? ReceiptThumbnails(
                     groupID: groupID, shoppingListID: shoppingListID)
                 : null,
           ),

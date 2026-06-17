@@ -8,13 +8,15 @@
 - 最初から全体がプレミアム機能。非プレミアムユーザーはタップで Paywall に誘導される。
 
 ## 画面・表示条件
-- 表示場所: 買い物リスト詳細画面（ホームのアイテム一覧）の最終アイテム直下（`ShoppingListItems` の `footer` としてスクロールに追従して表示）。FAB のような一等地は使わない。
+- 表示場所: 買い物リスト詳細画面（ホームのアイテム一覧）。導線を2つに分ける。
+  - 追加ボタン（`ReceiptAddButton`）: アイテム一覧の上部、AIカテゴリ分けボタンの直上に控えめな pill で表示する。リストが長いと最下部の導線に気づきにくいため上部に出す。AIカテゴリ分けボタン（accent 塗りつぶし）より主張を抑えるため soft（accent 薄塗り）トーンにする。
+  - 登録済みサムネイル（`ReceiptThumbnails`）: 最終アイテム直下（`ShoppingListItems` の `footer` としてスクロールに追従して表示）。
 - 表示条件: チェック済みアイテムが1件以上ある（`shoppingListItemMetrics(items).checkedCount > 0`）とき。
-- `ReceiptSection`（`receipt_section.dart`）が見出し・追加ボタン・登録済みサムネイルの横スクロールを表示する。
+- いずれも `receipt_section.dart` に定義する。FAB のような一等地は使わない。
 
 ## フロー
-1. 買い物リストのアイテムを1つ以上チェックすると、リスト末尾にレシートセクションが現れる。
-2. 「追加」をタップ（非プレミアムなら Paywall を表示して終了）。
+1. 買い物リストのアイテムを1つ以上チェックすると、リスト上部に「レシートを追加」ボタンが現れる。
+2. 「レシートを追加」をタップ（非プレミアムなら Paywall を表示して終了）。
 3. `showReceiptEditSheet`（`receipt_edit_sheet.dart`）で写真を撮影/選択し、金額・メモを入力して保存する。
    - 新規は写真必須。`receiptID` を採番 → `uploadReceiptImage` で画像アップロード → Firestore にドキュメント作成、の順で実行する（画像アップロード失敗時はドキュメントを作らないため孤児が残らない）。
 4. サムネイル（プレミアムのみ表示）をタップすると同じ編集シートが開き、金額・メモ・画像を編集できる（削除は行わない）。
@@ -32,7 +34,7 @@
 - レシートの削除機能は提供しない（登録・編集のみ。firestore.rules も `create` / `update` のみ許可）。
 
 ## 関連ファイル
-- `lib/features/receipt/receipt_section.dart` — リスト末尾のセクション（表示・追加導線・サムネイル）
+- `lib/features/receipt/receipt_section.dart` — 上部の追加ボタン（`ReceiptAddButton`）と最下部の登録済みサムネイル（`ReceiptThumbnails`）
 - `lib/features/receipt/receipt_edit_sheet.dart` — 登録/編集シート
 - `lib/features/receipt/receipt_image.dart` — storagePath から getDownloadURL で画像を表示する widget
 - `lib/entity/group_shopping_list_receipt.dart` — Entity
