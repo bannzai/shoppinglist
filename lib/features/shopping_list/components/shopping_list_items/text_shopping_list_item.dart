@@ -11,6 +11,7 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
@@ -332,11 +333,8 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                   : GroupShoppingListItemStatus.checked.name,
             });
           } catch (e, st) {
-            debugPrint('アイテムのチェック切替に失敗: $e\n$st');
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(e.toString())),
-              );
+              showErrorSnackBar(context, e, st);
             }
           }
           return false;
@@ -385,9 +383,9 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
             );
           return true;
         } catch (e, st) {
-          debugPrint('アイテムの削除に失敗: $e\n$st');
+          logError(e, st);
           messenger.showSnackBar(
-            SnackBar(content: Text(e.toString())),
+            SnackBar(content: Text(describeError(e, st).message)),
           );
           return false;
         }

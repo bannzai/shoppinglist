@@ -16,6 +16,7 @@ import 'package:shoppinglist/provider/ai_usage.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/image/image.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -297,11 +298,9 @@ class ExpandableFab extends HookConsumerWidget {
         mimeType: mimeType(file),
         base64Image: base64Image,
       );
-    } catch (e) {
+    } catch (e, st) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
+        showErrorSnackBar(context, e, st);
       }
       return;
     } finally {
@@ -496,8 +495,8 @@ class _URLInputDialog extends HookConsumerWidget {
                     rawItems = await functions.generateShoppingListItemsFromURL(
                       url: normalizedURL,
                     );
-                  } catch (e) {
-                    showGlobalToast(e.toString(), title: null);
+                  } catch (e, st) {
+                    showGlobalErrorToast(e, st);
                     return;
                   } finally {
                     if (context.mounted) {

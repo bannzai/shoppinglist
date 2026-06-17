@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/error/error_view.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/group_create/page.dart';
@@ -81,9 +82,9 @@ class GroupListPage extends ConsumerWidget {
                     );
                   },
                 ),
-        (AsyncError(:final error), _) ||
-        (_, AsyncError(:final error)) =>
-          Center(child: Text(error.toString())),
+        (AsyncError(:final error, :final stackTrace), _) ||
+        (_, AsyncError(:final error, :final stackTrace)) =>
+          ErrorView(error: error, stackTrace: stackTrace),
         _ => const Center(child: CircularProgressIndicator()),
       },
       // 上限到達時はFAB自体を非表示にする。上限の案内と解除導線は本文の _FreeLimitBanner が担う。

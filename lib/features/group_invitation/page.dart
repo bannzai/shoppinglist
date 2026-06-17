@@ -6,6 +6,7 @@ import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/invitation_code_validator.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -147,8 +148,9 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                                 Navigator.of(context)
                                     .popUntil((route) => route.isFirst);
                               }
-                            } catch (e) {
-                              errorMessage.value = e.toString();
+                            } catch (e, st) {
+                              logError(e, st);
+                              errorMessage.value = describeError(e, st).message;
                               if (context.mounted) {
                                 Navigator.of(context).pop(); // verifying dialog
                               }

@@ -163,9 +163,9 @@ class _ReceiptEditSheet extends HookConsumerWidget {
         }
 
         popRouteSafely(navigator: navigator, route: sheetRoute);
-      } catch (e) {
+      } catch (e, st) {
         // シート上の SnackBar は背後の Scaffold に隠れるため、前面トーストで通知する。
-        showGlobalToast(e.toString(), title: null);
+        showGlobalErrorToast(e, st);
       } finally {
         if (context.mounted) {
           isSaving.value = false;

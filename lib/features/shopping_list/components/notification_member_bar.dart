@@ -114,10 +114,10 @@ class NotificationMemberBar extends HookConsumerWidget {
         targetUserIDs: targetUserIDs,
       );
       sentUserIDs.value = {...sentUserIDs.value, ...targetUserIDs};
-    } catch (e) {
+    } catch (e, st) {
       // この通知バー自体がグローバルトースト上に表示されるため、SnackBar は
       // トーストの背後に隠れる。エラーもグローバルトーストで前面に通知する。
-      showGlobalToast(e.toString(), title: null);
+      showGlobalErrorToast(e, st);
     } finally {
       sendingUserIDs.value = Set.from(sendingUserIDs.value)
         ..removeAll(targetUserIDs);

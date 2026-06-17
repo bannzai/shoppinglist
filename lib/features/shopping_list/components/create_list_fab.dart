@@ -11,6 +11,7 @@ import 'package:shoppinglist/provider/current_shopping_list_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 /// `ShoppingListPage` 右下、アイテム追加 FAB の上に置く「新しいリストを作成」ボタン。
@@ -288,9 +289,10 @@ class CreateListFab extends HookConsumerWidget {
           ),
         ),
       );
-    } catch (e) {
+    } catch (e, st) {
+      logError(e, st);
       messenger.showSnackBar(
-        SnackBar(content: Text(e.toString())),
+        SnackBar(content: Text(describeError(e, st).message)),
       );
     } finally {
       // 破棄済みの ValueNotifier へ書き込まないようガードする。
@@ -349,9 +351,10 @@ class CreateListFab extends HookConsumerWidget {
           ),
         ),
       );
-    } catch (e) {
+    } catch (e, st) {
+      logError(e, st);
       messenger.showSnackBar(
-        SnackBar(content: Text(e.toString())),
+        SnackBar(content: Text(describeError(e, st).message)),
       );
     } finally {
       // 破棄済みの ValueNotifier へ書き込まないようガードする。

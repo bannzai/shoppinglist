@@ -10,6 +10,7 @@ import 'package:shoppinglist/provider/group_create.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupCreatePage extends HookConsumerWidget {
@@ -196,20 +197,19 @@ class GroupCreatePage extends HookConsumerWidget {
                                     ),
                                   );
                                 }
-                              } catch (e) {
+                              } catch (e, st) {
                                 // 招待生成失敗時もグループ作成自体は成功している
                                 // のでエラー表示は SnackBar に留め、画面は閉じる。
                                 if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(e.toString())),
-                                  );
+                                  showErrorSnackBar(context, e, st);
                                 }
                               }
                               if (context.mounted) {
                                 Navigator.pop(context);
                               }
-                            } catch (e) {
-                              errorMessage.value = e.toString();
+                            } catch (e, st) {
+                              logError(e, st);
+                              errorMessage.value = describeError(e, st).message;
                             } finally {
                               isCreating.value = false;
                             }

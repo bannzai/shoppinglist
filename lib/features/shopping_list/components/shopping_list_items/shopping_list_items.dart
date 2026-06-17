@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shoppinglist/components/error/error_view.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/features/shopping_list/components/ai_categorize_button.dart';
@@ -104,7 +105,7 @@ class ShoppingListItems extends ConsumerWidget {
           footer: footer,
         );
       },
-      error: (e, st) => Center(child: Text(e.toString())),
+      error: (e, st) => ErrorView(error: e, stackTrace: st),
       loading: () => _FlatShoppingListItems(
         groupID: groupID,
         shoppingListID: shoppingListID,
@@ -310,7 +311,7 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
           ],
         );
       },
-      error: (e, st) => Center(child: Text(e.toString())),
+      error: (e, st) => ErrorView(error: e, stackTrace: st),
       loading: () => _FlatShoppingListItems(
         groupID: groupID,
         shoppingListID: shoppingListID,

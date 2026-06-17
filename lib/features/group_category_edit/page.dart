@@ -4,12 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/error/error_view.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_keyword.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/hooks/use_on_disappear.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -45,7 +47,8 @@ class GroupCategoryEditPage extends ConsumerWidget {
           category: category,
         );
       },
-      error: (e, st) => _EditScaffold(child: Center(child: Text(e.toString()))),
+      error: (e, st) =>
+          _EditScaffold(child: ErrorView(error: e, stackTrace: st)),
       loading: () => const _EditScaffold(
           child: Center(child: CircularProgressIndicator())),
     );
@@ -161,11 +164,9 @@ class _CategoryEditBody extends HookConsumerWidget {
                             categoryID: category.id,
                             category: category.copyWith(color: color),
                           );
-                    } catch (e) {
+                    } catch (e, st) {
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString())),
-                        );
+                        showErrorSnackBar(context, e, st);
                       }
                     }
                   },
@@ -194,11 +195,9 @@ class _CategoryEditBody extends HookConsumerWidget {
                             categoryID: category.id,
                             category: category.copyWith(iconName: iconName),
                           );
-                    } catch (e) {
+                    } catch (e, st) {
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString())),
-                        );
+                        showErrorSnackBar(context, e, st);
                       }
                     }
                   },
@@ -387,11 +386,9 @@ class _CategoryEditBody extends HookConsumerWidget {
                         categoryID: category.id,
                         category: updatedCategory,
                       );
-                } catch (e) {
+                } catch (e, st) {
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
+                    showErrorSnackBar(context, e, st);
                   }
                 }
               },
@@ -430,11 +427,9 @@ class _CategoryEditBody extends HookConsumerWidget {
             categoryID: category.id,
             category: updatedCategory,
           );
-    } catch (e) {
+    } catch (e, st) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
+        showErrorSnackBar(context, e, st);
       }
     }
   }

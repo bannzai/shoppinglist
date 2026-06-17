@@ -39,6 +39,7 @@ void main() {
     var retried = 0;
     await tester.pumpWidget(_wrap(ListErrorCard(
       exception: Exception('boom'),
+      stackTrace: null,
       onRetry: () => retried++,
     )));
     expect(find.text('リストを読み込めませんでした'), findsOneWidget);
