@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/error/error_view.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class Retry extends InheritedWidget {
@@ -35,25 +36,18 @@ class RetryPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    debugPrint('Retry: $exception, $stackTrace');
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              exception.toString(),
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                analytics.logEvent(name: 'tap_retry', parameters: null);
-                Retry.of(context).retry();
-              },
-              child: const Text('Retry'),
-            ),
-          ],
+      body: SafeArea(
+        child: ErrorView(
+          error: exception,
+          stackTrace: stackTrace,
+          action: ElevatedButton(
+            onPressed: () {
+              analytics.logEvent(name: 'tap_retry', parameters: null);
+              Retry.of(context).retry();
+            },
+            child: const Text('Retry'),
+          ),
         ),
       ),
     );

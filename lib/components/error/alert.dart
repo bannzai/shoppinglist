@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ErrorAlert extends StatelessWidget {
@@ -59,10 +60,15 @@ class ErrorAlert extends StatelessWidget {
   }
 }
 
-void showErrorAlert(BuildContext? context, Object error) {
+void showErrorAlert(
+  BuildContext? context,
+  Object error, [
+  StackTrace? stackTrace,
+]) {
   if (context == null) {
     return;
   }
+  logError(error, stackTrace);
   final String title;
   final String message;
   final String? faqLinkURL;
@@ -75,8 +81,10 @@ void showErrorAlert(BuildContext? context, Object error) {
     message = error;
     faqLinkURL = null;
   } else {
-    title = '予期せぬエラーが発生しました';
-    message = error.toString();
+    // FirebaseException 等は describeError で StackTrace を分離する。
+    final display = describeError(error);
+    title = display.title ?? '予期せぬエラーが発生しました';
+    message = display.message;
     faqLinkURL = null;
   }
   showDialog(

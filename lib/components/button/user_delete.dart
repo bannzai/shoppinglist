@@ -153,14 +153,13 @@ class DeleteUserButton extends HookConsumerWidget {
           ],
         );
       } else {
-        errorLogger.recordError(error, stackTrace);
         if (context.mounted) {
-          showErrorAlert(context, error);
+          showErrorAlert(context, error, stackTrace);
         }
       }
-    } catch (error) {
+    } catch (error, stackTrace) {
       if (context.mounted) {
-        showErrorAlert(context, error);
+        showErrorAlert(context, error, stackTrace);
       }
     }
   }

@@ -4,6 +4,7 @@ import 'package:shoppinglist/provider/app_navigator_key.dart';
 import 'package:shoppinglist/provider/app_provider_container.dart';
 import 'package:shoppinglist/provider/toast.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 
 /// どこからでもテキストトーストを表示する。ref / BuildContext 不要。
 void showGlobalToast(String message, {required String? title}) {
@@ -11,6 +12,14 @@ void showGlobalToast(String message, {required String? title}) {
     ToastTextContent(title: title, message: message),
     identity: 'text ${title ?? ''} $message',
   );
+}
+
+/// エラーをグローバルトーストで通知する。本文・タイトルはそのまま、StackTrace は出さない。
+/// debugPrint/Crashlytics には生のエラーを記録する。
+void showGlobalErrorToast(Object error, [StackTrace? stackTrace]) {
+  logError(error, stackTrace);
+  final display = describeError(error, stackTrace);
+  showGlobalToast(display.message, title: display.title);
 }
 
 /// 任意 Widget をトーストとして表示する（メンバー通知バー等のリッチ内容用）。
