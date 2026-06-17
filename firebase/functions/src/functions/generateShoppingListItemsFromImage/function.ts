@@ -170,12 +170,19 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
     });
+    // gemini-2.0-flash 提供終了に伴い gemini-2.5-flash へ移行した（2026-06）。
+    // 2.5 系は thinking がデフォルト ON で、thinking トークンが maxOutputTokens を
+    // 消費し、function call が args 空（{}）の状態で返る事象が発生する。
+    // thinkingBudget: 0 で thinking を無効化し、出力トークンを抽出結果に充てる。
+    // 旧 SDK(@google/generative-ai 0.24) の GenerationConfig 型には thinkingConfig が
+    // 無いが、generationConfig は REST API へ素通しで転送されるため実行時に有効。
     const generationConfig = {
       temperature: 1,
       topP: 0.95,
       topK: 40,
       maxOutputTokens: 8192,
       responseMimeType: "text/plain",
+      thinkingConfig: { thinkingBudget: 0 },
     };
 
     try {
@@ -232,9 +239,14 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
       if (!functionCalls || functionCalls.length === 0) {
         throw new Error("Function call not found");
       }
-      const shoppingListItems = (
-        functionCalls[0].args as { shoppingListItems: string[] }
-      ).shoppingListItems;
+      // 画像から何も読み取れなかった場合、モデルは function call を返しつつ args を
+      // 空（{}）にすることがある。その場合 shoppingListItems は undefined になり、
+      // そのまま返すと JSON 化で data: {} となって outputSchema の必須
+      // shoppingListItems 検証に失敗し、クライアントへ INTERNAL が返る。
+      // 「読み取り 0 件」として空配列にフォールバックする。
+      const shoppingListItems =
+        (functionCalls[0].args as { shoppingListItems?: string[] })
+          .shoppingListItems ?? [];
 
       return {
         result: "OK",
