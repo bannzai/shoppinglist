@@ -156,6 +156,9 @@
 （`groupCategoryAxes.first`）で `findMatchingCategoryID`（`category_matcher.dart`）により判定した
 現在の分類カテゴリを表示する。
 
-- マッチ時:「カテゴリを編集」→ そのカテゴリの `GroupCategoryEditPage` へ遷移。
-- 未分類時:「カテゴリを管理」→ `GroupCategoryPage`（一覧）へ遷移（キーワード追加で分類されるようになる）。
+- マッチ時:「カテゴリを変更」/ 未分類時:「カテゴリを選択」→ いずれも `GroupCategoryPage`
+  （カテゴリ選択モード `selectionForItem != null`）へ遷移する。
+- 一覧で行をタップすると、このアイテムを選んだカテゴリへ移す（`MoveItemCategoryKeyword` で
+  移動先へ完全一致キーワードを追加し、他カテゴリから同名の完全一致キーワードを削除する付け替え）。
+  一覧で新規カテゴリを追加してそのまま選ぶこともできる。選択後は pop して詳細シートへ戻る。
 - 軸が無い（カテゴリ機能未使用）ときはカテゴリ行を表示しない。
