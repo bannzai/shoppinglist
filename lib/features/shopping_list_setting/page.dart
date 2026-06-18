@@ -6,7 +6,6 @@ import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/components/primitives/app_divider.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/components/primitives/app_section_label.dart';
-import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
@@ -56,8 +55,6 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     final textEditingController =
         useTextEditingController(text: shoppingListState.value.name);
     final isCreatingInvitation = useState(false);
-    // 招待時のグループ名チェック (Issue #432) のためグループを購読しておく。
-    final group = ref.watch(groupProvider(groupID: groupID)).valueOrNull;
     // UI 表示用は customerInfoProvider を使う。Promotional Entitlement 経由の付与でも
     // 即座に反映できる (Custom Claims はリアルタイムに更新されない)。
     final isPremium =
@@ -208,7 +205,6 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                     context: context,
                                     ref: ref,
                                     isCreatingInvitation: isCreatingInvitation,
-                                    group: group,
                                   ),
                           detail: null,
                           onSwitch: null,
@@ -296,15 +292,20 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     required BuildContext context,
     required WidgetRef ref,
     required ValueNotifier<bool> isCreatingInvitation,
-    required Group? group,
   }) async {
     analytics.logEvent(
       name: 'tap_create_list_invitation',
       parameters: {'groupID': groupID},
     );
     // Issue #432: グループ名未設定のまま招待すると混乱を招くため、招待前に名前登録を
-    // 必須化する。この画面にはグループ名入力欄がないため、トーストからグループ設定画面へ誘導する。
-    if (group == null || !group.hasRegisteredName) {
+    // 必須化する。アクション実行時のみ必要なグループ情報は build で watch せず、ここで
+    // 最新値を非同期取得する（ロード中の誤判定と不要な再描画を避ける）。
+    final group = await ref.read(groupProvider(groupID: groupID).future);
+    if (!context.mounted) {
+      return;
+    }
+    // この画面にはグループ名入力欄がないため、トーストからグループ設定画面へ誘導する。
+    if (!group.hasRegisteredName) {
       final rootContext = Navigator.of(context, rootNavigator: true).context;
       showGlobalActionToast(
         message: '招待する前にグループ名を設定してください',
