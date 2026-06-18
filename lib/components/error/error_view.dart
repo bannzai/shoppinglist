@@ -30,41 +30,68 @@ class ErrorView extends HookWidget {
 
     final display = describeError(error, stackTrace);
     final theme = Theme.of(context);
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (display.title != null) ...[
-              Text(
-                display.title!,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        children: [
+          // タイトル・本文・操作（再試行ボタン等）は常に画面内に収め、中央に寄せる。
+          // 内容が縦に長い場合に備えてこの領域内だけスクロールさせる。
+          Expanded(
+            child: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (display.title != null) ...[
+                      Text(
+                        display.title!,
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                    Text(
+                      display.message,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    if (action != null) ...[
+                      const SizedBox(height: 16),
+                      action!,
+                    ],
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
-            ],
-            Text(
-              display.message,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium,
             ),
-            if (action != null) ...[const SizedBox(height: 16), action!],
-            if (display.stackTrace != null) ...[
-              const SizedBox(height: 24),
-              // StackTrace はレベルを落として（小さめ・控えめ色）表示する。
-              Text(
-                display.stackTrace.toString(),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+          ),
+          if (display.stackTrace != null) ...[
+            const SizedBox(height: 16),
+            // StackTrace はレベルを落として（小さめ・控えめ色）表示する。
+            // 高さ上限を設けて内部スクロールにし、タイトル/本文/操作を画面外へ
+            // 押し出さない（全体が画面内に収まる）。
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 200),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: theme.dividerColor),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: SingleChildScrollView(
+                  child: Text(
+                    display.stackTrace.toString(),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ),
               ),
-            ],
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
