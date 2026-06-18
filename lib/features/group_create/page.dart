@@ -19,6 +19,11 @@ class GroupCreatePage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final nameController = useTextEditingController();
+    // グループ名 TextField の入力に応じて「作成する」ボタンの活性状態を切り替えるため購読する。
+    // Issue #432: グループ作成時に名前を必須化する。
+    useListenable(nameController);
+    final trimmedGroupName = nameController.text.trim();
+    final canCreate = trimmedGroupName.isNotEmpty;
     final isCreating = useState(false);
     final errorMessage = useState<String?>(null);
     final selectedIconName = useState<String>('home');
@@ -161,7 +166,7 @@ class GroupCreatePage extends HookConsumerWidget {
                     variant: AppPillVariant.accent,
                     large: true,
                     expanded: true,
-                    onPressed: isCreating.value
+                    onPressed: (isCreating.value || !canCreate)
                         ? null
                         : () async {
                             analytics.logEvent(
@@ -172,16 +177,13 @@ class GroupCreatePage extends HookConsumerWidget {
                               if (appUser == null) {
                                 throw StateError('AppUser is not available');
                               }
-                              final groupID = await ref
-                                  .read(createGroupProvider)
-                                  .call(
-                                    appUser: appUser,
-                                    name: nameController.text.trim().isNotEmpty
-                                        ? nameController.text.trim()
-                                        : null,
-                                    setAsDefault: false,
-                                    iconName: selectedIconName.value,
-                                  );
+                              final groupID =
+                                  await ref.read(createGroupProvider).call(
+                                        appUser: appUser,
+                                        name: trimmedGroupName,
+                                        setAsDefault: false,
+                                        iconName: selectedIconName.value,
+                                      );
                               // 作成後、招待コードを直ちに生成して共有 dialog を表示する。
                               // `design_handoff_shoppinglist/preview/screens-groups.jsx` 準拠。
                               try {
