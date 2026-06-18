@@ -4,7 +4,7 @@ appId: com.bannzai.shoppinglist
 # - 7 セクション label (UPPERCASE) が表示される
 # - カテゴリ Cell タップで GroupCategoryPage に遷移する
 # - 共有セクションが 1 card 2 Cell 構成 (招待 / グループ設定) で表示される
-# - 「アイテム追加で家族に通知」AppCell が表示される
+# - 「アイテム追加でグループに通知」AppCell が表示される
 # - 削除ダイアログに body 文 (件数) と「このリストを削除しますか?」が表示される
 
 - runFlow: shared/anonymous_sign_in.yaml
@@ -66,7 +66,7 @@ appId: com.bannzai.shoppinglist
 
 # autoNotify Cell (PR #283 由来。SSOT 拡張提案中)
 - assertVisible:
-    text: "アイテム追加で家族に通知"
+    text: "アイテム追加でグループに通知"
     optional: true
 - assertVisible:
     text: "このリストでアイテム追加・チェック切替があったとき"
