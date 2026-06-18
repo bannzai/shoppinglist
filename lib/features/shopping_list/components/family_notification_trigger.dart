@@ -70,6 +70,10 @@ class FamilyNotificationTrigger extends HookConsumerWidget {
     // 未通知のローカル変更(1件以上)で家族通知バーをグローバルトーストで表示する。
     // モーダル表示中でも最前面に出すためグローバルトースト経由。他メンバーが居る時だけ表示する。
     // 依存配列は pendingEditCount.value のみ — 変更回数の増加イベントだけをトリガーにする。
+    // memberProfiles / currentUserID / groupID / shoppingListID / shoppingListName は意図的に
+    // 依存配列へ含めない。これらの値が変わるたびに effect が再実行されると、新しいローカル変更が
+    // 無いのにトースト(showGlobalToastWidget)が再表示されてしまうため。トーストの表示は
+    // 「自分が変更したとき(pendingEditCount の増加)」だけに限定したい。
     useEffect(() {
       if (pendingEditCount.value > 0 && currentUserID != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
