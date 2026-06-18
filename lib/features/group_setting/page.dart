@@ -247,6 +247,14 @@ class _GroupSettingBody extends HookConsumerWidget {
                               analytics.logEvent(
                                   name: 'tap_create_grp_invitation',
                                   parameters: {'groupID': groupID});
+                              // Issue #432: グループ名未設定のまま招待すると、招待された側が
+                              // 名称未設定のグループに参加することになり混乱を招く。招待前に
+                              // グループ名の登録を必須化する。
+                              if (!group.hasRegisteredName) {
+                                showGlobalToast('招待する前にグループ名を設定してください',
+                                    title: null);
+                                return;
+                              }
                               isCreatingInvitation.value = true;
                               try {
                                 final invitation = await ref

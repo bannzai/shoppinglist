@@ -6,6 +6,7 @@ import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/components/primitives/app_divider.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/components/primitives/app_section_label.dart';
+import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
@@ -14,6 +15,7 @@ import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list_setting/delete_confirm_dialog.dart';
 import 'package:shoppinglist/features/shopping_list_setting/invitation_code_dialog.dart';
 import 'package:shoppinglist/features/shopping_list_setting/shopping_location_select_page.dart';
+import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -54,6 +56,8 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     final textEditingController =
         useTextEditingController(text: shoppingListState.value.name);
     final isCreatingInvitation = useState(false);
+    // 招待時のグループ名チェック (Issue #432) のためグループを購読しておく。
+    final group = ref.watch(groupProvider(groupID: groupID)).valueOrNull;
     // UI 表示用は customerInfoProvider を使う。Promotional Entitlement 経由の付与でも
     // 即座に反映できる (Custom Claims はリアルタイムに更新されない)。
     final isPremium =
@@ -204,6 +208,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                     context: context,
                                     ref: ref,
                                     isCreatingInvitation: isCreatingInvitation,
+                                    group: group,
                                   ),
                           detail: null,
                           onSwitch: null,
@@ -291,11 +296,26 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     required BuildContext context,
     required WidgetRef ref,
     required ValueNotifier<bool> isCreatingInvitation,
+    required Group? group,
   }) async {
     analytics.logEvent(
       name: 'tap_create_list_invitation',
       parameters: {'groupID': groupID},
     );
+    // Issue #432: グループ名未設定のまま招待すると混乱を招くため、招待前に名前登録を
+    // 必須化する。この画面にはグループ名入力欄がないため、トーストからグループ設定画面へ誘導する。
+    if (group == null || !group.hasRegisteredName) {
+      final rootContext = Navigator.of(context, rootNavigator: true).context;
+      showGlobalActionToast(
+        message: '招待する前にグループ名を設定してください',
+        actionLabel: 'グループ設定',
+        onAction: () => Navigator.push(
+          rootContext,
+          MaterialPageRoute(builder: (_) => GroupSettingPage(groupID: groupID)),
+        ),
+      );
+      return;
+    }
     isCreatingInvitation.value = true;
     try {
       final invitation =
