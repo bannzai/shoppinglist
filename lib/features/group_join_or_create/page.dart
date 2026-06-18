@@ -57,9 +57,9 @@ class GroupJoinOrCreatePage extends HookConsumerWidget {
                 '家族やパートナーから招待コードを受け取っていますか？\n'
                 'コードで参加すると同じ買い物リストを一緒に使えます。',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: neutral.ink2,
-                      height: 1.7,
-                    ),
+                  color: neutral.ink2,
+                  height: 1.7,
+                ),
                 textAlign: TextAlign.center,
               ),
               if (errorMessage.value != null) ...[
@@ -81,21 +81,23 @@ class GroupJoinOrCreatePage extends HookConsumerWidget {
                   variant: AppPillVariant.accent,
                   large: true,
                   expanded: true,
-                  onPressed: isCreating.value
-                      ? null
-                      : () {
-                          analytics.logEvent(
-                            name: 'tap_join_via_code',
-                            parameters: null,
-                          );
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const GroupInvitationAcceptPage(),
-                            ),
-                          );
-                        },
+                  onPressed:
+                      isCreating.value
+                          ? null
+                          : () {
+                            analytics.logEvent(
+                              name: 'tap_join_via_code',
+                              parameters: null,
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) =>
+                                        const GroupInvitationAcceptPage(),
+                              ),
+                            );
+                          },
                   icon: null,
                 ),
               ),
@@ -108,31 +110,34 @@ class GroupJoinOrCreatePage extends HookConsumerWidget {
                   variant: AppPillVariant.ghost,
                   large: true,
                   expanded: true,
-                  onPressed: isCreating.value
-                      ? null
-                      : () async {
-                          analytics.logEvent(
-                            name: 'tap_create_solo_group',
-                            parameters: null,
-                          );
-                          isCreating.value = true;
-                          errorMessage.value = null;
-                          try {
-                            await ref.read(createGroupProvider).call(
-                                  appUser: appUser,
-                                  name: null,
-                                  setAsDefault: true,
-                                  iconName: 'home',
-                                );
-                            // 成功時は defaultGroupID がセットされ
-                            // AppEntityPrepareResolver が再ビルドされて本画面が置き換わる。
-                            // 破棄済み hook への書き込みを避けるため isCreating は戻さない。
-                          } catch (e, st) {
-                            logError(e, st);
-                            errorMessage.value = describeError(e, st).message;
-                            isCreating.value = false;
-                          }
-                        },
+                  onPressed:
+                      isCreating.value
+                          ? null
+                          : () async {
+                            analytics.logEvent(
+                              name: 'tap_create_solo_group',
+                              parameters: null,
+                            );
+                            isCreating.value = true;
+                            errorMessage.value = null;
+                            try {
+                              await ref
+                                  .read(createGroupProvider)
+                                  .call(
+                                    appUser: appUser,
+                                    name: null,
+                                    setAsDefault: true,
+                                    iconName: 'home',
+                                  );
+                              // 成功時は defaultGroupID がセットされ
+                              // AppEntityPrepareResolver が再ビルドされて本画面が置き換わる。
+                              // 破棄済み hook への書き込みを避けるため isCreating は戻さない。
+                            } catch (e, st) {
+                              logError(e, st);
+                              errorMessage.value = describeError(e, st).message;
+                              isCreating.value = false;
+                            }
+                          },
                   icon: null,
                 ),
               ),

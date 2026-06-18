@@ -15,13 +15,14 @@ String _$geofenceServiceHash() => r'ebaeef2e7db157d0c444c375c27136cc553ac3fd';
 final geofenceServiceProvider = Provider<GeofenceService>.internal(
   geofenceService,
   name: r'geofenceServiceProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$geofenceServiceHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$geofenceServiceHash,
   dependencies: <ProviderOrFamily>[localNotificationsPluginProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     localNotificationsPluginProvider,
-    ...?localNotificationsPluginProvider.allTransitiveDependencies
+    ...?localNotificationsPluginProvider.allTransitiveDependencies,
   },
 );
 
@@ -42,18 +43,19 @@ String _$geofenceMonitoringPlanHash() =>
 @ProviderFor(geofenceMonitoringPlan)
 final geofenceMonitoringPlanProvider =
     AutoDisposeProvider<GeofenceMonitoringPlan>.internal(
-  geofenceMonitoringPlan,
-  name: r'geofenceMonitoringPlanProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$geofenceMonitoringPlanHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      geofenceMonitoringPlan,
+      name: r'geofenceMonitoringPlanProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$geofenceMonitoringPlanHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef GeofenceMonitoringPlanRef
-    = AutoDisposeProviderRef<GeofenceMonitoringPlan>;
+typedef GeofenceMonitoringPlanRef =
+    AutoDisposeProviderRef<GeofenceMonitoringPlan>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

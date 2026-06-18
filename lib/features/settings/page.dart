@@ -42,12 +42,14 @@ class SettingPage extends HookConsumerWidget {
     final displayNameController = useTextEditingController();
 
     // プロフィールのdisplayNameをTextFieldに反映
-    final groupUserProfilesAsync = groupID != null
-        ? ref.watch(groupUserProfilesProvider(groupID: groupID))
-        : null;
-    final myGroupUserProfile = groupUserProfilesAsync?.asData?.value
-        .where((p) => p.userID == currentUserID)
-        .firstOrNull;
+    final groupUserProfilesAsync =
+        groupID != null
+            ? ref.watch(groupUserProfilesProvider(groupID: groupID))
+            : null;
+    final myGroupUserProfile =
+        groupUserProfilesAsync?.asData?.value
+            .where((p) => p.userID == currentUserID)
+            .firstOrNull;
 
     // Firestoreからプロフィールデータが初回読み込みされた時にTextFieldへ反映する。
     // displayNameController.textが空の場合のみ設定することで、ユーザーが入力中の値を上書きしない。
@@ -184,8 +186,8 @@ class SettingPage extends HookConsumerWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              const GroupInvitationAcceptPage(),
+                          builder:
+                              (context) => const GroupInvitationAcceptPage(),
                         ),
                       );
                     },
@@ -341,13 +343,14 @@ class _PremiumCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: isPremium
-            ? LinearGradient(
-                colors: [tokens.accent, const Color(0xFF7C2A07)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              )
-            : null,
+        gradient:
+            isPremium
+                ? LinearGradient(
+                  colors: [tokens.accent, const Color(0xFF7C2A07)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+                : null,
         color: isPremium ? null : neutral.surface2,
         borderRadius: BorderRadius.circular(14),
         border:
@@ -361,9 +364,10 @@ class _PremiumCard extends ConsumerWidget {
             height: 36,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isPremium
-                  ? Colors.white.withValues(alpha: 0.2)
-                  : tokens.accentSoft,
+              color:
+                  isPremium
+                      ? Colors.white.withValues(alpha: 0.2)
+                      : tokens.accentSoft,
             ),
             alignment: Alignment.center,
             child: Icon(
@@ -381,18 +385,19 @@ class _PremiumCard extends ConsumerWidget {
                 Text(
                   isPremium ? 'プレミアム会員' : 'プレミアムにアップグレード',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: isPremium ? Colors.white : neutral.ink,
-                      ),
+                    fontWeight: FontWeight.w700,
+                    color: isPremium ? Colors.white : neutral.ink,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   isPremium ? 'すべての機能が利用できます' : '5 色テーマ・画像/URL読み取り回数アップなど',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: isPremium
+                    color:
+                        isPremium
                             ? Colors.white.withValues(alpha: 0.85)
                             : neutral.ink2,
-                      ),
+                  ),
                 ),
               ],
             ),
@@ -477,9 +482,9 @@ class _SignOutButton extends ConsumerWidget {
           label: Text(
             'サインアウト',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: tokens.neutral.danger,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: tokens.neutral.danger,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           onPressed: () async {
             analytics.logEvent(name: 'tap_sign_out', parameters: null);
@@ -504,9 +509,7 @@ class _SignOutButton extends ConsumerWidget {
                       const SizedBox(height: 12),
                       Text(
                         '再度サインインするまで端末からはリストにアクセスできなくなります。',
-                        style: Theme.of(dialogContext)
-                            .textTheme
-                            .bodyMedium
+                        style: Theme.of(dialogContext).textTheme.bodyMedium
                             ?.copyWith(color: tokens.neutral.ink2),
                       ),
                       const SizedBox(height: 16),
@@ -517,8 +520,8 @@ class _SignOutButton extends ConsumerWidget {
                               label: 'キャンセル',
                               variant: AppPillVariant.ghost,
                               expanded: true,
-                              onPressed: () =>
-                                  Navigator.pop(dialogContext, false),
+                              onPressed:
+                                  () => Navigator.pop(dialogContext, false),
                               icon: null,
                             ),
                           ),
@@ -528,8 +531,8 @@ class _SignOutButton extends ConsumerWidget {
                               label: 'サインアウト',
                               variant: AppPillVariant.danger,
                               expanded: true,
-                              onPressed: () =>
-                                  Navigator.pop(dialogContext, true),
+                              onPressed:
+                                  () => Navigator.pop(dialogContext, true),
                               icon: null,
                             ),
                           ),
@@ -583,17 +586,17 @@ class _SignOutCompletedDialog extends StatelessWidget {
           Text(
             'サインアウトしました',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: Theme.of(context).colorScheme.onSurface,
+              fontWeight: FontWeight.w700,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
           Text(
             'アプリを終了します',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -602,15 +605,17 @@ class _SignOutCompletedDialog extends StatelessWidget {
             child: TextButton(
               onPressed: () async {
                 analytics.logEvent(
-                    name: 'tap_exit_app_after_sign_out', parameters: null);
+                  name: 'tap_exit_app_after_sign_out',
+                  parameters: null,
+                );
                 exit(0);
               },
               child: Text(
                 '終了する',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),

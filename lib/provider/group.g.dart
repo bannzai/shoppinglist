@@ -39,25 +39,17 @@ class GroupFamily extends Family<AsyncValue<Group>> {
   const GroupFamily();
 
   /// See also [group].
-  GroupProvider call({
-    required String groupID,
-  }) {
-    return GroupProvider(
-      groupID: groupID,
-    );
+  GroupProvider call({required String groupID}) {
+    return GroupProvider(groupID: groupID);
   }
 
   @override
-  GroupProvider getProviderOverride(
-    covariant GroupProvider provider,
-  ) {
-    return call(
-      groupID: provider.groupID,
-    );
+  GroupProvider getProviderOverride(covariant GroupProvider provider) {
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -65,9 +57,9 @@ class GroupFamily extends Family<AsyncValue<Group>> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -80,23 +72,17 @@ class GroupFamily extends Family<AsyncValue<Group>> {
 /// See also [group].
 class GroupProvider extends AutoDisposeStreamProvider<Group> {
   /// See also [group].
-  GroupProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => group(
-            ref as GroupRef,
-            groupID: groupID,
-          ),
-          from: groupProvider,
-          name: r'groupProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$groupHash,
-          dependencies: GroupFamily._dependencies,
-          allTransitiveDependencies: GroupFamily._allTransitiveDependencies,
-          groupID: groupID,
-        );
+  GroupProvider({required String groupID})
+    : this._internal(
+        (ref) => group(ref as GroupRef, groupID: groupID),
+        from: groupProvider,
+        name: r'groupProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product') ? null : _$groupHash,
+        dependencies: GroupFamily._dependencies,
+        allTransitiveDependencies: GroupFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   GroupProvider._internal(
     super._createNotifier, {
@@ -111,9 +97,7 @@ class GroupProvider extends AutoDisposeStreamProvider<Group> {
   final String groupID;
 
   @override
-  Override overrideWith(
-    Stream<Group> Function(GroupRef provider) create,
-  ) {
+  Override overrideWith(Stream<Group> Function(GroupRef provider) create) {
     return ProviderOverride(
       origin: this,
       override: GroupProvider._internal(
@@ -174,25 +158,19 @@ class GroupNameUpdateFamily extends Family<GroupNameUpdate> {
   const GroupNameUpdateFamily();
 
   /// See also [groupNameUpdate].
-  GroupNameUpdateProvider call({
-    required String groupID,
-  }) {
-    return GroupNameUpdateProvider(
-      groupID: groupID,
-    );
+  GroupNameUpdateProvider call({required String groupID}) {
+    return GroupNameUpdateProvider(groupID: groupID);
   }
 
   @override
   GroupNameUpdateProvider getProviderOverride(
     covariant GroupNameUpdateProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -200,9 +178,9 @@ class GroupNameUpdateFamily extends Family<GroupNameUpdate> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -215,24 +193,20 @@ class GroupNameUpdateFamily extends Family<GroupNameUpdate> {
 /// See also [groupNameUpdate].
 class GroupNameUpdateProvider extends AutoDisposeProvider<GroupNameUpdate> {
   /// See also [groupNameUpdate].
-  GroupNameUpdateProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => groupNameUpdate(
-            ref as GroupNameUpdateRef,
-            groupID: groupID,
-          ),
-          from: groupNameUpdateProvider,
-          name: r'groupNameUpdateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$groupNameUpdateHash,
-          dependencies: GroupNameUpdateFamily._dependencies,
-          allTransitiveDependencies:
-              GroupNameUpdateFamily._allTransitiveDependencies,
-          groupID: groupID,
-        );
+  GroupNameUpdateProvider({required String groupID})
+    : this._internal(
+        (ref) => groupNameUpdate(ref as GroupNameUpdateRef, groupID: groupID),
+        from: groupNameUpdateProvider,
+        name: r'groupNameUpdateProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$groupNameUpdateHash,
+        dependencies: GroupNameUpdateFamily._dependencies,
+        allTransitiveDependencies:
+            GroupNameUpdateFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   GroupNameUpdateProvider._internal(
     super._createNotifier, {
@@ -298,5 +272,6 @@ class _GroupNameUpdateProviderElement
   @override
   String get groupID => (origin as GroupNameUpdateProvider).groupID;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

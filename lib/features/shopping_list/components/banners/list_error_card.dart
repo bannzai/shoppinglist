@@ -54,26 +54,26 @@ class ListErrorCard extends HookWidget {
             Text(
               'リストを読み込めませんでした',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: tokens.neutral.danger,
-                  ),
+                fontWeight: FontWeight.w700,
+                color: tokens.neutral.danger,
+              ),
             ),
             const SizedBox(height: 6),
             if (error != null)
               Text(
                 describeError(error, stackTrace).message,
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: tokens.neutral.ink2),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: tokens.neutral.ink2),
               ),
             const SizedBox(height: 14),
             AppPill(
-                label: '再試行',
-                variant: AppPillVariant.accent,
-                onPressed: onRetry,
-                icon: null),
+              label: '再試行',
+              variant: AppPillVariant.accent,
+              onPressed: onRetry,
+              icon: null,
+            ),
           ],
         ),
       ),

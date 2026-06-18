@@ -28,11 +28,12 @@ Future<void> showReceiptEditSheet({
 }) {
   return appShowModalBottomSheet(
     context: context,
-    builder: (context) => _ReceiptEditSheet(
-      groupID: groupID,
-      shoppingListID: shoppingListID,
-      receipt: receipt,
-    ),
+    builder:
+        (context) => _ReceiptEditSheet(
+          groupID: groupID,
+          shoppingListID: shoppingListID,
+          receipt: receipt,
+        ),
   );
 }
 
@@ -73,29 +74,30 @@ class _ReceiptEditSheet extends HookConsumerWidget {
     void showImageSourceSheet() {
       showModalBottomSheet(
         context: context,
-        builder: (sheetContext) => SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text('カメラで撮影'),
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  pickImage(ImageSource.camera);
-                },
+        builder:
+            (sheetContext) => SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.camera_alt),
+                    title: const Text('カメラで撮影'),
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      pickImage(ImageSource.camera);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.photo_library),
+                    title: const Text('フォトライブラリから選択'),
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      pickImage(ImageSource.gallery);
+                    },
+                  ),
+                ],
               ),
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('フォトライブラリから選択'),
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  pickImage(ImageSource.gallery);
-                },
-              ),
-            ],
-          ),
-        ),
+            ),
       );
     }
 
@@ -121,10 +123,11 @@ class _ReceiptEditSheet extends HookConsumerWidget {
         if (receipt == null) {
           // 新規: receiptID を採番 → 画像アップロード → ドキュメント作成の順。
           // 画像アップロードに失敗した場合はドキュメントを作らないため孤児が残らない。
-          final receiptID = ref
-              .read(groupDatabaseProvider(groupID: groupID))
-              .newReceiptReference(shoppingListID: shoppingListID)
-              .id;
+          final receiptID =
+              ref
+                  .read(groupDatabaseProvider(groupID: groupID))
+                  .newReceiptReference(shoppingListID: shoppingListID)
+                  .id;
           final file = File(selectedPhoto.value!.path);
           final uploadedStoragePath = await functions.uploadReceiptImage(
             groupID: groupID,
@@ -132,7 +135,9 @@ class _ReceiptEditSheet extends HookConsumerWidget {
             receiptID: receiptID,
             base64Image: await base64CompressImage(file),
           );
-          await ref.read(addReceiptProvider(groupID: groupID)).call(
+          await ref
+              .read(addReceiptProvider(groupID: groupID))
+              .call(
                 shoppingListID: shoppingListID,
                 receiptID: receiptID,
                 userID: userID,
@@ -153,7 +158,9 @@ class _ReceiptEditSheet extends HookConsumerWidget {
               base64Image: await base64CompressImage(file),
             );
           }
-          await ref.read(updateReceiptProvider(groupID: groupID)).call(
+          await ref
+              .read(updateReceiptProvider(groupID: groupID))
+              .call(
                 receipt: receipt!.copyWith(
                   storagePath: nextStoragePath,
                   amount: amount,
@@ -174,8 +181,9 @@ class _ReceiptEditSheet extends HookConsumerWidget {
     }
 
     return SingleChildScrollView(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
         child: Column(
@@ -217,13 +225,14 @@ class _ReceiptEditSheet extends HookConsumerWidget {
             const SizedBox(height: 24),
             FilledButton(
               onPressed: (!canSave || isSaving.value) ? null : save,
-              child: isSaving.value
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('保存'),
+              child:
+                  isSaving.value
+                      ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                      : const Text('保存'),
             ),
           ],
         ),
@@ -290,10 +299,9 @@ class _ReceiptImageField extends StatelessWidget {
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Theme.of(context)
-                    .colorScheme
-                    .surface
-                    .withValues(alpha: 0.8),
+                color: Theme.of(
+                  context,
+                ).colorScheme.surface.withValues(alpha: 0.8),
               ),
               child: const Icon(Icons.edit, size: 20),
             ),

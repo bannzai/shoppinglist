@@ -29,9 +29,10 @@ class GroupListPage extends ConsumerWidget {
     // 無料プランで作成上限に達しているか。作成済みグループ(自分がオーナー)が上限+1以上で到達。
     final appUser = appUserAsync.asData?.value;
     final groups = groupsAsync.asData?.value ?? const <Group>[];
-    final createdGroupCount = appUser == null
-        ? 0
-        : groups.where((group) => group.ownerUserID == appUser.id).length;
+    final createdGroupCount =
+        appUser == null
+            ? 0
+            : groups.where((group) => group.ownerUserID == appUser.id).length;
     final isLimitReached =
         !isPremium && createdGroupCount >= freeAdditionalGroupCreationLimit + 1;
 
@@ -45,67 +46,72 @@ class GroupListPage extends ConsumerWidget {
         (AsyncData(value: final appUser), AsyncData(value: final groups)) =>
           groups.isEmpty
               ? Center(
-                  child: Text(
-                    '所属しているグループはありません',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(color: neutral.ink2),
-                  ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
-                  itemCount: groups.length + (isPremium ? 0 : 1),
-                  itemBuilder: (context, index) {
-                    if (!isPremium && index == groups.length) {
-                      return _FreeLimitBanner(
-                        onTap: () => showPaywall(context: context),
-                      );
-                    }
-                    final group = groups[index];
-                    final isDefault = group.id == appUser.defaultGroupID;
-                    return _GroupCard(
-                      group: group,
-                      isDefault: isDefault,
-                      onTap: () {
-                        analytics.logEvent(
-                            name: 'tap_select_group',
-                            parameters: {'groupID': group.id});
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                GroupSettingPage(groupID: group.id),
-                          ),
-                        );
-                      },
-                    );
-                  },
+                child: Text(
+                  '所属しているグループはありません',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: neutral.ink2),
                 ),
+              )
+              : ListView.builder(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
+                itemCount: groups.length + (isPremium ? 0 : 1),
+                itemBuilder: (context, index) {
+                  if (!isPremium && index == groups.length) {
+                    return _FreeLimitBanner(
+                      onTap: () => showPaywall(context: context),
+                    );
+                  }
+                  final group = groups[index];
+                  final isDefault = group.id == appUser.defaultGroupID;
+                  return _GroupCard(
+                    group: group,
+                    isDefault: isDefault,
+                    onTap: () {
+                      analytics.logEvent(
+                        name: 'tap_select_group',
+                        parameters: {'groupID': group.id},
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => GroupSettingPage(groupID: group.id),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
         (AsyncError(:final error, :final stackTrace), _) ||
-        (_, AsyncError(:final error, :final stackTrace)) =>
-          ErrorView(error: error, stackTrace: stackTrace),
+        (
+          _,
+          AsyncError(:final error, :final stackTrace),
+        ) => ErrorView(error: error, stackTrace: stackTrace),
         _ => const Center(child: CircularProgressIndicator()),
       },
       // 上限到達時はFAB自体を非表示にする。上限の案内と解除導線は本文の _FreeLimitBanner が担う。
-      floatingActionButton: isLimitReached
-          ? null
-          : FloatingActionButton(
-              tooltip: 'グループ作成',
-              backgroundColor: tokens.accent,
-              foregroundColor: Colors.white,
-              onPressed: () {
-                analytics.logEvent(
-                    name: 'tap_navigate_group_create', parameters: null);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const GroupCreatePage(),
-                  ),
-                );
-              },
-              child: const Icon(Icons.add),
-            ),
+      floatingActionButton:
+          isLimitReached
+              ? null
+              : FloatingActionButton(
+                tooltip: 'グループ作成',
+                backgroundColor: tokens.accent,
+                foregroundColor: Colors.white,
+                onPressed: () {
+                  analytics.logEvent(
+                    name: 'tap_navigate_group_create',
+                    parameters: null,
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const GroupCreatePage(),
+                    ),
+                  );
+                },
+                child: const Icon(Icons.add),
+              ),
     );
   }
 }
@@ -128,7 +134,7 @@ class _GroupCard extends ConsumerWidget {
     final neutral = tokens.neutral;
     final profiles =
         ref.watch(groupUserProfilesProvider(groupID: group.id)).asData?.value ??
-            const <GroupUserProfile>[];
+        const <GroupUserProfile>[];
     final shown = profiles.take(3).toList();
 
     return Padding(
@@ -179,17 +185,20 @@ class _GroupCard extends ConsumerWidget {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: tokens.accentSoft,
-                              border:
-                                  Border.all(color: neutral.card, width: 1.5),
+                              border: Border.all(
+                                color: neutral.card,
+                                width: 1.5,
+                              ),
                             ),
                             alignment: Alignment.center,
                             child: Text(
                               initial,
                               style: monoTextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: tokens.accent,
-                                  letterSpacing: null),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: tokens.accent,
+                                letterSpacing: null,
+                              ),
                             ),
                           ),
                         );
@@ -208,9 +217,7 @@ class _GroupCard extends ConsumerWidget {
                               group.name ?? '名前未設定',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
+                              style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(color: neutral.ink),
                             ),
                           ),
@@ -218,21 +225,22 @@ class _GroupCard extends ConsumerWidget {
                             const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: tokens.accentSoft,
                                 borderRadius: BorderRadius.circular(999),
                               ),
                               child: Text(
                                 'デフォルト',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelSmall
-                                    ?.copyWith(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w600,
-                                      color: tokens.accent,
-                                    ),
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.labelSmall?.copyWith(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  color: tokens.accent,
+                                ),
                               ),
                             ),
                           ],
@@ -241,10 +249,9 @@ class _GroupCard extends ConsumerWidget {
                       const SizedBox(height: 2),
                       Text(
                         'メンバー ${group.memberUserIDs.length}人',
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelSmall
-                            ?.copyWith(color: neutral.ink3),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.labelSmall?.copyWith(color: neutral.ink3),
                       ),
                     ],
                   ),
@@ -281,9 +288,9 @@ class _FreeLimitBanner extends StatelessWidget {
             child: Text(
               '無料プランは追加 1 グループまで',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: tokens.accentInk,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: tokens.accentInk,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           InkWell(
@@ -293,9 +300,9 @@ class _FreeLimitBanner extends StatelessWidget {
               child: Text(
                 '解除',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: tokens.accent,
-                    ),
+                  fontWeight: FontWeight.w700,
+                  color: tokens.accent,
+                ),
               ),
             ),
           ),

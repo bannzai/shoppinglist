@@ -91,14 +91,15 @@ class _GroupsSection extends StatelessWidget {
       title: 'Groups',
       icon: Icons.groups,
       future: () async {
-        final snapshot = await FirebaseFirestore.instance
-            .collection('/groups')
-            .where('memberUserIDs', arrayContains: currentUID)
-            .withConverter(
-              fromFirestore: Group.fromFirestore,
-              toFirestore: Group.toFirestore,
-            )
-            .get();
+        final snapshot =
+            await FirebaseFirestore.instance
+                .collection('/groups')
+                .where('memberUserIDs', arrayContains: currentUID)
+                .withConverter(
+                  fromFirestore: Group.fromFirestore,
+                  toFirestore: Group.toFirestore,
+                )
+                .get();
         return snapshot.docs.map((doc) => doc.data()).toList();
       },
       builder: (groups) {
@@ -168,24 +169,25 @@ class _ShoppingListsSection extends StatelessWidget {
           );
         }
         return Column(
-          children: lists.map((list) {
-            return Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Column(
-                children: [
-                  _JsonExpansionTile(
-                    title: 'List: ${list.name} (${list.id})',
-                    icon: Icons.shopping_cart,
-                    data: list.toJson(),
+          children:
+              lists.map((list) {
+                return Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Column(
+                    children: [
+                      _JsonExpansionTile(
+                        title: 'List: ${list.name} (${list.id})',
+                        icon: Icons.shopping_cart,
+                        data: list.toJson(),
+                      ),
+                      _ShoppingListItemsSection(
+                        groupDB: groupDB,
+                        shoppingListID: list.id,
+                      ),
+                    ],
                   ),
-                  _ShoppingListItemsSection(
-                    groupDB: groupDB,
-                    shoppingListID: list.id,
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
+                );
+              }).toList(),
         );
       },
     );
@@ -209,9 +211,10 @@ class _ShoppingListItemsSection extends StatelessWidget {
         title: 'Items',
         icon: Icons.check_box,
         future: () async {
-          final snapshot = await groupDB
-              .shoppingListItemsReference(shoppingListID: shoppingListID)
-              .get();
+          final snapshot =
+              await groupDB
+                  .shoppingListItemsReference(shoppingListID: shoppingListID)
+                  .get();
           return snapshot.docs.map((doc) => doc.data()).toList();
         },
         builder: (items) {
@@ -222,13 +225,16 @@ class _ShoppingListItemsSection extends StatelessWidget {
             );
           }
           return Column(
-            children: items
-                .map((item) => _JsonExpansionTile(
-                      title: '${item.message} (${item.status.name})',
-                      icon: Icons.shopping_bag,
-                      data: item.toJson(),
-                    ))
-                .toList(),
+            children:
+                items
+                    .map(
+                      (item) => _JsonExpansionTile(
+                        title: '${item.message} (${item.status.name})',
+                        icon: Icons.shopping_bag,
+                        data: item.toJson(),
+                      ),
+                    )
+                    .toList(),
           );
         },
       ),
@@ -258,13 +264,16 @@ class _ShoppingLocationsSection extends StatelessWidget {
           );
         }
         return Column(
-          children: locations
-              .map((loc) => _JsonExpansionTile(
-                    title: loc.name,
-                    icon: Icons.store,
-                    data: loc.toJson(),
-                  ))
-              .toList(),
+          children:
+              locations
+                  .map(
+                    (loc) => _JsonExpansionTile(
+                      title: loc.name,
+                      icon: Icons.store,
+                      data: loc.toJson(),
+                    ),
+                  )
+                  .toList(),
         );
       },
     );
@@ -293,24 +302,25 @@ class _CategoryAxesSection extends StatelessWidget {
           );
         }
         return Column(
-          children: axes.map((axis) {
-            return Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Column(
-                children: [
-                  _JsonExpansionTile(
-                    title: 'Axis: ${axis.name} (${axis.id})',
-                    icon: Icons.account_tree,
-                    data: axis.toJson(),
+          children:
+              axes.map((axis) {
+                return Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Column(
+                    children: [
+                      _JsonExpansionTile(
+                        title: 'Axis: ${axis.name} (${axis.id})',
+                        icon: Icons.account_tree,
+                        data: axis.toJson(),
+                      ),
+                      _CategoriesSection(
+                        groupDB: groupDB,
+                        categoryAxisID: axis.id,
+                      ),
+                    ],
                   ),
-                  _CategoriesSection(
-                    groupDB: groupDB,
-                    categoryAxisID: axis.id,
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
+                );
+              }).toList(),
         );
       },
     );
@@ -334,9 +344,10 @@ class _CategoriesSection extends StatelessWidget {
         title: 'Categories',
         icon: Icons.label,
         future: () async {
-          final snapshot = await groupDB
-              .categoriesReference(categoryAxisID: categoryAxisID)
-              .get();
+          final snapshot =
+              await groupDB
+                  .categoriesReference(categoryAxisID: categoryAxisID)
+                  .get();
           return snapshot.docs.map((doc) => doc.data()).toList();
         },
         builder: (categories) {
@@ -347,13 +358,16 @@ class _CategoriesSection extends StatelessWidget {
             );
           }
           return Column(
-            children: categories
-                .map((cat) => _JsonExpansionTile(
-                      title: cat.name,
-                      icon: Icons.label_outline,
-                      data: cat.toJson(),
-                    ))
-                .toList(),
+            children:
+                categories
+                    .map(
+                      (cat) => _JsonExpansionTile(
+                        title: cat.name,
+                        icon: Icons.label_outline,
+                        data: cat.toJson(),
+                      ),
+                    )
+                    .toList(),
           );
         },
       ),
@@ -383,13 +397,16 @@ class _UserProfilesSection extends StatelessWidget {
           );
         }
         return Column(
-          children: profiles
-              .map((p) => _JsonExpansionTile(
-                    title: '${p.displayName ?? '名前未設定'} (${p.userID})',
-                    icon: Icons.person_outline,
-                    data: p.toJson(),
-                  ))
-              .toList(),
+          children:
+              profiles
+                  .map(
+                    (p) => _JsonExpansionTile(
+                      title: '${p.displayName ?? '名前未設定'} (${p.userID})',
+                      icon: Icons.person_outline,
+                      data: p.toJson(),
+                    ),
+                  )
+                  .toList(),
         );
       },
     );
@@ -440,8 +457,9 @@ class _AsyncExpansionTileState<T> extends State<_AsyncExpansionTile<T>> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Padding(
                   padding: EdgeInsets.all(16),
-                  child:
-                      Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                  child: Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
                 );
               }
               if (snapshot.hasError) {
@@ -449,10 +467,9 @@ class _AsyncExpansionTileState<T> extends State<_AsyncExpansionTile<T>> {
                   padding: const EdgeInsets.all(16),
                   child: Text(
                     'エラー: ${snapshot.error}',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(color: Colors.red),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: Colors.red),
                   ),
                 );
               }
@@ -494,10 +511,7 @@ class _JsonText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (data == null) {
-      return const Padding(
-        padding: EdgeInsets.all(16),
-        child: Text('データなし'),
-      );
+      return const Padding(padding: EdgeInsets.all(16), child: Text('データなし'));
     }
     // Timestamp等のFirestoreオブジェクトをJSON文字列に変換するためカスタムエンコーダーを使用
     final jsonString = JsonEncoder.withIndent('  ', (object) {
@@ -517,10 +531,9 @@ class _JsonText extends StatelessWidget {
         ),
         child: SelectableText(
           jsonString,
-          style: Theme.of(context)
-              .textTheme
-              .bodySmall
-              ?.copyWith(fontFamily: 'monospace'),
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
         ),
       ),
     );

@@ -33,14 +33,17 @@ class AuthResolver extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final firebaseUserChanges = ref.watch(firebaseUserChangesProvider);
     final sharedPreferences = ref.watch(sharedPreferencesProvider);
-    final hasSeenOnboarding = ref
-        .watch(boolSharedPreferencesProvider(key: BoolKey.hasSeenOnboarding));
+    final hasSeenOnboarding = ref.watch(
+      boolSharedPreferencesProvider(key: BoolKey.hasSeenOnboarding),
+    );
 
     useEffect(() {
       final userID = firebaseUserChanges.asData?.valueOrNull?.uid;
       if (userID != null) {
         sharedPreferences.setString(
-            StringKey.lastSignInFirebaseAuthUserID, userID);
+          StringKey.lastSignInFirebaseAuthUserID,
+          userID,
+        );
 
         unawaited(Purchases.logIn(userID));
         unawaited(FirebaseCrashlytics.instance.setUserIdentifier(userID));

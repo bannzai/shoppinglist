@@ -47,10 +47,10 @@ class GroupCreatePage extends HookConsumerWidget {
               Text(
                 'グループ名',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: neutral.ink2,
-                      letterSpacing: 0.04,
-                    ),
+                  fontWeight: FontWeight.w700,
+                  color: neutral.ink2,
+                  letterSpacing: 0.04,
+                ),
               ),
               const SizedBox(height: 8),
               Container(
@@ -73,25 +73,28 @@ class GroupCreatePage extends HookConsumerWidget {
                       borderSide: BorderSide(color: tokens.accent, width: 1),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                   ),
                 ),
               ),
               if (errorMessage.value != null) ...[
                 const SizedBox(height: 12),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: neutral.dangerSoft,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     errorMessage.value!,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: neutral.danger),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: neutral.danger),
                   ),
                 ),
               ],
@@ -101,10 +104,10 @@ class GroupCreatePage extends HookConsumerWidget {
               Text(
                 'アイコン',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: neutral.ink2,
-                      letterSpacing: 0.04,
-                    ),
+                  fontWeight: FontWeight.w700,
+                  color: neutral.ink2,
+                  letterSpacing: 0.04,
+                ),
               ),
               const SizedBox(height: 8),
               GridView.count(
@@ -114,76 +117,82 @@ class GroupCreatePage extends HookConsumerWidget {
                 mainAxisSpacing: 8,
                 crossAxisSpacing: 8,
                 childAspectRatio: 1.6,
-                children: _iconPresets.map((preset) {
-                  final isSelected = selectedIconName.value == preset.name;
-                  return GestureDetector(
-                    onTap: () {
-                      analytics.logEvent(
-                        name: 'select_group_icon',
-                        parameters: {'iconName': preset.name},
-                      );
-                      selectedIconName.value = preset.name;
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: isSelected ? tokens.accentSoft : neutral.card,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                          color: isSelected ? tokens.accent : neutral.divider,
-                          width: isSelected ? 1.5 : 0.5,
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            preset.icon,
-                            size: 24,
-                            color: isSelected ? tokens.accent : neutral.ink,
+                children:
+                    _iconPresets.map((preset) {
+                      final isSelected = selectedIconName.value == preset.name;
+                      return GestureDetector(
+                        onTap: () {
+                          analytics.logEvent(
+                            name: 'select_group_icon',
+                            parameters: {'iconName': preset.name},
+                          );
+                          selectedIconName.value = preset.name;
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color:
+                                isSelected ? tokens.accentSoft : neutral.card,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color:
+                                  isSelected ? tokens.accent : neutral.divider,
+                              width: isSelected ? 1.5 : 0.5,
+                            ),
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            preset.label,
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                preset.icon,
+                                size: 24,
+                                color: isSelected ? tokens.accent : neutral.ink,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                preset.label,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.labelSmall?.copyWith(
                                   color:
                                       isSelected ? tokens.accent : neutral.ink2,
                                 ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
+                        ),
+                      );
+                    }).toList(),
               ),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 child: AppPill(
-                    label: isCreating.value ? '作成中...' : '作成する',
-                    variant: AppPillVariant.accent,
-                    large: true,
-                    expanded: true,
-                    onPressed: (isCreating.value || !canCreate)
-                        ? null
-                        : () async {
+                  label: isCreating.value ? '作成中...' : '作成する',
+                  variant: AppPillVariant.accent,
+                  large: true,
+                  expanded: true,
+                  onPressed:
+                      (isCreating.value || !canCreate)
+                          ? null
+                          : () async {
                             analytics.logEvent(
-                                name: 'tap_create_group', parameters: null);
+                              name: 'tap_create_group',
+                              parameters: null,
+                            );
                             isCreating.value = true;
                             errorMessage.value = null;
                             try {
                               if (appUser == null) {
                                 throw StateError('AppUser is not available');
                               }
-                              final groupID =
-                                  await ref.read(createGroupProvider).call(
-                                        appUser: appUser,
-                                        name: trimmedGroupName,
-                                        setAsDefault: false,
-                                        iconName: selectedIconName.value,
-                                      );
+                              final groupID = await ref
+                                  .read(createGroupProvider)
+                                  .call(
+                                    appUser: appUser,
+                                    name: trimmedGroupName,
+                                    setAsDefault: false,
+                                    iconName: selectedIconName.value,
+                                  );
                               // 作成後、招待コードを直ちに生成して共有 dialog を表示する。
                               // `design_handoff_shoppinglist/preview/screens-groups.jsx` 準拠。
                               try {
@@ -193,10 +202,12 @@ class GroupCreatePage extends HookConsumerWidget {
                                 if (context.mounted) {
                                   await showDialog<void>(
                                     context: context,
-                                    builder: (dialogContext) =>
-                                        _PostCreateInvitationDialog(
-                                      invitationCode: invitation.invitationCode,
-                                    ),
+                                    builder:
+                                        (dialogContext) =>
+                                            _PostCreateInvitationDialog(
+                                              invitationCode:
+                                                  invitation.invitationCode,
+                                            ),
                                   );
                                 }
                               } catch (e, st) {
@@ -216,7 +227,8 @@ class GroupCreatePage extends HookConsumerWidget {
                               isCreating.value = false;
                             }
                           },
-                    icon: null),
+                  icon: null,
+                ),
               ),
             ],
           ),
@@ -267,7 +279,9 @@ class _PostCreateInvitationDialog extends StatelessWidget {
         TextButton(
           onPressed: () async {
             analytics.logEvent(
-                name: 'tap_copy_invitation_code_post_create', parameters: null);
+              name: 'tap_copy_invitation_code_post_create',
+              parameters: null,
+            );
             await Clipboard.setData(ClipboardData(text: invitationCode));
             // ダイアログ上の SnackBar は背後の Scaffold に描画されて
             // 見えないため、前面に出るグローバルトーストで通知する。
@@ -278,8 +292,9 @@ class _PostCreateInvitationDialog extends StatelessWidget {
         TextButton(
           onPressed: () async {
             analytics.logEvent(
-                name: 'tap_share_invitation_code_post_create',
-                parameters: null);
+              name: 'tap_share_invitation_code_post_create',
+              parameters: null,
+            );
             await SharePlus.instance.share(
               ShareParams(text: '買い物リストの招待コード: $invitationCode'),
             );

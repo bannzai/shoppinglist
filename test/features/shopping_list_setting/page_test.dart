@@ -29,9 +29,7 @@ Future<void> _pumpPage(
         ...extraOverrides,
       ],
       child: MaterialApp(
-        theme: buildAppTheme(
-          accent: AccentPreset.shu,
-        ),
+        theme: buildAppTheme(accent: AccentPreset.shu),
         home: ShoppingListSettingPage(
           groupID: mockGroupID,
           shoppingListID: mockShoppingListID,
@@ -50,21 +48,23 @@ void main() {
     await _pumpPage(tester);
 
     // AppSectionLabel は `toUpperCase()` で大文字化されるため、検証側も大文字で照合する。
-    final labels = tester
-        .widgetList<AppSectionLabel>(find.byType(AppSectionLabel))
-        .map((w) => w.text)
-        .toList();
+    final labels =
+        tester
+            .widgetList<AppSectionLabel>(find.byType(AppSectionLabel))
+            .map((w) => w.text)
+            .toList();
     expect(
-        labels,
-        containsAll(<String>[
-          'リスト名',
-          '買い物する場所',
-          'カテゴリ',
-          '保存期間',
-          '通知',
-          '共有',
-          'リストの操作',
-        ]));
+      labels,
+      containsAll(<String>[
+        'リスト名',
+        '買い物する場所',
+        'カテゴリ',
+        '保存期間',
+        '通知',
+        '共有',
+        'リストの操作',
+      ]),
+    );
 
     expect(find.text('リスト名'.toUpperCase()), findsOneWidget);
     expect(find.text('共有'.toUpperCase()), findsOneWidget);
@@ -73,10 +73,11 @@ void main() {
 
   testWidgets('買い物する場所 AppCell に detail「変更」が表示される', (tester) async {
     await _pumpPage(tester);
-    final placeCell = tester
-        .widgetList<AppCell>(find.byType(AppCell))
-        .where((c) => c.icon == Icons.place_outlined)
-        .firstOrNull;
+    final placeCell =
+        tester
+            .widgetList<AppCell>(find.byType(AppCell))
+            .where((c) => c.icon == Icons.place_outlined)
+            .firstOrNull;
     expect(placeCell, isNotNull, reason: '買い物する場所 Cell が AppCell として描画されているべき');
     expect(placeCell!.detail, '変更');
     expect(find.text('変更'), findsOneWidget);
@@ -84,10 +85,11 @@ void main() {
 
   testWidgets('保存期間に「アップグレード」AppPill が表示される (非プレミアム時)', (tester) async {
     await _pumpPage(tester);
-    final upgradePill = tester
-        .widgetList<AppPill>(find.byType(AppPill))
-        .where((p) => p.label == 'アップグレード')
-        .firstOrNull;
+    final upgradePill =
+        tester
+            .widgetList<AppPill>(find.byType(AppPill))
+            .where((p) => p.label == 'アップグレード')
+            .firstOrNull;
     expect(upgradePill, isNotNull);
     expect(upgradePill!.variant, AppPillVariant.soft);
   });
@@ -108,10 +110,11 @@ void main() {
 
   testWidgets('カテゴリ Cell タップで GroupCategoryPage に遷移する', (tester) async {
     await _pumpPage(tester);
-    final categoryCell = tester
-        .widgetList<AppCell>(find.byType(AppCell))
-        .where((c) => c.icon == Icons.category_outlined)
-        .firstOrNull;
+    final categoryCell =
+        tester
+            .widgetList<AppCell>(find.byType(AppCell))
+            .where((c) => c.icon == Icons.category_outlined)
+            .firstOrNull;
     expect(categoryCell, isNotNull, reason: 'カテゴリ Cell が AppCell として描画されているべき');
 
     await tester.tap(find.byWidget(categoryCell!));
@@ -144,10 +147,14 @@ void main() {
     final toastContainer = ProviderContainer();
     addTearDown(toastContainer.dispose);
     appProviderContainer = toastContainer;
-    await _pumpPage(tester, extraOverrides: [
-      groupProvider(groupID: mockGroupID).overrideWith(
-          (ref) => Stream.value(mockGroup().copyWith(name: null))),
-    ]);
+    await _pumpPage(
+      tester,
+      extraOverrides: [
+        groupProvider(
+          groupID: mockGroupID,
+        ).overrideWith((ref) => Stream.value(mockGroup().copyWith(name: null))),
+      ],
+    );
     final inviteCell = tester
         .widgetList<AppCell>(find.byType(AppCell))
         .firstWhere((c) => c.icon == Icons.person_add_outlined);

@@ -42,11 +42,16 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
       children: [
         _StarterRow(
           onTap: () async {
-            analytics.logEvent(name: 'tap_create_first_item', parameters: {
-              'groupID': groupID,
-              'shoppingListID': shoppingListID,
-            });
-            await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+            analytics.logEvent(
+              name: 'tap_create_first_item',
+              parameters: {
+                'groupID': groupID,
+                'shoppingListID': shoppingListID,
+              },
+            );
+            await ref
+                .read(addShoppingListItemProvider(groupID: groupID))
+                .call(
                   shoppingListID: shoppingListID,
                   userID: ref.read(currentUserIDProvider)!,
                   message: '',
@@ -68,17 +73,19 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
             child: CustomPaint(
               painter: _DashedRectPainter(color: tokens.neutral.divider),
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'こんな風に使えます',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: tokens.neutral.ink2,
-                          ),
+                        fontWeight: FontWeight.w700,
+                        color: tokens.neutral.ink2,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     _HintLine(text: '・タップしてそのまま入力'),
@@ -110,9 +117,7 @@ class _StarterRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
           color: tokens.accentSoft.withValues(alpha: 0.4),
-          border: Border(
-            left: BorderSide(color: tokens.accent, width: 2),
-          ),
+          border: Border(left: BorderSide(color: tokens.accent, width: 2)),
         ),
         child: Row(
           children: [
@@ -122,9 +127,9 @@ class _StarterRow extends StatelessWidget {
               child: Text(
                 'タップで入力開始',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: tokens.accentInk,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  color: tokens.accentInk,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             Icon(Icons.edit_outlined, size: 16, color: tokens.accent),
@@ -147,11 +152,12 @@ class _HintLine extends StatelessWidget {
       child: Text(
         text,
         style: monoTextStyle(
-            fontSize: 11.5,
-            fontWeight: FontWeight.w400,
-            color: tokens.neutral.ink2,
-            height: 1.4,
-            letterSpacing: null),
+          fontSize: 11.5,
+          fontWeight: FontWeight.w400,
+          color: tokens.neutral.ink2,
+          height: 1.4,
+          letterSpacing: null,
+        ),
       ),
     );
   }
@@ -171,10 +177,11 @@ class _DashedRectPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = _strokeWidth;
+    final paint =
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = _strokeWidth;
     final rrect = RRect.fromRectAndRadius(
       Rect.fromLTWH(0, 0, size.width, size.height),
       const Radius.circular(_radius),

@@ -32,13 +32,14 @@ abstract class AppUserPrivate with _$AppUserPrivate {
       _$AppUserPrivateFromJson(json);
 
   static AppUserPrivate fromFirestore(
-          DocumentSnapshot<Map<String, dynamic>> snapshot,
-          SnapshotOptions? options) =>
-      AppUserPrivate.fromJson(snapshot.data()!..['id'] = snapshot.id);
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+    SnapshotOptions? options,
+  ) => AppUserPrivate.fromJson(snapshot.data()!..['id'] = snapshot.id);
 
   static Map<String, dynamic> toFirestore(
-          AppUserPrivate private, SetOptions? options) =>
-      private.toJson();
+    AppUserPrivate private,
+    SetOptions? options,
+  ) => private.toJson();
 
   /// composite ID: UserPrivate_users_{userID}
   static String documentID({required String userID}) =>

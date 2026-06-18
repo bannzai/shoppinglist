@@ -7,11 +7,12 @@ class ErrorAlert extends StatelessWidget {
   final String errorMessage;
   final String? faqLinkURL;
 
-  const ErrorAlert(
-      {super.key,
-      required this.title,
-      required this.faqLinkURL,
-      required this.errorMessage});
+  const ErrorAlert({
+    super.key,
+    required this.title,
+    required this.faqLinkURL,
+    required this.errorMessage,
+  });
   @override
   Widget build(BuildContext context) {
     final faq = faqLinkURL;
@@ -20,15 +21,17 @@ class ErrorAlert extends StatelessWidget {
       title: Text(
         title ?? 'エラーが発生しました',
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: colorScheme.onSurface,
-            ),
+          fontWeight: FontWeight.w600,
+          color: colorScheme.onSurface,
+        ),
       ),
-      content: Text(errorMessage,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w300,
-                color: colorScheme.onSurface,
-              )),
+      content: Text(
+        errorMessage,
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.w300,
+          color: colorScheme.onSurface,
+        ),
+      ),
       actions: <Widget>[
         if (faq != null)
           TextButton(
@@ -38,9 +41,9 @@ class ErrorAlert extends StatelessWidget {
             child: Text(
               'FAQを見る',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: colorScheme.primary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         TextButton(
@@ -50,9 +53,9 @@ class ErrorAlert extends StatelessWidget {
           child: Text(
             '閉じる',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ],

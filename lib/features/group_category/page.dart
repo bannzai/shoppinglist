@@ -46,8 +46,9 @@ class GroupCategoryPage extends ConsumerWidget {
             child: CategoryEmptyState(
               onAddCategory: () {
                 analytics.logEvent(
-                    name: 'tap_add_first_category',
-                    parameters: {'groupID': groupID});
+                  name: 'tap_add_first_category',
+                  parameters: {'groupID': groupID},
+                );
                 _addCategoryWithAutoAxis(
                   context: context,
                   ref: ref,
@@ -67,11 +68,16 @@ class GroupCategoryPage extends ConsumerWidget {
           selectionForItem: selectionForItem,
         );
       },
-      error: (e, st) => _CategoryScaffold(
-          title: title, child: ErrorView(error: e, stackTrace: st)),
-      loading: () => _CategoryScaffold(
-          title: title,
-          child: const Center(child: CircularProgressIndicator())),
+      error:
+          (e, st) => _CategoryScaffold(
+            title: title,
+            child: ErrorView(error: e, stackTrace: st),
+          ),
+      loading:
+          () => _CategoryScaffold(
+            title: title,
+            child: const Center(child: CircularProgressIndicator()),
+          ),
     );
   }
 
@@ -117,23 +123,25 @@ Future<void> _addCategoryAndNavigateToEdit({
 }) async {
   try {
     final userID = ref.read(userDatabaseProvider).userID;
-    final category =
-        await ref.read(groupCategoryAddProvider(groupID: groupID)).call(
-              groupID: groupID,
-              userID: userID,
-              categoryAxisID: categoryAxisID,
-              name: '',
-              order: order,
-            );
+    final category = await ref
+        .read(groupCategoryAddProvider(groupID: groupID))
+        .call(
+          groupID: groupID,
+          userID: userID,
+          categoryAxisID: categoryAxisID,
+          name: '',
+          order: order,
+        );
     if (context.mounted) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => GroupCategoryEditPage(
-            groupID: groupID,
-            categoryAxisID: categoryAxisID,
-            categoryID: category.id,
-          ),
+          builder:
+              (context) => GroupCategoryEditPage(
+                groupID: groupID,
+                categoryAxisID: categoryAxisID,
+                categoryID: category.id,
+              ),
         ),
       );
     }
@@ -154,10 +162,7 @@ class _CategoryScaffold extends StatelessWidget {
     final tokens = context.appTheme;
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
-      appBar: AppBar(
-        title: Text(title),
-        backgroundColor: tokens.neutral.paper,
-      ),
+      appBar: AppBar(title: Text(title), backgroundColor: tokens.neutral.paper),
       body: child,
     );
   }
@@ -179,124 +184,145 @@ class _CategoryListBody extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final categoriesAsync = ref.watch(
-        groupCategoriesProvider(groupID: groupID, categoryAxisID: axis.id));
-    final locationsAsync =
-        ref.watch(shoppingLocationsProvider(groupID: groupID));
+      groupCategoriesProvider(groupID: groupID, categoryAxisID: axis.id),
+    );
+    final locationsAsync = ref.watch(
+      shoppingLocationsProvider(groupID: groupID),
+    );
     final selectedLocationID = useState<String?>(null);
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
 
     final tokens = context.appTheme;
     return categoriesAsync.when(
-      data: (categories) => Scaffold(
-        backgroundColor: tokens.neutral.paper,
-        appBar: AppBar(
-          title: Text(selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ'),
-          backgroundColor: tokens.neutral.paper,
-        ),
-        // カテゴリ0件時も価値訴求カードを表示する。追加導線は Scaffold の
-        // FloatingActionButton が担うため onAddCategory は null（カード内ボタンは出さない）。
-        body: categories.isEmpty
-            ? const CategoryEmptyState(onAddCategory: null)
-            : Column(
-                children: [
-                  // ロケーション選択ドロップダウン
-                  locationsAsync.when(
-                    data: (locations) {
-                      if (locations.isEmpty) {
-                        return const SizedBox.shrink();
-                      }
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 8.0),
-                        child: DropdownButtonFormField<String?>(
-                          initialValue: selectedLocationID.value,
-                          decoration: InputDecoration(
-                            labelText: '買い物する場所の並び順',
-                            border: const OutlineInputBorder(),
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 8),
-                            suffixIcon: !isPremium
-                                ? Icon(Icons.lock,
-                                    size: 16,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant)
-                                : null,
-                          ),
-                          items: [
-                            const DropdownMenuItem<String?>(
-                              value: null,
-                              child: Text('デフォルト'),
-                            ),
-                            ...locations.map(
-                              (location) => DropdownMenuItem<String?>(
-                                value: location.id,
-                                child: Text(location.name),
-                              ),
-                            ),
-                          ],
-                          onChanged: (value) {
-                            analytics.logEvent(
-                              name: 'select_category_location_order',
-                              parameters: {'groupID': groupID},
-                            );
-                            if (value != null && !isPremium) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  persist: false,
-                                  content:
-                                      const Text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
-                                  action: SnackBarAction(
-                                    label: 'アップグレード',
-                                    onPressed: () =>
-                                        showPaywall(context: context),
-                                  ),
-                                ),
-                              );
-                              return;
+      data:
+          (categories) => Scaffold(
+            backgroundColor: tokens.neutral.paper,
+            appBar: AppBar(
+              title: Text(selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ'),
+              backgroundColor: tokens.neutral.paper,
+            ),
+            // カテゴリ0件時も価値訴求カードを表示する。追加導線は Scaffold の
+            // FloatingActionButton が担うため onAddCategory は null（カード内ボタンは出さない）。
+            body:
+                categories.isEmpty
+                    ? const CategoryEmptyState(onAddCategory: null)
+                    : Column(
+                      children: [
+                        // ロケーション選択ドロップダウン
+                        locationsAsync.when(
+                          data: (locations) {
+                            if (locations.isEmpty) {
+                              return const SizedBox.shrink();
                             }
-                            selectedLocationID.value = value;
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 8.0,
+                              ),
+                              child: DropdownButtonFormField<String?>(
+                                initialValue: selectedLocationID.value,
+                                decoration: InputDecoration(
+                                  labelText: '買い物する場所の並び順',
+                                  border: const OutlineInputBorder(),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  suffixIcon:
+                                      !isPremium
+                                          ? Icon(
+                                            Icons.lock,
+                                            size: 16,
+                                            color:
+                                                Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurfaceVariant,
+                                          )
+                                          : null,
+                                ),
+                                items: [
+                                  const DropdownMenuItem<String?>(
+                                    value: null,
+                                    child: Text('デフォルト'),
+                                  ),
+                                  ...locations.map(
+                                    (location) => DropdownMenuItem<String?>(
+                                      value: location.id,
+                                      child: Text(location.name),
+                                    ),
+                                  ),
+                                ],
+                                onChanged: (value) {
+                                  analytics.logEvent(
+                                    name: 'select_category_location_order',
+                                    parameters: {'groupID': groupID},
+                                  );
+                                  if (value != null && !isPremium) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        persist: false,
+                                        content: const Text(
+                                          '買い物場所ごとのカテゴリ並び替えはプレミアム機能です',
+                                        ),
+                                        action: SnackBarAction(
+                                          label: 'アップグレード',
+                                          onPressed:
+                                              () =>
+                                                  showPaywall(context: context),
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  selectedLocationID.value = value;
+                                },
+                              ),
+                            );
                           },
+                          error: (e, st) => const SizedBox.shrink(),
+                          loading: () => const SizedBox.shrink(),
                         ),
-                      );
-                    },
-                    error: (e, st) => const SizedBox.shrink(),
-                    loading: () => const SizedBox.shrink(),
-                  ),
-                  Expanded(
-                    child: _CategoryReorderableList(
-                      groupID: groupID,
-                      categoryAxisID: axis.id,
-                      categories: categories,
-                      selectedShoppingLocationID: selectedLocationID.value,
-                      isPremium: isPremium,
-                      selectionForItem: selectionForItem,
+                        Expanded(
+                          child: _CategoryReorderableList(
+                            groupID: groupID,
+                            categoryAxisID: axis.id,
+                            categories: categories,
+                            selectedShoppingLocationID:
+                                selectedLocationID.value,
+                            isPremium: isPremium,
+                            selectionForItem: selectionForItem,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            analytics.logEvent(
-                name: 'tap_add_category', parameters: {'groupID': groupID});
-            _addCategoryAndNavigateToEdit(
-              context: context,
-              ref: ref,
-              groupID: groupID,
-              categoryAxisID: axis.id,
-              order: categories.length,
-            );
-          },
-          child: const Icon(Icons.add),
-        ),
-      ),
-      error: (e, st) => _CategoryScaffold(
-          title: selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ',
-          child: ErrorView(error: e, stackTrace: st)),
-      loading: () => _CategoryScaffold(
-          title: selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ',
-          child: const Center(child: CircularProgressIndicator())),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                analytics.logEvent(
+                  name: 'tap_add_category',
+                  parameters: {'groupID': groupID},
+                );
+                _addCategoryAndNavigateToEdit(
+                  context: context,
+                  ref: ref,
+                  groupID: groupID,
+                  categoryAxisID: axis.id,
+                  order: categories.length,
+                );
+              },
+              child: const Icon(Icons.add),
+            ),
+          ),
+      error:
+          (e, st) => _CategoryScaffold(
+            title: selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ',
+            child: ErrorView(error: e, stackTrace: st),
+          ),
+      loading:
+          () => _CategoryScaffold(
+            title: selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ',
+            child: const Center(child: CircularProgressIndicator()),
+          ),
     );
   }
 }
@@ -329,7 +355,9 @@ class _CategoryReorderableList extends ConsumerWidget {
     return ReorderableListView.builder(
       onReorder: (oldIndex, newIndex) {
         analytics.logEvent(
-            name: 'reorder_category', parameters: {'groupID': groupID});
+          name: 'reorder_category',
+          parameters: {'groupID': groupID},
+        );
         if (selectedShoppingLocationID != null) {
           if (!isPremium) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -355,26 +383,35 @@ class _CategoryReorderableList extends ConsumerWidget {
 
         if (selectedShoppingLocationID == null) {
           // デフォルト順序の更新（既存のorderフィールド）
-          final orderedCategories = reordered
-              .asMap()
-              .entries
-              .map((entry) => entry.value.copyWith(order: entry.key))
-              .toList();
+          final orderedCategories =
+              reordered
+                  .asMap()
+                  .entries
+                  .map((entry) => entry.value.copyWith(order: entry.key))
+                  .toList();
 
-          ref.read(groupCategoryBatchUpdateProvider(groupID: groupID)).call(
+          ref
+              .read(groupCategoryBatchUpdateProvider(groupID: groupID))
+              .call(
                 categoryAxisID: categoryAxisID,
                 categories: orderedCategories,
               );
         } else {
           // ロケーション別順序の更新（locationOrdersマップ）
-          final orderedCategories = reordered.asMap().entries.map((entry) {
-            final updatedLocationOrders =
-                Map<String, int>.from(entry.value.locationOrders);
-            updatedLocationOrders[selectedShoppingLocationID!] = entry.key;
-            return entry.value.copyWith(locationOrders: updatedLocationOrders);
-          }).toList();
+          final orderedCategories =
+              reordered.asMap().entries.map((entry) {
+                final updatedLocationOrders = Map<String, int>.from(
+                  entry.value.locationOrders,
+                );
+                updatedLocationOrders[selectedShoppingLocationID!] = entry.key;
+                return entry.value.copyWith(
+                  locationOrders: updatedLocationOrders,
+                );
+              }).toList();
 
-          ref.read(groupCategoryBatchUpdateProvider(groupID: groupID)).call(
+          ref
+              .read(groupCategoryBatchUpdateProvider(groupID: groupID))
+              .call(
                 categoryAxisID: categoryAxisID,
                 categories: orderedCategories,
               );
@@ -390,39 +427,42 @@ class _CategoryReorderableList extends ConsumerWidget {
           // 選択モード(selectionForItem != null)のときだけ行タップを有効化し、
           // アイテムを選んだカテゴリへ移してpopする。非選択モードでは null のままで、
           // 従来どおり編集/削除ボタンのみ反応する。
-          onTap: selectionForItem == null
-              ? null
-              : () async {
-                  analytics.logEvent(
-                    name: 'select_category_for_item',
-                    parameters: {
-                      'groupID': groupID,
-                      'categoryID': category.id,
-                    },
-                  );
-                  try {
-                    // アイテムはカテゴリIDを持たず message とキーワードのマッチで
-                    // 分類されるため、「選んだカテゴリへ変更」は移動先へ完全一致
-                    // キーワードを追加し、他カテゴリから同名の完全一致キーワードを
-                    // 削除する(= カテゴリ間 D&D と同じ付け替え)。これにより既に別
-                    // カテゴリへ分類済みのアイテムでも選んだカテゴリへ正しく移動する。
-                    await ref
-                        .read(moveItemCategoryKeywordProvider(groupID: groupID))
-                        .call(
-                          categoryAxisID: categoryAxisID,
-                          itemMessage: selectionForItem!.message,
-                          destinationCategoryID: category.id,
-                          categories: categories,
-                        );
-                    if (context.mounted) {
-                      Navigator.pop(context);
+          onTap:
+              selectionForItem == null
+                  ? null
+                  : () async {
+                    analytics.logEvent(
+                      name: 'select_category_for_item',
+                      parameters: {
+                        'groupID': groupID,
+                        'categoryID': category.id,
+                      },
+                    );
+                    try {
+                      // アイテムはカテゴリIDを持たず message とキーワードのマッチで
+                      // 分類されるため、「選んだカテゴリへ変更」は移動先へ完全一致
+                      // キーワードを追加し、他カテゴリから同名の完全一致キーワードを
+                      // 削除する(= カテゴリ間 D&D と同じ付け替え)。これにより既に別
+                      // カテゴリへ分類済みのアイテムでも選んだカテゴリへ正しく移動する。
+                      await ref
+                          .read(
+                            moveItemCategoryKeywordProvider(groupID: groupID),
+                          )
+                          .call(
+                            categoryAxisID: categoryAxisID,
+                            itemMessage: selectionForItem!.message,
+                            destinationCategoryID: category.id,
+                            categories: categories,
+                          );
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
+                    } catch (e, st) {
+                      if (context.mounted) {
+                        showErrorSnackBar(context, e, st);
+                      }
                     }
-                  } catch (e, st) {
-                    if (context.mounted) {
-                      showErrorSnackBar(context, e, st);
-                    }
-                  }
-                },
+                  },
           leading: Icon(
             categoryIconFromName(category.iconName),
             color: categoryColor,
@@ -435,30 +475,33 @@ class _CategoryReorderableList extends ConsumerWidget {
               IconButton(
                 icon: const Icon(Icons.edit),
                 onPressed: () {
-                  analytics.logEvent(name: 'tap_edit_category', parameters: {
-                    'groupID': groupID,
-                    'categoryID': category.id
-                  });
+                  analytics.logEvent(
+                    name: 'tap_edit_category',
+                    parameters: {'groupID': groupID, 'categoryID': category.id},
+                  );
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => GroupCategoryEditPage(
-                        groupID: groupID,
-                        categoryAxisID: categoryAxisID,
-                        categoryID: category.id,
-                      ),
+                      builder:
+                          (context) => GroupCategoryEditPage(
+                            groupID: groupID,
+                            categoryAxisID: categoryAxisID,
+                            categoryID: category.id,
+                          ),
                     ),
                   );
                 },
               ),
               IconButton(
-                icon:
-                    Icon(Icons.delete, color: context.appTheme.neutral.danger),
+                icon: Icon(
+                  Icons.delete,
+                  color: context.appTheme.neutral.danger,
+                ),
                 onPressed: () {
-                  analytics.logEvent(name: 'tap_delete_category', parameters: {
-                    'groupID': groupID,
-                    'categoryID': category.id
-                  });
+                  analytics.logEvent(
+                    name: 'tap_delete_category',
+                    parameters: {'groupID': groupID, 'categoryID': category.id},
+                  );
                   _showDeleteDialog(
                     context: context,
                     ref: ref,
@@ -480,48 +523,50 @@ class _CategoryReorderableList extends ConsumerWidget {
   }) {
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text('「${category.name}」を削除しますか？'),
-        content: const Text('このカテゴリに設定されたキーワードも削除されます'),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              analytics.logEvent(
-                  name: 'tap_confirm_del_category',
-                  parameters: {'groupID': groupID, 'categoryID': category.id});
-              Navigator.pop(dialogContext);
-              try {
-                await ref
-                    .read(groupCategoryDeleteProvider(groupID: groupID))
-                    .call(
-                      categoryAxisID: categoryAxisID,
-                      categoryID: category.id,
-                    );
-              } catch (e, st) {
-                if (context.mounted) {
-                  showErrorSnackBar(context, e, st);
-                }
-              }
-            },
-            child: Text(
-              '削除',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: context.appTheme.neutral.danger),
-            ),
+      builder:
+          (dialogContext) => AlertDialog(
+            title: Text('「${category.name}」を削除しますか？'),
+            content: const Text('このカテゴリに設定されたキーワードも削除されます'),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  analytics.logEvent(
+                    name: 'tap_confirm_del_category',
+                    parameters: {'groupID': groupID, 'categoryID': category.id},
+                  );
+                  Navigator.pop(dialogContext);
+                  try {
+                    await ref
+                        .read(groupCategoryDeleteProvider(groupID: groupID))
+                        .call(
+                          categoryAxisID: categoryAxisID,
+                          categoryID: category.id,
+                        );
+                  } catch (e, st) {
+                    if (context.mounted) {
+                      showErrorSnackBar(context, e, st);
+                    }
+                  }
+                },
+                child: Text(
+                  '削除',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: context.appTheme.neutral.danger,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  analytics.logEvent(
+                    name: 'cancel_del_category',
+                    parameters: {'groupID': groupID, 'categoryID': category.id},
+                  );
+                  Navigator.pop(dialogContext);
+                },
+                child: const Text('キャンセル'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              analytics.logEvent(
-                  name: 'cancel_del_category',
-                  parameters: {'groupID': groupID, 'categoryID': category.id});
-              Navigator.pop(dialogContext);
-            },
-            child: const Text('キャンセル'),
-          ),
-        ],
-      ),
     );
   }
 }

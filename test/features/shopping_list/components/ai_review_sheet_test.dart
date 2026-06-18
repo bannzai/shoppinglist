@@ -9,21 +9,21 @@ void main() {
   Future<void> pumpSheet(WidgetTester tester, List<String> rawNames) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: buildAppTheme(
-          accent: AccentPreset.shu,
-        ),
+        theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: Builder(
-            builder: (context) => Center(
-              child: ElevatedButton(
-                onPressed: () => showAIReviewSheet(
-                  context: context,
-                  rawNames: rawNames,
-                  source: 'test',
+            builder:
+                (context) => Center(
+                  child: ElevatedButton(
+                    onPressed:
+                        () => showAIReviewSheet(
+                          context: context,
+                          rawNames: rawNames,
+                          source: 'test',
+                        ),
+                    child: const Text('open'),
+                  ),
                 ),
-                child: const Text('open'),
-              ),
-            ),
           ),
         ),
       ),
@@ -60,23 +60,22 @@ void main() {
     List<AIShoppingListCandidate>? result;
     await tester.pumpWidget(
       MaterialApp(
-        theme: buildAppTheme(
-          accent: AccentPreset.shu,
-        ),
+        theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: Builder(
-            builder: (context) => Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  result = await showAIReviewSheet(
-                    context: context,
-                    rawNames: const ['りんご'],
-                    source: 'test',
-                  );
-                },
-                child: const Text('open'),
-              ),
-            ),
+            builder:
+                (context) => Center(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      result = await showAIReviewSheet(
+                        context: context,
+                        rawNames: const ['りんご'],
+                        source: 'test',
+                      );
+                    },
+                    child: const Text('open'),
+                  ),
+                ),
           ),
         ),
       ),

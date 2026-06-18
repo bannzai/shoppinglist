@@ -75,10 +75,7 @@ class UpdateReceipt {
           shoppingListID: receipt.shoppingListID,
           receiptID: receipt.id,
         )
-        .set(
-          receipt,
-          SetOptions(merge: true),
-        );
+        .set(receipt, SetOptions(merge: true));
   }
 }
 

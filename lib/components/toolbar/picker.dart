@@ -24,9 +24,9 @@ class PickerToolbar extends StatelessWidget {
             child: Text(
               'キャンセル',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w300,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+                fontWeight: FontWeight.w300,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
           ),
           CupertinoButton(
@@ -40,11 +40,11 @@ class PickerToolbar extends StatelessWidget {
             child: Text(
               '完了',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
-          )
+          ),
         ],
       ),
     );

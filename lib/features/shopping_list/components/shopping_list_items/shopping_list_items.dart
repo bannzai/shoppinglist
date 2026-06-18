@@ -49,9 +49,8 @@ ShoppingListItemRowKeys shoppingListItemRowKeys(Ref ref) =>
 /// 画面外側の SafeArea が bottom:false（NavBar の帯を下端まで伸ばすため）なので、
 /// ホームインジケータ/iPhone 下部バーの安全領域分を自前で確保し、さらに最終アイテムが
 /// バーに張り付かないよう余白を上乗せして被りを防ぐ。
-EdgeInsets _listBottomPadding(BuildContext context) => EdgeInsets.only(
-      bottom: MediaQuery.of(context).padding.bottom + 200,
-    );
+EdgeInsets _listBottomPadding(BuildContext context) =>
+    EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 200);
 
 /// 買い物リストのアイテム一覧。カテゴリ軸があればカテゴリ別グルーピング、無ければフラット表示する。
 class ShoppingListItems extends ConsumerWidget {
@@ -73,9 +72,14 @@ class ShoppingListItems extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shoppingListItems = ref
-            .watch(textShoppingListItemsProvider(
-                groupID: groupID, shoppingListID: shoppingListID))
+    final shoppingListItems =
+        ref
+            .watch(
+              textShoppingListItemsProvider(
+                groupID: groupID,
+                shoppingListID: shoppingListID,
+              ),
+            )
             .valueOrNull ??
         [];
     final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
@@ -106,12 +110,13 @@ class ShoppingListItems extends ConsumerWidget {
         );
       },
       error: (e, st) => ErrorView(error: e, stackTrace: st),
-      loading: () => _FlatShoppingListItems(
-        groupID: groupID,
-        shoppingListID: shoppingListID,
-        shoppingListItems: shoppingListItems,
-        footer: footer,
-      ),
+      loading:
+          () => _FlatShoppingListItems(
+            groupID: groupID,
+            shoppingListID: shoppingListID,
+            shoppingListItems: shoppingListItems,
+            footer: footer,
+          ),
     );
   }
 }
@@ -158,10 +163,7 @@ class _FlatShoppingListItems extends ConsumerWidget {
       onReorder: (oldIndex, newIndex) {
         analytics.logEvent(
           name: 'reorder_shopping_list_item',
-          parameters: {
-            'groupID': groupID,
-            'shoppingListID': shoppingListID,
-          },
+          parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
         );
         // ドラッグ時にリストから要素を一時的に削除するため newIndex がずれるのを調整
         if (oldIndex < newIndex) {
@@ -170,12 +172,15 @@ class _FlatShoppingListItems extends ConsumerWidget {
         final changedItems = [...shoppingListItems];
         final movedItem = changedItems.removeAt(oldIndex);
         changedItems.insert(newIndex, movedItem);
-        final orderedItems = changedItems
-            .asMap()
-            .entries
-            .map((entry) => entry.value.copyWith(order: entry.key))
-            .toList();
-        ref.read(shoppingListItemBatchUpdateProvider(groupID: groupID)).call(
+        final orderedItems =
+            changedItems
+                .asMap()
+                .entries
+                .map((entry) => entry.value.copyWith(order: entry.key))
+                .toList();
+        ref
+            .read(shoppingListItemBatchUpdateProvider(groupID: groupID))
+            .call(
               shoppingListID: shoppingListID,
               shoppingListItems: orderedItems,
             );
@@ -206,9 +211,10 @@ class _FlatShoppingListItems extends ConsumerWidget {
 
     // 入力中の空行(message が空) や空白のみのアイテムはカテゴリ分け対象にならないため、
     // ボタンの表示判定と件数から除外する。
-    final categorizableItems = shoppingListItems
-        .where((item) => item.message.trim().isNotEmpty)
-        .toList();
+    final categorizableItems =
+        shoppingListItems
+            .where((item) => item.message.trim().isNotEmpty)
+            .toList();
     if (!showCategorizeButton || categorizableItems.isEmpty) {
       return list;
     }
@@ -253,8 +259,9 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
     final rowKeys = ref.watch(shoppingListItemRowKeysProvider);
-    final categoriesAsync = ref.watch(groupCategoriesProvider(
-        groupID: groupID, categoryAxisID: categoryAxisID));
+    final categoriesAsync = ref.watch(
+      groupCategoriesProvider(groupID: groupID, categoryAxisID: categoryAxisID),
+    );
 
     return categoriesAsync.when(
       data: (categories) {
@@ -274,15 +281,18 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
         // 入力中の空行(message が空) や空白のみのアイテムはカテゴリ分け対象にならないため、
         // ボタンの表示判定と件数から除外する。グルーピング自体は楽観状態を持つ
         // [_GroupedListView] 側で行うため、ここでは未分類件数だけを直接算出する。
-        final uncategorizedItems = shoppingListItems
-            .where((item) =>
-                item.message.trim().isNotEmpty &&
-                findMatchingCategoryID(
-                      item: item,
-                      categories: categories,
-                    ) ==
-                    uncategorizedCategoryID)
-            .toList();
+        final uncategorizedItems =
+            shoppingListItems
+                .where(
+                  (item) =>
+                      item.message.trim().isNotEmpty &&
+                      findMatchingCategoryID(
+                            item: item,
+                            categories: categories,
+                          ) ==
+                          uncategorizedCategoryID,
+                )
+                .toList();
         final groupedListView = _GroupedListView(
           groupID: groupID,
           shoppingListID: shoppingListID,
@@ -312,12 +322,13 @@ class _CategorizedShoppingListItems extends ConsumerWidget {
         );
       },
       error: (e, st) => ErrorView(error: e, stackTrace: st),
-      loading: () => _FlatShoppingListItems(
-        groupID: groupID,
-        shoppingListID: shoppingListID,
-        shoppingListItems: shoppingListItems,
-        footer: footer,
-      ),
+      loading:
+          () => _FlatShoppingListItems(
+            groupID: groupID,
+            shoppingListID: shoppingListID,
+            shoppingListItems: shoppingListItems,
+            footer: footer,
+          ),
     );
   }
 }
@@ -368,8 +379,10 @@ bool _optimisticReflected({
     if (streamItem == null) {
       continue;
     }
-    final matched =
-        findMatchingCategoryID(item: streamItem, categories: categories);
+    final matched = findMatchingCategoryID(
+      item: streamItem,
+      categories: categories,
+    );
     if (matched != (entry.value ?? uncategorizedCategoryID)) {
       return false;
     }
@@ -392,13 +405,10 @@ bool _sectionOrderReflected({
       if (pendingIDSet.contains(category.id)) category.id,
   ];
   final streamIDSet = streamIDs.toSet();
-  return listEquals(
-    [
-      for (final categoryID in pendingCategoryIDOrder)
-        if (streamIDSet.contains(categoryID)) categoryID,
-    ],
-    streamIDs,
-  );
+  return listEquals([
+    for (final categoryID in pendingCategoryIDOrder)
+      if (streamIDSet.contains(categoryID)) categoryID,
+  ], streamIDs);
 }
 
 /// カテゴリヘッダー付きのグルーピング表示。
@@ -462,11 +472,14 @@ class _GroupedListView extends HookConsumerWidget {
     final draggingHeaderRowIndex = useRef<int?>(null);
 
     // 楽観 order を stream に重ねて再ソートする（order を指定されていないアイテムは自分の order）。
-    final effectiveItems = pending == null
-        ? shoppingListItems
-        : ([...shoppingListItems]..sort((a, b) =>
-            (pending.orderByItemID[a.id] ?? a.order)
-                .compareTo(pending.orderByItemID[b.id] ?? b.order)));
+    final effectiveItems =
+        pending == null
+            ? shoppingListItems
+            : ([...shoppingListItems]..sort(
+              (a, b) => (pending.orderByItemID[a.id] ?? a.order).compareTo(
+                pending.orderByItemID[b.id] ?? b.order,
+              ),
+            ));
 
     final streamSortedCategories = sortCategoriesByLocation(
       categories: categories,
@@ -501,14 +514,15 @@ class _GroupedListView extends HookConsumerWidget {
       sortedCategories = streamSortedCategories;
     } else {
       final streamCategoryByID = {
-        for (final category in streamSortedCategories) category.id: category
+        for (final category in streamSortedCategories) category.id: category,
       };
       sortedCategories = [
         for (final categoryID in pendingSectionOrder)
           if (streamCategoryByID.containsKey(categoryID))
             streamCategoryByID[categoryID]!,
-        ...streamSortedCategories
-            .where((category) => !pendingSectionOrder.contains(category.id)),
+        ...streamSortedCategories.where(
+          (category) => !pendingSectionOrder.contains(category.id),
+        ),
       ];
     }
     final categoryMap = {for (final c in categories) c.id: c};
@@ -585,38 +599,41 @@ class _GroupedListView extends HookConsumerWidget {
         // アイテム行は既定の proxyDecorator と同じ Material の elevation アニメーションのみ。
         proxyDecorator: (child, index, animation) {
           final row = rows[index];
-          final previewItems = row is GroupedHeaderRow && row.categoryID != null
-              ? (grouped[row.categoryID] ?? const <GroupShoppingListItem>[])
-                  .where((item) => item.message.isNotEmpty)
-                  .take(2)
-                  .toList()
-              : const <GroupShoppingListItem>[];
+          final previewItems =
+              row is GroupedHeaderRow && row.categoryID != null
+                  ? (grouped[row.categoryID] ?? const <GroupShoppingListItem>[])
+                      .where((item) => item.message.isNotEmpty)
+                      .take(2)
+                      .toList()
+                  : const <GroupShoppingListItem>[];
           return AnimatedBuilder(
             animation: animation,
-            builder: (context, animatedChild) => Material(
-              elevation: 6 * Curves.easeInOut.transform(animation.value),
-              child: animatedChild,
-            ),
-            child: previewItems.isEmpty
-                ? child
-                : IgnorePointer(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        child,
-                        for (final item in previewItems)
-                          TextShoppingListItemWidget(
-                            key: ValueKey('drag_preview_${item.id}'),
-                            groupID: groupID,
-                            textShoppingListItem: item,
-                            // proxy は表示専用(IgnorePointer)のため、Enter確定等で使う
-                            // 同一カテゴリのアイテム列は不要。
-                            shoppingListItems: const [],
-                            reorderIndex: null,
-                          ),
-                      ],
+            builder:
+                (context, animatedChild) => Material(
+                  elevation: 6 * Curves.easeInOut.transform(animation.value),
+                  child: animatedChild,
+                ),
+            child:
+                previewItems.isEmpty
+                    ? child
+                    : IgnorePointer(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          child,
+                          for (final item in previewItems)
+                            TextShoppingListItemWidget(
+                              key: ValueKey('drag_preview_${item.id}'),
+                              groupID: groupID,
+                              textShoppingListItem: item,
+                              // proxy は表示専用(IgnorePointer)のため、Enter確定等で使う
+                              // 同一カテゴリのアイテム列は不要。
+                              shoppingListItems: const [],
+                              reorderIndex: null,
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
           );
         },
         itemCount: rows.length,
@@ -666,7 +683,9 @@ class _GroupedListView extends HookConsumerWidget {
               // 入力行はドラッグ対象外。確定行のみ長押しドラッグでラップする。
               if (isInputRow) {
                 return KeyedSubtree(
-                    key: ValueKey('item_${item.id}'), child: tile);
+                  key: ValueKey('item_${item.id}'),
+                  child: tile,
+                );
               }
               return ReorderableDelayedDragStartListener(
                 key: ValueKey('item_${item.id}'),
@@ -695,8 +714,9 @@ class _GroupedListView extends HookConsumerWidget {
                     'categoryAxisID': categoryAxisID,
                   },
                 );
-                final oldVisibleIndex = headerCategories
-                    .indexWhere((category) => category.id == categoryID);
+                final oldVisibleIndex = headerCategories.indexWhere(
+                  (category) => category.id == categoryID,
+                );
                 final newVisibleIndex = sectionInsertIndexForHeaderDrop(
                   rows: rows,
                   oldIndex: oldIndex,
@@ -732,12 +752,15 @@ class _GroupedListView extends HookConsumerWidget {
                       .read(groupCategoryBatchUpdateProvider(groupID: groupID))
                       .call(
                         categoryAxisID: categoryAxisID,
-                        categories: reordered
-                            .asMap()
-                            .entries
-                            .map((entry) =>
-                                entry.value.copyWith(order: entry.key))
-                            .toList(),
+                        categories:
+                            reordered
+                                .asMap()
+                                .entries
+                                .map(
+                                  (entry) =>
+                                      entry.value.copyWith(order: entry.key),
+                                )
+                                .toList(),
                       )
                       .catchError(rollbackIfCurrent);
                 } else {
@@ -746,13 +769,17 @@ class _GroupedListView extends HookConsumerWidget {
                       .read(groupCategoryBatchUpdateProvider(groupID: groupID))
                       .call(
                         categoryAxisID: categoryAxisID,
-                        categories: reordered.asMap().entries.map((entry) {
-                          final updatedLocationOrders =
-                              Map<String, int>.from(entry.value.locationOrders);
-                          updatedLocationOrders[locationID] = entry.key;
-                          return entry.value
-                              .copyWith(locationOrders: updatedLocationOrders);
-                        }).toList(),
+                        categories:
+                            reordered.asMap().entries.map((entry) {
+                              final updatedLocationOrders =
+                                  Map<String, int>.from(
+                                    entry.value.locationOrders,
+                                  );
+                              updatedLocationOrders[locationID] = entry.key;
+                              return entry.value.copyWith(
+                                locationOrders: updatedLocationOrders,
+                              );
+                            }).toList(),
                       )
                       .catchError(rollbackIfCurrent);
                 }
@@ -790,7 +817,7 @@ class _GroupedListView extends HookConsumerWidget {
                 // 分類上書きは同 message の全アイテムに広げる(キーワード方式で連動して移動するため)。
                 final applied = _OptimisticReorder(
                   orderByItemID: {
-                    for (final it in orderedItems) it.id: it.order
+                    for (final it in orderedItems) it.id: it.order,
                   },
                   categoryOverrideByItemID: {
                     for (final it in effectiveItems)

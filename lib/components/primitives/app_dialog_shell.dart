@@ -35,10 +35,7 @@ class AppDialogShell extends StatelessWidget {
                 color: neutral.card,
                 borderRadius: BorderRadius.circular(20),
                 elevation: 0,
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: child,
-                ),
+                child: Padding(padding: const EdgeInsets.all(20), child: child),
               ),
             ),
           ),

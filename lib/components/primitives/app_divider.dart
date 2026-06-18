@@ -15,10 +15,7 @@ class AppDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(left: inset),
-      child: Container(
-        height: 0.5,
-        color: context.appTheme.neutral.divider,
-      ),
+      child: Container(height: 0.5, color: context.appTheme.neutral.divider),
     );
   }
 }

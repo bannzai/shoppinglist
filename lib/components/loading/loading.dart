@@ -4,25 +4,20 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/config/environment.dart';
 
 class Loading extends StatelessWidget {
-  const Loading({
-    super.key,
-  });
+  const Loading({super.key});
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     if (Environment.disableWidgetAnimation) {
       return Center(
-        child: Container(
-          color: colorScheme.secondary,
-          width: 40,
-          height: 40,
-        ),
+        child: Container(color: colorScheme.secondary, width: 40, height: 40),
       );
     }
     return Center(
       child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation(colorScheme.secondary)),
+        valueColor: AlwaysStoppedAnimation(colorScheme.secondary),
+      ),
     );
   }
 }
@@ -32,9 +27,7 @@ class ScaffoldLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Loading(),
-    );
+    return const Scaffold(body: Loading());
   }
 }
 
@@ -68,8 +61,9 @@ class LaunchLoading extends HookWidget {
     final tokens = context.appTheme;
     final accent = tokens.accent;
 
-    final bounce =
-        useAnimationController(duration: const Duration(milliseconds: 560));
+    final bounce = useAnimationController(
+      duration: const Duration(milliseconds: 560),
+    );
     // カゴのバウンス: reverse 往復で上下に弾ませる。マウント時に 1 度だけ開始すれば
     // 以降はループが継続するため依存配列は空にする。テスト時（disableWidgetAnimation）は
     // ループを開始せず静止状態にしてスナップショットを安定させる。
@@ -80,8 +74,9 @@ class LaunchLoading extends HookWidget {
       return null;
     }, const []);
 
-    final dots =
-        useAnimationController(duration: const Duration(milliseconds: 1100));
+    final dots = useAnimationController(
+      duration: const Duration(milliseconds: 1100),
+    );
     // ドットの波: 0→1 のループ進行を 3 ドットへ位相をずらして配り、左から順に躍らせる。
     // 同じ理由で依存配列は空、テスト時はループを開始しない。
     useEffect(() {
@@ -99,8 +94,11 @@ class LaunchLoading extends HookWidget {
           children: [
             AnimatedBuilder(
               animation: bounce,
-              child:
-                  Icon(Icons.shopping_basket_rounded, size: 56, color: accent),
+              child: Icon(
+                Icons.shopping_basket_rounded,
+                size: 56,
+                color: accent,
+              ),
               builder: (context, child) {
                 final t = Curves.easeInOut.transform(bounce.value);
                 return Column(
@@ -120,8 +118,9 @@ class LaunchLoading extends HookWidget {
                         height: 7,
                         decoration: BoxDecoration(
                           // 影は常に暗色（墨色）で描く。
-                          color: const Color(0xFF1B1813)
-                              .withValues(alpha: 0.20 - 0.12 * t),
+                          color: const Color(
+                            0xFF1B1813,
+                          ).withValues(alpha: 0.20 - 0.12 * t),
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -161,10 +160,9 @@ class LaunchLoading extends HookWidget {
             const SizedBox(height: 16),
             Text(
               '準備中...',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: tokens.neutral.ink3),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: tokens.neutral.ink3),
             ),
           ],
         ),

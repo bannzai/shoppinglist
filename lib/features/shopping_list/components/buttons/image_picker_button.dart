@@ -15,93 +15,109 @@ class ImagePickerButton extends ConsumerWidget {
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
 
-  const ImagePickerButton(
-      {super.key,
-      required this.groupID,
-      required this.shoppingListID,
-      required this.shoppingListItems});
+  const ImagePickerButton({
+    super.key,
+    required this.groupID,
+    required this.shoppingListID,
+    required this.shoppingListItems,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return OutlinedButton(
       onPressed: () async {
         analytics.logEvent(
-            name: 'tap_open_image_picker',
-            parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
+          name: 'tap_open_image_picker',
+          parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
+        );
         final imagePicker = ImagePicker();
 
         await showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListTile(
-                      title: const Text('カメラ'),
-                      leading: const Icon(Icons.photo_camera),
-                      onTap: () async {
-                        analytics.logEvent(
-                            name: 'tap_image_picker_camera',
-                            parameters: {
-                              'groupID': groupID,
-                              'shoppingListID': shoppingListID
-                            });
-                        final XFile? photo = await imagePicker.pickImage(
-                            source: ImageSource.camera);
-
-                        if (photo != null) {
-                          if (context.mounted) {
-                            await _addShoppingListItems(
-                                context, ref, photo, shoppingListItems);
-                          }
-                          if (context.mounted) {
-                            Navigator.of(context).pop();
-                          }
-                        }
-                      },
-                    ),
-                    ListTile(
-                      title: const Text('フォトライブラリ'),
-                      leading: const Icon(Icons.photo_album),
-                      onTap: () async {
-                        analytics.logEvent(
-                            name: 'tap_image_picker_gallery',
-                            parameters: {
-                              'groupID': groupID,
-                              'shoppingListID': shoppingListID
-                            });
-                        final XFile? photo = await imagePicker.pickImage(
-                            source: ImageSource.gallery);
-                        if (photo != null) {
-                          if (context.mounted) {
-                            await _addShoppingListItems(
-                                context, ref, photo, shoppingListItems);
-                          }
-                          if (context.mounted) {
-                            Navigator.of(context).pop();
-                          }
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    title: const Text('カメラ'),
+                    leading: const Icon(Icons.photo_camera),
+                    onTap: () async {
                       analytics.logEvent(
-                          name: 'cancel_image_picker',
-                          parameters: {
-                            'groupID': groupID,
-                            'shoppingListID': shoppingListID
-                          });
-                      Navigator.pop(context);
+                        name: 'tap_image_picker_camera',
+                        parameters: {
+                          'groupID': groupID,
+                          'shoppingListID': shoppingListID,
+                        },
+                      );
+                      final XFile? photo = await imagePicker.pickImage(
+                        source: ImageSource.camera,
+                      );
+
+                      if (photo != null) {
+                        if (context.mounted) {
+                          await _addShoppingListItems(
+                            context,
+                            ref,
+                            photo,
+                            shoppingListItems,
+                          );
+                        }
+                        if (context.mounted) {
+                          Navigator.of(context).pop();
+                        }
+                      }
                     },
-                    child: const Text('閉じる'),
+                  ),
+                  ListTile(
+                    title: const Text('フォトライブラリ'),
+                    leading: const Icon(Icons.photo_album),
+                    onTap: () async {
+                      analytics.logEvent(
+                        name: 'tap_image_picker_gallery',
+                        parameters: {
+                          'groupID': groupID,
+                          'shoppingListID': shoppingListID,
+                        },
+                      );
+                      final XFile? photo = await imagePicker.pickImage(
+                        source: ImageSource.gallery,
+                      );
+                      if (photo != null) {
+                        if (context.mounted) {
+                          await _addShoppingListItems(
+                            context,
+                            ref,
+                            photo,
+                            shoppingListItems,
+                          );
+                        }
+                        if (context.mounted) {
+                          Navigator.of(context).pop();
+                        }
+                      }
+                    },
                   ),
                 ],
-              );
-            });
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    analytics.logEvent(
+                      name: 'cancel_image_picker',
+                      parameters: {
+                        'groupID': groupID,
+                        'shoppingListID': shoppingListID,
+                      },
+                    );
+                    Navigator.pop(context);
+                  },
+                  child: const Text('閉じる'),
+                ),
+              ],
+            );
+          },
+        );
       },
       child: const Padding(
         padding: EdgeInsets.symmetric(vertical: 8),
@@ -110,8 +126,12 @@ class ImagePickerButton extends ConsumerWidget {
     );
   }
 
-  Future<void> _addShoppingListItems(BuildContext context, WidgetRef ref,
-      XFile photo, List<GroupShoppingListItem> shoppingListItems) async {
+  Future<void> _addShoppingListItems(
+    BuildContext context,
+    WidgetRef ref,
+    XFile photo,
+    List<GroupShoppingListItem> shoppingListItems,
+  ) async {
     final file = File(photo.path);
     final base64Image = await base64CompressImage(file);
     final rawItems = await functions.generateShoppingListItemsFromImage(
@@ -128,7 +148,9 @@ class ImagePickerButton extends ConsumerWidget {
       }
 
       try {
-        await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+        await ref
+            .read(addShoppingListItemProvider(groupID: groupID))
+            .call(
               shoppingListID: shoppingListID,
               userID: ref.read(currentUserIDProvider)!,
               message: e,

@@ -44,28 +44,33 @@ class CategoryEmptyState extends StatelessWidget {
                   color: tokens.accentSoft,
                 ),
                 alignment: Alignment.center,
-                child:
-                    Icon(Icons.label_outline, size: 28, color: tokens.accent),
+                child: Icon(
+                  Icons.label_outline,
+                  size: 28,
+                  color: tokens.accent,
+                ),
               ),
               const SizedBox(height: 16),
               Text(
                 '買ったものを自動でグループ分け',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: neutral.ink,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  color: neutral.ink,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 16),
               const _CategoryUseCaseRow(
                 icon: Icons.auto_awesome,
-                text: '「野菜」に トマト・玉ねぎ を登録すると、'
+                text:
+                    '「野菜」に トマト・玉ねぎ を登録すると、'
                     'リストで自動的に野菜セクションにまとまります',
               ),
               const SizedBox(height: 12),
               const _CategoryUseCaseRow(
                 icon: Icons.storefront,
-                text: '店ごとにカテゴリの並び順を変えられるので、'
+                text:
+                    '店ごとにカテゴリの並び順を変えられるので、'
                     '売り場の動線どおりに回れます',
               ),
               if (onAddCategory != null) ...[
@@ -105,10 +110,9 @@ class _CategoryUseCaseRow extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: neutral.ink2,
-                  height: 1.5,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: neutral.ink2, height: 1.5),
           ),
         ),
       ],

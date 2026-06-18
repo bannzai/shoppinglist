@@ -8,18 +8,19 @@ GroupShoppingListItem _item({
   GroupShoppingListItemStatus status = GroupShoppingListItemStatus.unchecked,
 }) {
   return GroupShoppingListItem(
-      id: id,
-      groupID: 'group-id',
-      shoppingListID: 'shopping-list-id',
-      userID: 'user-id',
-      message: message,
-      order: 0,
-      status: status,
-      checkedByUserID: null,
-      color: null,
-      description: null,
-      imageURL: null,
-      lastEditedByUserID: null);
+    id: id,
+    groupID: 'group-id',
+    shoppingListID: 'shopping-list-id',
+    userID: 'user-id',
+    message: message,
+    order: 0,
+    status: status,
+    checkedByUserID: null,
+    color: null,
+    description: null,
+    imageURL: null,
+    lastEditedByUserID: null,
+  );
 }
 
 void main() {

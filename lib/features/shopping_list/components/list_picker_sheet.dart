@@ -69,9 +69,9 @@ class ListPickerSheet extends HookConsumerWidget {
                   Text(
                     'リストを切り替える',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: tokens.neutral.ink2,
-                        ),
+                      fontWeight: FontWeight.w600,
+                      color: tokens.neutral.ink2,
+                    ),
                   ),
                 ],
               ),
@@ -102,9 +102,10 @@ class ListPickerSheet extends HookConsumerWidget {
             ListPickerAddListRow(
               isCreating: isCreatingList.value,
               onTap: () async {
-                analytics.logEvent(name: 'tap_create_new_list', parameters: {
-                  'groupID': groupID,
-                });
+                analytics.logEvent(
+                  name: 'tap_create_new_list',
+                  parameters: {'groupID': groupID},
+                );
                 if (appUser == null) {
                   Navigator.of(context).pop();
                   return;
@@ -138,8 +139,8 @@ class ListPickerSheet extends HookConsumerWidget {
                       content: Text(e.toString()),
                       action: SnackBarAction(
                         label: 'アップグレード',
-                        onPressed: () =>
-                            showPaywall(context: navigator.context),
+                        onPressed:
+                            () => showPaywall(context: navigator.context),
                       ),
                     ),
                   );
@@ -204,9 +205,9 @@ class ListPickerAddListRow extends StatelessWidget {
             Text(
               '新しいリストを追加',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: tokens.accent,
-                  ),
+                fontWeight: FontWeight.w600,
+                color: tokens.accent,
+              ),
             ),
           ],
         ),
@@ -240,9 +241,9 @@ class _ListPickerRow extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                      color: tokens.neutral.ink,
-                    ),
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                  color: tokens.neutral.ink,
+                ),
               ),
             ),
             if (selected) Icon(Icons.check, size: 18, color: tokens.accent),

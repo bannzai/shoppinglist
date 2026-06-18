@@ -65,13 +65,10 @@ class _DashedRRectPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final source = Path()
-      ..addRRect(
-        RRect.fromRectAndRadius(
-          Offset.zero & size,
-          Radius.circular(radius),
-        ),
-      );
+    final source =
+        Path()..addRRect(
+          RRect.fromRectAndRadius(Offset.zero & size, Radius.circular(radius)),
+        );
     final dashed = Path();
     for (final metric in source.computeMetrics()) {
       double distance = 0;

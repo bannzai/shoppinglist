@@ -45,10 +45,7 @@ class ReceiptAddButton extends ConsumerWidget {
         onPressed: () {
           analytics.logEvent(
             name: 'tap_add_receipt',
-            parameters: {
-              'groupID': groupID,
-              'shoppingListID': shoppingListID,
-            },
+            parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
           );
           if (!isPremium) {
             showPaywall(context: context);
@@ -86,9 +83,14 @@ class ReceiptThumbnails extends ConsumerWidget {
     final tokens = context.appTheme;
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
-    final receipts = ref
-            .watch(receiptsProvider(
-                groupID: groupID, shoppingListID: shoppingListID))
+    final receipts =
+        ref
+            .watch(
+              receiptsProvider(
+                groupID: groupID,
+                shoppingListID: shoppingListID,
+              ),
+            )
             .asData
             ?.value ??
         const [];
@@ -110,9 +112,9 @@ class ReceiptThumbnails extends ConsumerWidget {
               Text(
                 'レシート',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: tokens.accent,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  color: tokens.accent,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ],
           ),
@@ -129,10 +131,7 @@ class ReceiptThumbnails extends ConsumerWidget {
                   onTap: () {
                     analytics.logEvent(
                       name: 'tap_receipt_thumbnail',
-                      parameters: {
-                        'groupID': groupID,
-                        'receiptID': receipt.id,
-                      },
+                      parameters: {'groupID': groupID, 'receiptID': receipt.id},
                     );
                     showReceiptEditSheet(
                       context: context,

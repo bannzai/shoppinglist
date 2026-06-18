@@ -11,19 +11,21 @@ class CopyMultilineTextButton extends ConsumerWidget {
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
 
-  const CopyMultilineTextButton(
-      {super.key,
-      required this.groupID,
-      required this.shoppingListID,
-      required this.shoppingListItems});
+  const CopyMultilineTextButton({
+    super.key,
+    required this.groupID,
+    required this.shoppingListID,
+    required this.shoppingListItems,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return OutlinedButton(
       onPressed: () async {
         analytics.logEvent(
-            name: 'tap_paste_multiline',
-            parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
+          name: 'tap_paste_multiline',
+          parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
+        );
         final data = await Clipboard.getData(Clipboard.kTextPlain);
         final text = data?.text;
         if (text != null) {
@@ -32,7 +34,9 @@ class CopyMultilineTextButton extends ConsumerWidget {
             if (shoppingListItems.any((item) => item.message == line)) {
               continue;
             }
-            await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+            await ref
+                .read(addShoppingListItemProvider(groupID: groupID))
+                .call(
                   shoppingListID: shoppingListID,
                   userID: ref.read(currentUserIDProvider)!,
                   message: line,

@@ -18,9 +18,13 @@ void main() {
         iconName: null,
       );
   GroupCategoryKeyword exact(String keyword) => GroupCategoryKeyword(
-      keyword: keyword, matchingType: GroupCategoryKeywordMatchingType.exact);
+    keyword: keyword,
+    matchingType: GroupCategoryKeywordMatchingType.exact,
+  );
   GroupCategoryKeyword partial(String keyword) => GroupCategoryKeyword(
-      keyword: keyword, matchingType: GroupCategoryKeywordMatchingType.partial);
+    keyword: keyword,
+    matchingType: GroupCategoryKeywordMatchingType.partial,
+  );
 
   group('keywordsAfterItemMove', () {
     test('移動先カテゴリには message を exact キーワードとして追加する', () {

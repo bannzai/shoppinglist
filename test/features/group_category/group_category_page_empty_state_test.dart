@@ -17,22 +17,26 @@ const _testCategoryAxisID = 'test-axis-001';
 const _testUserID = 'test-user-001';
 
 Widget _wrap(List<Override> overrides) => ProviderScope(
-      overrides: overrides,
-      child: MaterialApp(
-        theme: buildAppTheme(accent: AccentPreset.shu),
-        home: const GroupCategoryPage(groupID: _testGroupID),
-      ),
-    );
+  overrides: overrides,
+  child: MaterialApp(
+    theme: buildAppTheme(accent: AccentPreset.shu),
+    home: const GroupCategoryPage(groupID: _testGroupID),
+  ),
+);
 
 void main() {
   group('GroupCategoryPage 空状態', () {
     testWidgets('軸が0件のとき CategoryEmptyState（追加ボタン付き）を表示する', (tester) async {
-      await tester.pumpWidget(_wrap([
-        userDatabaseProvider
-            .overrideWith((ref) => UserDatabase(userID: _testUserID)),
-        groupCategoryAxesProvider(groupID: _testGroupID)
-            .overrideWith((ref) => Stream.value(const [])),
-      ]));
+      await tester.pumpWidget(
+        _wrap([
+          userDatabaseProvider.overrideWith(
+            (ref) => UserDatabase(userID: _testUserID),
+          ),
+          groupCategoryAxesProvider(
+            groupID: _testGroupID,
+          ).overrideWith((ref) => Stream.value(const [])),
+        ]),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(CategoryEmptyState), findsOneWidget);
@@ -40,31 +44,37 @@ void main() {
       expect(find.byType(OutlinedButton), findsOneWidget);
     });
 
-    testWidgets('軸はあるがカテゴリ0件のとき CategoryEmptyState（追加ボタンなし）を表示する',
-        (tester) async {
-      await tester.pumpWidget(_wrap([
-        customerInfoProvider
-            .overrideWith((ref) => const Stream<CustomerInfo>.empty()),
-        userDatabaseProvider
-            .overrideWith((ref) => UserDatabase(userID: _testUserID)),
-        groupCategoryAxesProvider(groupID: _testGroupID).overrideWith(
-          (ref) => Stream.value(const [
-            GroupCategoryAxis(
-              id: _testCategoryAxisID,
-              groupID: _testGroupID,
-              userID: _testUserID,
-              name: '売り場',
-              order: 0,
-            ),
-          ]),
-        ),
-        groupCategoriesProvider(
-          groupID: _testGroupID,
-          categoryAxisID: _testCategoryAxisID,
-        ).overrideWith((ref) => Stream.value(const [])),
-        shoppingLocationsProvider(groupID: _testGroupID)
-            .overrideWith((ref) => Stream.value(const [])),
-      ]));
+    testWidgets('軸はあるがカテゴリ0件のとき CategoryEmptyState（追加ボタンなし）を表示する', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap([
+          customerInfoProvider.overrideWith(
+            (ref) => const Stream<CustomerInfo>.empty(),
+          ),
+          userDatabaseProvider.overrideWith(
+            (ref) => UserDatabase(userID: _testUserID),
+          ),
+          groupCategoryAxesProvider(groupID: _testGroupID).overrideWith(
+            (ref) => Stream.value(const [
+              GroupCategoryAxis(
+                id: _testCategoryAxisID,
+                groupID: _testGroupID,
+                userID: _testUserID,
+                name: '売り場',
+                order: 0,
+              ),
+            ]),
+          ),
+          groupCategoriesProvider(
+            groupID: _testGroupID,
+            categoryAxisID: _testCategoryAxisID,
+          ).overrideWith((ref) => Stream.value(const [])),
+          shoppingLocationsProvider(
+            groupID: _testGroupID,
+          ).overrideWith((ref) => Stream.value(const [])),
+        ]),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(CategoryEmptyState), findsOneWidget);

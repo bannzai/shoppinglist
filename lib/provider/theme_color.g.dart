@@ -15,13 +15,14 @@ String _$themeColorUpdateHash() => r'483c9c21d4b24367d50a7d04480f9fe71c366c55';
 final themeColorUpdateProvider = AutoDisposeProvider<ThemeColorUpdate>.internal(
   themeColorUpdate,
   name: r'themeColorUpdateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$themeColorUpdateHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$themeColorUpdateHash,
   dependencies: <ProviderOrFamily>[userDatabaseProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     userDatabaseProvider,
-    ...?userDatabaseProvider.allTransitiveDependencies
+    ...?userDatabaseProvider.allTransitiveDependencies,
   },
 );
 

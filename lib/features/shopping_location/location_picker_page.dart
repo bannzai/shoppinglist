@@ -154,31 +154,32 @@ class LocationPickerPage extends HookConsumerWidget {
                     Text(
                       address.value,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: neutral.ink,
-                          ),
+                        fontWeight: FontWeight.w600,
+                        color: neutral.ink,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   const SizedBox(height: 12),
                   AppPill(
-                      label: 'この場所を設定',
-                      variant: AppPillVariant.accent,
-                      large: true,
-                      expanded: true,
-                      onPressed: () {
-                        analytics.logEvent(
-                          name: 'tap_confirm_map_location',
-                          parameters: {
-                            'hasAddress': address.value.isNotEmpty.toString(),
-                          },
-                        );
-                        Navigator.pop(context, (
-                          latitude: selectedLatLng.value.latitude,
-                          longitude: selectedLatLng.value.longitude,
-                          address: address.value,
-                        ));
-                      },
-                      icon: null),
+                    label: 'この場所を設定',
+                    variant: AppPillVariant.accent,
+                    large: true,
+                    expanded: true,
+                    onPressed: () {
+                      analytics.logEvent(
+                        name: 'tap_confirm_map_location',
+                        parameters: {
+                          'hasAddress': address.value.isNotEmpty.toString(),
+                        },
+                      );
+                      Navigator.pop(context, (
+                        latitude: selectedLatLng.value.latitude,
+                        longitude: selectedLatLng.value.longitude,
+                        address: address.value,
+                      ));
+                    },
+                    icon: null,
+                  ),
                 ],
               ),
             ),

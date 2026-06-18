@@ -54,9 +54,9 @@ class AuthPage extends HookConsumerWidget {
                     '広告もメールマガジンもありません。',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: neutral.ink2,
-                          height: 1.7,
-                        ),
+                      color: neutral.ink2,
+                      height: 1.7,
+                    ),
                   ),
                   const Spacer(),
                   AppSignInWithAppleButton(
@@ -106,16 +106,15 @@ class _Note extends StatelessWidget {
     final neutral = tokens.neutral;
 
     final linkStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: tokens.accent,
-          fontWeight: FontWeight.w600,
-          decoration: TextDecoration.underline,
-          decorationThickness: 1,
-          decorationColor: tokens.accent,
-        );
-    final muted = Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: neutral.ink3,
-          height: 1.5,
-        );
+      color: tokens.accent,
+      fontWeight: FontWeight.w600,
+      decoration: TextDecoration.underline,
+      decorationThickness: 1,
+      decorationColor: tokens.accent,
+    );
+    final muted = Theme.of(
+      context,
+    ).textTheme.labelSmall?.copyWith(color: neutral.ink3, height: 1.5);
 
     // 利用規約・プライバシーポリシーへのリンクを含む同意文。
     // 多言語化時はこの 1 文（テンプレート）と各リンクのラベルだけを翻訳対象にすると、
@@ -162,7 +161,9 @@ List<InlineSpan> _spansFromTemplate({
     if (match.start > cursor) {
       spans.add(
         TextSpan(
-            text: template.substring(cursor, match.start), style: textStyle),
+          text: template.substring(cursor, match.start),
+          style: textStyle,
+        ),
       );
     }
     spans.add(placeholders[match.group(1)!] ?? const TextSpan());
@@ -184,13 +185,11 @@ TextSpan _linkSpan({
   return TextSpan(
     text: text,
     style: style,
-    recognizer: TapGestureRecognizer()
-      ..onTap = () {
-        analytics.logEvent(name: analyticsEventName, parameters: null);
-        launchUrl(
-          Uri.parse(url),
-          mode: LaunchMode.externalApplication,
-        );
-      },
+    recognizer:
+        TapGestureRecognizer()
+          ..onTap = () {
+            analytics.logEvent(name: analyticsEventName, parameters: null);
+            launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+          },
   );
 }

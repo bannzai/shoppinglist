@@ -50,28 +50,31 @@ class ListTopBar extends ConsumerWidget {
           children: [
             Expanded(
               child: InkWell(
-                onTap: shoppingLists.isEmpty
-                    ? null
-                    : () {
-                        analytics.logEvent(
-                          name: 'tap_open_list_picker',
-                          parameters: {
-                            'groupID': groupID,
-                            'shoppingListID': shoppingListID,
-                          },
-                        );
-                        FocusScope.of(context).unfocus();
-                        appShowModalBottomSheet(
-                          context: context,
-                          builder: (context) => ListPickerSheet(
-                            groupID: groupID,
-                            shoppingLists: shoppingLists,
-                            currentShoppingListID: shoppingListID,
-                            onShoppingListIDChanged: onShoppingListIDChanged,
-                            appUser: appUser,
-                          ),
-                        );
-                      },
+                onTap:
+                    shoppingLists.isEmpty
+                        ? null
+                        : () {
+                          analytics.logEvent(
+                            name: 'tap_open_list_picker',
+                            parameters: {
+                              'groupID': groupID,
+                              'shoppingListID': shoppingListID,
+                            },
+                          );
+                          FocusScope.of(context).unfocus();
+                          appShowModalBottomSheet(
+                            context: context,
+                            builder:
+                                (context) => ListPickerSheet(
+                                  groupID: groupID,
+                                  shoppingLists: shoppingLists,
+                                  currentShoppingListID: shoppingListID,
+                                  onShoppingListIDChanged:
+                                      onShoppingListIDChanged,
+                                  appUser: appUser,
+                                ),
+                          );
+                        },
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -81,9 +84,9 @@ class ListTopBar extends ConsumerWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: tokens.neutral.ink,
-                              letterSpacing: -0.17,
-                            ),
+                          color: tokens.neutral.ink,
+                          letterSpacing: -0.17,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 4),
@@ -100,34 +103,40 @@ class ListTopBar extends ConsumerWidget {
               key: const Key('list_setting_button'),
               icon: const _SettingsBadgeIcon(baseIcon: Icons.receipt_long),
               tooltip: 'リスト設定',
-              onPressed: shoppingList == null
-                  ? null
-                  : () {
-                      analytics.logEvent(
-                        name: 'tap_open_list_setting',
-                        parameters: {
-                          'groupID': groupID,
-                          'shoppingListID': shoppingListID,
-                        },
-                      );
-                      FocusScope.of(context).unfocus();
-                      appShowModalBottomSheet(
-                        context: context,
-                        builder: (sheetContext) => ShoppingListSettingPage(
-                          groupID: groupID,
-                          shoppingListID: shoppingListID,
-                          shoppingList: shoppingList!,
-                          onDelete: () {
-                            ref
-                                .read(shoppingListDeleteProvider(
-                                    groupID: groupID))
-                                .call(shoppingListID: shoppingListID);
-                            Navigator.of(sheetContext)
-                                .popUntil((route) => route.isFirst);
+              onPressed:
+                  shoppingList == null
+                      ? null
+                      : () {
+                        analytics.logEvent(
+                          name: 'tap_open_list_setting',
+                          parameters: {
+                            'groupID': groupID,
+                            'shoppingListID': shoppingListID,
                           },
-                        ),
-                      );
-                    },
+                        );
+                        FocusScope.of(context).unfocus();
+                        appShowModalBottomSheet(
+                          context: context,
+                          builder:
+                              (sheetContext) => ShoppingListSettingPage(
+                                groupID: groupID,
+                                shoppingListID: shoppingListID,
+                                shoppingList: shoppingList!,
+                                onDelete: () {
+                                  ref
+                                      .read(
+                                        shoppingListDeleteProvider(
+                                          groupID: groupID,
+                                        ),
+                                      )
+                                      .call(shoppingListID: shoppingListID);
+                                  Navigator.of(
+                                    sheetContext,
+                                  ).popUntil((route) => route.isFirst);
+                                },
+                              ),
+                        );
+                      },
             ),
             IconButton(
               key: const Key('app_settings_button'),
@@ -135,13 +144,13 @@ class ListTopBar extends ConsumerWidget {
               tooltip: '設定',
               onPressed: () {
                 analytics.logEvent(
-                    name: 'tap_open_app_setting', parameters: null);
+                  name: 'tap_open_app_setting',
+                  parameters: null,
+                );
                 FocusScope.of(context).unfocus();
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => const SettingPage(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const SettingPage()),
                 );
               },
             ),
@@ -173,11 +182,7 @@ class _SettingsBadgeIcon extends StatelessWidget {
           Positioned(
             left: 0,
             top: 0,
-            child: Icon(
-              baseIcon,
-              size: 22,
-              color: tokens.neutral.ink2,
-            ),
+            child: Icon(baseIcon, size: 22, color: tokens.neutral.ink2),
           ),
           Positioned(
             right: -2,
@@ -188,11 +193,7 @@ class _SettingsBadgeIcon extends StatelessWidget {
                 color: tokens.neutral.surface,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                Icons.settings,
-                size: 11,
-                color: tokens.neutral.ink2,
-              ),
+              child: Icon(Icons.settings, size: 11, color: tokens.neutral.ink2),
             ),
           ),
         ],

@@ -63,13 +63,14 @@ abstract class GroupShoppingListItem with _$GroupShoppingListItem {
       _$GroupShoppingListItemFromJson(json);
 
   static GroupShoppingListItem fromFirestore(
-          DocumentSnapshot<Map<String, dynamic>> snapshot,
-          SnapshotOptions? options) =>
-      GroupShoppingListItem.fromJson(snapshot.data()!..['id'] = snapshot.id);
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+    SnapshotOptions? options,
+  ) => GroupShoppingListItem.fromJson(snapshot.data()!..['id'] = snapshot.id);
 
   static Map<String, dynamic> toFirestore(
-          GroupShoppingListItem item, SetOptions? options) =>
-      item.toJson();
+    GroupShoppingListItem item,
+    SetOptions? options,
+  ) => item.toJson();
 }
 
 extension GroupShoppingListItems on List<GroupShoppingListItem> {

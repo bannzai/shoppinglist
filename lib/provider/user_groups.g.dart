@@ -18,7 +18,7 @@ final userGroupsProvider = AutoDisposeStreamProvider<List<Group>>.internal(
   dependencies: <ProviderOrFamily>[userDatabaseProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     userDatabaseProvider,
-    ...?userDatabaseProvider.allTransitiveDependencies
+    ...?userDatabaseProvider.allTransitiveDependencies,
   },
 );
 

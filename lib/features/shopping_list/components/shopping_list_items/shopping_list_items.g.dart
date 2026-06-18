@@ -16,14 +16,15 @@ String _$shoppingListItemRowKeysHash() =>
 @ProviderFor(shoppingListItemRowKeys)
 final shoppingListItemRowKeysProvider =
     Provider<ShoppingListItemRowKeys>.internal(
-  shoppingListItemRowKeys,
-  name: r'shoppingListItemRowKeysProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$shoppingListItemRowKeysHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      shoppingListItemRowKeys,
+      name: r'shoppingListItemRowKeysProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$shoppingListItemRowKeysHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element

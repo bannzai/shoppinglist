@@ -12,11 +12,7 @@ class FabMenuAction {
   /// null のときは無効状態（dim 表示・タップ不可）。
   final VoidCallback? onTap;
 
-  FabMenuAction({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
+  FabMenuAction({required this.icon, required this.label, required this.onTap});
 }
 
 /// FAB の上に展開するアクションメニュー。`ExpandableFab` / `CreateListFab` で共用する。
@@ -102,11 +98,7 @@ class _FabActionRow extends StatelessWidget {
                 child: SizedBox(
                   width: 44,
                   height: 44,
-                  child: Icon(
-                    action.icon,
-                    size: 20,
-                    color: tokens.neutral.ink,
-                  ),
+                  child: Icon(action.icon, size: 20, color: tokens.neutral.ink),
                 ),
               ),
             ),
@@ -134,9 +126,9 @@ class _FabActionLabel extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: tokens.neutral.surface,
-            ),
+          fontWeight: FontWeight.w600,
+          color: tokens.neutral.surface,
+        ),
       ),
     );
   }

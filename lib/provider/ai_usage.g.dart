@@ -15,17 +15,18 @@ String _$currentMonthAIUsageHash() =>
 @ProviderFor(currentMonthAIUsage)
 final currentMonthAIUsageProvider =
     AutoDisposeStreamProvider<UserAIUsage?>.internal(
-  currentMonthAIUsage,
-  name: r'currentMonthAIUsageProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$currentMonthAIUsageHash,
-  dependencies: <ProviderOrFamily>[userDatabaseProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    userDatabaseProvider,
-    ...?userDatabaseProvider.allTransitiveDependencies
-  },
-);
+      currentMonthAIUsage,
+      name: r'currentMonthAIUsageProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$currentMonthAIUsageHash,
+      dependencies: <ProviderOrFamily>[userDatabaseProvider],
+      allTransitiveDependencies: <ProviderOrFamily>{
+        userDatabaseProvider,
+        ...?userDatabaseProvider.allTransitiveDependencies,
+      },
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
@@ -73,25 +74,19 @@ class RemainingImageRecognitionCountFamily extends Family<int> {
   /// 現在月のAI画像認識の残り回数を返すProvider。
   ///
   /// Copied from [remainingImageRecognitionCount].
-  RemainingImageRecognitionCountProvider call({
-    required bool isPremium,
-  }) {
-    return RemainingImageRecognitionCountProvider(
-      isPremium: isPremium,
-    );
+  RemainingImageRecognitionCountProvider call({required bool isPremium}) {
+    return RemainingImageRecognitionCountProvider(isPremium: isPremium);
   }
 
   @override
   RemainingImageRecognitionCountProvider getProviderOverride(
     covariant RemainingImageRecognitionCountProvider provider,
   ) {
-    return call(
-      isPremium: provider.isPremium,
-    );
+    return call(isPremium: provider.isPremium);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    currentMonthAIUsageProvider
+    currentMonthAIUsageProvider,
   ];
 
   @override
@@ -99,9 +94,9 @@ class RemainingImageRecognitionCountFamily extends Family<int> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    currentMonthAIUsageProvider,
-    ...?currentMonthAIUsageProvider.allTransitiveDependencies
-  };
+        currentMonthAIUsageProvider,
+        ...?currentMonthAIUsageProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -118,24 +113,23 @@ class RemainingImageRecognitionCountProvider extends AutoDisposeProvider<int> {
   /// 現在月のAI画像認識の残り回数を返すProvider。
   ///
   /// Copied from [remainingImageRecognitionCount].
-  RemainingImageRecognitionCountProvider({
-    required bool isPremium,
-  }) : this._internal(
-          (ref) => remainingImageRecognitionCount(
-            ref as RemainingImageRecognitionCountRef,
-            isPremium: isPremium,
-          ),
-          from: remainingImageRecognitionCountProvider,
-          name: r'remainingImageRecognitionCountProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$remainingImageRecognitionCountHash,
-          dependencies: RemainingImageRecognitionCountFamily._dependencies,
-          allTransitiveDependencies:
-              RemainingImageRecognitionCountFamily._allTransitiveDependencies,
+  RemainingImageRecognitionCountProvider({required bool isPremium})
+    : this._internal(
+        (ref) => remainingImageRecognitionCount(
+          ref as RemainingImageRecognitionCountRef,
           isPremium: isPremium,
-        );
+        ),
+        from: remainingImageRecognitionCountProvider,
+        name: r'remainingImageRecognitionCountProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$remainingImageRecognitionCountHash,
+        dependencies: RemainingImageRecognitionCountFamily._dependencies,
+        allTransitiveDependencies:
+            RemainingImageRecognitionCountFamily._allTransitiveDependencies,
+        isPremium: isPremium,
+      );
 
   RemainingImageRecognitionCountProvider._internal(
     super._createNotifier, {
@@ -226,25 +220,19 @@ class RemainingURLRecognitionCountFamily extends Family<int> {
   /// 現在月のURL認識の残り回数を返すProvider。
   ///
   /// Copied from [remainingURLRecognitionCount].
-  RemainingURLRecognitionCountProvider call({
-    required bool isPremium,
-  }) {
-    return RemainingURLRecognitionCountProvider(
-      isPremium: isPremium,
-    );
+  RemainingURLRecognitionCountProvider call({required bool isPremium}) {
+    return RemainingURLRecognitionCountProvider(isPremium: isPremium);
   }
 
   @override
   RemainingURLRecognitionCountProvider getProviderOverride(
     covariant RemainingURLRecognitionCountProvider provider,
   ) {
-    return call(
-      isPremium: provider.isPremium,
-    );
+    return call(isPremium: provider.isPremium);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    currentMonthAIUsageProvider
+    currentMonthAIUsageProvider,
   ];
 
   @override
@@ -252,9 +240,9 @@ class RemainingURLRecognitionCountFamily extends Family<int> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    currentMonthAIUsageProvider,
-    ...?currentMonthAIUsageProvider.allTransitiveDependencies
-  };
+        currentMonthAIUsageProvider,
+        ...?currentMonthAIUsageProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -271,24 +259,23 @@ class RemainingURLRecognitionCountProvider extends AutoDisposeProvider<int> {
   /// 現在月のURL認識の残り回数を返すProvider。
   ///
   /// Copied from [remainingURLRecognitionCount].
-  RemainingURLRecognitionCountProvider({
-    required bool isPremium,
-  }) : this._internal(
-          (ref) => remainingURLRecognitionCount(
-            ref as RemainingURLRecognitionCountRef,
-            isPremium: isPremium,
-          ),
-          from: remainingURLRecognitionCountProvider,
-          name: r'remainingURLRecognitionCountProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$remainingURLRecognitionCountHash,
-          dependencies: RemainingURLRecognitionCountFamily._dependencies,
-          allTransitiveDependencies:
-              RemainingURLRecognitionCountFamily._allTransitiveDependencies,
+  RemainingURLRecognitionCountProvider({required bool isPremium})
+    : this._internal(
+        (ref) => remainingURLRecognitionCount(
+          ref as RemainingURLRecognitionCountRef,
           isPremium: isPremium,
-        );
+        ),
+        from: remainingURLRecognitionCountProvider,
+        name: r'remainingURLRecognitionCountProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$remainingURLRecognitionCountHash,
+        dependencies: RemainingURLRecognitionCountFamily._dependencies,
+        allTransitiveDependencies:
+            RemainingURLRecognitionCountFamily._allTransitiveDependencies,
+        isPremium: isPremium,
+      );
 
   RemainingURLRecognitionCountProvider._internal(
     super._createNotifier, {
@@ -378,25 +365,19 @@ class RemainingCategorizeCountFamily extends Family<int> {
   /// 現在月のAIカテゴリ分けの残り回数を返すProvider。
   ///
   /// Copied from [remainingCategorizeCount].
-  RemainingCategorizeCountProvider call({
-    required bool isPremium,
-  }) {
-    return RemainingCategorizeCountProvider(
-      isPremium: isPremium,
-    );
+  RemainingCategorizeCountProvider call({required bool isPremium}) {
+    return RemainingCategorizeCountProvider(isPremium: isPremium);
   }
 
   @override
   RemainingCategorizeCountProvider getProviderOverride(
     covariant RemainingCategorizeCountProvider provider,
   ) {
-    return call(
-      isPremium: provider.isPremium,
-    );
+    return call(isPremium: provider.isPremium);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    currentMonthAIUsageProvider
+    currentMonthAIUsageProvider,
   ];
 
   @override
@@ -404,9 +385,9 @@ class RemainingCategorizeCountFamily extends Family<int> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    currentMonthAIUsageProvider,
-    ...?currentMonthAIUsageProvider.allTransitiveDependencies
-  };
+        currentMonthAIUsageProvider,
+        ...?currentMonthAIUsageProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -423,24 +404,23 @@ class RemainingCategorizeCountProvider extends AutoDisposeProvider<int> {
   /// 現在月のAIカテゴリ分けの残り回数を返すProvider。
   ///
   /// Copied from [remainingCategorizeCount].
-  RemainingCategorizeCountProvider({
-    required bool isPremium,
-  }) : this._internal(
-          (ref) => remainingCategorizeCount(
-            ref as RemainingCategorizeCountRef,
-            isPremium: isPremium,
-          ),
-          from: remainingCategorizeCountProvider,
-          name: r'remainingCategorizeCountProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$remainingCategorizeCountHash,
-          dependencies: RemainingCategorizeCountFamily._dependencies,
-          allTransitiveDependencies:
-              RemainingCategorizeCountFamily._allTransitiveDependencies,
+  RemainingCategorizeCountProvider({required bool isPremium})
+    : this._internal(
+        (ref) => remainingCategorizeCount(
+          ref as RemainingCategorizeCountRef,
           isPremium: isPremium,
-        );
+        ),
+        from: remainingCategorizeCountProvider,
+        name: r'remainingCategorizeCountProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$remainingCategorizeCountHash,
+        dependencies: RemainingCategorizeCountFamily._dependencies,
+        allTransitiveDependencies:
+            RemainingCategorizeCountFamily._allTransitiveDependencies,
+        isPremium: isPremium,
+      );
 
   RemainingCategorizeCountProvider._internal(
     super._createNotifier, {
@@ -500,11 +480,13 @@ mixin RemainingCategorizeCountRef on AutoDisposeProviderRef<int> {
 }
 
 class _RemainingCategorizeCountProviderElement
-    extends AutoDisposeProviderElement<int> with RemainingCategorizeCountRef {
+    extends AutoDisposeProviderElement<int>
+    with RemainingCategorizeCountRef {
   _RemainingCategorizeCountProviderElement(super.provider);
 
   @override
   bool get isPremium => (origin as RemainingCategorizeCountProvider).isPremium;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

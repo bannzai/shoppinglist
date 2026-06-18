@@ -93,23 +93,23 @@ class AppNeutralColors {
 
   /// `ThemeExtension.lerp` から呼び出されるテーマ遷移用の補間。
   AppNeutralColors lerp(AppNeutralColors other, double t) => AppNeutralColors(
-        paper: Color.lerp(paper, other.paper, t)!,
-        surface: Color.lerp(surface, other.surface, t)!,
-        surface2: Color.lerp(surface2, other.surface2, t)!,
-        card: Color.lerp(card, other.card, t)!,
-        ink: Color.lerp(ink, other.ink, t)!,
-        ink2: Color.lerp(ink2, other.ink2, t)!,
-        ink3: Color.lerp(ink3, other.ink3, t)!,
-        ink4: Color.lerp(ink4, other.ink4, t)!,
-        divider: Color.lerp(divider, other.divider, t)!,
-        divider2: Color.lerp(divider2, other.divider2, t)!,
-        ok: Color.lerp(ok, other.ok, t)!,
-        okSoft: Color.lerp(okSoft, other.okSoft, t)!,
-        warn: Color.lerp(warn, other.warn, t)!,
-        danger: Color.lerp(danger, other.danger, t)!,
-        dangerSoft: Color.lerp(dangerSoft, other.dangerSoft, t)!,
-        checked: Color.lerp(checked, other.checked, t)!,
-      );
+    paper: Color.lerp(paper, other.paper, t)!,
+    surface: Color.lerp(surface, other.surface, t)!,
+    surface2: Color.lerp(surface2, other.surface2, t)!,
+    card: Color.lerp(card, other.card, t)!,
+    ink: Color.lerp(ink, other.ink, t)!,
+    ink2: Color.lerp(ink2, other.ink2, t)!,
+    ink3: Color.lerp(ink3, other.ink3, t)!,
+    ink4: Color.lerp(ink4, other.ink4, t)!,
+    divider: Color.lerp(divider, other.divider, t)!,
+    divider2: Color.lerp(divider2, other.divider2, t)!,
+    ok: Color.lerp(ok, other.ok, t)!,
+    okSoft: Color.lerp(okSoft, other.okSoft, t)!,
+    warn: Color.lerp(warn, other.warn, t)!,
+    danger: Color.lerp(danger, other.danger, t)!,
+    dangerSoft: Color.lerp(dangerSoft, other.dangerSoft, t)!,
+    checked: Color.lerp(checked, other.checked, t)!,
+  );
 }
 
 /// プレミアム機能で切り替え可能な 5 色のアクセントプリセット（和の伝統色）。
@@ -243,9 +243,7 @@ class AppThemeExtension extends ThemeExtension<AppThemeExtension> {
 
   /// accent から AppThemeExtension を組み立てる。
   /// neutral と cardShadow はライトモード固定。
-  factory AppThemeExtension.of({
-    required AccentPreset accent,
-  }) {
+  factory AppThemeExtension.of({required AccentPreset accent}) {
     return AppThemeExtension(
       accentPreset: accent,
       neutral: AppNeutralColors.light,
@@ -255,9 +253,7 @@ class AppThemeExtension extends ThemeExtension<AppThemeExtension> {
 
   @override
   AppThemeExtension copyWith({AccentPreset? accentPreset}) =>
-      AppThemeExtension.of(
-        accent: accentPreset ?? this.accentPreset,
-      );
+      AppThemeExtension.of(accent: accentPreset ?? this.accentPreset);
 
   @override
   AppThemeExtension lerp(ThemeExtension<AppThemeExtension>? other, double t) {

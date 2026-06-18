@@ -33,9 +33,7 @@ class _SystemHash {
 abstract class _$BoolSharedPreferences extends BuildlessNotifier<bool> {
   late final String key;
 
-  bool build({
-    required String key,
-  });
+  bool build({required String key});
 }
 
 /// SharedPreferences の bool 値を [key] 単位で読み書きする汎用 Notifier。
@@ -84,25 +82,19 @@ class BoolSharedPreferencesFamily extends Family<bool> {
   /// それに依存する本 Provider も keepAlive にする。
   ///
   /// Copied from [BoolSharedPreferences].
-  BoolSharedPreferencesProvider call({
-    required String key,
-  }) {
-    return BoolSharedPreferencesProvider(
-      key: key,
-    );
+  BoolSharedPreferencesProvider call({required String key}) {
+    return BoolSharedPreferencesProvider(key: key);
   }
 
   @override
   BoolSharedPreferencesProvider getProviderOverride(
     covariant BoolSharedPreferencesProvider provider,
   ) {
-    return call(
-      key: provider.key,
-    );
+    return call(key: provider.key);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    sharedPreferencesProvider
+    sharedPreferencesProvider,
   ];
 
   @override
@@ -110,9 +102,9 @@ class BoolSharedPreferencesFamily extends Family<bool> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    sharedPreferencesProvider,
-    ...?sharedPreferencesProvider.allTransitiveDependencies
-  };
+        sharedPreferencesProvider,
+        ...?sharedPreferencesProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -144,21 +136,20 @@ class BoolSharedPreferencesProvider
   /// それに依存する本 Provider も keepAlive にする。
   ///
   /// Copied from [BoolSharedPreferences].
-  BoolSharedPreferencesProvider({
-    required String key,
-  }) : this._internal(
-          () => BoolSharedPreferences()..key = key,
-          from: boolSharedPreferencesProvider,
-          name: r'boolSharedPreferencesProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$boolSharedPreferencesHash,
-          dependencies: BoolSharedPreferencesFamily._dependencies,
-          allTransitiveDependencies:
-              BoolSharedPreferencesFamily._allTransitiveDependencies,
-          key: key,
-        );
+  BoolSharedPreferencesProvider({required String key})
+    : this._internal(
+        () => BoolSharedPreferences()..key = key,
+        from: boolSharedPreferencesProvider,
+        name: r'boolSharedPreferencesProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$boolSharedPreferencesHash,
+        dependencies: BoolSharedPreferencesFamily._dependencies,
+        allTransitiveDependencies:
+            BoolSharedPreferencesFamily._allTransitiveDependencies,
+        key: key,
+      );
 
   BoolSharedPreferencesProvider._internal(
     super._createNotifier, {
@@ -173,12 +164,8 @@ class BoolSharedPreferencesProvider
   final String key;
 
   @override
-  bool runNotifierBuild(
-    covariant BoolSharedPreferences notifier,
-  ) {
-    return notifier.build(
-      key: key,
-    );
+  bool runNotifierBuild(covariant BoolSharedPreferences notifier) {
+    return notifier.build(key: key);
   }
 
   @override
@@ -231,5 +218,6 @@ class _BoolSharedPreferencesProviderElement
   @override
   String get key => (origin as BoolSharedPreferencesProvider).key;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

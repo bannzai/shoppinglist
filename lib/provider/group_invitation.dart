@@ -27,8 +27,9 @@ class AcceptGroupInvitation {
   AcceptGroupInvitation({required this.userDatabase});
 
   Future<String> call({required String invitationCode}) async {
-    final groupID =
-        await functions.acceptGroupInvitation(invitationCode: invitationCode);
+    final groupID = await functions.acceptGroupInvitation(
+      invitationCode: invitationCode,
+    );
     // 参加したグループをデフォルトグループに切り替える
     await userDatabase.userReference().update({
       'defaultGroupID': groupID,
