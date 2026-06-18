@@ -19,39 +19,43 @@ const _testUserID = 'test-user-001';
 const _testLocationID = 'test-location-001';
 
 List<GroupCategory> _testCategories() => [
-      const GroupCategory(
-          id: 'cat-001',
-          groupID: _testGroupID,
-          userID: _testUserID,
-          groupCategoryAxisID: _testCategoryAxisID,
-          name: '食品',
-          order: 0,
-          locationOrders: {},
-          keywords: [],
-          color: null,
-          iconName: null),
-      const GroupCategory(
-          id: 'cat-002',
-          groupID: _testGroupID,
-          userID: _testUserID,
-          groupCategoryAxisID: _testCategoryAxisID,
-          name: '日用品',
-          order: 1,
-          locationOrders: {},
-          keywords: [],
-          color: null,
-          iconName: null),
-    ];
+  const GroupCategory(
+    id: 'cat-001',
+    groupID: _testGroupID,
+    userID: _testUserID,
+    groupCategoryAxisID: _testCategoryAxisID,
+    name: '食品',
+    order: 0,
+    locationOrders: {},
+    keywords: [],
+    color: null,
+    iconName: null,
+  ),
+  const GroupCategory(
+    id: 'cat-002',
+    groupID: _testGroupID,
+    userID: _testUserID,
+    groupCategoryAxisID: _testCategoryAxisID,
+    name: '日用品',
+    order: 1,
+    locationOrders: {},
+    keywords: [],
+    color: null,
+    iconName: null,
+  ),
+];
 
 /// 非プレミアムユーザー用のprovider overrides
 List<Override> _nonPremiumOverrides() {
   return [
     // customerInfoProviderを空StreamでオーバーライドするとAsyncLoading状態になり、
     // .asData が null → isPremium ?? false = false（非プレミアム）
-    customerInfoProvider
-        .overrideWith((ref) => const Stream<CustomerInfo>.empty()),
-    userDatabaseProvider
-        .overrideWith((ref) => UserDatabase(userID: _testUserID)),
+    customerInfoProvider.overrideWith(
+      (ref) => const Stream<CustomerInfo>.empty(),
+    ),
+    userDatabaseProvider.overrideWith(
+      (ref) => UserDatabase(userID: _testUserID),
+    ),
     groupCategoryAxesProvider(groupID: _testGroupID).overrideWith(
       (ref) => Stream.value([
         const GroupCategoryAxis(
@@ -79,18 +83,18 @@ List<Override> _nonPremiumOverrides() {
         ),
       ]),
     ),
-    groupCategoryAddProvider(groupID: _testGroupID).overrideWith(
-      (ref) => _NoOpCategoryAdd(),
-    ),
-    groupCategoryDeleteProvider(groupID: _testGroupID).overrideWith(
-      (ref) => _NoOpCategoryDelete(),
-    ),
-    groupCategoryBatchUpdateProvider(groupID: _testGroupID).overrideWith(
-      (ref) => _NoOpCategoryBatchUpdate(),
-    ),
-    groupCategoryAxisAddProvider(groupID: _testGroupID).overrideWith(
-      (ref) => _NoOpCategoryAxisAdd(),
-    ),
+    groupCategoryAddProvider(
+      groupID: _testGroupID,
+    ).overrideWith((ref) => _NoOpCategoryAdd()),
+    groupCategoryDeleteProvider(
+      groupID: _testGroupID,
+    ).overrideWith((ref) => _NoOpCategoryDelete()),
+    groupCategoryBatchUpdateProvider(
+      groupID: _testGroupID,
+    ).overrideWith((ref) => _NoOpCategoryBatchUpdate()),
+    groupCategoryAxisAddProvider(
+      groupID: _testGroupID,
+    ).overrideWith((ref) => _NoOpCategoryAxisAdd()),
   ];
 }
 
@@ -124,7 +128,7 @@ class _NoOpCategoryBatchUpdate extends GroupCategoryBatchUpdate {
   bool called = false;
 
   _NoOpCategoryBatchUpdate()
-      : super(database: GroupDatabase(groupID: _testGroupID));
+    : super(database: GroupDatabase(groupID: _testGroupID));
 
   @override
   Future<void> call({
@@ -137,7 +141,7 @@ class _NoOpCategoryBatchUpdate extends GroupCategoryBatchUpdate {
 
 class _NoOpCategoryAxisAdd extends GroupCategoryAxisAdd {
   _NoOpCategoryAxisAdd()
-      : super(database: GroupDatabase(groupID: _testGroupID));
+    : super(database: GroupDatabase(groupID: _testGroupID));
 
   @override
   Future<GroupCategoryAxis> call({
@@ -158,8 +162,9 @@ class _NoOpCategoryAxisAdd extends GroupCategoryAxisAdd {
 
 void main() {
   group('GroupCategoryPage プレミアムゲーティング', () {
-    testWidgets('非プレミアムユーザーはドロップダウンにロックアイコンが表示される',
-        (WidgetTester tester) async {
+    testWidgets('非プレミアムユーザーはドロップダウンにロックアイコンが表示される', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: _nonPremiumOverrides(),
@@ -177,8 +182,9 @@ void main() {
       expect(find.byIcon(Icons.lock), findsOneWidget);
     });
 
-    testWidgets('非プレミアムユーザーが買い物場所を選択するとSnackBarが表示される',
-        (WidgetTester tester) async {
+    testWidgets('非プレミアムユーザーが買い物場所を選択するとSnackBarが表示される', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: _nonPremiumOverrides(),

@@ -49,11 +49,12 @@ abstract class GroupCategory with _$GroupCategory {
       _$GroupCategoryFromJson(json);
 
   static GroupCategory fromFirestore(
-          DocumentSnapshot<Map<String, dynamic>> snapshot,
-          SnapshotOptions? options) =>
-      GroupCategory.fromJson(snapshot.data()!..['id'] = snapshot.id);
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+    SnapshotOptions? options,
+  ) => GroupCategory.fromJson(snapshot.data()!..['id'] = snapshot.id);
 
   static Map<String, dynamic> toFirestore(
-          GroupCategory category, SetOptions? options) =>
-      category.toJson();
+    GroupCategory category,
+    SetOptions? options,
+  ) => category.toJson();
 }

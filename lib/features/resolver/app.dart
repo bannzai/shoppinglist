@@ -10,10 +10,14 @@ class AppResolvers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AuthResolver(builder: (_, user) {
-      return UserDatabaseResolver(builder: (context) {
-        return builder(context, user);
-      });
-    });
+    return AuthResolver(
+      builder: (_, user) {
+        return UserDatabaseResolver(
+          builder: (context) {
+            return builder(context, user);
+          },
+        );
+      },
+    );
   }
 }

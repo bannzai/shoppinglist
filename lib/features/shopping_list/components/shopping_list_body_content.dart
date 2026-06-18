@@ -50,11 +50,14 @@ class ShoppingListBodyContent extends StatelessWidget {
           GestureDetector(
             onTap: () {
               final sourceID = shoppingList!.duplicatedFromGroupShoppingListID!;
-              analytics.logEvent(name: 'tap_navigate_source_list', parameters: {
-                'groupID': groupID,
-                'shoppingListID': shoppingListID,
-                'sourceShoppingListID': sourceID,
-              });
+              analytics.logEvent(
+                name: 'tap_navigate_source_list',
+                parameters: {
+                  'groupID': groupID,
+                  'shoppingListID': shoppingListID,
+                  'sourceShoppingListID': sourceID,
+                },
+              );
               if (shoppingLists.any((sl) => sl.id == sourceID)) {
                 onShoppingListIDChanged(sourceID);
               } else {
@@ -71,9 +74,9 @@ class ShoppingListBodyContent extends StatelessWidget {
                 Text(
                   '${shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingList!.duplicatedFromGroupShoppingListID)?.name ?? "削除済みリスト"}から複製',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: tokens.accent,
-                        decoration: TextDecoration.underline,
-                      ),
+                    color: tokens.accent,
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
               ],
             ),
@@ -90,10 +93,13 @@ class ShoppingListBodyContent extends StatelessWidget {
             shoppingListID: shoppingListID,
             shoppingLocationID: shoppingList?.shoppingLocationID,
             // 登録済みレシートのサムネイルを最終アイテム直後（footer）に表示する。
-            footer: hasCheckedItem
-                ? ReceiptThumbnails(
-                    groupID: groupID, shoppingListID: shoppingListID)
-                : null,
+            footer:
+                hasCheckedItem
+                    ? ReceiptThumbnails(
+                      groupID: groupID,
+                      shoppingListID: shoppingListID,
+                    )
+                    : null,
           ),
         ),
       ],

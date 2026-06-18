@@ -25,9 +25,10 @@ class ReceiptImage extends HookWidget {
   Widget build(BuildContext context) {
     final path = storagePath;
     final urlFuture = useMemoized(
-      () => (path == null || path.isEmpty)
-          ? Future<String?>.value(null)
-          : FirebaseStorage.instance.ref(path).getDownloadURL(),
+      () =>
+          (path == null || path.isEmpty)
+              ? Future<String?>.value(null)
+              : FirebaseStorage.instance.ref(path).getDownloadURL(),
       [path],
     );
     final snapshot = useFuture(urlFuture);
@@ -44,8 +45,9 @@ class ReceiptImage extends HookWidget {
       width: width,
       height: height,
       fit: BoxFit.cover,
-      placeholder: (context, _) =>
-          _box(const Center(child: CircularProgressIndicator())),
+      placeholder:
+          (context, _) =>
+              _box(const Center(child: CircularProgressIndicator())),
       errorWidget: (context, _, __) => _box(const Icon(Icons.broken_image)),
     );
   }

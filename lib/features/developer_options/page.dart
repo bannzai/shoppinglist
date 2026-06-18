@@ -27,9 +27,7 @@ void showDeveloperOptionsModal(BuildContext context) {
 void navigateToDeveloperOptionsPage(BuildContext context) {
   Navigator.push(
     context,
-    MaterialPageRoute(
-      builder: (context) => const DeveloperOptionsPage(),
-    ),
+    MaterialPageRoute(builder: (context) => const DeveloperOptionsPage()),
   );
 }
 
@@ -63,9 +61,7 @@ class _DeveloperOptionsSheet extends HookConsumerWidget {
       builder: (context, scrollController) {
         return Padding(
           padding: const EdgeInsets.all(16),
-          child: _DeveloperOptionsContent(
-            scrollController: scrollController,
-          ),
+          child: _DeveloperOptionsContent(scrollController: scrollController),
         );
       },
     );
@@ -82,9 +78,10 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
     final currentUID = ref.watch(currentUserIDProvider);
     final appUserAsync = ref.watch(appUserProvider);
     final defaultGroupID = appUserAsync.asData?.value.defaultGroupID;
-    final debugUID = currentUID != null
-        ? debugUserID(realUserID: currentUID, index: 1)
-        : null;
+    final debugUID =
+        currentUID != null
+            ? debugUserID(realUserID: currentUID, index: 1)
+            : null;
 
     final itemMessage = useState('debug_item_test');
     final isProcessing = useState(false);
@@ -97,40 +94,46 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
     // ④ Paywall 診断用: Offering / Package 構成のダンプ（確認後に削除可）。
     // 月額・年額が default(/current) Offering に標準 PackageType で入っているか確認する。
     final offerings = ref.watch(offeringsProvider).asData?.value;
-    final offeringsDump = offerings == null
-        ? 'Offerings: 取得中/未取得'
-        : [
-            'Offerings.all: ${offerings.all.keys.join(', ')}',
-            'current: ${offerings.current?.identifier ?? 'なし'}',
-            for (final entry in offerings.all.entries)
-              for (final package in entry.value.availablePackages)
-                '[${entry.key}] ${package.identifier} / ${package.packageType.name} / ${package.storeProduct.identifier}',
-          ].join('\n');
+    final offeringsDump =
+        offerings == null
+            ? 'Offerings: 取得中/未取得'
+            : [
+              'Offerings.all: ${offerings.all.keys.join(', ')}',
+              'current: ${offerings.current?.identifier ?? 'なし'}',
+              for (final entry in offerings.all.entries)
+                for (final package in entry.value.availablePackages)
+                  '[${entry.key}] ${package.identifier} / ${package.packageType.name} / ${package.storeProduct.identifier}',
+            ].join('\n');
     // shoppingListsProviderをbuild内でwatchしてデータをロードする
     // （ref.readではAutoDisposeのStreamProviderがAsyncLoadingを返すため）
-    final shoppingListsAsync = defaultGroupID != null
-        ? ref.watch(shoppingListsProvider(
-            groupID: defaultGroupID, isPremium: firestoreIsPremium))
-        : null;
+    final shoppingListsAsync =
+        defaultGroupID != null
+            ? ref.watch(
+              shoppingListsProvider(
+                groupID: defaultGroupID,
+                isPremium: firestoreIsPremium,
+              ),
+            )
+            : null;
     final shoppingLists = shoppingListsAsync?.asData?.value ?? [];
     final firstShoppingListID =
         shoppingLists.isNotEmpty ? shoppingLists.first.id : null;
 
-    final itemsAsync = (defaultGroupID != null && firstShoppingListID != null)
-        ? ref.watch(textShoppingListItemsProvider(
-            groupID: defaultGroupID,
-            shoppingListID: firstShoppingListID,
-          ))
-        : null;
+    final itemsAsync =
+        (defaultGroupID != null && firstShoppingListID != null)
+            ? ref.watch(
+              textShoppingListItemsProvider(
+                groupID: defaultGroupID,
+                shoppingListID: firstShoppingListID,
+              ),
+            )
+            : null;
     final items = itemsAsync?.asData?.value ?? <GroupShoppingListItem>[];
 
     return ListView(
       controller: scrollController,
       children: [
-        Text(
-          '開発者オプション',
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
+        Text('開発者オプション', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 8),
 
         // Firestoreデータ確認
@@ -150,28 +153,38 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
         ),
         const Divider(height: 24),
         const SizedBox(height: 8),
-        Text('UID: ${currentUID ?? "不明"}',
-            style: Theme.of(context).textTheme.bodySmall),
-        Text('defaultGroupID: ${defaultGroupID ?? "なし"}',
-            style: Theme.of(context).textTheme.bodySmall),
-        Text('デバッグユーザーID: ${debugUID ?? "不明"}',
-            style: Theme.of(context).textTheme.bodySmall),
         Text(
-            'Premium(RC): $revenueCatIsPremium / Premium(Claims): $firestoreIsPremium',
-            style: Theme.of(context).textTheme.bodySmall),
-        Text('Offering 構成:\n$offeringsDump',
-            style: Theme.of(context).textTheme.bodySmall),
+          'UID: ${currentUID ?? "不明"}',
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        Text(
+          'defaultGroupID: ${defaultGroupID ?? "なし"}',
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        Text(
+          'デバッグユーザーID: ${debugUID ?? "不明"}',
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        Text(
+          'Premium(RC): $revenueCatIsPremium / Premium(Claims): $firestoreIsPremium',
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        Text(
+          'Offering 構成:\n$offeringsDump',
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
         if (resultMessage.value.isNotEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Text(
               resultMessage.value,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: resultMessage.value.contains('エラー')
+                color:
+                    resultMessage.value.contains('エラー')
                         ? Colors.red
                         : Colors.green,
-                    fontWeight: FontWeight.bold,
-                  ),
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         const Divider(height: 24),
@@ -182,20 +195,21 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
           subtitle: 'RC Promo経由でプレミアムEntitlementを付与（dev環境のみ）',
           icon: Icons.star,
           isProcessing: isProcessing.value,
-          onTap: () => _execute(
-            isProcessing: isProcessing,
-            resultMessage: resultMessage,
-            action: () async {
-              await functions.grantPromotionalPremium(duration: 'daily');
-              // RC SDK のキャッシュを無効化してから fresh fetch する。
-              // invalidate を挟まないと getCustomerInfo() が古いキャッシュを返し、
-              // Promotional Entitlement の付与が UI に反映されない。
-              await Purchases.invalidateCustomerInfoCache();
-              await Purchases.getCustomerInfo();
-              ref.invalidate(customerInfoProvider);
-            },
-            actionName: 'プレミアム付与',
-          ),
+          onTap:
+              () => _execute(
+                isProcessing: isProcessing,
+                resultMessage: resultMessage,
+                action: () async {
+                  await functions.grantPromotionalPremium(duration: 'daily');
+                  // RC SDK のキャッシュを無効化してから fresh fetch する。
+                  // invalidate を挟まないと getCustomerInfo() が古いキャッシュを返し、
+                  // Promotional Entitlement の付与が UI に反映されない。
+                  await Purchases.invalidateCustomerInfoCache();
+                  await Purchases.getCustomerInfo();
+                  ref.invalidate(customerInfoProvider);
+                },
+                actionName: 'プレミアム付与',
+              ),
         ),
 
         // カテゴリロケーション順序設定（Maestro E2Eテスト用）
@@ -204,9 +218,10 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
           subtitle: '「肉」→「野菜」の順序を「テストスーパー」に設定（dev環境のみ）',
           icon: Icons.sort,
           isProcessing: isProcessing.value,
-          onTap: defaultGroupID == null
-              ? null
-              : () => _execute(
+          onTap:
+              defaultGroupID == null
+                  ? null
+                  : () => _execute(
                     isProcessing: isProcessing,
                     resultMessage: resultMessage,
                     action: () async {
@@ -227,17 +242,18 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
           subtitle: 'RC Promo経由で付与したプレミアムEntitlementを取り消す（dev環境のみ）',
           icon: Icons.star_border,
           isProcessing: isProcessing.value,
-          onTap: () => _execute(
-            isProcessing: isProcessing,
-            resultMessage: resultMessage,
-            action: () async {
-              await functions.revokePromotionalPremium();
-              await Purchases.invalidateCustomerInfoCache();
-              await Purchases.getCustomerInfo();
-              ref.invalidate(customerInfoProvider);
-            },
-            actionName: 'プレミアム剥奪',
-          ),
+          onTap:
+              () => _execute(
+                isProcessing: isProcessing,
+                resultMessage: resultMessage,
+                action: () async {
+                  await functions.revokePromotionalPremium();
+                  await Purchases.invalidateCustomerInfoCache();
+                  await Purchases.getCustomerInfo();
+                  ref.invalidate(customerInfoProvider);
+                },
+                actionName: 'プレミアム剥奪',
+              ),
         ),
 
         const Divider(height: 24),
@@ -248,12 +264,13 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
           subtitle: 'Firestoreに /users/$debugUID を作成',
           icon: Icons.person_add,
           isProcessing: isProcessing.value,
-          onTap: () => _execute(
-            isProcessing: isProcessing,
-            resultMessage: resultMessage,
-            action: () => DebugUserCreate().call(debugUID: debugUID!),
-            actionName: 'デバッグユーザー作成',
-          ),
+          onTap:
+              () => _execute(
+                isProcessing: isProcessing,
+                resultMessage: resultMessage,
+                action: () => DebugUserCreate().call(debugUID: debugUID!),
+                actionName: 'デバッグユーザー作成',
+              ),
         ),
 
         // グループにデバッグユーザーを追加
@@ -262,15 +279,17 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
           subtitle: 'memberUserIDsに追加 + プロフィール作成',
           icon: Icons.group_add,
           isProcessing: isProcessing.value,
-          onTap: defaultGroupID == null
-              ? null
-              : () => _execute(
+          onTap:
+              defaultGroupID == null
+                  ? null
+                  : () => _execute(
                     isProcessing: isProcessing,
                     resultMessage: resultMessage,
-                    action: () => DebugUserAddToGroup().call(
-                      debugUID: debugUID!,
-                      groupID: defaultGroupID,
-                    ),
+                    action:
+                        () => DebugUserAddToGroup().call(
+                          debugUID: debugUID!,
+                          groupID: defaultGroupID,
+                        ),
                     actionName: 'グループ追加',
                   ),
         ),
@@ -294,22 +313,27 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
           subtitle: 'アイテムを追加（リアルタイム同期で反映）',
           icon: Icons.add_shopping_cart,
           isProcessing: isProcessing.value,
-          onTap: (defaultGroupID == null || firstShoppingListID == null)
-              ? null
-              : () => _execute(
+          onTap:
+              (defaultGroupID == null || firstShoppingListID == null)
+                  ? null
+                  : () => _execute(
                     isProcessing: isProcessing,
                     resultMessage: resultMessage,
-                    action: () => ref
-                        .read(addShoppingListItemProvider(
-                            groupID: defaultGroupID))
-                        .call(
-                          shoppingListID: firstShoppingListID,
-                          userID: debugUID!,
-                          message: itemMessage.value,
-                          order: items.nextOrder,
-                          description: null,
-                          color: null,
-                        ),
+                    action:
+                        () => ref
+                            .read(
+                              addShoppingListItemProvider(
+                                groupID: defaultGroupID,
+                              ),
+                            )
+                            .call(
+                              shoppingListID: firstShoppingListID,
+                              userID: debugUID!,
+                              message: itemMessage.value,
+                              order: items.nextOrder,
+                              description: null,
+                              color: null,
+                            ),
                     actionName: 'アイテム追加',
                   ),
         ),
@@ -322,15 +346,17 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
           subtitle: 'デバッグユーザー関連データを全て削除',
           icon: Icons.cleaning_services,
           isProcessing: isProcessing.value,
-          onTap: defaultGroupID == null
-              ? null
-              : () => _execute(
+          onTap:
+              defaultGroupID == null
+                  ? null
+                  : () => _execute(
                     isProcessing: isProcessing,
                     resultMessage: resultMessage,
-                    action: () => DebugUserCleanup().call(
-                      debugUID: debugUID!,
-                      groupID: defaultGroupID,
-                    ),
+                    action:
+                        () => DebugUserCleanup().call(
+                          debugUID: debugUID!,
+                          groupID: defaultGroupID,
+                        ),
                     actionName: 'クリーンアップ',
                   ),
         ),
@@ -386,13 +412,14 @@ class _ActionTile extends StatelessWidget {
         leading: Icon(icon),
         title: Text(title),
         subtitle: Text(subtitle),
-        trailing: isProcessing
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            : const Icon(Icons.play_arrow),
+        trailing:
+            isProcessing
+                ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+                : const Icon(Icons.play_arrow),
         onTap: isProcessing ? null : onTap,
       ),
     );

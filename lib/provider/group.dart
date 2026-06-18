@@ -23,7 +23,10 @@ class GroupNameUpdate {
       final snapshot = await transaction.get(docRef);
       final currentGroup = snapshot.data()!;
       transaction.set(
-          docRef, currentGroup.copyWith(name: name), SetOptions(merge: true));
+        docRef,
+        currentGroup.copyWith(name: name),
+        SetOptions(merge: true),
+      );
     });
   }
 }

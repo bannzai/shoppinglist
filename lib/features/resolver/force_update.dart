@@ -11,10 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 class ForceUpdateResolver extends HookConsumerWidget {
   final Widget Function(BuildContext) builder;
 
-  const ForceUpdateResolver({
-    super.key,
-    required this.builder,
-  });
+  const ForceUpdateResolver({super.key, required this.builder});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,17 +40,19 @@ class ForceUpdateResolver extends HookConsumerWidget {
           return;
         }
 
-        await showOKDialog(context,
-            icon: Icons.error,
-            title: 'アプリをアップデートしてください',
-            message:
-                'お使いのアプリのバージョンのアップデートをお願いしております。$storeNameから最新バージョンにアップデートしてください',
-            ok: () async {
-          await launchUrl(
-            Uri.parse(forceUpdateStoreURL),
-            mode: LaunchMode.externalApplication,
-          );
-        });
+        await showOKDialog(
+          context,
+          icon: Icons.error,
+          title: 'アプリをアップデートしてください',
+          message:
+              'お使いのアプリのバージョンのアップデートをお願いしております。$storeNameから最新バージョンにアップデートしてください',
+          ok: () async {
+            await launchUrl(
+              Uri.parse(forceUpdateStoreURL),
+              mode: LaunchMode.externalApplication,
+            );
+          },
+        );
       });
       return LaunchLoading.shared();
     }

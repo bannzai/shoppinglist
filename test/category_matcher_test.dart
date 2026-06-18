@@ -9,54 +9,54 @@ void main() {
     test('完全一致マッチング', () {
       final categories = [
         GroupCategory(
-            id: 'cat1',
-            groupID: 'group1',
-            userID: 'user1',
-            groupCategoryAxisID: 'axis1',
-            name: '野菜',
-            order: 0,
-            locationOrders: {},
-            keywords: [
-              const GroupCategoryKeyword(
-                keyword: 'にんじん',
-                matchingType: GroupCategoryKeywordMatchingType.exact,
-              ),
-            ],
-            color: null,
-            iconName: null),
+          id: 'cat1',
+          groupID: 'group1',
+          userID: 'user1',
+          groupCategoryAxisID: 'axis1',
+          name: '野菜',
+          order: 0,
+          locationOrders: {},
+          keywords: [
+            const GroupCategoryKeyword(
+              keyword: 'にんじん',
+              matchingType: GroupCategoryKeywordMatchingType.exact,
+            ),
+          ],
+          color: null,
+          iconName: null,
+        ),
       ];
 
       final items = [
         const GroupShoppingListItem(
-            id: 'item1',
-            groupID: 'group1',
-            shoppingListID: 'list1',
-            userID: 'user1',
-            message: 'にんじん',
-            order: 0,
-            checkedByUserID: null,
-            color: null,
-            description: null,
-            imageURL: null,
-            lastEditedByUserID: null),
+          id: 'item1',
+          groupID: 'group1',
+          shoppingListID: 'list1',
+          userID: 'user1',
+          message: 'にんじん',
+          order: 0,
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          imageURL: null,
+          lastEditedByUserID: null,
+        ),
         const GroupShoppingListItem(
-            id: 'item2',
-            groupID: 'group1',
-            shoppingListID: 'list1',
-            userID: 'user1',
-            message: 'にんじんジュース',
-            order: 1,
-            checkedByUserID: null,
-            color: null,
-            description: null,
-            imageURL: null,
-            lastEditedByUserID: null),
+          id: 'item2',
+          groupID: 'group1',
+          shoppingListID: 'list1',
+          userID: 'user1',
+          message: 'にんじんジュース',
+          order: 1,
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          imageURL: null,
+          lastEditedByUserID: null,
+        ),
       ];
 
-      final result = groupItemsByCategory(
-        items: items,
-        categories: categories,
-      );
+      final result = groupItemsByCategory(items: items, categories: categories);
 
       expect(result['cat1']?.length, 1);
       expect(result['cat1']?.first.id, 'item1');
@@ -67,61 +67,65 @@ void main() {
     test('categoryOverrideByItemID 指定時はキーワードマッチより上書きを優先する', () {
       final categories = [
         GroupCategory(
-            id: 'cat-veg',
-            groupID: 'group1',
-            userID: 'user1',
-            groupCategoryAxisID: 'axis1',
-            name: '野菜',
-            order: 0,
-            locationOrders: {},
-            keywords: [
-              const GroupCategoryKeyword(
-                keyword: 'にんじん',
-                matchingType: GroupCategoryKeywordMatchingType.exact,
-              ),
-            ],
-            color: null,
-            iconName: null),
+          id: 'cat-veg',
+          groupID: 'group1',
+          userID: 'user1',
+          groupCategoryAxisID: 'axis1',
+          name: '野菜',
+          order: 0,
+          locationOrders: {},
+          keywords: [
+            const GroupCategoryKeyword(
+              keyword: 'にんじん',
+              matchingType: GroupCategoryKeywordMatchingType.exact,
+            ),
+          ],
+          color: null,
+          iconName: null,
+        ),
         GroupCategory(
-            id: 'cat-meat',
-            groupID: 'group1',
-            userID: 'user1',
-            groupCategoryAxisID: 'axis1',
-            name: '肉',
-            order: 1,
-            locationOrders: {},
-            keywords: const [],
-            color: null,
-            iconName: null),
+          id: 'cat-meat',
+          groupID: 'group1',
+          userID: 'user1',
+          groupCategoryAxisID: 'axis1',
+          name: '肉',
+          order: 1,
+          locationOrders: {},
+          keywords: const [],
+          color: null,
+          iconName: null,
+        ),
       ];
 
       final items = [
         // キーワード上は「にんじん」→ cat-veg にマッチするが、上書きで cat-meat に置く。
         const GroupShoppingListItem(
-            id: 'item-carrot',
-            groupID: 'group1',
-            shoppingListID: 'list1',
-            userID: 'user1',
-            message: 'にんじん',
-            order: 0,
-            checkedByUserID: null,
-            color: null,
-            description: null,
-            imageURL: null,
-            lastEditedByUserID: null),
+          id: 'item-carrot',
+          groupID: 'group1',
+          shoppingListID: 'list1',
+          userID: 'user1',
+          message: 'にんじん',
+          order: 0,
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          imageURL: null,
+          lastEditedByUserID: null,
+        ),
         // 上書きで未分類(null)に置く。
         const GroupShoppingListItem(
-            id: 'item-unknown',
-            groupID: 'group1',
-            shoppingListID: 'list1',
-            userID: 'user1',
-            message: 'なぞ',
-            order: 1,
-            checkedByUserID: null,
-            color: null,
-            description: null,
-            imageURL: null,
-            lastEditedByUserID: null),
+          id: 'item-unknown',
+          groupID: 'group1',
+          shoppingListID: 'list1',
+          userID: 'user1',
+          message: 'なぞ',
+          order: 1,
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          imageURL: null,
+          lastEditedByUserID: null,
+        ),
       ];
 
       final result = groupItemsByCategory(
@@ -133,8 +137,11 @@ void main() {
         },
       );
 
-      expect(result['cat-veg'], isNull,
-          reason: 'にんじんは上書きで cat-meat に移ったので cat-veg は空のはず');
+      expect(
+        result['cat-veg'],
+        isNull,
+        reason: 'にんじんは上書きで cat-meat に移ったので cat-veg は空のはず',
+      );
       expect(result['cat-meat']?.single.id, 'item-carrot');
       expect(result[uncategorizedCategoryID]?.single.id, 'item-unknown');
     });
@@ -142,42 +149,41 @@ void main() {
     test('部分一致マッチング', () {
       final categories = [
         GroupCategory(
-            id: 'cat1',
-            groupID: 'group1',
-            userID: 'user1',
-            groupCategoryAxisID: 'axis1',
-            name: '野菜',
-            order: 0,
-            locationOrders: {},
-            keywords: [
-              const GroupCategoryKeyword(
-                keyword: 'にんじん',
-                matchingType: GroupCategoryKeywordMatchingType.partial,
-              ),
-            ],
-            color: null,
-            iconName: null),
+          id: 'cat1',
+          groupID: 'group1',
+          userID: 'user1',
+          groupCategoryAxisID: 'axis1',
+          name: '野菜',
+          order: 0,
+          locationOrders: {},
+          keywords: [
+            const GroupCategoryKeyword(
+              keyword: 'にんじん',
+              matchingType: GroupCategoryKeywordMatchingType.partial,
+            ),
+          ],
+          color: null,
+          iconName: null,
+        ),
       ];
 
       final items = [
         const GroupShoppingListItem(
-            id: 'item1',
-            groupID: 'group1',
-            shoppingListID: 'list1',
-            userID: 'user1',
-            message: 'にんじんジュース',
-            order: 0,
-            checkedByUserID: null,
-            color: null,
-            description: null,
-            imageURL: null,
-            lastEditedByUserID: null),
+          id: 'item1',
+          groupID: 'group1',
+          shoppingListID: 'list1',
+          userID: 'user1',
+          message: 'にんじんジュース',
+          order: 0,
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          imageURL: null,
+          lastEditedByUserID: null,
+        ),
       ];
 
-      final result = groupItemsByCategory(
-        items: items,
-        categories: categories,
-      );
+      final result = groupItemsByCategory(items: items, categories: categories);
 
       expect(result['cat1']?.length, 1);
       expect(result['cat1']?.first.id, 'item1');
@@ -186,42 +192,41 @@ void main() {
     test('大文字小文字の区別なし', () {
       final categories = [
         GroupCategory(
-            id: 'cat1',
-            groupID: 'group1',
-            userID: 'user1',
-            groupCategoryAxisID: 'axis1',
-            name: 'Drinks',
-            order: 0,
-            locationOrders: {},
-            keywords: [
-              const GroupCategoryKeyword(
-                keyword: 'Milk',
-                matchingType: GroupCategoryKeywordMatchingType.exact,
-              ),
-            ],
-            color: null,
-            iconName: null),
+          id: 'cat1',
+          groupID: 'group1',
+          userID: 'user1',
+          groupCategoryAxisID: 'axis1',
+          name: 'Drinks',
+          order: 0,
+          locationOrders: {},
+          keywords: [
+            const GroupCategoryKeyword(
+              keyword: 'Milk',
+              matchingType: GroupCategoryKeywordMatchingType.exact,
+            ),
+          ],
+          color: null,
+          iconName: null,
+        ),
       ];
 
       final items = [
         const GroupShoppingListItem(
-            id: 'item1',
-            groupID: 'group1',
-            shoppingListID: 'list1',
-            userID: 'user1',
-            message: 'milk',
-            order: 0,
-            checkedByUserID: null,
-            color: null,
-            description: null,
-            imageURL: null,
-            lastEditedByUserID: null),
+          id: 'item1',
+          groupID: 'group1',
+          shoppingListID: 'list1',
+          userID: 'user1',
+          message: 'milk',
+          order: 0,
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          imageURL: null,
+          lastEditedByUserID: null,
+        ),
       ];
 
-      final result = groupItemsByCategory(
-        items: items,
-        categories: categories,
-      );
+      final result = groupItemsByCategory(items: items, categories: categories);
 
       expect(result['cat1']?.length, 1);
     });
@@ -229,58 +234,58 @@ void main() {
     test('複数カテゴリにマッチ時は先頭カテゴリに分類', () {
       final categories = [
         GroupCategory(
-            id: 'cat1',
-            groupID: 'group1',
-            userID: 'user1',
-            groupCategoryAxisID: 'axis1',
-            name: '野菜',
-            order: 0,
-            locationOrders: {},
-            keywords: [
-              const GroupCategoryKeyword(
-                keyword: 'トマト',
-                matchingType: GroupCategoryKeywordMatchingType.partial,
-              ),
-            ],
-            color: null,
-            iconName: null),
+          id: 'cat1',
+          groupID: 'group1',
+          userID: 'user1',
+          groupCategoryAxisID: 'axis1',
+          name: '野菜',
+          order: 0,
+          locationOrders: {},
+          keywords: [
+            const GroupCategoryKeyword(
+              keyword: 'トマト',
+              matchingType: GroupCategoryKeywordMatchingType.partial,
+            ),
+          ],
+          color: null,
+          iconName: null,
+        ),
         GroupCategory(
-            id: 'cat2',
-            groupID: 'group1',
-            userID: 'user1',
-            groupCategoryAxisID: 'axis1',
-            name: '果物',
-            order: 1,
-            locationOrders: {},
-            keywords: [
-              const GroupCategoryKeyword(
-                keyword: 'トマト',
-                matchingType: GroupCategoryKeywordMatchingType.partial,
-              ),
-            ],
-            color: null,
-            iconName: null),
+          id: 'cat2',
+          groupID: 'group1',
+          userID: 'user1',
+          groupCategoryAxisID: 'axis1',
+          name: '果物',
+          order: 1,
+          locationOrders: {},
+          keywords: [
+            const GroupCategoryKeyword(
+              keyword: 'トマト',
+              matchingType: GroupCategoryKeywordMatchingType.partial,
+            ),
+          ],
+          color: null,
+          iconName: null,
+        ),
       ];
 
       final items = [
         const GroupShoppingListItem(
-            id: 'item1',
-            groupID: 'group1',
-            shoppingListID: 'list1',
-            userID: 'user1',
-            message: 'トマト',
-            order: 0,
-            checkedByUserID: null,
-            color: null,
-            description: null,
-            imageURL: null,
-            lastEditedByUserID: null),
+          id: 'item1',
+          groupID: 'group1',
+          shoppingListID: 'list1',
+          userID: 'user1',
+          message: 'トマト',
+          order: 0,
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          imageURL: null,
+          lastEditedByUserID: null,
+        ),
       ];
 
-      final result = groupItemsByCategory(
-        items: items,
-        categories: categories,
-      );
+      final result = groupItemsByCategory(items: items, categories: categories);
 
       expect(result['cat1']?.length, 1);
       expect(result['cat2'], isNull);
@@ -289,42 +294,41 @@ void main() {
     test('マッチしないアイテムは未分類', () {
       final categories = [
         GroupCategory(
-            id: 'cat1',
-            groupID: 'group1',
-            userID: 'user1',
-            groupCategoryAxisID: 'axis1',
-            name: '野菜',
-            order: 0,
-            locationOrders: {},
-            keywords: [
-              const GroupCategoryKeyword(
-                keyword: 'にんじん',
-                matchingType: GroupCategoryKeywordMatchingType.exact,
-              ),
-            ],
-            color: null,
-            iconName: null),
+          id: 'cat1',
+          groupID: 'group1',
+          userID: 'user1',
+          groupCategoryAxisID: 'axis1',
+          name: '野菜',
+          order: 0,
+          locationOrders: {},
+          keywords: [
+            const GroupCategoryKeyword(
+              keyword: 'にんじん',
+              matchingType: GroupCategoryKeywordMatchingType.exact,
+            ),
+          ],
+          color: null,
+          iconName: null,
+        ),
       ];
 
       final items = [
         const GroupShoppingListItem(
-            id: 'item1',
-            groupID: 'group1',
-            shoppingListID: 'list1',
-            userID: 'user1',
-            message: '牛乳',
-            order: 0,
-            checkedByUserID: null,
-            color: null,
-            description: null,
-            imageURL: null,
-            lastEditedByUserID: null),
+          id: 'item1',
+          groupID: 'group1',
+          shoppingListID: 'list1',
+          userID: 'user1',
+          message: '牛乳',
+          order: 0,
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          imageURL: null,
+          lastEditedByUserID: null,
+        ),
       ];
 
-      final result = groupItemsByCategory(
-        items: items,
-        categories: categories,
-      );
+      final result = groupItemsByCategory(items: items, categories: categories);
 
       expect(result[uncategorizedCategoryID]?.length, 1);
       expect(result['cat1'], isNull);
@@ -333,35 +337,34 @@ void main() {
     test('カテゴリが空の場合は全て未分類', () {
       final items = [
         const GroupShoppingListItem(
-            id: 'item1',
-            groupID: 'group1',
-            shoppingListID: 'list1',
-            userID: 'user1',
-            message: 'にんじん',
-            order: 0,
-            checkedByUserID: null,
-            color: null,
-            description: null,
-            imageURL: null,
-            lastEditedByUserID: null),
+          id: 'item1',
+          groupID: 'group1',
+          shoppingListID: 'list1',
+          userID: 'user1',
+          message: 'にんじん',
+          order: 0,
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          imageURL: null,
+          lastEditedByUserID: null,
+        ),
         const GroupShoppingListItem(
-            id: 'item2',
-            groupID: 'group1',
-            shoppingListID: 'list1',
-            userID: 'user1',
-            message: '牛乳',
-            order: 1,
-            checkedByUserID: null,
-            color: null,
-            description: null,
-            imageURL: null,
-            lastEditedByUserID: null),
+          id: 'item2',
+          groupID: 'group1',
+          shoppingListID: 'list1',
+          userID: 'user1',
+          message: '牛乳',
+          order: 1,
+          checkedByUserID: null,
+          color: null,
+          description: null,
+          imageURL: null,
+          lastEditedByUserID: null,
+        ),
       ];
 
-      final result = groupItemsByCategory(
-        items: items,
-        categories: [],
-      );
+      final result = groupItemsByCategory(items: items, categories: []);
 
       expect(result[uncategorizedCategoryID]?.length, 2);
       expect(result.length, 1);
@@ -370,27 +373,25 @@ void main() {
     test('アイテムが空の場合は空マップ', () {
       final categories = [
         GroupCategory(
-            id: 'cat1',
-            groupID: 'group1',
-            userID: 'user1',
-            groupCategoryAxisID: 'axis1',
-            name: '野菜',
-            order: 0,
-            locationOrders: {},
-            keywords: [
-              const GroupCategoryKeyword(
-                keyword: 'にんじん',
-                matchingType: GroupCategoryKeywordMatchingType.exact,
-              ),
-            ],
-            color: null,
-            iconName: null),
+          id: 'cat1',
+          groupID: 'group1',
+          userID: 'user1',
+          groupCategoryAxisID: 'axis1',
+          name: '野菜',
+          order: 0,
+          locationOrders: {},
+          keywords: [
+            const GroupCategoryKeyword(
+              keyword: 'にんじん',
+              matchingType: GroupCategoryKeywordMatchingType.exact,
+            ),
+          ],
+          color: null,
+          iconName: null,
+        ),
       ];
 
-      final result = groupItemsByCategory(
-        items: [],
-        categories: categories,
-      );
+      final result = groupItemsByCategory(items: [], categories: categories);
 
       expect(result.isEmpty, true);
     });
@@ -402,34 +403,34 @@ void main() {
       required int order,
       required String keyword,
       required GroupCategoryKeywordMatchingType matchingType,
-    }) =>
-        GroupCategory(
-            id: id,
-            groupID: 'group1',
-            userID: 'user1',
-            groupCategoryAxisID: 'axis1',
-            name: id,
-            order: order,
-            locationOrders: {},
-            keywords: [
-              GroupCategoryKeyword(
-                  keyword: keyword, matchingType: matchingType),
-            ],
-            color: null,
-            iconName: null);
+    }) => GroupCategory(
+      id: id,
+      groupID: 'group1',
+      userID: 'user1',
+      groupCategoryAxisID: 'axis1',
+      name: id,
+      order: order,
+      locationOrders: {},
+      keywords: [
+        GroupCategoryKeyword(keyword: keyword, matchingType: matchingType),
+      ],
+      color: null,
+      iconName: null,
+    );
 
     GroupShoppingListItem item(String message) => GroupShoppingListItem(
-        id: 'item1',
-        groupID: 'group1',
-        shoppingListID: 'list1',
-        userID: 'user1',
-        message: message,
-        order: 0,
-        checkedByUserID: null,
-        color: null,
-        description: null,
-        imageURL: null,
-        lastEditedByUserID: null);
+      id: 'item1',
+      groupID: 'group1',
+      shoppingListID: 'list1',
+      userID: 'user1',
+      message: message,
+      order: 0,
+      checkedByUserID: null,
+      color: null,
+      description: null,
+      imageURL: null,
+      lastEditedByUserID: null,
+    );
 
     test('マッチしたカテゴリIDを返す', () {
       expect(
@@ -437,10 +438,11 @@ void main() {
           item: item('にんじん'),
           categories: [
             category(
-                id: 'cat1',
-                order: 0,
-                keyword: 'にんじん',
-                matchingType: GroupCategoryKeywordMatchingType.exact),
+              id: 'cat1',
+              order: 0,
+              keyword: 'にんじん',
+              matchingType: GroupCategoryKeywordMatchingType.exact,
+            ),
           ],
         ),
         'cat1',
@@ -453,10 +455,11 @@ void main() {
           item: item('牛乳'),
           categories: [
             category(
-                id: 'cat1',
-                order: 0,
-                keyword: 'にんじん',
-                matchingType: GroupCategoryKeywordMatchingType.exact),
+              id: 'cat1',
+              order: 0,
+              keyword: 'にんじん',
+              matchingType: GroupCategoryKeywordMatchingType.exact,
+            ),
           ],
         ),
         uncategorizedCategoryID,
@@ -473,18 +476,18 @@ void main() {
 
   group('reorderedSectionItems', () {
     GroupShoppingListItem item(String id, int order) => GroupShoppingListItem(
-          id: id,
-          groupID: 'group1',
-          shoppingListID: 'list1',
-          userID: 'user1',
-          message: id,
-          order: order,
-          checkedByUserID: null,
-          color: null,
-          description: null,
-          imageURL: null,
-          lastEditedByUserID: null,
-        );
+      id: id,
+      groupID: 'group1',
+      shoppingListID: 'list1',
+      userID: 'user1',
+      message: id,
+      order: order,
+      checkedByUserID: null,
+      color: null,
+      description: null,
+      imageURL: null,
+      lastEditedByUserID: null,
+    );
 
     test('先頭→末尾の移動で order 多重集合を保ったまま並びが入れ替わる', () {
       // カテゴリのアイテムが order {0,2,4} を持つ状態を再現
@@ -534,43 +537,45 @@ void main() {
 
   group('カテゴリまたぎ D&D', () {
     GroupCategory cat(String id, int order) => GroupCategory(
-          id: id,
-          groupID: 'group1',
-          userID: 'user1',
-          groupCategoryAxisID: 'axis1',
-          name: id,
-          order: order,
-          locationOrders: {},
-          keywords: [],
-          color: null,
-          iconName: null,
-        );
+      id: id,
+      groupID: 'group1',
+      userID: 'user1',
+      groupCategoryAxisID: 'axis1',
+      name: id,
+      order: order,
+      locationOrders: {},
+      keywords: [],
+      color: null,
+      iconName: null,
+    );
 
     GroupShoppingListItem item(String id, int order) => GroupShoppingListItem(
-          id: id,
-          groupID: 'group1',
-          shoppingListID: 'list1',
-          userID: 'user1',
-          message: id,
-          order: order,
-          checkedByUserID: null,
-          color: null,
-          description: null,
-          imageURL: null,
-          lastEditedByUserID: null,
-        );
+      id: id,
+      groupID: 'group1',
+      shoppingListID: 'list1',
+      userID: 'user1',
+      message: id,
+      order: order,
+      checkedByUserID: null,
+      color: null,
+      description: null,
+      imageURL: null,
+      lastEditedByUserID: null,
+    );
 
     final sortedCategories = [cat('cat1', 0), cat('cat2', 1)];
     // cat1: [a, b], cat2: [c], 未分類: [d]
     Map<String, List<GroupShoppingListItem>> grouped() => {
-          'cat1': [item('a', 0), item('b', 1)],
-          'cat2': [item('c', 2)],
-          uncategorizedCategoryID: [item('d', 3)],
-        };
+      'cat1': [item('a', 0), item('b', 1)],
+      'cat2': [item('c', 2)],
+      uncategorizedCategoryID: [item('d', 3)],
+    };
 
     test('buildGroupedRows はヘッダー+アイテムを表示順に並べ未分類を末尾に置く', () {
       final rows = buildGroupedRows(
-          sortedCategories: sortedCategories, grouped: grouped());
+        sortedCategories: sortedCategories,
+        grouped: grouped(),
+      );
       // 期待: H(cat1), a, b, H(cat2), c, H(未分類), d
       expect(rows.length, 7);
       expect((rows[0] as GroupedHeaderRow).categoryID, 'cat1');
@@ -584,26 +589,38 @@ void main() {
 
     test('categoryIDForDropPosition: cat1の a を cat2 末尾へドロップすると cat2', () {
       final rows = buildGroupedRows(
-          sortedCategories: sortedCategories, grouped: grouped());
+        sortedCategories: sortedCategories,
+        grouped: grouped(),
+      );
       // a(index1) を cat2 の c の下(未分類ヘッダーの直前 index5)へ
-      final dest =
-          categoryIDForDropPosition(rows: rows, oldIndex: 1, newIndex: 5);
+      final dest = categoryIDForDropPosition(
+        rows: rows,
+        oldIndex: 1,
+        newIndex: 5,
+      );
       expect(dest, 'cat2');
     });
 
     test('categoryIDForDropPosition: 末尾(未分類)へドロップすると null', () {
       final rows = buildGroupedRows(
-          sortedCategories: sortedCategories, grouped: grouped());
+        sortedCategories: sortedCategories,
+        grouped: grouped(),
+      );
       // a(index1) を末尾(未分類 d の下、newIndex=7)へ
-      final dest =
-          categoryIDForDropPosition(rows: rows, oldIndex: 1, newIndex: 7);
+      final dest = categoryIDForDropPosition(
+        rows: rows,
+        oldIndex: 1,
+        newIndex: 7,
+      );
       expect(dest, isNull);
     });
 
     // rows: H(cat1)=0, a=1, b=2, H(cat2)=3, c=4, H(未分類)=5, d=6
     test('sectionInsertIndexForHeaderDrop: 先頭ヘッダーを2セクション目の下へ → 1', () {
       final rows = buildGroupedRows(
-          sortedCategories: sortedCategories, grouped: grouped());
+        sortedCategories: sortedCategories,
+        grouped: grouped(),
+      );
       // H(cat1) を c の下(H(未分類) の手前、newIndex=5)へ
       expect(
         sectionInsertIndexForHeaderDrop(rows: rows, oldIndex: 0, newIndex: 5),
@@ -613,7 +630,9 @@ void main() {
 
     test('sectionInsertIndexForHeaderDrop: 2番目のヘッダーを先頭へ → 0', () {
       final rows = buildGroupedRows(
-          sortedCategories: sortedCategories, grouped: grouped());
+        sortedCategories: sortedCategories,
+        grouped: grouped(),
+      );
       expect(
         sectionInsertIndexForHeaderDrop(rows: rows, oldIndex: 3, newIndex: 0),
         0,
@@ -622,7 +641,9 @@ void main() {
 
     test('sectionInsertIndexForHeaderDrop: 未分類の下へドロップしても最後のカテゴリの直後に丸まる', () {
       final rows = buildGroupedRows(
-          sortedCategories: sortedCategories, grouped: grouped());
+        sortedCategories: sortedCategories,
+        grouped: grouped(),
+      );
       // H(cat1) を末尾(未分類 d の下、newIndex=7)へ。未分類ヘッダーは数えないため 1。
       expect(
         sectionInsertIndexForHeaderDrop(rows: rows, oldIndex: 0, newIndex: 7),
@@ -632,10 +653,15 @@ void main() {
 
     test('itemsAfterMove: a を cat2 へ移すと全体 order が 0..N-1 に正規化される', () {
       final g = grouped();
-      final rows =
-          buildGroupedRows(sortedCategories: sortedCategories, grouped: g);
-      final dest =
-          categoryIDForDropPosition(rows: rows, oldIndex: 1, newIndex: 5);
+      final rows = buildGroupedRows(
+        sortedCategories: sortedCategories,
+        grouped: g,
+      );
+      final dest = categoryIDForDropPosition(
+        rows: rows,
+        oldIndex: 1,
+        newIndex: 5,
+      );
       final result = itemsAfterMove(
         sortedCategories: sortedCategories,
         grouped: g,
@@ -643,7 +669,11 @@ void main() {
         fromCategoryID: 'cat1',
         toCategoryID: dest,
         dropIndexInTargetValue: dropIndexInTarget(
-            rows: rows, oldIndex: 1, newIndex: 5, toCategoryID: dest),
+          rows: rows,
+          oldIndex: 1,
+          newIndex: 5,
+          toCategoryID: dest,
+        ),
       );
       // 表示順: cat1[b], cat2[c, a], 未分類[d] → b,c,a,d に order 0,1,2,3
       expect(result.map((e) => e.id).toList(), ['b', 'c', 'a', 'd']);
@@ -652,11 +682,16 @@ void main() {
 
     test('itemsAfterMove: 未分類の d を cat1 先頭へ移す', () {
       final g = grouped();
-      final rows =
-          buildGroupedRows(sortedCategories: sortedCategories, grouped: g);
+      final rows = buildGroupedRows(
+        sortedCategories: sortedCategories,
+        grouped: g,
+      );
       // d(index6) を cat1 の a の上(newIndex=1)へ
-      final dest =
-          categoryIDForDropPosition(rows: rows, oldIndex: 6, newIndex: 1);
+      final dest = categoryIDForDropPosition(
+        rows: rows,
+        oldIndex: 6,
+        newIndex: 1,
+      );
       final result = itemsAfterMove(
         sortedCategories: sortedCategories,
         grouped: g,
@@ -664,7 +699,11 @@ void main() {
         fromCategoryID: null,
         toCategoryID: dest,
         dropIndexInTargetValue: dropIndexInTarget(
-            rows: rows, oldIndex: 6, newIndex: 1, toCategoryID: dest),
+          rows: rows,
+          oldIndex: 6,
+          newIndex: 1,
+          toCategoryID: dest,
+        ),
       );
       expect(dest, 'cat1');
       // cat1[d, a, b], cat2[c], 未分類[] → d,a,b,c
@@ -676,16 +715,17 @@ void main() {
   group('reorderCategorySections', () {
     GroupCategory category({required String id, required int order}) =>
         GroupCategory(
-            id: id,
-            groupID: 'group1',
-            userID: 'user1',
-            groupCategoryAxisID: 'axis1',
-            name: id,
-            order: order,
-            locationOrders: {},
-            keywords: [],
-            color: null,
-            iconName: null);
+          id: id,
+          groupID: 'group1',
+          userID: 'user1',
+          groupCategoryAxisID: 'axis1',
+          name: id,
+          order: order,
+          locationOrders: {},
+          keywords: [],
+          color: null,
+          iconName: null,
+        );
 
     test('全カテゴリが表示中: 前から後ろへ移動', () {
       final a = category(id: 'a', order: 0);

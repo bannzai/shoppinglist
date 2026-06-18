@@ -50,10 +50,9 @@ class _GroupInvitationVerifyingPreviewState
                 Text(
                   'サーバー側でグループへの参加を処理しています。',
                   textAlign: TextAlign.center,
-                  style: Theme.of(dialogContext)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: tokens.neutral.ink3),
+                  style: Theme.of(
+                    dialogContext,
+                  ).textTheme.bodySmall?.copyWith(color: tokens.neutral.ink3),
                 ),
               ],
             ),

@@ -83,23 +83,25 @@ class ExpandableFab extends HookConsumerWidget {
         icon: Icons.photo_camera_outlined,
         label: '写真から追加',
         // AI 処理中は無効化（dim 表示・タップ不可）。
-        onTap: isAIProcessing
-            ? null
-            : () {
-                close();
-                _showImagePicker(context, ref, isPremium);
-              },
+        onTap:
+            isAIProcessing
+                ? null
+                : () {
+                  close();
+                  _showImagePicker(context, ref, isPremium);
+                },
       ),
       FabMenuAction(
         icon: Icons.link,
         label: 'URL から追加',
         // AI 処理中は無効化（dim 表示・タップ不可）。
-        onTap: isAIProcessing
-            ? null
-            : () {
-                close();
-                _showURLInputDialog(context, ref, isPremium);
-              },
+        onTap:
+            isAIProcessing
+                ? null
+                : () {
+                  close();
+                  _showURLInputDialog(context, ref, isPremium);
+                },
       ),
       FabMenuAction(
         icon: Icons.content_paste_go_outlined,
@@ -115,12 +117,14 @@ class ExpandableFab extends HookConsumerWidget {
         label: '1行追加',
         // 空行を直接追加する最頻操作。AI 処理を使わないため常に有効。
         onTap: () {
-          analytics.logEvent(name: 'tap_add_item_fab', parameters: {
-            'groupID': groupID,
-            'shoppingListID': shoppingListID,
-          });
+          analytics.logEvent(
+            name: 'tap_add_item_fab',
+            parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
+          );
           close();
-          ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+          ref
+              .read(addShoppingListItemProvider(groupID: groupID))
+              .call(
                 shoppingListID: shoppingListID,
                 userID: currentUserID!,
                 message: '',
@@ -152,27 +156,34 @@ class ExpandableFab extends HookConsumerWidget {
             onPressed: () {
               // メニュー展開中（x 状態）のタップは閉じるに倒す。
               if (open.value) {
-                analytics.logEvent(name: 'tap_close_fab_menu', parameters: {
-                  'groupID': groupID,
-                  'shoppingListID': shoppingListID,
-                });
+                analytics.logEvent(
+                  name: 'tap_close_fab_menu',
+                  parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                  },
+                );
                 close();
                 return;
               }
-              analytics.logEvent(name: 'tap_open_fab_menu', parameters: {
-                'groupID': groupID,
-                'shoppingListID': shoppingListID,
-              });
+              analytics.logEvent(
+                name: 'tap_open_fab_menu',
+                parameters: {
+                  'groupID': groupID,
+                  'shoppingListID': shoppingListID,
+                },
+              );
               open.value = true;
             },
             // 閉時は add_task（アイテム追加）、メニュー展開中は x（閉じる）。
             // AnimatedSwitcher の回転+フェードでアイコン自体を入れ替える。
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
-              transitionBuilder: (child, animation) => RotationTransition(
-                turns: Tween(begin: 0.85, end: 1.0).animate(animation),
-                child: FadeTransition(opacity: animation, child: child),
-              ),
+              transitionBuilder:
+                  (child, animation) => RotationTransition(
+                    turns: Tween(begin: 0.85, end: 1.0).animate(animation),
+                    child: FadeTransition(opacity: animation, child: child),
+                  ),
               child: Icon(
                 open.value ? Icons.close : Icons.add_task,
                 key: ValueKey(open.value),
@@ -186,27 +197,31 @@ class ExpandableFab extends HookConsumerWidget {
   }
 
   void _showImagePicker(BuildContext context, WidgetRef ref, bool isPremium) {
-    analytics.logEvent(name: 'tap_open_image_picker', parameters: {
-      'groupID': groupID,
-      'shoppingListID': shoppingListID,
-    });
-    final remaining =
-        ref.read(remainingImageRecognitionCountProvider(isPremium: isPremium));
+    analytics.logEvent(
+      name: 'tap_open_image_picker',
+      parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
+    );
+    final remaining = ref.read(
+      remainingImageRecognitionCountProvider(isPremium: isPremium),
+    );
     if (remaining <= 0) {
-      final limit = isPremium
-          ? premiumMonthlyImageRecognitionLimit
-          : freeMonthlyImageRecognitionLimit;
+      final limit =
+          isPremium
+              ? premiumMonthlyImageRecognitionLimit
+              : freeMonthlyImageRecognitionLimit;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           persist: false,
           content: Text(
-              '画像読み取りの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyImageRecognitionLimit回まで利用できます'}'),
-          action: isPremium
-              ? null
-              : SnackBarAction(
-                  label: 'アップグレード',
-                  onPressed: () => showPaywall(context: context),
-                ),
+            '画像読み取りの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyImageRecognitionLimit回まで利用できます'}',
+          ),
+          action:
+              isPremium
+                  ? null
+                  : SnackBarAction(
+                    label: 'アップグレード',
+                    onPressed: () => showPaywall(context: context),
+                  ),
         ),
       );
       return;
@@ -224,13 +239,16 @@ class ExpandableFab extends HookConsumerWidget {
                 title: const Text('カメラ'),
                 leading: const Icon(Icons.photo_camera),
                 onTap: () async {
-                  analytics
-                      .logEvent(name: 'tap_image_picker_camera', parameters: {
-                    'groupID': groupID,
-                    'shoppingListID': shoppingListID,
-                  });
-                  final XFile? photo =
-                      await imagePicker.pickImage(source: ImageSource.camera);
+                  analytics.logEvent(
+                    name: 'tap_image_picker_camera',
+                    parameters: {
+                      'groupID': groupID,
+                      'shoppingListID': shoppingListID,
+                    },
+                  );
+                  final XFile? photo = await imagePicker.pickImage(
+                    source: ImageSource.camera,
+                  );
                   if (photo == null) {
                     return;
                   }
@@ -248,13 +266,16 @@ class ExpandableFab extends HookConsumerWidget {
                 title: const Text('フォトライブラリ'),
                 leading: const Icon(Icons.photo_album),
                 onTap: () async {
-                  analytics
-                      .logEvent(name: 'tap_image_picker_gallery', parameters: {
-                    'groupID': groupID,
-                    'shoppingListID': shoppingListID,
-                  });
-                  final XFile? photo =
-                      await imagePicker.pickImage(source: ImageSource.gallery);
+                  analytics.logEvent(
+                    name: 'tap_image_picker_gallery',
+                    parameters: {
+                      'groupID': groupID,
+                      'shoppingListID': shoppingListID,
+                    },
+                  );
+                  final XFile? photo = await imagePicker.pickImage(
+                    source: ImageSource.gallery,
+                  );
                   if (photo == null) {
                     return;
                   }
@@ -273,10 +294,13 @@ class ExpandableFab extends HookConsumerWidget {
           actions: [
             TextButton(
               onPressed: () {
-                analytics.logEvent(name: 'cancel_image_picker', parameters: {
-                  'groupID': groupID,
-                  'shoppingListID': shoppingListID,
-                });
+                analytics.logEvent(
+                  name: 'cancel_image_picker',
+                  parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                  },
+                );
                 Navigator.pop(dialogContext);
               },
               child: const Text('閉じる'),
@@ -288,7 +312,10 @@ class ExpandableFab extends HookConsumerWidget {
   }
 
   Future<void> _addShoppingListItemsFromImage(
-      BuildContext context, WidgetRef ref, XFile photo) async {
+    BuildContext context,
+    WidgetRef ref,
+    XFile photo,
+  ) async {
     ref.read(aIProcessingProvider.notifier).start(AIProcessingType.image);
     List<String> rawItems;
     try {
@@ -312,9 +339,10 @@ class ExpandableFab extends HookConsumerWidget {
     // 既存アイテムに存在しない候補だけ review sheet にかける。
     // 候補が空（画像から読み取れなかった／すべて既存）でも review sheet を開き、
     // 「候補がありませんでした」を表示して画像が読み取れたか判断できるようにする。
-    final candidates = rawItems
-        .where((e) => !shoppingListItems.any((item) => item.message == e))
-        .toList();
+    final candidates =
+        rawItems
+            .where((e) => !shoppingListItems.any((item) => item.message == e))
+            .toList();
     final reviewed = await showAIReviewSheet(
       context: context,
       rawNames: candidates,
@@ -326,7 +354,9 @@ class ExpandableFab extends HookConsumerWidget {
     final selected = reviewed.where((c) => c.selected).toList();
     for (var (i, c) in selected.indexed) {
       try {
-        await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+        await ref
+            .read(addShoppingListItemProvider(groupID: groupID))
+            .call(
               shoppingListID: shoppingListID,
               userID: ref.read(currentUserIDProvider)!,
               message: c.name,
@@ -341,47 +371,55 @@ class ExpandableFab extends HookConsumerWidget {
   }
 
   void _showURLInputDialog(
-      BuildContext context, WidgetRef ref, bool isPremium) {
-    analytics.logEvent(name: 'tap_open_url_input', parameters: {
-      'groupID': groupID,
-      'shoppingListID': shoppingListID,
-    });
-    final remaining =
-        ref.read(remainingURLRecognitionCountProvider(isPremium: isPremium));
+    BuildContext context,
+    WidgetRef ref,
+    bool isPremium,
+  ) {
+    analytics.logEvent(
+      name: 'tap_open_url_input',
+      parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
+    );
+    final remaining = ref.read(
+      remainingURLRecognitionCountProvider(isPremium: isPremium),
+    );
     if (remaining <= 0) {
-      final limit = isPremium
-          ? premiumMonthlyURLRecognitionLimit
-          : freeMonthlyURLRecognitionLimit;
+      final limit =
+          isPremium
+              ? premiumMonthlyURLRecognitionLimit
+              : freeMonthlyURLRecognitionLimit;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           persist: false,
           content: Text(
-              'URL読み取りの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyURLRecognitionLimit回まで利用できます'}'),
-          action: isPremium
-              ? null
-              : SnackBarAction(
-                  label: 'アップグレード',
-                  onPressed: () => showPaywall(context: context),
-                ),
+            'URL読み取りの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyURLRecognitionLimit回まで利用できます'}',
+          ),
+          action:
+              isPremium
+                  ? null
+                  : SnackBarAction(
+                    label: 'アップグレード',
+                    onPressed: () => showPaywall(context: context),
+                  ),
         ),
       );
       return;
     }
     showDialog(
       context: context,
-      builder: (context) => _URLInputDialog(
-        groupID: groupID,
-        shoppingListID: shoppingListID,
-        shoppingListItems: shoppingListItems,
-      ),
+      builder:
+          (context) => _URLInputDialog(
+            groupID: groupID,
+            shoppingListID: shoppingListID,
+            shoppingListItems: shoppingListItems,
+          ),
     );
   }
 
   Future<void> _pasteFromClipboard(BuildContext context, WidgetRef ref) async {
-    analytics.logEvent(name: 'tap_paste_multiline', parameters: {
-      'groupID': groupID,
-      'shoppingListID': shoppingListID,
-    });
+    analytics.logEvent(
+      name: 'tap_paste_multiline',
+      parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
+    );
     final data = await Clipboard.getData(Clipboard.kTextPlain);
     final text = data?.text;
     if (text == null) {
@@ -395,7 +433,9 @@ class ExpandableFab extends HookConsumerWidget {
       if (shoppingListItems.any((item) => item.message == line)) {
         continue;
       }
-      await ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+      await ref
+          .read(addShoppingListItemProvider(groupID: groupID))
+          .call(
             shoppingListID: shoppingListID,
             userID: ref.read(currentUserIDProvider)!,
             message: line,
@@ -448,103 +488,115 @@ class _URLInputDialog extends HookConsumerWidget {
       ),
       actions: [
         TextButton(
-          onPressed: isLoading.value
-              ? null
-              : () {
-                  analytics.logEvent(name: 'cancel_url_input', parameters: {
-                    'groupID': groupID,
-                    'shoppingListID': shoppingListID,
-                  });
-                  Navigator.pop(context);
-                },
+          onPressed:
+              isLoading.value
+                  ? null
+                  : () {
+                    analytics.logEvent(
+                      name: 'cancel_url_input',
+                      parameters: {
+                        'groupID': groupID,
+                        'shoppingListID': shoppingListID,
+                      },
+                    );
+                    Navigator.pop(context);
+                  },
           child: const Text('キャンセル'),
         ),
         TextButton(
-          onPressed: isLoading.value
-              ? null
-              : () async {
-                  analytics.logEvent(name: 'tap_submit_url', parameters: {
-                    'groupID': groupID,
-                    'shoppingListID': shoppingListID,
-                  });
-                  final normalizedURL = urlController.text.trim();
-                  // ダイアログ上の SnackBar は背後の Scaffold に描画されて
-                  // 見えないため、前面に出るグローバルトーストで通知する。
-                  if (normalizedURL.isEmpty) {
-                    showGlobalToast('URLを入力してください', title: null);
-                    return;
-                  }
-                  final parsedURL = Uri.tryParse(normalizedURL);
-                  if (parsedURL == null ||
-                      parsedURL.scheme != 'https' ||
-                      parsedURL.host.isEmpty ||
-                      parsedURL.userInfo.isNotEmpty) {
-                    showGlobalToast('有効なHTTPS URLを入力してください', title: null);
-                    return;
-                  }
-                  // 生成の await 中にダイアログが先に閉じられると、遅延した pop が
-                  // ホームまで剥がして黒画面になるため、pop は自ルートに限定する (#372)。
-                  final navigator = Navigator.of(context);
-                  final dialogRoute = ModalRoute.of(context);
-                  isLoading.value = true;
-                  ref
-                      .read(aIProcessingProvider.notifier)
-                      .start(AIProcessingType.url);
-                  List<String> rawItems;
-                  try {
-                    rawItems = await functions.generateShoppingListItemsFromURL(
-                      url: normalizedURL,
+          onPressed:
+              isLoading.value
+                  ? null
+                  : () async {
+                    analytics.logEvent(
+                      name: 'tap_submit_url',
+                      parameters: {
+                        'groupID': groupID,
+                        'shoppingListID': shoppingListID,
+                      },
                     );
-                  } catch (e, st) {
-                    showGlobalErrorToast(e, st);
-                    return;
-                  } finally {
-                    if (context.mounted) {
-                      isLoading.value = false;
+                    final normalizedURL = urlController.text.trim();
+                    // ダイアログ上の SnackBar は背後の Scaffold に描画されて
+                    // 見えないため、前面に出るグローバルトーストで通知する。
+                    if (normalizedURL.isEmpty) {
+                      showGlobalToast('URLを入力してください', title: null);
+                      return;
                     }
-                    ref.read(aIProcessingProvider.notifier).end();
-                  }
-                  if (!context.mounted) {
-                    return;
-                  }
-                  // URL ダイアログを先に閉じてから review sheet を出す。
-                  popRouteSafely(navigator: navigator, route: dialogRoute);
-                  if (!context.mounted) {
-                    return;
-                  }
-                  final candidates = rawItems
-                      .where((e) => !shoppingListItems
-                          .any((existing) => existing.message == e))
-                      .toList();
-                  if (candidates.isEmpty) {
-                    return;
-                  }
-                  final reviewed = await showAIReviewSheet(
-                    context: context,
-                    rawNames: candidates,
-                    source: 'url',
-                  );
-                  if (reviewed == null) {
-                    return;
-                  }
-                  final selected = reviewed.where((c) => c.selected).toList();
-                  for (var (i, c) in selected.indexed) {
+                    final parsedURL = Uri.tryParse(normalizedURL);
+                    if (parsedURL == null ||
+                        parsedURL.scheme != 'https' ||
+                        parsedURL.host.isEmpty ||
+                        parsedURL.userInfo.isNotEmpty) {
+                      showGlobalToast('有効なHTTPS URLを入力してください', title: null);
+                      return;
+                    }
+                    // 生成の await 中にダイアログが先に閉じられると、遅延した pop が
+                    // ホームまで剥がして黒画面になるため、pop は自ルートに限定する (#372)。
+                    final navigator = Navigator.of(context);
+                    final dialogRoute = ModalRoute.of(context);
+                    isLoading.value = true;
+                    ref
+                        .read(aIProcessingProvider.notifier)
+                        .start(AIProcessingType.url);
+                    List<String> rawItems;
                     try {
-                      await ref
-                          .read(addShoppingListItemProvider(groupID: groupID))
-                          .call(
-                            shoppingListID: shoppingListID,
-                            userID: ref.read(currentUserIDProvider)!,
-                            message: c.name,
-                            order: shoppingListItems.nextOrder + i,
-                            description: null,
-                            color: null,
-                          );
-                    } catch (e) {
-                      debugPrint('Error: $e');
+                      rawItems = await functions
+                          .generateShoppingListItemsFromURL(url: normalizedURL);
+                    } catch (e, st) {
+                      showGlobalErrorToast(e, st);
+                      return;
+                    } finally {
+                      if (context.mounted) {
+                        isLoading.value = false;
+                      }
+                      ref.read(aIProcessingProvider.notifier).end();
                     }
-                  }
-                },
+                    if (!context.mounted) {
+                      return;
+                    }
+                    // URL ダイアログを先に閉じてから review sheet を出す。
+                    popRouteSafely(navigator: navigator, route: dialogRoute);
+                    if (!context.mounted) {
+                      return;
+                    }
+                    final candidates =
+                        rawItems
+                            .where(
+                              (e) =>
+                                  !shoppingListItems.any(
+                                    (existing) => existing.message == e,
+                                  ),
+                            )
+                            .toList();
+                    if (candidates.isEmpty) {
+                      return;
+                    }
+                    final reviewed = await showAIReviewSheet(
+                      context: context,
+                      rawNames: candidates,
+                      source: 'url',
+                    );
+                    if (reviewed == null) {
+                      return;
+                    }
+                    final selected = reviewed.where((c) => c.selected).toList();
+                    for (var (i, c) in selected.indexed) {
+                      try {
+                        await ref
+                            .read(addShoppingListItemProvider(groupID: groupID))
+                            .call(
+                              shoppingListID: shoppingListID,
+                              userID: ref.read(currentUserIDProvider)!,
+                              message: c.name,
+                              order: shoppingListItems.nextOrder + i,
+                              description: null,
+                              color: null,
+                            );
+                      } catch (e) {
+                        debugPrint('Error: $e');
+                      }
+                    }
+                  },
           child: const Text('生成'),
         ),
       ],

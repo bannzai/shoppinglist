@@ -7,11 +7,7 @@ import 'package:shoppinglist/utils/logger/analytics.dart';
 class Retry extends InheritedWidget {
   final VoidCallback retry;
 
-  const Retry({
-    super.key,
-    required this.retry,
-    required super.child,
-  });
+  const Retry({super.key, required this.retry, required super.child});
 
   static Retry of(BuildContext context) {
     final result = context.dependOnInheritedWidgetOfExactType<Retry>();

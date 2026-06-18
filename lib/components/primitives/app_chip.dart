@@ -51,11 +51,12 @@ class AppChip extends StatelessWidget {
           // active+soft は薄塗りが背景(cream)に埋もれてコントラストが低いため、
           // accent 色の枠線を足して選択状態をはっきりさせる。
           // ink 反転塗り(soft=false)は塗り自体が高コントラストなので枠線なし。
-          side: active
-              ? (soft
-                  ? BorderSide(color: tokens.accent, width: 1.5)
-                  : BorderSide.none)
-              : BorderSide(color: neutral.divider),
+          side:
+              active
+                  ? (soft
+                      ? BorderSide(color: tokens.accent, width: 1.5)
+                      : BorderSide.none)
+                  : BorderSide(color: neutral.divider),
         ),
         child: InkWell(
           onTap: onTap,
@@ -85,11 +86,10 @@ class AppChip extends StatelessWidget {
                   Text(
                     label,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontWeight:
-                              active ? FontWeight.w600 : FontWeight.w500,
-                          letterSpacing: -0.005,
-                          color: fg,
-                        ),
+                      fontWeight: active ? FontWeight.w600 : FontWeight.w500,
+                      letterSpacing: -0.005,
+                      color: fg,
+                    ),
                   ),
                 ],
               ),

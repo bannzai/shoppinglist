@@ -62,14 +62,16 @@ class ShoppingListPage extends ConsumerWidget {
     final groups = ref.watch(userGroupsProvider).asData?.value;
     final appUser = ref.watch(appUserProvider).asData?.value;
     final shoppingListsAsync = ref.watch(
-        shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium));
+      shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium),
+    );
     final resolvedShoppingListID = resolveShoppingListID(
       selected: ref.watch(currentShoppingListIDProvider),
       shoppingLists: shoppingListsAsync.valueOrNull ?? [],
     );
 
     void invalidateLists() => ref.invalidate(
-        shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium));
+      shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium),
+    );
 
     return shoppingListsAsync.when(
       data: (lists) {
@@ -90,18 +92,20 @@ class ShoppingListPage extends ConsumerWidget {
           firestoreIsPremium: firestoreIsPremium,
         );
       },
-      error: (e, st) => _ShoppingListScaffold(
-        groupID: groupID,
-        groups: groups,
-        onRetry: invalidateLists,
-        child: RetryPage(exception: e, stackTrace: st),
-      ),
-      loading: () => _ShoppingListScaffold(
-        groupID: groupID,
-        groups: groups,
-        onRetry: invalidateLists,
-        child: const Loading(),
-      ),
+      error:
+          (e, st) => _ShoppingListScaffold(
+            groupID: groupID,
+            groups: groups,
+            onRetry: invalidateLists,
+            child: RetryPage(exception: e, stackTrace: st),
+          ),
+      loading:
+          () => _ShoppingListScaffold(
+            groupID: groupID,
+            groups: groups,
+            onRetry: invalidateLists,
+            child: const Loading(),
+          ),
     );
   }
 }
@@ -189,8 +193,9 @@ class _ActiveShoppingList extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.appTheme;
-    final shoppingList =
-        shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID);
+    final shoppingList = shoppingLists.firstWhereOrNull(
+      (sl) => sl.id == shoppingListID,
+    );
 
     // 表示リスト切替に使う notifier を build 時に束ねる。
     // この notifier を子(ListTopBar / ListPickerSheet)へ渡す onShoppingListIDChanged
@@ -199,25 +204,30 @@ class _ActiveShoppingList extends HookConsumerWidget {
     // 破棄される。クロージャ内で `ref` を直接使うと、破棄後にシート側から呼ばれた時に
     // "Cannot use ref after the widget was disposed" になる。notifier 自体は provider
     // (親 ShoppingListPage が watch 継続)が保持し続けるため、破棄後でも安全に使える。
-    final currentShoppingListIDNotifier =
-        ref.watch(currentShoppingListIDProvider.notifier);
+    final currentShoppingListIDNotifier = ref.watch(
+      currentShoppingListIDProvider.notifier,
+    );
 
     // チェック済み含む全件。FAB・リスト本体・進捗ピル・変更検知・通知トーストすべてこの一覧を基準にする。
-    final shoppingListItemsAsync = ref.watch(textShoppingListItemsProvider(
-      groupID: groupID,
-      shoppingListID: shoppingListID,
-    ));
-    final itemMetrics =
-        shoppingListItemMetrics(shoppingListItemsAsync.valueOrNull ?? []);
+    final shoppingListItemsAsync = ref.watch(
+      textShoppingListItemsProvider(
+        groupID: groupID,
+        shoppingListID: shoppingListID,
+      ),
+    );
+    final itemMetrics = shoppingListItemMetrics(
+      shoppingListItemsAsync.valueOrNull ?? [],
+    );
     final checkedCount = itemMetrics.checkedCount;
     final totalCount = itemMetrics.totalCount;
 
     final currentUserID = ref.watch(currentUserIDProvider);
     final memberProfiles =
         ref.watch(groupUserProfilesProvider(groupID: groupID)).asData?.value ??
-            [];
-    final autoNotify = ref.watch(boolSharedPreferencesProvider(
-        key: BoolKey.autoNotifyShoppingListUpdate));
+        [];
+    final autoNotify = ref.watch(
+      boolSharedPreferencesProvider(key: BoolKey.autoNotifyShoppingListUpdate),
+    );
     final aiProcessingType = ref.watch(aIProcessingProvider);
 
     final itemChangeCount = useState(0);
@@ -278,10 +288,11 @@ class _ActiveShoppingList extends HookConsumerWidget {
       final listener = AppLifecycleListener(
         onStateChange: (state) {
           if (state == AppLifecycleState.paused && itemChangeCount.value > 0) {
-            final otherMemberIDs = memberProfiles
-                .where((p) => p.userID != currentUserID)
-                .map((p) => p.userID)
-                .toList();
+            final otherMemberIDs =
+                memberProfiles
+                    .where((p) => p.userID != currentUserID)
+                    .map((p) => p.userID)
+                    .toList();
             if (otherMemberIDs.isEmpty) {
               return;
             }
@@ -303,10 +314,18 @@ class _ActiveShoppingList extends HookConsumerWidget {
       groupID: groupID,
       groups: groups,
       onRetry: () {
-        ref.invalidate(shoppingListsProvider(
-            groupID: groupID, isPremium: firestoreIsPremium));
-        ref.invalidate(textShoppingListItemsProvider(
-            groupID: groupID, shoppingListID: shoppingListID));
+        ref.invalidate(
+          shoppingListsProvider(
+            groupID: groupID,
+            isPremium: firestoreIsPremium,
+          ),
+        );
+        ref.invalidate(
+          textShoppingListItemsProvider(
+            groupID: groupID,
+            shoppingListID: shoppingListID,
+          ),
+        );
       },
       // ダブル FAB: 上がリスト作成（CreateListFab）、下がアイテム入力（ExpandableFab）。
       // CreateListFab(48px) は ExpandableFab(56px) と中心が揃うよう右に 4px 寄せる。
@@ -342,8 +361,8 @@ class _ActiveShoppingList extends HookConsumerWidget {
               shoppingListID: shoppingListID,
               shoppingLists: shoppingLists,
               shoppingList: shoppingList,
-              onShoppingListIDChanged: (newID) =>
-                  currentShoppingListIDNotifier.update(newID),
+              onShoppingListIDChanged:
+                  (newID) => currentShoppingListIDNotifier.update(newID),
             ),
             Expanded(
               child: Container(
@@ -356,21 +375,23 @@ class _ActiveShoppingList extends HookConsumerWidget {
                           AIProcessingBanner(type: aiProcessingType),
                         Expanded(
                           child: shoppingListItemsAsync.when(
-                            data: (shoppingListItems) =>
-                                ShoppingListBodyContent(
-                              groupID: groupID,
-                              shoppingListID: shoppingListID,
-                              shoppingLists: shoppingLists,
-                              shoppingList: shoppingList,
-                              shoppingListItems: shoppingListItems,
-                              onShoppingListIDChanged: (newID) =>
-                                  currentShoppingListIDNotifier.update(newID),
-                            ),
-                            error: (e, st) => ListErrorCard(
-                              exception: e,
-                              stackTrace: st,
-                              onRetry: () => Retry.of(context).retry(),
-                            ),
+                            data:
+                                (shoppingListItems) => ShoppingListBodyContent(
+                                  groupID: groupID,
+                                  shoppingListID: shoppingListID,
+                                  shoppingLists: shoppingLists,
+                                  shoppingList: shoppingList,
+                                  shoppingListItems: shoppingListItems,
+                                  onShoppingListIDChanged:
+                                      (newID) => currentShoppingListIDNotifier
+                                          .update(newID),
+                                ),
+                            error:
+                                (e, st) => ListErrorCard(
+                                  exception: e,
+                                  stackTrace: st,
+                                  onRetry: () => Retry.of(context).retry(),
+                                ),
                             loading: () => const Loading(),
                           ),
                         ),
@@ -415,11 +436,7 @@ class _NoListYet extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.playlist_add,
-              size: 80,
-              color: tokens.neutral.ink4,
-            ),
+            Icon(Icons.playlist_add, size: 80, color: tokens.neutral.ink4),
             const SizedBox(height: 24),
             Text(
               '買い物リストがありません',
@@ -428,10 +445,9 @@ class _NoListYet extends ConsumerWidget {
             const SizedBox(height: 8),
             Text(
               '新しい買い物リストを作成しましょう',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: tokens.neutral.ink2),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: tokens.neutral.ink2),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
@@ -441,8 +457,9 @@ class _NoListYet extends ConsumerWidget {
                   return;
                 }
                 analytics.logEvent(
-                    name: 'tap_create_first_shopping_list',
-                    parameters: {'groupID': groupID});
+                  name: 'tap_create_first_shopping_list',
+                  parameters: {'groupID': groupID},
+                );
                 try {
                   await ref
                       .read(shoppingListAddProvider(groupID: groupID))

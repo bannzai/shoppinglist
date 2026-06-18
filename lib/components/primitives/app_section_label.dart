@@ -18,11 +18,11 @@ class AppSectionLabel extends StatelessWidget {
       child: Text(
         text.toUpperCase(),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.05,
-              color: context.appTheme.neutral.ink2,
-            ),
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.05,
+          color: context.appTheme.neutral.ink2,
+        ),
       ),
     );
   }

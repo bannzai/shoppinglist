@@ -20,10 +20,7 @@ import 'package:shoppinglist/provider/user_groups.dart';
 class HomeWidgetSync extends HookConsumerWidget {
   final Widget Function(BuildContext context) builder;
 
-  const HomeWidgetSync({
-    super.key,
-    required this.builder,
-  });
+  const HomeWidgetSync({super.key, required this.builder});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,10 +35,11 @@ class HomeWidgetSync extends HookConsumerWidget {
         ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
     final themeColorHex =
         ref.watch(appUserProvider).valueOrNull?.themeColorHex ??
-            defaultThemeColorHex;
+        defaultThemeColorHex;
     final groups = ref.watch(userGroupsProvider).valueOrNull ?? [];
     final shoppingListsAsync = ref.watch(
-        shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium));
+      shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium),
+    );
     final resolvedShoppingListID = resolveShoppingListID(
       selected: ref.watch(currentShoppingListIDProvider),
       shoppingLists: shoppingListsAsync.valueOrNull ?? [],
@@ -64,9 +62,7 @@ class HomeWidgetSync extends HookConsumerWidget {
       if (prevThemeColorHex == nextThemeColorHex) {
         return;
       }
-      HomeWidgetDataSync.syncThemeColor(
-        themeColorHex: nextThemeColorHex,
-      );
+      HomeWidgetDataSync.syncThemeColor(themeColorHex: nextThemeColorHex);
     });
 
     // プレミアム状態の変更を検知して同期
@@ -83,18 +79,19 @@ class HomeWidgetSync extends HookConsumerWidget {
 
     // 買い物リスト一覧の変更を検知して同期
     ref.listen(
-        shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium),
-        (prev, next) {
-      final lists = next.valueOrNull;
-      if (lists != null && lists.isNotEmpty) {
-        final group = groups.firstWhereOrNull((g) => g.id == groupID);
-        HomeWidgetDataSync.syncShoppingLists(
-          shoppingLists: lists,
-          groupID: groupID,
-          groupName: group?.name ?? '',
-        );
-      }
-    });
+      shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium),
+      (prev, next) {
+        final lists = next.valueOrNull;
+        if (lists != null && lists.isNotEmpty) {
+          final group = groups.firstWhereOrNull((g) => g.id == groupID);
+          HomeWidgetDataSync.syncShoppingLists(
+            shoppingLists: lists,
+            groupID: groupID,
+            groupName: group?.name ?? '',
+          );
+        }
+      },
+    );
 
     // 現在の買い物リストアイテムの同期は、resolvedShoppingListID が確定している時のみ行う。
     // Riverpod の ref.listen を条件分岐内で呼ぶことを避けるため、非null時のみマウントされる
@@ -129,22 +126,25 @@ class _HomeWidgetItemSync extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen(
-        textShoppingListItemsProvider(
-          groupID: groupID,
-          shoppingListID: shoppingListID,
-        ), (prev, next) {
-      final items = next.valueOrNull;
-      if (items != null) {
-        final list =
-            shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingListID);
-        HomeWidgetDataSync.syncCurrentShoppingListItems(
-          groupID: groupID,
-          shoppingListID: shoppingListID,
-          shoppingListName: list?.name ?? '',
-          items: items,
-        );
-      }
-    });
+      textShoppingListItemsProvider(
+        groupID: groupID,
+        shoppingListID: shoppingListID,
+      ),
+      (prev, next) {
+        final items = next.valueOrNull;
+        if (items != null) {
+          final list = shoppingLists.firstWhereOrNull(
+            (sl) => sl.id == shoppingListID,
+          );
+          HomeWidgetDataSync.syncCurrentShoppingListItems(
+            groupID: groupID,
+            shoppingListID: shoppingListID,
+            shoppingListName: list?.name ?? '',
+            items: items,
+          );
+        }
+      },
+    );
 
     return builder(context);
   }

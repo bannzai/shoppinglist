@@ -3,15 +3,15 @@ import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/provider/current_shopping_list_id.dart';
 
 GroupShoppingList _list(String id) => GroupShoppingList(
-      id: id,
-      createUserID: 'user-id',
-      groupID: 'group-id',
-      name: id,
-      status: GroupShoppingListStatus.active,
-      ttlExpiresDateTime: null,
-      duplicatedFromGroupShoppingListID: null,
-      shoppingLocationID: null,
-    );
+  id: id,
+  createUserID: 'user-id',
+  groupID: 'group-id',
+  name: id,
+  status: GroupShoppingListStatus.active,
+  ttlExpiresDateTime: null,
+  duplicatedFromGroupShoppingListID: null,
+  shoppingLocationID: null,
+);
 
 void main() {
   group('resolveShoppingListID', () {
@@ -22,7 +22,9 @@ void main() {
     test('選択が一覧に存在すればその選択を返す', () {
       expect(
         resolveShoppingListID(
-            selected: 'b', shoppingLists: [_list('a'), _list('b')]),
+          selected: 'b',
+          shoppingLists: [_list('a'), _list('b')],
+        ),
         'b',
       );
     });
@@ -30,7 +32,9 @@ void main() {
     test('選択が null なら先頭にフォールバックする', () {
       expect(
         resolveShoppingListID(
-            selected: null, shoppingLists: [_list('a'), _list('b')]),
+          selected: null,
+          shoppingLists: [_list('a'), _list('b')],
+        ),
         'a',
       );
     });
@@ -38,7 +42,9 @@ void main() {
     test('選択が一覧に存在しなければ先頭にフォールバックする', () {
       expect(
         resolveShoppingListID(
-            selected: 'z', shoppingLists: [_list('a'), _list('b')]),
+          selected: 'z',
+          shoppingLists: [_list('a'), _list('b')],
+        ),
         'a',
       );
     });

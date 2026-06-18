@@ -70,7 +70,7 @@ class TextShoppingListItemsFamily
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -78,9 +78,9 @@ class TextShoppingListItemsFamily
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -102,23 +102,23 @@ class TextShoppingListItemsProvider
     required String groupID,
     required String shoppingListID,
   }) : this._internal(
-          (ref) => textShoppingListItems(
-            ref as TextShoppingListItemsRef,
-            groupID: groupID,
-            shoppingListID: shoppingListID,
-          ),
-          from: textShoppingListItemsProvider,
-          name: r'textShoppingListItemsProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$textShoppingListItemsHash,
-          dependencies: TextShoppingListItemsFamily._dependencies,
-          allTransitiveDependencies:
-              TextShoppingListItemsFamily._allTransitiveDependencies,
-          groupID: groupID,
-          shoppingListID: shoppingListID,
-        );
+         (ref) => textShoppingListItems(
+           ref as TextShoppingListItemsRef,
+           groupID: groupID,
+           shoppingListID: shoppingListID,
+         ),
+         from: textShoppingListItemsProvider,
+         name: r'textShoppingListItemsProvider',
+         debugGetCreateSourceHash:
+             const bool.fromEnvironment('dart.vm.product')
+                 ? null
+                 : _$textShoppingListItemsHash,
+         dependencies: TextShoppingListItemsFamily._dependencies,
+         allTransitiveDependencies:
+             TextShoppingListItemsFamily._allTransitiveDependencies,
+         groupID: groupID,
+         shoppingListID: shoppingListID,
+       );
 
   TextShoppingListItemsProvider._internal(
     super._createNotifier, {
@@ -137,8 +137,9 @@ class TextShoppingListItemsProvider
   @override
   Override overrideWith(
     Stream<List<GroupShoppingListItem>> Function(
-            TextShoppingListItemsRef provider)
-        create,
+      TextShoppingListItemsRef provider,
+    )
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -157,7 +158,7 @@ class TextShoppingListItemsProvider
 
   @override
   AutoDisposeStreamProviderElement<List<GroupShoppingListItem>>
-      createElement() {
+  createElement() {
     return _TextShoppingListItemsProviderElement(this);
   }
 
@@ -214,25 +215,19 @@ class AddShoppingListItemFamily extends Family<AddShoppingListItem> {
   const AddShoppingListItemFamily();
 
   /// See also [addShoppingListItem].
-  AddShoppingListItemProvider call({
-    required String groupID,
-  }) {
-    return AddShoppingListItemProvider(
-      groupID: groupID,
-    );
+  AddShoppingListItemProvider call({required String groupID}) {
+    return AddShoppingListItemProvider(groupID: groupID);
   }
 
   @override
   AddShoppingListItemProvider getProviderOverride(
     covariant AddShoppingListItemProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -240,9 +235,9 @@ class AddShoppingListItemFamily extends Family<AddShoppingListItem> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -256,24 +251,23 @@ class AddShoppingListItemFamily extends Family<AddShoppingListItem> {
 class AddShoppingListItemProvider
     extends AutoDisposeProvider<AddShoppingListItem> {
   /// See also [addShoppingListItem].
-  AddShoppingListItemProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => addShoppingListItem(
-            ref as AddShoppingListItemRef,
-            groupID: groupID,
-          ),
-          from: addShoppingListItemProvider,
-          name: r'addShoppingListItemProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$addShoppingListItemHash,
-          dependencies: AddShoppingListItemFamily._dependencies,
-          allTransitiveDependencies:
-              AddShoppingListItemFamily._allTransitiveDependencies,
+  AddShoppingListItemProvider({required String groupID})
+    : this._internal(
+        (ref) => addShoppingListItem(
+          ref as AddShoppingListItemRef,
           groupID: groupID,
-        );
+        ),
+        from: addShoppingListItemProvider,
+        name: r'addShoppingListItemProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$addShoppingListItemHash,
+        dependencies: AddShoppingListItemFamily._dependencies,
+        allTransitiveDependencies:
+            AddShoppingListItemFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   AddShoppingListItemProvider._internal(
     super._createNotifier, {
@@ -353,25 +347,19 @@ class DeleteShoppingListItemFamily extends Family<DeleteShoppingListItem> {
   const DeleteShoppingListItemFamily();
 
   /// See also [deleteShoppingListItem].
-  DeleteShoppingListItemProvider call({
-    required String groupID,
-  }) {
-    return DeleteShoppingListItemProvider(
-      groupID: groupID,
-    );
+  DeleteShoppingListItemProvider call({required String groupID}) {
+    return DeleteShoppingListItemProvider(groupID: groupID);
   }
 
   @override
   DeleteShoppingListItemProvider getProviderOverride(
     covariant DeleteShoppingListItemProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -379,9 +367,9 @@ class DeleteShoppingListItemFamily extends Family<DeleteShoppingListItem> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -395,24 +383,23 @@ class DeleteShoppingListItemFamily extends Family<DeleteShoppingListItem> {
 class DeleteShoppingListItemProvider
     extends AutoDisposeProvider<DeleteShoppingListItem> {
   /// See also [deleteShoppingListItem].
-  DeleteShoppingListItemProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => deleteShoppingListItem(
-            ref as DeleteShoppingListItemRef,
-            groupID: groupID,
-          ),
-          from: deleteShoppingListItemProvider,
-          name: r'deleteShoppingListItemProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$deleteShoppingListItemHash,
-          dependencies: DeleteShoppingListItemFamily._dependencies,
-          allTransitiveDependencies:
-              DeleteShoppingListItemFamily._allTransitiveDependencies,
+  DeleteShoppingListItemProvider({required String groupID})
+    : this._internal(
+        (ref) => deleteShoppingListItem(
+          ref as DeleteShoppingListItemRef,
           groupID: groupID,
-        );
+        ),
+        from: deleteShoppingListItemProvider,
+        name: r'deleteShoppingListItemProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$deleteShoppingListItemHash,
+        dependencies: DeleteShoppingListItemFamily._dependencies,
+        allTransitiveDependencies:
+            DeleteShoppingListItemFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   DeleteShoppingListItemProvider._internal(
     super._createNotifier, {
@@ -493,25 +480,19 @@ class RestoreShoppingListItemFamily extends Family<RestoreShoppingListItem> {
   const RestoreShoppingListItemFamily();
 
   /// See also [restoreShoppingListItem].
-  RestoreShoppingListItemProvider call({
-    required String groupID,
-  }) {
-    return RestoreShoppingListItemProvider(
-      groupID: groupID,
-    );
+  RestoreShoppingListItemProvider call({required String groupID}) {
+    return RestoreShoppingListItemProvider(groupID: groupID);
   }
 
   @override
   RestoreShoppingListItemProvider getProviderOverride(
     covariant RestoreShoppingListItemProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -519,9 +500,9 @@ class RestoreShoppingListItemFamily extends Family<RestoreShoppingListItem> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -535,24 +516,23 @@ class RestoreShoppingListItemFamily extends Family<RestoreShoppingListItem> {
 class RestoreShoppingListItemProvider
     extends AutoDisposeProvider<RestoreShoppingListItem> {
   /// See also [restoreShoppingListItem].
-  RestoreShoppingListItemProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => restoreShoppingListItem(
-            ref as RestoreShoppingListItemRef,
-            groupID: groupID,
-          ),
-          from: restoreShoppingListItemProvider,
-          name: r'restoreShoppingListItemProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$restoreShoppingListItemHash,
-          dependencies: RestoreShoppingListItemFamily._dependencies,
-          allTransitiveDependencies:
-              RestoreShoppingListItemFamily._allTransitiveDependencies,
+  RestoreShoppingListItemProvider({required String groupID})
+    : this._internal(
+        (ref) => restoreShoppingListItem(
+          ref as RestoreShoppingListItemRef,
           groupID: groupID,
-        );
+        ),
+        from: restoreShoppingListItemProvider,
+        name: r'restoreShoppingListItemProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$restoreShoppingListItemHash,
+        dependencies: RestoreShoppingListItemFamily._dependencies,
+        allTransitiveDependencies:
+            RestoreShoppingListItemFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   RestoreShoppingListItemProvider._internal(
     super._createNotifier, {
@@ -569,7 +549,7 @@ class RestoreShoppingListItemProvider
   @override
   Override overrideWith(
     RestoreShoppingListItem Function(RestoreShoppingListItemRef provider)
-        create,
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -635,25 +615,19 @@ class ToggleShoppingListItemCheckFamily
   const ToggleShoppingListItemCheckFamily();
 
   /// See also [toggleShoppingListItemCheck].
-  ToggleShoppingListItemCheckProvider call({
-    required String groupID,
-  }) {
-    return ToggleShoppingListItemCheckProvider(
-      groupID: groupID,
-    );
+  ToggleShoppingListItemCheckProvider call({required String groupID}) {
+    return ToggleShoppingListItemCheckProvider(groupID: groupID);
   }
 
   @override
   ToggleShoppingListItemCheckProvider getProviderOverride(
     covariant ToggleShoppingListItemCheckProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -661,9 +635,9 @@ class ToggleShoppingListItemCheckFamily
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -677,24 +651,23 @@ class ToggleShoppingListItemCheckFamily
 class ToggleShoppingListItemCheckProvider
     extends AutoDisposeProvider<ToggleShoppingListItemCheck> {
   /// See also [toggleShoppingListItemCheck].
-  ToggleShoppingListItemCheckProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => toggleShoppingListItemCheck(
-            ref as ToggleShoppingListItemCheckRef,
-            groupID: groupID,
-          ),
-          from: toggleShoppingListItemCheckProvider,
-          name: r'toggleShoppingListItemCheckProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$toggleShoppingListItemCheckHash,
-          dependencies: ToggleShoppingListItemCheckFamily._dependencies,
-          allTransitiveDependencies:
-              ToggleShoppingListItemCheckFamily._allTransitiveDependencies,
+  ToggleShoppingListItemCheckProvider({required String groupID})
+    : this._internal(
+        (ref) => toggleShoppingListItemCheck(
+          ref as ToggleShoppingListItemCheckRef,
           groupID: groupID,
-        );
+        ),
+        from: toggleShoppingListItemCheckProvider,
+        name: r'toggleShoppingListItemCheckProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$toggleShoppingListItemCheckHash,
+        dependencies: ToggleShoppingListItemCheckFamily._dependencies,
+        allTransitiveDependencies:
+            ToggleShoppingListItemCheckFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   ToggleShoppingListItemCheckProvider._internal(
     super._createNotifier, {
@@ -711,8 +684,9 @@ class ToggleShoppingListItemCheckProvider
   @override
   Override overrideWith(
     ToggleShoppingListItemCheck Function(
-            ToggleShoppingListItemCheckRef provider)
-        create,
+      ToggleShoppingListItemCheckRef provider,
+    )
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -778,25 +752,19 @@ class UpdateShoppingListItemFamily extends Family<UpdateShoppingListItem> {
   const UpdateShoppingListItemFamily();
 
   /// See also [updateShoppingListItem].
-  UpdateShoppingListItemProvider call({
-    required String groupID,
-  }) {
-    return UpdateShoppingListItemProvider(
-      groupID: groupID,
-    );
+  UpdateShoppingListItemProvider call({required String groupID}) {
+    return UpdateShoppingListItemProvider(groupID: groupID);
   }
 
   @override
   UpdateShoppingListItemProvider getProviderOverride(
     covariant UpdateShoppingListItemProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -804,9 +772,9 @@ class UpdateShoppingListItemFamily extends Family<UpdateShoppingListItem> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -820,24 +788,23 @@ class UpdateShoppingListItemFamily extends Family<UpdateShoppingListItem> {
 class UpdateShoppingListItemProvider
     extends AutoDisposeProvider<UpdateShoppingListItem> {
   /// See also [updateShoppingListItem].
-  UpdateShoppingListItemProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => updateShoppingListItem(
-            ref as UpdateShoppingListItemRef,
-            groupID: groupID,
-          ),
-          from: updateShoppingListItemProvider,
-          name: r'updateShoppingListItemProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$updateShoppingListItemHash,
-          dependencies: UpdateShoppingListItemFamily._dependencies,
-          allTransitiveDependencies:
-              UpdateShoppingListItemFamily._allTransitiveDependencies,
+  UpdateShoppingListItemProvider({required String groupID})
+    : this._internal(
+        (ref) => updateShoppingListItem(
+          ref as UpdateShoppingListItemRef,
           groupID: groupID,
-        );
+        ),
+        from: updateShoppingListItemProvider,
+        name: r'updateShoppingListItemProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$updateShoppingListItemHash,
+        dependencies: UpdateShoppingListItemFamily._dependencies,
+        allTransitiveDependencies:
+            UpdateShoppingListItemFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   UpdateShoppingListItemProvider._internal(
     super._createNotifier, {
@@ -919,25 +886,19 @@ class ShoppingListItemBatchUpdateFamily
   const ShoppingListItemBatchUpdateFamily();
 
   /// See also [shoppingListItemBatchUpdate].
-  ShoppingListItemBatchUpdateProvider call({
-    required String groupID,
-  }) {
-    return ShoppingListItemBatchUpdateProvider(
-      groupID: groupID,
-    );
+  ShoppingListItemBatchUpdateProvider call({required String groupID}) {
+    return ShoppingListItemBatchUpdateProvider(groupID: groupID);
   }
 
   @override
   ShoppingListItemBatchUpdateProvider getProviderOverride(
     covariant ShoppingListItemBatchUpdateProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -945,9 +906,9 @@ class ShoppingListItemBatchUpdateFamily
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -961,24 +922,23 @@ class ShoppingListItemBatchUpdateFamily
 class ShoppingListItemBatchUpdateProvider
     extends AutoDisposeProvider<ShoppingListItemBatchUpdate> {
   /// See also [shoppingListItemBatchUpdate].
-  ShoppingListItemBatchUpdateProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => shoppingListItemBatchUpdate(
-            ref as ShoppingListItemBatchUpdateRef,
-            groupID: groupID,
-          ),
-          from: shoppingListItemBatchUpdateProvider,
-          name: r'shoppingListItemBatchUpdateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$shoppingListItemBatchUpdateHash,
-          dependencies: ShoppingListItemBatchUpdateFamily._dependencies,
-          allTransitiveDependencies:
-              ShoppingListItemBatchUpdateFamily._allTransitiveDependencies,
+  ShoppingListItemBatchUpdateProvider({required String groupID})
+    : this._internal(
+        (ref) => shoppingListItemBatchUpdate(
+          ref as ShoppingListItemBatchUpdateRef,
           groupID: groupID,
-        );
+        ),
+        from: shoppingListItemBatchUpdateProvider,
+        name: r'shoppingListItemBatchUpdateProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$shoppingListItemBatchUpdateHash,
+        dependencies: ShoppingListItemBatchUpdateFamily._dependencies,
+        allTransitiveDependencies:
+            ShoppingListItemBatchUpdateFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   ShoppingListItemBatchUpdateProvider._internal(
     super._createNotifier, {
@@ -995,8 +955,9 @@ class ShoppingListItemBatchUpdateProvider
   @override
   Override overrideWith(
     ShoppingListItemBatchUpdate Function(
-            ShoppingListItemBatchUpdateRef provider)
-        create,
+      ShoppingListItemBatchUpdateRef provider,
+    )
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -1048,5 +1009,6 @@ class _ShoppingListItemBatchUpdateProviderElement
   @override
   String get groupID => (origin as ShoppingListItemBatchUpdateProvider).groupID;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -74,13 +74,16 @@ Future<void> _pumpSheet(
       overrides: [
         currentUserIDProvider.overrideWithValue(_testUserID),
         // カテゴリ軸を空にしてカテゴリセクションを省略し、説明セクションのみ検証する。
-        groupCategoryAxesProvider(groupID: _testGroupID)
-            .overrideWith((ref) => Stream.value(const <GroupCategoryAxis>[])),
-        customerInfoProvider
-            .overrideWith((ref) => Stream.value(_FakeCustomerInfo())),
+        groupCategoryAxesProvider(
+          groupID: _testGroupID,
+        ).overrideWith((ref) => Stream.value(const <GroupCategoryAxis>[])),
+        customerInfoProvider.overrideWith(
+          (ref) => Stream.value(_FakeCustomerInfo()),
+        ),
         // シートを閉じる時の自動保存が Firestore を触らないよう no-op に差し替える。
-        updateShoppingListItemProvider(groupID: _testGroupID)
-            .overrideWith((ref) => _NoOpUpdate()),
+        updateShoppingListItemProvider(
+          groupID: _testGroupID,
+        ).overrideWith((ref) => _NoOpUpdate()),
       ],
       child: MaterialApp(
         theme: buildAppTheme(accent: AccentPreset.shu),

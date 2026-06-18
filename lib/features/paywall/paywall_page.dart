@@ -39,14 +39,15 @@ class PaywallPage extends ConsumerWidget {
       ),
       body: offerings.when(
         loading: () => const _LoadingBody(),
-        error: (e, st) => _ErrorBody(
-          exception: e,
-          stackTrace: st,
-          onRetry: () {
-            analytics.logEvent(name: 'tap_paywall_retry', parameters: null);
-            ref.invalidate(offeringsProvider);
-          },
-        ),
+        error:
+            (e, st) => _ErrorBody(
+              exception: e,
+              stackTrace: st,
+              onRetry: () {
+                analytics.logEvent(name: 'tap_paywall_retry', parameters: null);
+                ref.invalidate(offeringsProvider);
+              },
+            ),
         data: (_) {
           final monthly = ref.watch(monthlyPackageProvider);
           final annual = ref.watch(annualPackageProvider);
@@ -70,10 +71,9 @@ class PaywallPage extends ConsumerWidget {
                 child: Text(
                   'いつでもキャンセル可能・自動更新は購入後 24 時間前まで',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelSmall
-                      ?.copyWith(color: neutral.ink3),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.labelSmall?.copyWith(color: neutral.ink3),
                 ),
               ),
               const SizedBox(height: 12),
@@ -99,15 +99,14 @@ class _PaywallFooterLinks extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.appTheme;
     final linkStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: tokens.accent,
-          decoration: TextDecoration.underline,
-          decorationColor: tokens.accent,
-          decorationThickness: 1,
-        );
-    final separatorStyle = Theme.of(context)
-        .textTheme
-        .labelSmall
-        ?.copyWith(color: tokens.neutral.ink4);
+      color: tokens.accent,
+      decoration: TextDecoration.underline,
+      decorationColor: tokens.accent,
+      decorationThickness: 1,
+    );
+    final separatorStyle = Theme.of(
+      context,
+    ).textTheme.labelSmall?.copyWith(color: tokens.neutral.ink4);
     return Center(
       child: Text.rich(
         TextSpan(
@@ -115,49 +114,62 @@ class _PaywallFooterLinks extends ConsumerWidget {
             TextSpan(
               text: '利用規約',
               style: linkStyle,
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  analytics.logEvent(
-                      name: 'tap_paywall_terms', parameters: null);
-                  launchUrl(Uri.parse(_termsUrl),
-                      mode: LaunchMode.externalApplication);
-                },
+              recognizer:
+                  TapGestureRecognizer()
+                    ..onTap = () {
+                      analytics.logEvent(
+                        name: 'tap_paywall_terms',
+                        parameters: null,
+                      );
+                      launchUrl(
+                        Uri.parse(_termsUrl),
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
             ),
             TextSpan(text: '   ·   ', style: separatorStyle),
             TextSpan(
               text: 'プライバシー',
               style: linkStyle,
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  analytics.logEvent(
-                      name: 'tap_paywall_privacy', parameters: null);
-                  launchUrl(Uri.parse(_privacyUrl),
-                      mode: LaunchMode.externalApplication);
-                },
+              recognizer:
+                  TapGestureRecognizer()
+                    ..onTap = () {
+                      analytics.logEvent(
+                        name: 'tap_paywall_privacy',
+                        parameters: null,
+                      );
+                      launchUrl(
+                        Uri.parse(_privacyUrl),
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
             ),
             TextSpan(text: '   ·   ', style: separatorStyle),
             TextSpan(
               text: '復元',
               style: linkStyle,
-              recognizer: TapGestureRecognizer()
-                ..onTap = () async {
-                  analytics.logEvent(
-                      name: 'tap_paywall_restore', parameters: null);
-                  try {
-                    await Purchases.restorePurchases();
-                    if (!context.mounted) {
-                      return;
-                    }
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('購入を復元しました')),
-                    );
-                  } catch (e, st) {
-                    if (!context.mounted) {
-                      return;
-                    }
-                    showErrorSnackBar(context, e, st);
-                  }
-                },
+              recognizer:
+                  TapGestureRecognizer()
+                    ..onTap = () async {
+                      analytics.logEvent(
+                        name: 'tap_paywall_restore',
+                        parameters: null,
+                      );
+                      try {
+                        await Purchases.restorePurchases();
+                        if (!context.mounted) {
+                          return;
+                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('購入を復元しました')),
+                        );
+                      } catch (e, st) {
+                        if (!context.mounted) {
+                          return;
+                        }
+                        showErrorSnackBar(context, e, st);
+                      }
+                    },
             ),
           ],
         ),
@@ -205,18 +217,18 @@ class _Hero extends StatelessWidget {
         Text(
           'プレミアムにアップグレード',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w800,
-                color: tokens.neutral.ink,
-                letterSpacing: -0.015,
-              ),
+            fontWeight: FontWeight.w800,
+            color: tokens.neutral.ink,
+            letterSpacing: -0.015,
+          ),
         ),
         const SizedBox(height: 8),
         Text(
           '全機能を解放して、家族みんなで気持ちよく使えます。',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: tokens.neutral.ink2,
-                height: 1.6,
-              ),
+            color: tokens.neutral.ink2,
+            height: 1.6,
+          ),
         ),
       ],
     );
@@ -274,9 +286,9 @@ class _FeatureRow extends StatelessWidget {
           child: Text(
             label,
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: tokens.neutral.ink,
-                  fontWeight: FontWeight.w500,
-                ),
+              color: tokens.neutral.ink,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
         Icon(Icons.check_circle, size: 16, color: tokens.neutral.ok),
@@ -325,18 +337,20 @@ class _ErrorBody extends HookWidget {
           children: [
             Text('📡', style: Theme.of(context).textTheme.displayMedium),
             const SizedBox(height: 8),
-            Text(describeError(exception, stackTrace).message,
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: tokens.neutral.ink2)),
+            Text(
+              describeError(exception, stackTrace).message,
+              textAlign: TextAlign.center,
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: tokens.neutral.ink2),
+            ),
             const SizedBox(height: 16),
             AppPill(
-                label: '再試行',
-                variant: AppPillVariant.accent,
-                onPressed: onRetry,
-                icon: null),
+              label: '再試行',
+              variant: AppPillVariant.accent,
+              onPressed: onRetry,
+              icon: null,
+            ),
           ],
         ),
       ),
@@ -355,10 +369,9 @@ class _NoPlansBody extends StatelessWidget {
         child: Text(
           '現在ご利用いただけるプランがありません',
           textAlign: TextAlign.center,
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(color: tokens.neutral.ink2),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: tokens.neutral.ink2),
         ),
       ),
     );
@@ -386,15 +399,16 @@ class _PaywallPackageTile extends ConsumerWidget {
           color: recommended ? tokens.accent : neutral.divider,
           width: recommended ? 1.5 : 0.5,
         ),
-        boxShadow: recommended
-            ? [
-                BoxShadow(
-                  color: tokens.accent.withValues(alpha: 0.15),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : null,
+        boxShadow:
+            recommended
+                ? [
+                  BoxShadow(
+                    color: tokens.accent.withValues(alpha: 0.15),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+                : null,
       ),
       child: Row(
         children: [
@@ -410,16 +424,18 @@ class _PaywallPackageTile extends ConsumerWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: neutral.ink,
-                            ),
+                          fontWeight: FontWeight.w700,
+                          color: neutral.ink,
+                        ),
                       ),
                     ),
                     if (recommended) ...[
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: tokens.accentSoft,
                           borderRadius: BorderRadius.circular(999),
@@ -440,10 +456,11 @@ class _PaywallPackageTile extends ConsumerWidget {
                 Text(
                   package.storeProduct.priceString,
                   style: monoTextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.w700,
-                      color: neutral.ink,
-                      letterSpacing: null),
+                    fontSize: 19,
+                    fontWeight: FontWeight.w700,
+                    color: neutral.ink,
+                    letterSpacing: null,
+                  ),
                 ),
               ],
             ),
@@ -466,8 +483,9 @@ class _PaywallPackageTile extends ConsumerWidget {
               final navigator = Navigator.of(context);
               final paywallRoute = ModalRoute.of(context);
               try {
-                final completed =
-                    await ref.read(purchaseProvider).call(package);
+                final completed = await ref
+                    .read(purchaseProvider)
+                    .call(package);
                 if (!context.mounted) {
                   return;
                 }

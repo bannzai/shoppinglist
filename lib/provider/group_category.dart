@@ -11,14 +11,18 @@ part 'group_category.g.dart';
 // --- CategoryAxis Providers ---
 
 @Riverpod(dependencies: [groupDatabase, userDatabase])
-Stream<List<GroupCategoryAxis>> groupCategoryAxes(Ref ref,
-    {required String groupID}) {
+Stream<List<GroupCategoryAxis>> groupCategoryAxes(
+  Ref ref, {
+  required String groupID,
+}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   final userDatabase = ref.watch(userDatabaseProvider);
   return database
       .categoryAxesReference()
-      .where(GroupCategoryAxisFirestoreKeys.userID,
-          isEqualTo: userDatabase.userID)
+      .where(
+        GroupCategoryAxisFirestoreKeys.userID,
+        isEqualTo: userDatabase.userID,
+      )
       .orderBy(GroupCategoryAxisFirestoreKeys.order)
       .snapshots()
       .map((event) => event.docs.map((doc) => doc.data()).toList());
@@ -60,15 +64,18 @@ class GroupCategoryAxisDelete {
   GroupCategoryAxisDelete({required this.database});
 
   Future<void> call({required String categoryAxisID}) async {
-    final docRef =
-        database.categoryAxisReference(categoryAxisID: categoryAxisID);
+    final docRef = database.categoryAxisReference(
+      categoryAxisID: categoryAxisID,
+    );
     await docRef.delete();
   }
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupCategoryAxisDelete groupCategoryAxisDelete(Ref ref,
-    {required String groupID}) {
+GroupCategoryAxisDelete groupCategoryAxisDelete(
+  Ref ref, {
+  required String groupID,
+}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupCategoryAxisDelete(database: database);
 }
@@ -76,8 +83,11 @@ GroupCategoryAxisDelete groupCategoryAxisDelete(Ref ref,
 // --- Category Providers ---
 
 @Riverpod(dependencies: [groupDatabase, userDatabase])
-Stream<List<GroupCategory>> groupCategories(Ref ref,
-    {required String groupID, required String categoryAxisID}) {
+Stream<List<GroupCategory>> groupCategories(
+  Ref ref, {
+  required String groupID,
+  required String categoryAxisID,
+}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return database
       .categoriesReference(categoryAxisID: categoryAxisID)
@@ -98,19 +108,21 @@ class GroupCategoryAdd {
     required String name,
     required int order,
   }) async {
-    final docRef =
-        database.newCategoryReference(categoryAxisID: categoryAxisID);
+    final docRef = database.newCategoryReference(
+      categoryAxisID: categoryAxisID,
+    );
     final category = GroupCategory(
-        id: docRef.id,
-        groupID: groupID,
-        userID: userID,
-        groupCategoryAxisID: categoryAxisID,
-        name: name,
-        order: order,
-        locationOrders: {},
-        keywords: [],
-        color: null,
-        iconName: null);
+      id: docRef.id,
+      groupID: groupID,
+      userID: userID,
+      groupCategoryAxisID: categoryAxisID,
+      name: name,
+      order: order,
+      locationOrders: {},
+      keywords: [],
+      color: null,
+      iconName: null,
+    );
     await docRef.set(category, SetOptions(merge: true));
     return category;
   }
@@ -133,7 +145,9 @@ class GroupCategoryUpdate {
     required GroupCategory category,
   }) async {
     final docRef = database.categoryReference(
-        categoryAxisID: categoryAxisID, categoryID: categoryID);
+      categoryAxisID: categoryAxisID,
+      categoryID: categoryID,
+    );
     await docRef.set(category, SetOptions(merge: true));
   }
 }
@@ -154,7 +168,9 @@ class GroupCategoryDelete {
     required String categoryID,
   }) async {
     final docRef = database.categoryReference(
-        categoryAxisID: categoryAxisID, categoryID: categoryID);
+      categoryAxisID: categoryAxisID,
+      categoryID: categoryID,
+    );
     await docRef.delete();
   }
 }
@@ -178,7 +194,9 @@ class GroupCategoryBatchUpdate {
 
     for (final category in categories) {
       final docRef = database.categoryReference(
-          categoryAxisID: categoryAxisID, categoryID: category.id);
+        categoryAxisID: categoryAxisID,
+        categoryID: category.id,
+      );
       batch.set(docRef, category, SetOptions(merge: true));
     }
 
@@ -187,8 +205,10 @@ class GroupCategoryBatchUpdate {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-GroupCategoryBatchUpdate groupCategoryBatchUpdate(Ref ref,
-    {required String groupID}) {
+GroupCategoryBatchUpdate groupCategoryBatchUpdate(
+  Ref ref, {
+  required String groupID,
+}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupCategoryBatchUpdate(database: database);
 }
@@ -235,18 +255,22 @@ class AICategorizeApply {
     }
 
     // 2. 既存カテゴリを取得し、名前→カテゴリ の対応を作る
-    final existing = (await database
-            .categoriesReference(categoryAxisID: axisID)
-            .orderBy(GroupCategoryFirestoreKeys.order)
-            .get())
-        .docs
-        .map((doc) => doc.data())
-        .toList();
+    final existing =
+        (await database
+                .categoriesReference(categoryAxisID: axisID)
+                .orderBy(GroupCategoryFirestoreKeys.order)
+                .get())
+            .docs
+            .map((doc) => doc.data())
+            .toList();
     final categoryByName = {
-      for (final category in existing) category.name: category
+      for (final category in existing) category.name: category,
     };
-    var nextOrder = existing.fold<int>(-1,
-            (max, category) => category.order > max ? category.order : max) +
+    var nextOrder =
+        existing.fold<int>(
+          -1,
+          (max, category) => category.order > max ? category.order : max,
+        ) +
         1;
 
     // 3. assignments に登場するカテゴリ名のうち未作成のものを作成
@@ -280,7 +304,9 @@ class AICategorizeApply {
     }
     for (final entry in itemNamesByCategoryName.entries) {
       final docRef = database.categoryReference(
-          categoryAxisID: axisID, categoryID: categoryByName[entry.key]!.id);
+        categoryAxisID: axisID,
+        categoryID: categoryByName[entry.key]!.id,
+      );
       // 同時編集でキーワードが消えないよう read-modify-write を transaction で行う
       // （firestore-transaction.md: group 配下の同時書き込み対策）。
       await FirebaseFirestore.instance.runTransaction((transaction) async {
@@ -293,10 +319,12 @@ class AICategorizeApply {
             current.keywords.map((keyword) => keyword.keyword).toSet();
         final addedKeywords = entry.value
             .where((itemName) => !existingKeywords.contains(itemName))
-            .map((itemName) => GroupCategoryKeyword(
-                  keyword: itemName,
-                  matchingType: GroupCategoryKeywordMatchingType.exact,
-                ));
+            .map(
+              (itemName) => GroupCategoryKeyword(
+                keyword: itemName,
+                matchingType: GroupCategoryKeywordMatchingType.exact,
+              ),
+            );
         transaction.set(
           docRef,
           current.copyWith(keywords: [...current.keywords, ...addedKeywords]),
@@ -325,22 +353,28 @@ List<GroupCategoryKeyword>? keywordsAfterItemMove({
 }) {
   final keywords = [...category.keywords];
   if (category.id == destinationCategoryID) {
-    final alreadyHasExact = keywords.any((keyword) =>
-        keyword.keyword == itemMessage &&
-        keyword.matchingType == GroupCategoryKeywordMatchingType.exact);
+    final alreadyHasExact = keywords.any(
+      (keyword) =>
+          keyword.keyword == itemMessage &&
+          keyword.matchingType == GroupCategoryKeywordMatchingType.exact,
+    );
     if (alreadyHasExact) {
       return null;
     }
-    keywords.add(GroupCategoryKeyword(
-      keyword: itemMessage,
-      matchingType: GroupCategoryKeywordMatchingType.exact,
-    ));
+    keywords.add(
+      GroupCategoryKeyword(
+        keyword: itemMessage,
+        matchingType: GroupCategoryKeywordMatchingType.exact,
+      ),
+    );
     return keywords;
   }
   final lengthBeforeRemove = keywords.length;
-  keywords.removeWhere((keyword) =>
-      keyword.keyword == itemMessage &&
-      keyword.matchingType == GroupCategoryKeywordMatchingType.exact);
+  keywords.removeWhere(
+    (keyword) =>
+        keyword.keyword == itemMessage &&
+        keyword.matchingType == GroupCategoryKeywordMatchingType.exact,
+  );
   return keywords.length == lengthBeforeRemove ? null : keywords;
 }
 
@@ -368,8 +402,12 @@ class MoveItemCategoryKeyword {
       // transaction の制約により read を全て先に行う。
       final currentByCategoryID = <String, GroupCategory>{};
       for (final category in categories) {
-        final snapshot = await transaction.get(database.categoryReference(
-            categoryAxisID: categoryAxisID, categoryID: category.id));
+        final snapshot = await transaction.get(
+          database.categoryReference(
+            categoryAxisID: categoryAxisID,
+            categoryID: category.id,
+          ),
+        );
         final current = snapshot.data();
         if (current != null) {
           currentByCategoryID[category.id] = current;
@@ -387,7 +425,9 @@ class MoveItemCategoryKeyword {
         }
         transaction.set(
           database.categoryReference(
-              categoryAxisID: categoryAxisID, categoryID: entry.key),
+            categoryAxisID: categoryAxisID,
+            categoryID: entry.key,
+          ),
           entry.value.copyWith(keywords: updatedKeywords),
           SetOptions(merge: true),
         );
@@ -397,8 +437,10 @@ class MoveItemCategoryKeyword {
 }
 
 @Riverpod(dependencies: [groupDatabase])
-MoveItemCategoryKeyword moveItemCategoryKeyword(Ref ref,
-    {required String groupID}) {
+MoveItemCategoryKeyword moveItemCategoryKeyword(
+  Ref ref, {
+  required String groupID,
+}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return MoveItemCategoryKeyword(database: database);
 }

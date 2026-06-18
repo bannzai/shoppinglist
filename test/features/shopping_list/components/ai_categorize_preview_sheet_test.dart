@@ -18,18 +18,19 @@ void main() {
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: Builder(
-            builder: (context) => Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  captured = await showAICategorizePreviewSheet(
-                    context: context,
-                    categorized: categorized,
-                    existingCategoryNames: existingCategoryNames,
-                  );
-                },
-                child: const Text('open'),
-              ),
-            ),
+            builder:
+                (context) => Center(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      captured = await showAICategorizePreviewSheet(
+                        context: context,
+                        categorized: categorized,
+                        existingCategoryNames: existingCategoryNames,
+                      );
+                    },
+                    child: const Text('open'),
+                  ),
+                ),
           ),
         ),
       ),
@@ -83,20 +84,19 @@ void main() {
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: Builder(
-            builder: (context) => Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  captured = await showAICategorizePreviewSheet(
-                    context: context,
-                    categorized: const [
-                      (name: 'にんじん', categoryName: '野菜'),
-                    ],
-                    existingCategoryNames: const [],
-                  );
-                },
-                child: const Text('open'),
-              ),
-            ),
+            builder:
+                (context) => Center(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      captured = await showAICategorizePreviewSheet(
+                        context: context,
+                        categorized: const [(name: 'にんじん', categoryName: '野菜')],
+                        existingCategoryNames: const [],
+                      );
+                    },
+                    child: const Text('open'),
+                  ),
+                ),
           ),
         ),
       ),
@@ -117,9 +117,7 @@ void main() {
   testWidgets('キャンセルでシートが閉じる', (tester) async {
     await pumpSheet(
       tester,
-      categorized: const [
-        (name: 'にんじん', categoryName: '野菜'),
-      ],
+      categorized: const [(name: 'にんじん', categoryName: '野菜')],
       existingCategoryNames: const [],
     );
     expect(find.text('1 件を登録'), findsOneWidget);

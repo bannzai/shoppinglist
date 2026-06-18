@@ -19,48 +19,46 @@ GroupCategory _category({
   required String name,
   required int order,
   required List<String> keywords,
-}) =>
-    GroupCategory(
-      id: id,
-      groupID: mockGroupID,
-      userID: mockUserID,
-      groupCategoryAxisID: mockCategoryAxisID,
-      name: name,
-      order: order,
-      locationOrders: const {},
-      keywords: [
-        for (final keyword in keywords)
-          GroupCategoryKeyword(
-            keyword: keyword,
-            matchingType: GroupCategoryKeywordMatchingType.exact,
-          ),
-      ],
-      color: null,
-      iconName: null,
-    );
+}) => GroupCategory(
+  id: id,
+  groupID: mockGroupID,
+  userID: mockUserID,
+  groupCategoryAxisID: mockCategoryAxisID,
+  name: name,
+  order: order,
+  locationOrders: const {},
+  keywords: [
+    for (final keyword in keywords)
+      GroupCategoryKeyword(
+        keyword: keyword,
+        matchingType: GroupCategoryKeywordMatchingType.exact,
+      ),
+  ],
+  color: null,
+  iconName: null,
+);
 
 GroupShoppingListItem _item({
   required String id,
   required String message,
   required int order,
-}) =>
-    GroupShoppingListItem(
-      id: id,
-      groupID: mockGroupID,
-      shoppingListID: mockShoppingListID,
-      userID: mockUserID,
-      message: message,
-      order: order,
-      checkedByUserID: null,
-      color: null,
-      description: null,
-      imageURL: null,
-      lastEditedByUserID: null,
-    );
+}) => GroupShoppingListItem(
+  id: id,
+  groupID: mockGroupID,
+  shoppingListID: mockShoppingListID,
+  userID: mockUserID,
+  message: message,
+  order: order,
+  checkedByUserID: null,
+  color: null,
+  description: null,
+  imageURL: null,
+  lastEditedByUserID: null,
+);
 
 class _SpyMoveItemCategoryKeyword extends MoveItemCategoryKeyword {
   _SpyMoveItemCategoryKeyword()
-      : super(database: GroupDatabase(groupID: mockGroupID));
+    : super(database: GroupDatabase(groupID: mockGroupID));
 
   final List<({String itemMessage, String? destinationCategoryID})> calls = [];
 
@@ -105,7 +103,8 @@ void main() {
   ];
 
   Future<({_SpyMoveItemCategoryKeyword move, _SpyBatchUpdate batch})> pump(
-      WidgetTester tester) async {
+    WidgetTester tester,
+  ) async {
     // ignore: invalid_use_of_visible_for_testing_member
     SharedPreferences.setMockInitialValues({});
     final sharedPreferences = await SharedPreferences.getInstance();
@@ -116,15 +115,19 @@ void main() {
         overrides: [
           ...previewProviderOverrides(sharedPreferences: sharedPreferences),
           groupCategoriesProvider(
-                  groupID: mockGroupID, categoryAxisID: mockCategoryAxisID)
-              .overrideWith((ref) => Stream.value(categories)),
+            groupID: mockGroupID,
+            categoryAxisID: mockCategoryAxisID,
+          ).overrideWith((ref) => Stream.value(categories)),
           textShoppingListItemsProvider(
-                  groupID: mockGroupID, shoppingListID: mockShoppingListID)
-              .overrideWith((ref) => Stream.value(items)),
-          moveItemCategoryKeywordProvider(groupID: mockGroupID)
-              .overrideWith((ref) => spyMove),
-          shoppingListItemBatchUpdateProvider(groupID: mockGroupID)
-              .overrideWith((ref) => spyBatch),
+            groupID: mockGroupID,
+            shoppingListID: mockShoppingListID,
+          ).overrideWith((ref) => Stream.value(items)),
+          moveItemCategoryKeywordProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => spyMove),
+          shoppingListItemBatchUpdateProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => spyBatch),
         ],
         child: MaterialApp(
           theme: buildAppTheme(accent: AccentPreset.shu),
@@ -145,12 +148,16 @@ void main() {
   /// 長押し→指定オフセットへドラッグ→離す。
   /// 行の中央は TextField があり長押しがそちらに取られるため、左端(行パディング)を掴む。
   Future<void> longPressDrag(
-      WidgetTester tester, Finder from, double dy) async {
+    WidgetTester tester,
+    Finder from,
+    double dy,
+  ) async {
     final rect = tester.getRect(from);
     final start = Offset(rect.left + 6, rect.center.dy);
     final gesture = await tester.startGesture(start);
-    await tester
-        .pump(const Duration(milliseconds: 600)); // 長押し成立(>kLongPressTimeout)
+    await tester.pump(
+      const Duration(milliseconds: 600),
+    ); // 長押し成立(>kLongPressTimeout)
     await tester.pump(const Duration(milliseconds: 100));
     // 1 ステップ目は touch slop を超えるため少し大きめに(ドラッグ方向へ)動かして始動する。
     final kick = dy.isNegative ? -24.0 : 24.0;
@@ -178,21 +185,36 @@ void main() {
     final spies = await pump(tester);
     // トマト(野菜の2番目)を上へドラッグして にんじん の上へ。野菜カテゴリ内に留まる。
     await longPressDrag(
-        tester, find.byKey(const ValueKey('item_item-tomato')), -60);
+      tester,
+      find.byKey(const ValueKey('item_item-tomato')),
+      -60,
+    );
     // onReorder が発火し order は永続化される。
-    expect(spies.batch.batches, isNotEmpty,
-        reason: '同一カテゴリ内ドラッグで onReorder が発火していない(=ドラッグ機構が起動していない)');
+    expect(
+      spies.batch.batches,
+      isNotEmpty,
+      reason: '同一カテゴリ内ドラッグで onReorder が発火していない(=ドラッグ機構が起動していない)',
+    );
     // 同一カテゴリ内なのでキーワード付け替え(カテゴリ移動)は呼ばれない。
-    expect(spies.move.calls, isEmpty,
-        reason: '同一カテゴリ内なのに moveItemCategoryKeyword が呼ばれている');
+    expect(
+      spies.move.calls,
+      isEmpty,
+      reason: '同一カテゴリ内なのに moveItemCategoryKeyword が呼ばれている',
+    );
   });
 
   testWidgets('にんじんを肉セクションへドラッグすると 肉(cat-meat) へ移動する', (tester) async {
     final spies = await pump(tester);
     await longPressDrag(
-        tester, find.byKey(const ValueKey('item_item-carrot')), 400);
-    expect(spies.move.calls, isNotEmpty,
-        reason: 'カテゴリ間ドラッグで moveItemCategoryKeyword が呼ばれていない');
+      tester,
+      find.byKey(const ValueKey('item_item-carrot')),
+      400,
+    );
+    expect(
+      spies.move.calls,
+      isNotEmpty,
+      reason: 'カテゴリ間ドラッグで moveItemCategoryKeyword が呼ばれていない',
+    );
     expect(spies.move.calls.last.destinationCategoryID, 'cat-meat');
   });
 
@@ -201,7 +223,10 @@ void main() {
     // にんじんが 肉 ヘッダーより下＝肉セクション内に来ていれば楽観反映できている。
     await pump(tester);
     await longPressDrag(
-        tester, find.byKey(const ValueKey('item_item-carrot')), 400);
+      tester,
+      find.byKey(const ValueKey('item_item-carrot')),
+      400,
+    );
     expect(
       tester.getCenter(find.text('にんじん')).dy,
       greaterThan(tester.getCenter(find.text('肉')).dy),
@@ -213,7 +238,10 @@ void main() {
     // トマト(野菜の2番目)を上へドラッグして にんじん の上へ。楽観 order で並びが先に反映される。
     await pump(tester);
     await longPressDrag(
-        tester, find.byKey(const ValueKey('item_item-tomato')), -60);
+      tester,
+      find.byKey(const ValueKey('item_item-tomato')),
+      -60,
+    );
     expect(
       tester.getCenter(find.text('トマト')).dy,
       lessThan(tester.getCenter(find.text('にんじん')).dy),

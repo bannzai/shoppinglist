@@ -16,9 +16,13 @@ import 'package:url_launcher/url_launcher.dart';
 void inquiry() {
   PackageInfo.fromPlatform().then((value) => debugInfo(', ')).then((info) {
     launchUrl(
-        Uri.parse(Uri.encodeFull(
-            'https://docs.google.com/forms/d/e/1FAIpQLSdokN_G4rRbtBvpYw8r8emBcXWLac1iNq2u3g1Z6iM05NgBAQ/viewform?usp=pp_url&entry.1233153512=$info')),
-        mode: LaunchMode.externalApplication);
+      Uri.parse(
+        Uri.encodeFull(
+          'https://docs.google.com/forms/d/e/1FAIpQLSdokN_G4rRbtBvpYw8r8emBcXWLac1iNq2u3g1Z6iM05NgBAQ/viewform?usp=pp_url&entry.1233153512=$info',
+        ),
+      ),
+      mode: LaunchMode.externalApplication,
+    );
   });
 }
 
@@ -27,7 +31,8 @@ Future<String> debugInfo(String separator) async {
   if (userID == null) {
     final sharedPreferences = await SharedPreferences.getInstance();
     return Future.value(
-        'DEBUG INFO user is not found. lastest last login id ${sharedPreferences.getString(StringKey.lastSignInFirebaseAuthUserID)}');
+      'DEBUG INFO user is not found. lastest last login id ${sharedPreferences.getString(StringKey.lastSignInFirebaseAuthUserID)}',
+    );
   }
 
   UserDatabase databaseConnection = UserDatabase(userID: userID);
@@ -65,20 +70,19 @@ class InquiryButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return TextButton.icon(
-      icon: const Icon(
-        Icons.mail,
-        size: 20,
-      ),
+      icon: const Icon(Icons.mail, size: 20),
       label: Text(
         'お問い合わせ',
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w300,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
+          fontWeight: FontWeight.w300,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
       ),
       onPressed: () {
         analytics.logEvent(
-            name: 'problem_unresolved_button_pressed', parameters: null);
+          name: 'problem_unresolved_button_pressed',
+          parameters: null,
+        );
         inquiry();
       },
     );

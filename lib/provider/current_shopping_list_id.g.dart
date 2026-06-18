@@ -16,14 +16,15 @@ String _$currentShoppingListIDHash() =>
 @ProviderFor(CurrentShoppingListID)
 final currentShoppingListIDProvider =
     AutoDisposeNotifierProvider<CurrentShoppingListID, String?>.internal(
-  CurrentShoppingListID.new,
-  name: r'currentShoppingListIDProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$currentShoppingListIDHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      CurrentShoppingListID.new,
+      name: r'currentShoppingListIDProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$currentShoppingListIDHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$CurrentShoppingListID = AutoDisposeNotifier<String?>;
 // ignore_for_file: type=lint

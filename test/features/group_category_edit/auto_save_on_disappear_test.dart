@@ -14,17 +14,17 @@ const _testUserID = 'test-user-001';
 const _testCategoryID = 'cat-001';
 
 GroupCategory _testCategory({String name = '食品'}) => GroupCategory(
-      id: _testCategoryID,
-      groupID: _testGroupID,
-      userID: _testUserID,
-      groupCategoryAxisID: _testCategoryAxisID,
-      name: name,
-      order: 0,
-      locationOrders: const {},
-      keywords: const [],
-      color: null,
-      iconName: null,
-    );
+  id: _testCategoryID,
+  groupID: _testGroupID,
+  userID: _testUserID,
+  groupCategoryAxisID: _testCategoryAxisID,
+  name: name,
+  order: 0,
+  locationOrders: const {},
+  keywords: const [],
+  color: null,
+  iconName: null,
+);
 
 /// 自動保存(disappear)で呼ばれた更新引数を記録するスパイ。
 class _SpyCategoryUpdate extends GroupCategoryUpdate {
@@ -45,13 +45,12 @@ class _SpyCategoryUpdate extends GroupCategoryUpdate {
 }
 
 List<Override> _overrides(_SpyCategoryUpdate spy, {String name = '食品'}) => [
-      groupCategoriesProvider(
-        groupID: _testGroupID,
-        categoryAxisID: _testCategoryAxisID,
-      ).overrideWith((ref) => Stream.value([_testCategory(name: name)])),
-      groupCategoryUpdateProvider(groupID: _testGroupID)
-          .overrideWith((ref) => spy),
-    ];
+  groupCategoriesProvider(
+    groupID: _testGroupID,
+    categoryAxisID: _testCategoryAxisID,
+  ).overrideWith((ref) => Stream.value([_testCategory(name: name)])),
+  groupCategoryUpdateProvider(groupID: _testGroupID).overrideWith((ref) => spy),
+];
 
 /// ホーム画面のボタンから編集画面を push する。AppBar の戻るボタンを出すことで
 /// `tester.pageBack()` による pop(画面離脱)を検証できるようにする。
@@ -66,20 +65,23 @@ Future<void> _pumpAndOpenEditPage(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: Builder(
-            builder: (context) => Center(
-              child: ElevatedButton(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => const GroupCategoryEditPage(
-                      groupID: _testGroupID,
-                      categoryAxisID: _testCategoryAxisID,
-                      categoryID: _testCategoryID,
-                    ),
+            builder:
+                (context) => Center(
+                  child: ElevatedButton(
+                    onPressed:
+                        () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder:
+                                (_) => const GroupCategoryEditPage(
+                                  groupID: _testGroupID,
+                                  categoryAxisID: _testCategoryAxisID,
+                                  categoryID: _testCategoryID,
+                                ),
+                          ),
+                        ),
+                    child: const Text('open'),
                   ),
                 ),
-                child: const Text('open'),
-              ),
-            ),
           ),
         ),
       ),

@@ -71,30 +71,30 @@ class AppPill extends StatelessWidget {
     final (bg, fg, side) = switch (variant) {
       AppPillVariant.accent => (tokens.accent, Colors.white, BorderSide.none),
       AppPillVariant.soft => (
-          tokens.accentSoft,
-          tokens.accentInk,
-          BorderSide.none,
-        ),
+        tokens.accentSoft,
+        tokens.accentInk,
+        BorderSide.none,
+      ),
       AppPillVariant.danger => (
-          neutral.dangerSoft,
-          neutral.danger,
-          BorderSide.none,
-        ),
+        neutral.dangerSoft,
+        neutral.danger,
+        BorderSide.none,
+      ),
       AppPillVariant.dangerSolid => (
-          neutral.danger,
-          Colors.white,
-          BorderSide.none,
-        ),
+        neutral.danger,
+        Colors.white,
+        BorderSide.none,
+      ),
       AppPillVariant.ghost => (
-          Colors.transparent,
-          neutral.ink,
-          BorderSide(color: neutral.divider),
-        ),
+        Colors.transparent,
+        neutral.ink,
+        BorderSide(color: neutral.divider),
+      ),
       AppPillVariant.neutral => (
-          neutral.surface2,
-          neutral.ink,
-          BorderSide(color: neutral.divider),
-        ),
+        neutral.surface2,
+        neutral.ink,
+        BorderSide(color: neutral.divider),
+      ),
     };
 
     return Opacity(
@@ -123,10 +123,10 @@ class AppPill extends StatelessWidget {
                             ? Theme.of(context).textTheme.bodyLarge
                             : Theme.of(context).textTheme.labelLarge)
                         ?.copyWith(
-                      color: fg,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.005,
-                    ),
+                          color: fg,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.005,
+                        ),
                   ),
                   if (trailingIcon != null) ...[
                     const SizedBox(width: 6),

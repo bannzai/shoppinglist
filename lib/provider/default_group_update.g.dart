@@ -13,17 +13,18 @@ String _$defaultGroupUpdateHash() =>
 @ProviderFor(defaultGroupUpdate)
 final defaultGroupUpdateProvider =
     AutoDisposeProvider<DefaultGroupUpdate>.internal(
-  defaultGroupUpdate,
-  name: r'defaultGroupUpdateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$defaultGroupUpdateHash,
-  dependencies: <ProviderOrFamily>[userDatabaseProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    userDatabaseProvider,
-    ...?userDatabaseProvider.allTransitiveDependencies
-  },
-);
+      defaultGroupUpdate,
+      name: r'defaultGroupUpdateProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$defaultGroupUpdateHash,
+      dependencies: <ProviderOrFamily>[userDatabaseProvider],
+      allTransitiveDependencies: <ProviderOrFamily>{
+        userDatabaseProvider,
+        ...?userDatabaseProvider.allTransitiveDependencies,
+      },
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element

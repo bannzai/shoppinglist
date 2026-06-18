@@ -41,58 +41,59 @@ class DeleteConfirmDialog extends StatelessWidget {
           Text(
             'このリストを削除しますか?',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: neutral.ink,
-                ),
+              fontWeight: FontWeight.w700,
+              color: neutral.ink,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             '「$shoppingListName」とその中の $itemCount件 のアイテムが削除されます。元に戻せません。',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: neutral.ink2,
-                  height: 1.6,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: neutral.ink2, height: 1.6),
           ),
           const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
                 child: AppPill(
-                    label: 'キャンセル',
-                    variant: AppPillVariant.ghost,
-                    large: true,
-                    expanded: true,
-                    onPressed: () {
-                      analytics.logEvent(
-                        name: 'cancel_delete_list',
-                        parameters: {
-                          'groupID': groupID,
-                          'shoppingListID': shoppingListID,
-                        },
-                      );
-                      Navigator.pop(context);
-                    },
-                    icon: null),
+                  label: 'キャンセル',
+                  variant: AppPillVariant.ghost,
+                  large: true,
+                  expanded: true,
+                  onPressed: () {
+                    analytics.logEvent(
+                      name: 'cancel_delete_list',
+                      parameters: {
+                        'groupID': groupID,
+                        'shoppingListID': shoppingListID,
+                      },
+                    );
+                    Navigator.pop(context);
+                  },
+                  icon: null,
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: AppPill(
-                    label: '削除',
-                    variant: AppPillVariant.dangerSolid,
-                    large: true,
-                    expanded: true,
-                    onPressed: () {
-                      analytics.logEvent(
-                        name: 'tap_confirm_delete_list',
-                        parameters: {
-                          'groupID': groupID,
-                          'shoppingListID': shoppingListID,
-                        },
-                      );
-                      onConfirm();
-                    },
-                    icon: null),
+                  label: '削除',
+                  variant: AppPillVariant.dangerSolid,
+                  large: true,
+                  expanded: true,
+                  onPressed: () {
+                    analytics.logEvent(
+                      name: 'tap_confirm_delete_list',
+                      parameters: {
+                        'groupID': groupID,
+                        'shoppingListID': shoppingListID,
+                      },
+                    );
+                    onConfirm();
+                  },
+                  icon: null,
+                ),
               ),
             ],
           ),

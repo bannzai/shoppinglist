@@ -12,10 +12,7 @@ import 'package:shoppinglist/provider/shopping_list.dart';
 class AppEntityPrepareResolver extends HookConsumerWidget {
   final Widget Function(BuildContext context) builder;
 
-  const AppEntityPrepareResolver({
-    super.key,
-    required this.builder,
-  });
+  const AppEntityPrepareResolver({super.key, required this.builder});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,23 +22,28 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
     final firestoreIsPremiumAsync = ref.watch(firestoreIsPremiumProvider);
     final isPremium = firestoreIsPremiumAsync.asData?.value;
 
-    final shoppingListAdd = appUserDefaultGroupID != null
-        ? ref.watch(shoppingListAddProvider(groupID: appUserDefaultGroupID))
-        : null;
-    final shoppingLists = (appUserDefaultGroupID != null && isPremium != null)
-        ? ref.watch(shoppingListsProvider(
-            groupID: appUserDefaultGroupID,
-            isPremium: isPremium,
-          ))
-        : null;
+    final shoppingListAdd =
+        appUserDefaultGroupID != null
+            ? ref.watch(shoppingListAddProvider(groupID: appUserDefaultGroupID))
+            : null;
+    final shoppingLists =
+        (appUserDefaultGroupID != null && isPremium != null)
+            ? ref.watch(
+              shoppingListsProvider(
+                groupID: appUserDefaultGroupID,
+                isPremium: isPremium,
+              ),
+            )
+            : null;
 
     // FCMトークン登録: appUserが取得できたらFCMトークンをFirestoreに保存し、トークン更新を監視する
     // 依存配列: [appUser] — appUserがnullから値に変わった時に実行。再実行時は前回のリフレッシュリスナーをキャンセル
     final userDatabase = ref.watch(userDatabaseProvider);
     useEffect(() {
       if (appUser != null) {
-        final fcmRegistration =
-            FcmTokenRegistration(userDatabase: userDatabase);
+        final fcmRegistration = FcmTokenRegistration(
+          userDatabase: userDatabase,
+        );
         fcmRegistration.registerToken();
         final subscription = fcmRegistration.listenTokenRefresh();
         return subscription.cancel;
@@ -57,10 +59,11 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
             shoppingLists is AsyncData &&
             shoppingLists?.value?.isEmpty == true) {
           await shoppingListAdd(
-              createUserID: appUser.id,
-              groupID: appUserDefaultGroupID,
-              shoppingLocationID: null,
-              duplicatedFromGroupShoppingListID: null);
+            createUserID: appUser.id,
+            groupID: appUserDefaultGroupID,
+            shoppingLocationID: null,
+            duplicatedFromGroupShoppingListID: null,
+          );
         }
       }
 

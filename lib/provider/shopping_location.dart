@@ -7,8 +7,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'shopping_location.g.dart';
 
 @Riverpod(dependencies: [groupDatabase])
-Stream<List<GroupShoppingLocation>> shoppingLocations(Ref ref,
-    {required String groupID}) {
+Stream<List<GroupShoppingLocation>> shoppingLocations(
+  Ref ref, {
+  required String groupID,
+}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return database
       .shoppingLocationsReference()
@@ -75,14 +77,17 @@ class ShoppingLocationUpdate {
     required GroupShoppingLocation shoppingLocation,
   }) async {
     final docRef = database.shoppingLocationReference(
-        shoppingLocationID: shoppingLocationID);
+      shoppingLocationID: shoppingLocationID,
+    );
     await docRef.set(shoppingLocation, SetOptions(merge: true));
   }
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingLocationUpdate shoppingLocationUpdate(Ref ref,
-    {required String groupID}) {
+ShoppingLocationUpdate shoppingLocationUpdate(
+  Ref ref, {
+  required String groupID,
+}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingLocationUpdate(database: database);
 }
@@ -94,14 +99,17 @@ class ShoppingLocationDelete {
 
   Future<void> call({required String shoppingLocationID}) async {
     final docRef = database.shoppingLocationReference(
-        shoppingLocationID: shoppingLocationID);
+      shoppingLocationID: shoppingLocationID,
+    );
     await docRef.delete();
   }
 }
 
 @Riverpod(dependencies: [groupDatabase])
-ShoppingLocationDelete shoppingLocationDelete(Ref ref,
-    {required String groupID}) {
+ShoppingLocationDelete shoppingLocationDelete(
+  Ref ref, {
+  required String groupID,
+}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingLocationDelete(database: database);
 }

@@ -19,31 +19,31 @@ const _testUserID = 'test-user-001';
 const _testShoppingListID = 'test-list-001';
 
 List<GroupCategory> _testCategories() => const [
-      GroupCategory(
-        id: 'cat-001',
-        groupID: _testGroupID,
-        userID: _testUserID,
-        groupCategoryAxisID: _testCategoryAxisID,
-        name: '食品',
-        order: 0,
-        locationOrders: {},
-        keywords: [],
-        color: null,
-        iconName: null,
-      ),
-      GroupCategory(
-        id: 'cat-002',
-        groupID: _testGroupID,
-        userID: _testUserID,
-        groupCategoryAxisID: _testCategoryAxisID,
-        name: '飲料',
-        order: 1,
-        locationOrders: {},
-        keywords: [],
-        color: null,
-        iconName: null,
-      ),
-    ];
+  GroupCategory(
+    id: 'cat-001',
+    groupID: _testGroupID,
+    userID: _testUserID,
+    groupCategoryAxisID: _testCategoryAxisID,
+    name: '食品',
+    order: 0,
+    locationOrders: {},
+    keywords: [],
+    color: null,
+    iconName: null,
+  ),
+  GroupCategory(
+    id: 'cat-002',
+    groupID: _testGroupID,
+    userID: _testUserID,
+    groupCategoryAxisID: _testCategoryAxisID,
+    name: '飲料',
+    order: 1,
+    locationOrders: {},
+    keywords: [],
+    color: null,
+    iconName: null,
+  ),
+];
 
 GroupShoppingListItem _testItem({required String message}) =>
     GroupShoppingListItem(
@@ -62,33 +62,34 @@ GroupShoppingListItem _testItem({required String message}) =>
 
 /// カテゴリ画面表示に必要な最小限の provider overrides。
 List<Override> _baseOverrides() => [
-      customerInfoProvider
-          .overrideWith((ref) => const Stream<CustomerInfo>.empty()),
-      userDatabaseProvider
-          .overrideWith((ref) => UserDatabase(userID: _testUserID)),
-      groupCategoryAxesProvider(groupID: _testGroupID).overrideWith(
-        (ref) => Stream.value(const [
-          GroupCategoryAxis(
-            id: _testCategoryAxisID,
-            groupID: _testGroupID,
-            userID: _testUserID,
-            name: '売り場',
-            order: 0,
-          ),
-        ]),
-      ),
-      groupCategoriesProvider(
+  customerInfoProvider.overrideWith(
+    (ref) => const Stream<CustomerInfo>.empty(),
+  ),
+  userDatabaseProvider.overrideWith((ref) => UserDatabase(userID: _testUserID)),
+  groupCategoryAxesProvider(groupID: _testGroupID).overrideWith(
+    (ref) => Stream.value(const [
+      GroupCategoryAxis(
+        id: _testCategoryAxisID,
         groupID: _testGroupID,
-        categoryAxisID: _testCategoryAxisID,
-      ).overrideWith((ref) => Stream.value(_testCategories())),
-      shoppingLocationsProvider(groupID: _testGroupID)
-          .overrideWith((ref) => Stream.value(const [])),
-    ];
+        userID: _testUserID,
+        name: '売り場',
+        order: 0,
+      ),
+    ]),
+  ),
+  groupCategoriesProvider(
+    groupID: _testGroupID,
+    categoryAxisID: _testCategoryAxisID,
+  ).overrideWith((ref) => Stream.value(_testCategories())),
+  shoppingLocationsProvider(
+    groupID: _testGroupID,
+  ).overrideWith((ref) => Stream.value(const [])),
+];
 
 /// 選択モードで呼ばれたカテゴリ付け替えの引数を記録するスパイ。
 class _SpyMoveItemCategoryKeyword extends MoveItemCategoryKeyword {
   _SpyMoveItemCategoryKeyword()
-      : super(database: GroupDatabase(groupID: _testGroupID));
+    : super(database: GroupDatabase(groupID: _testGroupID));
 
   int callCount = 0;
   String? calledDestinationCategoryID;
@@ -115,8 +116,9 @@ void main() {
         ProviderScope(
           overrides: [
             ..._baseOverrides(),
-            moveItemCategoryKeywordProvider(groupID: _testGroupID)
-                .overrideWith((ref) => spy),
+            moveItemCategoryKeywordProvider(
+              groupID: _testGroupID,
+            ).overrideWith((ref) => spy),
           ],
           child: MaterialApp(
             theme: buildAppTheme(accent: AccentPreset.shu),
@@ -147,8 +149,9 @@ void main() {
         ProviderScope(
           overrides: [
             ..._baseOverrides(),
-            moveItemCategoryKeywordProvider(groupID: _testGroupID)
-                .overrideWith((ref) => spy),
+            moveItemCategoryKeywordProvider(
+              groupID: _testGroupID,
+            ).overrideWith((ref) => spy),
           ],
           child: MaterialApp(
             theme: buildAppTheme(accent: AccentPreset.shu),

@@ -13,31 +13,37 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: Builder(
-            builder: (context) => Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: const Text(message),
-                      persist: persist,
-                      action:
-                          SnackBarAction(label: 'アップグレード', onPressed: () {}),
-                    ),
-                  );
-                },
-                child: const Text('show'),
-              ),
-            ),
+            builder:
+                (context) => Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text(message),
+                          persist: persist,
+                          action: SnackBarAction(
+                            label: 'アップグレード',
+                            onPressed: () {},
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text('show'),
+                  ),
+                ),
           ),
         ),
       ),
     );
   }
 
-  testWidgets('A: action付きSnackBar(persist未指定=デフォルトtrue)は10秒待っても消えない',
-      (tester) async {
-    await pumpButton(tester,
-        persist: null); // 未指定 → action!=null で persist=true
+  testWidgets('A: action付きSnackBar(persist未指定=デフォルトtrue)は10秒待っても消えない', (
+    tester,
+  ) async {
+    await pumpButton(
+      tester,
+      persist: null,
+    ); // 未指定 → action!=null で persist=true
     await tester.tap(find.text('show'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300)); // 入場アニメ
@@ -45,8 +51,11 @@ void main() {
 
     // 既定 duration(4秒) を大きく超えて待つ
     await tester.pump(const Duration(seconds: 10));
-    expect(find.text(message), findsOneWidget,
-        reason: 'persist=true により自動消去されない（バグ再現）');
+    expect(
+      find.text(message),
+      findsOneWidget,
+      reason: 'persist=true により自動消去されない（バグ再現）',
+    );
 
     // 後始末: 残った SnackBar を片付ける
     tester.element(find.byType(Scaffold));
@@ -62,7 +71,10 @@ void main() {
     // 4秒 timeout + 退場アニメ
     await tester.pump(const Duration(seconds: 4));
     await tester.pump(const Duration(milliseconds: 500));
-    expect(find.text(message), findsNothing,
-        reason: 'persist:false で自動消去される（修正の実証）');
+    expect(
+      find.text(message),
+      findsNothing,
+      reason: 'persist:false で自動消去される（修正の実証）',
+    );
   });
 }

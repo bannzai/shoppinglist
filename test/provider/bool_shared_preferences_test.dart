@@ -10,9 +10,11 @@ Future<ProviderContainer> _container(Map<String, Object> initialValues) async {
   // ignore: invalid_use_of_visible_for_testing_member
   SharedPreferences.setMockInitialValues(initialValues);
   final sharedPreferences = await SharedPreferences.getInstance();
-  final container = ProviderContainer(overrides: [
-    sharedPreferencesProvider.overrideWith((ref) => sharedPreferences),
-  ]);
+  final container = ProviderContainer(
+    overrides: [
+      sharedPreferencesProvider.overrideWith((ref) => sharedPreferences),
+    ],
+  );
   addTearDown(container.dispose);
   return container;
 }
@@ -22,29 +24,37 @@ void main() {
     test('同じ key は同一の Notifier インスタンスを返す', () async {
       final container = await _container({});
 
-      final first =
-          container.read(boolSharedPreferencesProvider(key: 'foo').notifier);
-      final second =
-          container.read(boolSharedPreferencesProvider(key: 'foo').notifier);
+      final first = container.read(
+        boolSharedPreferencesProvider(key: 'foo').notifier,
+      );
+      final second = container.read(
+        boolSharedPreferencesProvider(key: 'foo').notifier,
+      );
 
       // 同一 key → family キャッシュにより同じインスタンス。
       expect(identical(first, second), isTrue);
       // provider オブジェクト自体も == で等価。
-      expect(boolSharedPreferencesProvider(key: 'foo'),
-          boolSharedPreferencesProvider(key: 'foo'));
+      expect(
+        boolSharedPreferencesProvider(key: 'foo'),
+        boolSharedPreferencesProvider(key: 'foo'),
+      );
     });
 
     test('異なる key は別の Notifier インスタンスを返す', () async {
       final container = await _container({});
 
-      final foo =
-          container.read(boolSharedPreferencesProvider(key: 'foo').notifier);
-      final bar =
-          container.read(boolSharedPreferencesProvider(key: 'bar').notifier);
+      final foo = container.read(
+        boolSharedPreferencesProvider(key: 'foo').notifier,
+      );
+      final bar = container.read(
+        boolSharedPreferencesProvider(key: 'bar').notifier,
+      );
 
       expect(identical(foo, bar), isFalse);
-      expect(boolSharedPreferencesProvider(key: 'foo'),
-          isNot(boolSharedPreferencesProvider(key: 'bar')));
+      expect(
+        boolSharedPreferencesProvider(key: 'foo'),
+        isNot(boolSharedPreferencesProvider(key: 'bar')),
+      );
     });
   });
 
@@ -54,7 +64,9 @@ void main() {
 
       expect(container.read(boolSharedPreferencesProvider(key: 'foo')), isTrue);
       expect(
-          container.read(boolSharedPreferencesProvider(key: 'unset')), isFalse);
+        container.read(boolSharedPreferencesProvider(key: 'unset')),
+        isFalse,
+      );
     });
 
     test('set は値を保存し、key ごとに独立している', () async {
@@ -67,20 +79,25 @@ void main() {
       expect(container.read(boolSharedPreferencesProvider(key: 'foo')), isTrue);
       // 別 key は影響を受けない。
       expect(
-          container.read(boolSharedPreferencesProvider(key: 'bar')), isFalse);
+        container.read(boolSharedPreferencesProvider(key: 'bar')),
+        isFalse,
+      );
     });
 
     test('toggle は現在値を反転する', () async {
       final container = await _container({'foo': false});
-      final notifier =
-          container.read(boolSharedPreferencesProvider(key: 'foo').notifier);
+      final notifier = container.read(
+        boolSharedPreferencesProvider(key: 'foo').notifier,
+      );
 
       await notifier.toggle();
       expect(container.read(boolSharedPreferencesProvider(key: 'foo')), isTrue);
 
       await notifier.toggle();
       expect(
-          container.read(boolSharedPreferencesProvider(key: 'foo')), isFalse);
+        container.read(boolSharedPreferencesProvider(key: 'foo')),
+        isFalse,
+      );
     });
   });
 }

@@ -39,30 +39,31 @@ class _SignOutDialogPreviewState extends State<SignOutDialogPreview> {
                 const SizedBox(height: 12),
                 Text(
                   '再度サインインするまで端末からはリストにアクセスできなくなります。',
-                  style: Theme.of(dialogContext)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: tokens.neutral.ink2),
+                  style: Theme.of(
+                    dialogContext,
+                  ).textTheme.bodyMedium?.copyWith(color: tokens.neutral.ink2),
                 ),
                 const SizedBox(height: 16),
                 Row(
                   children: [
                     Expanded(
                       child: AppPill(
-                          label: 'キャンセル',
-                          variant: AppPillVariant.ghost,
-                          expanded: true,
-                          onPressed: () => Navigator.pop(dialogContext),
-                          icon: null),
+                        label: 'キャンセル',
+                        variant: AppPillVariant.ghost,
+                        expanded: true,
+                        onPressed: () => Navigator.pop(dialogContext),
+                        icon: null,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: AppPill(
-                          label: 'サインアウト',
-                          variant: AppPillVariant.danger,
-                          expanded: true,
-                          onPressed: () => Navigator.pop(dialogContext),
-                          icon: null),
+                        label: 'サインアウト',
+                        variant: AppPillVariant.danger,
+                        expanded: true,
+                        onPressed: () => Navigator.pop(dialogContext),
+                        icon: null,
+                      ),
                     ),
                   ],
                 ),

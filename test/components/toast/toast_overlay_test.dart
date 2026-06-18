@@ -90,14 +90,17 @@ void main() {
     await pumpOverlay(tester);
 
     // モーダルボトムシートを開く（実アプリの appShowModalBottomSheet と同じ showModalBottomSheet route）
-    unawaited(showModalBottomSheet<void>(
-      context: tester.element(find.byType(Scaffold)),
-      isScrollControlled: true,
-      builder: (context) => const SizedBox(
-        height: 400,
-        child: Center(child: Text('シート本体')),
+    unawaited(
+      showModalBottomSheet<void>(
+        context: tester.element(find.byType(Scaffold)),
+        isScrollControlled: true,
+        builder:
+            (context) => const SizedBox(
+              height: 400,
+              child: Center(child: Text('シート本体')),
+            ),
       ),
-    ));
+    );
     await tester.pumpAndSettle();
     expect(find.text('シート本体'), findsOneWidget);
 

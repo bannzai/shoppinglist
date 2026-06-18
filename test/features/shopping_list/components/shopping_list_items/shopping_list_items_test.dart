@@ -37,9 +37,7 @@ Future<void> _pump(WidgetTester tester) async {
     ProviderScope(
       overrides: previewProviderOverrides(sharedPreferences: sharedPreferences),
       child: MaterialApp(
-        theme: buildAppTheme(
-          accent: AccentPreset.shu,
-        ),
+        theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: ShoppingListItems(
             groupID: mockGroupID,
@@ -62,17 +60,16 @@ Future<void> _pumpFlat(WidgetTester tester) async {
     ProviderScope(
       overrides: [
         ...previewProviderOverrides(sharedPreferences: sharedPreferences),
-        groupCategoryAxesProvider(groupID: _noCategoryAxisGroupID)
-            .overrideWith((ref) => Stream.value(const <GroupCategoryAxis>[])),
+        groupCategoryAxesProvider(
+          groupID: _noCategoryAxisGroupID,
+        ).overrideWith((ref) => Stream.value(const <GroupCategoryAxis>[])),
         textShoppingListItemsProvider(
           groupID: _noCategoryAxisGroupID,
           shoppingListID: mockShoppingListID,
         ).overrideWith((ref) => Stream.value(mockShoppingListItems())),
       ],
       child: MaterialApp(
-        theme: buildAppTheme(
-          accent: AccentPreset.shu,
-        ),
+        theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: ShoppingListItems(
             groupID: _noCategoryAxisGroupID,
@@ -99,17 +96,16 @@ Future<void> _pumpFlatWithItems(
     ProviderScope(
       overrides: [
         ...previewProviderOverrides(sharedPreferences: sharedPreferences),
-        groupCategoryAxesProvider(groupID: _noCategoryAxisGroupID)
-            .overrideWith((ref) => Stream.value(const <GroupCategoryAxis>[])),
+        groupCategoryAxesProvider(
+          groupID: _noCategoryAxisGroupID,
+        ).overrideWith((ref) => Stream.value(const <GroupCategoryAxis>[])),
         textShoppingListItemsProvider(
           groupID: _noCategoryAxisGroupID,
           shoppingListID: mockShoppingListID,
         ).overrideWith((ref) => Stream.value(items)),
       ],
       child: MaterialApp(
-        theme: buildAppTheme(
-          accent: AccentPreset.shu,
-        ),
+        theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: ShoppingListItems(
             groupID: _noCategoryAxisGroupID,
@@ -138,21 +134,20 @@ GroupShoppingListItem _item({
   required String id,
   required String message,
   required int order,
-}) =>
-    GroupShoppingListItem(
-      id: id,
-      groupID: mockGroupID,
-      shoppingListID: _customShoppingListID,
-      userID: mockUserID,
-      message: message,
-      order: order,
-      status: GroupShoppingListItemStatus.unchecked,
-      checkedByUserID: null,
-      color: null,
-      description: null,
-      imageURL: null,
-      lastEditedByUserID: null,
-    );
+}) => GroupShoppingListItem(
+  id: id,
+  groupID: mockGroupID,
+  shoppingListID: _customShoppingListID,
+  userID: mockUserID,
+  message: message,
+  order: order,
+  status: GroupShoppingListItemStatus.unchecked,
+  checkedByUserID: null,
+  color: null,
+  description: null,
+  imageURL: null,
+  lastEditedByUserID: null,
+);
 
 /// 任意のアイテムリストでカテゴリ表示の ShoppingListItems を pump する。
 Future<void> _pumpWithItems(
@@ -172,9 +167,7 @@ Future<void> _pumpWithItems(
         ).overrideWith((ref) => Stream.value(items)),
       ],
       child: MaterialApp(
-        theme: buildAppTheme(
-          accent: AccentPreset.shu,
-        ),
+        theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: ShoppingListItems(
             groupID: mockGroupID,
@@ -199,51 +192,49 @@ GroupCategory _categoryWithKeywords({
   required String name,
   required int order,
   required List<String> keywords,
-}) =>
-    GroupCategory(
-      id: id,
-      groupID: _sectionReorderGroupID,
-      userID: mockUserID,
-      groupCategoryAxisID: _sectionReorderAxisID,
-      name: name,
-      order: order,
-      locationOrders: {},
-      keywords: [
-        for (final keyword in keywords)
-          GroupCategoryKeyword(
-            keyword: keyword,
-            matchingType: GroupCategoryKeywordMatchingType.exact,
-          ),
-      ],
-      color: null,
-      iconName: null,
-    );
+}) => GroupCategory(
+  id: id,
+  groupID: _sectionReorderGroupID,
+  userID: mockUserID,
+  groupCategoryAxisID: _sectionReorderAxisID,
+  name: name,
+  order: order,
+  locationOrders: {},
+  keywords: [
+    for (final keyword in keywords)
+      GroupCategoryKeyword(
+        keyword: keyword,
+        matchingType: GroupCategoryKeywordMatchingType.exact,
+      ),
+  ],
+  color: null,
+  iconName: null,
+);
 
 /// セクション並び替えテスト用の確定済みアイテムを生成する。
 GroupShoppingListItem _sectionItem({
   required String id,
   required String message,
   required int order,
-}) =>
-    GroupShoppingListItem(
-      id: id,
-      groupID: _sectionReorderGroupID,
-      shoppingListID: mockShoppingListID,
-      userID: mockUserID,
-      message: message,
-      order: order,
-      status: GroupShoppingListItemStatus.unchecked,
-      checkedByUserID: null,
-      color: null,
-      description: null,
-      imageURL: null,
-      lastEditedByUserID: null,
-    );
+}) => GroupShoppingListItem(
+  id: id,
+  groupID: _sectionReorderGroupID,
+  shoppingListID: mockShoppingListID,
+  userID: mockUserID,
+  message: message,
+  order: order,
+  status: GroupShoppingListItemStatus.unchecked,
+  checkedByUserID: null,
+  color: null,
+  description: null,
+  imageURL: null,
+  lastEditedByUserID: null,
+);
 
 /// セクション並び替えの永続化呼び出しを記録するフェイク。
 class _RecordingCategoryBatchUpdate extends GroupCategoryBatchUpdate {
   _RecordingCategoryBatchUpdate()
-      : super(database: GroupDatabase(groupID: _sectionReorderGroupID));
+    : super(database: GroupDatabase(groupID: _sectionReorderGroupID));
 
   /// 最後に call へ渡された並び替え後のカテゴリリスト。未呼び出しなら null。
   List<GroupCategory>? lastCategories;
@@ -264,7 +255,7 @@ class _RecordingCategoryBatchUpdate extends GroupCategoryBatchUpdate {
 /// 行編集の確定保存(フォーカス喪失保存)を記録するフェイク。
 class _RecordingUpdateShoppingListItem extends UpdateShoppingListItem {
   _RecordingUpdateShoppingListItem()
-      : super(database: GroupDatabase(groupID: _sectionReorderGroupID));
+    : super(database: GroupDatabase(groupID: _sectionReorderGroupID));
 
   /// 最後に保存されたアイテム。未呼び出しなら null。
   GroupShoppingListItem? lastItem;
@@ -283,10 +274,12 @@ class _RecordingUpdateShoppingListItem extends UpdateShoppingListItem {
 /// 食品(牛乳・卵・食パン)・日用品(洗剤)の2カテゴリ + 未分類(ガムテープ)の3セクション構成。
 /// 食品を3件にして、ヘッダードラッグ proxy のプレビュー上限(先頭2件)を検証できるようにする。
 Future<
-    ({
-      _RecordingCategoryBatchUpdate categoryBatch,
-      _RecordingUpdateShoppingListItem itemUpdate,
-    })> _pumpSectionReorder(WidgetTester tester) async {
+  ({
+    _RecordingCategoryBatchUpdate categoryBatch,
+    _RecordingUpdateShoppingListItem itemUpdate,
+  })
+>
+_pumpSectionReorder(WidgetTester tester) async {
   // ignore: invalid_use_of_visible_for_testing_member
   SharedPreferences.setMockInitialValues({});
   final sharedPreferences = await SharedPreferences.getInstance();
@@ -296,47 +289,57 @@ Future<
     ProviderScope(
       overrides: [
         ...previewProviderOverrides(sharedPreferences: sharedPreferences),
-        groupCategoryAxesProvider(groupID: _sectionReorderGroupID)
-            .overrideWith((ref) => Stream.value([
-                  const GroupCategoryAxis(
-                    id: _sectionReorderAxisID,
-                    groupID: _sectionReorderGroupID,
-                    userID: mockUserID,
-                    name: '売り場',
-                    order: 0,
-                  ),
-                ])),
+        groupCategoryAxesProvider(groupID: _sectionReorderGroupID).overrideWith(
+          (ref) => Stream.value([
+            const GroupCategoryAxis(
+              id: _sectionReorderAxisID,
+              groupID: _sectionReorderGroupID,
+              userID: mockUserID,
+              name: '売り場',
+              order: 0,
+            ),
+          ]),
+        ),
         groupCategoriesProvider(
           groupID: _sectionReorderGroupID,
           categoryAxisID: _sectionReorderAxisID,
-        ).overrideWith((ref) => Stream.value([
-              _categoryWithKeywords(
-                  id: 'cat-food',
-                  name: '食品',
-                  order: 0,
-                  keywords: ['牛乳', '卵', '食パン']),
-              _categoryWithKeywords(
-                  id: 'cat-daily', name: '日用品', order: 1, keywords: ['洗剤']),
-            ])),
+        ).overrideWith(
+          (ref) => Stream.value([
+            _categoryWithKeywords(
+              id: 'cat-food',
+              name: '食品',
+              order: 0,
+              keywords: ['牛乳', '卵', '食パン'],
+            ),
+            _categoryWithKeywords(
+              id: 'cat-daily',
+              name: '日用品',
+              order: 1,
+              keywords: ['洗剤'],
+            ),
+          ]),
+        ),
         textShoppingListItemsProvider(
           groupID: _sectionReorderGroupID,
           shoppingListID: mockShoppingListID,
-        ).overrideWith((ref) => Stream.value([
-              _sectionItem(id: 'item-milk', message: '牛乳', order: 0),
-              _sectionItem(id: 'item-egg', message: '卵', order: 1),
-              _sectionItem(id: 'item-bread', message: '食パン', order: 2),
-              _sectionItem(id: 'item-soap', message: '洗剤', order: 3),
-              _sectionItem(id: 'item-tape', message: 'ガムテープ', order: 4),
-            ])),
-        groupCategoryBatchUpdateProvider(groupID: _sectionReorderGroupID)
-            .overrideWith((ref) => recorder),
-        updateShoppingListItemProvider(groupID: _sectionReorderGroupID)
-            .overrideWith((ref) => itemUpdateRecorder),
+        ).overrideWith(
+          (ref) => Stream.value([
+            _sectionItem(id: 'item-milk', message: '牛乳', order: 0),
+            _sectionItem(id: 'item-egg', message: '卵', order: 1),
+            _sectionItem(id: 'item-bread', message: '食パン', order: 2),
+            _sectionItem(id: 'item-soap', message: '洗剤', order: 3),
+            _sectionItem(id: 'item-tape', message: 'ガムテープ', order: 4),
+          ]),
+        ),
+        groupCategoryBatchUpdateProvider(
+          groupID: _sectionReorderGroupID,
+        ).overrideWith((ref) => recorder),
+        updateShoppingListItemProvider(
+          groupID: _sectionReorderGroupID,
+        ).overrideWith((ref) => itemUpdateRecorder),
       ],
       child: MaterialApp(
-        theme: buildAppTheme(
-          accent: AccentPreset.shu,
-        ),
+        theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: ShoppingListItems(
             groupID: _sectionReorderGroupID,
@@ -371,8 +374,9 @@ Future<void> _longPressDragHeader(
 
 void main() {
   group('ShoppingListItems: スクロールでキーボードを閉じる', () {
-    testWidgets('フラット表示の ReorderableListView に onDrag プロパティが設定されている',
-        (tester) async {
+    testWidgets('フラット表示の ReorderableListView に onDrag プロパティが設定されている', (
+      tester,
+    ) async {
       await _pumpFlat(tester);
       expect(
         tester
@@ -382,8 +386,9 @@ void main() {
       );
     });
 
-    testWidgets('カテゴリ分類表示の ReorderableListView に onDrag プロパティが設定されている',
-        (tester) async {
+    testWidgets('カテゴリ分類表示の ReorderableListView に onDrag プロパティが設定されている', (
+      tester,
+    ) async {
       await _pump(tester);
       expect(
         tester
@@ -393,49 +398,73 @@ void main() {
       );
     });
 
-    testWidgets('フラット表示: アイテム編集中にドラッグでスクロールするとフォーカスが外れる（キーボードが閉じる）',
-        (tester) async {
+    testWidgets('フラット表示: アイテム編集中にドラッグでスクロールするとフォーカスが外れる（キーボードが閉じる）', (
+      tester,
+    ) async {
       // ドラッグで ScrollUpdateNotification(dragDetails 付き) を発火させるため、
       // ビューポートを超える件数のアイテムでスクロール可能にする。
-      await _pumpFlatWithItems(tester, items: [
-        for (var i = 0; i < 30; i++)
-          _item(id: 'flat-scroll-$i', message: 'アイテム$i', order: i),
-      ]);
+      await _pumpFlatWithItems(
+        tester,
+        items: [
+          for (var i = 0; i < 30; i++)
+            _item(id: 'flat-scroll-$i', message: 'アイテム$i', order: i),
+        ],
+      );
 
       // 先頭付近のアイテムをタップしてフォーカス（= ソフトキーボード表示状態）にする。
       await tester.tap(find.widgetWithText(TextField, 'アイテム2'));
       await tester.pump();
-      expect(_anyFieldFocused(tester), isTrue,
-          reason: 'タップ後は TextField にフォーカスが当たる');
+      expect(
+        _anyFieldFocused(tester),
+        isTrue,
+        reason: 'タップ後は TextField にフォーカスが当たる',
+      );
 
       // ドラッグでスクロールする。少量にしてフォーカス中の行が画面外に消えて
       // 破棄される（=フォーカスが消えるだけ）状態と区別する。
       await tester.drag(
-          find.byType(ReorderableListView), const Offset(0, -120));
+        find.byType(ReorderableListView),
+        const Offset(0, -120),
+      );
       await tester.pump();
 
-      expect(_anyFieldFocused(tester), isFalse,
-          reason: 'スクロール(ドラッグ)で onDrag が unfocus を呼び、フォーカスが外れる');
+      expect(
+        _anyFieldFocused(tester),
+        isFalse,
+        reason: 'スクロール(ドラッグ)で onDrag が unfocus を呼び、フォーカスが外れる',
+      );
     });
 
-    testWidgets('カテゴリ分類表示: アイテム編集中にドラッグでスクロールするとフォーカスが外れる（キーボードが閉じる）',
-        (tester) async {
-      await _pumpWithItems(tester, items: [
-        for (var i = 0; i < 30; i++)
-          _item(id: 'grouped-scroll-$i', message: 'アイテム$i', order: i),
-      ]);
+    testWidgets('カテゴリ分類表示: アイテム編集中にドラッグでスクロールするとフォーカスが外れる（キーボードが閉じる）', (
+      tester,
+    ) async {
+      await _pumpWithItems(
+        tester,
+        items: [
+          for (var i = 0; i < 30; i++)
+            _item(id: 'grouped-scroll-$i', message: 'アイテム$i', order: i),
+        ],
+      );
 
       await tester.tap(find.widgetWithText(TextField, 'アイテム2'));
       await tester.pump();
-      expect(_anyFieldFocused(tester), isTrue,
-          reason: 'タップ後は TextField にフォーカスが当たる');
+      expect(
+        _anyFieldFocused(tester),
+        isTrue,
+        reason: 'タップ後は TextField にフォーカスが当たる',
+      );
 
       await tester.drag(
-          find.byType(ReorderableListView), const Offset(0, -120));
+        find.byType(ReorderableListView),
+        const Offset(0, -120),
+      );
       await tester.pump();
 
-      expect(_anyFieldFocused(tester), isFalse,
-          reason: 'スクロール(ドラッグ)で onDrag が unfocus を呼び、フォーカスが外れる');
+      expect(
+        _anyFieldFocused(tester),
+        isFalse,
+        reason: 'スクロール(ドラッグ)で onDrag が unfocus を呼び、フォーカスが外れる',
+      );
     });
   });
 
@@ -452,20 +481,25 @@ void main() {
     });
 
     testWidgets('入力中の空行のみのときはボタンが出ない', (tester) async {
-      await _pumpWithItems(tester, items: [
-        _item(id: 'input-row-001', message: '', order: 0),
-      ]);
+      await _pumpWithItems(
+        tester,
+        items: [_item(id: 'input-row-001', message: '', order: 0)],
+      );
       expect(find.byType(AICategorizeButton), findsNothing);
     });
 
     testWidgets('入力中の空行と空白のみのアイテムは件数カウントから除外される', (tester) async {
-      await _pumpWithItems(tester, items: [
-        _item(id: 'confirmed-001', message: '牛乳', order: 0),
-        _item(id: 'input-row-001', message: '', order: 1),
-        _item(id: 'whitespace-001', message: '   ', order: 2),
-      ]);
-      final button =
-          tester.widget<AICategorizeButton>(find.byType(AICategorizeButton));
+      await _pumpWithItems(
+        tester,
+        items: [
+          _item(id: 'confirmed-001', message: '牛乳', order: 0),
+          _item(id: 'input-row-001', message: '', order: 1),
+          _item(id: 'whitespace-001', message: '   ', order: 2),
+        ],
+      );
+      final button = tester.widget<AICategorizeButton>(
+        find.byType(AICategorizeButton),
+      );
       expect(button.uncategorizedItems.length, 1);
     });
   });
@@ -623,8 +657,11 @@ void main() {
       expect(find.byType(TextShoppingListItemWidget), findsNWidgets(4));
       expect(find.text('牛乳'), findsOneWidget);
       expect(find.text('卵'), findsOneWidget);
-      expect(find.text('食パン'), findsNothing,
-          reason: '3件目はプレビュー上限(2件)の対象外で、リスト側は畳まれているため表示されない');
+      expect(
+        find.text('食パン'),
+        findsNothing,
+        reason: '3件目はプレビュー上限(2件)の対象外で、リスト側は畳まれているため表示されない',
+      );
 
       await gesture.up();
       await tester.pumpAndSettle();

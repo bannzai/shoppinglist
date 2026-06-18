@@ -55,7 +55,7 @@ final customerInfoProvider = StreamProvider((ref) {
 });
 
 extension CustomerInfoExtension on CustomerInfo {
-// rc_promo_Premium `のみ` が含まれている場合は値を返す
+  // rc_promo_Premium `のみ` が含まれている場合は値を返す
   DateTime? get promotionExpirationDate {
     final premiumEntitlement =
         entitlements.active[premiumEntitlementIdentifier];
@@ -63,8 +63,9 @@ extension CustomerInfoExtension on CustomerInfo {
     if (premiumEntitlement == null || expirationDate == null) {
       return null;
     }
-    if (!premiumEntitlement.productIdentifier
-        .startsWith(promotionProductIdentifierPrefix)) {
+    if (!premiumEntitlement.productIdentifier.startsWith(
+      promotionProductIdentifierPrefix,
+    )) {
       return null;
     }
 
@@ -72,16 +73,17 @@ extension CustomerInfoExtension on CustomerInfo {
       return null;
     }
     if (activeSubscriptions.any(
-        (element) => !element.startsWith(promotionProductIdentifierPrefix))) {
+      (element) => !element.startsWith(promotionProductIdentifierPrefix),
+    )) {
       return null;
     }
     return DateTime.parse(expirationDate);
   }
 
-// Promotional Entitlement 期間中も true を返す（Focus アプリの hasPremiumEntitlement と
-// 同じ方針）。ディスカウント表示判定は isInDiscountDuration / currentOfferingType で
-// 独立に行うため、ここで除外する必要はない。Issue #239 でも「プロモーション付与で
-// プレミアム機能を解禁する」前提に揃える。
+  // Promotional Entitlement 期間中も true を返す（Focus アプリの hasPremiumEntitlement と
+  // 同じ方針）。ディスカウント表示判定は isInDiscountDuration / currentOfferingType で
+  // 独立に行うため、ここで除外する必要はない。Issue #239 でも「プロモーション付与で
+  // プレミアム機能を解禁する」前提に揃える。
   bool get isPremium {
     return entitlements.active.containsKey(premiumEntitlementIdentifier);
   }
@@ -123,13 +125,13 @@ Future<Offerings> offerings(Ref ref) async {
     Duration(seconds: 1),
     Duration(seconds: 2),
   ];
-  for (var attempt = 0;; attempt++) {
+  for (var attempt = 0; ; attempt++) {
     try {
       return await Purchases.getOfferings();
     } on PlatformException catch (exception) {
       final isConfigurationError =
           PurchasesErrorHelper.getErrorCode(exception) ==
-              PurchasesErrorCode.configurationError;
+          PurchasesErrorCode.configurationError;
       if (!isConfigurationError || attempt >= retryDelays.length) {
         rethrow;
       }
@@ -152,7 +154,8 @@ List<Package> currentOfferingPackages(Ref ref) {
 
   // 通常は currentOfferingType.identifier ('default'/'discounted') の Offering を使う。
   // 当該 identifier が未設定の構成でも RC の "Current" Offering で表示できるよう fallback する。
-  final offering = offerings.all[customerInfo.currentOfferingType.identifier] ??
+  final offering =
+      offerings.all[customerInfo.currentOfferingType.identifier] ??
       offerings.current;
   return offering?.availablePackages ?? [];
 }
@@ -160,30 +163,34 @@ List<Package> currentOfferingPackages(Ref ref) {
 @Riverpod()
 Package? weeklyPackage(Ref ref) {
   final currentOfferingPackages = ref.watch(currentOfferingPackagesProvider);
-  return currentOfferingPackages
-      .firstWhereOrNull((element) => element.packageType == PackageType.weekly);
+  return currentOfferingPackages.firstWhereOrNull(
+    (element) => element.packageType == PackageType.weekly,
+  );
 }
 
 @Riverpod()
 Package? monthlyPackage(Ref ref) {
   final currentOfferingPackages = ref.watch(currentOfferingPackagesProvider);
   return currentOfferingPackages.firstWhereOrNull(
-      (element) => element.packageType == PackageType.monthly);
+    (element) => element.packageType == PackageType.monthly,
+  );
 }
 
 @Riverpod()
 Package? sixMonthPackage(Ref ref) {
   final currentOfferingPackages = ref.watch(currentOfferingPackagesProvider);
   return currentOfferingPackages.firstWhereOrNull(
-      (element) => element.packageType == PackageType.sixMonth);
+    (element) => element.packageType == PackageType.sixMonth,
+  );
 }
 
 /// 現在 Offering から annual (1 年) Package を返す。Offering に未設定なら null。
 @Riverpod()
 Package? annualPackage(Ref ref) {
   final currentOfferingPackages = ref.watch(currentOfferingPackagesProvider);
-  return currentOfferingPackages
-      .firstWhereOrNull((element) => element.packageType == PackageType.annual);
+  return currentOfferingPackages.firstWhereOrNull(
+    (element) => element.packageType == PackageType.annual,
+  );
 }
 
 /// 現在 Offering から lifetime (買い切り) Package を返す。Offering に未設定なら null。
@@ -191,21 +198,22 @@ Package? annualPackage(Ref ref) {
 Package? lifetimePackage(Ref ref) {
   final currentOfferingPackages = ref.watch(currentOfferingPackagesProvider);
   return currentOfferingPackages.firstWhereOrNull(
-      (element) => element.packageType == PackageType.lifetime);
+    (element) => element.packageType == PackageType.lifetime,
+  );
 }
 
 @Riverpod()
 Package? monthlyPremiumPackage(Ref ref) {
   const premiumPackageOfferingType = OfferingType.premium;
-  final offering = ref
-      .watch(offeringsProvider)
-      .valueOrNull
-      ?.all[premiumPackageOfferingType.identifier];
+  final offering =
+      ref.watch(offeringsProvider).valueOrNull?.all[premiumPackageOfferingType
+          .identifier];
   if (offering == null) {
     return null;
   }
   return offering.availablePackages.firstWhereOrNull(
-      (element) => element.packageType == PackageType.monthly);
+    (element) => element.packageType == PackageType.monthly,
+  );
 }
 
 // Issue #237 (https://github.com/bannzai/shoppinglist/issues/237) /
@@ -225,15 +233,17 @@ Package? monthlyPremiumPackage(Ref ref) {
 /// SDK の初期化完了を barrier として待つ。
 Future<void> initializePurchase() async {
   await Purchases.setLogLevel(
-      Environment.isDevelopment ? LogLevel.debug : LogLevel.info);
+    Environment.isDevelopment ? LogLevel.debug : LogLevel.info,
+  );
 
   // kDebugMode=true のとき RC Test Store Key を使い、mock purchase modal で IAP フローを検証する。
   // Release ビルドでは kDebugMode=false となり本番キーが使われる（本番キー誤差し替え防止のガード）。
   // Debug ビルドで本番課金フローを検証したい場合は、ここの apiKey の値を一時的に
   // Secret.revenueCatPublicAPIKey に差し替える運用とする（USE_RC_TEST_STORE のような環境変数スイッチは設けない）。
-  final apiKey = kDebugMode
-      ? Secret.revenueCatTestStorePublicAPIKey
-      : Secret.revenueCatPublicAPIKey;
+  final apiKey =
+      kDebugMode
+          ? Secret.revenueCatTestStorePublicAPIKey
+          : Secret.revenueCatPublicAPIKey;
 
   assert(
     !kDebugMode || apiKey.isNotEmpty,
@@ -260,10 +270,14 @@ class Purchase {
   /// Return value is used to display the completion page
   Future<bool> call(Package package) async {
     try {
-      final purchaseResult =
-          await Purchases.purchase(PurchaseParams.package(package));
-      final premiumEntitlement = purchaseResult
-          .customerInfo.entitlements.all[premiumEntitlementIdentifier];
+      final purchaseResult = await Purchases.purchase(
+        PurchaseParams.package(package),
+      );
+      final premiumEntitlement =
+          purchaseResult
+              .customerInfo
+              .entitlements
+              .all[premiumEntitlementIdentifier];
       if (premiumEntitlement == null) {
         throw AssertionError('unexpected premium entitlements is not exists');
       }
@@ -272,11 +286,14 @@ class Purchase {
       }
       return Future.value(true);
     } on PlatformException catch (exception, stack) {
-      analytics.logEvent(name: 'catched_purchase_exception', parameters: {
-        'code': exception.code,
-        'details': exception.details.toString(),
-        'message': exception.message ?? 'empty message'
-      });
+      analytics.logEvent(
+        name: 'catched_purchase_exception',
+        parameters: {
+          'code': exception.code,
+          'details': exception.details.toString(),
+          'message': exception.message ?? 'empty message',
+        },
+      );
       final newException = mapToDisplayedException(exception);
       if (newException == null) {
         return Future.value(false);
@@ -284,9 +301,10 @@ class Purchase {
       errorLogger.recordError(exception, stack);
       throw newException;
     } catch (exception, stack) {
-      analytics.logEvent(name: 'catched_purchase_anonymous', parameters: {
-        'exception_type': exception.runtimeType.toString(),
-      });
+      analytics.logEvent(
+        name: 'catched_purchase_anonymous',
+        parameters: {'exception_type': exception.runtimeType.toString()},
+      );
       errorLogger.recordError(exception, stack);
       rethrow;
     }

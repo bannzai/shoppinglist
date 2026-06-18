@@ -97,18 +97,13 @@ void main() {
     });
 
     test('themeColorHex 付きの JSON から正しくデシリアライズされる', () {
-      final json = {
-        'id': 'test-user',
-        'themeColorHex': '#1F6B4E',
-      };
+      final json = {'id': 'test-user', 'themeColorHex': '#1F6B4E'};
       final appUser = AppUser.fromJson(json);
       expect(appUser.themeColorHex, '#1F6B4E');
     });
 
     test('themeColorHex なしの JSON から正しくデシリアライズされる（後方互換性）', () {
-      final json = {
-        'id': 'test-user',
-      };
+      final json = {'id': 'test-user'};
       final appUser = AppUser.fromJson(json);
       expect(appUser.themeColorHex, isNull);
     });

@@ -51,23 +51,24 @@ const _locationID = 'loc-001';
 
 // 座標付きの店舗（監視対象になる条件）。
 GroupShoppingLocation _locationWithCoords() => const GroupShoppingLocation(
-      id: _locationID,
-      groupID: mockGroupID,
-      name: 'テストスーパー',
-      latitude: 35.6812,
-      longitude: 139.7671,
-      geofenceRadiusMeters: null,
-    );
+  id: _locationID,
+  groupID: mockGroupID,
+  name: 'テストスーパー',
+  latitude: 35.6812,
+  longitude: 139.7671,
+  geofenceRadiusMeters: null,
+);
 
 // 上記店舗に紐づく active な買い物リスト。
 GroupShoppingList _activeListAtLocation() => GroupShoppingList(
-    id: 'list-001',
-    createUserID: 'user-001',
-    groupID: mockGroupID,
-    status: GroupShoppingListStatus.active,
-    shoppingLocationID: _locationID,
-    ttlExpiresDateTime: null,
-    duplicatedFromGroupShoppingListID: null);
+  id: 'list-001',
+  createUserID: 'user-001',
+  groupID: mockGroupID,
+  status: GroupShoppingListStatus.active,
+  shoppingLocationID: _locationID,
+  ttlExpiresDateTime: null,
+  duplicatedFromGroupShoppingListID: null,
+);
 
 // locationReminderEnabled は sharedPreferences の値から build されるため、
 // SharedPreferences のモック値で有効/無効を制御する。
@@ -80,12 +81,15 @@ void main() {
   group('geofenceMonitoringPlan', () {
     test('premium でない場合は shouldMonitor=false（stopped）', () async {
       final sp = await _sharedPrefs(enabled: true);
-      final container = ProviderContainer(overrides: [
-        sharedPreferencesProvider.overrideWith((ref) => sp),
-        customerInfoProvider.overrideWith(
-            (ref) => Stream.value(_FakeCustomerInfo(premium: false))),
-        userGroupsProvider.overrideWith((ref) => Stream.value([mockGroup()])),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          sharedPreferencesProvider.overrideWith((ref) => sp),
+          customerInfoProvider.overrideWith(
+            (ref) => Stream.value(_FakeCustomerInfo(premium: false)),
+          ),
+          userGroupsProvider.overrideWith((ref) => Stream.value([mockGroup()])),
+        ],
+      );
       addTearDown(container.dispose);
       await container.read(customerInfoProvider.future);
       await container.read(userGroupsProvider.future);
@@ -98,12 +102,15 @@ void main() {
 
     test('premium でもトグル無効の場合は shouldMonitor=false', () async {
       final sp = await _sharedPrefs(enabled: false);
-      final container = ProviderContainer(overrides: [
-        sharedPreferencesProvider.overrideWith((ref) => sp),
-        customerInfoProvider.overrideWith(
-            (ref) => Stream.value(_FakeCustomerInfo(premium: true))),
-        userGroupsProvider.overrideWith((ref) => Stream.value([mockGroup()])),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          sharedPreferencesProvider.overrideWith((ref) => sp),
+          customerInfoProvider.overrideWith(
+            (ref) => Stream.value(_FakeCustomerInfo(premium: true)),
+          ),
+          userGroupsProvider.overrideWith((ref) => Stream.value([mockGroup()])),
+        ],
+      );
       addTearDown(container.dispose);
       await container.read(customerInfoProvider.future);
       await container.read(userGroupsProvider.future);
@@ -114,12 +121,15 @@ void main() {
 
     test('premium・有効でもグループが空の場合は shouldMonitor=false', () async {
       final sp = await _sharedPrefs(enabled: true);
-      final container = ProviderContainer(overrides: [
-        sharedPreferencesProvider.overrideWith((ref) => sp),
-        customerInfoProvider.overrideWith(
-            (ref) => Stream.value(_FakeCustomerInfo(premium: true))),
-        userGroupsProvider.overrideWith((ref) => Stream.value(<Group>[])),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          sharedPreferencesProvider.overrideWith((ref) => sp),
+          customerInfoProvider.overrideWith(
+            (ref) => Stream.value(_FakeCustomerInfo(premium: true)),
+          ),
+          userGroupsProvider.overrideWith((ref) => Stream.value(<Group>[])),
+        ],
+      );
       addTearDown(container.dispose);
       await container.read(customerInfoProvider.future);
       await container.read(userGroupsProvider.future);
@@ -128,31 +138,43 @@ void main() {
       expect(plan.shouldMonitor, isFalse);
     });
 
-    test('premium・有効・座標付き店舗・アクティブリストが揃う場合は shouldMonitor=true でデータが入る',
-        () async {
-      final sp = await _sharedPrefs(enabled: true);
-      final container = ProviderContainer(overrides: [
-        sharedPreferencesProvider.overrideWith((ref) => sp),
-        customerInfoProvider.overrideWith(
-            (ref) => Stream.value(_FakeCustomerInfo(premium: true))),
-        userGroupsProvider.overrideWith((ref) => Stream.value([mockGroup()])),
-        shoppingLocationsProvider(groupID: mockGroupID)
-            .overrideWith((ref) => Stream.value([_locationWithCoords()])),
-        shoppingListsProvider(groupID: mockGroupID, isPremium: true)
-            .overrideWith((ref) => Stream.value([_activeListAtLocation()])),
-      ]);
-      addTearDown(container.dispose);
-      await container.read(customerInfoProvider.future);
-      await container.read(userGroupsProvider.future);
-      await container
-          .read(shoppingLocationsProvider(groupID: mockGroupID).future);
-      await container.read(
-          shoppingListsProvider(groupID: mockGroupID, isPremium: true).future);
+    test(
+      'premium・有効・座標付き店舗・アクティブリストが揃う場合は shouldMonitor=true でデータが入る',
+      () async {
+        final sp = await _sharedPrefs(enabled: true);
+        final container = ProviderContainer(
+          overrides: [
+            sharedPreferencesProvider.overrideWith((ref) => sp),
+            customerInfoProvider.overrideWith(
+              (ref) => Stream.value(_FakeCustomerInfo(premium: true)),
+            ),
+            userGroupsProvider.overrideWith(
+              (ref) => Stream.value([mockGroup()]),
+            ),
+            shoppingLocationsProvider(
+              groupID: mockGroupID,
+            ).overrideWith((ref) => Stream.value([_locationWithCoords()])),
+            shoppingListsProvider(
+              groupID: mockGroupID,
+              isPremium: true,
+            ).overrideWith((ref) => Stream.value([_activeListAtLocation()])),
+          ],
+        );
+        addTearDown(container.dispose);
+        await container.read(customerInfoProvider.future);
+        await container.read(userGroupsProvider.future);
+        await container.read(
+          shoppingLocationsProvider(groupID: mockGroupID).future,
+        );
+        await container.read(
+          shoppingListsProvider(groupID: mockGroupID, isPremium: true).future,
+        );
 
-      final plan = container.read(geofenceMonitoringPlanProvider);
-      expect(plan.shouldMonitor, isTrue);
-      expect(plan.locationsByGroupID[mockGroupID], isNotEmpty);
-      expect(plan.activeListsByLocationID[_locationID], hasLength(1));
-    });
+        final plan = container.read(geofenceMonitoringPlanProvider);
+        expect(plan.shouldMonitor, isTrue);
+        expect(plan.locationsByGroupID[mockGroupID], isNotEmpty);
+        expect(plan.activeListsByLocationID[_locationID], hasLength(1));
+      },
+    );
   });
 }

@@ -11,14 +11,9 @@ String debugUserID({required String realUserID, required int index}) =>
 
 /// デバッグユーザーの Firestore ドキュメントを作成する。
 class DebugUserCreate {
-  Future<void> call({
-    required String debugUID,
-  }) async {
+  Future<void> call({required String debugUID}) async {
     final userDB = UserDatabase(userID: debugUID);
-    final user = AppUser(
-      id: debugUID,
-      name: 'Debug User ($debugUID)',
-    );
+    final user = AppUser(id: debugUID, name: 'Debug User ($debugUID)');
     await userDB.userReference().set(user);
     debugPrint('[DebugUserCreate] ユーザー作成完了: $debugUID');
   }
@@ -26,10 +21,7 @@ class DebugUserCreate {
 
 /// デバッグユーザーをグループの memberUserIDs に追加し、プロフィールを作成する。
 class DebugUserAddToGroup {
-  Future<void> call({
-    required String debugUID,
-    required String groupID,
-  }) async {
+  Future<void> call({required String debugUID, required String groupID}) async {
     final groupDB = GroupDatabase(groupID: groupID);
 
     // memberUserIDs に arrayUnion で追加
@@ -38,8 +30,10 @@ class DebugUserAddToGroup {
     });
 
     // プロフィール作成
-    final profileDocID =
-        GroupUserProfile.documentID(groupID: groupID, userID: debugUID);
+    final profileDocID = GroupUserProfile.documentID(
+      groupID: groupID,
+      userID: debugUID,
+    );
     final profile = GroupUserProfile(
       id: profileDocID,
       groupID: groupID,
@@ -54,10 +48,7 @@ class DebugUserAddToGroup {
 /// デバッグユーザー関連データをクリーンアップする。
 /// memberUserIDs から除去、プロフィール削除、ユーザードキュメント削除。
 class DebugUserCleanup {
-  Future<void> call({
-    required String debugUID,
-    required String groupID,
-  }) async {
+  Future<void> call({required String debugUID, required String groupID}) async {
     final groupDB = GroupDatabase(groupID: groupID);
 
     // memberUserIDs から除去

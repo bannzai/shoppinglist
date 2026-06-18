@@ -6,11 +6,8 @@ import 'package:shoppinglist/utils/logger/error.dart';
 /// - [title]: 特定のエラーコードにだけ付ける見出し。該当しなければ null。
 /// - [message]: ユーザーに見せる本文。規約どおり加工せず、StackTrace だけ分離したもの。
 /// - [stackTrace]: ページ全体エラー表示用。トースト/スナックバー/アラートでは使わない。
-typedef ErrorDisplay = ({
-  String? title,
-  String message,
-  StackTrace? stackTrace,
-});
+typedef ErrorDisplay =
+    ({String? title, String message, StackTrace? stackTrace});
 
 /// 任意のエラーを表示用の (title, message, stackTrace) に分解する。
 ///

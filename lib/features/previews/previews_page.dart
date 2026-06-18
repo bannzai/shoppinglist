@@ -28,34 +28,19 @@ class _PreviewEntry {
 }
 
 final _previewEntries = <_PreviewEntry>[
-  _PreviewEntry(
-    title: 'LaunchLoading',
-    builder: (_) => const LaunchLoading(),
-  ),
+  _PreviewEntry(title: 'LaunchLoading', builder: (_) => const LaunchLoading()),
   _PreviewEntry(
     title: 'OnboardingPage',
     builder: (_) => const OnboardingPage(),
   ),
-  _PreviewEntry(
-    title: 'AuthPage',
-    builder: (_) => const AuthPage(),
-  ),
-  _PreviewEntry(
-    title: 'HomePage',
-    builder: (_) => const HomePage(),
-  ),
+  _PreviewEntry(title: 'AuthPage', builder: (_) => const AuthPage()),
+  _PreviewEntry(title: 'HomePage', builder: (_) => const HomePage()),
   _PreviewEntry(
     title: 'ShoppingListPage',
     builder: (_) => const ShoppingListPreview(),
   ),
-  _PreviewEntry(
-    title: 'SettingPage',
-    builder: (_) => const SettingPage(),
-  ),
-  _PreviewEntry(
-    title: 'GroupListPage',
-    builder: (_) => const GroupListPage(),
-  ),
+  _PreviewEntry(title: 'SettingPage', builder: (_) => const SettingPage()),
+  _PreviewEntry(title: 'GroupListPage', builder: (_) => const GroupListPage()),
   _PreviewEntry(
     title: 'GroupCreatePage',
     builder: (_) => const GroupCreatePage(),
@@ -82,11 +67,12 @@ final _previewEntries = <_PreviewEntry>[
   ),
   _PreviewEntry(
     title: 'GroupCategoryEditPage',
-    builder: (_) => GroupCategoryEditPage(
-      groupID: mockGroupID,
-      categoryAxisID: mockCategoryAxisID,
-      categoryID: mockCategoryID,
-    ),
+    builder:
+        (_) => GroupCategoryEditPage(
+          groupID: mockGroupID,
+          categoryAxisID: mockCategoryAxisID,
+          categoryID: mockCategoryID,
+        ),
   ),
   _PreviewEntry(
     title: 'ShoppingListSettingPage',
@@ -128,9 +114,7 @@ class PreviewsPage extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: entry.builder,
-                ),
+                MaterialPageRoute(builder: entry.builder),
               );
             },
           );

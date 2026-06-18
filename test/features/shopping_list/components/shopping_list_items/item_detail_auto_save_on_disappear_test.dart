@@ -51,15 +51,18 @@ class _SpyUpdate extends UpdateShoppingListItem {
 }
 
 List<Override> _overrides(_SpyUpdate spy) => [
-      currentUserIDProvider.overrideWithValue(_testUserID),
-      // 軸を空にしてカテゴリセクションを省略する（説明・カラーのみ検証）。
-      groupCategoryAxesProvider(groupID: _testGroupID)
-          .overrideWith((ref) => Stream.value(const <GroupCategoryAxis>[])),
-      customerInfoProvider
-          .overrideWith((ref) => const Stream<CustomerInfo>.empty()),
-      updateShoppingListItemProvider(groupID: _testGroupID)
-          .overrideWith((ref) => spy),
-    ];
+  currentUserIDProvider.overrideWithValue(_testUserID),
+  // 軸を空にしてカテゴリセクションを省略する（説明・カラーのみ検証）。
+  groupCategoryAxesProvider(
+    groupID: _testGroupID,
+  ).overrideWith((ref) => Stream.value(const <GroupCategoryAxis>[])),
+  customerInfoProvider.overrideWith(
+    (ref) => const Stream<CustomerInfo>.empty(),
+  ),
+  updateShoppingListItemProvider(
+    groupID: _testGroupID,
+  ).overrideWith((ref) => spy),
+];
 
 /// シートをルートとして pump する。tree を差し替えると dispose され、
 /// useOnDisappear による自動保存が発火する。
@@ -106,11 +109,7 @@ void main() {
 
     testWidgets('変更せずシートを閉じると保存されない', (tester) async {
       final spy = _SpyUpdate();
-      await _pumpSheet(
-        tester,
-        spy: spy,
-        item: _testItem(description: '既存メモ'),
-      );
+      await _pumpSheet(tester, spy: spy, item: _testItem(description: '既存メモ'));
 
       await _disposeSheet(tester);
 

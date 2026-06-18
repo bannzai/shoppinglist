@@ -15,62 +15,76 @@ import 'package:shoppinglist/style/tokens.dart';
 
 /// テーマを適用した最小 MaterialApp で `child` を表示するヘルパー。
 Widget _wrap(Widget child) => MaterialApp(
-      theme: buildAppTheme(
-        accent: AccentPreset.shu,
-      ),
-      home: Scaffold(body: Center(child: child)),
-    );
+  theme: buildAppTheme(accent: AccentPreset.shu),
+  home: Scaffold(body: Center(child: child)),
+);
 
 void main() {
   testWidgets('AppPill: 各 variant が落ちずに描画される', (tester) async {
-    await tester.pumpWidget(_wrap(Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        AppPill(label: 'neutral', onPressed: () {}, icon: null),
-        AppPill(
-            label: 'accent',
-            onPressed: () {},
-            variant: AppPillVariant.accent,
-            icon: null),
-        AppPill(
-            label: 'soft',
-            onPressed: () {},
-            variant: AppPillVariant.soft,
-            icon: null),
-        AppPill(
-            label: 'ghost',
-            onPressed: () {},
-            variant: AppPillVariant.ghost,
-            icon: null),
-        AppPill(
-            label: 'danger',
-            onPressed: () {},
-            variant: AppPillVariant.danger,
-            icon: null),
-        AppPill(
-            label: 'dangerSolid',
-            onPressed: () {},
-            variant: AppPillVariant.dangerSolid,
-            icon: null),
-        const AppPill(label: 'disabled', onPressed: null, icon: null),
-      ],
-    )));
+    await tester.pumpWidget(
+      _wrap(
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppPill(label: 'neutral', onPressed: () {}, icon: null),
+            AppPill(
+              label: 'accent',
+              onPressed: () {},
+              variant: AppPillVariant.accent,
+              icon: null,
+            ),
+            AppPill(
+              label: 'soft',
+              onPressed: () {},
+              variant: AppPillVariant.soft,
+              icon: null,
+            ),
+            AppPill(
+              label: 'ghost',
+              onPressed: () {},
+              variant: AppPillVariant.ghost,
+              icon: null,
+            ),
+            AppPill(
+              label: 'danger',
+              onPressed: () {},
+              variant: AppPillVariant.danger,
+              icon: null,
+            ),
+            AppPill(
+              label: 'dangerSolid',
+              onPressed: () {},
+              variant: AppPillVariant.dangerSolid,
+              icon: null,
+            ),
+            const AppPill(label: 'disabled', onPressed: null, icon: null),
+          ],
+        ),
+      ),
+    );
     expect(find.text('neutral'), findsOneWidget);
     expect(find.text('dangerSolid'), findsOneWidget);
     expect(find.text('disabled'), findsOneWidget);
   });
 
   testWidgets('AppPill: dangerSolid は danger 塗り + 白文字', (tester) async {
-    await tester.pumpWidget(_wrap(AppPill(
-        label: '削除',
-        onPressed: () {},
-        variant: AppPillVariant.dangerSolid,
-        icon: null)));
+    await tester.pumpWidget(
+      _wrap(
+        AppPill(
+          label: '削除',
+          onPressed: () {},
+          variant: AppPillVariant.dangerSolid,
+          icon: null,
+        ),
+      ),
+    );
     final ctx = tester.element(find.byType(AppPill));
     final neutral = ctx.appTheme.neutral;
     final material = tester.widget<Material>(
       find.descendant(
-          of: find.byType(AppPill), matching: find.byType(Material)),
+        of: find.byType(AppPill),
+        matching: find.byType(Material),
+      ),
     );
     expect(material.color, neutral.danger);
     final text = tester.widget<Text>(find.text('削除'));
@@ -87,46 +101,62 @@ void main() {
 
   testWidgets('AppRoundButton: タップで onPressed が発火', (tester) async {
     var tapped = 0;
-    await tester.pumpWidget(_wrap(AppRoundButton(
-      icon: Icons.close,
-      onPressed: () => tapped++,
-    )));
+    await tester.pumpWidget(
+      _wrap(AppRoundButton(icon: Icons.close, onPressed: () => tapped++)),
+    );
     await tester.tap(find.byIcon(Icons.close));
     expect(tapped, 1);
   });
 
   testWidgets('AppCheckbox: checked=false でアイコン非表示、true で表示', (tester) async {
-    await tester.pumpWidget(_wrap(
-      const AppCheckbox(checked: false, onChanged: null, color: null),
-    ));
+    await tester.pumpWidget(
+      _wrap(const AppCheckbox(checked: false, onChanged: null, color: null)),
+    );
     expect(find.byIcon(Icons.check), findsNothing);
 
-    await tester.pumpWidget(_wrap(
-      const AppCheckbox(checked: true, onChanged: null, color: null),
-    ));
+    await tester.pumpWidget(
+      _wrap(const AppCheckbox(checked: true, onChanged: null, color: null)),
+    );
     expect(find.byIcon(Icons.check), findsOneWidget);
   });
 
   testWidgets('AppCheckbox: タップで onChanged(!checked) が発火', (tester) async {
     bool? received;
-    await tester.pumpWidget(_wrap(AppCheckbox(
-        checked: false, onChanged: (v) => received = v, color: null)));
+    await tester.pumpWidget(
+      _wrap(
+        AppCheckbox(
+          checked: false,
+          onChanged: (v) => received = v,
+          color: null,
+        ),
+      ),
+    );
     await tester.tap(find.byType(AppCheckbox), warnIfMissed: false);
     expect(received, true);
   });
 
   testWidgets('AppChip: active のときラベルが太字 600', (tester) async {
-    await tester.pumpWidget(_wrap(Column(
-      children: [
-        AppChip(label: 'inactive', onTap: () {}, dotColor: null, icon: null),
-        AppChip(
-            label: 'active',
-            active: true,
-            onTap: () {},
-            dotColor: null,
-            icon: null),
-      ],
-    )));
+    await tester.pumpWidget(
+      _wrap(
+        Column(
+          children: [
+            AppChip(
+              label: 'inactive',
+              onTap: () {},
+              dotColor: null,
+              icon: null,
+            ),
+            AppChip(
+              label: 'active',
+              active: true,
+              onTap: () {},
+              dotColor: null,
+              icon: null,
+            ),
+          ],
+        ),
+      ),
+    );
     expect(find.text('inactive'), findsOneWidget);
     expect(find.text('active'), findsOneWidget);
   });
@@ -142,27 +172,34 @@ void main() {
   });
 
   testWidgets('AppLargeAppBar: title と subtitle が描画される', (tester) async {
-    await tester.pumpWidget(MaterialApp(
-      theme: buildAppTheme(
-        accent: AccentPreset.shu,
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(accent: AccentPreset.shu),
+        home: const Scaffold(
+          appBar: AppLargeAppBar(
+            title: '設定',
+            subtitle: 'アプリ全般の設定',
+            leading: null,
+          ),
+        ),
       ),
-      home: const Scaffold(
-        appBar:
-            AppLargeAppBar(title: '設定', subtitle: 'アプリ全般の設定', leading: null),
-      ),
-    ));
+    );
     expect(find.text('設定'), findsOneWidget);
     expect(find.text('アプリ全般の設定'), findsOneWidget);
   });
 
   testWidgets('AppSettingSection: title と children が表示される', (tester) async {
-    await tester.pumpWidget(_wrap(const AppSettingSection(
-      title: 'プロフィール',
-      children: [
-        ListTile(title: Text('表示名')),
-        ListTile(title: Text('メール')),
-      ],
-    )));
+    await tester.pumpWidget(
+      _wrap(
+        const AppSettingSection(
+          title: 'プロフィール',
+          children: [
+            ListTile(title: Text('表示名')),
+            ListTile(title: Text('メール')),
+          ],
+        ),
+      ),
+    );
     expect(find.text('プロフィール'), findsOneWidget);
     expect(find.text('表示名'), findsOneWidget);
     expect(find.text('メール'), findsOneWidget);
@@ -171,26 +208,32 @@ void main() {
   testWidgets('AppFrameAppBar: preferredSize 48 + title 描画', (tester) async {
     const bar = AppFrameAppBar(title: 'カテゴリ', leading: null, trailing: null);
     expect(bar.preferredSize.height, 48);
-    await tester.pumpWidget(MaterialApp(
-      theme: buildAppTheme(
-        accent: AccentPreset.shu,
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(accent: AccentPreset.shu),
+        home: const Scaffold(
+          appBar: AppFrameAppBar(title: 'カテゴリ', leading: null, trailing: null),
+        ),
       ),
-      home: const Scaffold(
-          appBar: AppFrameAppBar(title: 'カテゴリ', leading: null, trailing: null)),
-    ));
+    );
     expect(find.text('カテゴリ'), findsOneWidget);
   });
 
   testWidgets('AppCell: onTap 指定で chev-r 表示・タップ発火', (tester) async {
     var tapped = 0;
-    await tester.pumpWidget(_wrap(AppCell(
-        icon: Icons.notifications_active_outlined,
-        title: '通知設定',
-        subtitle: 'プッシュ通知の細かい設定',
-        onTap: () => tapped++,
-        detail: null,
-        onSwitch: null,
-        switchValue: null)));
+    await tester.pumpWidget(
+      _wrap(
+        AppCell(
+          icon: Icons.notifications_active_outlined,
+          title: '通知設定',
+          subtitle: 'プッシュ通知の細かい設定',
+          onTap: () => tapped++,
+          detail: null,
+          onSwitch: null,
+          switchValue: null,
+        ),
+      ),
+    );
     expect(find.text('通知設定'), findsOneWidget);
     expect(find.text('プッシュ通知の細かい設定'), findsOneWidget);
     expect(find.byIcon(Icons.chevron_right), findsOneWidget);
@@ -200,14 +243,19 @@ void main() {
 
   testWidgets('AppCell: onSwitch + switchValue 指定で Switch 表示', (tester) async {
     bool? lastValue;
-    await tester.pumpWidget(_wrap(AppCell(
-        icon: Icons.notifications_active_outlined,
-        title: '自動通知',
-        switchValue: false,
-        onSwitch: (v) => lastValue = v,
-        detail: null,
-        onTap: null,
-        subtitle: null)));
+    await tester.pumpWidget(
+      _wrap(
+        AppCell(
+          icon: Icons.notifications_active_outlined,
+          title: '自動通知',
+          switchValue: false,
+          onSwitch: (v) => lastValue = v,
+          detail: null,
+          onTap: null,
+          subtitle: null,
+        ),
+      ),
+    );
     expect(find.byType(Switch), findsOneWidget);
     expect(find.byIcon(Icons.chevron_right), findsNothing);
     await tester.tap(find.byType(Switch));
@@ -215,15 +263,20 @@ void main() {
   });
 
   testWidgets('AppCell: danger=true でアイコンが danger 色', (tester) async {
-    await tester.pumpWidget(_wrap(const AppCell(
-        icon: Icons.logout,
-        title: 'サインアウト',
-        danger: true,
-        detail: null,
-        onSwitch: null,
-        onTap: null,
-        subtitle: null,
-        switchValue: null)));
+    await tester.pumpWidget(
+      _wrap(
+        const AppCell(
+          icon: Icons.logout,
+          title: 'サインアウト',
+          danger: true,
+          detail: null,
+          onSwitch: null,
+          onTap: null,
+          subtitle: null,
+          switchValue: null,
+        ),
+      ),
+    );
     expect(find.text('サインアウト'), findsOneWidget);
   });
 
@@ -231,26 +284,19 @@ void main() {
     await tester.pumpWidget(_wrap(const AppDivider()));
     final padding = tester.widget<Padding>(
       find
-          .ancestor(
-            of: find.byType(Container),
-            matching: find.byType(Padding),
-          )
+          .ancestor(of: find.byType(Container), matching: find.byType(Padding))
           .first,
     );
     expect(padding.padding, const EdgeInsets.only(left: 60));
   });
 
   testWidgets('AppDialogShell: child が card 内に表示される', (tester) async {
-    await tester.pumpWidget(MaterialApp(
-      theme: buildAppTheme(
-        accent: AccentPreset.shu,
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(accent: AccentPreset.shu),
+        home: const Scaffold(body: AppDialogShell(child: Text('確認ダイアログ'))),
       ),
-      home: const Scaffold(
-        body: AppDialogShell(
-          child: Text('確認ダイアログ'),
-        ),
-      ),
-    ));
+    );
     expect(find.text('確認ダイアログ'), findsOneWidget);
   });
 }

@@ -32,12 +32,12 @@ class _FakeCreateGroup extends CreateGroup {
 const _appUser = AppUser(id: 'test-user-001');
 
 Widget _wrap(_FakeCreateGroup fake) => ProviderScope(
-      overrides: [createGroupProvider.overrideWithValue(fake)],
-      child: MaterialApp(
-        theme: buildAppTheme(accent: AccentPreset.shu),
-        home: const GroupJoinOrCreatePage(appUser: _appUser),
-      ),
-    );
+  overrides: [createGroupProvider.overrideWithValue(fake)],
+  child: MaterialApp(
+    theme: buildAppTheme(accent: AccentPreset.shu),
+    home: const GroupJoinOrCreatePage(appUser: _appUser),
+  ),
+);
 
 void main() {
   testWidgets('「自分のリストを作る」で createGroup を setAsDefault:true で呼ぶ', (

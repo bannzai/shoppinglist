@@ -30,7 +30,9 @@ void showGlobalToastWidget(
   Duration duration = const Duration(seconds: 5),
   Object? identity,
 }) {
-  appProviderContainer.read(toastProvider.notifier).show(
+  appProviderContainer
+      .read(toastProvider.notifier)
+      .show(
         KeyedSubtree(key: UniqueKey(), child: _ToastFrame(child: content)),
         duration: duration,
         identity: identity,
@@ -148,14 +150,7 @@ class _ToastViewport extends StatelessWidget {
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
       child: SafeArea(
         child: Stack(
-          children: [
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: child,
-            ),
-          ],
+          children: [Positioned(left: 0, right: 0, bottom: 0, child: child)],
         ),
       ),
     );
@@ -192,8 +187,11 @@ class ToastTextContent extends StatelessWidget {
   /// 本文。空なら省略（FCM で title のみのケースに対応）。
   final String message;
 
-  const ToastTextContent(
-      {super.key, required this.title, required this.message});
+  const ToastTextContent({
+    super.key,
+    required this.title,
+    required this.message,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -206,15 +204,16 @@ class ToastTextContent extends StatelessWidget {
           Text(
             title!,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: onInk,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: onInk,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         if (message.isNotEmpty)
           Text(
             message,
-            style:
-                Theme.of(context).textTheme.bodySmall?.copyWith(color: onInk),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: onInk),
           ),
       ],
     );
@@ -243,8 +242,9 @@ class ToastActionContent extends StatelessWidget {
         Expanded(
           child: Text(
             message,
-            style:
-                Theme.of(context).textTheme.bodySmall?.copyWith(color: onInk),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: onInk),
           ),
         ),
         const SizedBox(width: 12),
@@ -260,9 +260,9 @@ class ToastActionContent extends StatelessWidget {
               child: Text(
                 actionLabel,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ),

@@ -34,10 +34,10 @@ import 'package:shoppinglist/provider/user_groups.dart';
 
 class _NoOpShoppingListAdd extends ShoppingListAdd {
   _NoOpShoppingListAdd()
-      : super(
-          database: GroupDatabase(groupID: mockGroupID),
-          isPremiumResolver: () => false,
-        );
+    : super(
+        database: GroupDatabase(groupID: mockGroupID),
+        isPremiumResolver: () => false,
+      );
 
   @override
   Future<GroupShoppingList> call({
@@ -52,7 +52,7 @@ class _NoOpShoppingListAdd extends ShoppingListAdd {
 
 class _NoOpShoppingListDelete extends ShoppingListDelete {
   _NoOpShoppingListDelete()
-      : super(database: GroupDatabase(groupID: mockGroupID));
+    : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<void> call({required String shoppingListID}) async {}
@@ -60,7 +60,7 @@ class _NoOpShoppingListDelete extends ShoppingListDelete {
 
 class _NoOpShoppingListUpdate extends ShoppingListUpdate {
   _NoOpShoppingListUpdate()
-      : super(database: GroupDatabase(groupID: mockGroupID));
+    : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<void> call({
@@ -71,9 +71,10 @@ class _NoOpShoppingListUpdate extends ShoppingListUpdate {
 
 class _NoOpShoppingListDuplicate extends ShoppingListDuplicate {
   _NoOpShoppingListDuplicate()
-      : super(
-            shoppingListAdd: _NoOpShoppingListAdd(),
-            addShoppingListItem: _NoOpAddShoppingListItem());
+    : super(
+        shoppingListAdd: _NoOpShoppingListAdd(),
+        addShoppingListItem: _NoOpAddShoppingListItem(),
+      );
 
   @override
   Future<GroupShoppingList> call({
@@ -88,7 +89,7 @@ class _NoOpShoppingListDuplicate extends ShoppingListDuplicate {
 
 class _NoOpAddShoppingListItem extends AddShoppingListItem {
   _NoOpAddShoppingListItem()
-      : super(database: GroupDatabase(groupID: mockGroupID));
+    : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<GroupShoppingListItem> call({
@@ -105,7 +106,7 @@ class _NoOpAddShoppingListItem extends AddShoppingListItem {
 
 class _NoOpShoppingListItemBatchUpdate extends ShoppingListItemBatchUpdate {
   _NoOpShoppingListItemBatchUpdate()
-      : super(database: GroupDatabase(groupID: mockGroupID));
+    : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<void> call({
@@ -128,7 +129,7 @@ class _NoOpCreateGroupInvitation extends CreateGroupInvitation {
 
 class _NoOpAcceptGroupInvitation extends AcceptGroupInvitation {
   _NoOpAcceptGroupInvitation()
-      : super(userDatabase: UserDatabase(userID: mockUserID));
+    : super(userDatabase: UserDatabase(userID: mockUserID));
 
   @override
   Future<String> call({required String invitationCode}) async {
@@ -138,7 +139,7 @@ class _NoOpAcceptGroupInvitation extends AcceptGroupInvitation {
 
 class _NoOpDefaultGroupUpdate extends DefaultGroupUpdate {
   _NoOpDefaultGroupUpdate()
-      : super(userDatabase: UserDatabase(userID: mockUserID));
+    : super(userDatabase: UserDatabase(userID: mockUserID));
 
   @override
   Future<void> call({required String groupID}) async {}
@@ -151,8 +152,7 @@ class _NoOpCreateGroup extends CreateGroup {
     required String? name,
     required bool setAsDefault,
     required String iconName,
-  }) async =>
-      mockGroupID;
+  }) async => mockGroupID;
 }
 
 class _NoOpCategoryAxisAdd extends GroupCategoryAxisAdd {
@@ -171,7 +171,7 @@ class _NoOpCategoryAxisAdd extends GroupCategoryAxisAdd {
 
 class _NoOpCategoryAxisDelete extends GroupCategoryAxisDelete {
   _NoOpCategoryAxisDelete()
-      : super(database: GroupDatabase(groupID: mockGroupID));
+    : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<void> call({required String categoryAxisID}) async {}
@@ -215,7 +215,7 @@ class _NoOpCategoryDelete extends GroupCategoryDelete {
 
 class _NoOpCategoryBatchUpdate extends GroupCategoryBatchUpdate {
   _NoOpCategoryBatchUpdate()
-      : super(database: GroupDatabase(groupID: mockGroupID));
+    : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<void> call({
@@ -226,7 +226,7 @@ class _NoOpCategoryBatchUpdate extends GroupCategoryBatchUpdate {
 
 class _NoOpGroupUserProfileUpdate extends GroupUserProfileUpdate {
   _NoOpGroupUserProfileUpdate()
-      : super(database: GroupDatabase(groupID: mockGroupID));
+    : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<void> call({
@@ -237,7 +237,7 @@ class _NoOpGroupUserProfileUpdate extends GroupUserProfileUpdate {
 
 class _NoOpShoppingLocationAdd extends ShoppingLocationAdd {
   _NoOpShoppingLocationAdd()
-      : super(database: GroupDatabase(groupID: mockGroupID));
+    : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<GroupShoppingLocation> call({
@@ -253,7 +253,7 @@ class _NoOpShoppingLocationAdd extends ShoppingLocationAdd {
 
 class _NoOpShoppingLocationUpdate extends ShoppingLocationUpdate {
   _NoOpShoppingLocationUpdate()
-      : super(database: GroupDatabase(groupID: mockGroupID));
+    : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<void> call({
@@ -264,7 +264,7 @@ class _NoOpShoppingLocationUpdate extends ShoppingLocationUpdate {
 
 class _NoOpShoppingLocationDelete extends ShoppingLocationDelete {
   _NoOpShoppingLocationDelete()
-      : super(database: GroupDatabase(groupID: mockGroupID));
+    : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<void> call({required String shoppingLocationID}) async {}
@@ -289,33 +289,41 @@ List<Override> previewProviderOverrides({
     // 基盤
     sharedPreferencesProvider.overrideWith((ref) => sharedPreferences),
     currentGroupIDProvider.overrideWith(() => _MockCurrentGroupID()),
-    currentShoppingListIDProvider
-        .overrideWith(() => _MockCurrentShoppingListID()),
+    currentShoppingListIDProvider.overrideWith(
+      () => _MockCurrentShoppingListID(),
+    ),
     firebaseUserChangesProvider.overrideWith((ref) => Stream.value(null)),
     currentUserIDProvider.overrideWithValue(mockUserID),
-    userDatabaseProvider
-        .overrideWith((ref) => UserDatabase(userID: mockUserID)),
-    remoteConfigParameterProvider
-        .overrideWith((ref) => RemoteConfigParameter()),
+    userDatabaseProvider.overrideWith(
+      (ref) => UserDatabase(userID: mockUserID),
+    ),
+    remoteConfigParameterProvider.overrideWith(
+      (ref) => RemoteConfigParameter(),
+    ),
     firestoreIsPremiumProvider.overrideWith((ref) => Future.value(false)),
     // Preview では Purchases SDK 未初期化のため Stream.empty で逃がす。
     // asData が常に null → `?? false` で isPremium=false に解決される。
-    customerInfoProvider
-        .overrideWith((ref) => const Stream<CustomerInfo>.empty()),
+    customerInfoProvider.overrideWith(
+      (ref) => const Stream<CustomerInfo>.empty(),
+    ),
 
     // ユーザー・グループ (non-family)
     appUserProvider.overrideWith((ref) => Stream.value(mockAppUser())),
     userGroupsProvider.overrideWith((ref) => Stream.value([mockGroup()])),
 
     // Family providers: 具体的パラメータ付きでoverride
-    groupProvider(groupID: mockGroupID)
-        .overrideWith((ref) => Stream.value(mockGroup())),
-    groupDatabaseProvider(groupID: mockGroupID)
-        .overrideWith((ref) => GroupDatabase(groupID: mockGroupID)),
+    groupProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => Stream.value(mockGroup())),
+    groupDatabaseProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => GroupDatabase(groupID: mockGroupID)),
 
     // 買い物リスト
-    shoppingListsProvider(groupID: mockGroupID, isPremium: false)
-        .overrideWith((ref) => Stream.value(mockShoppingLists())),
+    shoppingListsProvider(
+      groupID: mockGroupID,
+      isPremium: false,
+    ).overrideWith((ref) => Stream.value(mockShoppingLists())),
     textShoppingListItemsProvider(
       groupID: mockGroupID,
       shoppingListID: mockShoppingListID,
@@ -326,67 +334,88 @@ List<Override> previewProviderOverrides({
     ).overrideWith((ref) => Stream.value(mockShoppingListItems())),
 
     // カテゴリ
-    groupCategoryAxesProvider(groupID: mockGroupID)
-        .overrideWith((ref) => Stream.value([mockCategoryAxis()])),
+    groupCategoryAxesProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => Stream.value([mockCategoryAxis()])),
     groupCategoriesProvider(
       groupID: mockGroupID,
       categoryAxisID: mockCategoryAxisID,
     ).overrideWith((ref) => Stream.value(mockCategories())),
 
     // ユーザープロファイル
-    groupUserProfilesProvider(groupID: mockGroupID)
-        .overrideWith((ref) => Stream.value(mockUserProfiles())),
+    groupUserProfilesProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => Stream.value(mockUserProfiles())),
 
     // 買い物場所
-    shoppingLocationsProvider(groupID: mockGroupID)
-        .overrideWith((ref) => Stream.value([mockShoppingLocation()])),
+    shoppingLocationsProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => Stream.value([mockShoppingLocation()])),
 
     // 操作クラス (no-op) - Family providers
-    shoppingListAddProvider(groupID: mockGroupID)
-        .overrideWith((ref) => _NoOpShoppingListAdd()),
-    shoppingListDeleteProvider(groupID: mockGroupID)
-        .overrideWith((ref) => _NoOpShoppingListDelete()),
-    shoppingListUpdateProvider(groupID: mockGroupID)
-        .overrideWith((ref) => _NoOpShoppingListUpdate()),
-    shoppingListDuplicateProvider(groupID: mockGroupID)
-        .overrideWith((ref) => _NoOpShoppingListDuplicate()),
-    addShoppingListItemProvider(groupID: mockGroupID)
-        .overrideWith((ref) => _NoOpAddShoppingListItem()),
-    shoppingListItemBatchUpdateProvider(groupID: mockGroupID)
-        .overrideWith((ref) => _NoOpShoppingListItemBatchUpdate()),
+    shoppingListAddProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => _NoOpShoppingListAdd()),
+    shoppingListDeleteProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => _NoOpShoppingListDelete()),
+    shoppingListUpdateProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => _NoOpShoppingListUpdate()),
+    shoppingListDuplicateProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => _NoOpShoppingListDuplicate()),
+    addShoppingListItemProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => _NoOpAddShoppingListItem()),
+    shoppingListItemBatchUpdateProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => _NoOpShoppingListItemBatchUpdate()),
 
     // 操作クラス (no-op) - Non-family providers
-    createGroupInvitationProvider
-        .overrideWith((ref) => _NoOpCreateGroupInvitation()),
-    acceptGroupInvitationProvider
-        .overrideWith((ref) => _NoOpAcceptGroupInvitation()),
+    createGroupInvitationProvider.overrideWith(
+      (ref) => _NoOpCreateGroupInvitation(),
+    ),
+    acceptGroupInvitationProvider.overrideWith(
+      (ref) => _NoOpAcceptGroupInvitation(),
+    ),
     defaultGroupUpdateProvider.overrideWith((ref) => _NoOpDefaultGroupUpdate()),
     createGroupProvider.overrideWith((ref) => _NoOpCreateGroup()),
 
     // カテゴリ操作 (no-op)
-    groupCategoryAxisAddProvider(groupID: mockGroupID)
-        .overrideWith((ref) => _NoOpCategoryAxisAdd()),
-    groupCategoryAxisDeleteProvider(groupID: mockGroupID)
-        .overrideWith((ref) => _NoOpCategoryAxisDelete()),
-    groupCategoryAddProvider(groupID: mockGroupID)
-        .overrideWith((ref) => _NoOpCategoryAdd()),
-    groupCategoryUpdateProvider(groupID: mockGroupID)
-        .overrideWith((ref) => _NoOpCategoryUpdate()),
-    groupCategoryDeleteProvider(groupID: mockGroupID)
-        .overrideWith((ref) => _NoOpCategoryDelete()),
-    groupCategoryBatchUpdateProvider(groupID: mockGroupID)
-        .overrideWith((ref) => _NoOpCategoryBatchUpdate()),
+    groupCategoryAxisAddProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => _NoOpCategoryAxisAdd()),
+    groupCategoryAxisDeleteProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => _NoOpCategoryAxisDelete()),
+    groupCategoryAddProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => _NoOpCategoryAdd()),
+    groupCategoryUpdateProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => _NoOpCategoryUpdate()),
+    groupCategoryDeleteProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => _NoOpCategoryDelete()),
+    groupCategoryBatchUpdateProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => _NoOpCategoryBatchUpdate()),
 
     // ユーザープロファイル操作
-    groupUserProfileUpdateProvider(groupID: mockGroupID)
-        .overrideWith((ref) => _NoOpGroupUserProfileUpdate()),
+    groupUserProfileUpdateProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => _NoOpGroupUserProfileUpdate()),
 
     // 買い物場所操作
-    shoppingLocationAddProvider(groupID: mockGroupID)
-        .overrideWith((ref) => _NoOpShoppingLocationAdd()),
-    shoppingLocationUpdateProvider(groupID: mockGroupID)
-        .overrideWith((ref) => _NoOpShoppingLocationUpdate()),
-    shoppingLocationDeleteProvider(groupID: mockGroupID)
-        .overrideWith((ref) => _NoOpShoppingLocationDelete()),
+    shoppingLocationAddProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => _NoOpShoppingLocationAdd()),
+    shoppingLocationUpdateProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => _NoOpShoppingLocationUpdate()),
+    shoppingLocationDeleteProvider(
+      groupID: mockGroupID,
+    ).overrideWith((ref) => _NoOpShoppingLocationDelete()),
   ];
 }

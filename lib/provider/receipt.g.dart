@@ -52,16 +52,11 @@ class ReceiptsFamily
     required String groupID,
     required String shoppingListID,
   }) {
-    return ReceiptsProvider(
-      groupID: groupID,
-      shoppingListID: shoppingListID,
-    );
+    return ReceiptsProvider(groupID: groupID, shoppingListID: shoppingListID);
   }
 
   @override
-  ReceiptsProvider getProviderOverride(
-    covariant ReceiptsProvider provider,
-  ) {
+  ReceiptsProvider getProviderOverride(covariant ReceiptsProvider provider) {
     return call(
       groupID: provider.groupID,
       shoppingListID: provider.shoppingListID,
@@ -69,7 +64,7 @@ class ReceiptsFamily
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -77,9 +72,9 @@ class ReceiptsFamily
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -97,26 +92,24 @@ class ReceiptsProvider
   /// 買い物リストに紐づくレシート一覧を、登録日時の新しい順で購読する。
   ///
   /// Copied from [receipts].
-  ReceiptsProvider({
-    required String groupID,
-    required String shoppingListID,
-  }) : this._internal(
-          (ref) => receipts(
-            ref as ReceiptsRef,
-            groupID: groupID,
-            shoppingListID: shoppingListID,
-          ),
-          from: receiptsProvider,
-          name: r'receiptsProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$receiptsHash,
-          dependencies: ReceiptsFamily._dependencies,
-          allTransitiveDependencies: ReceiptsFamily._allTransitiveDependencies,
+  ReceiptsProvider({required String groupID, required String shoppingListID})
+    : this._internal(
+        (ref) => receipts(
+          ref as ReceiptsRef,
           groupID: groupID,
           shoppingListID: shoppingListID,
-        );
+        ),
+        from: receiptsProvider,
+        name: r'receiptsProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$receiptsHash,
+        dependencies: ReceiptsFamily._dependencies,
+        allTransitiveDependencies: ReceiptsFamily._allTransitiveDependencies,
+        groupID: groupID,
+        shoppingListID: shoppingListID,
+      );
 
   ReceiptsProvider._internal(
     super._createNotifier, {
@@ -135,7 +128,7 @@ class ReceiptsProvider
   @override
   Override overrideWith(
     Stream<List<GroupShoppingListReceipt>> Function(ReceiptsRef provider)
-        create,
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -154,7 +147,7 @@ class ReceiptsProvider
 
   @override
   AutoDisposeStreamProviderElement<List<GroupShoppingListReceipt>>
-      createElement() {
+  createElement() {
     return _ReceiptsProviderElement(this);
   }
 
@@ -209,25 +202,19 @@ class AddReceiptFamily extends Family<AddReceipt> {
   const AddReceiptFamily();
 
   /// See also [addReceipt].
-  AddReceiptProvider call({
-    required String groupID,
-  }) {
-    return AddReceiptProvider(
-      groupID: groupID,
-    );
+  AddReceiptProvider call({required String groupID}) {
+    return AddReceiptProvider(groupID: groupID);
   }
 
   @override
   AddReceiptProvider getProviderOverride(
     covariant AddReceiptProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -235,9 +222,9 @@ class AddReceiptFamily extends Family<AddReceipt> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -250,24 +237,19 @@ class AddReceiptFamily extends Family<AddReceipt> {
 /// See also [addReceipt].
 class AddReceiptProvider extends AutoDisposeProvider<AddReceipt> {
   /// See also [addReceipt].
-  AddReceiptProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => addReceipt(
-            ref as AddReceiptRef,
-            groupID: groupID,
-          ),
-          from: addReceiptProvider,
-          name: r'addReceiptProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$addReceiptHash,
-          dependencies: AddReceiptFamily._dependencies,
-          allTransitiveDependencies:
-              AddReceiptFamily._allTransitiveDependencies,
-          groupID: groupID,
-        );
+  AddReceiptProvider({required String groupID})
+    : this._internal(
+        (ref) => addReceipt(ref as AddReceiptRef, groupID: groupID),
+        from: addReceiptProvider,
+        name: r'addReceiptProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$addReceiptHash,
+        dependencies: AddReceiptFamily._dependencies,
+        allTransitiveDependencies: AddReceiptFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   AddReceiptProvider._internal(
     super._createNotifier, {
@@ -282,9 +264,7 @@ class AddReceiptProvider extends AutoDisposeProvider<AddReceipt> {
   final String groupID;
 
   @override
-  Override overrideWith(
-    AddReceipt Function(AddReceiptRef provider) create,
-  ) {
+  Override overrideWith(AddReceipt Function(AddReceiptRef provider) create) {
     return ProviderOverride(
       origin: this,
       override: AddReceiptProvider._internal(
@@ -345,25 +325,19 @@ class UpdateReceiptFamily extends Family<UpdateReceipt> {
   const UpdateReceiptFamily();
 
   /// See also [updateReceipt].
-  UpdateReceiptProvider call({
-    required String groupID,
-  }) {
-    return UpdateReceiptProvider(
-      groupID: groupID,
-    );
+  UpdateReceiptProvider call({required String groupID}) {
+    return UpdateReceiptProvider(groupID: groupID);
   }
 
   @override
   UpdateReceiptProvider getProviderOverride(
     covariant UpdateReceiptProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -371,9 +345,9 @@ class UpdateReceiptFamily extends Family<UpdateReceipt> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -386,24 +360,20 @@ class UpdateReceiptFamily extends Family<UpdateReceipt> {
 /// See also [updateReceipt].
 class UpdateReceiptProvider extends AutoDisposeProvider<UpdateReceipt> {
   /// See also [updateReceipt].
-  UpdateReceiptProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => updateReceipt(
-            ref as UpdateReceiptRef,
-            groupID: groupID,
-          ),
-          from: updateReceiptProvider,
-          name: r'updateReceiptProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$updateReceiptHash,
-          dependencies: UpdateReceiptFamily._dependencies,
-          allTransitiveDependencies:
-              UpdateReceiptFamily._allTransitiveDependencies,
-          groupID: groupID,
-        );
+  UpdateReceiptProvider({required String groupID})
+    : this._internal(
+        (ref) => updateReceipt(ref as UpdateReceiptRef, groupID: groupID),
+        from: updateReceiptProvider,
+        name: r'updateReceiptProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$updateReceiptHash,
+        dependencies: UpdateReceiptFamily._dependencies,
+        allTransitiveDependencies:
+            UpdateReceiptFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   UpdateReceiptProvider._internal(
     super._createNotifier, {
@@ -462,11 +432,13 @@ mixin UpdateReceiptRef on AutoDisposeProviderRef<UpdateReceipt> {
 }
 
 class _UpdateReceiptProviderElement
-    extends AutoDisposeProviderElement<UpdateReceipt> with UpdateReceiptRef {
+    extends AutoDisposeProviderElement<UpdateReceipt>
+    with UpdateReceiptRef {
   _UpdateReceiptProviderElement(super.provider);
 
   @override
   String get groupID => (origin as UpdateReceiptProvider).groupID;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

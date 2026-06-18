@@ -31,22 +31,18 @@ class _AppState extends ConsumerState<App> {
     // build ではなく initState で listenManual するのは、購読を1回だけ確立すれば以降の変化は
     // listener が追従するため（build 内 ref.listen は fireImmediately 非対応）。
     // fireImmediately: true で初回プランにも反応し、従来の ref.watch と同じ初回挙動を保つ。
-    ref.listenManual(
-      geofenceMonitoringPlanProvider,
-      (previous, next) {
-        final service = ref.read(geofenceServiceProvider);
-        if (!next.shouldMonitor) {
-          service.stopMonitoring();
-          return;
-        }
-        service.updateMonitoredData(
-          locationsByGroupID: next.locationsByGroupID,
-          activeListsByLocationID: next.activeListsByLocationID,
-        );
-        service.startMonitoring();
-      },
-      fireImmediately: true,
-    );
+    ref.listenManual(geofenceMonitoringPlanProvider, (previous, next) {
+      final service = ref.read(geofenceServiceProvider);
+      if (!next.shouldMonitor) {
+        service.stopMonitoring();
+        return;
+      }
+      service.updateMonitoredData(
+        locationsByGroupID: next.locationsByGroupID,
+        activeListsByLocationID: next.activeListsByLocationID,
+      );
+      service.startMonitoring();
+    }, fireImmediately: true);
   }
 
   @override
@@ -54,7 +50,8 @@ class _AppState extends ConsumerState<App> {
     // appUserProvider は UserDatabaseResolver スコープ外では AsyncError になるが、
     // .asData?.value で安全に null フォールバックし、shu（朱）が使われる
     final accent = resolveAccentPreset(
-        ref.watch(appUserProvider).asData?.value.themeColorHex);
+      ref.watch(appUserProvider).asData?.value.themeColorHex,
+    );
 
     return MaterialApp(
       navigatorKey: appNavigatorKey,
@@ -65,21 +62,17 @@ class _AppState extends ConsumerState<App> {
         Widget content = child ?? const SizedBox.shrink();
         if (kDebugMode) {
           content = ShakeDetectorWrapper(
-            onShake: () => showDeveloperOptionsModal(
-              Navigator.of(context, rootNavigator: true).context,
-            ),
+            onShake:
+                () => showDeveloperOptionsModal(
+                  Navigator.of(context, rootNavigator: true).context,
+                ),
             child: content,
           );
         }
         // ToastOverlay は toastProvider を監視し、root Navigator の Overlay
         // 最前面へトーストの OverlayEntry を積む。builder に常駐させるのは
         // route 遷移に依存せずアプリ起動から監視を確立するため。
-        return Stack(
-          children: [
-            content,
-            const ToastOverlay(),
-          ],
-        );
+        return Stack(children: [content, const ToastOverlay()]);
       },
       home: const RootPage(),
     );

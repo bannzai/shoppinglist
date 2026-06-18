@@ -62,7 +62,8 @@ GeofenceMonitoringPlan geofenceMonitoringPlan(Ref ref) {
   final isPremium =
       ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
   final isEnabled = ref.watch(
-      boolSharedPreferencesProvider(key: BoolKey.locationReminderEnabled));
+    boolSharedPreferencesProvider(key: BoolKey.locationReminderEnabled),
+  );
   final groups = ref.watch(userGroupsProvider).asData?.value ?? [];
 
   if (!isPremium || !isEnabled || groups.isEmpty) {
@@ -74,20 +75,25 @@ GeofenceMonitoringPlan geofenceMonitoringPlan(Ref ref) {
   final activeListsByLocationID = <String, List<GroupShoppingList>>{};
 
   for (final group in groups) {
-    final locationsWithCoords = (ref
-                .watch(shoppingLocationsProvider(groupID: group.id))
-                .asData
-                ?.value ??
-            [])
-        .where((l) => l.latitude != null && l.longitude != null)
-        .toList();
+    final locationsWithCoords =
+        (ref
+                    .watch(shoppingLocationsProvider(groupID: group.id))
+                    .asData
+                    ?.value ??
+                [])
+            .where((l) => l.latitude != null && l.longitude != null)
+            .toList();
     if (locationsWithCoords.isNotEmpty) {
       locationsByGroupID[group.id] = locationsWithCoords;
     }
 
     for (final list in (ref
-                .watch(shoppingListsProvider(
-                    groupID: group.id, isPremium: isPremium))
+                .watch(
+                  shoppingListsProvider(
+                    groupID: group.id,
+                    isPremium: isPremium,
+                  ),
+                )
                 .asData
                 ?.value ??
             [])

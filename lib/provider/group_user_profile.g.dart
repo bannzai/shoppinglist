@@ -40,25 +40,19 @@ class GroupUserProfilesFamily
   const GroupUserProfilesFamily();
 
   /// See also [groupUserProfiles].
-  GroupUserProfilesProvider call({
-    required String groupID,
-  }) {
-    return GroupUserProfilesProvider(
-      groupID: groupID,
-    );
+  GroupUserProfilesProvider call({required String groupID}) {
+    return GroupUserProfilesProvider(groupID: groupID);
   }
 
   @override
   GroupUserProfilesProvider getProviderOverride(
     covariant GroupUserProfilesProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -66,9 +60,9 @@ class GroupUserProfilesFamily
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -82,24 +76,21 @@ class GroupUserProfilesFamily
 class GroupUserProfilesProvider
     extends AutoDisposeStreamProvider<List<GroupUserProfile>> {
   /// See also [groupUserProfiles].
-  GroupUserProfilesProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => groupUserProfiles(
-            ref as GroupUserProfilesRef,
-            groupID: groupID,
-          ),
-          from: groupUserProfilesProvider,
-          name: r'groupUserProfilesProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$groupUserProfilesHash,
-          dependencies: GroupUserProfilesFamily._dependencies,
-          allTransitiveDependencies:
-              GroupUserProfilesFamily._allTransitiveDependencies,
-          groupID: groupID,
-        );
+  GroupUserProfilesProvider({required String groupID})
+    : this._internal(
+        (ref) =>
+            groupUserProfiles(ref as GroupUserProfilesRef, groupID: groupID),
+        from: groupUserProfilesProvider,
+        name: r'groupUserProfilesProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$groupUserProfilesHash,
+        dependencies: GroupUserProfilesFamily._dependencies,
+        allTransitiveDependencies:
+            GroupUserProfilesFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   GroupUserProfilesProvider._internal(
     super._createNotifier, {
@@ -116,7 +107,7 @@ class GroupUserProfilesProvider
   @override
   Override overrideWith(
     Stream<List<GroupUserProfile>> Function(GroupUserProfilesRef provider)
-        create,
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -181,25 +172,19 @@ class GroupUserProfileUpdateFamily extends Family<GroupUserProfileUpdate> {
   const GroupUserProfileUpdateFamily();
 
   /// See also [groupUserProfileUpdate].
-  GroupUserProfileUpdateProvider call({
-    required String groupID,
-  }) {
-    return GroupUserProfileUpdateProvider(
-      groupID: groupID,
-    );
+  GroupUserProfileUpdateProvider call({required String groupID}) {
+    return GroupUserProfileUpdateProvider(groupID: groupID);
   }
 
   @override
   GroupUserProfileUpdateProvider getProviderOverride(
     covariant GroupUserProfileUpdateProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -207,9 +192,9 @@ class GroupUserProfileUpdateFamily extends Family<GroupUserProfileUpdate> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -223,24 +208,23 @@ class GroupUserProfileUpdateFamily extends Family<GroupUserProfileUpdate> {
 class GroupUserProfileUpdateProvider
     extends AutoDisposeProvider<GroupUserProfileUpdate> {
   /// See also [groupUserProfileUpdate].
-  GroupUserProfileUpdateProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => groupUserProfileUpdate(
-            ref as GroupUserProfileUpdateRef,
-            groupID: groupID,
-          ),
-          from: groupUserProfileUpdateProvider,
-          name: r'groupUserProfileUpdateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$groupUserProfileUpdateHash,
-          dependencies: GroupUserProfileUpdateFamily._dependencies,
-          allTransitiveDependencies:
-              GroupUserProfileUpdateFamily._allTransitiveDependencies,
+  GroupUserProfileUpdateProvider({required String groupID})
+    : this._internal(
+        (ref) => groupUserProfileUpdate(
+          ref as GroupUserProfileUpdateRef,
           groupID: groupID,
-        );
+        ),
+        from: groupUserProfileUpdateProvider,
+        name: r'groupUserProfileUpdateProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$groupUserProfileUpdateHash,
+        dependencies: GroupUserProfileUpdateFamily._dependencies,
+        allTransitiveDependencies:
+            GroupUserProfileUpdateFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   GroupUserProfileUpdateProvider._internal(
     super._createNotifier, {
@@ -307,5 +291,6 @@ class _GroupUserProfileUpdateProviderElement
   @override
   String get groupID => (origin as GroupUserProfileUpdateProvider).groupID;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

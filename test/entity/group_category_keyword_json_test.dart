@@ -10,16 +10,19 @@ void main() {
       );
       final json = keyword.toJson();
       expect(json['matchingType'], 'regex');
-      expect(GroupCategoryKeyword.fromJson(json).matchingType,
-          GroupCategoryKeywordMatchingType.regex);
+      expect(
+        GroupCategoryKeyword.fromJson(json).matchingType,
+        GroupCategoryKeywordMatchingType.regex,
+      );
     });
 
     test('3 種類すべての matchingType がデシリアライズできる', () {
-      for (final entry in const {
-        'exact': GroupCategoryKeywordMatchingType.exact,
-        'partial': GroupCategoryKeywordMatchingType.partial,
-        'regex': GroupCategoryKeywordMatchingType.regex,
-      }.entries) {
+      for (final entry
+          in const {
+            'exact': GroupCategoryKeywordMatchingType.exact,
+            'partial': GroupCategoryKeywordMatchingType.partial,
+            'regex': GroupCategoryKeywordMatchingType.regex,
+          }.entries) {
         final keyword = GroupCategoryKeyword.fromJson({
           'keyword': 'にんじん',
           'matchingType': entry.key,

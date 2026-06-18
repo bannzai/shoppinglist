@@ -45,11 +45,12 @@ abstract class GroupInvitation with _$GroupInvitation {
       _$GroupInvitationFromJson(json);
 
   static GroupInvitation fromFirestore(
-          DocumentSnapshot<Map<String, dynamic>> snapshot,
-          SnapshotOptions? options) =>
-      GroupInvitation.fromJson(snapshot.data()!..['id'] = snapshot.id);
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+    SnapshotOptions? options,
+  ) => GroupInvitation.fromJson(snapshot.data()!..['id'] = snapshot.id);
 
   static Map<String, dynamic> toFirestore(
-          GroupInvitation invitation, SetOptions? options) =>
-      invitation.toJson();
+    GroupInvitation invitation,
+    SetOptions? options,
+  ) => invitation.toJson();
 }

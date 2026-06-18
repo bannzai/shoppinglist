@@ -19,7 +19,7 @@ class _RecordingAddShoppingListItem extends AddShoppingListItem {
   int callCount = 0;
 
   _RecordingAddShoppingListItem()
-      : super(database: GroupDatabase(groupID: 'g'));
+    : super(database: GroupDatabase(groupID: 'g'));
 
   @override
   Future<GroupShoppingListItem> call({
@@ -65,21 +65,23 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          customerInfoProvider
-              .overrideWith((ref) => const Stream<CustomerInfo>.empty()),
-          currentMonthAIUsageProvider
-              .overrideWith((ref) => const Stream<UserAIUsage?>.empty()),
+          customerInfoProvider.overrideWith(
+            (ref) => const Stream<CustomerInfo>.empty(),
+          ),
+          currentMonthAIUsageProvider.overrideWith(
+            (ref) => const Stream<UserAIUsage?>.empty(),
+          ),
           currentUserIDProvider.overrideWithValue('u'),
-          addShoppingListItemProvider(groupID: 'g')
-              .overrideWith((ref) => recordingAdd),
+          addShoppingListItemProvider(
+            groupID: 'g',
+          ).overrideWith((ref) => recordingAdd),
           if (aiProcessingType != null)
-            aIProcessingProvider
-                .overrideWith(() => _ProcessingAIProcessing(aiProcessingType)),
+            aIProcessingProvider.overrideWith(
+              () => _ProcessingAIProcessing(aiProcessingType),
+            ),
         ],
         child: MaterialApp(
-          theme: buildAppTheme(
-            accent: AccentPreset.shu,
-          ),
+          theme: buildAppTheme(accent: AccentPreset.shu),
           home: const Scaffold(
             floatingActionButton: ExpandableFab(
               groupID: 'g',
@@ -137,8 +139,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(recordingAdd.callCount, 0, reason: 'メニュー展開中（x 状態）のタップは Row 追加せず閉じる');
-    expect(find.byIcon(Icons.add_task), findsOneWidget,
-        reason: '閉じて add_task に戻る');
+    expect(
+      find.byIcon(Icons.add_task),
+      findsOneWidget,
+      reason: '閉じて add_task に戻る',
+    );
   });
 
   testWidgets('② 通常状態の FAB タップはメニューを開くだけで Row を追加しない', (tester) async {

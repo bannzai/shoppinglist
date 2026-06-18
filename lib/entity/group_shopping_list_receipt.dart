@@ -47,14 +47,12 @@ abstract class GroupShoppingListReceipt with _$GroupShoppingListReceipt {
   static GroupShoppingListReceipt fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
     SnapshotOptions? options,
-  ) =>
-      GroupShoppingListReceipt.fromJson(
-        Map<String, dynamic>.from(snapshot.data() ?? {})..['id'] = snapshot.id,
-      );
+  ) => GroupShoppingListReceipt.fromJson(
+    Map<String, dynamic>.from(snapshot.data() ?? {})..['id'] = snapshot.id,
+  );
 
   static Map<String, dynamic> toFirestore(
     GroupShoppingListReceipt receipt,
     SetOptions? options,
-  ) =>
-      receipt.toJson();
+  ) => receipt.toJson();
 }
