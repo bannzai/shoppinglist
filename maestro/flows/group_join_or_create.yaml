@@ -1,0 +1,50 @@
+appId: com.bannzai.shoppinglist
+---
+- launchApp:
+    clearState: true
+    clearKeychain: true
+- runFlow:
+    when:
+      visible: "許可"
+    commands:
+      - tapOn: "許可"
+      - waitForAnimationToEnd
+# オンボーディング(ログイン前)をスキップ
+- extendedWaitUntil:
+    visible: "スキップ"
+    timeout: 90000
+- tapOn: "スキップ"
+- waitForAnimationToEnd
+# 匿名サインイン
+- extendedWaitUntil:
+    visible: "匿名サインイン（デバッグ用）"
+    timeout: 90000
+- tapOn: "匿名サインイン（デバッグ用）"
+- waitForAnimationToEnd
+- runFlow:
+    when:
+      visible: "Retry"
+    commands:
+      - tapOn: "Retry"
+      - waitForAnimationToEnd
+# GroupJoinOrCreatePage が表示され両ボタンが見えること
+- extendedWaitUntil:
+    visible: "招待コードで参加"
+    timeout: 90000
+- assertVisible: "自分のリストを作る"
+# 招待コードで参加 → GroupInvitationAcceptPage へ
+- tapOn: "招待コードで参加"
+- extendedWaitUntil:
+    visible: "招待コードを入力してください"
+    timeout: 30000
+# 戻って自分のリストを作る → ホームへ
+- tapOn: "キャンセル"
+- extendedWaitUntil:
+    visible: "自分のリストを作る"
+    timeout: 30000
+- tapOn: "自分のリストを作る"
+- waitForAnimationToEnd
+# サインイン後の空ホームに到達したことを確認
+- extendedWaitUntil:
+    visible: "タップで入力開始"
+    timeout: 60000

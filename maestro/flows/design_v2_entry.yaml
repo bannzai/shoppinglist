@@ -5,10 +5,24 @@ appId: com.bannzai.shoppinglist
 # - Auth title / body / 規約注記 は screens-onboarding.jsx#AuthPage 準拠
 # - Auth ゲストリンクは UI に出さない (debug 匿名ボタンのみ)
 
-- clearState
-- launchApp
+# clearState だけでは Firebase 認証が Keychain に残存しオンボーディングが表示されないため
+# clearKeychain も行って未認証状態に戻す（onboarding は未認証ユーザーにのみ表示される）。
+- launchApp:
+    clearState: true
+    clearKeychain: true
 
-# Slide 1
+# clearState 直後は通知許可ダイアログがオンボーディングの前面に出るため先に閉じる
+- runFlow:
+    when:
+      visible: "許可"
+    commands:
+      - tapOn: "許可"
+      - waitForAnimationToEnd
+
+# Slide 1（スプラッシュ表示後に描画されるため明示的に待つ）
+- extendedWaitUntil:
+    visible: "家族と作る、"
+    timeout: 90000
 - assertVisible: "家族と作る、"
 - assertVisible: "買い物リスト"
 - assertVisible: "店頭で別の誰かがチェック"

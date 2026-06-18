@@ -31,6 +31,12 @@ appId: com.bannzai.shoppinglist
     commands:
       - tapOn: "Retry"
       - waitForAnimationToEnd
+# 匿名サインイン後は GroupJoinOrCreatePage が表示されるため「自分のリストを作る」でホームへ進む。
+- extendedWaitUntil:
+    visible: "自分のリストを作る"
+    timeout: 90000
+- tapOn: "自分のリストを作る"
+- waitForAnimationToEnd
 - extendedWaitUntil:
     visible: "タップで入力開始"
     timeout: 60000
@@ -48,12 +54,12 @@ appId: com.bannzai.shoppinglist
 - takeScreenshot: screenshots/swipe_delete_01_before
 
 # 左スワイプで削除（Dismissible direction: endToStart）。
-# このアプリでは右スワイプ=チェック切替、左スワイプ=削除（design_v2_list_core.yaml 参照）。
-# テキストは行の左寄りにあるため、行の右端から左へスワイプして dismissThreshold を超える。
+# このアプリでは右スワイプ=チェック切替、左スワイプ=削除。
+# 先頭アイテム行は design_v2_list_core.yaml と同じ y=21% にあるため、同じ実証済み座標
+# （右端 88% → 左端 8%）でスワイプして dismissThreshold(幅の40%) を超える。
 - swipe:
-    start: "92%, 28%"
-    end: "8%, 28%"
-    duration: 800
+    start: "88%, 21%"
+    end: "8%, 21%"
 - waitForAnimationToEnd
 
 # 削除され、Undo SnackBar が表示される

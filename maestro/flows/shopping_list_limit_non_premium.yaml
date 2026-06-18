@@ -2,22 +2,32 @@ appId: com.bannzai.shoppinglist
 ---
 - runFlow: shared/anonymous_sign_in.yaml
 
-# 1個目のリストは初期作成済み（anonymous_sign_inで作成される）
-# 残り19個を追加して合計20個（freeGroupActiveShoppingListLimit）にする
+# 1個目のリストは初期作成済み（anonymous_sign_in でソログループ作成時に1個作られる）。
+# 残り19個を追加して合計20個（freeGroupActiveShoppingListLimit）にする。
+# design v2: リスト追加は CreateListFab（上側 FAB, 右下 89%,83%）を展開し
+# 「今日の日付でリストを追加」をタップする。作成は空アイテム追加+フォーカスまで
+# 連鎖しキーボードが FAB を覆うため、毎回 hideKeyboard で閉じてから次の追加を行う。
 - repeat:
     times: 19
     commands:
-      - tapOn: "メニュー"
-      - tapOn: "買い物リストを追加"
+      - tapOn:
+          point: "89%, 83%"
+      - extendedWaitUntil:
+          visible: "今日の日付でリストを追加"
+          timeout: 8000
+      - tapOn: "今日の日付でリストを追加"
       - waitForAnimationToEnd
-      - tapOn: "買い物リストを追加"
+      - hideKeyboard
       - waitForAnimationToEnd
 
-# 21個目（上限超過） — SnackBarが表示されるはず
-- tapOn: "メニュー"
-- tapOn: "買い物リストを追加"
-- waitForAnimationToEnd
-- tapOn: "買い物リストを追加"
-- waitForAnimationToEnd
-- assertVisible: "無料プランでは1グループあたり20個までリストを作成できます。プレミアムにアップグレードすると無制限に作成できます"
+# 21個目（上限超過）— SnackBar が表示されるはず
+- tapOn:
+    point: "89%, 83%"
+- extendedWaitUntil:
+    visible: "今日の日付でリストを追加"
+    timeout: 8000
+- tapOn: "今日の日付でリストを追加"
+- extendedWaitUntil:
+    visible: "無料プランでは1グループあたり20個まで"
+    timeout: 8000
 - takeScreenshot: screenshots/shopping_list_limit_01_exceeded
