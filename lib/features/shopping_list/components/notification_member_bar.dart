@@ -63,7 +63,7 @@ class NotificationMemberBar extends HookConsumerWidget {
               const SizedBox(height: 2),
               Text(
                 // SSOT: screens-list.jsx#NotifySnack
-                '家族に通知しますか?',
+                'グループに通知しますか?',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: Colors.white70,
                       height: 1.3,

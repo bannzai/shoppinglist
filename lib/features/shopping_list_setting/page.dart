@@ -168,7 +168,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                   color: neutral.card,
                   child: AppCell(
                       icon: Icons.notifications_outlined,
-                      title: 'アイテム追加で家族に通知',
+                      title: 'アイテム追加でグループに通知',
                       subtitle: 'このリストでアイテム追加・チェック切替があったとき',
                       switchValue: shoppingListState.value.autoNotifyEnabled,
                       onSwitch: (value) {
