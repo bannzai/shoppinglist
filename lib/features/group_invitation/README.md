@@ -29,6 +29,6 @@
 - グループ名が未設定（null・空白のみ）のグループでは招待コードを発行できない。
   - `GroupSettingPage` の招待ボタン: 「招待する前にグループ名を設定してください」とトーストで促す（同画面のグループ名入力欄で設定可能）。
   - `ShoppingListSettingPage` の招待: 同メッセージ + 「グループ設定」アクション付きトーストで `GroupSettingPage` へ誘導する。
-- 名前登録済みかの判定は `Group.hasRegisteredName`（`lib/entity/group.dart`）に集約。
+- グループ名が空でないかの判定は `Group.nameIsNotEmpty`（`lib/entity/group.dart`）に集約。
 - グループ作成画面（`GroupCreatePage`）では名前を必須化（空だと「作成する」ボタンが無効）。作成直後の自動招待でも名前が確定済みになる。
 - 初回に自動作成されるソログループ（`name: null`）は通常利用は従来どおりで、招待しようとしたときだけ名前を要求される。

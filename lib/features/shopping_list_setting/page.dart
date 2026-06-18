@@ -305,7 +305,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
       return;
     }
     // この画面にはグループ名入力欄がないため、トーストからグループ設定画面へ誘導する。
-    if (!group.hasRegisteredName) {
+    if (!group.nameIsNotEmpty) {
       final rootContext = Navigator.of(context, rootNavigator: true).context;
       showGlobalActionToast(
         message: '招待する前にグループ名を設定してください',

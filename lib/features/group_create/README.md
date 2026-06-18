@@ -28,4 +28,4 @@
 ## 関連ファイル
 - `lib/provider/group_create.dart` - `CreateGroup`（Firebase Function `createGroup` 呼び出し）
 - `lib/provider/group_invitation.dart` - `CreateGroupInvitation`（作成直後の招待コード発行）
-- `lib/entity/group.dart` - `Group` エンティティ・`Group.hasRegisteredName`
+- `lib/entity/group.dart` - `Group` エンティティ・`Group.nameIsNotEmpty`
