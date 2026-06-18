@@ -118,6 +118,38 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       return null;
     }, [inputRowFocusRequest]);
 
+    // 入力行がフォーカス中に、キーボード表示(viewInsets 変化)や Enter 確定で確定アイテムが
+    // 挿入されて入力行が下へ繰り下がる(order 変化)と、入力行がキーボードの裏に隠れて入力中の
+    // 文字が見えなくなる(Issue #429)。これらの変化のたびに入力行を可視領域の下端へスクロールし、
+    // 入力中の行を常に見えるようにする。プログラムによる ensureVisible のアニメーションは
+    // dragDetails を持たないため、ReorderableListView の keyboardDismissBehavior.onDrag を
+    // 誤発火させず、フォーカス(ソフトキーボード表示)も維持される(fix-350 の挙動を壊さない)。
+    //
+    // keyboardInset は入力行(空メッセージ)でだけ viewInsets を購読する。確定行はキーボードの
+    // 高さに依存させず、キーボード開閉のたびに全行が再ビルドされるのを避ける。
+    final keyboardInset = textShoppingListItem.message.isEmpty
+        ? MediaQuery.viewInsetsOf(context).bottom
+        : 0.0;
+    // 目的: 入力行をキーボード上端の可視領域へ追従させる。
+    // 依存配列: キーボード高さ・入力行の order・編集状態。レイアウトに影響する変化だけで追従させ、
+    // 各文字のテキスト編集では再実行しない(文字単位のキャレット追従は EditableText が担うため)。
+    useEffect(() {
+      if (textShoppingListItem.message.isEmpty && isEditing.value) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final scrollContext = focusNode.context;
+          if (scrollContext != null) {
+            Scrollable.ensureVisible(
+              scrollContext,
+              alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+            );
+          }
+        });
+      }
+      return null;
+    }, [keyboardInset, textShoppingListItem.order, isEditing.value]);
+
     final currentUserID = ref.watch(currentUserIDProvider)!;
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
