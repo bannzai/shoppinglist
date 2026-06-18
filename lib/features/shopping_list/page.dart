@@ -1,10 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
-import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
@@ -13,29 +11,24 @@ import 'package:shoppinglist/features/shopping_list/components/banners/list_erro
 import 'package:shoppinglist/features/shopping_list/components/banners/retention_banner.dart';
 import 'package:shoppinglist/features/shopping_list/components/create_list_fab.dart';
 import 'package:shoppinglist/features/shopping_list/components/expandable_fab.dart';
+import 'package:shoppinglist/features/shopping_list/components/family_notification_trigger.dart';
 import 'package:shoppinglist/features/shopping_list/components/group_chips_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/list_top_bar.dart';
-import 'package:shoppinglist/features/shopping_list/components/notification_member_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/progress_pill.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_body_content.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
 import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/auth_claim.dart';
-import 'package:shoppinglist/provider/bool_shared_preferences.dart';
 import 'package:shoppinglist/provider/current_group_id.dart';
 import 'package:shoppinglist/provider/current_shopping_list_id.dart';
-import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/default_group_update.dart';
-import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
-import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
-import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 
 /// 買い物リストのメイン画面。買い物リスト一覧の状態(Loading/Error/空/データ)をハンドリングし、
 /// 共通レイアウト(_ShoppingListShell)と、有効なリストがある時の本体(_ActiveShoppingList)へ振り分ける。
@@ -172,9 +165,9 @@ class _GroupChips extends ConsumerWidget {
 }
 
 /// 有効な買い物リストが確定している(resolvedShoppingListID 非null)時のみマウントされる本体。
-/// item 系 provider の購読・通知系 useEffect をここで無条件に行うため、
+/// item 系 provider の購読・通知トリガー(FamilyNotificationTrigger)をここで無条件に行うため、
 /// ShoppingListPage 側に条件付き ref.watch を持ち込まずに済む。
-class _ActiveShoppingList extends HookConsumerWidget {
+class _ActiveShoppingList extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupShoppingList> shoppingLists;
@@ -208,7 +201,8 @@ class _ActiveShoppingList extends HookConsumerWidget {
       currentShoppingListIDProvider.notifier,
     );
 
-    // チェック済み含む全件。FAB・リスト本体・進捗ピル・変更検知・通知トーストすべてこの一覧を基準にする。
+    // チェック済み含む全件。FAB・リスト本体・進捗ピルがこの一覧を基準にする。
+    // (家族通知の発火は localShoppingListItemEditCountProvider 由来に分離した — Issue #430)
     final shoppingListItemsAsync = ref.watch(
       textShoppingListItemsProvider(
         groupID: groupID,
@@ -221,94 +215,12 @@ class _ActiveShoppingList extends HookConsumerWidget {
     final checkedCount = itemMetrics.checkedCount;
     final totalCount = itemMetrics.totalCount;
 
-    final currentUserID = ref.watch(currentUserIDProvider);
-    final memberProfiles =
-        ref.watch(groupUserProfilesProvider(groupID: groupID)).asData?.value ??
-        [];
-    final autoNotify = ref.watch(
-      boolSharedPreferencesProvider(key: BoolKey.autoNotifyShoppingListUpdate),
-    );
     final aiProcessingType = ref.watch(aIProcessingProvider);
 
-    final itemChangeCount = useState(0);
-    final isInitialLoad = useState(true);
-    // 全件の取得結果が更新されるたびに「初回ロードか / 以降の変更か」を判定する。
-    // 初回(AsyncData 初到達)は通知対象外なのでフラグを倒すだけ、2回目以降の変化で
-    // itemChangeCount を増やし、通知トースト / 自動通知のトリガーにする。
-    // 依存配列を shoppingListItemsAsync にするのは、この Async 値の更新そのものを
-    // アイテム変更イベントとして扱うため。
-    useEffect(() {
-      if (shoppingListItemsAsync is AsyncData) {
-        if (isInitialLoad.value) {
-          isInitialLoad.value = false;
-        } else {
-          itemChangeCount.value++;
-        }
-      }
-      return null;
-    }, [shoppingListItemsAsync]);
-
-    // アイテムの変更(2回目以降)を検知したら、家族へ通知を促すトーストを表示する。
-    // モーダル表示中でも最前面に出すためグローバルトースト経由で出す。ソログループ(自分のみ)では
-    // 空のトースト枠だけが残るため、他メンバーが居る時だけ表示する。
-    // 依存配列は itemChangeCount.value のみ — 変更回数の増加イベントだけをトリガーにする。
-    useEffect(() {
-      if (itemChangeCount.value > 0 && currentUserID != null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!context.mounted) {
-            return;
-          }
-          if (!memberProfiles.any((p) => p.userID != currentUserID)) {
-            return;
-          }
-          showGlobalToastWidget(
-            NotificationMemberBar(
-              groupID: groupID,
-              shoppingListID: shoppingListID,
-              shoppingListName: shoppingList?.name,
-              currentUserID: currentUserID,
-              memberProfiles: memberProfiles,
-            ),
-            // 同一リストの更新通知は内容が同一（titleText は listName 依存）。
-            // 連続更新でトーストが消えなくなるのを防ぐため identity でまとめる。
-            identity: 'member_bar $shoppingListID',
-          );
-        });
-      }
-      return null;
-    }, [itemChangeCount.value]);
-
-    // 自動通知: アプリがバックグラウンドへ移る(paused)時に未通知の変更があれば家族へ送る。
-    // autoNotify 設定 OFF / 未ログイン時は監視しない。依存配列の値が変わったら古い
-    // AppLifecycleListener を破棄して張り直す。
-    useEffect(() {
-      if (!autoNotify || currentUserID == null) {
-        return null;
-      }
-      final listener = AppLifecycleListener(
-        onStateChange: (state) {
-          if (state == AppLifecycleState.paused && itemChangeCount.value > 0) {
-            final otherMemberIDs =
-                memberProfiles
-                    .where((p) => p.userID != currentUserID)
-                    .map((p) => p.userID)
-                    .toList();
-            if (otherMemberIDs.isEmpty) {
-              return;
-            }
-
-            functions.sendShoppingListUpdateNotification(
-              groupID: groupID,
-              shoppingListID: shoppingListID,
-              shoppingListName: shoppingList?.name,
-              targetUserIDs: otherMemberIDs,
-            );
-            itemChangeCount.value = 0;
-          }
-        },
-      );
-      return listener.dispose;
-    }, [autoNotify, currentUserID, memberProfiles]);
+    // 自分(ローカル端末)の変更検知 → 家族通知バー表示 / バックグラウンド自動通知は
+    // FamilyNotificationTrigger に委譲する(下の Stack 内に配置)。
+    // 他メンバーの変更が stream 同期されてきても通知バーを出さないため、検知は
+    // localShoppingListItemEditCountProvider(hasPendingWrites)由来に限定している(Issue #430)。
 
     return _ShoppingListScaffold(
       groupID: groupID,
@@ -369,6 +281,13 @@ class _ActiveShoppingList extends HookConsumerWidget {
                 color: tokens.neutral.card,
                 child: Stack(
                   children: [
+                    // 自分(ローカル端末)の変更を検知して家族通知バー/自動通知を出す。
+                    // 描画はしない(SizedBox.shrink)が、リスト表示中は常駐させる。
+                    FamilyNotificationTrigger(
+                      groupID: groupID,
+                      shoppingListID: shoppingListID,
+                      shoppingListName: shoppingList?.name,
+                    ),
                     Column(
                       children: [
                         if (aiProcessingType != null)
