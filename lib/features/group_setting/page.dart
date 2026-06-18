@@ -88,9 +88,6 @@ class _GroupSettingBody extends HookConsumerWidget {
     final currentUserID = ref.watch(currentUserIDProvider);
     final isOwner =
         group.ownerUserID != null && group.ownerUserID == currentUserID;
-    // オーナーに加え、ownerUserID を持たないレガシーグループはメンバーが命名できる
-    // ようにする（Issue #432 の招待必須化で、レガシー無名グループが招待不能になるのを防ぐ）。
-    final canEditGroupName = isOwner || group.ownerUserID == null;
     final groupNameController =
         useTextEditingController(text: group.name ?? '');
     final isCreatingInvitation = useState(false);
@@ -120,13 +117,13 @@ class _GroupSettingBody extends HookConsumerWidget {
                         horizontal: 16.0, vertical: 4.0),
                     child: TextField(
                       controller: groupNameController,
-                      readOnly: !canEditGroupName,
+                      readOnly: !isOwner,
                       cursorColor: tokens.accent,
                       decoration: const InputDecoration(
                         hintText: 'グループ名を入力',
                         border: InputBorder.none,
                       ),
-                      onSubmitted: !canEditGroupName
+                      onSubmitted: !isOwner
                           ? null
                           : (value) {
                               final newName = value.trim();
