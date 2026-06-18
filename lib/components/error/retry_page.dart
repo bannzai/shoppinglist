@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/error_view.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class Retry extends InheritedWidget {
@@ -41,12 +42,21 @@ class RetryPage extends ConsumerWidget {
         child: ErrorView(
           error: exception,
           stackTrace: stackTrace,
-          action: ElevatedButton(
-            onPressed: () {
-              analytics.logEvent(name: 'tap_retry', parameters: null);
-              Retry.of(context).retry();
-            },
-            child: const Text('Retry'),
+          // 背景に埋もれないようアクセント(赤)で塗り、横幅いっぱい + 縦 padding にする。
+          action: SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: context.appTheme.accent,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+              onPressed: () {
+                analytics.logEvent(name: 'tap_retry', parameters: null);
+                Retry.of(context).retry();
+              },
+              child: const Text('Retry'),
+            ),
           ),
         ),
       ),
