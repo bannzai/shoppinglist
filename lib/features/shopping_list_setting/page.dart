@@ -14,6 +14,7 @@ import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list_setting/delete_confirm_dialog.dart';
 import 'package:shoppinglist/features/shopping_list_setting/invitation_code_dialog.dart';
 import 'package:shoppinglist/features/shopping_list_setting/shopping_location_select_page.dart';
+import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -296,6 +297,26 @@ class ShoppingListSettingPage extends HookConsumerWidget {
       name: 'tap_create_list_invitation',
       parameters: {'groupID': groupID},
     );
+    // Issue #432: グループ名未設定のまま招待すると混乱を招くため、招待前に名前登録を
+    // 必須化する。アクション実行時のみ必要なグループ情報は build で watch せず、ここで
+    // 最新値を非同期取得する（ロード中の誤判定と不要な再描画を避ける）。
+    final group = await ref.read(groupProvider(groupID: groupID).future);
+    if (!context.mounted) {
+      return;
+    }
+    // この画面にはグループ名入力欄がないため、トーストからグループ設定画面へ誘導する。
+    if (!group.nameIsNotEmpty) {
+      final rootContext = Navigator.of(context, rootNavigator: true).context;
+      showGlobalActionToast(
+        message: '招待する前にグループ名を設定してください',
+        actionLabel: 'グループ設定',
+        onAction: () => Navigator.push(
+          rootContext,
+          MaterialPageRoute(builder: (_) => GroupSettingPage(groupID: groupID)),
+        ),
+      );
+      return;
+    }
     isCreatingInvitation.value = true;
     try {
       final invitation =

@@ -8,17 +8,26 @@ import 'package:shoppinglist/components/primitives/app_section_label.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/previews/mock/mock_provider_overrides.dart';
+import 'package:shoppinglist/features/shopping_list_setting/invitation_code_dialog.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
+import 'package:shoppinglist/provider/app_provider_container.dart';
+import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
-Future<void> _pumpPage(WidgetTester tester) async {
+Future<void> _pumpPage(
+  WidgetTester tester, {
+  List<Override> extraOverrides = const [],
+}) async {
   // ignore: invalid_use_of_visible_for_testing_member
   SharedPreferences.setMockInitialValues({});
   final sharedPreferences = await SharedPreferences.getInstance();
   await tester.pumpWidget(
     ProviderScope(
-      overrides: previewProviderOverrides(sharedPreferences: sharedPreferences),
+      overrides: [
+        ...previewProviderOverrides(sharedPreferences: sharedPreferences),
+        ...extraOverrides,
+      ],
       child: MaterialApp(
         theme: buildAppTheme(
           accent: AccentPreset.shu,
@@ -109,5 +118,45 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(GroupCategoryPage), findsOneWidget);
+  });
+
+  testWidgets('グループ名あり: 招待で招待コードダイアログが表示される (Issue #432)', (tester) async {
+    await _pumpPage(tester);
+    final inviteCell = tester
+        .widgetList<AppCell>(find.byType(AppCell))
+        .firstWhere((c) => c.icon == Icons.person_add_outlined);
+    await tester.ensureVisible(find.byWidget(inviteCell));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byWidget(inviteCell));
+    // _NoOpCreateGroupInvitation の解決 → showGeneralDialog (transition 160ms)。
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byType(InvitationCodeDialog), findsOneWidget);
+    // InvitationCodeDialog は Timer.periodic を持つため、閉じて dispose させ
+    // pending timer を残さない。
+    Navigator.of(tester.element(find.byType(InvitationCodeDialog))).pop();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+  });
+
+  testWidgets('グループ名なし: 招待でダイアログが表示されない（ガード, Issue #432）', (tester) async {
+    // 招待ガード時の showGlobalActionToast が参照する appProviderContainer を初期化する。
+    final toastContainer = ProviderContainer();
+    addTearDown(toastContainer.dispose);
+    appProviderContainer = toastContainer;
+    await _pumpPage(tester, extraOverrides: [
+      groupProvider(groupID: mockGroupID).overrideWith(
+          (ref) => Stream.value(mockGroup().copyWith(name: null))),
+    ]);
+    final inviteCell = tester
+        .widgetList<AppCell>(find.byType(AppCell))
+        .firstWhere((c) => c.icon == Icons.person_add_outlined);
+    await tester.ensureVisible(find.byWidget(inviteCell));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byWidget(inviteCell));
+    await tester.pumpAndSettle();
+    expect(find.byType(InvitationCodeDialog), findsNothing);
+    // showGlobalActionToast の自動消滅タイマー (5秒) を消化し、pending timer を残さない。
+    await tester.pump(const Duration(seconds: 5));
   });
 }
