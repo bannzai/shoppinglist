@@ -103,33 +103,47 @@ class FamilyNotificationTrigger extends HookConsumerWidget {
     // 自動通知: アプリが background(paused)へ移る時に未通知のローカル変更があれば家族へ送る。
     // autoNotify 設定 OFF / 未ログイン時は監視しない。依存配列の値が変わったら古い
     // AppLifecycleListener を破棄して張り直す。
-    useEffect(() {
-      if (!autoNotify || currentUserID == null) {
-        return null;
-      }
-      final listener = AppLifecycleListener(
-        onStateChange: (state) {
-          if (state == AppLifecycleState.paused && pendingEditCount.value > 0) {
-            final otherMemberIDs =
-                memberProfiles
-                    .where((p) => p.userID != currentUserID)
-                    .map((p) => p.userID)
-                    .toList();
-            if (otherMemberIDs.isEmpty) {
-              return;
+    // groupID / shoppingListID / shoppingListName も依存配列に含める。これらが変わったときに
+    // リスナーを張り直して最新値を捕捉するため(特にリスト名変更後に古い名前で通知が飛ぶ
+    // stale closure を防ぐ)。リスナーの張り直しは副作用が無く安全。
+    useEffect(
+      () {
+        if (!autoNotify || currentUserID == null) {
+          return null;
+        }
+        final listener = AppLifecycleListener(
+          onStateChange: (state) {
+            if (state == AppLifecycleState.paused &&
+                pendingEditCount.value > 0) {
+              final otherMemberIDs =
+                  memberProfiles
+                      .where((p) => p.userID != currentUserID)
+                      .map((p) => p.userID)
+                      .toList();
+              if (otherMemberIDs.isEmpty) {
+                return;
+              }
+              functions.sendShoppingListUpdateNotification(
+                groupID: groupID,
+                shoppingListID: shoppingListID,
+                shoppingListName: shoppingListName,
+                targetUserIDs: otherMemberIDs,
+              );
+              pendingEditCount.value = 0;
             }
-            functions.sendShoppingListUpdateNotification(
-              groupID: groupID,
-              shoppingListID: shoppingListID,
-              shoppingListName: shoppingListName,
-              targetUserIDs: otherMemberIDs,
-            );
-            pendingEditCount.value = 0;
-          }
-        },
-      );
-      return listener.dispose;
-    }, [autoNotify, currentUserID, memberProfiles]);
+          },
+        );
+        return listener.dispose;
+      },
+      [
+        autoNotify,
+        currentUserID,
+        memberProfiles,
+        groupID,
+        shoppingListID,
+        shoppingListName,
+      ],
+    );
 
     return const SizedBox.shrink();
   }
