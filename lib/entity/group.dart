@@ -46,6 +46,14 @@ abstract class Group with _$Group {
     @ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime,
   }) = _Group;
 
+  /// グループ名が登録済み（null でも空白のみでもない）かどうか。
+  /// グループ招待にはグループ名の登録を必須とする（Issue #432: 名称未設定グループ
+  /// 同士の混同を防ぐため）。
+  bool get hasRegisteredName {
+    final trimmedName = name?.trim();
+    return trimmedName != null && trimmedName.isNotEmpty;
+  }
+
   factory Group.fromJson(Map<String, dynamic> json) => _$GroupFromJson(json);
 
   static Group fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot,
