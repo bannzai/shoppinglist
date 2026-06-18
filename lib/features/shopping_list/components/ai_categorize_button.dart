@@ -9,6 +9,7 @@ import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/ai_usage.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
@@ -89,10 +90,9 @@ class AICategorizeButton extends ConsumerWidget {
         itemNames: uncategorizedItems.map((e) => e.message).toList(),
         existingCategoryNames: existingCategoryNames,
       );
-    } catch (e) {
+    } catch (e, st) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.toString())));
+        showErrorSnackBar(context, e, st);
       }
       return;
     } finally {
@@ -131,10 +131,9 @@ class AICategorizeButton extends ConsumerWidget {
           content: Text('${included.length}件をカテゴリに登録しました'),
         ));
       }
-    } catch (e) {
+    } catch (e, st) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.toString())));
+        showErrorSnackBar(context, e, st);
       }
     }
   }

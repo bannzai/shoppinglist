@@ -24,6 +24,7 @@ import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -81,11 +82,9 @@ class SettingPage extends HookConsumerWidget {
             context,
           ).showSnackBar(const SnackBar(content: Text('表示名を更新しました')));
         }
-      } catch (e) {
+      } catch (e, st) {
         if (context.mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(e.toString())));
+          showErrorSnackBar(context, e, st);
         }
       }
     }

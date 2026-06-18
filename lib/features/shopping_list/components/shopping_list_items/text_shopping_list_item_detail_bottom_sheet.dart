@@ -130,9 +130,9 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
             ),
             editedByUserID: currentUserID,
           );
-        } catch (e) {
+        } catch (e, st) {
           // シート消失後でも前面に出るグローバルトーストで失敗を通知する。
-          showGlobalToast(e.toString(), title: null);
+          showGlobalErrorToast(e, st);
         }
       }());
     });

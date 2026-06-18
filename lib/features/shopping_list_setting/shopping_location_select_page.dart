@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/error/error_view.dart';
 import 'package:shoppinglist/components/primitives/app_cell.dart';
 import 'package:shoppinglist/components/primitives/app_setting_section.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
@@ -84,7 +85,7 @@ class ShoppingLocationSelectPage extends ConsumerWidget {
             ],
           ),
         ),
-        error: (e, st) => Center(child: Text(e.toString())),
+        error: (e, st) => ErrorView(error: e, stackTrace: st),
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
     );

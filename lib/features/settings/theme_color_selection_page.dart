@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 /// テーマカラー（5 色プリセット）の選択画面。プレミアム機能。
@@ -66,11 +67,9 @@ class ThemeColorSelectionPage extends ConsumerWidget {
                                 const SnackBar(content: Text('テーマカラーを変更しました')),
                               );
                             }
-                          } catch (e) {
+                          } catch (e, st) {
                             if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(e.toString())),
-                              );
+                              showErrorSnackBar(context, e, st);
                             }
                           }
                         },

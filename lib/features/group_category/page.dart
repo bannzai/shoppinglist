@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/error/error_view.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
@@ -14,6 +15,7 @@ import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
@@ -66,7 +68,7 @@ class GroupCategoryPage extends ConsumerWidget {
         );
       },
       error: (e, st) => _CategoryScaffold(
-          title: title, child: Center(child: Text(e.toString()))),
+          title: title, child: ErrorView(error: e, stackTrace: st)),
       loading: () => _CategoryScaffold(
           title: title,
           child: const Center(child: CircularProgressIndicator())),
@@ -135,11 +137,9 @@ Future<void> _addCategoryAndNavigateToEdit({
         ),
       );
     }
-  } catch (e) {
+  } catch (e, st) {
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      showErrorSnackBar(context, e, st);
     }
   }
 }
@@ -293,7 +293,7 @@ class _CategoryListBody extends HookConsumerWidget {
       ),
       error: (e, st) => _CategoryScaffold(
           title: selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ',
-          child: Center(child: Text(e.toString()))),
+          child: ErrorView(error: e, stackTrace: st)),
       loading: () => _CategoryScaffold(
           title: selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ',
           child: const Center(child: CircularProgressIndicator())),
@@ -417,11 +417,9 @@ class _CategoryReorderableList extends ConsumerWidget {
                     if (context.mounted) {
                       Navigator.pop(context);
                     }
-                  } catch (e) {
+                  } catch (e, st) {
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(e.toString())),
-                      );
+                      showErrorSnackBar(context, e, st);
                     }
                   }
                 },
@@ -499,11 +497,9 @@ class _CategoryReorderableList extends ConsumerWidget {
                       categoryAxisID: categoryAxisID,
                       categoryID: category.id,
                     );
-              } catch (e) {
+              } catch (e, st) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString())),
-                  );
+                  showErrorSnackBar(context, e, st);
                 }
               }
             },

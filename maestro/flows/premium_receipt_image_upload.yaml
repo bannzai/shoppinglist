@@ -1,0 +1,97 @@
+appId: com.bannzai.shoppinglist
+---
+# プレミアム状態でレシート画像をアップロードできることを確認する E2E。
+#
+# レシート投稿はプレミアム機能のため、課金せず開発者オプションのデバッグ機能で
+# プレミアムを付与してから検証する（CLAUDE.md テスト方針 / shared/grant_premium_via_debug.yaml）。
+# レシートの「追加」導線は checkedCount > 0 のときのみリスト末尾に出現するため、
+# 先にアイテムを1件追加してチェックする（shopping_list_body_content.dart）。
+#
+# 関連:
+# - Functions: firebase/functions/src/functions/uploadReceiptImage/function.ts
+#   （inputSchema は groupID/shoppingListID/receiptID/base64Image。mimeType は持たない）
+# - クライアント: lib/utils/functions/firebase_function.dart#uploadReceiptImage
+# - 画面: lib/features/receipt/receipt_section.dart / receipt_edit_sheet.dart
+
+- runFlow: shared/anonymous_sign_in.yaml
+- runFlow: shared/grant_premium_via_debug.yaml
+
+# grant_premium_via_debug.yaml の末尾タブ復帰は design v2（タブバー無し）では
+# 空振りし、設定/開発者オプション画面に留まることがある。買い物リスト本体へ確実に
+# 戻すため、スターター行が見えるまでエッジスワイプで戻る。
+- runFlow:
+    when:
+      notVisible: "タップで入力開始"
+    commands:
+      - swipe:
+          start: "1%,50%"
+          end: "95%,50%"
+      - waitForAnimationToEnd
+- runFlow:
+    when:
+      notVisible: "タップで入力開始"
+    commands:
+      - swipe:
+          start: "1%,50%"
+          end: "95%,50%"
+      - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "タップで入力開始"
+    timeout: 10000
+
+# アイテムを1件追加（Enterで保存→空行作成、もう一度Enterで空行削除）してチェックする
+- tapOn: "タップで入力開始"
+- inputText: "牛乳"
+- pressKey: enter
+- pressKey: enter
+- hideKeyboard
+- waitForAnimationToEnd
+- assertVisible: "牛乳"
+# 行左端の円形チェックボックスを明示座標でタップ（design v2 レイアウト基準・1件目）
+- tapOn:
+    point: "7%,23%"
+- waitForAnimationToEnd
+
+# レシートセクション（チェック済み>0で footer に出現）まで下スクロールして「追加」
+- scrollUntilVisible:
+    element:
+      text: "レシート"
+    direction: DOWN
+    timeout: 15000
+- tapOn:
+    text: "追加"
+- waitForAnimationToEnd
+
+# 非プレミアムなら Paywall に飛ぶ。プレミアムではレシート編集シートが開くことを確認
+- assertVisible: "レシートを追加"
+
+# 画像を選択（カメラ/ライブラリのソース選択 → フォトライブラリ → ネイティブピッカー）
+- tapOn: "レシートを撮影 / 選択"
+- waitForAnimationToEnd
+- tapOn: "フォトライブラリから選択"
+- waitForAnimationToEnd
+# 写真アクセス許可ダイアログが出たら許可する
+- runFlow:
+    when:
+      visible: "フルアクセスを許可"
+    commands:
+      - tapOn: "フルアクセスを許可"
+      - waitForAnimationToEnd
+# ネイティブ写真ピッカーの1枚目を選択（単一選択なのでタップで即返る）。
+# 座標は端末/写真ライブラリ依存のため、グリッド先頭付近をタップする。
+- tapOn:
+    point: "58%,38%"
+- waitForAnimationToEnd
+
+# 画像選択後は保存ボタンが活性化する。保存してアップロードを実行
+- tapOn: "保存"
+- waitForAnimationToEnd
+
+# 成功確認: シートが閉じてメインに戻り、INTERNAL 等のエラートーストが出ていないこと。
+# （デプロイ済み Functions の inputSchema 不一致で出ていた `[firebase_functions/internal]
+#   INTERNAL` のリグレッション検知）
+- assertNotVisible: "レシートを追加"
+- assertNotVisible:
+    text: ".*INTERNAL.*"
+- assertVisible: "レシート"
+- takeScreenshot: screenshots/premium_receipt_image_upload

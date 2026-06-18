@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/error/error_view.dart';
 import 'package:shoppinglist/components/primitives/app_cell.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
@@ -15,6 +16,7 @@ import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -40,12 +42,12 @@ class GroupSettingPage extends ConsumerWidget {
           profiles: profiles,
         ),
         error: (e, st) =>
-            _PaperScaffold(child: Center(child: Text(e.toString()))),
+            _PaperScaffold(child: ErrorView(error: e, stackTrace: st)),
         loading: () => const _PaperScaffold(
             child: Center(child: CircularProgressIndicator())),
       ),
       error: (e, st) =>
-          _PaperScaffold(child: Center(child: Text(e.toString()))),
+          _PaperScaffold(child: ErrorView(error: e, stackTrace: st)),
       loading: () => const _PaperScaffold(
           child: Center(child: CircularProgressIndicator())),
     );
@@ -259,11 +261,9 @@ class _GroupSettingBody extends HookConsumerWidget {
                                             invitation.invitationCode),
                                   );
                                 }
-                              } catch (e) {
+                              } catch (e, st) {
                                 if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(e.toString())),
-                                  );
+                                  showErrorSnackBar(context, e, st);
                                 }
                               } finally {
                                 isCreatingInvitation.value = false;
@@ -315,11 +315,9 @@ class _GroupSettingBody extends HookConsumerWidget {
                             Text('${profile.displayName ?? 'メンバー'}を削除しました')),
                   );
                 }
-              } catch (e) {
+              } catch (e, st) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString())),
-                  );
+                  showErrorSnackBar(context, e, st);
                 }
               } finally {
                 isRemovingMember.value = false;

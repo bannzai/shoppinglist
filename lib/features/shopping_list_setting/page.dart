@@ -314,10 +314,10 @@ class ShoppingListSettingPage extends HookConsumerWidget {
           expiresDateTime: invitation.expiresDateTime,
         ),
       );
-    } catch (e) {
+    } catch (e, st) {
       // このページはボトムシート上に表示されるため、SnackBar は背後の
       // Scaffold に描画されて見えない。前面に出るグローバルトーストで通知する。
-      showGlobalToast(e.toString(), title: null);
+      showGlobalErrorToast(e, st);
     } finally {
       isCreatingInvitation.value = false;
     }
@@ -569,8 +569,8 @@ class _ListActionsCard extends ConsumerWidget {
         actionLabel: 'アップグレード',
         onAction: () => showPaywall(context: paywallContext),
       );
-    } catch (e) {
-      showGlobalToast(e.toString(), title: null);
+    } catch (e, st) {
+      showGlobalErrorToast(e, st);
     }
   }
 }

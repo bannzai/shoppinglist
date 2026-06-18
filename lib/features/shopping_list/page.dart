@@ -32,6 +32,7 @@ import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
@@ -367,6 +368,7 @@ class _ActiveShoppingList extends HookConsumerWidget {
                             ),
                             error: (e, st) => ListErrorCard(
                               exception: e,
+                              stackTrace: st,
                               onRetry: () => Retry.of(context).retry(),
                             ),
                             loading: () => const Loading(),
@@ -463,11 +465,9 @@ class _NoListYet extends ConsumerWidget {
                       ),
                     );
                   }
-                } catch (e) {
+                } catch (e, st) {
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
+                    showErrorSnackBar(context, e, st);
                   }
                 }
               },

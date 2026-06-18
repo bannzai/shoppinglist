@@ -1,10 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:shoppinglist/utils/stdlib/navigator.dart';
@@ -37,8 +39,9 @@ class PaywallPage extends ConsumerWidget {
       ),
       body: offerings.when(
         loading: () => const _LoadingBody(),
-        error: (e, _) => _ErrorBody(
+        error: (e, st) => _ErrorBody(
           exception: e,
+          stackTrace: st,
           onRetry: () {
             analytics.logEvent(name: 'tap_paywall_retry', parameters: null);
             ref.invalidate(offeringsProvider);
@@ -148,13 +151,11 @@ class _PaywallFooterLinks extends ConsumerWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('購入を復元しました')),
                     );
-                  } catch (e) {
+                  } catch (e, st) {
                     if (!context.mounted) {
                       return;
                     }
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
+                    showErrorSnackBar(context, e, st);
                   }
                 },
             ),
@@ -292,13 +293,24 @@ class _LoadingBody extends StatelessWidget {
   }
 }
 
-class _ErrorBody extends StatelessWidget {
+class _ErrorBody extends HookWidget {
   final Object exception;
+  final StackTrace? stackTrace;
   final VoidCallback onRetry;
-  const _ErrorBody({required this.exception, required this.onRetry});
+  const _ErrorBody({
+    required this.exception,
+    required this.stackTrace,
+    required this.onRetry,
+  });
 
   @override
   Widget build(BuildContext context) {
+    // 表示と同時に生のエラーを一度だけ記録する。exception が変わった時のみ再記録。
+    useEffect(() {
+      logError(exception, stackTrace);
+      return null;
+    }, [exception]);
+
     final tokens = context.appTheme;
     return Center(
       child: Container(
@@ -313,7 +325,7 @@ class _ErrorBody extends StatelessWidget {
           children: [
             Text('📡', style: Theme.of(context).textTheme.displayMedium),
             const SizedBox(height: 8),
-            Text(exception.toString(),
+            Text(describeError(exception, stackTrace).message,
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme
@@ -465,13 +477,11 @@ class _PaywallPackageTile extends ConsumerWidget {
                   );
                   popRouteSafely(navigator: navigator, route: paywallRoute);
                 }
-              } catch (e) {
+              } catch (e, st) {
                 if (!context.mounted) {
                   return;
                 }
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(e.toString())),
-                );
+                showErrorSnackBar(context, e, st);
               }
             },
             child: const Text('購入'),

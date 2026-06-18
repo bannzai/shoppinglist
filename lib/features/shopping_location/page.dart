@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/error/error_view.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_location/location_picker_page.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
@@ -157,7 +159,7 @@ class ShoppingLocationPage extends ConsumerWidget {
             },
           );
         },
-        error: (e, st) => Center(child: Text(e.toString())),
+        error: (e, st) => ErrorView(error: e, stackTrace: st),
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
       floatingActionButton: FloatingActionButton(
@@ -278,11 +280,9 @@ class ShoppingLocationPage extends ConsumerWidget {
                         longitude: selectedLongitude,
                         geofenceRadiusMeters: null,
                       );
-                } catch (e) {
+                } catch (e, st) {
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
+                    showErrorSnackBar(context, e, st);
                   }
                 }
               },
@@ -338,11 +338,9 @@ class ShoppingLocationPage extends ConsumerWidget {
                       shoppingLocationID: location.id,
                       shoppingLocation: location.copyWith(name: name),
                     );
-              } catch (e) {
+              } catch (e, st) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString())),
-                  );
+                  showErrorSnackBar(context, e, st);
                 }
               }
             },
@@ -383,11 +381,9 @@ class ShoppingLocationPage extends ConsumerWidget {
                 await ref
                     .read(shoppingLocationDeleteProvider(groupID: groupID))
                     .call(shoppingLocationID: location.id);
-              } catch (e) {
+              } catch (e, st) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString())),
-                  );
+                  showErrorSnackBar(context, e, st);
                 }
               }
             },
