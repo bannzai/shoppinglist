@@ -2,22 +2,31 @@ appId: com.bannzai.shoppinglist
 ---
 - runFlow: shared/anonymous_sign_in.yaml
 
-# 1個目のリストは初期作成済み（anonymous_sign_inで作成される）
-# 残り19個を追加して合計20個（freeGroupActiveShoppingListLimit）にする
+# 初期 1 個 + CreateListFab で 19 個追加 = 20 個（freeGroupActiveShoppingListLimit）。
+# design v2: リスト追加は CreateListFab（右下 89%,83%）を展開し「今日の日付でリストを追加」。
+# 作成後はキーボードが FAB を覆うため毎回 hideKeyboard で閉じてから次の追加を行う。
 - repeat:
     times: 19
     commands:
-      - tapOn: "メニュー"
-      - tapOn: "買い物リストを追加"
+      - tapOn:
+          point: "89%, 83%"
+      - extendedWaitUntil:
+          visible: "今日の日付でリストを追加"
+          timeout: 8000
+      - tapOn: "今日の日付でリストを追加"
       - waitForAnimationToEnd
-      - tapOn: "買い物リストを追加"
+      - hideKeyboard
       - waitForAnimationToEnd
 
-# 21個目を複製で試みる（上限超過） — SnackBarが表示されるはず
-- tapOn: "メニュー"
-- tapOn: "買い物リストを追加"
-- waitForAnimationToEnd
-- tapOn: "現在の買い物リストを複製"
-- waitForAnimationToEnd
-- assertVisible: "無料プランでは1グループあたり20個までリストを作成できます。プレミアムにアップグレードすると無制限に作成できます"
+# 21 個目を複製で試みる（上限超過）。CreateListFab 展開 →「現在のリストを複製」。
+# 上限 SnackBar 本文(content の Text)は Flutter semantics に露出せず maestro の text 一致で
+# 拾えないため、SnackBarAction のラベル「アップグレード」を assertVisible で捕捉する
+# （通常ホームには存在せず上限 SnackBar 出現時のみ可視の一意信号）。本文はスクショで記録。
+- tapOn:
+    point: "89%, 83%"
+- extendedWaitUntil:
+    visible: "現在のリストを複製"
+    timeout: 8000
+- tapOn: "現在のリストを複製"
+- assertVisible: "アップグレード"
 - takeScreenshot: screenshots/shopping_list_limit_duplicate_01_exceeded
