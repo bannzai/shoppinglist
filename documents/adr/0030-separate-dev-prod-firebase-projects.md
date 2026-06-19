@@ -39,6 +39,12 @@ iOS の Keychain access group / App Group は bundleId 由来で、dev/prod で 
 ### 5. named database 方式を廃止
 - `lib/utils/firestore/firestore.dart` の `FIRESTORE_DATABASE_ID` 切替、`firebase/firebase.json` の `development` DB、`restoreInquirySnapshot.ts` の `getFirestore(..., 'development')` / `--db` / `ALLOW_PROD_RESTORE` を撤去。復元先は接続中プロジェクト(dev の SA 鍵で実行)の `(default)`。
 
+### 6. Google Maps クライアントキーは build config に直書き、Secret.xcconfig は廃止
+- Maps の API キーは Info.plist(`GMSApiKey`) / AndroidManifest(`geo.API_KEY`) を native SDK が起動時に読むため、`--dart-define`(Dart 層のみ)では注入できない。よって build setting(xcconfig) / manifestPlaceholder で注入する。
+- Maps クライアントキーは「アプリ制限 + API 制限をかけて埋め込む」公開情報のため、dev/prod 値を **build config に直接コミット**する(iOS=`Debug.xcconfig`/`Release.xcconfig`、Android=`build.gradle` の defaultConfig(prod)+debug 上書き(dev))。切替は Debug=dev / Release(+Profile)=prod。
+  - GCP 側でアプリ制限(iOS=bundleId / Android=package+SHA-1)+ API 制限(Maps SDK for iOS/Android)を必須とし、課金悪用に対しては予算上限で守る。
+- これに伴い `ios/Flutter/Secret.xcconfig`(中身は未使用の `ADMOB_APP_ID` のみ)と `XCCONFIG_SECRET` 注入を廃止(`#include`、Makefile 生成行、pbxproj の navigator 参照、`Secret.xcconfig.example`、CI の `XCCONFIG_SECRET` を撤去)。AdMob は未統合(`google_mobile_ads` 未使用)で `ADMOB_APP_ID` / admob unit id は dead。
+
 ## Consequences
 - バックエンド含め dev/prod が完全分離する。`admin.firestore()` は無変更で正しく分離。
 - Keychain / App Group が環境別になり、認証状態の混在が解消。dev/prod を同一端末に同時インストールできる。
