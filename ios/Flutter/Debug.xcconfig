@@ -1,6 +1,5 @@
 #include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
 #include "Generated.xcconfig"
-#include "Secret.xcconfig"
 
 // dev/prod 識別子分離(Issue #410 / ADR 0030)。Runner の entitlements が参照する
 // $(APP_GROUP_ID) / $(KEYCHAIN_ACCESS_GROUP) の dev 値。Debug config = dev。
@@ -9,4 +8,8 @@
 APP_BUNDLE_IDENTIFIER = com.bannzai.shoppinglist.dev
 APP_GROUP_ID = group.com.bannzai.shoppinglist.dev
 KEYCHAIN_ACCESS_GROUP = com.bannzai.shoppinglist.dev
+
+// Google Maps クライアントキー(dev)。Info.plist の GMSApiKey=$(GOOGLE_MAPS_API_KEY) が参照。
+// クライアント埋め込み前提の公開情報のため直書き。GCP 側でアプリ制限(bundleId)+API制限(Maps SDK for iOS)を必須とする。
+GOOGLE_MAPS_API_KEY = AIzaSyBQ0V0mGjdN0pg1JPr71rz7LE09UM2YKFs
 
