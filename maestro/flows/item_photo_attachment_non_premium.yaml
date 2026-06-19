@@ -2,14 +2,14 @@ appId: com.bannzai.shoppinglist
 ---
 - runFlow: shared/anonymous_sign_in.yaml
 
-# アイテムを追加
+# アイテムを追加（design v2: 空入力行「タップで入力開始」が追加導線）
 - extendedWaitUntil:
-    visible: "アイテムを追加"
+    visible: "タップで入力開始"
     timeout: 15000
-- tapOn: "アイテムを追加"
+- tapOn: "タップで入力開始"
 - inputText: "テスト商品"
 - pressKey: enter
-# 空アイテムを削除
+# 2 回目の Enter で空の入力行を畳む
 - pressKey: enter
 - hideKeyboard
 - waitForAnimationToEnd
