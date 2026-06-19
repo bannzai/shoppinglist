@@ -57,7 +57,6 @@ jobs:
     env:
       FIREBASE_BASE64_IOS: ${{ secrets.FIREBASE_BASE64_IOS }}
       FIREBASE_BASE64_ANDROID: ${{ secrets.FIREBASE_BASE64_ANDROID }}
-      XCCONFIG_SECRET: ${{ secrets.XCCONFIG_SECRET }}
       REVENUE_CAT_PUBLIC_API_KEY: ${{ secrets.REVENUE_CAT_PUBLIC_API_KEY }}
       IOS_ADMOB_NATIVE_ADVANCE_IDENTIFIER: ${{ secrets.IOS_ADMOB_NATIVE_ADVANCE_IDENTIFIER }}
       ANDROID_ADMOB_NATIVE_ADVANCE_IDENTIFIER: ${{ secrets.ANDROID_ADMOB_NATIVE_ADVANCE_IDENTIFIER }}
@@ -75,7 +74,7 @@ jobs:
           channel: stable
           flutter-version: '3.41.9'
 
-      # アプリ内シークレットを復元（GoogleService-Info.plist / Secret.xcconfig / lib/secret/secret.dart など）
+      # アプリ内シークレットを復元（GoogleService-Info.plist / lib/secret/secret.dart など）
       - name: Restore app secrets
         run: make secret
 
@@ -192,7 +191,6 @@ jobs:
     env:
       FIREBASE_BASE64_IOS: ${{ secrets.FIREBASE_BASE64_IOS }}
       FIREBASE_BASE64_ANDROID: ${{ secrets.FIREBASE_BASE64_ANDROID }}
-      XCCONFIG_SECRET: ${{ secrets.XCCONFIG_SECRET }}
       REVENUE_CAT_PUBLIC_API_KEY: ${{ secrets.REVENUE_CAT_PUBLIC_API_KEY }}
       IOS_ADMOB_NATIVE_ADVANCE_IDENTIFIER: ${{ secrets.IOS_ADMOB_NATIVE_ADVANCE_IDENTIFIER }}
       ANDROID_ADMOB_NATIVE_ADVANCE_IDENTIFIER: ${{ secrets.ANDROID_ADMOB_NATIVE_ADVANCE_IDENTIFIER }}
