@@ -1,7 +1,7 @@
 {
   "projects": {
-    "default": "shoppinglist-dev",
-    "dev": "shoppinglist-dev",
-    "prod": "shoppinglist-prod"
+    "default": "shoppinglist-dev-b2787",
+    "dev": "shoppinglist-dev-b2787",
+    "prod": "shoppinglist-prod-857bb"
   }
 }

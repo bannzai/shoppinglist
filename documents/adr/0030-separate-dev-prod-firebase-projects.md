@@ -8,14 +8,14 @@ Accepted (supersedes [[0028-dev-environment-firestore-named-database]], partiall
 
 ADR 0028 の選択肢A「別 Firebase プロジェクトで完全分離」へ寄せることで、クライアント・バックエンド・Auth・Firestore・Storage をすべて dev プロジェクト側に揃える。`admin.firestore()` は各 Function のデプロイ先プロジェクトの `(default)` を見るため、コード変更なしで dev/prod が正しく分離される(Issue #410)。
 
-また prod プロジェクトIDの命名ミスを是正するため、`shopping-list-prod-a615c` を新規 `shoppinglist-prod` に作り直す(リリース前でユーザーデータ移行は不要)。dev は `shoppinglist-dev`。
+また prod プロジェクトIDの命名ミスを是正するため、`shopping-list-prod-a615c` を新規 prod に作り直す(リリース前でユーザーデータ移行は不要)。GCP がサフィックスを付与し、実 ID は dev=`shoppinglist-dev-b2787` / prod=`shoppinglist-prod-857bb`。
 
 iOS の Keychain access group / App Group は bundleId 由来で、dev/prod で bundleId を共通にすると認証状態が環境を跨いで残り、オンボーディング再現等を阻害する。これを避けるため**アプリ識別子も環境ごとに分離**する。
 
 ## Decision
 
 ### 1. dev/prod を別 Firebase プロジェクトに分離
-- `shoppinglist-dev` / `shoppinglist-prod` の2プロジェクト。`firebase/.firebaserc` に `dev` / `prod` alias を持ち、`default` は誤爆防止のため `dev`。CI/手動 deploy は常に `--project` を明示する。
+- dev=`shoppinglist-dev-b2787` / prod=`shoppinglist-prod-857bb` の2プロジェクト(GCP のサフィックス付与後の実 ID)。`firebase/.firebaserc` に `dev` / `prod` alias を持ち、`default` は誤爆防止のため `dev`。CI/手動 deploy は常に `--project` を明示する。
 - `admin.firestore()`(14箇所)は無変更。`index.ts` の `storageBucket` のみハードコードを撤め、ランタイムの `GCLOUD_PROJECT` / `GOOGLE_CLOUD_PROJECT` から導出する。
 
 ### 2. 環境切替は build configuration / buildType 駆動(Flutter `--flavor` は不使用)

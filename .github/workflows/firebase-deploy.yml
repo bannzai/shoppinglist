@@ -78,9 +78,9 @@ jobs:
           PROJECT: ${{ inputs.project }}
         run: |
           if [ "$PROJECT" = "prod" ]; then
-            echo "project_id=shoppinglist-prod" >> "$GITHUB_OUTPUT"
+            echo "project_id=shoppinglist-prod-857bb" >> "$GITHUB_OUTPUT"
           else
-            echo "project_id=shoppinglist-dev" >> "$GITHUB_OUTPUT"
+            echo "project_id=shoppinglist-dev-b2787" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Restore service account key
