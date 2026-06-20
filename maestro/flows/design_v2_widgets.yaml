@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # PR-8 Widgets の検証 (動作確認はホーム画面 widget 追加が必要なため UI 起動のみ assert):
 # - アプリ起動 → ホーム widget 設定への導線は OS UI のため手動でしか触れない

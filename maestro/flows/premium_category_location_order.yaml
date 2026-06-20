@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # プレミアム状態でロケーション別カテゴリ並び替えが機能することを確認する。
 # 「テストスーパー」に対して「肉」(order=0)→「野菜」(order=1) の順序をデバッグ Function 経由で設定し、

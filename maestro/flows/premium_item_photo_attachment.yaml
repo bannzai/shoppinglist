@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # プレミアム状態ではアイテムに写真を添付できることを確認する。
 # non_premium 版では SnackBar で遮断される。

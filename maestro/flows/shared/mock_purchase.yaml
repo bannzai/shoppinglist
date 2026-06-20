@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # monthly パッケージ購入の共通サブフロー。
 # 匿名サインイン後に呼び出される前提（shared/anonymous_sign_in.yaml の後段で runFlow）。

@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # プレミアム状態でテーマカラー設定画面に遷移できることを確認する。
 # non_premium 版では SnackBar で遮断される。対の premium フロー。

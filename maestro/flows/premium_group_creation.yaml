@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # プレミアム状態では 2 個目以降のグループも作成できることを確認する。
 # non_premium 版では「ソログループ+1グループまで」の SnackBar で遮断される。

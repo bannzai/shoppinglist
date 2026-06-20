@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # プレミアム状態では位置情報リマインダーを有効化できることを確認する。
 # non_premium 版では SnackBar で遮断される。

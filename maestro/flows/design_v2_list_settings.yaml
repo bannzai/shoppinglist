@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # ShoppingListSettingPage (design v2 SSOT 準拠) の検証:
 # - 6 セクション label (UPPERCASE) が表示される

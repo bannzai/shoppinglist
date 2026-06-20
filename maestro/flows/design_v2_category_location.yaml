@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # PR-6 Categories & Locations の検証:
 # - GroupCategoryPage で regex マッチング選択肢が出る

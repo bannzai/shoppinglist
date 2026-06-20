@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # PR-3 List Core の検証:
 # - i-7 (左スワイプ削除) / i-8 (右スワイプチェック切替) を assert
