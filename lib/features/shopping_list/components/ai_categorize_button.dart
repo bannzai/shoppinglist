@@ -9,6 +9,7 @@ import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/ai_usage.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
@@ -54,31 +55,40 @@ class AICategorizeButton extends ConsumerWidget {
   }
 
   Future<void> _run(BuildContext context, WidgetRef ref) async {
-    analytics.logEvent(name: 'tap_ai_categorize', parameters: {
-      'groupID': groupID,
-      'shoppingListID': shoppingListID,
-      'itemCount': uncategorizedItems.length.toString(),
-    });
+    analytics.logEvent(
+      name: 'tap_ai_categorize',
+      parameters: {
+        'groupID': groupID,
+        'shoppingListID': shoppingListID,
+        'itemCount': uncategorizedItems.length.toString(),
+      },
+    );
 
     final isPremium =
         ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
-    final remaining =
-        ref.read(remainingCategorizeCountProvider(isPremium: isPremium));
+    final remaining = ref.read(
+      remainingCategorizeCountProvider(isPremium: isPremium),
+    );
     if (remaining <= 0) {
-      final limit = isPremium
-          ? premiumMonthlyCategorizeLimit
-          : freeMonthlyCategorizeLimit;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        persist: false,
-        content: Text(
-            '自動カテゴリ分けの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyCategorizeLimit回まで利用できます'}'),
-        action: isPremium
-            ? null
-            : SnackBarAction(
-                label: 'アップグレード',
-                onPressed: () => showPaywall(context: context),
-              ),
-      ));
+      final limit =
+          isPremium
+              ? premiumMonthlyCategorizeLimit
+              : freeMonthlyCategorizeLimit;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          persist: false,
+          content: Text(
+            '自動カテゴリ分けの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyCategorizeLimit回まで利用できます'}',
+          ),
+          action:
+              isPremium
+                  ? null
+                  : SnackBarAction(
+                    label: 'アップグレード',
+                    onPressed: () => showPaywall(context: context),
+                  ),
+        ),
+      );
       return;
     }
 
@@ -89,10 +99,9 @@ class AICategorizeButton extends ConsumerWidget {
         itemNames: uncategorizedItems.map((e) => e.message).toList(),
         existingCategoryNames: existingCategoryNames,
       );
-    } catch (e) {
+    } catch (e, st) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.toString())));
+        showErrorSnackBar(context, e, st);
       }
       return;
     } finally {
@@ -116,25 +125,33 @@ class AICategorizeButton extends ConsumerWidget {
     }
 
     try {
-      await ref.read(aiCategorizeApplyProvider(groupID: groupID)).call(
+      await ref
+          .read(aiCategorizeApplyProvider(groupID: groupID))
+          .call(
             groupID: groupID,
             userID: ref.read(currentUserIDProvider)!,
             categoryAxisID: categoryAxisID,
-            assignments: included
-                .map(
-                    (c) => (itemName: c.itemName, categoryName: c.categoryName))
-                .toList(),
+            assignments:
+                included
+                    .map(
+                      (c) => (
+                        itemName: c.itemName,
+                        categoryName: c.categoryName,
+                      ),
+                    )
+                    .toList(),
           );
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          persist: false,
-          content: Text('${included.length}件をカテゴリに登録しました'),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            persist: false,
+            content: Text('${included.length}件をカテゴリに登録しました'),
+          ),
+        );
       }
-    } catch (e) {
+    } catch (e, st) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.toString())));
+        showErrorSnackBar(context, e, st);
       }
     }
   }

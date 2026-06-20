@@ -102,9 +102,7 @@ class GeofenceService {
 
     analytics.logEvent(
       name: 'geofence_notification_sent',
-      parameters: {
-        'listCount': lists.length.toString(),
-      },
+      parameters: {'listCount': lists.length.toString()},
     );
 
     await notificationsPlugin.show(

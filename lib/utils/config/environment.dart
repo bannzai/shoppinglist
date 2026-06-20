@@ -18,18 +18,21 @@ abstract class Environment {
   static bool get disableWidgetAnimation =>
       const bool.fromEnvironment('DISABLE_WIDGET_ANIMATION') && isDevelopment;
 
-  static const siwaServiceIdentifier =
-      String.fromEnvironment('SIWA_SERVICE_IDENTIFIIER');
-  static const androidSiwaRedirectURL =
-      String.fromEnvironment('ANDROID_SIWA_REDIRECT_URL');
+  static const siwaServiceIdentifier = String.fromEnvironment(
+    'SIWA_SERVICE_IDENTIFIIER',
+  );
+  static const androidSiwaRedirectURL = String.fromEnvironment(
+    'ANDROID_SIWA_REDIRECT_URL',
+  );
 
   /// ローカル開発用の開発者識別トークン。
   /// dart-define `SHOPPINGLIST_DEVELOPER_TOKEN` から注入される。値が設定されている場合のみ
   /// users/{userID}.developerToken に upsert され、Cloud Functions
   /// (grantPromotionalPremium 等の dev only 関数) でユーザー単位の認可に使われる。
   /// 空文字の場合は本番ユーザービルド扱いで何もしない。
-  static const developerToken =
-      String.fromEnvironment('SHOPPINGLIST_DEVELOPER_TOKEN');
+  static const developerToken = String.fromEnvironment(
+    'SHOPPINGLIST_DEVELOPER_TOKEN',
+  );
 
   static Function()? deleteUser;
   static Function()? signOutUser;

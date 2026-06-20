@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # PR-5 Groups の検証:
 # - GroupCreatePage の icon picker (6 種) が表示される

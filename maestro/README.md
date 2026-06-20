@@ -21,6 +21,15 @@
 
 **Debug ビルドで Key が空のまま起動すると `initializePurchase()` の assert で落ちる**（PR #233 設計）。
 
+### テスト対象アプリの指定（appId / prod・dev 切り替え）
+
+全フローの `appId` は `${APP_ID}` に変数化されており、実行時に `-e APP_ID=<bundle id>` で対象アプリを指定する。Maestro 仕様上、appId のデフォルト値を効かせる手段が無い（config.yaml の `env:` は `undefined`、flow 内 `env:` は `-e` を上書きしてしまう）ため、**指定は必須**。未指定だと `Unable to launch app undefined` で失敗する。
+
+- prod: `-e APP_ID=com.bannzai.shoppinglist`
+- dev:  `-e APP_ID=com.bannzai.shoppinglist.dev`
+
+`run-maestro-flow.sh` / `run_group_sync_test.sh` 経由なら環境変数 `APP_ID` で指定でき、内部で `-e APP_ID=$APP_ID` を付与する（`run_group_sync_test.sh` のデフォルトは prod）。`runFlow` のサブフロー（`shared/*.yaml`）も親に渡した `-e` を継承する。指定する bundle に対応するビルド（prod=Release / dev=Debug フレーバー）を事前にインストールしておくこと。
+
 ## iOS 実行
 
 ### 1. シミュレータ起動 + アプリインストール
@@ -40,6 +49,8 @@ xcrun simctl install $DEVICE_UDID build/ios/iphonesimulator/Runner.app
 ### 2. 購入 E2E（3 パッケージ）
 
 ```bash
+# APP_ID で対象アプリを指定（prod 例。dev は com.bannzai.shoppinglist.dev）
+export APP_ID=com.bannzai.shoppinglist
 for pkg in monthly annual lifetime; do
   bash ~/.claude/skills/maestro-flutter/scripts/run-maestro-flow.sh \
     maestro/flows/iap_purchase_${pkg}.yaml $DEVICE_UDID
@@ -49,6 +60,7 @@ done
 ### 3. 機能解除確認 E2E（10 フロー）
 
 ```bash
+export APP_ID=com.bannzai.shoppinglist   # dev は com.bannzai.shoppinglist.dev
 for f in maestro/flows/premium_*.yaml; do
   bash ~/.claude/skills/maestro-flutter/scripts/run-maestro-flow.sh "$f" $DEVICE_UDID
 done
@@ -66,9 +78,9 @@ emulator -avd test_device_api35 -no-snapshot-load &
 flutter build apk --debug --dart-define=REVENUECAT_TEST_STORE_API_KEY=$REVENUECAT_TEST_STORE_API_KEY
 adb install -r build/app/outputs/flutter-apk/app-debug.apk
 
-# 全 IAP / premium フロー実行
+# 全 IAP / premium フロー実行（-e APP_ID で対象アプリを指定。dev は com.bannzai.shoppinglist.dev）
 for f in maestro/flows/iap_purchase_*.yaml maestro/flows/premium_*.yaml; do
-  maestro --platform android test "$f" --debug-output tmp/maestro-android-results --flatten-debug-output
+  maestro --platform android test "$f" -e APP_ID=com.bannzai.shoppinglist --debug-output tmp/maestro-android-results --flatten-debug-output
 done
 ```
 

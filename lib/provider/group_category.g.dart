@@ -40,26 +40,20 @@ class GroupCategoryAxesFamily
   const GroupCategoryAxesFamily();
 
   /// See also [groupCategoryAxes].
-  GroupCategoryAxesProvider call({
-    required String groupID,
-  }) {
-    return GroupCategoryAxesProvider(
-      groupID: groupID,
-    );
+  GroupCategoryAxesProvider call({required String groupID}) {
+    return GroupCategoryAxesProvider(groupID: groupID);
   }
 
   @override
   GroupCategoryAxesProvider getProviderOverride(
     covariant GroupCategoryAxesProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
     groupDatabaseProvider,
-    userDatabaseProvider
+    userDatabaseProvider,
   ];
 
   @override
@@ -67,11 +61,11 @@ class GroupCategoryAxesFamily
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies,
-    userDatabaseProvider,
-    ...?userDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+        userDatabaseProvider,
+        ...?userDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -85,24 +79,21 @@ class GroupCategoryAxesFamily
 class GroupCategoryAxesProvider
     extends AutoDisposeStreamProvider<List<GroupCategoryAxis>> {
   /// See also [groupCategoryAxes].
-  GroupCategoryAxesProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => groupCategoryAxes(
-            ref as GroupCategoryAxesRef,
-            groupID: groupID,
-          ),
-          from: groupCategoryAxesProvider,
-          name: r'groupCategoryAxesProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$groupCategoryAxesHash,
-          dependencies: GroupCategoryAxesFamily._dependencies,
-          allTransitiveDependencies:
-              GroupCategoryAxesFamily._allTransitiveDependencies,
-          groupID: groupID,
-        );
+  GroupCategoryAxesProvider({required String groupID})
+    : this._internal(
+        (ref) =>
+            groupCategoryAxes(ref as GroupCategoryAxesRef, groupID: groupID),
+        from: groupCategoryAxesProvider,
+        name: r'groupCategoryAxesProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$groupCategoryAxesHash,
+        dependencies: GroupCategoryAxesFamily._dependencies,
+        allTransitiveDependencies:
+            GroupCategoryAxesFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   GroupCategoryAxesProvider._internal(
     super._createNotifier, {
@@ -119,7 +110,7 @@ class GroupCategoryAxesProvider
   @override
   Override overrideWith(
     Stream<List<GroupCategoryAxis>> Function(GroupCategoryAxesRef provider)
-        create,
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -184,25 +175,19 @@ class GroupCategoryAxisAddFamily extends Family<GroupCategoryAxisAdd> {
   const GroupCategoryAxisAddFamily();
 
   /// See also [groupCategoryAxisAdd].
-  GroupCategoryAxisAddProvider call({
-    required String groupID,
-  }) {
-    return GroupCategoryAxisAddProvider(
-      groupID: groupID,
-    );
+  GroupCategoryAxisAddProvider call({required String groupID}) {
+    return GroupCategoryAxisAddProvider(groupID: groupID);
   }
 
   @override
   GroupCategoryAxisAddProvider getProviderOverride(
     covariant GroupCategoryAxisAddProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -210,9 +195,9 @@ class GroupCategoryAxisAddFamily extends Family<GroupCategoryAxisAdd> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -226,24 +211,23 @@ class GroupCategoryAxisAddFamily extends Family<GroupCategoryAxisAdd> {
 class GroupCategoryAxisAddProvider
     extends AutoDisposeProvider<GroupCategoryAxisAdd> {
   /// See also [groupCategoryAxisAdd].
-  GroupCategoryAxisAddProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => groupCategoryAxisAdd(
-            ref as GroupCategoryAxisAddRef,
-            groupID: groupID,
-          ),
-          from: groupCategoryAxisAddProvider,
-          name: r'groupCategoryAxisAddProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$groupCategoryAxisAddHash,
-          dependencies: GroupCategoryAxisAddFamily._dependencies,
-          allTransitiveDependencies:
-              GroupCategoryAxisAddFamily._allTransitiveDependencies,
+  GroupCategoryAxisAddProvider({required String groupID})
+    : this._internal(
+        (ref) => groupCategoryAxisAdd(
+          ref as GroupCategoryAxisAddRef,
           groupID: groupID,
-        );
+        ),
+        from: groupCategoryAxisAddProvider,
+        name: r'groupCategoryAxisAddProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$groupCategoryAxisAddHash,
+        dependencies: GroupCategoryAxisAddFamily._dependencies,
+        allTransitiveDependencies:
+            GroupCategoryAxisAddFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   GroupCategoryAxisAddProvider._internal(
     super._createNotifier, {
@@ -323,25 +307,19 @@ class GroupCategoryAxisDeleteFamily extends Family<GroupCategoryAxisDelete> {
   const GroupCategoryAxisDeleteFamily();
 
   /// See also [groupCategoryAxisDelete].
-  GroupCategoryAxisDeleteProvider call({
-    required String groupID,
-  }) {
-    return GroupCategoryAxisDeleteProvider(
-      groupID: groupID,
-    );
+  GroupCategoryAxisDeleteProvider call({required String groupID}) {
+    return GroupCategoryAxisDeleteProvider(groupID: groupID);
   }
 
   @override
   GroupCategoryAxisDeleteProvider getProviderOverride(
     covariant GroupCategoryAxisDeleteProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -349,9 +327,9 @@ class GroupCategoryAxisDeleteFamily extends Family<GroupCategoryAxisDelete> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -365,24 +343,23 @@ class GroupCategoryAxisDeleteFamily extends Family<GroupCategoryAxisDelete> {
 class GroupCategoryAxisDeleteProvider
     extends AutoDisposeProvider<GroupCategoryAxisDelete> {
   /// See also [groupCategoryAxisDelete].
-  GroupCategoryAxisDeleteProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => groupCategoryAxisDelete(
-            ref as GroupCategoryAxisDeleteRef,
-            groupID: groupID,
-          ),
-          from: groupCategoryAxisDeleteProvider,
-          name: r'groupCategoryAxisDeleteProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$groupCategoryAxisDeleteHash,
-          dependencies: GroupCategoryAxisDeleteFamily._dependencies,
-          allTransitiveDependencies:
-              GroupCategoryAxisDeleteFamily._allTransitiveDependencies,
+  GroupCategoryAxisDeleteProvider({required String groupID})
+    : this._internal(
+        (ref) => groupCategoryAxisDelete(
+          ref as GroupCategoryAxisDeleteRef,
           groupID: groupID,
-        );
+        ),
+        from: groupCategoryAxisDeleteProvider,
+        name: r'groupCategoryAxisDeleteProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$groupCategoryAxisDeleteHash,
+        dependencies: GroupCategoryAxisDeleteFamily._dependencies,
+        allTransitiveDependencies:
+            GroupCategoryAxisDeleteFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   GroupCategoryAxisDeleteProvider._internal(
     super._createNotifier, {
@@ -399,7 +376,7 @@ class GroupCategoryAxisDeleteProvider
   @override
   Override overrideWith(
     GroupCategoryAxisDelete Function(GroupCategoryAxisDeleteRef provider)
-        create,
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -485,7 +462,7 @@ class GroupCategoriesFamily extends Family<AsyncValue<List<GroupCategory>>> {
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
     groupDatabaseProvider,
-    userDatabaseProvider
+    userDatabaseProvider,
   ];
 
   @override
@@ -493,11 +470,11 @@ class GroupCategoriesFamily extends Family<AsyncValue<List<GroupCategory>>> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies,
-    userDatabaseProvider,
-    ...?userDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+        userDatabaseProvider,
+        ...?userDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -515,23 +492,23 @@ class GroupCategoriesProvider
     required String groupID,
     required String categoryAxisID,
   }) : this._internal(
-          (ref) => groupCategories(
-            ref as GroupCategoriesRef,
-            groupID: groupID,
-            categoryAxisID: categoryAxisID,
-          ),
-          from: groupCategoriesProvider,
-          name: r'groupCategoriesProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$groupCategoriesHash,
-          dependencies: GroupCategoriesFamily._dependencies,
-          allTransitiveDependencies:
-              GroupCategoriesFamily._allTransitiveDependencies,
-          groupID: groupID,
-          categoryAxisID: categoryAxisID,
-        );
+         (ref) => groupCategories(
+           ref as GroupCategoriesRef,
+           groupID: groupID,
+           categoryAxisID: categoryAxisID,
+         ),
+         from: groupCategoriesProvider,
+         name: r'groupCategoriesProvider',
+         debugGetCreateSourceHash:
+             const bool.fromEnvironment('dart.vm.product')
+                 ? null
+                 : _$groupCategoriesHash,
+         dependencies: GroupCategoriesFamily._dependencies,
+         allTransitiveDependencies:
+             GroupCategoriesFamily._allTransitiveDependencies,
+         groupID: groupID,
+         categoryAxisID: categoryAxisID,
+       );
 
   GroupCategoriesProvider._internal(
     super._createNotifier, {
@@ -622,25 +599,19 @@ class GroupCategoryAddFamily extends Family<GroupCategoryAdd> {
   const GroupCategoryAddFamily();
 
   /// See also [groupCategoryAdd].
-  GroupCategoryAddProvider call({
-    required String groupID,
-  }) {
-    return GroupCategoryAddProvider(
-      groupID: groupID,
-    );
+  GroupCategoryAddProvider call({required String groupID}) {
+    return GroupCategoryAddProvider(groupID: groupID);
   }
 
   @override
   GroupCategoryAddProvider getProviderOverride(
     covariant GroupCategoryAddProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -648,9 +619,9 @@ class GroupCategoryAddFamily extends Family<GroupCategoryAdd> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -663,24 +634,20 @@ class GroupCategoryAddFamily extends Family<GroupCategoryAdd> {
 /// See also [groupCategoryAdd].
 class GroupCategoryAddProvider extends AutoDisposeProvider<GroupCategoryAdd> {
   /// See also [groupCategoryAdd].
-  GroupCategoryAddProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => groupCategoryAdd(
-            ref as GroupCategoryAddRef,
-            groupID: groupID,
-          ),
-          from: groupCategoryAddProvider,
-          name: r'groupCategoryAddProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$groupCategoryAddHash,
-          dependencies: GroupCategoryAddFamily._dependencies,
-          allTransitiveDependencies:
-              GroupCategoryAddFamily._allTransitiveDependencies,
-          groupID: groupID,
-        );
+  GroupCategoryAddProvider({required String groupID})
+    : this._internal(
+        (ref) => groupCategoryAdd(ref as GroupCategoryAddRef, groupID: groupID),
+        from: groupCategoryAddProvider,
+        name: r'groupCategoryAddProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$groupCategoryAddHash,
+        dependencies: GroupCategoryAddFamily._dependencies,
+        allTransitiveDependencies:
+            GroupCategoryAddFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   GroupCategoryAddProvider._internal(
     super._createNotifier, {
@@ -760,25 +727,19 @@ class GroupCategoryUpdateFamily extends Family<GroupCategoryUpdate> {
   const GroupCategoryUpdateFamily();
 
   /// See also [groupCategoryUpdate].
-  GroupCategoryUpdateProvider call({
-    required String groupID,
-  }) {
-    return GroupCategoryUpdateProvider(
-      groupID: groupID,
-    );
+  GroupCategoryUpdateProvider call({required String groupID}) {
+    return GroupCategoryUpdateProvider(groupID: groupID);
   }
 
   @override
   GroupCategoryUpdateProvider getProviderOverride(
     covariant GroupCategoryUpdateProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -786,9 +747,9 @@ class GroupCategoryUpdateFamily extends Family<GroupCategoryUpdate> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -802,24 +763,23 @@ class GroupCategoryUpdateFamily extends Family<GroupCategoryUpdate> {
 class GroupCategoryUpdateProvider
     extends AutoDisposeProvider<GroupCategoryUpdate> {
   /// See also [groupCategoryUpdate].
-  GroupCategoryUpdateProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => groupCategoryUpdate(
-            ref as GroupCategoryUpdateRef,
-            groupID: groupID,
-          ),
-          from: groupCategoryUpdateProvider,
-          name: r'groupCategoryUpdateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$groupCategoryUpdateHash,
-          dependencies: GroupCategoryUpdateFamily._dependencies,
-          allTransitiveDependencies:
-              GroupCategoryUpdateFamily._allTransitiveDependencies,
+  GroupCategoryUpdateProvider({required String groupID})
+    : this._internal(
+        (ref) => groupCategoryUpdate(
+          ref as GroupCategoryUpdateRef,
           groupID: groupID,
-        );
+        ),
+        from: groupCategoryUpdateProvider,
+        name: r'groupCategoryUpdateProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$groupCategoryUpdateHash,
+        dependencies: GroupCategoryUpdateFamily._dependencies,
+        allTransitiveDependencies:
+            GroupCategoryUpdateFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   GroupCategoryUpdateProvider._internal(
     super._createNotifier, {
@@ -899,25 +859,19 @@ class GroupCategoryDeleteFamily extends Family<GroupCategoryDelete> {
   const GroupCategoryDeleteFamily();
 
   /// See also [groupCategoryDelete].
-  GroupCategoryDeleteProvider call({
-    required String groupID,
-  }) {
-    return GroupCategoryDeleteProvider(
-      groupID: groupID,
-    );
+  GroupCategoryDeleteProvider call({required String groupID}) {
+    return GroupCategoryDeleteProvider(groupID: groupID);
   }
 
   @override
   GroupCategoryDeleteProvider getProviderOverride(
     covariant GroupCategoryDeleteProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -925,9 +879,9 @@ class GroupCategoryDeleteFamily extends Family<GroupCategoryDelete> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -941,24 +895,23 @@ class GroupCategoryDeleteFamily extends Family<GroupCategoryDelete> {
 class GroupCategoryDeleteProvider
     extends AutoDisposeProvider<GroupCategoryDelete> {
   /// See also [groupCategoryDelete].
-  GroupCategoryDeleteProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => groupCategoryDelete(
-            ref as GroupCategoryDeleteRef,
-            groupID: groupID,
-          ),
-          from: groupCategoryDeleteProvider,
-          name: r'groupCategoryDeleteProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$groupCategoryDeleteHash,
-          dependencies: GroupCategoryDeleteFamily._dependencies,
-          allTransitiveDependencies:
-              GroupCategoryDeleteFamily._allTransitiveDependencies,
+  GroupCategoryDeleteProvider({required String groupID})
+    : this._internal(
+        (ref) => groupCategoryDelete(
+          ref as GroupCategoryDeleteRef,
           groupID: groupID,
-        );
+        ),
+        from: groupCategoryDeleteProvider,
+        name: r'groupCategoryDeleteProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$groupCategoryDeleteHash,
+        dependencies: GroupCategoryDeleteFamily._dependencies,
+        allTransitiveDependencies:
+            GroupCategoryDeleteFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   GroupCategoryDeleteProvider._internal(
     super._createNotifier, {
@@ -1038,25 +991,19 @@ class GroupCategoryBatchUpdateFamily extends Family<GroupCategoryBatchUpdate> {
   const GroupCategoryBatchUpdateFamily();
 
   /// See also [groupCategoryBatchUpdate].
-  GroupCategoryBatchUpdateProvider call({
-    required String groupID,
-  }) {
-    return GroupCategoryBatchUpdateProvider(
-      groupID: groupID,
-    );
+  GroupCategoryBatchUpdateProvider call({required String groupID}) {
+    return GroupCategoryBatchUpdateProvider(groupID: groupID);
   }
 
   @override
   GroupCategoryBatchUpdateProvider getProviderOverride(
     covariant GroupCategoryBatchUpdateProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -1064,9 +1011,9 @@ class GroupCategoryBatchUpdateFamily extends Family<GroupCategoryBatchUpdate> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -1080,24 +1027,23 @@ class GroupCategoryBatchUpdateFamily extends Family<GroupCategoryBatchUpdate> {
 class GroupCategoryBatchUpdateProvider
     extends AutoDisposeProvider<GroupCategoryBatchUpdate> {
   /// See also [groupCategoryBatchUpdate].
-  GroupCategoryBatchUpdateProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => groupCategoryBatchUpdate(
-            ref as GroupCategoryBatchUpdateRef,
-            groupID: groupID,
-          ),
-          from: groupCategoryBatchUpdateProvider,
-          name: r'groupCategoryBatchUpdateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$groupCategoryBatchUpdateHash,
-          dependencies: GroupCategoryBatchUpdateFamily._dependencies,
-          allTransitiveDependencies:
-              GroupCategoryBatchUpdateFamily._allTransitiveDependencies,
+  GroupCategoryBatchUpdateProvider({required String groupID})
+    : this._internal(
+        (ref) => groupCategoryBatchUpdate(
+          ref as GroupCategoryBatchUpdateRef,
           groupID: groupID,
-        );
+        ),
+        from: groupCategoryBatchUpdateProvider,
+        name: r'groupCategoryBatchUpdateProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$groupCategoryBatchUpdateHash,
+        dependencies: GroupCategoryBatchUpdateFamily._dependencies,
+        allTransitiveDependencies:
+            GroupCategoryBatchUpdateFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   GroupCategoryBatchUpdateProvider._internal(
     super._createNotifier, {
@@ -1114,7 +1060,7 @@ class GroupCategoryBatchUpdateProvider
   @override
   Override overrideWith(
     GroupCategoryBatchUpdate Function(GroupCategoryBatchUpdateRef provider)
-        create,
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -1180,25 +1126,19 @@ class GroupCategoryKeywordAddFamily extends Family<GroupCategoryKeywordAdd> {
   const GroupCategoryKeywordAddFamily();
 
   /// See also [groupCategoryKeywordAdd].
-  GroupCategoryKeywordAddProvider call({
-    required String groupID,
-  }) {
-    return GroupCategoryKeywordAddProvider(
-      groupID: groupID,
-    );
+  GroupCategoryKeywordAddProvider call({required String groupID}) {
+    return GroupCategoryKeywordAddProvider(groupID: groupID);
   }
 
   @override
   GroupCategoryKeywordAddProvider getProviderOverride(
     covariant GroupCategoryKeywordAddProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -1206,9 +1146,9 @@ class GroupCategoryKeywordAddFamily extends Family<GroupCategoryKeywordAdd> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -1222,24 +1162,23 @@ class GroupCategoryKeywordAddFamily extends Family<GroupCategoryKeywordAdd> {
 class GroupCategoryKeywordAddProvider
     extends AutoDisposeProvider<GroupCategoryKeywordAdd> {
   /// See also [groupCategoryKeywordAdd].
-  GroupCategoryKeywordAddProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => groupCategoryKeywordAdd(
-            ref as GroupCategoryKeywordAddRef,
-            groupID: groupID,
-          ),
-          from: groupCategoryKeywordAddProvider,
-          name: r'groupCategoryKeywordAddProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$groupCategoryKeywordAddHash,
-          dependencies: GroupCategoryKeywordAddFamily._dependencies,
-          allTransitiveDependencies:
-              GroupCategoryKeywordAddFamily._allTransitiveDependencies,
+  GroupCategoryKeywordAddProvider({required String groupID})
+    : this._internal(
+        (ref) => groupCategoryKeywordAdd(
+          ref as GroupCategoryKeywordAddRef,
           groupID: groupID,
-        );
+        ),
+        from: groupCategoryKeywordAddProvider,
+        name: r'groupCategoryKeywordAddProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$groupCategoryKeywordAddHash,
+        dependencies: GroupCategoryKeywordAddFamily._dependencies,
+        allTransitiveDependencies:
+            GroupCategoryKeywordAddFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   GroupCategoryKeywordAddProvider._internal(
     super._createNotifier, {
@@ -1256,7 +1195,7 @@ class GroupCategoryKeywordAddProvider
   @override
   Override overrideWith(
     GroupCategoryKeywordAdd Function(GroupCategoryKeywordAddRef provider)
-        create,
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -1320,25 +1259,19 @@ class AiCategorizeApplyFamily extends Family<AICategorizeApply> {
   const AiCategorizeApplyFamily();
 
   /// See also [aiCategorizeApply].
-  AiCategorizeApplyProvider call({
-    required String groupID,
-  }) {
-    return AiCategorizeApplyProvider(
-      groupID: groupID,
-    );
+  AiCategorizeApplyProvider call({required String groupID}) {
+    return AiCategorizeApplyProvider(groupID: groupID);
   }
 
   @override
   AiCategorizeApplyProvider getProviderOverride(
     covariant AiCategorizeApplyProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -1346,9 +1279,9 @@ class AiCategorizeApplyFamily extends Family<AICategorizeApply> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -1361,24 +1294,21 @@ class AiCategorizeApplyFamily extends Family<AICategorizeApply> {
 /// See also [aiCategorizeApply].
 class AiCategorizeApplyProvider extends AutoDisposeProvider<AICategorizeApply> {
   /// See also [aiCategorizeApply].
-  AiCategorizeApplyProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => aiCategorizeApply(
-            ref as AiCategorizeApplyRef,
-            groupID: groupID,
-          ),
-          from: aiCategorizeApplyProvider,
-          name: r'aiCategorizeApplyProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$aiCategorizeApplyHash,
-          dependencies: AiCategorizeApplyFamily._dependencies,
-          allTransitiveDependencies:
-              AiCategorizeApplyFamily._allTransitiveDependencies,
-          groupID: groupID,
-        );
+  AiCategorizeApplyProvider({required String groupID})
+    : this._internal(
+        (ref) =>
+            aiCategorizeApply(ref as AiCategorizeApplyRef, groupID: groupID),
+        from: aiCategorizeApplyProvider,
+        name: r'aiCategorizeApplyProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$aiCategorizeApplyHash,
+        dependencies: AiCategorizeApplyFamily._dependencies,
+        allTransitiveDependencies:
+            AiCategorizeApplyFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   AiCategorizeApplyProvider._internal(
     super._createNotifier, {
@@ -1458,25 +1388,19 @@ class MoveItemCategoryKeywordFamily extends Family<MoveItemCategoryKeyword> {
   const MoveItemCategoryKeywordFamily();
 
   /// See also [moveItemCategoryKeyword].
-  MoveItemCategoryKeywordProvider call({
-    required String groupID,
-  }) {
-    return MoveItemCategoryKeywordProvider(
-      groupID: groupID,
-    );
+  MoveItemCategoryKeywordProvider call({required String groupID}) {
+    return MoveItemCategoryKeywordProvider(groupID: groupID);
   }
 
   @override
   MoveItemCategoryKeywordProvider getProviderOverride(
     covariant MoveItemCategoryKeywordProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider
+    groupDatabaseProvider,
   ];
 
   @override
@@ -1484,9 +1408,9 @@ class MoveItemCategoryKeywordFamily extends Family<MoveItemCategoryKeyword> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    groupDatabaseProvider,
-    ...?groupDatabaseProvider.allTransitiveDependencies
-  };
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -1500,24 +1424,23 @@ class MoveItemCategoryKeywordFamily extends Family<MoveItemCategoryKeyword> {
 class MoveItemCategoryKeywordProvider
     extends AutoDisposeProvider<MoveItemCategoryKeyword> {
   /// See also [moveItemCategoryKeyword].
-  MoveItemCategoryKeywordProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => moveItemCategoryKeyword(
-            ref as MoveItemCategoryKeywordRef,
-            groupID: groupID,
-          ),
-          from: moveItemCategoryKeywordProvider,
-          name: r'moveItemCategoryKeywordProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$moveItemCategoryKeywordHash,
-          dependencies: MoveItemCategoryKeywordFamily._dependencies,
-          allTransitiveDependencies:
-              MoveItemCategoryKeywordFamily._allTransitiveDependencies,
+  MoveItemCategoryKeywordProvider({required String groupID})
+    : this._internal(
+        (ref) => moveItemCategoryKeyword(
+          ref as MoveItemCategoryKeywordRef,
           groupID: groupID,
-        );
+        ),
+        from: moveItemCategoryKeywordProvider,
+        name: r'moveItemCategoryKeywordProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$moveItemCategoryKeywordHash,
+        dependencies: MoveItemCategoryKeywordFamily._dependencies,
+        allTransitiveDependencies:
+            MoveItemCategoryKeywordFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   MoveItemCategoryKeywordProvider._internal(
     super._createNotifier, {
@@ -1534,7 +1457,7 @@ class MoveItemCategoryKeywordProvider
   @override
   Override overrideWith(
     MoveItemCategoryKeyword Function(MoveItemCategoryKeywordRef provider)
-        create,
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -1585,5 +1508,6 @@ class _MoveItemCategoryKeywordProviderElement
   @override
   String get groupID => (origin as MoveItemCategoryKeywordProvider).groupID;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

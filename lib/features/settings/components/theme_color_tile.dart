@@ -26,9 +26,10 @@ class ThemeColorTile extends ConsumerWidget {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: resolveAccentPreset(
-                ref.watch(appUserProvider).asData?.value.themeColorHex,
-              ).light,
+              color:
+                  resolveAccentPreset(
+                    ref.watch(appUserProvider).asData?.value.themeColorHex,
+                  ).light,
               shape: BoxShape.circle,
             ),
           ),

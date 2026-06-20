@@ -62,9 +62,10 @@ class _AppCheckboxState extends State<AppCheckbox>
       scale: _scale,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: widget.onChanged == null
-            ? null
-            : () => widget.onChanged!(!widget.checked),
+        onTap:
+            widget.onChanged == null
+                ? null
+                : () => widget.onChanged!(!widget.checked),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 120),
           width: widget.size,
@@ -78,9 +79,14 @@ class _AppCheckboxState extends State<AppCheckbox>
             ),
           ),
           alignment: Alignment.center,
-          child: widget.checked
-              ? Icon(Icons.check, size: widget.size * 0.62, color: Colors.white)
-              : null,
+          child:
+              widget.checked
+                  ? Icon(
+                    Icons.check,
+                    size: widget.size * 0.62,
+                    color: Colors.white,
+                  )
+                  : null,
         ),
       ),
     );

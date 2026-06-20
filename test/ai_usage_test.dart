@@ -11,7 +11,9 @@ void main() {
 
     test('UTC月初の場合', () {
       expect(
-          yearMonthFrom(dateTime: DateTime.utc(2026, 4, 1, 0, 0)), '2026-04');
+        yearMonthFrom(dateTime: DateTime.utc(2026, 4, 1, 0, 0)),
+        '2026-04',
+      );
     });
 
     test('月が1桁の場合ゼロパディングされる', () {
@@ -25,8 +27,10 @@ void main() {
 
   group('currentYearMonth', () {
     test('yyyy-MM形式で返される', () {
-      expect(currentYearMonth(now: DateTime.utc(2026, 4, 1)),
-          matches(RegExp(r'^\d{4}-\d{2}$')));
+      expect(
+        currentYearMonth(now: DateTime.utc(2026, 4, 1)),
+        matches(RegExp(r'^\d{4}-\d{2}$')),
+      );
     });
 
     test('指定した日時から年月を算出する', () {

@@ -9,9 +9,7 @@ class DefaultGroupUpdate {
   DefaultGroupUpdate({required this.userDatabase});
 
   Future<void> call({required String groupID}) async {
-    await userDatabase.userReference().update({
-      'defaultGroupID': groupID,
-    });
+    await userDatabase.userReference().update({'defaultGroupID': groupID});
   }
 }
 

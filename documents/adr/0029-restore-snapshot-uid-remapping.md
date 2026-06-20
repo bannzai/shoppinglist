@@ -1,7 +1,7 @@
 # 0029. 復元コマンドの uid 載せ替え (--target-uid)
 
 ## Status
-Accepted
+Accepted (復元先は [[0030-separate-dev-prod-firebase-projects]] で named database `development` から dev プロジェクトの `(default)` に変更。uid 載せ替えロジック自体は継続)
 
 ## Context
 ADR 0028 で、お問い合わせ時点のスナップショットを named database `development` へ復元する仕組みを導入した。そこでは「スナップショットは本番ユーザーの uid のまま `development` に復元される。dev の別ユーザーで『自分のデータ』として再現するには uid 載せ替えが別途必要(今回は未対応)」と明記し、uid 載せ替えを将来課題として残していた。

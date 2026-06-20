@@ -51,8 +51,8 @@ class AppFrameAppBar extends StatelessWidget implements PreferredSizeWidget {
                 title,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: accent ? tokens.accent : neutral.ink,
-                    ),
+                  color: accent ? tokens.accent : neutral.ink,
+                ),
               ),
             ),
             SizedBox(width: 36, child: trailing),

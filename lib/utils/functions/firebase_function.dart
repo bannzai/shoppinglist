@@ -10,14 +10,10 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
   /// 戻り値の `expiresDateTime` は `Functions` が ISO8601 文字列で返したものを
   /// `DateTime.parse` した値。
   Future<({String invitationCode, DateTime expiresDateTime})>
-      createGroupInvitation({
-    required String groupID,
-  }) async {
-    final result = await httpsCallable('createGroupInvitation').call(
-      {
-        'groupID': groupID,
-      },
-    );
+  createGroupInvitation({required String groupID}) async {
+    final result = await httpsCallable(
+      'createGroupInvitation',
+    ).call({'groupID': groupID});
     debugPrint('createGroupInvitation.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
@@ -25,21 +21,18 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     }
     return (
       invitationCode: response['data']['invitationCode'] as String,
-      expiresDateTime:
-          DateTime.parse(response['data']['expiresDateTime'] as String),
+      expiresDateTime: DateTime.parse(
+        response['data']['expiresDateTime'] as String,
+      ),
     );
   }
 
   /// 招待コードを使ってグループに参加する。
   /// 戻り値は参加したグループの ID (Firestore doc ID)。
-  Future<String> acceptGroupInvitation({
-    required String invitationCode,
-  }) async {
-    final result = await httpsCallable('acceptGroupInvitation').call(
-      {
-        'invitationCode': invitationCode,
-      },
-    );
+  Future<String> acceptGroupInvitation({required String invitationCode}) async {
+    final result = await httpsCallable(
+      'acceptGroupInvitation',
+    ).call({'invitationCode': invitationCode});
     debugPrint('acceptGroupInvitation.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
@@ -54,13 +47,9 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     required String mimeType,
     required String base64Image,
   }) async {
-    final result =
-        await httpsCallable('generateShoppingListItemsFromImage').call(
-      {
-        'mimeType': mimeType,
-        'base64Image': base64Image,
-      },
-    );
+    final result = await httpsCallable(
+      'generateShoppingListItemsFromImage',
+    ).call({'mimeType': mimeType, 'base64Image': base64Image});
     debugPrint('generateShoppingListItemsFromImage.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
@@ -76,11 +65,9 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
   Future<List<String>> generateShoppingListItemsFromURL({
     required String url,
   }) async {
-    final result = await httpsCallable('generateShoppingListItemsFromURL').call(
-      {
-        'url': url,
-      },
-    );
+    final result = await httpsCallable(
+      'generateShoppingListItemsFromURL',
+    ).call({'url': url});
     debugPrint('generateShoppingListItemsFromURL.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
@@ -95,16 +82,14 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
   /// アイテムにカテゴリIDは持たせず、(アイテム名, カテゴリ名) の対応のみを返す。
   /// 永続化（キーワード追記・カテゴリ作成）はクライアント側で行う。
   Future<List<({String name, String categoryName})>>
-      categorizeShoppingListItems({
+  categorizeShoppingListItems({
     required List<String> itemNames,
     required List<String> existingCategoryNames,
   }) async {
-    final result = await httpsCallable('categorizeShoppingListItems').call(
-      {
-        'itemNames': itemNames,
-        'existingCategoryNames': existingCategoryNames,
-      },
-    );
+    final result = await httpsCallable('categorizeShoppingListItems').call({
+      'itemNames': itemNames,
+      'existingCategoryNames': existingCategoryNames,
+    });
     debugPrint('categorizeShoppingListItems.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
@@ -126,12 +111,9 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     required String groupID,
     required String targetUserID,
   }) async {
-    final result = await httpsCallable('removeGroupMember').call(
-      {
-        'groupID': groupID,
-        'targetUserID': targetUserID,
-      },
-    );
+    final result = await httpsCallable(
+      'removeGroupMember',
+    ).call({'groupID': groupID, 'targetUserID': targetUserID});
     debugPrint('removeGroupMember.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
@@ -146,43 +128,19 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     required String? shoppingListName,
     required List<String> targetUserIDs,
   }) async {
-    final result =
-        await httpsCallable('sendShoppingListUpdateNotification').call(
-      {
-        'groupID': groupID,
-        'shoppingListID': shoppingListID,
-        'shoppingListName': shoppingListName,
-        'targetUserIDs': targetUserIDs,
-      },
-    );
+    final result = await httpsCallable(
+      'sendShoppingListUpdateNotification',
+    ).call({
+      'groupID': groupID,
+      'shoppingListID': shoppingListID,
+      'shoppingListName': shoppingListName,
+      'targetUserIDs': targetUserIDs,
+    });
     debugPrint('sendShoppingListUpdateNotification.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
       throw Exception(response['error']['message']);
     }
-  }
-
-  /// サーバー側で上限チェックを行った上で買い物リストを作成する。
-  Future<String> createShoppingList({
-    required String groupID,
-    required String createUserID,
-    required String? shoppingLocationID,
-    required String? duplicatedFromGroupShoppingListID,
-  }) async {
-    final result = await httpsCallable('createShoppingList').call(
-      {
-        'groupID': groupID,
-        'createUserID': createUserID,
-        'shoppingLocationID': shoppingLocationID,
-        'duplicatedFromGroupShoppingListID': duplicatedFromGroupShoppingListID,
-      },
-    );
-    debugPrint('createShoppingList.result: ${result.data}');
-    final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
-    return response['data']['shoppingListID'] as String;
   }
 
   /// サーバー側で上限チェックを行った上でグループを作成する。
@@ -195,14 +153,12 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     required bool setAsDefault,
     required String iconName,
   }) async {
-    final result = await httpsCallable('createGroup').call(
-      {
-        'createUserID': createUserID,
-        'name': name,
-        'setAsDefault': setAsDefault,
-        'iconName': iconName,
-      },
-    );
+    final result = await httpsCallable('createGroup').call({
+      'createUserID': createUserID,
+      'name': name,
+      'setAsDefault': setAsDefault,
+      'iconName': iconName,
+    });
     debugPrint('createGroup.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
@@ -216,12 +172,9 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     required String groupID,
     required String name,
   }) async {
-    final result = await httpsCallable('updateGroupName').call(
-      {
-        'groupID': groupID,
-        'name': name,
-      },
-    );
+    final result = await httpsCallable(
+      'updateGroupName',
+    ).call({'groupID': groupID, 'name': name});
     debugPrint('updateGroupName.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
@@ -237,15 +190,13 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     required String mimeType,
     required String base64Image,
   }) async {
-    final result = await httpsCallable('uploadShoppingListItemImage').call(
-      {
-        'groupID': groupID,
-        'shoppingListID': shoppingListID,
-        'itemID': itemID,
-        'mimeType': mimeType,
-        'base64Image': base64Image,
-      },
-    );
+    final result = await httpsCallable('uploadShoppingListItemImage').call({
+      'groupID': groupID,
+      'shoppingListID': shoppingListID,
+      'itemID': itemID,
+      'mimeType': mimeType,
+      'base64Image': base64Image,
+    });
     // token付きURLを含む可能性があるためresult.dataはログ出力しない
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
@@ -256,14 +207,10 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
 
   /// RevenueCat Promotions API経由でプレミアムEntitlementを付与する。
   /// 開発者オプションでのテスト用。
-  Future<void> grantPromotionalPremium({
-    required String duration,
-  }) async {
-    final result = await httpsCallable('grantPromotionalPremium').call(
-      {
-        'duration': duration,
-      },
-    );
+  Future<void> grantPromotionalPremium({required String duration}) async {
+    final result = await httpsCallable(
+      'grantPromotionalPremium',
+    ).call({'duration': duration});
     debugPrint('grantPromotionalPremium.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
@@ -276,9 +223,9 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
   Future<void> revokePromotionalPremium() async {
     // 引数なし call() は data が null になり、GenKit の inputSchema
     // z.object({}) の検証が INTERNAL で落ちるため空オブジェクトを渡す。
-    final result = await httpsCallable('revokePromotionalPremium').call(
-      <String, dynamic>{},
-    );
+    final result = await httpsCallable(
+      'revokePromotionalPremium',
+    ).call(<String, dynamic>{});
     debugPrint('revokePromotionalPremium.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
@@ -295,15 +242,13 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     required String platform,
     required String appVersion,
   }) async {
-    final result = await httpsCallable('submitInquiry').call(
-      {
-        'email': email,
-        'categoryType': categoryType.wireValue,
-        'content': content,
-        'platform': platform,
-        'appVersion': appVersion,
-      },
-    );
+    final result = await httpsCallable('submitInquiry').call({
+      'email': email,
+      'categoryType': categoryType.wireValue,
+      'content': content,
+      'platform': platform,
+      'appVersion': appVersion,
+    });
     debugPrint('submitInquiry.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
@@ -340,18 +285,37 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     required String shoppingListID,
     required String itemID,
   }) async {
-    final result = await httpsCallable('deleteShoppingListItemImage').call(
-      {
-        'groupID': groupID,
-        'shoppingListID': shoppingListID,
-        'itemID': itemID,
-      },
-    );
+    final result = await httpsCallable('deleteShoppingListItemImage').call({
+      'groupID': groupID,
+      'shoppingListID': shoppingListID,
+      'itemID': itemID,
+    });
     debugPrint('deleteShoppingListItemImage.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {
       throw Exception(response['error']['message']);
     }
+  }
+
+  /// レシート画像をFirebase Storageにアップロードし、ダウンロードURLを返す。
+  Future<String> uploadReceiptImage({
+    required String groupID,
+    required String shoppingListID,
+    required String receiptID,
+    required String base64Image,
+  }) async {
+    final result = await httpsCallable('uploadReceiptImage').call({
+      'groupID': groupID,
+      'shoppingListID': shoppingListID,
+      'receiptID': receiptID,
+      'base64Image': base64Image,
+    });
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+    // Storage path を返す（download URL は Firestore に保存しない）。
+    return response['data']['storagePath'] as String;
   }
 }
 
@@ -362,12 +326,13 @@ Map<String, dynamic> mapToJSON(Map<dynamic, dynamic> map) {
     if (map[key] is Map) {
       map[key] = mapToJSON(map[key]);
     } else if (map[key] is List) {
-      map[key] = map[key].map((e) {
-        if (e is Map) {
-          return mapToJSON(e);
-        }
-        return e;
-      }).toList();
+      map[key] =
+          map[key].map((e) {
+            if (e is Map) {
+              return mapToJSON(e);
+            }
+            return e;
+          }).toList();
     }
   }
   return Map<String, dynamic>.from(map);

@@ -17,10 +17,10 @@ List<GroupCategory> sortCategoriesByLocation({
     return [...categories]..sort((a, b) => a.order.compareTo(b.order));
   }
   return [...categories]..sort((a, b) {
-      final aOrder = a.locationOrders[shoppingLocationID] ?? a.order;
-      final bOrder = b.locationOrders[shoppingLocationID] ?? b.order;
-      return aOrder.compareTo(bOrder);
-    });
+    final aOrder = a.locationOrders[shoppingLocationID] ?? a.order;
+    final bOrder = b.locationOrders[shoppingLocationID] ?? b.order;
+    return aOrder.compareTo(bOrder);
+  });
 }
 
 /// セクション並び替えの結果を全カテゴリに反映した並び順のリストを返す。
@@ -41,12 +41,16 @@ List<GroupCategory> reorderCategorySections({
     ..removeWhere((category) => category.id == movedCategory.id);
   // 移動先の visible カテゴリの直前に挿入する。visible 末尾へ移動した場合は
   // 最後の visible カテゴリの直後(その後ろの非表示カテゴリより前)に挿入する。
-  final insertIndex = newVisibleIndex < visibleWithoutMoved.length
-      ? reordered.indexWhere(
-          (category) => category.id == visibleWithoutMoved[newVisibleIndex].id)
-      : reordered.indexWhere(
-              (category) => category.id == visibleWithoutMoved.last.id) +
-          1;
+  final insertIndex =
+      newVisibleIndex < visibleWithoutMoved.length
+          ? reordered.indexWhere(
+            (category) =>
+                category.id == visibleWithoutMoved[newVisibleIndex].id,
+          )
+          : reordered.indexWhere(
+                (category) => category.id == visibleWithoutMoved.last.id,
+              ) +
+              1;
   return reordered..insert(insertIndex, movedCategory);
 }
 
@@ -66,13 +70,11 @@ Map<String, List<GroupShoppingListItem>> groupItemsByCategory({
   final Map<String, List<GroupShoppingListItem>> grouped = {};
 
   for (final item in items) {
-    final categoryID = categoryOverrideByItemID != null &&
-            categoryOverrideByItemID.containsKey(item.id)
-        ? (categoryOverrideByItemID[item.id] ?? uncategorizedCategoryID)
-        : findMatchingCategoryID(
-            item: item,
-            categories: categories,
-          );
+    final categoryID =
+        categoryOverrideByItemID != null &&
+                categoryOverrideByItemID.containsKey(item.id)
+            ? (categoryOverrideByItemID[item.id] ?? uncategorizedCategoryID)
+            : findMatchingCategoryID(item: item, categories: categories);
     grouped.putIfAbsent(categoryID, () => []).add(item);
   }
 
@@ -103,8 +105,10 @@ String findMatchingCategoryID({
         case GroupCategoryKeywordMatchingType.regex:
           // FormatException (不正な regex 文字列) のときはマッチさせない。
           try {
-            if (RegExp(keyword.keyword, caseSensitive: false)
-                .hasMatch(item.message)) {
+            if (RegExp(
+              keyword.keyword,
+              caseSensitive: false,
+            ).hasMatch(item.message)) {
               return category.id;
             }
           } on FormatException {

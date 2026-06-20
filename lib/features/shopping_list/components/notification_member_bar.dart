@@ -38,9 +38,10 @@ class NotificationMemberBar extends HookConsumerWidget {
     final sentUserIDs = useState<Set<String>>({});
     final tokens = context.appTheme;
 
-    final titleText = (shoppingListName != null && shoppingListName!.isNotEmpty)
-        ? '「$shoppingListName」が更新されました'
-        : 'リストが更新されました';
+    final titleText =
+        (shoppingListName != null && shoppingListName!.isNotEmpty)
+            ? '「$shoppingListName」が更新されました'
+            : 'リストが更新されました';
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -53,21 +54,21 @@ class NotificationMemberBar extends HookConsumerWidget {
               Text(
                 titleText,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      height: 1.25,
-                    ),
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  height: 1.25,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 2),
               Text(
                 // SSOT: screens-list.jsx#NotifySnack
-                '家族に通知しますか?',
+                'グループに通知しますか?',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Colors.white70,
-                      height: 1.3,
-                    ),
+                  color: Colors.white70,
+                  height: 1.3,
+                ),
               ),
             ],
           ),
@@ -78,11 +79,12 @@ class NotificationMemberBar extends HookConsumerWidget {
           otherMembers: otherMembers,
           sendingUserIDs: sendingUserIDs,
           sentUserIDs: sentUserIDs,
-          onSendAll: () => _sendNotification(
-            targetUserIDs: otherMembers.map((m) => m.userID).toList(),
-            sendingUserIDs: sendingUserIDs,
-            sentUserIDs: sentUserIDs,
-          ),
+          onSendAll:
+              () => _sendNotification(
+                targetUserIDs: otherMembers.map((m) => m.userID).toList(),
+                sendingUserIDs: sendingUserIDs,
+                sentUserIDs: sentUserIDs,
+              ),
         ),
         const SizedBox(width: 8),
         _MemberAvatarStack(
@@ -90,11 +92,12 @@ class NotificationMemberBar extends HookConsumerWidget {
           members: otherMembers,
           sendingUserIDs: sendingUserIDs.value,
           sentUserIDs: sentUserIDs.value,
-          onTap: (userID) => _sendNotification(
-            targetUserIDs: [userID],
-            sendingUserIDs: sendingUserIDs,
-            sentUserIDs: sentUserIDs,
-          ),
+          onTap:
+              (userID) => _sendNotification(
+                targetUserIDs: [userID],
+                sendingUserIDs: sendingUserIDs,
+                sentUserIDs: sentUserIDs,
+              ),
         ),
       ],
     );
@@ -114,10 +117,10 @@ class NotificationMemberBar extends HookConsumerWidget {
         targetUserIDs: targetUserIDs,
       );
       sentUserIDs.value = {...sentUserIDs.value, ...targetUserIDs};
-    } catch (e) {
+    } catch (e, st) {
       // この通知バー自体がグローバルトースト上に表示されるため、SnackBar は
       // トーストの背後に隠れる。エラーもグローバルトーストで前面に通知する。
-      showGlobalToast(e.toString(), title: null);
+      showGlobalErrorToast(e, st);
     } finally {
       sendingUserIDs.value = Set.from(sendingUserIDs.value)
         ..removeAll(targetUserIDs);
@@ -143,10 +146,12 @@ class _SendAllButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final allSent =
-        otherMembers.every((m) => sentUserIDs.value.contains(m.userID));
-    final anySending =
-        otherMembers.any((m) => sendingUserIDs.value.contains(m.userID));
+    final allSent = otherMembers.every(
+      (m) => sentUserIDs.value.contains(m.userID),
+    );
+    final anySending = otherMembers.any(
+      (m) => sendingUserIDs.value.contains(m.userID),
+    );
 
     return InkWell(
       onTap: allSent || anySending ? null : onSendAll,
@@ -179,9 +184,9 @@ class _SendAllButton extends StatelessWidget {
               // のラベル「全員に通知」を SSOT として採用 (短縮形「全員」から移行)。
               allSent ? '送信済み' : '全員に通知',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
@@ -253,9 +258,10 @@ class _MemberAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final initial = (profile.displayName?.isNotEmpty == true)
-        ? profile.displayName![0].toUpperCase()
-        : '?';
+    final initial =
+        (profile.displayName?.isNotEmpty == true)
+            ? profile.displayName![0].toUpperCase()
+            : '?';
 
     return GestureDetector(
       onTap: isSending || isSent ? null : onTap,
@@ -266,30 +272,32 @@ class _MemberAvatar extends StatelessWidget {
           height: 26,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isSent
-                ? Colors.green.withValues(alpha: 0.7)
-                : Colors.white.withValues(alpha: 0.3),
+            color:
+                isSent
+                    ? Colors.green.withValues(alpha: 0.7)
+                    : Colors.white.withValues(alpha: 0.3),
             border: Border.all(color: Colors.white, width: 1.5),
           ),
           alignment: Alignment.center,
-          child: isSending
-              ? const SizedBox(
-                  width: 12,
-                  height: 12,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
-                  ),
-                )
-              : isSent
+          child:
+              isSending
+                  ? const SizedBox(
+                    width: 12,
+                    height: 12,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                  : isSent
                   ? const Icon(Icons.check, size: 14, color: Colors.white)
                   : Text(
-                      initial,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
+                    initial,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
                     ),
+                  ),
         ),
       ),
     );

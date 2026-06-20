@@ -1,37 +1,49 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
+# 買い物リストの作成・リネーム・削除（design v2）。
+# - 追加: CreateListFab（右下 89%,83%）→「今日の日付でリストを追加」
+# - リネーム/削除: リスト設定（リスト名 セクション / このリストを削除）
+
 - runFlow: shared/anonymous_sign_in.yaml
 
-# 三点メニューから買い物リストを追加（tooltip: 'メニュー' を設定済み）
-- tapOn: "メニュー"
-- tapOn: "買い物リストを追加"
+# --- 作成 ---
+- tapOn:
+    point: "89%, 83%"
+- extendedWaitUntil:
+    visible: "今日の日付でリストを追加"
+    timeout: 8000
+- tapOn: "今日の日付でリストを追加"
 - waitForAnimationToEnd
-
-# ボトムシートで「買い物リストを追加」を選択
-- tapOn: "買い物リストを追加"
+- hideKeyboard
 - waitForAnimationToEnd
 - takeScreenshot: screenshots/list_crud_01_new_list
 
-# リスト設定を開いてリスト名を変更（tooltip: 'リスト設定' を設定済み）
+# --- リスト設定を開く ---
 - tapOn: "リスト設定"
-- assertVisible: "買い物リスト設定"
+- waitForAnimationToEnd
+- assertVisible: "リスト名"
 
-# リスト名のTextField領域をタップしてフォーカスする
+# --- リネーム: リスト名フィールド（最上部、現在名 "yyyy-MM-dd" が入っている。
+# リスト名ラベル直下 ~50%,18%）をタップし、既存名を消して新しい名前を入力 → Enter で確定 ---
 - tapOn:
-    point: "50%,33%"
+    point: "50%, 18%"
 - eraseText
 - inputText: "週末の買い物"
 - pressKey: enter
-- hideKeyboard
-# AppBarタイトルをタップしてTextFieldのフォーカスを外す
-- tapOn:
-    point: "50%,12%"
 - waitForAnimationToEnd
 - takeScreenshot: screenshots/list_crud_02_renamed
 
-# 削除ボタンをタップ
-- tapOn: "買い物リストを削除"
-- assertVisible: "買い物リストを削除しますか？"
+# --- 削除: 「このリストを削除」→ 確認ダイアログ → 削除 ---
+- scrollUntilVisible:
+    element:
+      text: "(?s).*このリストを削除.*"
+    direction: DOWN
+    timeout: 15000
+- tapOn:
+    text: "(?s).*このリストを削除.*"
+- waitForAnimationToEnd
+- assertVisible:
+    text: "(?s).*このリストを削除しますか.*"
 - tapOn:
     text: "削除"
     index: 0

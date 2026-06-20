@@ -1,34 +1,32 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
-# PR-7 Settings & Paywall の検証:
-# - 設定画面の主要セクションが描画される
-# - サインアウトの AppDialogShell ダイアログが開閉できる
-# - Paywall 画面の状態 (loading / data / error / no-plans) のうち少なくとも 1 つを表示
+# Settings & Paywall の検証:
+# - 設定画面に確実に到達する（top-bar 設定アイコン tooltip "設定"。home_page_test で実証済み）
+# - サインアウト確認ダイアログを開いてキャンセルで閉じられる
+# 旧フローは text:"設定" optional がスキップされ「サインアウト」で失敗していた。設定到達を確実化する。
 
 - runFlow: shared/anonymous_sign_in.yaml
 
-# 設定タブに遷移
-- tapOn:
-    text: "設定"
-    optional: true
-- waitForAnimationToEnd
+# 設定画面へ
+- tapOn: "設定"
+- extendedWaitUntil:
+    visible: "プロフィール"
+    timeout: 10000
 
-# サインアウト dialog
-- assertVisible:
-    text: "サインアウト"
-    optional: true
+# サインアウト（設定下部）までスクロールして確認ダイアログを開く
+- scrollUntilVisible:
+    element:
+      text: "サインアウト"
+    direction: DOWN
+    timeout: 20000
 - tapOn: "サインアウト"
 - waitForAnimationToEnd
-- assertVisible:
-    text: "サインアウトしますか"
-    optional: true
+- takeScreenshot: screenshots/settings_paywall_01_signout_dialog
+
+# キャンセルでダイアログを閉じ、設定画面に留まる（サインアウトまでスクロール済みのため
+# 上部の「プロフィール」は画面外。現在位置で見える「サインアウト」で設定画面残留を確認）。
 - tapOn:
     text: "キャンセル"
-    optional: true
 - waitForAnimationToEnd
-
-# Paywall 経路 (プレミアム会員カード → paywall)
-- tapOn:
-    text: "はじめる"
-    optional: true
-- waitForAnimationToEnd
+- assertVisible: "サインアウト"
+- takeScreenshot: screenshots/settings_paywall_02_back_to_settings

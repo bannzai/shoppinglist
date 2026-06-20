@@ -3,7 +3,7 @@ name: flutter-deploy
 # 手動起動の配布ワークフロー。
 # iOS: 手動署名で IPA をビルドし TestFlight (App Store Connect) へアップロード。
 # Android: リリース署名で AAB をビルドし Google Play internal トラックへアップロード。
-# 単一環境（dev/prod flavor 無し）。秘匿情報は `make secret` と各種 Secrets から CI 上で復元する。
+# 配布は release=prod のみ(Issue #410 / ADR 0030)。秘匿情報は `make secret`(secrets.FIREBASE_BASE64_* には prod 値を登録)と各種 Secrets から CI 上で復元する。
 on:
   workflow_dispatch:
     inputs:
@@ -57,7 +57,6 @@ jobs:
     env:
       FIREBASE_BASE64_IOS: ${{ secrets.FIREBASE_BASE64_IOS }}
       FIREBASE_BASE64_ANDROID: ${{ secrets.FIREBASE_BASE64_ANDROID }}
-      XCCONFIG_SECRET: ${{ secrets.XCCONFIG_SECRET }}
       REVENUE_CAT_PUBLIC_API_KEY: ${{ secrets.REVENUE_CAT_PUBLIC_API_KEY }}
       IOS_ADMOB_NATIVE_ADVANCE_IDENTIFIER: ${{ secrets.IOS_ADMOB_NATIVE_ADVANCE_IDENTIFIER }}
       ANDROID_ADMOB_NATIVE_ADVANCE_IDENTIFIER: ${{ secrets.ANDROID_ADMOB_NATIVE_ADVANCE_IDENTIFIER }}
@@ -75,7 +74,7 @@ jobs:
           channel: stable
           flutter-version: '3.41.9'
 
-      # アプリ内シークレットを復元（GoogleService-Info.plist / Secret.xcconfig / lib/secret/secret.dart など）
+      # アプリ内シークレットを復元（GoogleService-Info.plist / lib/secret/secret.dart など）
       - name: Restore app secrets
         run: make secret
 
@@ -192,7 +191,6 @@ jobs:
     env:
       FIREBASE_BASE64_IOS: ${{ secrets.FIREBASE_BASE64_IOS }}
       FIREBASE_BASE64_ANDROID: ${{ secrets.FIREBASE_BASE64_ANDROID }}
-      XCCONFIG_SECRET: ${{ secrets.XCCONFIG_SECRET }}
       REVENUE_CAT_PUBLIC_API_KEY: ${{ secrets.REVENUE_CAT_PUBLIC_API_KEY }}
       IOS_ADMOB_NATIVE_ADVANCE_IDENTIFIER: ${{ secrets.IOS_ADMOB_NATIVE_ADVANCE_IDENTIFIER }}
       ANDROID_ADMOB_NATIVE_ADVANCE_IDENTIFIER: ${{ secrets.ANDROID_ADMOB_NATIVE_ADVANCE_IDENTIFIER }}

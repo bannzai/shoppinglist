@@ -16,23 +16,21 @@ import 'package:shoppinglist/style/tokens.dart';
 // read しても AsyncLoading(null) になりうる。値を warm な親ツリーから渡す設計。
 // ここではシートのレンダリング（リスト名・選択中チェック・追加行）の回帰を検証する。
 Widget _wrap(Widget child) => ProviderScope(
-      child: MaterialApp(
-        theme: buildAppTheme(
-          accent: AccentPreset.shu,
-        ),
-        home: Scaffold(body: child),
-      ),
-    );
+  child: MaterialApp(
+    theme: buildAppTheme(accent: AccentPreset.shu),
+    home: Scaffold(body: child),
+  ),
+);
 
 GroupShoppingList _list(String id, String name) => GroupShoppingList(
-      id: id,
-      createUserID: 'user-1',
-      groupID: 'group-1',
-      name: name,
-      ttlExpiresDateTime: null,
-      shoppingLocationID: null,
-      duplicatedFromGroupShoppingListID: null,
-    );
+  id: id,
+  createUserID: 'user-1',
+  groupID: 'group-1',
+  name: name,
+  ttlExpiresDateTime: null,
+  shoppingLocationID: null,
+  duplicatedFromGroupShoppingListID: null,
+);
 
 /// ShoppingListAdd の呼び出し回数と完了タイミングをテスト側から制御する fake。
 class _FakeShoppingListAdd implements ShoppingListAdd {
@@ -96,23 +94,25 @@ Future<void> _pumpSheetHost(
   required _FakeShoppingListAdd fake,
   required void Function(String newID) onShoppingListIDChanged,
 }) async {
-  await tester.pumpWidget(ProviderScope(
-    overrides: [
-      shoppingListAddProvider(groupID: 'group-1').overrideWith((ref) => fake),
-    ],
-    child: MaterialApp(
-      theme: buildAppTheme(accent: AccentPreset.shu),
-      home: _SheetHost(
-        sheet: ListPickerSheet(
-          groupID: 'group-1',
-          shoppingLists: [_list('list-1', '2026-06-01')],
-          currentShoppingListID: 'list-1',
-          onShoppingListIDChanged: onShoppingListIDChanged,
-          appUser: const AppUser(id: 'user-1'),
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        shoppingListAddProvider(groupID: 'group-1').overrideWith((ref) => fake),
+      ],
+      child: MaterialApp(
+        theme: buildAppTheme(accent: AccentPreset.shu),
+        home: _SheetHost(
+          sheet: ListPickerSheet(
+            groupID: 'group-1',
+            shoppingLists: [_list('list-1', '2026-06-01')],
+            currentShoppingListID: 'list-1',
+            onShoppingListIDChanged: onShoppingListIDChanged,
+            appUser: const AppUser(id: 'user-1'),
+          ),
         ),
       ),
     ),
-  ));
+  );
   await tester.tap(find.byType(ElevatedButton));
   await tester.pumpAndSettle();
   expect(find.byType(ListPickerSheet), findsOneWidget);
@@ -120,18 +120,20 @@ Future<void> _pumpSheetHost(
 
 void main() {
   testWidgets('リスト名・「新しいリストを追加」行を表示し、選択中リストのみチェックを出す', (tester) async {
-    await tester.pumpWidget(_wrap(
-      ListPickerSheet(
-        groupID: 'group-1',
-        shoppingLists: [
-          _list('list-1', '2026-05-28'),
-          _list('list-2', '2026-05-30'),
-        ],
-        currentShoppingListID: 'list-2',
-        onShoppingListIDChanged: (_) {},
-        appUser: null,
+    await tester.pumpWidget(
+      _wrap(
+        ListPickerSheet(
+          groupID: 'group-1',
+          shoppingLists: [
+            _list('list-1', '2026-05-28'),
+            _list('list-2', '2026-05-30'),
+          ],
+          currentShoppingListID: 'list-2',
+          onShoppingListIDChanged: (_) {},
+          appUser: null,
+        ),
       ),
-    ));
+    );
 
     expect(find.text('2026-05-28'), findsOneWidget);
     expect(find.text('2026-05-30'), findsOneWidget);

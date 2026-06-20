@@ -47,6 +47,10 @@ class AppPill extends StatelessWidget {
   /// 既定は false（中身に合わせて最小幅）。
   final bool expanded;
 
+  /// label の後ろ（末尾）に表示するアイコン（任意）。プレミアム王冠など、
+  /// ボタン内に補助的なバッジを収めたいときに使う。色は前景色 (fg) に合わせる。
+  final IconData? trailingIcon;
+
   const AppPill({
     super.key,
     required this.label,
@@ -55,6 +59,7 @@ class AppPill extends StatelessWidget {
     this.variant = AppPillVariant.neutral,
     this.large = false,
     this.expanded = false,
+    this.trailingIcon,
   });
 
   @override
@@ -66,30 +71,30 @@ class AppPill extends StatelessWidget {
     final (bg, fg, side) = switch (variant) {
       AppPillVariant.accent => (tokens.accent, Colors.white, BorderSide.none),
       AppPillVariant.soft => (
-          tokens.accentSoft,
-          tokens.accentInk,
-          BorderSide.none,
-        ),
+        tokens.accentSoft,
+        tokens.accentInk,
+        BorderSide.none,
+      ),
       AppPillVariant.danger => (
-          neutral.dangerSoft,
-          neutral.danger,
-          BorderSide.none,
-        ),
+        neutral.dangerSoft,
+        neutral.danger,
+        BorderSide.none,
+      ),
       AppPillVariant.dangerSolid => (
-          neutral.danger,
-          Colors.white,
-          BorderSide.none,
-        ),
+        neutral.danger,
+        Colors.white,
+        BorderSide.none,
+      ),
       AppPillVariant.ghost => (
-          Colors.transparent,
-          neutral.ink,
-          BorderSide(color: neutral.divider),
-        ),
+        Colors.transparent,
+        neutral.ink,
+        BorderSide(color: neutral.divider),
+      ),
       AppPillVariant.neutral => (
-          neutral.surface2,
-          neutral.ink,
-          BorderSide(color: neutral.divider),
-        ),
+        neutral.surface2,
+        neutral.ink,
+        BorderSide(color: neutral.divider),
+      ),
     };
 
     return Opacity(
@@ -118,11 +123,15 @@ class AppPill extends StatelessWidget {
                             ? Theme.of(context).textTheme.bodyLarge
                             : Theme.of(context).textTheme.labelLarge)
                         ?.copyWith(
-                      color: fg,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.005,
-                    ),
+                          color: fg,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.005,
+                        ),
                   ),
+                  if (trailingIcon != null) ...[
+                    const SizedBox(width: 6),
+                    Icon(trailingIcon, size: large ? 18 : 16, color: fg),
+                  ],
                 ],
               ),
             ),

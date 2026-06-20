@@ -88,18 +88,14 @@ class AppSignInWithGoogleButton extends HookConsumerWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SvgPicture.asset(
-                'images/google_icon.svg',
-                width: 20,
-                height: 20,
-              ),
+              SvgPicture.asset('images/google_icon.svg', width: 20, height: 20),
               const SizedBox(width: 10),
               Text(
                 'Google でサインイン',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: neutral.ink,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  color: neutral.ink,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),

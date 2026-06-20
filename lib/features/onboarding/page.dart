@@ -29,7 +29,8 @@ class OnboardingPage extends HookConsumerWidget {
       _SlideContent(
         eyebrowIndex: 1,
         title: '家族と作る、\n買い物リスト',
-        body: '家で思いついたものを誰かが追加して、店頭で別の誰かがチェック。'
+        body:
+            '家で思いついたものを誰かが追加して、店頭で別の誰かがチェック。'
             '「買ってきて」のやり取りを、ぜんぶこの一枚に。',
         assetPath: 'images/onboarding/slide_1.png',
         fallbackBuilder: (tokens) => _TiltedListArt(tokens: tokens),
@@ -37,7 +38,8 @@ class OnboardingPage extends HookConsumerWidget {
       _SlideContent(
         eyebrowIndex: 2,
         title: '同じリストを\n同時に編集',
-        body: '家族・パートナー・同居人を招待コードで招くと、同じリストを編集できます。'
+        body:
+            '家族・パートナー・同居人を招待コードで招くと、同じリストを編集できます。'
             '誰が追加したかではなく、何を買い忘れずに済むかを大切に。',
         assetPath: 'images/onboarding/slide_2.png',
         fallbackBuilder: (tokens) => _AvatarOrbitArt(tokens: tokens),
@@ -45,7 +47,8 @@ class OnboardingPage extends HookConsumerWidget {
       _SlideContent(
         eyebrowIndex: 3,
         title: 'お店の近くで、\nそっと思い出す',
-        body: '登録した店舗の近くに来ると、買い物リストをやさしくお知らせ。'
+        body:
+            '登録した店舗の近くに来ると、買い物リストをやさしくお知らせ。'
             '通知は必要な時だけ、押し付けがましくなく。',
         assetPath: 'images/onboarding/slide_3.png',
         fallbackBuilder: (tokens) => _MapHaloArt(tokens: tokens),
@@ -53,13 +56,16 @@ class OnboardingPage extends HookConsumerWidget {
     ];
 
     Future<void> finish({required String reason}) async {
-      analytics.logEvent(name: 'finish_onboarding', parameters: {
-        'reason': reason,
-        'lastIndex': index.value.toString(),
-      });
+      analytics.logEvent(
+        name: 'finish_onboarding',
+        parameters: {'reason': reason, 'lastIndex': index.value.toString()},
+      );
       await ref
-          .read(boolSharedPreferencesProvider(key: BoolKey.hasSeenOnboarding)
-              .notifier)
+          .read(
+            boolSharedPreferencesProvider(
+              key: BoolKey.hasSeenOnboarding,
+            ).notifier,
+          )
           .set(value: true);
     }
 
@@ -77,9 +83,9 @@ class OnboardingPage extends HookConsumerWidget {
                   child: Text(
                     'スキップ',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: tokens.neutral.ink3,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      color: tokens.neutral.ink3,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -105,21 +111,22 @@ class OnboardingPage extends HookConsumerWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: AppPill(
-                    label: index.value == slides.length - 1 ? 'はじめる' : '次へ',
-                    variant: AppPillVariant.accent,
-                    large: true,
-                    expanded: true,
-                    onPressed: () {
-                      if (index.value == slides.length - 1) {
-                        finish(reason: 'complete');
-                      } else {
-                        controller.nextPage(
-                          duration: const Duration(milliseconds: 240),
-                          curve: Curves.easeOut,
-                        );
-                      }
-                    },
-                    icon: null),
+                  label: index.value == slides.length - 1 ? 'はじめる' : '次へ',
+                  variant: AppPillVariant.accent,
+                  large: true,
+                  expanded: true,
+                  onPressed: () {
+                    if (index.value == slides.length - 1) {
+                      finish(reason: 'complete');
+                    } else {
+                      controller.nextPage(
+                        duration: const Duration(milliseconds: 240),
+                        curve: Curves.easeOut,
+                      );
+                    }
+                  },
+                  icon: null,
+                ),
               ),
             ),
           ],
@@ -165,8 +172,8 @@ class _OnboardingSlide extends StatelessWidget {
             child: Image.asset(
               data.assetPath,
               fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) =>
-                  data.fallbackBuilder(tokens),
+              errorBuilder:
+                  (context, error, stackTrace) => data.fallbackBuilder(tokens),
             ),
           ),
           const Spacer(),
@@ -196,10 +203,9 @@ class _OnboardingSlide extends StatelessWidget {
           Text(
             data.body,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: neutral.ink2,
-                  height: 1.7,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: neutral.ink2, height: 1.7),
           ),
           const SizedBox(height: 32),
         ],
@@ -249,38 +255,47 @@ class _TiltedListArt extends StatelessWidget {
                 ]) ...[
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
-                    child: Row(children: [
-                      Container(
-                        width: 14,
-                        height: 14,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: checked ? tokens.accent : Colors.transparent,
-                          border: Border.all(
-                            color:
-                                checked ? tokens.accent : tokens.neutral.ink4,
-                            width: 1.4,
-                          ),
-                        ),
-                        child: checked
-                            ? const Icon(Icons.check,
-                                size: 10, color: Colors.white)
-                            : null,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Container(
-                          height: 6,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 14,
+                          height: 14,
                           decoration: BoxDecoration(
-                            color: checked
-                                ? tokens.neutral.divider2
-                                : tokens.neutral.ink4.withValues(alpha: 0.35),
-                            borderRadius: BorderRadius.circular(3),
+                            shape: BoxShape.circle,
+                            color: checked ? tokens.accent : Colors.transparent,
+                            border: Border.all(
+                              color:
+                                  checked ? tokens.accent : tokens.neutral.ink4,
+                              width: 1.4,
+                            ),
                           ),
-                          margin: EdgeInsets.only(right: 160 * (1 - w)),
+                          child:
+                              checked
+                                  ? const Icon(
+                                    Icons.check,
+                                    size: 10,
+                                    color: Colors.white,
+                                  )
+                                  : null,
                         ),
-                      ),
-                    ]),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Container(
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color:
+                                  checked
+                                      ? tokens.neutral.divider2
+                                      : tokens.neutral.ink4.withValues(
+                                        alpha: 0.35,
+                                      ),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            margin: EdgeInsets.only(right: 160 * (1 - w)),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ],
@@ -355,10 +370,11 @@ class _AvatarOrbitArt extends StatelessWidget {
               child: Text(
                 label,
                 style: monoTextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                    letterSpacing: null),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  letterSpacing: null,
+                ),
               ),
             ),
           ),
@@ -455,13 +471,13 @@ class _MapHaloArtState extends State<_MapHaloArt>
   }
 
   Widget _block(double w, double h, Color color) => Container(
-        width: w,
-        height: h,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(6),
-        ),
-      );
+    width: w,
+    height: h,
+    decoration: BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.circular(6),
+    ),
+  );
 }
 
 /// dashed 円を描く CustomPainter。
@@ -475,10 +491,11 @@ class _DashedCirclePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
+    final paint =
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5;
     final center = Offset(size.width / 2, size.height / 2);
     var theta = 0.0;
     while (theta < math.pi * 2) {

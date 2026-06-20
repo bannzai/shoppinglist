@@ -23,38 +23,34 @@ class ColorButton extends HookWidget {
 
     return ElevatedButton(
       style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.resolveWith(
-          (states) {
-            if (states.contains(WidgetState.disabled)) {
-              return null;
-            }
-            return color;
-          },
-        ),
+        backgroundColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return null;
+          }
+          return color;
+        }),
       ),
-      onPressed: onPressed == null
-          ? null
-          : () async {
-              if (isProcessing.value) {
-                return;
-              }
-              isProcessing.value = true;
-              try {
-                await onPressed?.call();
-              } catch (error) {
-                rethrow;
-              } finally {
-                if (context.mounted) {
-                  isProcessing.value = false;
+      onPressed:
+          onPressed == null
+              ? null
+              : () async {
+                if (isProcessing.value) {
+                  return;
                 }
-              }
-            },
+                isProcessing.value = true;
+                try {
+                  await onPressed?.call();
+                } catch (error) {
+                  rethrow;
+                } finally {
+                  if (context.mounted) {
+                    isProcessing.value = false;
+                  }
+                }
+              },
       child: Stack(
         alignment: Alignment.center,
-        children: [
-          child,
-          if (isProcessing.value) _Loading(),
-        ],
+        children: [child, if (isProcessing.value) _Loading()],
       ),
     );
   }

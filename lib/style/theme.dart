@@ -10,9 +10,7 @@ const _tabularFeatures = <FontFeature>[FontFeature.tabularFigures()];
 
 /// 和紙テイストのデザイントークンから ThemeData を組み立てる。
 /// `MaterialApp.theme` から呼び出す。アプリはライトモード固定。
-ThemeData buildAppTheme({
-  required AccentPreset accent,
-}) {
+ThemeData buildAppTheme({required AccentPreset accent}) {
   final tokens = AppThemeExtension.of(accent: accent);
   final neutral = tokens.neutral;
 
@@ -25,28 +23,42 @@ ThemeData buildAppTheme({
     double height = 1.5,
     double ls = -0.005,
     required Color? color,
-  }) =>
-      TextStyle(
-        fontSize: size,
-        fontWeight: w,
-        height: height,
-        letterSpacing: ls,
-        fontFeatures: _paltFeatures,
-        color: color ?? neutral.ink,
-      );
+  }) => TextStyle(
+    fontSize: size,
+    fontWeight: w,
+    height: height,
+    letterSpacing: ls,
+    fontFeatures: _paltFeatures,
+    color: color ?? neutral.ink,
+  );
 
   final base = ThemeData.light().textTheme.apply(
-        bodyColor: neutral.ink,
-        displayColor: neutral.ink,
-      );
+    bodyColor: neutral.ink,
+    displayColor: neutral.ink,
+  );
 
   final textTheme = base.copyWith(
-    displayLarge:
-        sans(34, FontWeight.w800, height: 1.15, ls: -0.02, color: null),
-    displayMedium:
-        sans(28, FontWeight.w800, height: 1.15, ls: -0.02, color: null),
-    headlineSmall:
-        sans(22, FontWeight.w700, height: 1.25, ls: -0.015, color: null),
+    displayLarge: sans(
+      34,
+      FontWeight.w800,
+      height: 1.15,
+      ls: -0.02,
+      color: null,
+    ),
+    displayMedium: sans(
+      28,
+      FontWeight.w800,
+      height: 1.15,
+      ls: -0.02,
+      color: null,
+    ),
+    headlineSmall: sans(
+      22,
+      FontWeight.w700,
+      height: 1.25,
+      ls: -0.015,
+      color: null,
+    ),
     titleLarge: sans(17, FontWeight.w700, height: 1.3, ls: -0.01, color: null),
     titleMedium: sans(15, FontWeight.w600, height: 1.4, color: null),
     bodyLarge: sans(15, FontWeight.w400, height: 1.7, color: null),
@@ -146,8 +158,11 @@ ThemeData buildAppTheme({
         borderRadius: BorderRadius.circular(AppThemeExtension.radiusButton),
       ),
     ),
-    dividerTheme:
-        DividerThemeData(color: neutral.divider, thickness: 0.5, space: 0.5),
+    dividerTheme: DividerThemeData(
+      color: neutral.divider,
+      thickness: 0.5,
+      space: 0.5,
+    ),
     splashFactory: NoSplash.splashFactory,
   );
 }
@@ -161,12 +176,11 @@ TextStyle monoTextStyle({
   required Color color,
   double height = 1.0,
   required double? letterSpacing,
-}) =>
-    TextStyle(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      height: height,
-      letterSpacing: letterSpacing,
-      fontFeatures: _tabularFeatures,
-      color: color,
-    );
+}) => TextStyle(
+  fontSize: fontSize,
+  fontWeight: fontWeight,
+  height: height,
+  letterSpacing: letterSpacing,
+  fontFeatures: _tabularFeatures,
+  color: color,
+);

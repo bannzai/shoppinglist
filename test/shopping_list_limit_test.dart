@@ -4,8 +4,8 @@ import 'package:shoppinglist/provider/shopping_list.dart';
 
 void main() {
   group('買い物リスト作成数上限', () {
-    test('無料ユーザーのグループあたり上限は5個', () {
-      expect(freeGroupActiveShoppingListLimit, 5);
+    test('無料ユーザーのグループあたり上限は20個', () {
+      expect(freeGroupActiveShoppingListLimit, 20);
     });
 
     test('ShoppingListLimitExceededException のメッセージが正しい', () {

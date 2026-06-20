@@ -216,7 +216,7 @@ function NotifySnack({ t, members = ['M', 'K'], message = '「トマト」を追
       <Icon name="bell" size={16} stroke={t.surface}/>
       <div style={{ flex: 1, fontSize: 13, fontWeight: 500 }}>
         <div>{message}</div>
-        <div style={{ fontSize: 11, opacity: 0.7 }}>家族に通知しますか?</div>
+        <div style={{ fontSize: 11, opacity: 0.7 }}>グループに通知しますか?</div>
       </div>
       <div style={{ display: 'flex', gap: -6 }}>
         {members.map((m, i) => (

@@ -8,11 +8,13 @@ import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/components/primitives/app_section_label.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/group_setting/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list_setting/delete_confirm_dialog.dart';
 import 'package:shoppinglist/features/shopping_list_setting/invitation_code_dialog.dart';
 import 'package:shoppinglist/features/shopping_list_setting/shopping_location_select_page.dart';
+import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -27,11 +29,12 @@ import 'package:shoppinglist/utils/purchase/purchase.dart';
 /// セクション構成 (上から):
 /// 1. リスト名 (card-bg 入力欄 + 「確定キーで保存されます」hint)
 /// 2. 買い物する場所 (単独 AppCell、タップで `ShoppingLocationSelectPage` 遷移)
-/// 3. 保存期間 (アップグレード Pill 付きカード。`isPremium=false` 時のみ Pill 表示)
-/// 4. 通知 (autoNotify AppCell。Web SSOT 未拡張だが UX 上残す)
-/// 5. 共有 (1 card に 2 AppCell + AppDivider — 招待コード送付 / グループ設定)
-/// 6. リストの操作 (1 card に 1 AppCell — 複製。Web SSOT 未拡張だが UX 上残す)
-/// 7. 削除ボタン (AppPill danger large)
+/// 3. カテゴリ (単独 AppCell、タップで `GroupCategoryPage` 遷移。カテゴリは groupID 単位で共通)
+/// 4. 保存期間 (アップグレード Pill 付きカード。`isPremium=false` 時のみ Pill 表示)
+/// 5. 通知 (autoNotify AppCell。Web SSOT 未拡張だが UX 上残す)
+/// 6. 共有 (1 card に 2 AppCell + AppDivider — 招待コード送付 / グループ設定)
+/// 7. リストの操作 (1 card に 1 AppCell — 複製。Web SSOT 未拡張だが UX 上残す)
+/// 8. 削除ボタン (AppPill danger large)
 class ShoppingListSettingPage extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
@@ -49,8 +52,9 @@ class ShoppingListSettingPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final shoppingListState = useState(shoppingList);
-    final textEditingController =
-        useTextEditingController(text: shoppingListState.value.name);
+    final textEditingController = useTextEditingController(
+      text: shoppingListState.value.name,
+    );
     final isCreatingInvitation = useState(false);
     // UI 表示用は customerInfoProvider を使う。Promotional Entitlement 経由の付与でも
     // 即座に反映できる (Custom Claims はリアルタイムに更新されない)。
@@ -85,8 +89,10 @@ class ShoppingListSettingPage extends HookConsumerWidget {
             children: [
               const AppSectionLabel(text: 'リスト名'),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: neutral.card,
                   borderRadius: BorderRadius.circular(14),
@@ -100,12 +106,13 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                     contentPadding: EdgeInsets.zero,
                   ),
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
                   onChanged: (value) {
-                    shoppingListState.value =
-                        shoppingListState.value.copyWith(name: value);
+                    shoppingListState.value = shoppingListState.value.copyWith(
+                      name: value,
+                    );
                   },
                   onSubmitted: (value) {
                     analytics.logEvent(
@@ -124,8 +131,39 @@ class ShoppingListSettingPage extends HookConsumerWidget {
               _ShoppingLocationCell(
                 groupID: groupID,
                 currentLocationID: shoppingListState.value.shoppingLocationID,
-                onSelected: (newID) => autoSave(
-                  shoppingListState.value.copyWith(shoppingLocationID: newID),
+                onSelected:
+                    (newID) => autoSave(
+                      shoppingListState.value.copyWith(
+                        shoppingLocationID: newID,
+                      ),
+                    ),
+              ),
+              const SizedBox(height: 14),
+              const AppSectionLabel(text: 'カテゴリ'),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  color: neutral.card,
+                  child: AppCell(
+                    icon: Icons.category_outlined,
+                    title: 'カテゴリ',
+                    subtitle: '自動分類のキーワード管理',
+                    onTap: () {
+                      analytics.logEvent(
+                        name: 'navigate_category_from_list_setting',
+                        parameters: {'groupID': groupID},
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => GroupCategoryPage(groupID: groupID),
+                        ),
+                      );
+                    },
+                    detail: null,
+                    onSwitch: null,
+                    switchValue: null,
+                  ),
                 ),
               ),
               const SizedBox(height: 14),
@@ -138,24 +176,28 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                 child: Container(
                   color: neutral.card,
                   child: AppCell(
-                      icon: Icons.notifications_outlined,
-                      title: 'アイテム追加で家族に通知',
-                      subtitle: 'このリストでアイテム追加・チェック切替があったとき',
-                      switchValue: shoppingListState.value.autoNotifyEnabled,
-                      onSwitch: (value) {
-                        analytics.logEvent(
-                          name: 'toggle_list_auto_notify',
-                          parameters: {
-                            'groupID': groupID,
-                            'shoppingListID': shoppingListID,
-                            'value': value.toString(),
-                          },
-                        );
-                        autoSave(shoppingListState.value
-                            .copyWith(autoNotifyEnabled: value));
-                      },
-                      detail: null,
-                      onTap: null),
+                    icon: Icons.notifications_outlined,
+                    title: 'アイテム追加でグループに通知',
+                    subtitle: 'このリストでアイテム追加・チェック切替があったとき',
+                    switchValue: shoppingListState.value.autoNotifyEnabled,
+                    onSwitch: (value) {
+                      analytics.logEvent(
+                        name: 'toggle_list_auto_notify',
+                        parameters: {
+                          'groupID': groupID,
+                          'shoppingListID': shoppingListID,
+                          'value': value.toString(),
+                        },
+                      );
+                      autoSave(
+                        shoppingListState.value.copyWith(
+                          autoNotifyEnabled: value,
+                        ),
+                      );
+                    },
+                    detail: null,
+                    onTap: null,
+                  ),
                 ),
               ),
               const SizedBox(height: 14),
@@ -167,40 +209,43 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                   child: Column(
                     children: [
                       AppCell(
-                          icon: Icons.person_add_outlined,
-                          title: 'グループに招待コードを送る',
-                          onTap: isCreatingInvitation.value
-                              ? null
-                              : () => _onTapInvite(
-                                    context: context,
-                                    ref: ref,
-                                    isCreatingInvitation: isCreatingInvitation,
-                                  ),
-                          detail: null,
-                          onSwitch: null,
-                          subtitle: null,
-                          switchValue: null),
+                        icon: Icons.person_add_outlined,
+                        title: 'グループに招待コードを送る',
+                        onTap:
+                            isCreatingInvitation.value
+                                ? null
+                                : () => _onTapInvite(
+                                  context: context,
+                                  ref: ref,
+                                  isCreatingInvitation: isCreatingInvitation,
+                                ),
+                        detail: null,
+                        onSwitch: null,
+                        subtitle: null,
+                        switchValue: null,
+                      ),
                       const AppDivider(),
                       AppCell(
-                          icon: Icons.people_outlined,
-                          title: 'グループ設定',
-                          onTap: () {
-                            analytics.logEvent(
-                              name: 'tap_navigate_grp_setting',
-                              parameters: {'groupID': groupID},
-                            );
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    GroupSettingPage(groupID: groupID),
-                              ),
-                            );
-                          },
-                          detail: null,
-                          onSwitch: null,
-                          subtitle: null,
-                          switchValue: null),
+                        icon: Icons.people_outlined,
+                        title: 'グループ設定',
+                        onTap: () {
+                          analytics.logEvent(
+                            name: 'tap_navigate_grp_setting',
+                            parameters: {'groupID': groupID},
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (_) => GroupSettingPage(groupID: groupID),
+                            ),
+                          );
+                        },
+                        detail: null,
+                        onSwitch: null,
+                        subtitle: null,
+                        switchValue: null,
+                      ),
                     ],
                   ),
                 ),
@@ -221,29 +266,36 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                   color: neutral.dangerSoft,
                   borderRadius: BorderRadius.circular(14),
                   child: InkWell(
-                    onTap: () => _onTapDelete(
-                      context: context,
-                      ref: ref,
-                      currentShoppingListName: shoppingListState.value.name,
-                    ),
+                    onTap:
+                        () => _onTapDelete(
+                          context: context,
+                          ref: ref,
+                          currentShoppingListName: shoppingListState.value.name,
+                        ),
                     borderRadius: BorderRadius.circular(14),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.delete_outline,
-                              size: 16, color: neutral.danger),
+                          Icon(
+                            Icons.delete_outline,
+                            size: 16,
+                            color: neutral.danger,
+                          ),
                           const SizedBox(width: 8),
                           Text(
                             'このリストを削除',
-                            style:
-                                Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      color: neutral.danger,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyLarge?.copyWith(
+                              color: neutral.danger,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ),
@@ -267,10 +319,34 @@ class ShoppingListSettingPage extends HookConsumerWidget {
       name: 'tap_create_list_invitation',
       parameters: {'groupID': groupID},
     );
+    // Issue #432: グループ名未設定のまま招待すると混乱を招くため、招待前に名前登録を
+    // 必須化する。アクション実行時のみ必要なグループ情報は build で watch せず、ここで
+    // 最新値を非同期取得する（ロード中の誤判定と不要な再描画を避ける）。
+    final group = await ref.read(groupProvider(groupID: groupID).future);
+    if (!context.mounted) {
+      return;
+    }
+    // この画面にはグループ名入力欄がないため、トーストからグループ設定画面へ誘導する。
+    if (!group.nameIsNotEmpty) {
+      final rootContext = Navigator.of(context, rootNavigator: true).context;
+      showGlobalActionToast(
+        message: '招待する前にグループ名を設定してください',
+        actionLabel: 'グループ設定',
+        onAction:
+            () => Navigator.push(
+              rootContext,
+              MaterialPageRoute(
+                builder: (_) => GroupSettingPage(groupID: groupID),
+              ),
+            ),
+      );
+      return;
+    }
     isCreatingInvitation.value = true;
     try {
-      final invitation =
-          await ref.read(createGroupInvitationProvider).call(groupID: groupID);
+      final invitation = await ref
+          .read(createGroupInvitationProvider)
+          .call(groupID: groupID);
       if (!context.mounted) {
         return;
       }
@@ -280,15 +356,16 @@ class ShoppingListSettingPage extends HookConsumerWidget {
         barrierDismissible: true,
         barrierColor: Colors.transparent,
         transitionDuration: const Duration(milliseconds: 160),
-        pageBuilder: (_, __, ___) => InvitationCodeDialog(
-          invitationCode: invitation.invitationCode,
-          expiresDateTime: invitation.expiresDateTime,
-        ),
+        pageBuilder:
+            (_, __, ___) => InvitationCodeDialog(
+              invitationCode: invitation.invitationCode,
+              expiresDateTime: invitation.expiresDateTime,
+            ),
       );
-    } catch (e) {
+    } catch (e, st) {
       // このページはボトムシート上に表示されるため、SnackBar は背後の
       // Scaffold に描画されて見えない。前面に出るグローバルトーストで通知する。
-      showGlobalToast(e.toString(), title: null);
+      showGlobalErrorToast(e, st);
     } finally {
       isCreatingInvitation.value = false;
     }
@@ -301,16 +378,16 @@ class ShoppingListSettingPage extends HookConsumerWidget {
   }) async {
     analytics.logEvent(
       name: 'tap_delete_list',
-      parameters: {
-        'groupID': groupID,
-        'shoppingListID': shoppingListID,
-      },
+      parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
     );
-    final items = ref
-            .read(textShoppingListItemsProvider(
-              groupID: groupID,
-              shoppingListID: shoppingListID,
-            ))
+    final items =
+        ref
+            .read(
+              textShoppingListItemsProvider(
+                groupID: groupID,
+                shoppingListID: shoppingListID,
+              ),
+            )
             .valueOrNull ??
         const <GroupShoppingListItem>[];
     await showGeneralDialog<void>(
@@ -319,13 +396,14 @@ class ShoppingListSettingPage extends HookConsumerWidget {
       barrierDismissible: true,
       barrierColor: Colors.transparent,
       transitionDuration: const Duration(milliseconds: 160),
-      pageBuilder: (_, __, ___) => DeleteConfirmDialog(
-        shoppingListName: currentShoppingListName,
-        itemCount: items.length,
-        groupID: groupID,
-        shoppingListID: shoppingListID,
-        onConfirm: onDelete,
-      ),
+      pageBuilder:
+          (_, __, ___) => DeleteConfirmDialog(
+            shoppingListName: currentShoppingListName,
+            itemCount: items.length,
+            groupID: groupID,
+            shoppingListID: shoppingListID,
+            onConfirm: onDelete,
+          ),
     );
   }
 }
@@ -347,42 +425,44 @@ class _ShoppingLocationCell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final locations =
         ref.watch(shoppingLocationsProvider(groupID: groupID)).valueOrNull;
-    final currentName = locations
-        ?.where((l) => l.id == currentLocationID)
-        .map((l) => l.name)
-        .firstOrNull;
+    final currentName =
+        locations
+            ?.where((l) => l.id == currentLocationID)
+            .map((l) => l.name)
+            .firstOrNull;
     return ClipRRect(
       borderRadius: BorderRadius.circular(14),
       child: Container(
         color: context.appTheme.neutral.card,
         child: AppCell(
-            icon: Icons.place_outlined,
-            title: currentName ?? '未設定',
-            detail: '変更',
-            onTap: () async {
-              analytics.logEvent(
-                name: 'tap_change_list_location',
-                parameters: {'groupID': groupID},
-              );
-              final result = await pushShoppingLocationSelectPage(
-                context: context,
-                groupID: groupID,
-                currentLocationID: currentLocationID,
-              );
-              if (!context.mounted) {
-                return;
-              }
-              if (!result.changed) {
-                return;
-              }
-              if (result.locationID == currentLocationID) {
-                return;
-              }
-              onSelected(result.locationID);
-            },
-            onSwitch: null,
-            subtitle: null,
-            switchValue: null),
+          icon: Icons.place_outlined,
+          title: currentName ?? '未設定',
+          detail: '変更',
+          onTap: () async {
+            analytics.logEvent(
+              name: 'tap_change_list_location',
+              parameters: {'groupID': groupID},
+            );
+            final result = await pushShoppingLocationSelectPage(
+              context: context,
+              groupID: groupID,
+              currentLocationID: currentLocationID,
+            );
+            if (!context.mounted) {
+              return;
+            }
+            if (!result.changed) {
+              return;
+            }
+            if (result.locationID == currentLocationID) {
+              return;
+            }
+            onSelected(result.locationID);
+          },
+          onSwitch: null,
+          subtitle: null,
+          switchValue: null,
+        ),
       ),
     );
   }
@@ -429,19 +509,19 @@ class _StoragePeriodCard extends StatelessWidget {
                 Text(
                   isPremium ? 'プレミアム: 無制限' : '作成から30日間',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: neutral.ink,
-                      ),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: neutral.ink,
+                  ),
                 ),
                 if (!isPremium) ...[
                   const SizedBox(height: 2),
                   Text(
                     'プレミアムなら期限なしで残せます',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontSize: 11.5,
-                          color: neutral.ink3,
-                        ),
+                      fontSize: 11.5,
+                      color: neutral.ink3,
+                    ),
                   ),
                 ],
               ],
@@ -455,7 +535,9 @@ class _StoragePeriodCard extends StatelessWidget {
               variant: AppPillVariant.soft,
               onPressed: () {
                 analytics.logEvent(
-                    name: 'tap_storage_period_upgrade', parameters: null);
+                  name: 'tap_storage_period_upgrade',
+                  parameters: null,
+                );
                 showPaywall(context: context);
               },
             ),
@@ -481,11 +563,14 @@ class _ListActionsCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final items = ref
-            .watch(textShoppingListItemsProvider(
-              groupID: groupID,
-              shoppingListID: shoppingListID,
-            ))
+    final items =
+        ref
+            .watch(
+              textShoppingListItemsProvider(
+                groupID: groupID,
+                shoppingListID: shoppingListID,
+              ),
+            )
             .valueOrNull ??
         const <GroupShoppingListItem>[];
     return ClipRRect(
@@ -495,14 +580,14 @@ class _ListActionsCard extends ConsumerWidget {
         child: Column(
           children: [
             AppCell(
-                icon: Icons.content_copy_outlined,
-                title: '現在のリストを複製',
-                onTap: () =>
-                    _duplicate(context: context, ref: ref, items: items),
-                detail: null,
-                onSwitch: null,
-                subtitle: null,
-                switchValue: null),
+              icon: Icons.content_copy_outlined,
+              title: '現在のリストを複製',
+              onTap: () => _duplicate(context: context, ref: ref, items: items),
+              detail: null,
+              onSwitch: null,
+              subtitle: null,
+              switchValue: null,
+            ),
           ],
         ),
       ),
@@ -516,10 +601,7 @@ class _ListActionsCard extends ConsumerWidget {
   }) async {
     analytics.logEvent(
       name: 'tap_duplicate_list',
-      parameters: {
-        'groupID': groupID,
-        'sourceShoppingListID': shoppingListID,
-      },
+      parameters: {'groupID': groupID, 'sourceShoppingListID': shoppingListID},
     );
     // このページはボトムシート上に表示されるため、SnackBar は背後の Scaffold に
     // 描画されて見えない。前面に出るグローバルトーストで通知する。
@@ -527,7 +609,9 @@ class _ListActionsCard extends ConsumerWidget {
     // 生存し続ける root Navigator の context を束ねておく。
     final paywallContext = Navigator.of(context, rootNavigator: true).context;
     try {
-      await ref.read(shoppingListDuplicateProvider(groupID: groupID)).call(
+      await ref
+          .read(shoppingListDuplicateProvider(groupID: groupID))
+          .call(
             createUserID: shoppingList.createUserID,
             groupID: groupID,
             sourceShoppingList: shoppingList,
@@ -540,8 +624,8 @@ class _ListActionsCard extends ConsumerWidget {
         actionLabel: 'アップグレード',
         onAction: () => showPaywall(context: paywallContext),
       );
-    } catch (e) {
-      showGlobalToast(e.toString(), title: null);
+    } catch (e, st) {
+      showGlobalErrorToast(e, st);
     }
   }
 }

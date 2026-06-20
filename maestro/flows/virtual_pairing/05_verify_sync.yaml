@@ -1,15 +1,11 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # Phase 5: リアルタイム同期確認（核心テスト）
+# launchApp で home（デフォルトグループ）に戻る。design v2 にボトムタブは無いため
+# タブ切替は不要。デバッグユーザーが追加した "debug_item_test" が Firestore の
+# リアルタイム同期で表示されることを確認する。
 - launchApp:
     clearState: false
-
-# 買い物リストタブに切り替え
-- tapOn:
-    point: "25%,93%"
-- waitForAnimationToEnd
-
-# Firestore同期を待つ
 - extendedWaitUntil:
     visible: "debug_item_test"
     timeout: 15000

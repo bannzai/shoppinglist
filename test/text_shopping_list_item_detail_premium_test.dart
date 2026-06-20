@@ -53,28 +53,30 @@ class _FakeEntitlementInfo implements EntitlementInfo {
 
 // 写真未設定（imageURL = null）のアイテム。この状態で「写真を追加」ボタンが出る。
 GroupShoppingListItem _testItem() => const GroupShoppingListItem(
-      id: 'item-001',
-      groupID: _testGroupID,
-      shoppingListID: 'list-001',
-      userID: _testUserID,
-      message: 'コーラ',
-      order: 0,
-      description: null,
-      color: null,
-      imageURL: null,
-      checkedByUserID: null,
-      lastEditedByUserID: null,
-    );
+  id: 'item-001',
+  groupID: _testGroupID,
+  shoppingListID: 'list-001',
+  userID: _testUserID,
+  message: 'コーラ',
+  order: 0,
+  description: null,
+  color: null,
+  imageURL: null,
+  checkedByUserID: null,
+  lastEditedByUserID: null,
+);
 
 Future<void> _pumpSheet(WidgetTester tester, {required bool premium}) async {
   final container = ProviderContainer(
     overrides: [
       currentUserIDProvider.overrideWithValue(_testUserID),
       // カテゴリ軸を空にしてカテゴリセクションを省略し、写真セクションのみ検証する。
-      groupCategoryAxesProvider(groupID: _testGroupID)
-          .overrideWith((ref) => Stream.value(const <GroupCategoryAxis>[])),
+      groupCategoryAxesProvider(
+        groupID: _testGroupID,
+      ).overrideWith((ref) => Stream.value(const <GroupCategoryAxis>[])),
       customerInfoProvider.overrideWith(
-          (ref) => Stream.value(_FakeCustomerInfo(premium: premium))),
+        (ref) => Stream.value(_FakeCustomerInfo(premium: premium)),
+      ),
     ],
   );
   addTearDown(container.dispose);
@@ -112,8 +114,9 @@ void main() {
       expect(find.byIcon(Icons.workspace_premium), findsOneWidget);
     });
 
-    testWidgets('非プレミアムユーザーが「写真を追加」を押すと前面トーストが表示される',
-        (WidgetTester tester) async {
+    testWidgets('非プレミアムユーザーが「写真を追加」を押すと前面トーストが表示される', (
+      WidgetTester tester,
+    ) async {
       await _pumpSheet(tester, premium: false);
 
       await tester.tap(find.text('写真を追加'));

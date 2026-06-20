@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
 final elevatedButtonStyle = ElevatedButton.styleFrom(
-  shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(10),
-  ),
+  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
 );

@@ -40,11 +40,12 @@ abstract class GroupCategoryAxis with _$GroupCategoryAxis {
       _$GroupCategoryAxisFromJson(json);
 
   static GroupCategoryAxis fromFirestore(
-          DocumentSnapshot<Map<String, dynamic>> snapshot,
-          SnapshotOptions? options) =>
-      GroupCategoryAxis.fromJson(snapshot.data()!..['id'] = snapshot.id);
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+    SnapshotOptions? options,
+  ) => GroupCategoryAxis.fromJson(snapshot.data()!..['id'] = snapshot.id);
 
   static Map<String, dynamic> toFirestore(
-          GroupCategoryAxis categoryAxis, SetOptions? options) =>
-      categoryAxis.toJson();
+    GroupCategoryAxis categoryAxis,
+    SetOptions? options,
+  ) => categoryAxis.toJson();
 }

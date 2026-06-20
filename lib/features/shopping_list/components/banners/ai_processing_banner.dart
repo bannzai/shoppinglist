@@ -49,14 +49,15 @@ class _AIProcessingBannerState extends State<AIProcessingBanner>
             borderRadius: BorderRadius.circular(8),
             child: AnimatedBuilder(
               animation: _ctrl,
-              builder: (_, __) => CustomPaint(
-                size: const Size(32, 32),
-                painter: _StripePainter(
-                  stripeColor: tokens.accent.withValues(alpha: 0.45),
-                  bgColor: tokens.accent.withValues(alpha: 0.15),
-                  offset: _ctrl.value,
-                ),
-              ),
+              builder:
+                  (_, __) => CustomPaint(
+                    size: const Size(32, 32),
+                    painter: _StripePainter(
+                      stripeColor: tokens.accent.withValues(alpha: 0.45),
+                      bgColor: tokens.accent.withValues(alpha: 0.15),
+                      offset: _ctrl.value,
+                    ),
+                  ),
             ),
           ),
           const SizedBox(width: 12),
@@ -66,9 +67,9 @@ class _AIProcessingBannerState extends State<AIProcessingBanner>
             child: Text(
               label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: tokens.accentInk,
-                  ),
+                fontWeight: FontWeight.w600,
+                color: tokens.accentInk,
+              ),
             ),
           ),
         ],
@@ -101,12 +102,13 @@ class _StripePainter extends CustomPainter {
     final shift = offset * period;
     final diagonal = size.width + size.height;
     for (var x = -diagonal + shift; x < diagonal; x += period) {
-      final path = Path()
-        ..moveTo(x, size.height)
-        ..lineTo(x + _stripeWidth, size.height)
-        ..lineTo(x + _stripeWidth + size.height, 0)
-        ..lineTo(x + size.height, 0)
-        ..close();
+      final path =
+          Path()
+            ..moveTo(x, size.height)
+            ..lineTo(x + _stripeWidth, size.height)
+            ..lineTo(x + _stripeWidth + size.height, 0)
+            ..lineTo(x + size.height, 0)
+            ..close();
       canvas.drawPath(path, stripePaint);
     }
   }

@@ -1,81 +1,76 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 - runFlow: shared/anonymous_sign_in.yaml
 
-# アイテムを追加
-- tapOn: "アイテムを追加"
-- inputText: "にんじん"
-- pressKey: enter
-# 空アイテム削除
-- pressKey: enter
-# キーボード閉じてフォーカス解除
-- tapOn:
-    point: "50%,6%"
-- waitForAnimationToEnd
-
-# リスト設定を開く
+# design v2: カテゴリ管理は「リスト設定 →（独立セクション）自動分類のキーワード管理」→
+# GroupCategoryPage。旧フローの「グループ設定 → カテゴリを追加」は stale なので使わない。
+# AppCell の accessibility label は複数行が結合されるため (?s) 部分一致で指定する。
 - tapOn: "リスト設定"
-- assertVisible: "買い物リスト設定"
-# TextFieldのフォーカスを外す（iOS 26でアクセシビリティツリーがブロックされるのを防ぐ）
+- waitForAnimationToEnd
 - tapOn:
-    point: "50%,12%"
+    text: "(?s).*自動分類のキーワード管理.*"
 - waitForAnimationToEnd
-
-# グループ設定へ
-- tapOn: "グループ設定"
-- waitForAnimationToEnd
-- assertVisible: "グループ設定"
-
-# カテゴリセクションがグループ設定画面内に表示されている
+- assertVisible: "カテゴリを追加"
 - takeScreenshot: screenshots/category_crud_01_empty
 
-# カテゴリを追加（グループ設定画面内の「+ カテゴリを追加」をタップ）
+# カテゴリ追加 → 空名カテゴリが作成され「カテゴリ編集」画面へ直行する。
 - tapOn: "カテゴリを追加"
-- assertVisible: "カテゴリを追加"
-- tapOn: "カテゴリ名（例: 野菜）"
-- inputText: "野菜"
-- tapOn: "追加"
 - waitForAnimationToEnd
+- assertVisible: "カテゴリ編集"
 
-# カテゴリ編集画面に遷移
-- assertVisible: "カテゴリ名"
+# カテゴリ名を入力し Enter(onSubmitted) で保存する（旧: 追加ダイアログでの入力を置き換え）。
+- tapOn: "カテゴリ名を入力"
+- inputText: "野菜"
+- pressKey: enter
+- waitForAnimationToEnd
 - takeScreenshot: screenshots/category_crud_02_edit
 
-# キーワードを追加
+# キーワードを追加（「キーワード」セクションの追加ボタン）。
 - tapOn: "キーワードを追加"
-- assertVisible: "キーワードを追加"
+- waitForAnimationToEnd
 - inputText: "にんじん"
-# 部分一致はデフォルトなのでそのまま
+# 部分一致がデフォルト。ダイアログ内の「追加」(index 0) で確定する。
 - tapOn:
     text: "追加"
     index: 0
 - waitForAnimationToEnd
 - takeScreenshot: screenshots/category_crud_03_keyword_added
 
-# グループ設定に戻る（AppBar戻るボタン）
+# カテゴリ名は useOnDisappear（画面離脱時）に自動保存される。Enter(onSubmitted) では
+# 確定しないため、編集画面から直接 launchApp すると名前(野菜)が未保存のまま失われる。
+# 先に back シェブロン(左上 <)で「カテゴリ編集」を離脱して名前を確定させる。
 - tapOn:
     point: "5%,10%"
 - waitForAnimationToEnd
-- assertVisible: "グループ設定"
-- takeScreenshot: screenshots/category_crud_04_category_list
+# カテゴリ一覧に戻り、名前「野菜」が保存されて行に表示される（empty state の
+# 「カテゴリを追加」ボタンは消え、一覧+右下「+」FAB 表示に変わる）。
+# onDisappear 保存 → Firestore 書き込み → 一覧反映に時間がかかるため待つ。
+# カテゴリ行は「野菜\nキーワード: 1件」と結合され、maestro の text は全文アンカー
+# マッチのため (?s) DOTALL の部分一致正規表現で指定する。
+- extendedWaitUntil:
+    visible: "(?s).*野菜.*"
+    timeout: 10000
 
-# リスト設定BottomSheetに戻る（AppBar戻るボタン）
-- tapOn:
-    point: "5%,10%"
+# 買い物リスト画面へ戻る。多段の戻りより launchApp の方が安定する
+# （category_section_reorder.yaml と同手順。通知許可は付与済みのためダイアログは出ない）。
+- launchApp
 - waitForAnimationToEnd
-- assertVisible: "買い物リスト設定"
+- extendedWaitUntil:
+    visible: "タップで入力開始"
+    timeout: 30000
 
-# BottomSheetを閉じる（×ボタン）
-- tapOn:
-    point: "5%,12%"
+# アイテム「にんじん」を追加すると、キーワード一致で「野菜」カテゴリに分類される。
+- tapOn: "タップで入力開始"
+- inputText: "にんじん"
+- pressKey: enter
+- pressKey: enter
+- hideKeyboard
 - waitForAnimationToEnd
-
-# 買い物リスト画面に戻ったことを確認
 - assertVisible: "にんじん"
 
-# カテゴリヘッダー「野菜」が表示されることを確認
-# カテゴリ表示は常時ON固定（Issue #373）。Firestoreデータ同期待ち
+# カテゴリヘッダー「野菜」が表示される（カテゴリ表示は常時 ON 固定 / Issue #373）。
+# セクションヘッダは結合テキストのため (?s) 部分一致で待つ。Firestore 同期待ち。
 - extendedWaitUntil:
-    visible: "野菜"
+    visible: "(?s).*野菜.*"
     timeout: 10000
 - takeScreenshot: screenshots/category_crud_05_categorized

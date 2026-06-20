@@ -12,9 +12,9 @@ void main() {
     calls.clear();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
-      calls.add(call);
-      return null;
-    });
+          calls.add(call);
+          return null;
+        });
   });
 
   tearDown(() {
@@ -27,10 +27,12 @@ void main() {
       await HomeWidgetDataSync.syncThemeColor(themeColorHex: '#1F6B4E');
 
       expect(
-        calls.any((c) =>
-            c.method == 'saveWidgetData' &&
-            c.arguments['id'] == 'widget_theme_color_hex' &&
-            c.arguments['data'] == '#1F6B4E'),
+        calls.any(
+          (c) =>
+              c.method == 'saveWidgetData' &&
+              c.arguments['id'] == 'widget_theme_color_hex' &&
+              c.arguments['data'] == '#1F6B4E',
+        ),
         isTrue,
       );
       expect(calls.any((c) => c.method == 'updateWidget'), isTrue);
@@ -40,10 +42,12 @@ void main() {
       await HomeWidgetDataSync.syncThemeColor(themeColorHex: '#C2410C');
 
       expect(
-        calls.any((c) =>
-            c.method == 'saveWidgetData' &&
-            c.arguments['id'] == 'widget_theme_color_hex' &&
-            c.arguments['data'] == '#C2410C'),
+        calls.any(
+          (c) =>
+              c.method == 'saveWidgetData' &&
+              c.arguments['id'] == 'widget_theme_color_hex' &&
+              c.arguments['data'] == '#C2410C',
+        ),
         isTrue,
       );
     });
@@ -52,10 +56,12 @@ void main() {
       await HomeWidgetDataSync.syncThemeColor(themeColorHex: '#0f4c81');
 
       expect(
-        calls.any((c) =>
-            c.method == 'saveWidgetData' &&
-            c.arguments['id'] == 'widget_theme_color_hex' &&
-            c.arguments['data'] == '#0F4C81'),
+        calls.any(
+          (c) =>
+              c.method == 'saveWidgetData' &&
+              c.arguments['id'] == 'widget_theme_color_hex' &&
+              c.arguments['data'] == '#0F4C81',
+        ),
         isTrue,
       );
     });
@@ -64,10 +70,12 @@ void main() {
       await HomeWidgetDataSync.syncThemeColor(themeColorHex: '#673AB7');
 
       expect(
-        calls.any((c) =>
-            c.method == 'saveWidgetData' &&
-            c.arguments['id'] == 'widget_theme_color_hex' &&
-            c.arguments['data'] == '#C2410C'),
+        calls.any(
+          (c) =>
+              c.method == 'saveWidgetData' &&
+              c.arguments['id'] == 'widget_theme_color_hex' &&
+              c.arguments['data'] == '#C2410C',
+        ),
         isTrue,
       );
     });
@@ -76,10 +84,12 @@ void main() {
       await HomeWidgetDataSync.syncThemeColor(themeColorHex: '#F44336');
 
       expect(
-        calls.any((c) =>
-            c.method == 'saveWidgetData' &&
-            c.arguments['id'] == 'widget_theme_color_hex' &&
-            c.arguments['data'] == '#C2410C'),
+        calls.any(
+          (c) =>
+              c.method == 'saveWidgetData' &&
+              c.arguments['id'] == 'widget_theme_color_hex' &&
+              c.arguments['data'] == '#C2410C',
+        ),
         isTrue,
       );
     });
@@ -88,10 +98,12 @@ void main() {
       await HomeWidgetDataSync.syncThemeColor(themeColorHex: 'invalid');
 
       expect(
-        calls.any((c) =>
-            c.method == 'saveWidgetData' &&
-            c.arguments['id'] == 'widget_theme_color_hex' &&
-            c.arguments['data'] == '#C2410C'),
+        calls.any(
+          (c) =>
+              c.method == 'saveWidgetData' &&
+              c.arguments['id'] == 'widget_theme_color_hex' &&
+              c.arguments['data'] == '#C2410C',
+        ),
         isTrue,
       );
       expect(calls.any((c) => c.method == 'updateWidget'), isTrue);
@@ -101,10 +113,12 @@ void main() {
       await HomeWidgetDataSync.syncThemeColor(themeColorHex: '');
 
       expect(
-        calls.any((c) =>
-            c.method == 'saveWidgetData' &&
-            c.arguments['id'] == 'widget_theme_color_hex' &&
-            c.arguments['data'] == '#C2410C'),
+        calls.any(
+          (c) =>
+              c.method == 'saveWidgetData' &&
+              c.arguments['id'] == 'widget_theme_color_hex' &&
+              c.arguments['data'] == '#C2410C',
+        ),
         isTrue,
       );
     });
@@ -115,10 +129,12 @@ void main() {
       await HomeWidgetDataSync.syncPremiumStatus(isPremium: true);
 
       expect(
-        calls.any((c) =>
-            c.method == 'saveWidgetData' &&
-            c.arguments['id'] == 'widget_is_premium' &&
-            c.arguments['data'] == true),
+        calls.any(
+          (c) =>
+              c.method == 'saveWidgetData' &&
+              c.arguments['id'] == 'widget_is_premium' &&
+              c.arguments['data'] == true,
+        ),
         isTrue,
       );
       expect(calls.any((c) => c.method == 'updateWidget'), isTrue);
@@ -128,10 +144,12 @@ void main() {
       await HomeWidgetDataSync.syncPremiumStatus(isPremium: false);
 
       expect(
-        calls.any((c) =>
-            c.method == 'saveWidgetData' &&
-            c.arguments['id'] == 'widget_is_premium' &&
-            c.arguments['data'] == false),
+        calls.any(
+          (c) =>
+              c.method == 'saveWidgetData' &&
+              c.arguments['id'] == 'widget_is_premium' &&
+              c.arguments['data'] == false,
+        ),
         isTrue,
       );
       expect(calls.any((c) => c.method == 'updateWidget'), isTrue);

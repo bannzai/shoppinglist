@@ -24,10 +24,7 @@ class ProgressPill extends StatelessWidget {
     final neutral = tokens.neutral;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: neutral.card,
         borderRadius: BorderRadius.circular(AppThemeExtension.radiusPill),
@@ -35,24 +32,28 @@ class ProgressPill extends StatelessWidget {
         boxShadow: tokens.cardShadow,
       ),
       child: Text.rich(
-        TextSpan(children: [
-          TextSpan(
-            text: '$checkedCount',
-            style: monoTextStyle(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: '$checkedCount',
+              style: monoTextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: neutral.ink,
-                letterSpacing: null),
-          ),
-          TextSpan(
-            text: '/$totalCount',
-            style: monoTextStyle(
+                letterSpacing: null,
+              ),
+            ),
+            TextSpan(
+              text: '/$totalCount',
+              style: monoTextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: neutral.ink3,
-                letterSpacing: null),
-          ),
-        ]),
+                letterSpacing: null,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

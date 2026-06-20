@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # Phase 6: クリーンアップ
 - launchApp:
@@ -6,13 +6,18 @@ appId: com.bannzai.shoppinglist
 
 # 設定タブ → 開発者オプション画面へ遷移
 - runFlow: ../shared/open_developer_options.yaml
-- extendedWaitUntil:
-    visible: "デバッグデータクリーンアップ"
-    timeout: 10000
+- scrollUntilVisible:
+    element:
+      text: "デバッグデータクリーンアップ"
+    direction: DOWN
+    timeout: 15000
 - tapOn: "デバッグデータクリーンアップ"
 
-# 操作完了を待つ
-- extendedWaitUntil:
-    visible: ".*完了"
+# 結果メッセージ "<action> 完了" は開発者オプション上部に出る。下スクロール済みのため
+# 上方向にスクロールして完了を確認する。
+- scrollUntilVisible:
+    element:
+      text: ".*完了"
+    direction: UP
     timeout: 15000
 - takeScreenshot: screenshots/virtual_pairing/06_cleanup_done

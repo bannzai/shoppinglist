@@ -8,11 +8,9 @@ import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
 Widget _wrap(Widget child) => MaterialApp(
-      theme: buildAppTheme(
-        accent: AccentPreset.shu,
-      ),
-      home: Scaffold(body: child),
-    );
+  theme: buildAppTheme(accent: AccentPreset.shu),
+  home: Scaffold(body: child),
+);
 
 void main() {
   testWidgets('RetentionBanner: 30 日メッセージと「詳しく」が表示される', (tester) async {
@@ -22,25 +20,30 @@ void main() {
   });
 
   testWidgets('AIProcessingBanner(image): 画像ラベルが表示される', (tester) async {
-    await tester.pumpWidget(_wrap(
-      const AIProcessingBanner(type: AIProcessingType.image),
-    ));
+    await tester.pumpWidget(
+      _wrap(const AIProcessingBanner(type: AIProcessingType.image)),
+    );
     expect(find.text('画像から候補を抽出中...'), findsOneWidget);
   });
 
   testWidgets('AIProcessingBanner(url): URL ラベルが表示される', (tester) async {
-    await tester.pumpWidget(_wrap(
-      const AIProcessingBanner(type: AIProcessingType.url),
-    ));
+    await tester.pumpWidget(
+      _wrap(const AIProcessingBanner(type: AIProcessingType.url)),
+    );
     expect(find.text('URL から候補を抽出中...'), findsOneWidget);
   });
 
   testWidgets('ListErrorCard: 例外メッセージと「再試行」が表示される', (tester) async {
     var retried = 0;
-    await tester.pumpWidget(_wrap(ListErrorCard(
-      exception: Exception('boom'),
-      onRetry: () => retried++,
-    )));
+    await tester.pumpWidget(
+      _wrap(
+        ListErrorCard(
+          exception: Exception('boom'),
+          stackTrace: null,
+          onRetry: () => retried++,
+        ),
+      ),
+    );
     expect(find.text('リストを読み込めませんでした'), findsOneWidget);
     expect(find.textContaining('boom'), findsOneWidget);
     await tester.tap(find.text('再試行'));

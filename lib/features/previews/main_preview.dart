@@ -13,8 +13,10 @@ void main() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   Environment.flavor = Flavor.DEVELOP;
 
-  runApp(ProviderScope(
-    overrides: previewProviderOverrides(sharedPreferences: sharedPreferences),
-    child: const PreviewApp(),
-  ));
+  runApp(
+    ProviderScope(
+      overrides: previewProviderOverrides(sharedPreferences: sharedPreferences),
+      child: const PreviewApp(),
+    ),
+  );
 }

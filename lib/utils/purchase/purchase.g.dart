@@ -36,14 +36,15 @@ String _$currentOfferingPackagesHash() =>
 @ProviderFor(currentOfferingPackages)
 final currentOfferingPackagesProvider =
     AutoDisposeProvider<List<Package>>.internal(
-  currentOfferingPackages,
-  name: r'currentOfferingPackagesProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$currentOfferingPackagesHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      currentOfferingPackages,
+      name: r'currentOfferingPackagesProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$currentOfferingPackagesHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
@@ -55,9 +56,10 @@ String _$weeklyPackageHash() => r'ba26c9b5ee0fd47b82377fe698a98759c7286f1e';
 final weeklyPackageProvider = AutoDisposeProvider<Package?>.internal(
   weeklyPackage,
   name: r'weeklyPackageProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$weeklyPackageHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$weeklyPackageHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -72,9 +74,10 @@ String _$monthlyPackageHash() => r'43e529cd7d27fba0cf9e591bc80f23b0abf2d893';
 final monthlyPackageProvider = AutoDisposeProvider<Package?>.internal(
   monthlyPackage,
   name: r'monthlyPackageProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$monthlyPackageHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$monthlyPackageHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -89,9 +92,10 @@ String _$sixMonthPackageHash() => r'3293887aad384d28bcb0ae42e2f94c35a6028c33';
 final sixMonthPackageProvider = AutoDisposeProvider<Package?>.internal(
   sixMonthPackage,
   name: r'sixMonthPackageProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$sixMonthPackageHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$sixMonthPackageHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -108,9 +112,10 @@ String _$annualPackageHash() => r'84a4a588f0eaebbd8d31e87c839f0c2cb6ece25e';
 final annualPackageProvider = AutoDisposeProvider<Package?>.internal(
   annualPackage,
   name: r'annualPackageProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$annualPackageHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$annualPackageHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -127,9 +132,10 @@ String _$lifetimePackageHash() => r'd6ce85cb4d25c704a916e53bbae5458d1fbcdd7b';
 final lifetimePackageProvider = AutoDisposeProvider<Package?>.internal(
   lifetimePackage,
   name: r'lifetimePackageProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$lifetimePackageHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$lifetimePackageHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -145,9 +151,10 @@ String _$monthlyPremiumPackageHash() =>
 final monthlyPremiumPackageProvider = AutoDisposeProvider<Package?>.internal(
   monthlyPremiumPackage,
   name: r'monthlyPremiumPackageProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$monthlyPremiumPackageHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$monthlyPremiumPackageHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );

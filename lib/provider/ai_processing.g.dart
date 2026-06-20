@@ -16,13 +16,15 @@ String _$aIProcessingHash() => r'0f8d22f5c479b1c3c936ba592b3775337dbfcd4a';
 @ProviderFor(AIProcessing)
 final aIProcessingProvider =
     AutoDisposeNotifierProvider<AIProcessing, AIProcessingType?>.internal(
-  AIProcessing.new,
-  name: r'aIProcessingProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$aIProcessingHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      AIProcessing.new,
+      name: r'aIProcessingProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$aIProcessingHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$AIProcessing = AutoDisposeNotifier<AIProcessingType?>;
 // ignore_for_file: type=lint

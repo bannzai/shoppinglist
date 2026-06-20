@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/error/error_view.dart';
+import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class Retry extends InheritedWidget {
   final VoidCallback retry;
 
-  const Retry({
-    super.key,
-    required this.retry,
-    required super.child,
-  });
+  const Retry({super.key, required this.retry, required super.child});
 
   static Retry of(BuildContext context) {
     final result = context.dependOnInheritedWidgetOfExactType<Retry>();
@@ -35,25 +33,27 @@ class RetryPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    debugPrint('Retry: $exception, $stackTrace');
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              exception.toString(),
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
+      body: SafeArea(
+        child: ErrorView(
+          error: exception,
+          stackTrace: stackTrace,
+          // 背景に埋もれないようアクセント(赤)で塗り、横幅いっぱい + 縦 padding にする。
+          action: SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: context.appTheme.accent,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
               onPressed: () {
                 analytics.logEvent(name: 'tap_retry', parameters: null);
                 Retry.of(context).retry();
               },
               child: const Text('Retry'),
             ),
-          ],
+          ),
         ),
       ),
     );

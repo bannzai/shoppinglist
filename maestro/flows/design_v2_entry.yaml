@@ -1,49 +1,67 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # Onboarding 3 スライド + Auth 文言 SSOT 化 (PR-2) の検証。
 # - Onboarding body は screens-onboarding.jsx exact 文に差し替え済み
 # - Auth title / body / 規約注記 は screens-onboarding.jsx#AuthPage 準拠
 # - Auth ゲストリンクは UI に出さない (debug 匿名ボタンのみ)
+#
+# 注意: スライドのタイトル/本文は複数行が 1 つの Text(semantics) に結合されることがあり、
+# maestro の text は全文アンカーマッチのため (?s) 部分一致で指定する。
 
-- clearState
-- launchApp
+# clearState だけでは Firebase 認証が Keychain に残存しオンボーディングが表示されないため
+# clearKeychain も行って未認証状態に戻す（onboarding は未認証ユーザーにのみ表示される）。
+- launchApp:
+    clearState: true
+    clearKeychain: true
 
-# Slide 1
-- assertVisible: "家族と作る、"
-- assertVisible: "買い物リスト"
-- assertVisible: "店頭で別の誰かがチェック"
+# clearState 直後は通知許可ダイアログがオンボーディングの前面に出るため先に閉じる
+- runFlow:
+    when:
+      visible: "許可"
+    commands:
+      - tapOn: "許可"
+      - waitForAnimationToEnd
+
+# Slide 1（スプラッシュ表示後に描画されるため明示的に待つ）
+- extendedWaitUntil:
+    visible: "(?s).*家族と作る.*"
+    timeout: 90000
+- assertVisible: "(?s).*家族と作る.*"
+- assertVisible: "(?s).*買い物リスト.*"
+- assertVisible: "(?s).*店頭で別の誰かがチェック.*"
 - swipe:
     direction: LEFT
 
 # Slide 2
-- assertVisible: "同じリストを"
-- assertVisible: "同時に編集"
-- assertVisible: "招待コードで招くと"
+- assertVisible: "(?s).*同じリストを.*"
+- assertVisible: "(?s).*同時に編集.*"
+- assertVisible: "(?s).*招待コードで招くと.*"
 - swipe:
     direction: LEFT
 
 # Slide 3
-- assertVisible: "お店の近くで、"
-- assertVisible: "そっと思い出す"
-- assertVisible: "やさしくお知らせ"
+- assertVisible: "(?s).*お店の近くで.*"
+- assertVisible: "(?s).*そっと思い出す.*"
+- assertVisible: "(?s).*やさしくお知らせ.*"
 
 # 完走で AuthPage に遷移
 - tapOn: "はじめる"
 
 # Auth title / body
-- assertVisible: "家族の買い物を、"
-- assertVisible: "ひとつのリストへ"
-- assertVisible: "広告もメールマガジンもありません"
+- assertVisible: "(?s).*家族の買い物を.*"
+- assertVisible: "(?s).*ひとつのリストへ.*"
+- assertVisible: "(?s).*広告もメールマガジンもありません.*"
 
 # Auth ゲスト導線は本番 UI に出さない
 - assertNotVisible: "ゲストとして使う"
 
-# サインインボタンは存在
-- assertVisible: "Apple でサインイン"
-- assertVisible: "Google でサインイン"
+# サインインボタンは存在。Apple は native SignInWithAppleButton で文言が OS ロケール依存の
+# ため maestro の text 一致に向かない。カスタムボタンの「Google でサインイン」存在で
+# AuthPage 到達を確認する。
+- assertVisible: "(?s).*Google でサインイン.*"
 
 # 規約注記は SSOT 文
-- assertVisible: "続けることで"
-- assertVisible: "利用規約"
-- assertVisible: "プライバシーポリシー"
-- assertVisible: "に同意したものとみなされます"
+- assertVisible: "(?s).*続けることで.*"
+- assertVisible: "(?s).*利用規約.*"
+- assertVisible: "(?s).*プライバシーポリシー.*"
+- assertVisible: "(?s).*に同意したものとみなされます.*"

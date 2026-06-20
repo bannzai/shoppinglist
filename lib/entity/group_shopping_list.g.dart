@@ -12,23 +12,32 @@ _GroupShoppingList _$GroupShoppingListFromJson(Map<String, dynamic> json) =>
       createUserID: json['createUserID'] as String,
       groupID: json['groupID'] as String,
       name: json['name'] as String? ?? '',
-      status: $enumDecodeNullable(
-              _$GroupShoppingListStatusEnumMap, json['status']) ??
+      status:
+          $enumDecodeNullable(
+            _$GroupShoppingListStatusEnumMap,
+            json['status'],
+          ) ??
           GroupShoppingListStatus.active,
       autoNotifyEnabled: json['autoNotifyEnabled'] as bool? ?? false,
       shoppingLocationID: json['shoppingLocationID'] as String?,
       duplicatedFromGroupShoppingListID:
           json['duplicatedFromGroupShoppingListID'] as String?,
       ttlExpiresDateTime: _$JsonConverterFromJson<Timestamp, DateTime>(
-          json['ttlExpiresDateTime'], const TimestampConverter().fromJson),
-      createdDateTime: const ClientCreatedTimestamp()
-          .fromJson(json['createdDateTime'] as Timestamp?),
-      updatedDateTime: const ClientUpdatedTimestamp()
-          .fromJson(json['updatedDateTime'] as Timestamp?),
-      serverCreatedDateTime: const ServerCreatedTimestamp()
-          .fromJson(json['serverCreatedDateTime']),
-      serverUpdatedDateTime: const ServerUpdatedTimestamp()
-          .fromJson(json['serverUpdatedDateTime']),
+        json['ttlExpiresDateTime'],
+        const TimestampConverter().fromJson,
+      ),
+      createdDateTime: const ClientCreatedTimestamp().fromJson(
+        json['createdDateTime'] as Timestamp?,
+      ),
+      updatedDateTime: const ClientUpdatedTimestamp().fromJson(
+        json['updatedDateTime'] as Timestamp?,
+      ),
+      serverCreatedDateTime: const ServerCreatedTimestamp().fromJson(
+        json['serverCreatedDateTime'],
+      ),
+      serverUpdatedDateTime: const ServerUpdatedTimestamp().fromJson(
+        json['serverUpdatedDateTime'],
+      ),
     );
 
 Map<String, dynamic> _$GroupShoppingListToJson(_GroupShoppingList instance) =>
@@ -43,15 +52,21 @@ Map<String, dynamic> _$GroupShoppingListToJson(_GroupShoppingList instance) =>
       'duplicatedFromGroupShoppingListID':
           instance.duplicatedFromGroupShoppingListID,
       'ttlExpiresDateTime': _$JsonConverterToJson<Timestamp, DateTime>(
-          instance.ttlExpiresDateTime, const TimestampConverter().toJson),
-      'createdDateTime':
-          const ClientCreatedTimestamp().toJson(instance.createdDateTime),
-      'updatedDateTime':
-          const ClientUpdatedTimestamp().toJson(instance.updatedDateTime),
-      'serverCreatedDateTime':
-          const ServerCreatedTimestamp().toJson(instance.serverCreatedDateTime),
-      'serverUpdatedDateTime':
-          const ServerUpdatedTimestamp().toJson(instance.serverUpdatedDateTime),
+        instance.ttlExpiresDateTime,
+        const TimestampConverter().toJson,
+      ),
+      'createdDateTime': const ClientCreatedTimestamp().toJson(
+        instance.createdDateTime,
+      ),
+      'updatedDateTime': const ClientUpdatedTimestamp().toJson(
+        instance.updatedDateTime,
+      ),
+      'serverCreatedDateTime': const ServerCreatedTimestamp().toJson(
+        instance.serverCreatedDateTime,
+      ),
+      'serverUpdatedDateTime': const ServerUpdatedTimestamp().toJson(
+        instance.serverUpdatedDateTime,
+      ),
     };
 
 const _$GroupShoppingListStatusEnumMap = {
@@ -63,11 +78,9 @@ const _$GroupShoppingListStatusEnumMap = {
 Value? _$JsonConverterFromJson<Json, Value>(
   Object? json,
   Value? Function(Json json) fromJson,
-) =>
-    json == null ? null : fromJson(json as Json);
+) => json == null ? null : fromJson(json as Json);
 
 Json? _$JsonConverterToJson<Json, Value>(
   Value? value,
   Json? Function(Value value) toJson,
-) =>
-    value == null ? null : toJson(value);
+) => value == null ? null : toJson(value);

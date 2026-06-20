@@ -13,9 +13,10 @@ String _$appIsReleasedHash() => r'cd68fb9b60121a2c8e19d2db9057c4deca0fb528';
 final appIsReleasedProvider = AutoDisposeFutureProvider<bool>.internal(
   appIsReleased,
   name: r'appIsReleasedProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$appIsReleasedHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$appIsReleasedHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );

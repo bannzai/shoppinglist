@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # プレミアム状態ではアイテムに写真を添付できることを確認する。
 # non_premium 版では SnackBar で遮断される。
@@ -6,13 +6,18 @@ appId: com.bannzai.shoppinglist
 - runFlow: shared/anonymous_sign_in.yaml
 - runFlow: shared/grant_premium_via_debug.yaml
 
-# アイテム追加 → 詳細ボトムシート → 「写真を追加」
-- tapOn: "アイテムを追加"
+# grant 後に設定画面へ留まることがあるため、ホーム（空入力行）まで確実に戻す。
+- extendedWaitUntil:
+    visible: "タップで入力開始"
+    timeout: 15000
+
+# アイテム追加 → 詳細ボトムシート → 「写真を追加」（design v2: 空入力行が追加導線）
+- tapOn: "タップで入力開始"
 - inputText: "milk"
 - pressKey: enter
-# キーボード閉じる
-- tapOn:
-    point: "50%,6%"
+# 2 回目の Enter で空入力行を畳んでからキーボードを閉じる
+- pressKey: enter
+- hideKeyboard
 - waitForAnimationToEnd
 # milk テキスト本体タップはチェックトグル動作のため、`IconButton(tooltip: 'アイテム詳細',
 # Icons.info_outline)` を tooltip 経由でタップして詳細ボトムシートを開く。

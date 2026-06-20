@@ -8,9 +8,7 @@ import 'package:shoppinglist/utils/config/version.dart';
 
 final checkForceUpdateProvider = Provider.autoDispose(
   (ref) => CheckForceUpdate(
-    remoteConfigParameter: ref.watch(
-      remoteConfigParameterProvider,
-    ),
+    remoteConfigParameter: ref.watch(remoteConfigParameterProvider),
   ),
 );
 
@@ -19,14 +17,15 @@ class CheckForceUpdate {
 
   CheckForceUpdate({required this.remoteConfigParameter});
 
-// Return false: should not force update
-// Return true: should force update
+  // Return false: should not force update
+  // Return true: should force update
   Future<bool> call() async {
     final config = remoteConfigParameter;
     final packageVersion = await Version.fromPackage();
 
-    final forceUpdate =
-        packageVersion.isLessThan(Version.parse(config.minimumAppVersion));
+    final forceUpdate = packageVersion.isLessThan(
+      Version.parse(config.minimumAppVersion),
+    );
     if (forceUpdate) {
       analytics.logEvent(
         name: 'screen_type_force_update',

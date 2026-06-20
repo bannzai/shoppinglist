@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/error/error_view.dart';
 import 'package:shoppinglist/components/primitives/app_cell.dart';
 import 'package:shoppinglist/components/primitives/app_setting_section.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
@@ -37,54 +38,55 @@ class ShoppingLocationSelectPage extends ConsumerWidget {
         ),
       ),
       body: locationsAsync.when(
-        data: (locations) => SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(0, 14, 0, 32),
-          child: AppSettingSection(
-            children: [
-              AppCell(
-                icon: Icons.block,
-                title: 'なし',
-                detail: currentLocationID == null ? '選択中' : null,
-                onTap: () {
-                  analytics.logEvent(
-                    name: 'select_list_location',
-                    parameters: {'groupID': groupID, 'value': 'none'},
-                  );
-                  Navigator.pop<_LocationSelectResult>(
-                    context,
-                    const _LocationSelectResult(null),
-                  );
-                },
-                onSwitch: null,
-                subtitle: null,
-                switchValue: null,
-              ),
-              for (final location in locations)
-                AppCell(
-                  icon: Icons.place_outlined,
-                  title: location.name,
-                  detail: currentLocationID == location.id ? '選択中' : null,
-                  onTap: () {
-                    analytics.logEvent(
-                      name: 'select_list_location',
-                      parameters: {
-                        'groupID': groupID,
-                        'locationID': location.id,
+        data:
+            (locations) => SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(0, 14, 0, 32),
+              child: AppSettingSection(
+                children: [
+                  AppCell(
+                    icon: Icons.block,
+                    title: 'なし',
+                    detail: currentLocationID == null ? '選択中' : null,
+                    onTap: () {
+                      analytics.logEvent(
+                        name: 'select_list_location',
+                        parameters: {'groupID': groupID, 'value': 'none'},
+                      );
+                      Navigator.pop<_LocationSelectResult>(
+                        context,
+                        const _LocationSelectResult(null),
+                      );
+                    },
+                    onSwitch: null,
+                    subtitle: null,
+                    switchValue: null,
+                  ),
+                  for (final location in locations)
+                    AppCell(
+                      icon: Icons.place_outlined,
+                      title: location.name,
+                      detail: currentLocationID == location.id ? '選択中' : null,
+                      onTap: () {
+                        analytics.logEvent(
+                          name: 'select_list_location',
+                          parameters: {
+                            'groupID': groupID,
+                            'locationID': location.id,
+                          },
+                        );
+                        Navigator.pop<_LocationSelectResult>(
+                          context,
+                          _LocationSelectResult(location.id),
+                        );
                       },
-                    );
-                    Navigator.pop<_LocationSelectResult>(
-                      context,
-                      _LocationSelectResult(location.id),
-                    );
-                  },
-                  onSwitch: null,
-                  subtitle: null,
-                  switchValue: null,
-                ),
-            ],
-          ),
-        ),
-        error: (e, st) => Center(child: Text(e.toString())),
+                      onSwitch: null,
+                      subtitle: null,
+                      switchValue: null,
+                    ),
+                ],
+              ),
+            ),
+        error: (e, st) => ErrorView(error: e, stackTrace: st),
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
     );
@@ -110,10 +112,11 @@ Future<({bool changed, String? locationID})> pushShoppingLocationSelectPage({
   final result = await Navigator.push<_LocationSelectResult>(
     context,
     MaterialPageRoute(
-      builder: (_) => ShoppingLocationSelectPage(
-        groupID: groupID,
-        currentLocationID: currentLocationID,
-      ),
+      builder:
+          (_) => ShoppingLocationSelectPage(
+            groupID: groupID,
+            currentLocationID: currentLocationID,
+          ),
     ),
   );
   if (result == null) {

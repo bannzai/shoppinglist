@@ -17,29 +17,26 @@ class OKDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Icon(
-        icon,
-        color: Theme.of(context).primaryColor,
-      ),
+      title: Icon(icon, color: Theme.of(context).primaryColor),
       content: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           if (title.isNotEmpty) ...[
-            Text(title,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.w600)),
-            const SizedBox(
-              height: 15,
+            Text(
+              title,
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
+            const SizedBox(height: 15),
           ],
-          Text(message,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(fontWeight: FontWeight.w300)),
+          Text(
+            message,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),
+          ),
         ],
       ),
       actions: <Widget>[
@@ -55,9 +52,9 @@ class OKDialog extends StatelessWidget {
           child: Text(
             'OK',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: Theme.of(context).colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ],
@@ -74,11 +71,8 @@ Future<void> showOKDialog(
 }) async {
   return showDialog(
     context: context,
-    builder: (context) => OKDialog(
-      icon: icon,
-      title: title,
-      message: message,
-      ok: ok,
-    ),
+    builder:
+        (context) =>
+            OKDialog(icon: icon, title: title, message: message, ok: ok),
   );
 }

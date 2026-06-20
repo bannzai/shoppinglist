@@ -18,7 +18,7 @@ final appUserProvider = AutoDisposeStreamProvider<AppUser>.internal(
   dependencies: <ProviderOrFamily>[userDatabaseProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     userDatabaseProvider,
-    ...?userDatabaseProvider.allTransitiveDependencies
+    ...?userDatabaseProvider.allTransitiveDependencies,
   },
 );
 
@@ -36,13 +36,14 @@ String _$optionalAppUserHash() => r'73a1a68b8be25fe0eac81c89a514e5273708b3a4';
 final optionalAppUserProvider = AutoDisposeStreamProvider<AppUser?>.internal(
   optionalAppUser,
   name: r'optionalAppUserProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$optionalAppUserHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$optionalAppUserHash,
   dependencies: <ProviderOrFamily>[userDatabaseProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     userDatabaseProvider,
-    ...?userDatabaseProvider.allTransitiveDependencies
+    ...?userDatabaseProvider.allTransitiveDependencies,
   },
 );
 

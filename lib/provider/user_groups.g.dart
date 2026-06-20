@@ -6,7 +6,7 @@ part of 'user_groups.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$userGroupsHash() => r'dad1683587f62d6e3d9f2b12d8f5f871ca484bfd';
+String _$userGroupsHash() => r'2286f5e74fe99b2721b461d5dc929ac38ba75bb3';
 
 /// See also [userGroups].
 @ProviderFor(userGroups)
@@ -18,7 +18,7 @@ final userGroupsProvider = AutoDisposeStreamProvider<List<Group>>.internal(
   dependencies: <ProviderOrFamily>[userDatabaseProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     userDatabaseProvider,
-    ...?userDatabaseProvider.allTransitiveDependencies
+    ...?userDatabaseProvider.allTransitiveDependencies,
   },
 );
 

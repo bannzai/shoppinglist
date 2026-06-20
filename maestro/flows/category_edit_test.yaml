@@ -1,52 +1,59 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
-# カテゴリ編集のテスト（カラー設定・カラー解除・アイコン設定）
-# 前提: category_location_orderの後、アプリはカテゴリ付き買い物リスト画面
+# カテゴリ編集のテスト（カラー設定・カラー解除・アイコン設定 + 画面離脱時の自動保存）
+# design v2 ナビ: リスト設定 →「自動分類のキーワード管理」→ GroupCategoryPage。
 
 - runFlow: shared/anonymous_sign_in.yaml
 
-# グループ設定画面を開く
+# カテゴリ管理画面（空状態）を開く
 - tapOn: "リスト設定"
-- assertVisible: "買い物リスト設定"
+- waitForAnimationToEnd
 - tapOn:
-    point: "50%,12%"
+    text: "(?s).*自動分類のキーワード管理.*"
 - waitForAnimationToEnd
-
-- tapOn: "グループ設定"
-- waitForAnimationToEnd
-- assertVisible: "グループ設定"
+- assertVisible: "カテゴリを追加"
 
 # 「カテゴリを追加」→ ダイアログを挟まず編集画面へ直接遷移し、空名カテゴリが作成される
 - tapOn: "カテゴリを追加"
 - waitForAnimationToEnd
+- assertVisible: "カテゴリ編集"
 
-# カテゴリ編集画面
-- assertVisible: "カテゴリ名"
-
-# 編集画面の TextField で名前を入力（旧: 追加ダイアログでの入力を置き換え）
+# 編集画面の TextField で名前を入力。iOS Flutter では hideKeyboard が不安定なため
+# Enter(onSubmitted) でキーボードを閉じる（名前は値を保持し onDisappear で自動保存される）。
 - tapOn: "カテゴリ名を入力"
 - inputText: "テスト用"
-- hideKeyboard
+- pressKey: enter
 - waitForAnimationToEnd
 
 # --- カラー設定テスト ---
-# 赤色（2番目のカラーサークル）をタップ
-# Wrap内: spacing=12, circle=40x40. "カテゴリカラー"の下の行
+# カテゴリカラーの 2 番目（赤）をタップ。Wrap 1 行目、⊘ の右隣。
 - tapOn:
-    point: "20%,34%"
+    point: "22%,33%"
 - waitForAnimationToEnd
 - takeScreenshot: screenshots/category_edit_color_set
 
 # --- カラー解除テスト ---
-# 色なし（1番目のサークル、⊘アイコン）をタップ
+# 色なし（1 番目のサークル、⊘ アイコン）をタップ
 - tapOn:
-    point: "8%,34%"
+    point: "9%,33%"
 - waitForAnimationToEnd
 - takeScreenshot: screenshots/category_edit_color_unset
 
 # --- アイコン設定テスト ---
-# カートアイコン（2番目のアイコン）をタップ
+# カートアイコン（2 番目のアイコン）をタップ
 - tapOn:
-    point: "20%,50%"
+    point: "24%,50%"
 - waitForAnimationToEnd
 - takeScreenshot: screenshots/category_edit_icon_set
+
+# --- 自動保存（画面離脱）テスト ---
+# 「完了」を押さず back シェブロン(左上 <)で離脱しても、入力したカテゴリ名が
+# 一覧に反映されている（useOnDisappear による離脱時の自動保存を検証）。
+# カテゴリ行は結合テキストのため (?s) 部分一致で待つ（Firestore 反映待ち）。
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "(?s).*テスト用.*"
+    timeout: 10000
+- takeScreenshot: screenshots/category_edit_autosaved

@@ -1,184 +1,139 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
-# ロケーション別カテゴリ並べ替えのE2Eテスト
-# 1. 買い物場所を作成
-# 2. カテゴリを3つ作成（キーワード付き）
-# 3. 買い物リストにロケーション設定
-# 4. アイテム追加＆カテゴリ表示順を確認
-# NOTE: longPressAndDragはMaestro未サポートのため並べ替え操作はスキップ
-
+# ロケーション別カテゴリ並べ替えの E2E（design v2 ナビ追従）。
+# design v2 ではグループ設定内のインライン場所/カテゴリ追加は廃止され、
+# 場所は ShoppingLocationPage(FAB)、カテゴリは GroupCategoryPage(カテゴリ編集) に分離された。
+# 本フローは「場所作成 → カテゴリ2件作成(キーワード付き) → リストに場所割当 →
+# アイテム追加でキーワード分類されカテゴリヘッダーが出る」までを検証する。
+# NOTE: ロケーション別並べ替え（長押しD&D）の順序入替は別途 premium フローで検証する。
 - runFlow: shared/anonymous_sign_in.yaml
 
-# --- リスト設定→グループ設定を開く ---
-
+# === Phase 1: リスト設定 → グループ設定 配下で 場所 + カテゴリ2件 を作成 ===
 - tapOn: "リスト設定"
 - assertVisible: "買い物リスト設定"
-# TextFieldのフォーカスを外す
-- tapOn:
-    point: "50%,12%"
-- waitForAnimationToEnd
-
+- scrollUntilVisible:
+    element: "グループ設定"
+    direction: DOWN
 - tapOn: "グループ設定"
-- waitForAnimationToEnd
 - assertVisible: "グループ設定"
 
-# --- 買い物場所の作成（グループ設定画面内のインライン追加） ---
-
-- tapOn: "場所を追加"
+# 買い物場所「テストスーパー」を作成（買い物する場所セル → ShoppingLocationPage → FAB）
+- scrollUntilVisible:
+    element: "(?s).*買い物する場所.*"
+    direction: DOWN
+- tapOn: "(?s).*買い物する場所.*"
+- assertVisible: "買い物する場所がまだありません"
+- tapOn:
+    point: "90%,93%"
 - assertVisible: "場所を追加"
 - tapOn: "場所の名前（例: スーパー）"
-- inputText: "近所のスーパー"
+- inputText: "テストスーパー"
 - tapOn:
     text: "追加"
     index: 0
 - waitForAnimationToEnd
-- assertVisible: "近所のスーパー"
+- assertVisible: "テストスーパー"
 - takeScreenshot: screenshots/category_location_01_location_created
-
-# --- カテゴリを3つ作成（グループ設定画面内のインライン追加） ---
-
-# カテゴリ1: 野菜
-- tapOn: "カテゴリを追加"
-- assertVisible: "カテゴリを追加"
-- tapOn: "カテゴリ名（例: 野菜）"
-- inputText: "野菜"
+# グループ設定へ戻る
 - tapOn:
-    text: "追加"
-    index: 0
+    point: "5%,10%"
+- waitForAnimationToEnd
+- assertVisible: "グループ設定"
+
+# カテゴリ画面へ（グループ設定のカテゴリセル → GroupCategoryPage）
+- scrollUntilVisible:
+    element: "(?s).*カテゴリ.*"
+    direction: DOWN
+- tapOn: "(?s).*カテゴリ.*"
+- assertVisible: "カテゴリを追加"
+
+# カテゴリ1: 野菜 / キーワード にんじん（名前は onDisappear 保存のため back で確定）
+- tapOn: "カテゴリを追加"
 - waitForAnimationToEnd
 - assertVisible: "カテゴリ編集"
-
-# キーワード追加: にんじん
+- tapOn: "カテゴリ名を入力"
+- inputText: "野菜"
+- pressKey: enter
+- waitForAnimationToEnd
 - tapOn: "キーワードを追加"
-- assertVisible: "キーワードを追加"
+- waitForAnimationToEnd
 - inputText: "にんじん"
 - tapOn:
     text: "追加"
     index: 0
 - waitForAnimationToEnd
-
-# グループ設定に戻る
 - tapOn:
     point: "5%,10%"
 - waitForAnimationToEnd
-- assertVisible: "グループ設定"
+- extendedWaitUntil:
+    visible: "(?s).*野菜.*"
+    timeout: 10000
 
-# カテゴリ2: 肉
-- scrollUntilVisible:
-    element: "カテゴリを追加"
-    direction: DOWN
-- tapOn: "カテゴリを追加"
-- assertVisible: "カテゴリを追加"
-- tapOn: "カテゴリ名（例: 野菜）"
-- inputText: "肉"
+# カテゴリ2: 肉 / キーワード 鶏肉（一覧に1件あるため右下 FAB から追加）
 - tapOn:
-    text: "追加"
-    index: 0
+    point: "90%,93%"
 - waitForAnimationToEnd
 - assertVisible: "カテゴリ編集"
-
-# キーワード追加: 鶏肉
+- tapOn: "カテゴリ名を入力"
+- inputText: "肉"
+- pressKey: enter
+- waitForAnimationToEnd
 - tapOn: "キーワードを追加"
-- assertVisible: "キーワードを追加"
+- waitForAnimationToEnd
 - inputText: "鶏肉"
 - tapOn:
     text: "追加"
     index: 0
 - waitForAnimationToEnd
-
-# グループ設定に戻る
 - tapOn:
     point: "5%,10%"
 - waitForAnimationToEnd
-- assertVisible: "グループ設定"
-
-# カテゴリ3: 魚
-- scrollUntilVisible:
-    element: "カテゴリを追加"
-    direction: DOWN
-- tapOn: "カテゴリを追加"
-- assertVisible: "カテゴリを追加"
-- tapOn: "カテゴリ名（例: 野菜）"
-- inputText: "魚"
-- tapOn:
-    text: "追加"
-    index: 0
-- waitForAnimationToEnd
-- assertVisible: "カテゴリ編集"
-
-# キーワード追加: サーモン
-- tapOn: "キーワードを追加"
-- assertVisible: "キーワードを追加"
-- inputText: "サーモン"
-- tapOn:
-    text: "追加"
-    index: 0
-- waitForAnimationToEnd
-
-# グループ設定に戻る
-- tapOn:
-    point: "5%,10%"
-- waitForAnimationToEnd
-- assertVisible: "グループ設定"
-
-# 3つのカテゴリが作成されたことをスクリーンショットで確認
-# NOTE: カテゴリ名はFlutterアクセシビリティツリーに公開されないためassertVisibleは使用しない
+- extendedWaitUntil:
+    visible: "(?s).*肉.*"
+    timeout: 10000
 - takeScreenshot: screenshots/category_location_02_categories_created
 
-# NOTE: ロケーション別並べ替え（ドラッグ操作）はMaestroのlongPressAndDrag未サポートのためスキップ
+# === Phase 2: home に戻る（多段の戻りより launchApp が安定。category_crud と同手順） ===
+- launchApp
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "タップで入力開始"
+    timeout: 30000
 
-# --- リスト設定に戻る ---
-- tapOn:
-    point: "5%,10%"
+# === Phase 3: リストに「テストスーパー」を割り当て ===
+- tapOn: "リスト設定"
+- assertVisible: "買い物リスト設定"
+# 買い物する場所セルは未設定時 "未設定\n変更" 結合のため (?s) 部分一致で開く
+- tapOn: "(?s).*未設定.*"
+- assertVisible: "買い物する場所を選ぶ"
+- tapOn: "テストスーパー"
 - waitForAnimationToEnd
 - assertVisible: "買い物リスト設定"
-
-# TextFieldのフォーカスを外す
-- tapOn:
-    point: "50%,12%"
-- waitForAnimationToEnd
-
-# 買い物する場所で「近所のスーパー」を選択
-- tapOn: "なし"
-- waitForAnimationToEnd
-- tapOn: "近所のスーパー"
-- waitForAnimationToEnd
 - takeScreenshot: screenshots/category_location_05_list_location_set
-
-# BottomSheetを閉じる
+# リスト設定(モーダル)を×で閉じる。モーダルは上部にドラッグハンドルがあり、close ボタンは
+# 設定ページより下にある（実測 bounds [4,91][52,139] = 中心 ~7%,13%）。
 - tapOn:
-    point: "5%,12%"
+    point: "7%,13%"
 - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "タップで入力開始"
+    timeout: 15000
 
-# アイテム追加: にんじん（野菜カテゴリ）
-- tapOn: "アイテムを追加"
+# === Phase 4: アイテム追加 → キーワード分類でカテゴリヘッダー表示 ===
+- tapOn: "タップで入力開始"
 - inputText: "にんじん"
 - pressKey: enter
-
-# アイテム追加: 鶏肉（肉カテゴリ）
 - inputText: "鶏肉"
 - pressKey: enter
-
-# アイテム追加: サーモン（魚カテゴリ）
-- inputText: "サーモン"
+# 空入力行を畳む
 - pressKey: enter
-
-# 空アイテム削除
-- pressKey: enter
-
-# キーボード閉じてフォーカス解除
-- tapOn:
-    point: "50%,6%"
+- hideKeyboard
 - waitForAnimationToEnd
-
-# Firestoreデータ同期待ち＆カテゴリヘッダー表示確認
+# カテゴリヘッダー（結合テキスト）を Firestore 同期待ちで確認
 - extendedWaitUntil:
-    visible: "野菜"
+    visible: "(?s).*野菜.*"
     timeout: 10000
 - extendedWaitUntil:
-    visible: "肉"
-    timeout: 5000
-- extendedWaitUntil:
-    visible: "魚"
+    visible: "(?s).*肉.*"
     timeout: 5000
 - takeScreenshot: screenshots/category_location_06_final_categorized

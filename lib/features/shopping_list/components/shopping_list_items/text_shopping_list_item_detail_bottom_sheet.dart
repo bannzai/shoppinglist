@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -11,7 +12,6 @@ import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
-import 'package:shoppinglist/features/group_category_edit/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
@@ -21,10 +21,10 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
+import 'package:shoppinglist/utils/hooks/use_on_disappear.dart';
 import 'package:shoppinglist/utils/image/image.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
-import 'package:shoppinglist/utils/stdlib/navigator.dart';
 
 class _PresetColor {
   final String label;
@@ -68,32 +68,109 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
     final imageURL = useState<String?>(textShoppingListItem.imageURL);
     final selectedPhoto = useState<XFile?>(null);
     final removeImageOnSave = useState<bool>(false);
-    final isSavingImage = useState<bool>(false);
+
+    // 保存ボタンを廃止し、シートを閉じる/アプリが background へ移る時に変更をまとめて
+    // 自動保存する。useOnDisappear の closure は Widget unmount 後にも呼ばれ ref を
+    // 使えないため、更新オブジェクトを build 時にキャプチャする。
+    final update = ref.watch(updateShoppingListItemProvider(groupID: groupID));
+    // 削除実行時は、dispose 起因の自動保存で削除済みアイテムを復活させないよう抑止する。
+    final skipSave = useRef(false);
+    useOnDisappear(() {
+      if (skipSave.value) {
+        return;
+      }
+      // dispose 後に async で参照すると破棄済みの ValueNotifier/Controller を触るため、
+      // 比較・保存に使う値はこの時点(同期)で確定させる。
+      final description = descriptionController.text.trim();
+      final normalizedDescription = description.isEmpty ? null : description;
+      final color = selectedColor.value;
+      final pickedPhoto = selectedPhoto.value;
+      final shouldRemoveImage =
+          removeImageOnSave.value && originalImageURL != null;
+      final currentImageURL = imageURL.value;
+
+      final hasChanges =
+          normalizedDescription != textShoppingListItem.description ||
+          color != textShoppingListItem.color ||
+          pickedPhoto != null ||
+          shouldRemoveImage;
+      if (!hasChanges) {
+        return;
+      }
+      analytics.logEvent(
+        name: 'auto_save_item_detail',
+        parameters: {'groupID': groupID, 'itemID': textShoppingListItem.id},
+      );
+      unawaited(() async {
+        try {
+          var nextImageURL = currentImageURL;
+          if (pickedPhoto != null) {
+            final file = File(pickedPhoto.path);
+            nextImageURL = await functions.uploadShoppingListItemImage(
+              groupID: groupID,
+              shoppingListID: textShoppingListItem.shoppingListID,
+              itemID: textShoppingListItem.id,
+              mimeType: mimeType(file),
+              base64Image: await base64CompressImage(file),
+            );
+          } else if (shouldRemoveImage) {
+            await functions.deleteShoppingListItemImage(
+              groupID: groupID,
+              shoppingListID: textShoppingListItem.shoppingListID,
+              itemID: textShoppingListItem.id,
+            );
+            nextImageURL = null;
+          }
+          await update.call(
+            shoppingListID: textShoppingListItem.shoppingListID,
+            item: textShoppingListItem.copyWith(
+              description: normalizedDescription,
+              color: color,
+              imageURL: nextImageURL,
+            ),
+            editedByUserID: currentUserID,
+          );
+        } catch (e, st) {
+          // シート消失後でも前面に出るグローバルトーストで失敗を通知する。
+          showGlobalErrorToast(e, st);
+        }
+      }());
+    });
 
     // カテゴリは先頭軸(axes.first)のキーワードマッチで動的に決まる(アイテムはカテゴリIDを持たない)。
     // appShowModalBottomSheet は AppResolvers でラップされているため build 内の ref.watch が機能する。
     // 遷移時の ref.read だと AsyncLoading(null) になり得るので、ここで watch して値を確定させる。
     final categoryAxes =
         ref.watch(groupCategoryAxesProvider(groupID: groupID)).valueOrNull ??
-            const <GroupCategoryAxis>[];
+        const <GroupCategoryAxis>[];
     final categoryAxis = categoryAxes.firstOrNull;
-    final categories = categoryAxis == null
-        ? const <GroupCategory>[]
-        : ref
-                .watch(groupCategoriesProvider(
-                    groupID: groupID, categoryAxisID: categoryAxis.id))
-                .valueOrNull ??
-            const <GroupCategory>[];
-    final matchedCategory = categoryAxis == null
-        ? null
-        : categories.firstWhereOrNull((category) =>
-            category.id ==
-            findMatchingCategoryID(
-                item: textShoppingListItem, categories: categories));
+    final categories =
+        categoryAxis == null
+            ? const <GroupCategory>[]
+            : ref
+                    .watch(
+                      groupCategoriesProvider(
+                        groupID: groupID,
+                        categoryAxisID: categoryAxis.id,
+                      ),
+                    )
+                    .valueOrNull ??
+                const <GroupCategory>[];
+    final matchedCategory =
+        categoryAxis == null
+            ? null
+            : categories.firstWhereOrNull(
+              (category) =>
+                  category.id ==
+                  findMatchingCategoryID(
+                    item: textShoppingListItem,
+                    categories: categories,
+                  ),
+            );
 
     // シート(appShowModalBottomSheet)は固定高でキーボードの viewInsets を考慮しないため、
-    // 説明入力中はキーボードが保存ボタンを覆って到達できなくなる。キーボード高さ分の
-    // 下余白を持つスクロールにして、入力中でも保存ボタンまでスクロールできるようにする。
+    // 説明入力中はキーボードが下部のカラー等を覆って到達できなくなる。キーボード高さ分の
+    // 下余白を持つスクロールにして、入力中でも下部の項目までスクロールできるようにする。
     return SingleChildScrollView(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -103,9 +180,77 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              textShoppingListItem.message,
-              style: Theme.of(context).textTheme.titleMedium,
+            // タイトル行: 中央にアイテム名、右上に削除(ゴミ箱)アイコンを置く。
+            // 左に IconButton と同じ幅の余白を入れてタイトルを視覚的に中央へ寄せる。
+            Row(
+              children: [
+                const SizedBox(width: 48),
+                Expanded(
+                  child: Text(
+                    textShoppingListItem.message,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                IconButton(
+                  tooltip: 'アイテムを削除',
+                  icon: Icon(Icons.delete_outline, color: colorScheme.error),
+                  onPressed: () {
+                    analytics.logEvent(
+                      name: 'tap_delete_item',
+                      parameters: {
+                        'groupID': groupID,
+                        'itemID': textShoppingListItem.id,
+                      },
+                    );
+                    showDialog(
+                      context: context,
+                      builder:
+                          (dialogContext) => AlertDialog(
+                            title: const Text('このアイテムを削除しますか？'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  analytics.logEvent(
+                                    name: 'tap_confirm_delete_item',
+                                    parameters: {
+                                      'groupID': groupID,
+                                      'itemID': textShoppingListItem.id,
+                                    },
+                                  );
+                                  // 削除後の dispose で自動保存が走りアイテムが復活するのを防ぐ。
+                                  skipSave.value = true;
+                                  ref
+                                      .read(
+                                        groupDatabaseProvider(groupID: groupID),
+                                      )
+                                      .shoppingListItemsReference(
+                                        shoppingListID:
+                                            textShoppingListItem.shoppingListID,
+                                      )
+                                      .doc(textShoppingListItem.id)
+                                      .delete();
+                                  Navigator.pop(dialogContext);
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  '削除',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(color: colorScheme.error),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(dialogContext);
+                                },
+                                child: const Text('キャンセル'),
+                              ),
+                            ],
+                          ),
+                    );
+                  },
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             // カテゴリセクション。軸が無い(カテゴリ機能未使用)ときは表示しない。
@@ -114,10 +259,9 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'カテゴリ',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium
-                      ?.copyWith(fontWeight: FontWeight.w700),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -127,36 +271,34 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                   TextButton(
                     onPressed: () {
                       analytics.logEvent(
-                        name: matchedCategory != null
-                            ? 'tap_edit_category_from_item'
-                            : 'tap_manage_category_from_item',
+                        name:
+                            matchedCategory != null
+                                ? 'tap_change_category_from_item'
+                                : 'tap_select_category_from_item',
                         parameters: {
                           'groupID': groupID,
                           'itemID': textShoppingListItem.id,
                         },
                       );
-                      // マッチ時はそのカテゴリの編集ページへ。未分類時はカテゴリ選択
-                      // モードの一覧へ誘導し、行タップでこのアイテムを既存カテゴリへ
-                      // 割り当てる(アイテム名をそのカテゴリのキーワードに追記する)。
-                      // シートは閉じずに push する(戻れば説明等の編集状態を保持したまま戻れる)。
+                      // マッチ済み・未分類のどちらもカテゴリ選択モードの一覧へ誘導する。
+                      // 一覧で行をタップするとこのアイテムを選んだカテゴリへ移し(アイテム名の
+                      // 完全一致キーワードを付け替える)、一覧で新規カテゴリを追加してそのまま
+                      // 選ぶこともできる。シートは閉じずに push する(戻れば説明等の編集状態を
+                      // 保持したまま戻れる)。
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => matchedCategory != null
-                              ? GroupCategoryEditPage(
-                                  groupID: groupID,
-                                  categoryAxisID: categoryAxis.id,
-                                  categoryID: matchedCategory.id,
-                                )
-                              : GroupCategoryPage(
-                                  groupID: groupID,
-                                  selectionForItem: textShoppingListItem,
-                                ),
+                          builder:
+                              (context) => GroupCategoryPage(
+                                groupID: groupID,
+                                selectionForItem: textShoppingListItem,
+                              ),
                         ),
                       );
                     },
-                    child:
-                        Text(matchedCategory != null ? 'カテゴリを編集' : 'カテゴリを管理'),
+                    child: Text(
+                      matchedCategory != null ? 'カテゴリを変更' : 'カテゴリを選択',
+                    ),
                   ),
                 ],
               ),
@@ -167,10 +309,9 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 '説明',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
               ),
             ),
             const SizedBox(height: 8),
@@ -191,10 +332,9 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 '写真',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
               ),
             ),
             const SizedBox(height: 8),
@@ -212,10 +352,9 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 'カラー',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
               ),
             ),
             const SizedBox(height: 8),
@@ -229,11 +368,12 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                   child: GestureDetector(
                     onTap: () {
                       analytics.logEvent(
-                          name: 'tap_item_remove_color',
-                          parameters: {
-                            'groupID': groupID,
-                            'itemID': textShoppingListItem.id
-                          });
+                        name: 'tap_item_remove_color',
+                        parameters: {
+                          'groupID': groupID,
+                          'itemID': textShoppingListItem.id,
+                        },
+                      );
                       selectedColor.value = null;
                     },
                     child: Container(
@@ -242,9 +382,10 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: selectedColor.value == null
-                              ? colorScheme.onSurface
-                              : colorScheme.outline,
+                          color:
+                              selectedColor.value == null
+                                  ? colorScheme.onSurface
+                                  : colorScheme.outline,
                           width: selectedColor.value == null ? 2 : 1,
                         ),
                       ),
@@ -263,12 +404,13 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                     child: GestureDetector(
                       onTap: () {
                         analytics.logEvent(
-                            name: 'tap_item_select_color',
-                            parameters: {
-                              'groupID': groupID,
-                              'itemID': textShoppingListItem.id,
-                              'color': preset.hex
-                            });
+                          name: 'tap_item_select_color',
+                          parameters: {
+                            'groupID': groupID,
+                            'itemID': textShoppingListItem.id,
+                            'color': preset.hex,
+                          },
+                        );
                         selectedColor.value = preset.hex;
                       },
                       child: Container(
@@ -278,161 +420,25 @@ class TextShoppingListItemDetailBottomSheet extends HookConsumerWidget {
                           shape: BoxShape.circle,
                           color: colorFromHex(preset.hex),
                           border: Border.all(
-                            color: selectedColor.value == preset.hex
-                                ? colorScheme.onSurface
-                                : Colors.transparent,
+                            color:
+                                selectedColor.value == preset.hex
+                                    ? colorScheme.onSurface
+                                    : Colors.transparent,
                             width: 2,
                           ),
                         ),
-                        child: selectedColor.value == preset.hex
-                            ? Icon(
-                                Icons.check,
-                                size: 20,
-                                color: colorScheme.onPrimary,
-                              )
-                            : null,
+                        child:
+                            selectedColor.value == preset.hex
+                                ? Icon(
+                                  Icons.check,
+                                  size: 20,
+                                  color: colorScheme.onPrimary,
+                                )
+                                : null,
                       ),
                     ),
                   ),
               ],
-            ),
-            const SizedBox(height: 24),
-            // 保存ボタン
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: isSavingImage.value
-                    ? null
-                    : () async {
-                        analytics.logEvent(
-                            name: 'tap_save_item_detail',
-                            parameters: {
-                              'groupID': groupID,
-                              'itemID': textShoppingListItem.id
-                            });
-                        // 写真アップロード等の await 中にシートが手動クローズされると、
-                        // 遅延した pop がホームまで剥がして黒画面になるため、
-                        // pop はこのシート自身のルートに限定する (#372)。
-                        final navigator = Navigator.of(context);
-                        final sheetRoute = ModalRoute.of(context);
-                        isSavingImage.value = true;
-                        try {
-                          var nextImageURL = imageURL.value;
-
-                          if (selectedPhoto.value != null) {
-                            final file = File(selectedPhoto.value!.path);
-                            nextImageURL =
-                                await functions.uploadShoppingListItemImage(
-                              groupID: groupID,
-                              shoppingListID:
-                                  textShoppingListItem.shoppingListID,
-                              itemID: textShoppingListItem.id,
-                              mimeType: mimeType(file),
-                              base64Image: await base64CompressImage(file),
-                            );
-                          } else if (removeImageOnSave.value &&
-                              originalImageURL != null) {
-                            await functions.deleteShoppingListItemImage(
-                              groupID: groupID,
-                              shoppingListID:
-                                  textShoppingListItem.shoppingListID,
-                              itemID: textShoppingListItem.id,
-                            );
-                            nextImageURL = null;
-                          }
-
-                          final description = descriptionController.text.trim();
-                          ref
-                              .read(updateShoppingListItemProvider(
-                                  groupID: groupID))
-                              .call(
-                                shoppingListID:
-                                    textShoppingListItem.shoppingListID,
-                                item: textShoppingListItem.copyWith(
-                                  description:
-                                      description.isEmpty ? null : description,
-                                  color: selectedColor.value,
-                                  imageURL: nextImageURL,
-                                ),
-                                editedByUserID: currentUserID,
-                              );
-
-                          popRouteSafely(
-                              navigator: navigator, route: sheetRoute);
-                        } catch (e) {
-                          // シート上の SnackBar は背後の Scaffold に描画されて
-                          // 見えないため、前面に出るグローバルトーストで通知する。
-                          showGlobalToast(e.toString(), title: null);
-                        } finally {
-                          // シートが既に dispose 済み(手動クローズ等)の場合に
-                          // 破棄済みの ValueNotifier へ書き込まないようガードする。
-                          if (context.mounted) {
-                            isSavingImage.value = false;
-                          }
-                        }
-                      },
-                child: isSavingImage.value
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('保存'),
-              ),
-            ),
-            const SizedBox(height: 12),
-            // 削除ボタン
-            SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  foregroundColor: colorScheme.error,
-                ),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (dialogContext) => AlertDialog(
-                      title: const Text('このアイテムを削除しますか？'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            analytics.logEvent(
-                                name: 'tap_confirm_delete_item',
-                                parameters: {
-                                  'groupID': groupID,
-                                  'itemID': textShoppingListItem.id
-                                });
-                            ref
-                                .read(groupDatabaseProvider(groupID: groupID))
-                                .shoppingListItemsReference(
-                                  shoppingListID:
-                                      textShoppingListItem.shoppingListID,
-                                )
-                                .doc(textShoppingListItem.id)
-                                .delete();
-                            Navigator.pop(dialogContext);
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            '削除',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(color: colorScheme.error),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(dialogContext);
-                          },
-                          child: const Text('キャンセル'),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                child: const Text('削除'),
-              ),
             ),
           ],
         ),
@@ -493,14 +499,16 @@ class _PhotoSection extends HookConsumerWidget {
           width: double.infinity,
           height: 200,
           fit: BoxFit.cover,
-          placeholder: (context, url) => const SizedBox(
-            height: 200,
-            child: Center(child: CircularProgressIndicator()),
-          ),
-          errorWidget: (context, url, error) => const SizedBox(
-            height: 200,
-            child: Center(child: Icon(Icons.broken_image, size: 48)),
-          ),
+          placeholder:
+              (context, url) => const SizedBox(
+                height: 200,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+          errorWidget:
+              (context, url, error) => const SizedBox(
+                height: 200,
+                child: Center(child: Icon(Icons.broken_image, size: 48)),
+              ),
         ),
       );
     }
@@ -509,24 +517,29 @@ class _PhotoSection extends HookConsumerWidget {
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton.icon(
-        onPressed: () => _showImageSourceDialog(
-            context: context, ref: ref, isPremium: isPremium),
+        onPressed:
+            () => _showImageSourceDialog(
+              context: context,
+              ref: ref,
+              isPremium: isPremium,
+            ),
         icon: const Icon(Icons.add_a_photo),
-        label: isPremium
-            ? const Text('写真を追加')
-            : Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('写真を追加'),
-                  const SizedBox(width: 6),
-                  // 写真添付がプレミアム機能であることを示す王冠。未課金時のみ表示。
-                  Icon(
-                    Icons.workspace_premium,
-                    size: 18,
-                    color: context.appTheme.accent,
-                  ),
-                ],
-              ),
+        label:
+            isPremium
+                ? const Text('写真を追加')
+                : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('写真を追加'),
+                    const SizedBox(width: 6),
+                    // 写真添付がプレミアム機能であることを示す王冠。未課金時のみ表示。
+                    Icon(
+                      Icons.workspace_premium,
+                      size: 18,
+                      color: context.appTheme.accent,
+                    ),
+                  ],
+                ),
       ),
     );
   }
@@ -540,10 +553,7 @@ class _PhotoSection extends HookConsumerWidget {
   }) {
     return Stack(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: child,
-        ),
+        ClipRRect(borderRadius: BorderRadius.circular(8), child: child),
         Positioned(
           top: 8,
           right: 8,
@@ -553,8 +563,12 @@ class _PhotoSection extends HookConsumerWidget {
               _CircleIconButton(
                 icon: Icons.edit,
                 colorScheme: colorScheme,
-                onTap: () => _showImageSourceDialog(
-                    context: context, ref: ref, isPremium: isPremium),
+                onTap:
+                    () => _showImageSourceDialog(
+                      context: context,
+                      ref: ref,
+                      isPremium: isPremium,
+                    ),
               ),
               const SizedBox(width: 8),
               // 写真を削除
@@ -563,8 +577,9 @@ class _PhotoSection extends HookConsumerWidget {
                 colorScheme: colorScheme,
                 onTap: () {
                   analytics.logEvent(
-                      name: 'tap_item_remove_photo',
-                      parameters: {'groupID': groupID, 'itemID': itemID});
+                    name: 'tap_item_remove_photo',
+                    parameters: {'groupID': groupID, 'itemID': itemID},
+                  );
                   selectedPhoto.value = null;
                   imageURL.value = null;
                   removeImageOnSave.value = originalImageURL != null;
@@ -584,8 +599,9 @@ class _PhotoSection extends HookConsumerWidget {
   }) {
     if (!isPremium) {
       analytics.logEvent(
-          name: 'tap_item_photo_non_premium',
-          parameters: {'groupID': groupID, 'itemID': itemID});
+        name: 'tap_item_photo_non_premium',
+        parameters: {'groupID': groupID, 'itemID': itemID},
+      );
       // シートが閉じられた後でもアクションからペイウォールを開けるよう、
       // 生存し続ける root Navigator の context を束ねておく。
       final paywallContext = Navigator.of(context, rootNavigator: true).context;
@@ -598,34 +614,36 @@ class _PhotoSection extends HookConsumerWidget {
     }
 
     analytics.logEvent(
-        name: 'tap_item_add_photo',
-        parameters: {'groupID': groupID, 'itemID': itemID});
+      name: 'tap_item_add_photo',
+      parameters: {'groupID': groupID, 'itemID': itemID},
+    );
 
     showModalBottomSheet(
       context: context,
-      builder: (sheetContext) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('カメラで撮影'),
-              onTap: () {
-                Navigator.pop(sheetContext);
-                _pickImage(source: ImageSource.camera);
-              },
+      builder:
+          (sheetContext) => SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.camera_alt),
+                  title: const Text('カメラで撮影'),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    _pickImage(source: ImageSource.camera);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.photo_library),
+                  title: const Text('フォトライブラリから選択'),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    _pickImage(source: ImageSource.gallery);
+                  },
+                ),
+              ],
             ),
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('フォトライブラリから選択'),
-              onTap: () {
-                Navigator.pop(sheetContext);
-                _pickImage(source: ImageSource.gallery);
-              },
-            ),
-          ],
-        ),
-      ),
+          ),
     );
   }
 

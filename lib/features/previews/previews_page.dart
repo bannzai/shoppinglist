@@ -13,6 +13,7 @@ import 'package:shoppinglist/features/onboarding/page.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/previews/screens/ai_categorize_preview_sheet_preview.dart';
 import 'package:shoppinglist/features/previews/screens/ai_review_sheet_preview.dart';
+import 'package:shoppinglist/features/previews/screens/group_category_empty_state_preview.dart';
 import 'package:shoppinglist/features/previews/screens/invitation_verifying_preview.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_preview.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_setting_preview.dart';
@@ -28,37 +29,23 @@ class _PreviewEntry {
 }
 
 final _previewEntries = <_PreviewEntry>[
-  _PreviewEntry(
-    title: 'LaunchLoading',
-    builder: (_) => const LaunchLoading(),
-  ),
+  _PreviewEntry(title: 'LaunchLoading', builder: (_) => const LaunchLoading()),
   _PreviewEntry(
     title: 'OnboardingPage',
     builder: (_) => const OnboardingPage(),
   ),
-  _PreviewEntry(
-    title: 'AuthPage',
-    builder: (_) => const AuthPage(),
-  ),
-  _PreviewEntry(
-    title: 'HomePage',
-    builder: (_) => const HomePage(),
-  ),
+  _PreviewEntry(title: 'AuthPage', builder: (_) => const AuthPage()),
+  _PreviewEntry(title: 'HomePage', builder: (_) => const HomePage()),
   _PreviewEntry(
     title: 'ShoppingListPage',
     builder: (_) => const ShoppingListPreview(),
   ),
+  _PreviewEntry(title: 'SettingPage', builder: (_) => const SettingPage()),
+  _PreviewEntry(title: 'InquiryPage', builder: (_) => const InquiryPage()),
+  _PreviewEntry(title: 'GroupListPage', builder: (_) => const GroupListPage()),
   _PreviewEntry(
-    title: 'SettingPage',
-    builder: (_) => const SettingPage(),
-  ),
-  _PreviewEntry(
-    title: 'InquiryPage',
-    builder: (_) => const InquiryPage(),
-  ),
-  _PreviewEntry(
-    title: 'GroupListPage',
-    builder: (_) => const GroupListPage(),
+    title: 'GroupCategoryEmptyState',
+    builder: (_) => const GroupCategoryEmptyStatePreview(),
   ),
   _PreviewEntry(
     title: 'GroupCreatePage',
@@ -82,11 +69,12 @@ final _previewEntries = <_PreviewEntry>[
   ),
   _PreviewEntry(
     title: 'GroupCategoryEditPage',
-    builder: (_) => GroupCategoryEditPage(
-      groupID: mockGroupID,
-      categoryAxisID: mockCategoryAxisID,
-      categoryID: mockCategoryID,
-    ),
+    builder:
+        (_) => GroupCategoryEditPage(
+          groupID: mockGroupID,
+          categoryAxisID: mockCategoryAxisID,
+          categoryID: mockCategoryID,
+        ),
   ),
   _PreviewEntry(
     title: 'ShoppingListSettingPage',
@@ -128,9 +116,7 @@ class PreviewsPage extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: entry.builder,
-                ),
+                MaterialPageRoute(builder: entry.builder),
               );
             },
           );

@@ -11,6 +11,7 @@ import 'package:shoppinglist/provider/current_shopping_list_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 /// `ShoppingListPage` 右下、アイテム追加 FAB の上に置く「新しいリストを作成」ボタン。
@@ -89,71 +90,74 @@ class CreateListFab extends HookConsumerWidget {
         icon: Icons.today_outlined,
         label: '今日の日付でリストを追加',
         // AppUser 未ロード・実行中は無効化（dim 表示・タップ不可）。
-        onTap: appUser == null || isCreating.value
-            ? null
-            : () {
-                analytics.logEvent(
-                  name: 'tap_create_list_menu_today',
-                  parameters: {'groupID': groupID},
-                );
-                close();
-                _createTodayList(
-                  context: context,
-                  ref: ref,
-                  appUser: appUser,
-                  isCreating: isCreating,
-                );
-              },
+        onTap:
+            appUser == null || isCreating.value
+                ? null
+                : () {
+                  analytics.logEvent(
+                    name: 'tap_create_list_menu_today',
+                    parameters: {'groupID': groupID},
+                  );
+                  close();
+                  _createTodayList(
+                    context: context,
+                    ref: ref,
+                    appUser: appUser,
+                    isCreating: isCreating,
+                  );
+                },
       ),
       FabMenuAction(
         icon: Icons.content_copy_outlined,
         label: '現在のリストを複製',
         // AppUser・複製元リスト未ロード・実行中は無効化（dim 表示・タップ不可）。
-        onTap: appUser == null || shoppingList == null || isCreating.value
-            ? null
-            : () {
-                analytics.logEvent(
-                  name: 'tap_duplicate_list_from_fab',
-                  parameters: {
-                    'groupID': groupID,
-                    'sourceShoppingListID': shoppingList.id,
-                  },
-                );
-                close();
-                _duplicateCurrentList(
-                  context: context,
-                  ref: ref,
-                  appUser: appUser,
-                  sourceShoppingList: shoppingList,
-                  isCreating: isCreating,
-                  uncheckedOnly: false,
-                );
-              },
+        onTap:
+            appUser == null || shoppingList == null || isCreating.value
+                ? null
+                : () {
+                  analytics.logEvent(
+                    name: 'tap_duplicate_list_from_fab',
+                    parameters: {
+                      'groupID': groupID,
+                      'sourceShoppingListID': shoppingList.id,
+                    },
+                  );
+                  close();
+                  _duplicateCurrentList(
+                    context: context,
+                    ref: ref,
+                    appUser: appUser,
+                    sourceShoppingList: shoppingList,
+                    isCreating: isCreating,
+                    uncheckedOnly: false,
+                  );
+                },
       ),
       FabMenuAction(
         icon: Icons.check_box_outline_blank,
         label: '未チェックのみ引き継いで複製',
         // AppUser・複製元リスト未ロード・実行中は無効化（dim 表示・タップ不可）。
-        onTap: appUser == null || shoppingList == null || isCreating.value
-            ? null
-            : () {
-                analytics.logEvent(
-                  name: 'tap_duplicate_unchecked_from_fab',
-                  parameters: {
-                    'groupID': groupID,
-                    'sourceShoppingListID': shoppingList.id,
-                  },
-                );
-                close();
-                _duplicateCurrentList(
-                  context: context,
-                  ref: ref,
-                  appUser: appUser,
-                  sourceShoppingList: shoppingList,
-                  isCreating: isCreating,
-                  uncheckedOnly: true,
-                );
-              },
+        onTap:
+            appUser == null || shoppingList == null || isCreating.value
+                ? null
+                : () {
+                  analytics.logEvent(
+                    name: 'tap_duplicate_unchecked_from_fab',
+                    parameters: {
+                      'groupID': groupID,
+                      'sourceShoppingListID': shoppingList.id,
+                    },
+                  );
+                  close();
+                  _duplicateCurrentList(
+                    context: context,
+                    ref: ref,
+                    appUser: appUser,
+                    sourceShoppingList: shoppingList,
+                    isCreating: isCreating,
+                    uncheckedOnly: true,
+                  );
+                },
       ),
     ];
 
@@ -179,55 +183,63 @@ class CreateListFab extends HookConsumerWidget {
               customBorder: const CircleBorder(),
               // タップでメニューを開閉する。展開中（x 状態）なら閉じ、それ以外は展開する。
               // リスト作成（今日の日付）はメニュー内の先頭アクションに集約している。
-              onTap: isCreating.value || appUser == null
-                  ? null
-                  : () {
-                      if (open.value) {
+              onTap:
+                  isCreating.value || appUser == null
+                      ? null
+                      : () {
+                        if (open.value) {
+                          analytics.logEvent(
+                            name: 'tap_close_create_list_menu',
+                            parameters: {'groupID': groupID},
+                          );
+                          close();
+                          return;
+                        }
+                        HapticFeedback.mediumImpact();
                         analytics.logEvent(
-                          name: 'tap_close_create_list_menu',
+                          name: 'tap_open_create_list_menu',
                           parameters: {'groupID': groupID},
                         );
-                        close();
-                        return;
-                      }
-                      HapticFeedback.mediumImpact();
-                      analytics.logEvent(
-                        name: 'tap_open_create_list_menu',
-                        parameters: {'groupID': groupID},
-                      );
-                      open.value = true;
-                    },
+                        open.value = true;
+                      },
               child: Center(
-                child: isCreating.value
-                    ? SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(tokens.accent),
-                        ),
-                      )
-                    // 閉時は合成アイコン、メニュー展開中は x（閉じる）。
-                    // `ExpandableFab` と同じ AnimatedSwitcher の回転+フェードで入れ替える。
-                    : AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 200),
-                        transitionBuilder: (child, animation) =>
-                            RotationTransition(
-                          turns:
-                              Tween(begin: 0.85, end: 1.0).animate(animation),
+                child:
+                    isCreating.value
+                        ? SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              tokens.accent,
+                            ),
+                          ),
+                        )
+                        // 閉時は合成アイコン、メニュー展開中は x（閉じる）。
+                        // `ExpandableFab` と同じ AnimatedSwitcher の回転+フェードで入れ替える。
+                        : AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          transitionBuilder:
+                              (child, animation) => RotationTransition(
+                                turns: Tween(
+                                  begin: 0.85,
+                                  end: 1.0,
+                                ).animate(animation),
+                                child: FadeTransition(
+                                  opacity: animation,
+                                  child: child,
+                                ),
+                              ),
                           child:
-                              FadeTransition(opacity: animation, child: child),
+                              open.value
+                                  ? Icon(
+                                    Icons.close,
+                                    key: const ValueKey(true),
+                                    size: 22,
+                                    color: tokens.accent,
+                                  )
+                                  : const _AddListIcon(key: ValueKey(false)),
                         ),
-                        child: open.value
-                            ? Icon(
-                                Icons.close,
-                                key: const ValueKey(true),
-                                size: 22,
-                                color: tokens.accent,
-                              )
-                            : const _AddListIcon(key: ValueKey(false)),
-                      ),
               ),
             ),
           ),
@@ -250,10 +262,12 @@ class CreateListFab extends HookConsumerWidget {
     // 破棄後の ref.read は使えないため、await を挟む前に
     // call クラスと notifier を束縛しておく。
     final shoppingListAdd = ref.read(shoppingListAddProvider(groupID: groupID));
-    final addShoppingListItem =
-        ref.read(addShoppingListItemProvider(groupID: groupID));
-    final currentShoppingListIDNotifier =
-        ref.read(currentShoppingListIDProvider.notifier);
+    final addShoppingListItem = ref.read(
+      addShoppingListItemProvider(groupID: groupID),
+    );
+    final currentShoppingListIDNotifier = ref.read(
+      currentShoppingListIDProvider.notifier,
+    );
     isCreating.value = true;
     try {
       final newShoppingList = await shoppingListAdd(
@@ -288,9 +302,10 @@ class CreateListFab extends HookConsumerWidget {
           ),
         ),
       );
-    } catch (e) {
+    } catch (e, st) {
+      logError(e, st);
       messenger.showSnackBar(
-        SnackBar(content: Text(e.toString())),
+        SnackBar(content: Text(describeError(e, st).message)),
       );
     } finally {
       // 破棄済みの ValueNotifier へ書き込まないようガードする。
@@ -314,29 +329,31 @@ class CreateListFab extends HookConsumerWidget {
     // 複製が Stream へ反映されると _ActiveShoppingList の ValueKey 差し替えで
     // この widget ごと破棄されるため、await を挟む前に call クラスと notifier を
     // 束縛しておく（_createTodayList と同じ理由）。
-    final shoppingListDuplicate =
-        ref.read(shoppingListDuplicateProvider(groupID: groupID));
-    final currentShoppingListIDNotifier =
-        ref.read(currentShoppingListIDProvider.notifier);
+    final shoppingListDuplicate = ref.read(
+      shoppingListDuplicateProvider(groupID: groupID),
+    );
+    final currentShoppingListIDNotifier = ref.read(
+      currentShoppingListIDProvider.notifier,
+    );
     isCreating.value = true;
     try {
       final newShoppingList = await shoppingListDuplicate(
         createUserID: appUser.id,
         groupID: groupID,
         sourceShoppingList: sourceShoppingList,
-        shoppingListItems: uncheckedOnly
-            ? shoppingListItems
-                .where((item) =>
-                    item.status == GroupShoppingListItemStatus.unchecked)
-                .toList()
-            : shoppingListItems,
+        shoppingListItems:
+            uncheckedOnly
+                ? shoppingListItems
+                    .where(
+                      (item) =>
+                          item.status == GroupShoppingListItemStatus.unchecked,
+                    )
+                    .toList()
+                : shoppingListItems,
       );
       currentShoppingListIDNotifier.update(newShoppingList.id);
       messenger.showSnackBar(
-        SnackBar(
-          persist: false,
-          content: const Text('リストを複製しました'),
-        ),
+        SnackBar(persist: false, content: const Text('リストを複製しました')),
       );
     } on ShoppingListLimitExceededException catch (e) {
       messenger.showSnackBar(
@@ -349,9 +366,10 @@ class CreateListFab extends HookConsumerWidget {
           ),
         ),
       );
-    } catch (e) {
+    } catch (e, st) {
+      logError(e, st);
       messenger.showSnackBar(
-        SnackBar(content: Text(e.toString())),
+        SnackBar(content: Text(describeError(e, st).message)),
       );
     } finally {
       // 破棄済みの ValueNotifier へ書き込まないようガードする。

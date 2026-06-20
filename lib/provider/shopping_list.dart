@@ -55,38 +55,40 @@ String groupShoppingListName({
 /// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
 /// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
 @Riverpod(dependencies: [groupDatabase])
-Stream<List<GroupShoppingList>> shoppingLists(Ref ref,
-    {required String groupID, required bool isPremium}) {
+Stream<List<GroupShoppingList>> shoppingLists(
+  Ref ref, {
+  required String groupID,
+  required bool isPremium,
+}) {
   if (groupID.trim().isEmpty) {
     throw ArgumentError.value(groupID, 'groupID', 'must not be empty');
   }
 
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   var query = database.shoppingListsReference().orderBy(
-      GroupShoppingListFirestoreKeys.createdDateTime,
-      descending: true);
+    GroupShoppingListFirestoreKeys.createdDateTime,
+    descending: true,
+  );
 
   if (!isPremium) {
     query = query.where(
       GroupShoppingListFirestoreKeys.createdDateTime,
       isGreaterThanOrEqualTo: Timestamp.fromDate(
-          ref.watch(hourlyTriggerProvider).subtract(const Duration(days: 30))),
+        ref.watch(hourlyTriggerProvider).subtract(const Duration(days: 30)),
+      ),
     );
   }
 
-  return query
-      .snapshots()
-      .map((event) => event.docs.map((doc) => doc.data()).toList());
+  return query.snapshots().map(
+    (event) => event.docs.map((doc) => doc.data()).toList(),
+  );
 }
 
 class ShoppingListAdd {
   final GroupDatabase database;
   final IsPremiumResolver isPremiumResolver;
 
-  ShoppingListAdd({
-    required this.database,
-    required this.isPremiumResolver,
-  });
+  ShoppingListAdd({required this.database, required this.isPremiumResolver});
 
   Future<GroupShoppingList> call({
     required String createUserID,
@@ -105,8 +107,9 @@ class ShoppingListAdd {
 
     final docRef = database.newGroupShoppingListReference();
     final createdDate = DateTime.now();
-    final sameDateCount =
-        await database.countOfGroupShoppingListsCreatedOn(date: createdDate);
+    final sameDateCount = await database.countOfGroupShoppingListsCreatedOn(
+      date: createdDate,
+    );
     final shoppingList = GroupShoppingList(
       id: docRef.id,
       createUserID: createUserID,
@@ -130,8 +133,8 @@ ShoppingListAdd shoppingListAdd(Ref ref, {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return ShoppingListAdd(
     database: database,
-    isPremiumResolver: () =>
-        ref.read(firestoreIsPremiumProvider).asData?.value ?? false,
+    isPremiumResolver:
+        () => ref.read(firestoreIsPremiumProvider).asData?.value ?? false,
   );
 }
 
@@ -141,8 +144,9 @@ class ShoppingListDelete {
   ShoppingListDelete({required this.database});
 
   Future<void> call({required String shoppingListID}) async {
-    final docRef =
-        database.shoppingListReference(shoppingListID: shoppingListID);
+    final docRef = database.shoppingListReference(
+      shoppingListID: shoppingListID,
+    );
     await docRef.delete();
   }
 }
@@ -158,11 +162,13 @@ class ShoppingListUpdate {
 
   ShoppingListUpdate({required this.database});
 
-  Future<void> call(
-      {required String shoppingListID,
-      required GroupShoppingList shoppingList}) async {
-    final docRef =
-        database.shoppingListReference(shoppingListID: shoppingListID);
+  Future<void> call({
+    required String shoppingListID,
+    required GroupShoppingList shoppingList,
+  }) async {
+    final docRef = database.shoppingListReference(
+      shoppingListID: shoppingListID,
+    );
     await docRef.set(shoppingList, SetOptions(merge: true));
   }
 }
@@ -210,15 +216,15 @@ class ShoppingListDuplicate {
   }
 }
 
-@Riverpod(dependencies: [
-  shoppingListAdd,
-  addShoppingListItem,
-])
-ShoppingListDuplicate shoppingListDuplicate(Ref ref,
-    {required String groupID}) {
+@Riverpod(dependencies: [shoppingListAdd, addShoppingListItem])
+ShoppingListDuplicate shoppingListDuplicate(
+  Ref ref, {
+  required String groupID,
+}) {
   final shoppingListAdd = ref.watch(shoppingListAddProvider(groupID: groupID));
-  final addShoppingListItem =
-      ref.watch(addShoppingListItemProvider(groupID: groupID));
+  final addShoppingListItem = ref.watch(
+    addShoppingListItemProvider(groupID: groupID),
+  );
   return ShoppingListDuplicate(
     shoppingListAdd: shoppingListAdd,
     addShoppingListItem: addShoppingListItem,

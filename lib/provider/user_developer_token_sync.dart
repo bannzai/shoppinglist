@@ -37,9 +37,9 @@ class UserDeveloperTokenSync {
       return;
     }
     await userDatabase.userReference().set(
-          appUser.copyWith(developerToken: Environment.developerToken),
-          SetOptions(merge: true),
-        );
+      appUser.copyWith(developerToken: Environment.developerToken),
+      SetOptions(merge: true),
+    );
   }
 }
 

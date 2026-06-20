@@ -26,9 +26,9 @@ class GhostItemRow extends StatelessWidget {
               child: Text(
                 hint,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontStyle: FontStyle.italic,
-                      color: tokens.neutral.ink3,
-                    ),
+                  fontStyle: FontStyle.italic,
+                  color: tokens.neutral.ink3,
+                ),
               ),
             ),
           ],
