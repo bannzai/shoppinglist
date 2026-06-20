@@ -17,10 +17,10 @@ class _RecordingShoppingListAdd extends ShoppingListAdd {
   int callCount = 0;
 
   _RecordingShoppingListAdd()
-      : super(
-          database: GroupDatabase(groupID: 'g'),
-          isPremiumResolver: () => false,
-        );
+    : super(
+        database: GroupDatabase(groupID: 'g'),
+        isPremiumResolver: () => false,
+      );
 
   @override
   Future<GroupShoppingList> call({
@@ -45,10 +45,10 @@ class _RecordingShoppingListAdd extends ShoppingListAdd {
 /// 無料プランの上限超過を再現するモック。
 class _LimitExceededShoppingListAdd extends ShoppingListAdd {
   _LimitExceededShoppingListAdd()
-      : super(
-          database: GroupDatabase(groupID: 'g'),
-          isPremiumResolver: () => false,
-        );
+    : super(
+        database: GroupDatabase(groupID: 'g'),
+        isPremiumResolver: () => false,
+      );
 
   @override
   Future<GroupShoppingList> call({
@@ -71,7 +71,7 @@ class _RecordingAddShoppingListItem extends AddShoppingListItem {
   int? lastOrder;
 
   _RecordingAddShoppingListItem()
-      : super(database: GroupDatabase(groupID: 'g'));
+    : super(database: GroupDatabase(groupID: 'g'));
 
   @override
   Future<GroupShoppingListItem> call({
@@ -109,10 +109,10 @@ class _RecordingShoppingListDuplicate extends ShoppingListDuplicate {
   List<GroupShoppingListItem>? lastShoppingListItems;
 
   _RecordingShoppingListDuplicate()
-      : super(
-          shoppingListAdd: _RecordingShoppingListAdd(),
-          addShoppingListItem: _RecordingAddShoppingListItem(),
-        );
+    : super(
+        shoppingListAdd: _RecordingShoppingListAdd(),
+        addShoppingListItem: _RecordingAddShoppingListItem(),
+      );
 
   @override
   Future<GroupShoppingList> call({
@@ -260,8 +260,9 @@ void main() {
     expect(find.byIcon(Icons.receipt_long), findsOneWidget);
   });
 
-  testWidgets('メニューの「今日の日付でリストを追加」はリスト作成 → 表示切替 → 空アイテム追加まで連鎖する',
-      (tester) async {
+  testWidgets('メニューの「今日の日付でリストを追加」はリスト作成 → 表示切替 → 空アイテム追加まで連鎖する', (
+    tester,
+  ) async {
     final recordingListAdd = _RecordingShoppingListAdd();
     final recordingItemAdd = _RecordingAddShoppingListItem();
     final recordingDuplicate = _RecordingShoppingListDuplicate();

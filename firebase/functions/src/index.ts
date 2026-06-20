@@ -67,13 +67,6 @@ if (
 
 if (
   !process.env.FUNCTION_NAME ||
-  process.env.FUNCTION_NAME === "createShoppingList"
-) {
-  exports.createShoppingList = require("./functions/createShoppingList/function");
-}
-
-if (
-  !process.env.FUNCTION_NAME ||
   process.env.FUNCTION_NAME === "createGroup"
 ) {
   exports.createGroup = require("./functions/createGroup/function");
@@ -91,6 +84,13 @@ if (
   process.env.FUNCTION_NAME === "deleteShoppingListItemImage"
 ) {
   exports.deleteShoppingListItemImage = require("./functions/deleteShoppingListItemImage/function");
+}
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "uploadReceiptImage"
+) {
+  exports.uploadReceiptImage = require("./functions/uploadReceiptImage/function");
 }
 
 if (

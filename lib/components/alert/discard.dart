@@ -14,10 +14,7 @@ class DiscardDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Icon(
-        Icons.warning,
-        color: Theme.of(context).primaryColor,
-      ),
+      title: Icon(Icons.warning, color: Theme.of(context).primaryColor),
       content: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.min,
@@ -26,14 +23,12 @@ class DiscardDialog extends StatelessWidget {
             Text(
               title,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(
-              height: 15,
-            ),
+            const SizedBox(height: 15),
           ],
           message,
         ],
@@ -51,16 +46,17 @@ void showDiscardDialog(
 }) {
   showDialog(
     context: context,
-    builder: (context) => DiscardDialog(
-      title: title,
-      message: Text(
-        message,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+    builder:
+        (context) => DiscardDialog(
+          title: title,
+          message: Text(
+            message,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w300,
               color: Theme.of(context).colorScheme.onSurface,
             ),
-      ),
-      actions: actions,
-    ),
+          ),
+          actions: actions,
+        ),
   );
 }

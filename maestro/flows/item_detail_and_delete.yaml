@@ -2,14 +2,12 @@ appId: ${APP_ID}
 ---
 - runFlow: shared/anonymous_sign_in.yaml
 
-# アイテムを追加
-- tapOn: "アイテムを追加"
+# アイテムを追加（design v2: 空入力行「タップで入力開始」が追加導線）
+- tapOn: "タップで入力開始"
 - inputText: "醤油"
 - pressKey: enter
-# 空アイテムを削除
+# 2 回目の Enter で空の入力行を畳む
 - pressKey: enter
-# hideKeyboardはスクリーン上のリンクを誤タップする可能性があるため、
-# AppBarタイトルの安全な領域をタップしてキーボードを閉じる
 - hideKeyboard
 - waitForAnimationToEnd
 
@@ -24,22 +22,29 @@ appId: ${APP_ID}
 # カラーを選択（赤）
 # カラー円に Semantics(label: preset.label) を設定済み
 - tapOn: "赤"
-
-# 保存（ボタンはキーボードの上に常に固定表示）
-- tapOn: "保存"
 - waitForAnimationToEnd
+
+# 説明フィールドのフォーカスでキーボードが残りタップではシートが閉じないため、
+# ドラッグハンドル(上部)から下方向へスワイプしてシートを dismiss する（=変更を自動保存）。
+- swipe:
+    start: "50%, 8%"
+    end: "50%, 75%"
+- waitForAnimationToEnd
+
+# 再度詳細を開いて、説明・カラーが自動保存されていることを確認
+- tapOn: "アイテム詳細"
+- assertVisible: "キッコーマンの丸大豆"
 - takeScreenshot: screenshots/item_detail_01_with_memo_color
 
-# 再度詳細を開いて削除
-- tapOn: "アイテム詳細"
+# 削除（タイトル右上のゴミ箱アイコン。tooltip: 'アイテムを削除'）
 - assertVisible: "説明"
-- tapOn: "削除"
+- tapOn: "アイテムを削除"
 - assertVisible: "このアイテムを削除しますか？"
 - tapOn:
     text: "削除"
     index: 0
 - waitForAnimationToEnd
 
-# 空リスト状態に戻る
-- assertVisible: "アイテムを追加"
+# 空リスト状態に戻る（design v2 の空入力行）
+- assertVisible: "タップで入力開始"
 - takeScreenshot: screenshots/item_detail_02_after_delete

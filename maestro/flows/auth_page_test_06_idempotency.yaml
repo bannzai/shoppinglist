@@ -5,25 +5,24 @@ appId: ${APP_ID}
     clearState: false
     clearKeychain: false
 - waitForAnimationToEnd
-# ホーム画面が表示されるまで待機（既にログイン済み）
+# ホーム画面が表示されるまで待機（既にログイン済み・clearState:false で前段サインインを継承）。
+# 「タップで入力開始」は空リスト時のみ表示されリスト内容に依存するため、リスト内容に
+# 依らず常にホーム上部バーに出る「リスト設定」アイコン(tooltip)をホーム表示の指標にする。
 - extendedWaitUntil:
-    visible: "アイテムを追加"
+    visible: "リスト設定"
     timeout: 30000
-# ホーム画面を確認（リストが2026-03-25の1つだけであること）
+# ホーム画面を確認
 - takeScreenshot: maestro/test-results/auth_page_06_relaunch_home
-# 設定タブへ移動
+# 設定（トップバーアイコン）→ 開発者オプション（下部のためスクロールで探す）
 - tapOn:
     text: "設定.*"
     index: 0
 - waitForAnimationToEnd
-# 下にスクロールして開発者オプションを見つける
-- swipe:
-    start: "50%,80%"
-    end: "50%,20%"
-- swipe:
-    start: "50%,80%"
-    end: "50%,20%"
-# 開発者オプションをタップ
+- scrollUntilVisible:
+    element:
+      text: "開発者オプション"
+    direction: DOWN
+    timeout: 20000
 - tapOn: "開発者オプション"
 - waitForAnimationToEnd
 # 開発者オプションページでUID/defaultGroupIDが同じことを確認

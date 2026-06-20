@@ -6,25 +6,30 @@ appId: ${APP_ID}
 
 # 設定タブ → 開発者オプション画面へ遷移
 - runFlow: ../shared/open_developer_options.yaml
-- extendedWaitUntil:
-    visible: "デバッグユーザー作成"
-    timeout: 10000
+# デバッグ系タイルは開発者オプション下部にありフォールド下になり得るためスクロールで探す
+- scrollUntilVisible:
+    element:
+      text: "デバッグユーザー作成"
+    direction: DOWN
+    timeout: 15000
 - tapOn: "デバッグユーザー作成"
 
-# 操作完了を待つ
-- extendedWaitUntil:
-    visible: ".*完了"
+# 結果メッセージ "<action> 完了" は開発者オプション上部（タイル群の上, page.dart:164）に
+# 出る。タイル探索で下にスクロール済みのため、上方向にスクロールして完了を確認する。
+- scrollUntilVisible:
+    element:
+      text: ".*完了"
+    direction: UP
     timeout: 15000
 
-# 開発者オプションページから戻る
+# 開発者オプション → 設定 → home へ戻る（design v2 にボトムタブは無い。
+# grant_premium_via_debug.yaml と同じ Back + 設定×(7%,10%) の復帰手順）
 - tapOn: "Back"
 - waitForAnimationToEnd
-
-# 買い物リストタブに戻る
 - tapOn:
-    point: "25%,93%"
+    point: "7%,10%"
 - waitForAnimationToEnd
 - extendedWaitUntil:
-    visible: "アイテムを追加"
+    visible: "タップで入力開始"
     timeout: 10000
 - takeScreenshot: screenshots/virtual_pairing/02_debug_user_created

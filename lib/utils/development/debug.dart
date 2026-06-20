@@ -10,8 +10,11 @@ void printWrapped(String? message, {int? wrapWidth}) {
       debugPrintSynchronously('null');
     } else {
       final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
-      pattern.allMatches(message).forEach(
-          (match) => debugPrintSynchronously('[SL:DEBUG] ${match.group(0)}'));
+      pattern
+          .allMatches(message)
+          .forEach(
+            (match) => debugPrintSynchronously('[SL:DEBUG] ${match.group(0)}'),
+          );
     }
   }
 }

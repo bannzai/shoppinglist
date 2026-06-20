@@ -2,20 +2,21 @@ appId: ${APP_ID}
 ---
 - runFlow: shared/anonymous_sign_in.yaml
 
-# 買い物リストページが表示されること
-- assertVisible: ".*"
-- takeScreenshot: screenshots/display_period_01_home
-
-# 新規ユーザーではリスト作成日が本日のため30日メッセージは表示されない
-# リスト設定で保存期間が「30日」と表示されることを確認する
-
-# リスト設定を開いて保存期間の表示を確認（ギアアイコンのtooltip「リスト設定」を使用）
+# 新規ユーザーは非プレミアムのため、リスト設定の「保存期間」セクションに
+# 「作成から30日間」と表示されることを確認する（design v2 SSOT 文言）。
+# リスト設定はギアアイコン（tooltip→accessibilityText「リスト設定」）から開く。
 - tapOn: "リスト設定"
 - extendedWaitUntil:
     visible: "買い物リスト設定"
-    timeout: 5000
-- assertVisible: "買い物リストの保存期間"
-- assertVisible: "作成から30日間表示されます"
+    timeout: 8000
+# 保存期間セクションは画面下方にあるためスクロールして表示させる
+- scrollUntilVisible:
+    element:
+      text: "保存期間"
+    direction: DOWN
+    timeout: 15000
+- assertVisible: "保存期間"
+- assertVisible: "作成から30日間"
 - takeScreenshot: screenshots/display_period_03_setting_free_user
 
 # 設定を閉じる

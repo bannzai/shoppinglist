@@ -6,25 +6,28 @@ appId: ${APP_ID}
 
 # 設定タブ → 開発者オプション画面へ遷移
 - runFlow: ../shared/open_developer_options.yaml
-- extendedWaitUntil:
-    visible: "グループにデバッグユーザーを追加"
-    timeout: 10000
+- scrollUntilVisible:
+    element:
+      text: "グループにデバッグユーザーを追加"
+    direction: DOWN
+    timeout: 15000
 - tapOn: "グループにデバッグユーザーを追加"
 
-# 操作完了を待つ
-- extendedWaitUntil:
-    visible: ".*完了"
+# 結果メッセージ "<action> 完了" は開発者オプション上部に出る。下スクロール済みのため
+# 上方向にスクロールして完了を確認する。
+- scrollUntilVisible:
+    element:
+      text: ".*完了"
+    direction: UP
     timeout: 15000
 
-# 開発者オプションページから戻る
+# 開発者オプション → 設定 → home へ戻る（design v2 にボトムタブは無い）
 - tapOn: "Back"
 - waitForAnimationToEnd
-
-# 買い物リストタブに戻る
 - tapOn:
-    point: "25%,93%"
+    point: "7%,10%"
 - waitForAnimationToEnd
 - extendedWaitUntil:
-    visible: "アイテムを追加"
+    visible: "タップで入力開始"
     timeout: 10000
 - takeScreenshot: screenshots/virtual_pairing/03_debug_user_added

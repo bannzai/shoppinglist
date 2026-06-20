@@ -18,14 +18,15 @@ String _$currentGroupIDHash() => r'249ca4f9127397143dc3d1b1e275770ac31987a6';
 @ProviderFor(CurrentGroupID)
 final currentGroupIDProvider =
     AutoDisposeNotifierProvider<CurrentGroupID, String?>.internal(
-  CurrentGroupID.new,
-  name: r'currentGroupIDProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$currentGroupIDHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      CurrentGroupID.new,
+      name: r'currentGroupIDProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$currentGroupIDHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$CurrentGroupID = AutoDisposeNotifier<String?>;
 // ignore_for_file: type=lint

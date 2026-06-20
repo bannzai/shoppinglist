@@ -14,9 +14,10 @@ String _$firebaseUserChangesHash() =>
 final firebaseUserChangesProvider = StreamProvider<User?>.internal(
   firebaseUserChanges,
   name: r'firebaseUserChangesProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$firebaseUserChangesHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$firebaseUserChangesHash,
   dependencies: const <ProviderOrFamily>[],
   allTransitiveDependencies: const <ProviderOrFamily>{},
 );

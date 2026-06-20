@@ -7,17 +7,16 @@ appId: ${APP_ID}
     index: 0
 - waitForAnimationToEnd
 
-- swipe:
-    start: "50%,80%"
-    end: "50%,20%"
-- swipe:
-    start: "50%,80%"
-    end: "50%,20%"
-- waitForAnimationToEnd
-- tapOn:
-    text: ".*プレミアム会員.*"
+# design v2: 設定上部（プロフィール直下）のプレミアムカード。非プレミアム時は
+# 「はじめる」pill が showPaywall を開く（カード自体は非タップ）。
+- scrollUntilVisible:
+    element:
+      text: "はじめる"
+    direction: DOWN
+    timeout: 15000
+- tapOn: "はじめる"
 - extendedWaitUntil:
-    visible: "プレミアムプラン"
+    visible: "購入"
     timeout: 15000
 
 # 表示順 index で tap（monthly=0 / annual=1 / lifetime=2）

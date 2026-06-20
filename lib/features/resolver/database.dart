@@ -11,6 +11,7 @@ import 'package:shoppinglist/entity/app_user_private.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_list_receipt.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
@@ -25,15 +26,24 @@ abstract class _CollectionPath {
   static const String groups = '/groups';
   static String shoppingLists({required String groupID}) =>
       '/groups/$groupID/shoppingLists';
-  static String shoppingListItems(
-          {required String groupID, required String shoppingListID}) =>
+  static String shoppingListItems({
+    required String groupID,
+    required String shoppingListID,
+  }) =>
       '/groups/$groupID/shoppingLists/$shoppingListID/items';
+  static String receipts({
+    required String groupID,
+    required String shoppingListID,
+  }) =>
+      '/groups/$groupID/shoppingLists/$shoppingListID/receipts';
   static String shoppingLocations({required String groupID}) =>
       '/groups/$groupID/shoppingLocations';
   static String userCategoryAxes({required String groupID}) =>
       '/groups/$groupID/userCategoryAxes';
-  static String categories(
-          {required String groupID, required String categoryAxisID}) =>
+  static String categories({
+    required String groupID,
+    required String categoryAxisID,
+  }) =>
       '/groups/$groupID/userCategoryAxes/$categoryAxisID/categories';
   static String privates({required String userID}) => '/users/$userID/privates';
   static String userProfiles({required String groupID}) =>
@@ -110,8 +120,9 @@ class GroupDatabase {
   /// 指定日(ローカルタイム)に作成された買い物リスト数を返す。
   /// 同日内のリスト名連番(`yyyy-MM-dd (N)`)の採番に使用する。
   /// 日付が変われば 0 に戻るため、日付をまたいで連番が増え続けることはない。
-  Future<int> countOfGroupShoppingListsCreatedOn(
-      {required DateTime date}) async {
+  Future<int> countOfGroupShoppingListsCreatedOn({
+    required DateTime date,
+  }) async {
     final startOfDay = DateTime(date.year, date.month, date.day);
     final aggregated = await firestore
         .collection(_CollectionPath.shoppingLists(groupID: groupID))
@@ -121,8 +132,9 @@ class GroupDatabase {
         )
         .where(
           GroupShoppingListFirestoreKeys.createdDateTime,
-          isLessThan:
-              Timestamp.fromDate(startOfDay.add(const Duration(days: 1))),
+          isLessThan: Timestamp.fromDate(
+            startOfDay.add(const Duration(days: 1)),
+          ),
         )
         .count()
         .get();
@@ -161,8 +173,9 @@ class GroupDatabase {
             toFirestore: GroupShoppingList.toFirestore,
           );
 
-  CollectionReference<GroupShoppingListItem> shoppingListItemsReference(
-          {required String shoppingListID}) =>
+  CollectionReference<GroupShoppingListItem> shoppingListItemsReference({
+    required String shoppingListID,
+  }) =>
       firestore
           .collection(
             _CollectionPath.shoppingListItems(
@@ -180,12 +193,67 @@ class GroupDatabase {
     required String itemID,
   }) =>
       firestore
-          .collection(_CollectionPath.shoppingListItems(
-              groupID: groupID, shoppingListID: shoppingListID))
+          .collection(
+            _CollectionPath.shoppingListItems(
+              groupID: groupID,
+              shoppingListID: shoppingListID,
+            ),
+          )
           .doc(itemID)
           .withConverter(
             fromFirestore: GroupShoppingListItem.fromFirestore,
             toFirestore: GroupShoppingListItem.toFirestore,
+          );
+
+  /// 買い物リストに紐づくレシートのコレクション参照。
+  CollectionReference<GroupShoppingListReceipt> receiptsReference({
+    required String shoppingListID,
+  }) =>
+      firestore
+          .collection(
+            _CollectionPath.receipts(
+              groupID: groupID,
+              shoppingListID: shoppingListID,
+            ),
+          )
+          .withConverter(
+            fromFirestore: GroupShoppingListReceipt.fromFirestore,
+            toFirestore: GroupShoppingListReceipt.toFirestore,
+          );
+
+  /// 既存レシートのドキュメント参照。
+  DocumentReference<GroupShoppingListReceipt> receiptReference({
+    required String shoppingListID,
+    required String receiptID,
+  }) =>
+      firestore
+          .collection(
+            _CollectionPath.receipts(
+              groupID: groupID,
+              shoppingListID: shoppingListID,
+            ),
+          )
+          .doc(receiptID)
+          .withConverter(
+            fromFirestore: GroupShoppingListReceipt.fromFirestore,
+            toFirestore: GroupShoppingListReceipt.toFirestore,
+          );
+
+  /// 自動生成 ID を持つ新規レシートのドキュメント参照。
+  DocumentReference<GroupShoppingListReceipt> newReceiptReference({
+    required String shoppingListID,
+  }) =>
+      firestore
+          .collection(
+            _CollectionPath.receipts(
+              groupID: groupID,
+              shoppingListID: shoppingListID,
+            ),
+          )
+          .doc()
+          .withConverter(
+            fromFirestore: GroupShoppingListReceipt.fromFirestore,
+            toFirestore: GroupShoppingListReceipt.toFirestore,
           );
 
   CollectionReference<GroupShoppingLocation> shoppingLocationsReference() =>
@@ -246,8 +314,12 @@ class GroupDatabase {
     required String categoryAxisID,
   }) =>
       firestore
-          .collection(_CollectionPath.categories(
-              groupID: groupID, categoryAxisID: categoryAxisID))
+          .collection(
+            _CollectionPath.categories(
+              groupID: groupID,
+              categoryAxisID: categoryAxisID,
+            ),
+          )
           .withConverter(
             fromFirestore: GroupCategory.fromFirestore,
             toFirestore: GroupCategory.toFirestore,
@@ -258,8 +330,12 @@ class GroupDatabase {
     required String categoryID,
   }) =>
       firestore
-          .collection(_CollectionPath.categories(
-              groupID: groupID, categoryAxisID: categoryAxisID))
+          .collection(
+            _CollectionPath.categories(
+              groupID: groupID,
+              categoryAxisID: categoryAxisID,
+            ),
+          )
           .doc(categoryID)
           .withConverter(
             fromFirestore: GroupCategory.fromFirestore,
@@ -270,8 +346,12 @@ class GroupDatabase {
     required String categoryAxisID,
   }) =>
       firestore
-          .collection(_CollectionPath.categories(
-              groupID: groupID, categoryAxisID: categoryAxisID))
+          .collection(
+            _CollectionPath.categories(
+              groupID: groupID,
+              categoryAxisID: categoryAxisID,
+            ),
+          )
           .doc()
           .withConverter(
             fromFirestore: GroupCategory.fromFirestore,
@@ -316,12 +396,11 @@ class UserDatabaseResolver extends HookConsumerWidget {
     if (user != null) {
       return ProviderScope(
         overrides: [
-          userDatabaseProvider
-              .overrideWith((ref) => UserDatabase(userID: user.uid))
+          userDatabaseProvider.overrideWith(
+            (ref) => UserDatabase(userID: user.uid),
+          ),
         ],
-        child: Consumer(
-          builder: ((context, ref, child) => builder(context)),
-        ),
+        child: Consumer(builder: ((context, ref, child) => builder(context))),
       );
     } else {
       return LaunchLoading.shared();

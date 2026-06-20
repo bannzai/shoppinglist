@@ -43,9 +43,10 @@ class InvitationCodeDialog extends HookWidget {
     final neutral = context.appTheme.neutral;
     final remaining = expiresDateTime.difference(now.value);
     final isExpired = remaining.isNegative;
-    final remainingText = isExpired
-        ? '有効期限切れ'
-        : '有効期限: 7日間 ・ 残り ${remaining.inDays}日${remaining.inHours.remainder(24)}時間';
+    final remainingText =
+        isExpired
+            ? '有効期限切れ'
+            : '有効期限: 7日間 ・ 残り ${remaining.inDays}日${remaining.inHours.remainder(24)}時間';
 
     return AppDialogShell(
       child: Column(
@@ -54,9 +55,9 @@ class InvitationCodeDialog extends HookWidget {
           Text(
             '招待コード',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: neutral.ink2,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: neutral.ink2,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 8),
           DashedBorderBox(
@@ -84,10 +85,9 @@ class InvitationCodeDialog extends HookWidget {
           const SizedBox(height: 10),
           Text(
             remainingText,
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall
-                ?.copyWith(color: neutral.ink3),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: neutral.ink3),
           ),
           const SizedBox(height: 16),
           Row(
@@ -101,7 +101,9 @@ class InvitationCodeDialog extends HookWidget {
                   expanded: true,
                   onPressed: () async {
                     analytics.logEvent(
-                        name: 'tap_copy_list_invite_code', parameters: null);
+                      name: 'tap_copy_list_invite_code',
+                      parameters: null,
+                    );
                     await Clipboard.setData(
                       ClipboardData(text: invitationCode),
                     );
@@ -121,14 +123,17 @@ class InvitationCodeDialog extends HookWidget {
                   expanded: true,
                   onPressed: () async {
                     analytics.logEvent(
-                        name: 'tap_share_list_invite_code', parameters: null);
+                      name: 'tap_share_list_invite_code',
+                      parameters: null,
+                    );
                     final box = context.findRenderObject() as RenderBox?;
                     await SharePlus.instance.share(
                       ShareParams(
                         text: '買い物リストの招待コード: $invitationCode',
-                        sharePositionOrigin: box == null
-                            ? null
-                            : box.localToGlobal(Offset.zero) & box.size,
+                        sharePositionOrigin:
+                            box == null
+                                ? null
+                                : box.localToGlobal(Offset.zero) & box.size,
                       ),
                     );
                   },

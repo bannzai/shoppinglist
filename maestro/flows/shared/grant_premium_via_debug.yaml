@@ -29,13 +29,11 @@ appId: ${APP_ID}
     visible: "プレミアム付与 完了"
     timeout: 30000
 
-# 開発者オプション画面から設定タブに戻る。設定画面の scroll 位置は「開発者オプション」
-# 付近のまま残るため、買い物リストタブに切り替えて初期状態に戻す。
-# Flutter BottomNavigationBar のタブラベルは Maestro の text マッチで安定に拾えない
-# （Semantics merge 問題）ため、画面下端の左タブを座標タップする。iPhone 16 Plus
-# (430x932 points) でタブバー左タブ中心がおおよそ 25%,93% 付近。
+# 開発者オプション画面 → 設定画面 → 買い物リスト画面(ホーム)へ戻して初期状態に戻す。
+# design v2 では下部タブは廃止されているため、設定画面は AppBar 左上の × (Navigator.pop)
+# で閉じてホームに戻る。× は Flutter の Key/icon が Maestro に露出しないため座標タップする。
 - tapOn: "Back"
 - waitForAnimationToEnd
 - tapOn:
-    point: "25%,93%"
+    point: "7%,10%"
 - waitForAnimationToEnd

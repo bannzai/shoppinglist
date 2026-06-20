@@ -25,14 +25,23 @@ appId: ${APP_ID}
       visible: "グループ名"
     commands:
       - inputText: "テストグループ"
-      - hideKeyboard
+      # hideKeyboard は iOS で不安定。「作成する」はキーボードの上にあるため直接タップする。
       - tapOn: "作成する"
+      # 作成後「メンバーを招待」ダイアログ（招待コード）が出るため閉じる
+      - extendedWaitUntil:
+          visible: "閉じる"
+          timeout: 10000
+      - tapOn: "閉じる"
       - extendedWaitUntil:
           visible: "グループ管理"
           timeout: 15000
-      # 上限到達後に再度FABをタップ
-      - tapOn: "グループ作成"
+      # 上限到達後、FAB はロックされ「グループ作成」ラベルが無くなるため optional でタップを試みる。
+      - tapOn:
+          text: "グループ作成"
+          optional: true
       - waitForAnimationToEnd
+      # FAB ロックで作成画面（グループ名）が開かないことを確認する。
+      - assertNotVisible: "グループ名"
 
 # 上限超過時、グループ管理画面に留まりFABにロックアイコンが表示されること
 # SnackBarはFlutterオーバーレイのためMaestroで検出困難。ロジックはunit testでカバー。

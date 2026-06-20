@@ -18,7 +18,7 @@ final userDatabaseProvider = Provider<UserDatabase>.internal(
   dependencies: <ProviderOrFamily>[firebaseUserChangesProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     firebaseUserChangesProvider,
-    ...?firebaseUserChangesProvider.allTransitiveDependencies
+    ...?firebaseUserChangesProvider.allTransitiveDependencies,
   },
 );
 
@@ -58,21 +58,15 @@ class GroupDatabaseFamily extends Family<GroupDatabase> {
   const GroupDatabaseFamily();
 
   /// See also [groupDatabase].
-  GroupDatabaseProvider call({
-    required String groupID,
-  }) {
-    return GroupDatabaseProvider(
-      groupID: groupID,
-    );
+  GroupDatabaseProvider call({required String groupID}) {
+    return GroupDatabaseProvider(groupID: groupID);
   }
 
   @override
   GroupDatabaseProvider getProviderOverride(
     covariant GroupDatabaseProvider provider,
   ) {
-    return call(
-      groupID: provider.groupID,
-    );
+    return call(groupID: provider.groupID);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies =
@@ -95,24 +89,20 @@ class GroupDatabaseFamily extends Family<GroupDatabase> {
 /// See also [groupDatabase].
 class GroupDatabaseProvider extends Provider<GroupDatabase> {
   /// See also [groupDatabase].
-  GroupDatabaseProvider({
-    required String groupID,
-  }) : this._internal(
-          (ref) => groupDatabase(
-            ref as GroupDatabaseRef,
-            groupID: groupID,
-          ),
-          from: groupDatabaseProvider,
-          name: r'groupDatabaseProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$groupDatabaseHash,
-          dependencies: GroupDatabaseFamily._dependencies,
-          allTransitiveDependencies:
-              GroupDatabaseFamily._allTransitiveDependencies,
-          groupID: groupID,
-        );
+  GroupDatabaseProvider({required String groupID})
+    : this._internal(
+        (ref) => groupDatabase(ref as GroupDatabaseRef, groupID: groupID),
+        from: groupDatabaseProvider,
+        name: r'groupDatabaseProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$groupDatabaseHash,
+        dependencies: GroupDatabaseFamily._dependencies,
+        allTransitiveDependencies:
+            GroupDatabaseFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
 
   GroupDatabaseProvider._internal(
     super._createNotifier, {
@@ -177,5 +167,6 @@ class _GroupDatabaseProviderElement extends ProviderElement<GroupDatabase>
   @override
   String get groupID => (origin as GroupDatabaseProvider).groupID;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

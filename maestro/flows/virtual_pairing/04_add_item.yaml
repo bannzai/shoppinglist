@@ -9,15 +9,20 @@ appId: ${APP_ID}
 
 # デフォルトのアイテムメッセージ "debug_item_test" をそのまま使用
 
-# アイテム追加ボタンをタップ
-- extendedWaitUntil:
-    visible: "デバッグユーザーとしてアイテム追加"
-    timeout: 10000
+# アイテム追加ボタンをタップ（下部タイルのためスクロールで探す）
+- scrollUntilVisible:
+    element:
+      text: "デバッグユーザーとしてアイテム追加"
+    direction: DOWN
+    timeout: 15000
 - tapOn: "デバッグユーザーとしてアイテム追加"
 
-# 操作完了を待つ
-- extendedWaitUntil:
-    visible: ".*完了"
+# 結果メッセージ "<action> 完了" は開発者オプション上部に出る。下スクロール済みのため
+# 上方向にスクロールして完了を確認する。
+- scrollUntilVisible:
+    element:
+      text: ".*完了"
+    direction: UP
     timeout: 15000
 
 # 開発者オプションページから戻る

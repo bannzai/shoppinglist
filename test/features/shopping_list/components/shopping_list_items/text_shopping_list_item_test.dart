@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
+import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/features/previews/mock/mock_provider_overrides.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
@@ -44,7 +47,7 @@ class _RecordingAddShoppingListItem extends AddShoppingListItem {
   final List<({String message, int order})> calls = [];
 
   _RecordingAddShoppingListItem()
-      : super(database: GroupDatabase(groupID: mockGroupID));
+    : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<GroupShoppingListItem> call({
@@ -67,7 +70,7 @@ class _RecordingShoppingListItemBatchUpdate
   final List<List<GroupShoppingListItem>> calls = [];
 
   _RecordingShoppingListItemBatchUpdate()
-      : super(database: GroupDatabase(groupID: mockGroupID));
+    : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<void> call({
@@ -84,7 +87,7 @@ class _RecordingUpdateShoppingListItem extends UpdateShoppingListItem {
   final List<GroupShoppingListItem> calls = [];
 
   _RecordingUpdateShoppingListItem()
-      : super(database: GroupDatabase(groupID: mockGroupID));
+    : super(database: GroupDatabase(groupID: mockGroupID));
 
   @override
   Future<void> call({
@@ -105,9 +108,9 @@ class _RecordingGroupDatabase extends GroupDatabase {
   _RecordingGroupDatabase() : super(groupID: mockGroupID);
 
   @override
-  CollectionReference<GroupShoppingListItem> shoppingListItemsReference(
-          {required String shoppingListID}) =>
-      _RecordingShoppingListItemsReference(deletedItemIDs: deletedItemIDs);
+  CollectionReference<GroupShoppingListItem> shoppingListItemsReference({
+    required String shoppingListID,
+  }) => _RecordingShoppingListItemsReference(deletedItemIDs: deletedItemIDs);
 }
 
 // ignore: subtype_of_sealed_class
@@ -122,7 +125,9 @@ class _RecordingShoppingListItemsReference extends Fake
   @override
   DocumentReference<GroupShoppingListItem> doc([String? path]) =>
       _RecordingShoppingListItemReference(
-          itemID: path!, deletedItemIDs: deletedItemIDs);
+        itemID: path!,
+        deletedItemIDs: deletedItemIDs,
+      );
 }
 
 // ignore: subtype_of_sealed_class
@@ -135,8 +140,10 @@ class _RecordingShoppingListItemReference extends Fake
   /// delete() されたアイテムの id の記録先 ([_RecordingGroupDatabase] と共有)。
   final List<String> deletedItemIDs;
 
-  _RecordingShoppingListItemReference(
-      {required this.itemID, required this.deletedItemIDs});
+  _RecordingShoppingListItemReference({
+    required this.itemID,
+    required this.deletedItemIDs,
+  });
 
   @override
   Future<void> delete() async => deletedItemIDs.add(itemID);
@@ -146,6 +153,7 @@ Future<void> _pump(
   WidgetTester tester,
   GroupShoppingListItem item, {
   int? reorderIndex,
+  bool showAddCategoryButton = false,
   List<Override> extraOverrides = const [],
 }) async {
   // ignore: invalid_use_of_visible_for_testing_member
@@ -159,15 +167,14 @@ Future<void> _pump(
         ...extraOverrides,
       ],
       child: MaterialApp(
-        theme: buildAppTheme(
-          accent: AccentPreset.shu,
-        ),
+        theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: TextShoppingListItemWidget(
             groupID: mockGroupID,
             textShoppingListItem: item,
             shoppingListItems: [item],
             reorderIndex: reorderIndex,
+            showAddCategoryButton: showAddCategoryButton,
           ),
         ),
       ),
@@ -322,11 +329,19 @@ void main() {
     });
 
     testWidgets(
-        'reorderIndex 指定時は長押しドラッグ用の ReorderableDelayedDragStartListener でラップする',
-        (tester) async {
-      await _pump(tester, _item(id: 'filled', message: '牛乳'), reorderIndex: 0);
-      expect(find.byType(ReorderableDelayedDragStartListener), findsOneWidget);
-    });
+      'reorderIndex 指定時は長押しドラッグ用の ReorderableDelayedDragStartListener でラップする',
+      (tester) async {
+        await _pump(
+          tester,
+          _item(id: 'filled', message: '牛乳'),
+          reorderIndex: 0,
+        );
+        expect(
+          find.byType(ReorderableDelayedDragStartListener),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('reorderIndex が null（入力行）のときは長押しドラッグ対象にしない', (tester) async {
       await _pump(tester, _item(id: 'empty', message: ''));
@@ -336,19 +351,20 @@ void main() {
 
   group('TextShoppingListItemWidget の入力フィールド（Enter でキーボードを閉じない）', () {
     testWidgets(
-        'TextField は textInputAction.newline と onChanged を持ち、next/onSubmitted は使わない',
-        (tester) async {
-      await _pump(tester, _item(id: 'filled', message: '牛乳'));
-      final textField = tester.widget<TextField>(find.byType(TextField));
-      // actionable な action（next/done 等）は performAction で入力接続を close→reopen
-      // （flutter#84240）してソフトキーボードを一瞬閉じるため使わない。改行(Enter)は
-      // newline で受け、確定は onChanged の改行検知で行う。この設定が外れると
-      // 「Enter のたびにキーボードが開閉する」回帰が再発する（fix-350 で実機計測して確定）。
-      expect(textField.textInputAction, TextInputAction.newline);
-      expect(textField.onChanged, isNotNull);
-      expect(textField.onSubmitted, isNull);
-      expect(textField.onEditingComplete, isNull);
-    });
+      'TextField は textInputAction.newline と onChanged を持ち、next/onSubmitted は使わない',
+      (tester) async {
+        await _pump(tester, _item(id: 'filled', message: '牛乳'));
+        final textField = tester.widget<TextField>(find.byType(TextField));
+        // actionable な action（next/done 等）は performAction で入力接続を close→reopen
+        // （flutter#84240）してソフトキーボードを一瞬閉じるため使わない。改行(Enter)は
+        // newline で受け、確定は onChanged の改行検知で行う。この設定が外れると
+        // 「Enter のたびにキーボードが開閉する」回帰が再発する（fix-350 で実機計測して確定）。
+        expect(textField.textInputAction, TextInputAction.newline);
+        expect(textField.onChanged, isNotNull);
+        expect(textField.onSubmitted, isNull);
+        expect(textField.onEditingComplete, isNull);
+      },
+    );
 
     testWidgets('非編集(未フォーカス)の行はテキスト選択を無効化して長押しを並び替えドラッグに渡す', (tester) async {
       // filled な行は自動フォーカスされない(空行のみ自動フォーカス)ため isEditing=false。
@@ -363,16 +379,23 @@ void main() {
   });
 
   group('入力行の Enter 確定（連続入力）', () {
-    testWidgets('Enter で確定テキストが入力行の位置に追加され、入力行は末尾 (nextOrder) へ繰り下がる',
-        (tester) async {
+    testWidgets('Enter で確定テキストが入力行の位置に追加され、入力行は末尾 (nextOrder) へ繰り下がる', (
+      tester,
+    ) async {
       final add = _RecordingAddShoppingListItem();
       final batchUpdate = _RecordingShoppingListItemBatchUpdate();
-      await _pump(tester, _item(id: 'input', message: ''), extraOverrides: [
-        addShoppingListItemProvider(groupID: mockGroupID)
-            .overrideWith((ref) => add),
-        shoppingListItemBatchUpdateProvider(groupID: mockGroupID)
-            .overrideWith((ref) => batchUpdate),
-      ]);
+      await _pump(
+        tester,
+        _item(id: 'input', message: ''),
+        extraOverrides: [
+          addShoppingListItemProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => add),
+          shoppingListItemBatchUpdateProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => batchUpdate),
+        ],
+      );
       // 改行 (Enter) を含むテキストを入力すると onChanged の改行検知で確定する。
       await tester.enterText(find.byType(TextField), '牛乳\n');
       await tester.pump();
@@ -386,12 +409,18 @@ void main() {
 
     testWidgets('確定後も入力行は空のままフォーカスを保ち、連続で Enter 入力できる', (tester) async {
       final add = _RecordingAddShoppingListItem();
-      await _pump(tester, _item(id: 'input', message: ''), extraOverrides: [
-        addShoppingListItemProvider(groupID: mockGroupID)
-            .overrideWith((ref) => add),
-        shoppingListItemBatchUpdateProvider(groupID: mockGroupID)
-            .overrideWith((ref) => _RecordingShoppingListItemBatchUpdate()),
-      ]);
+      await _pump(
+        tester,
+        _item(id: 'input', message: ''),
+        extraOverrides: [
+          addShoppingListItemProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => add),
+          shoppingListItemBatchUpdateProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => _RecordingShoppingListItemBatchUpdate()),
+        ],
+      );
       await tester.enterText(find.byType(TextField), '牛乳\n');
       await tester.pump();
       final textField = tester.widget<TextField>(find.byType(TextField));
@@ -404,16 +433,23 @@ void main() {
       expect(add.calls.map((c) => c.message).toList(), ['牛乳', '卵']);
     });
 
-    testWidgets('既存行の Enter 確定は update し、入力行が無ければ末尾 (nextOrder) に空の入力行を追加する',
-        (tester) async {
+    testWidgets('既存行の Enter 確定は update し、入力行が無ければ末尾 (nextOrder) に空の入力行を追加する', (
+      tester,
+    ) async {
       final add = _RecordingAddShoppingListItem();
       final update = _RecordingUpdateShoppingListItem();
-      await _pump(tester, _item(id: 'filled', message: '牛乳'), extraOverrides: [
-        addShoppingListItemProvider(groupID: mockGroupID)
-            .overrideWith((ref) => add),
-        updateShoppingListItemProvider(groupID: mockGroupID)
-            .overrideWith((ref) => update),
-      ]);
+      await _pump(
+        tester,
+        _item(id: 'filled', message: '牛乳'),
+        extraOverrides: [
+          addShoppingListItemProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => add),
+          updateShoppingListItemProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => update),
+        ],
+      );
       await tester.enterText(find.byType(TextField), '牛乳 2本\n');
       await tester.pump();
       expect(update.calls.single.message, '牛乳 2本');
@@ -423,13 +459,79 @@ void main() {
     });
   });
 
+  group('「カテゴリ +」ボタン (AddCategoryChip)', () {
+    testWidgets('showAddCategoryButton: true でカテゴリ追加チップを表示する', (tester) async {
+      await _pump(
+        tester,
+        _item(id: 'uncategorized', message: '牛乳'),
+        showAddCategoryButton: true,
+      );
+      expect(find.byType(AddCategoryChip), findsOneWidget);
+    });
+
+    testWidgets('showAddCategoryButton: false ではチップを表示しない', (tester) async {
+      await _pump(tester, _item(id: 'categorized', message: '牛乳'));
+      expect(find.byType(AddCategoryChip), findsNothing);
+    });
+
+    testWidgets('チップは行末の詳細アイコン (more_horiz) より左に置く', (tester) async {
+      await _pump(
+        tester,
+        _item(id: 'uncategorized', message: '牛乳'),
+        showAddCategoryButton: true,
+      );
+      expect(
+        tester.getCenter(find.byType(AddCategoryChip)).dx,
+        lessThan(tester.getCenter(find.byIcon(Icons.more_horiz)).dx),
+      );
+    });
+
+    testWidgets('編集中(Enter未確定)の最新テキストでカテゴリ選択を開く', (tester) async {
+      // 既存行を Enter せず編集したままチップを押すと、build 時点の古い message ではなく
+      // 入力欄の最新テキストが選択モードへ渡ることを検証する。
+      // 遷移先 GroupCategoryPage が Firestore に触れないよう、カテゴリ軸を空に override して
+      // 空状態(カテゴリ追加のみ)を描画させ、selectionForItem だけを確認する。
+      await _pump(
+        tester,
+        _item(id: 'editing', message: '牛乳'),
+        showAddCategoryButton: true,
+        extraOverrides: [
+          groupCategoryAxesProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => Stream.value(const <GroupCategoryAxis>[])),
+          // チップタップ時の push でフォーカスが外れ、編集中テキストの確定保存が走る。
+          // 本物の DB は Firebase 未初期化で落ちるため記録フェイクへ差し替える。
+          groupDatabaseProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => _RecordingGroupDatabase()),
+          updateShoppingListItemProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => _RecordingUpdateShoppingListItem()),
+        ],
+      );
+      await tester.enterText(find.byType(TextField), '低脂肪牛乳');
+      await tester.pump();
+      await tester.tap(find.byType(AddCategoryChip));
+      await tester.pumpAndSettle();
+      final page = tester.widget<GroupCategoryPage>(
+        find.byType(GroupCategoryPage),
+      );
+      expect(page.selectionForItem?.message, '低脂肪牛乳');
+    });
+  });
+
   group('フォーカス喪失時の空行削除', () {
     testWidgets('空のままフォーカスが外れた行は物理削除される', (tester) async {
       final database = _RecordingGroupDatabase();
-      await _pump(tester, _item(id: 'input', message: ''), extraOverrides: [
-        groupDatabaseProvider(groupID: mockGroupID)
-            .overrideWith((ref) => database),
-      ]);
+      await _pump(
+        tester,
+        _item(id: 'input', message: ''),
+        extraOverrides: [
+          groupDatabaseProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => database),
+        ],
+      );
       // 空行 (入力行) は postFrame で自動フォーカスされる。
       final focusNode =
           tester.widget<TextField>(find.byType(TextField)).focusNode!;
@@ -442,12 +544,18 @@ void main() {
     testWidgets('入力途中テキストはフォーカス喪失で確定保存され、行は削除されない', (tester) async {
       final database = _RecordingGroupDatabase();
       final update = _RecordingUpdateShoppingListItem();
-      await _pump(tester, _item(id: 'input', message: ''), extraOverrides: [
-        groupDatabaseProvider(groupID: mockGroupID)
-            .overrideWith((ref) => database),
-        updateShoppingListItemProvider(groupID: mockGroupID)
-            .overrideWith((ref) => update),
-      ]);
+      await _pump(
+        tester,
+        _item(id: 'input', message: ''),
+        extraOverrides: [
+          groupDatabaseProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => database),
+          updateShoppingListItemProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => update),
+        ],
+      );
       // 改行を含めない = Enter 未確定の入力途中テキスト。
       await tester.enterText(find.byType(TextField), '牛乳');
       tester.widget<TextField>(find.byType(TextField)).focusNode!.unfocus();
@@ -459,12 +567,18 @@ void main() {
     testWidgets('内容が変わっていない非空行のフォーカス喪失では削除も更新もしない', (tester) async {
       final database = _RecordingGroupDatabase();
       final update = _RecordingUpdateShoppingListItem();
-      await _pump(tester, _item(id: 'filled', message: '牛乳'), extraOverrides: [
-        groupDatabaseProvider(groupID: mockGroupID)
-            .overrideWith((ref) => database),
-        updateShoppingListItemProvider(groupID: mockGroupID)
-            .overrideWith((ref) => update),
-      ]);
+      await _pump(
+        tester,
+        _item(id: 'filled', message: '牛乳'),
+        extraOverrides: [
+          groupDatabaseProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => database),
+          updateShoppingListItemProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => update),
+        ],
+      );
       await tester.showKeyboard(find.byType(TextField));
       await tester.pump();
       tester.widget<TextField>(find.byType(TextField)).focusNode!.unfocus();

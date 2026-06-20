@@ -27,8 +27,11 @@ class Toast extends _$Toast {
   /// `content` を `duration` の間だけ表示する。
   /// `identity` が現在表示中のものと同一なら、再 show を無視してタイマーをリセットしない。
   /// 同一通知が高頻度で再発行されても、最初の表示から `duration` 後に必ず消すため。
-  void show(Widget content,
-      {Duration duration = const Duration(seconds: 5), Object? identity}) {
+  void show(
+    Widget content, {
+    Duration duration = const Duration(seconds: 5),
+    Object? identity,
+  }) {
     if (state != null && identity != null && identity == _currentIdentity) {
       return;
     }

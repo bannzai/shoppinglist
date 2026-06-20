@@ -21,11 +21,12 @@ void main() {
       );
       // toJson は ServerCreatedTimestamp / ServerUpdatedTimestamp によって
       // FieldValue を埋めるため、ラウンドトリップ用に server* / client* を除外する。
-      final json = group.toJson()
-        ..remove('createdDateTime')
-        ..remove('updatedDateTime')
-        ..remove('serverCreatedDateTime')
-        ..remove('serverUpdatedDateTime');
+      final json =
+          group.toJson()
+            ..remove('createdDateTime')
+            ..remove('updatedDateTime')
+            ..remove('serverCreatedDateTime')
+            ..remove('serverUpdatedDateTime');
       expect(json['iconName'], 'cart');
       expect(Group.fromJson(json).iconName, 'cart');
     });

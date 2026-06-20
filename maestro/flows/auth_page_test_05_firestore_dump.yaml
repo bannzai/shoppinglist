@@ -10,6 +10,12 @@ appId: ${APP_ID}
     commands:
       - tapOn: "許可"
       - waitForAnimationToEnd
+# clearState 直後は design v2 オンボーディングが表示されるためスキップする
+- extendedWaitUntil:
+    visible: "スキップ"
+    timeout: 90000
+- tapOn: "スキップ"
+- waitForAnimationToEnd
 - extendedWaitUntil:
     visible: "匿名サインイン（デバッグ用）"
     timeout: 30000
@@ -28,8 +34,14 @@ appId: ${APP_ID}
     commands:
       - tapOn: "Retry"
       - waitForAnimationToEnd
+# 匿名サインイン後は GroupJoinOrCreatePage が表示されるため「自分のリストを作る」でホームへ進む。
 - extendedWaitUntil:
-    visible: "アイテムを追加"
+    visible: "自分のリストを作る"
+    timeout: 90000
+- tapOn: "自分のリストを作る"
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "タップで入力開始"
     timeout: 30000
 # 設定タブへ移動
 - tapOn:

@@ -17,6 +17,7 @@ class AutoNotifyToggle extends ConsumerWidget {
     return SwitchListTile(
       title: const Text('買い物リストの更新を通知する'),
       subtitle: const Text('画面を離れた時にグループメンバーへ自動通知'),
+      secondary: const Icon(Icons.notifications),
       value: isEnabled,
       onChanged: (_) {
         analytics.logEvent(

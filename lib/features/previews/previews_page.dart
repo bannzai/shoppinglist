@@ -13,6 +13,7 @@ import 'package:shoppinglist/features/onboarding/page.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/previews/screens/ai_categorize_preview_sheet_preview.dart';
 import 'package:shoppinglist/features/previews/screens/ai_review_sheet_preview.dart';
+import 'package:shoppinglist/features/previews/screens/group_category_empty_state_preview.dart';
 import 'package:shoppinglist/features/previews/screens/invitation_verifying_preview.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_preview.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_setting_preview.dart';
@@ -59,6 +60,10 @@ final _previewEntries = <_PreviewEntry>[
   _PreviewEntry(
     title: 'GroupListPage',
     builder: (_) => const GroupListPage(),
+  ),
+  _PreviewEntry(
+    title: 'GroupCategoryEmptyState',
+    builder: (_) => const GroupCategoryEmptyStatePreview(),
   ),
   _PreviewEntry(
     title: 'GroupCreatePage',

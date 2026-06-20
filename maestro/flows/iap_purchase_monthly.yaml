@@ -7,18 +7,12 @@ appId: ${APP_ID}
 
 - runFlow: shared/mock_purchase.yaml
 
-# 設定画面に戻って premium 状態を確認。
-# 購入完了後の SnackBar や PaywallPage pop の遷移直後はアクセシビリティツリーが
-# 安定していない場合があるため extendedWaitUntil で待機する。
-- tapOn:
-    text: "設定.*"
-    index: 0
-- waitForAnimationToEnd
+# 購入完了後、PaywallPage が pop して設定画面に戻る。プレミアムカードが
+# 加入済み表示（title "プレミアム会員"）に変わっていることを確認する。
+# design v2 の premium カードは title+subtitle が結合されるため (?s) 部分一致で待つ。
+# （旧フローの ".*有効.*" は現行に存在しないため削除）
 - extendedWaitUntil:
-    visible: ".*プレミアム会員.*"
-    timeout: 15000
-- extendedWaitUntil:
-    visible: ".*有効.*"
+    visible: "(?s).*プレミアム会員.*"
     timeout: 15000
 
 - takeScreenshot: screenshots/iap_purchase_monthly_completed

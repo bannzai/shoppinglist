@@ -10,20 +10,23 @@ class ShoppingListItemAddButton extends ConsumerWidget {
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
 
-  const ShoppingListItemAddButton(
-      {super.key,
-      required this.groupID,
-      required this.shoppingListID,
-      required this.shoppingListItems});
+  const ShoppingListItemAddButton({
+    super.key,
+    required this.groupID,
+    required this.shoppingListID,
+    required this.shoppingListItems,
+  });
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final addShoppingListItem =
-        ref.watch(addShoppingListItemProvider(groupID: groupID));
+    final addShoppingListItem = ref.watch(
+      addShoppingListItemProvider(groupID: groupID),
+    );
     return OutlinedButton(
       onPressed: () {
         analytics.logEvent(
-            name: 'tap_add_item',
-            parameters: {'groupID': groupID, 'shoppingListID': shoppingListID});
+          name: 'tap_add_item',
+          parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
+        );
         addShoppingListItem.call(
           shoppingListID: shoppingListID,
           userID: ref.read(currentUserIDProvider)!,

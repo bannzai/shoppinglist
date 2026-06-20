@@ -14,15 +14,17 @@ final remoteConfig = FirebaseRemoteConfig.instance;
 Future<void> setupRemoteConfig() async {
   try {
     await (
-      remoteConfig.setConfigSettings(RemoteConfigSettings(
-        fetchTimeout: const Duration(minutes: 1),
-        minimumFetchInterval: const Duration(hours: 1),
-      )),
+      remoteConfig.setConfigSettings(
+        RemoteConfigSettings(
+          fetchTimeout: const Duration(minutes: 1),
+          minimumFetchInterval: const Duration(hours: 1),
+        ),
+      ),
       remoteConfig.setDefaults({
         RemoteConfigKeys.releasedVersion:
             RemoteConfigParameterDefaultValues.releasedVersion,
       }),
-      remoteConfig.fetchAndActivate()
+      remoteConfig.fetchAndActivate(),
     ).wait;
 
     debugPrintRemoteConfig();
@@ -40,8 +42,9 @@ Future<void> setupRemoteConfig() async {
 
 @Riverpod()
 Future<bool> appIsReleased(Ref ref) async {
-  final releasedVersion =
-      Version.parse(remoteConfig.getString(RemoteConfigKeys.releasedVersion));
+  final releasedVersion = Version.parse(
+    remoteConfig.getString(RemoteConfigKeys.releasedVersion),
+  );
   final packageInfo = await PackageInfo.fromPlatform();
   final appVersion = Version.parse(packageInfo.version);
   return !appVersion.isGreaterThan(releasedVersion);

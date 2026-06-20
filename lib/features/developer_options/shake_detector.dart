@@ -40,8 +40,9 @@ class _ShakeDetectorWrapperState extends State<ShakeDetectorWrapper> {
   }
 
   void _onAccelerometerEvent(AccelerometerEvent event) {
-    final magnitude =
-        sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
+    final magnitude = sqrt(
+      event.x * event.x + event.y * event.y + event.z * event.z,
+    );
     if (magnitude > _shakeThreshold) {
       final now = DateTime.now();
       if (now.difference(_lastShakeTime) > _debounceDuration) {

@@ -42,9 +42,10 @@ abstract class AppUser with _$AppUser {
   factory AppUser.fromJson(Map<String, dynamic> json) =>
       _$AppUserFromJson(json);
 
-  static AppUser fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot,
-          SnapshotOptions? options) =>
-      AppUser.fromJson(snapshot.data()!..['id'] = snapshot.id);
+  static AppUser fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+    SnapshotOptions? options,
+  ) => AppUser.fromJson(snapshot.data()!..['id'] = snapshot.id);
 
   static Map<String, dynamic> toFirestore(AppUser user, SetOptions? options) =>
       user.toJson();

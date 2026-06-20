@@ -10,7 +10,7 @@
 - **グループ名編集**: オーナーのみ編集可能。非オーナーは読み取り専用表示
 - **メンバー一覧表示**: `/groups/{groupID}/userProfiles` からプロフィールを取得して表示。displayName未設定の場合は「名前未設定」と表示
 - **メンバー削除**: オーナーのみ、自分以外のメンバーを削除可能。Firebase Function `removeGroupMember` を呼び出す。削除されたメンバーの `defaultGroupID` はnullに設定され、次回起動時に新グループが自動作成される
-- **グループ招待**: 招待コードを発行してメンバーを招待。`ShoppingListSettingPage` と同じ `createGroupInvitation` を使用
+- **グループ招待**: 招待コードを発行してメンバーを招待。`ShoppingListSettingPage` と同じ `createGroupInvitation` を使用。グループ名が未設定（null・空白のみ）の場合は招待コードを発行せず、「招待する前にグループ名を設定してください」とトーストで促す。同画面のグループ名入力欄に入力があれば（onSubmitted で未確定でも）招待時に保存してから発行する（Issue #432）
 
 ## 権限
 - オーナー: グループ名編集、メンバー削除、招待コード発行

@@ -6,7 +6,7 @@ part 'group_shopping_list.g.dart';
 part 'group_shopping_list.freezed.dart';
 
 /// 無料ユーザーのグループあたりアクティブリスト数上限。
-const int freeGroupActiveShoppingListLimit = 5;
+const int freeGroupActiveShoppingListLimit = 20;
 
 abstract class GroupShoppingListFirestoreKeys {
   static const createdDateTime = 'createdDateTime';
@@ -53,13 +53,14 @@ abstract class GroupShoppingList with _$GroupShoppingList {
       _$GroupShoppingListFromJson(json);
 
   static GroupShoppingList fromFirestore(
-          DocumentSnapshot<Map<String, dynamic>> snapshot,
-          SnapshotOptions? options) =>
-      GroupShoppingList.fromJson(snapshot.data()!..['id'] = snapshot.id);
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+    SnapshotOptions? options,
+  ) => GroupShoppingList.fromJson(snapshot.data()!..['id'] = snapshot.id);
 
   static Map<String, dynamic> toFirestore(
-          GroupShoppingList shoppingList, SetOptions? options) =>
-      shoppingList.toJson();
+    GroupShoppingList shoppingList,
+    SetOptions? options,
+  ) => shoppingList.toJson();
 }
 
 /// [GroupShoppingList] のステータス。

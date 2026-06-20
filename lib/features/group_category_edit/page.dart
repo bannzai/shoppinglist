@@ -1,13 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/error/error_view.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_keyword.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
+import 'package:shoppinglist/utils/hooks/use_on_disappear.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupCategoryEditPage extends ConsumerWidget {
@@ -24,8 +29,9 @@ class GroupCategoryEditPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesAsync = ref.watch(groupCategoriesProvider(
-        groupID: groupID, categoryAxisID: categoryAxisID));
+    final categoriesAsync = ref.watch(
+      groupCategoriesProvider(groupID: groupID, categoryAxisID: categoryAxisID),
+    );
 
     return categoriesAsync.when(
       data: (categories) {
@@ -42,9 +48,12 @@ class GroupCategoryEditPage extends ConsumerWidget {
           category: category,
         );
       },
-      error: (e, st) => _EditScaffold(child: Center(child: Text(e.toString()))),
-      loading: () => const _EditScaffold(
-          child: Center(child: CircularProgressIndicator())),
+      error:
+          (e, st) => _EditScaffold(child: ErrorView(error: e, stackTrace: st)),
+      loading:
+          () => const _EditScaffold(
+            child: Center(child: CircularProgressIndicator()),
+          ),
     );
   }
 }
@@ -81,7 +90,32 @@ class _CategoryEditBody extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final nameController = useTextEditingController(text: category.name);
-    final isSaving = useState(false);
+
+    // disappear 時に未保存のカテゴリ名を保存するための更新オブジェクトを build 時にキャプチャする。
+    // useOnDisappear の closure は Widget unmount 後にも呼ばれ ref を使えないため、ここで掴む。
+    final update = ref.watch(groupCategoryUpdateProvider(groupID: groupID));
+
+    // 画面離脱・アプリの background 移行時に、未保存のカテゴリ名を保存する。
+    // 名前以外(色/アイコン/キーワード)は操作時に即時保存されるため、ここでは名前のみ扱う。
+    // category は毎 build 最新が closure に渡る(useOnDisappear が最新版を呼ぶ)ため、
+    // copyWith(name:) は直近で永続化された色/アイコンを保持したまま名前だけ差し替える。
+    useOnDisappear(() {
+      final name = nameController.text.trim();
+      if (name.isEmpty || name == category.name) {
+        return;
+      }
+      analytics.logEvent(
+        name: 'auto_save_category_name',
+        parameters: {'groupID': groupID, 'categoryID': category.id},
+      );
+      unawaited(
+        update.call(
+          categoryAxisID: categoryAxisID,
+          categoryID: category.id,
+          category: category.copyWith(name: name),
+        ),
+      );
+    });
 
     final tokens = context.appTheme;
     return Scaffold(
@@ -97,69 +131,36 @@ class _CategoryEditBody extends HookConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('カテゴリ名',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.w700)),
+                Text(
+                  'カテゴリ名',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: 8),
                 TextField(
                   controller: nameController,
                   textInputAction: TextInputAction.done,
-                  decoration: const InputDecoration(
-                    hintText: 'カテゴリ名を入力',
-                  ),
-                  onSubmitted: (String value) async {
-                    final name = value.trim();
-                    if (name.isEmpty || name == category.name) {
-                      return;
-                    }
-                    analytics.logEvent(
-                        name: 'submit_category_name',
-                        parameters: {
-                          'groupID': groupID,
-                          'categoryID': category.id
-                        });
-                    isSaving.value = true;
-                    try {
-                      await ref
-                          .read(groupCategoryUpdateProvider(groupID: groupID))
-                          .call(
-                            categoryAxisID: categoryAxisID,
-                            categoryID: category.id,
-                            category: category.copyWith(name: name),
-                          );
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('保存しました')),
-                        );
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString())),
-                        );
-                      }
-                    } finally {
-                      isSaving.value = false;
-                    }
-                  },
+                  decoration: const InputDecoration(hintText: 'カテゴリ名を入力'),
                 ),
                 const SizedBox(height: 24),
-                Text('カテゴリカラー',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.w700)),
+                Text(
+                  'カテゴリカラー',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: 8),
                 _CategoryColorPicker(
                   selectedColor: category.color,
                   onColorSelected: (color) async {
-                    analytics
-                        .logEvent(name: 'select_category_color', parameters: {
-                      'groupID': groupID,
-                      'categoryID': category.id,
-                    });
+                    analytics.logEvent(
+                      name: 'select_category_color',
+                      parameters: {
+                        'groupID': groupID,
+                        'categoryID': category.id,
+                      },
+                    );
                     try {
                       await ref
                           .read(groupCategoryUpdateProvider(groupID: groupID))
@@ -168,31 +169,32 @@ class _CategoryEditBody extends HookConsumerWidget {
                             categoryID: category.id,
                             category: category.copyWith(color: color),
                           );
-                    } catch (e) {
+                    } catch (e, st) {
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString())),
-                        );
+                        showErrorSnackBar(context, e, st);
                       }
                     }
                   },
                 ),
                 const SizedBox(height: 24),
-                Text('カテゴリアイコン',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.w700)),
+                Text(
+                  'カテゴリアイコン',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: 8),
                 _CategoryIconPicker(
                   selectedIconName: category.iconName,
                   selectedColor: category.color,
                   onIconSelected: (iconName) async {
-                    analytics
-                        .logEvent(name: 'select_category_icon', parameters: {
-                      'groupID': groupID,
-                      'categoryID': category.id,
-                    });
+                    analytics.logEvent(
+                      name: 'select_category_icon',
+                      parameters: {
+                        'groupID': groupID,
+                        'categoryID': category.id,
+                      },
+                    );
                     try {
                       await ref
                           .read(groupCategoryUpdateProvider(groupID: groupID))
@@ -201,11 +203,9 @@ class _CategoryEditBody extends HookConsumerWidget {
                             categoryID: category.id,
                             category: category.copyWith(iconName: iconName),
                           );
-                    } catch (e) {
+                    } catch (e, st) {
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString())),
-                        );
+                        showErrorSnackBar(context, e, st);
                       }
                     }
                   },
@@ -214,24 +214,23 @@ class _CategoryEditBody extends HookConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('キーワード',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w700)),
+                    Text(
+                      'キーワード',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     IconButton(
                       tooltip: 'キーワードを追加',
                       onPressed: () {
                         analytics.logEvent(
-                            name: 'tap_add_keyword',
-                            parameters: {
-                              'groupID': groupID,
-                              'categoryID': category.id
-                            });
-                        _showAddKeywordDialog(
-                          context: context,
-                          ref: ref,
+                          name: 'tap_add_keyword',
+                          parameters: {
+                            'groupID': groupID,
+                            'categoryID': category.id,
+                          },
                         );
+                        _showAddKeywordDialog(context: context, ref: ref);
                       },
                       icon: const Icon(Icons.add),
                     ),
@@ -243,18 +242,19 @@ class _CategoryEditBody extends HookConsumerWidget {
                   Text(
                     '[DEBUG] locationOrders: ${category.locationOrders}',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: context.appTheme.neutral.ink3,
-                          fontFamily: 'monospace',
-                        ),
+                      color: context.appTheme.neutral.ink3,
+                      fontFamily: 'monospace',
+                    ),
                   ),
                   const SizedBox(height: 8),
                 ],
                 if (category.keywords.isEmpty)
-                  Text('キーワードがまだありません',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: Colors.grey))
+                  Text(
+                    'キーワードがまだありません',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                  )
                 else
                   ...category.keywords.asMap().entries.map((entry) {
                     final index = entry.key;
@@ -262,22 +262,22 @@ class _CategoryEditBody extends HookConsumerWidget {
                     return ListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Text(keyword.keyword),
-                      subtitle: Text(
-                        switch (keyword.matchingType) {
-                          GroupCategoryKeywordMatchingType.exact => '完全一致',
-                          GroupCategoryKeywordMatchingType.partial => '部分一致',
-                          GroupCategoryKeywordMatchingType.regex => '正規表現',
-                        },
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
+                      subtitle: Text(switch (keyword.matchingType) {
+                        GroupCategoryKeywordMatchingType.exact => '完全一致',
+                        GroupCategoryKeywordMatchingType.partial => '部分一致',
+                        GroupCategoryKeywordMatchingType.regex => '正規表現',
+                      }, style: Theme.of(context).textTheme.bodySmall),
                       trailing: IconButton(
-                        icon: Icon(Icons.delete,
-                            color: context.appTheme.neutral.danger),
-                        onPressed: () => _deleteKeyword(
-                          context: context,
-                          ref: ref,
-                          index: index,
+                        icon: Icon(
+                          Icons.delete,
+                          color: context.appTheme.neutral.danger,
                         ),
+                        onPressed:
+                            () => _deleteKeyword(
+                              context: context,
+                              ref: ref,
+                              index: index,
+                            ),
                       ),
                     );
                   }),
@@ -298,125 +298,131 @@ class _CategoryEditBody extends HookConsumerWidget {
 
     showDialog(
       context: context,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: const Text('キーワードを追加'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: keywordController,
-                autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: 'キーワードを入力',
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'マッチング',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              const SizedBox(height: 8),
-              // 部分一致/完全一致/正規表現は排他的な3択なので、関連選択肢を
-              // 1コントロールにまとめた SegmentedButton で均等配置する。
-              SizedBox(
-                width: double.infinity,
-                child: SegmentedButton<GroupCategoryKeywordMatchingType>(
-                  segments: const [
-                    ButtonSegment(
-                      value: GroupCategoryKeywordMatchingType.partial,
-                      label: Text('部分一致'),
+      builder:
+          (dialogContext) => StatefulBuilder(
+            builder:
+                (context, setState) => AlertDialog(
+                  title: const Text('キーワードを追加'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextField(
+                        controller: keywordController,
+                        autofocus: true,
+                        decoration: const InputDecoration(hintText: 'キーワードを入力'),
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'マッチング',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      const SizedBox(height: 8),
+                      // 部分一致/完全一致/正規表現は排他的な3択なので、関連選択肢を
+                      // 1コントロールにまとめた SegmentedButton で均等配置する。
+                      SizedBox(
+                        width: double.infinity,
+                        child:
+                            SegmentedButton<GroupCategoryKeywordMatchingType>(
+                              segments: const [
+                                ButtonSegment(
+                                  value:
+                                      GroupCategoryKeywordMatchingType.partial,
+                                  label: Text('部分一致'),
+                                ),
+                                ButtonSegment(
+                                  value: GroupCategoryKeywordMatchingType.exact,
+                                  label: Text('完全一致'),
+                                ),
+                                ButtonSegment(
+                                  value: GroupCategoryKeywordMatchingType.regex,
+                                  label: Text('正規表現'),
+                                ),
+                              ],
+                              selected: {selectedMatchingType},
+                              showSelectedIcon: false,
+                              onSelectionChanged: (selected) {
+                                final matchingType = selected.first;
+                                analytics.logEvent(
+                                  name: switch (matchingType) {
+                                    GroupCategoryKeywordMatchingType.partial =>
+                                      'select_match_partial',
+                                    GroupCategoryKeywordMatchingType.exact =>
+                                      'select_match_exact',
+                                    GroupCategoryKeywordMatchingType.regex =>
+                                      'select_match_regex',
+                                  },
+                                  parameters: {
+                                    'groupID': groupID,
+                                    'categoryID': category.id,
+                                  },
+                                );
+                                setState(() {
+                                  selectedMatchingType = matchingType;
+                                });
+                              },
+                            ),
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () async {
+                        final keyword = keywordController.text.trim();
+                        if (keyword.isEmpty) {
+                          return;
+                        }
+                        analytics.logEvent(
+                          name: 'tap_confirm_add_keyword',
+                          parameters: {
+                            'groupID': groupID,
+                            'categoryID': category.id,
+                          },
+                        );
+                        Navigator.pop(dialogContext);
+
+                        final newKeyword = GroupCategoryKeyword(
+                          keyword: keyword,
+                          matchingType: selectedMatchingType,
+                        );
+                        final updatedCategory = category.copyWith(
+                          keywords: [...category.keywords, newKeyword],
+                        );
+
+                        try {
+                          await ref
+                              .read(
+                                groupCategoryUpdateProvider(groupID: groupID),
+                              )
+                              .call(
+                                categoryAxisID: categoryAxisID,
+                                categoryID: category.id,
+                                category: updatedCategory,
+                              );
+                        } catch (e, st) {
+                          if (context.mounted) {
+                            showErrorSnackBar(context, e, st);
+                          }
+                        }
+                      },
+                      child: const Text('追加'),
                     ),
-                    ButtonSegment(
-                      value: GroupCategoryKeywordMatchingType.exact,
-                      label: Text('完全一致'),
-                    ),
-                    ButtonSegment(
-                      value: GroupCategoryKeywordMatchingType.regex,
-                      label: Text('正規表現'),
+                    TextButton(
+                      onPressed: () {
+                        analytics.logEvent(
+                          name: 'cancel_add_keyword',
+                          parameters: {
+                            'groupID': groupID,
+                            'categoryID': category.id,
+                          },
+                        );
+                        Navigator.pop(dialogContext);
+                      },
+                      child: const Text('キャンセル'),
                     ),
                   ],
-                  selected: {selectedMatchingType},
-                  showSelectedIcon: false,
-                  onSelectionChanged: (selected) {
-                    final matchingType = selected.first;
-                    analytics.logEvent(
-                      name: switch (matchingType) {
-                        GroupCategoryKeywordMatchingType.partial =>
-                          'select_match_partial',
-                        GroupCategoryKeywordMatchingType.exact =>
-                          'select_match_exact',
-                        GroupCategoryKeywordMatchingType.regex =>
-                          'select_match_regex',
-                      },
-                      parameters: {
-                        'groupID': groupID,
-                        'categoryID': category.id,
-                      },
-                    );
-                    setState(() {
-                      selectedMatchingType = matchingType;
-                    });
-                  },
                 ),
-              ),
-            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                final keyword = keywordController.text.trim();
-                if (keyword.isEmpty) {
-                  return;
-                }
-                analytics.logEvent(
-                    name: 'tap_confirm_add_keyword',
-                    parameters: {
-                      'groupID': groupID,
-                      'categoryID': category.id
-                    });
-                Navigator.pop(dialogContext);
-
-                final newKeyword = GroupCategoryKeyword(
-                  keyword: keyword,
-                  matchingType: selectedMatchingType,
-                );
-                final updatedCategory = category.copyWith(
-                  keywords: [...category.keywords, newKeyword],
-                );
-
-                try {
-                  await ref
-                      .read(groupCategoryUpdateProvider(groupID: groupID))
-                      .call(
-                        categoryAxisID: categoryAxisID,
-                        categoryID: category.id,
-                        category: updatedCategory,
-                      );
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
-                  }
-                }
-              },
-              child: const Text('追加'),
-            ),
-            TextButton(
-              onPressed: () {
-                analytics.logEvent(name: 'cancel_add_keyword', parameters: {
-                  'groupID': groupID,
-                  'categoryID': category.id
-                });
-                Navigator.pop(dialogContext);
-              },
-              child: const Text('キャンセル'),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -426,22 +432,23 @@ class _CategoryEditBody extends HookConsumerWidget {
     required int index,
   }) async {
     analytics.logEvent(
-        name: 'tap_delete_keyword',
-        parameters: {'groupID': groupID, 'categoryID': category.id});
+      name: 'tap_delete_keyword',
+      parameters: {'groupID': groupID, 'categoryID': category.id},
+    );
     final updatedKeywords = [...category.keywords]..removeAt(index);
     final updatedCategory = category.copyWith(keywords: updatedKeywords);
 
     try {
-      await ref.read(groupCategoryUpdateProvider(groupID: groupID)).call(
+      await ref
+          .read(groupCategoryUpdateProvider(groupID: groupID))
+          .call(
             categoryAxisID: categoryAxisID,
             categoryID: category.id,
             category: updatedCategory,
           );
-    } catch (e) {
+    } catch (e, st) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
+        showErrorSnackBar(context, e, st);
       }
     }
   }
@@ -472,14 +479,18 @@ class _CategoryColorPicker extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: selectedColor == null
-                    ? colorScheme.primary
-                    : colorScheme.outline,
+                color:
+                    selectedColor == null
+                        ? colorScheme.primary
+                        : colorScheme.outline,
                 width: selectedColor == null ? 3 : 1,
               ),
             ),
-            child: Icon(Icons.block,
-                size: 20, color: colorScheme.onSurfaceVariant),
+            child: Icon(
+              Icons.block,
+              size: 20,
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
         ...categoryPresetColors.map((hex) {
@@ -493,13 +504,15 @@ class _CategoryColorPicker extends StatelessWidget {
               decoration: BoxDecoration(
                 color: color,
                 shape: BoxShape.circle,
-                border: isSelected
-                    ? Border.all(color: colorScheme.primary, width: 3)
-                    : null,
+                border:
+                    isSelected
+                        ? Border.all(color: colorScheme.primary, width: 3)
+                        : null,
               ),
-              child: isSelected
-                  ? const Icon(Icons.check, color: Colors.white, size: 20)
-                  : null,
+              child:
+                  isSelected
+                      ? const Icon(Icons.check, color: Colors.white, size: 20)
+                      : null,
             ),
           );
         }),
@@ -537,14 +550,18 @@ class _CategoryIconPicker extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: selectedIconName == null
-                    ? colorScheme.primary
-                    : colorScheme.outline,
+                color:
+                    selectedIconName == null
+                        ? colorScheme.primary
+                        : colorScheme.outline,
                 width: selectedIconName == null ? 2 : 1,
               ),
             ),
-            child: Icon(Icons.block,
-                size: 20, color: colorScheme.onSurfaceVariant),
+            child: Icon(
+              Icons.block,
+              size: 20,
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
         ...categoryIconMap.entries.map((entry) {
@@ -556,23 +573,27 @@ class _CategoryIconPicker extends StatelessWidget {
               height: 48,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color: isSelected
-                    ? (accentColor ?? colorScheme.primary)
-                        .withValues(alpha: 0.15)
-                    : null,
+                color:
+                    isSelected
+                        ? (accentColor ?? colorScheme.primary).withValues(
+                          alpha: 0.15,
+                        )
+                        : null,
                 border: Border.all(
-                  color: isSelected
-                      ? (accentColor ?? colorScheme.primary)
-                      : colorScheme.outline,
+                  color:
+                      isSelected
+                          ? (accentColor ?? colorScheme.primary)
+                          : colorScheme.outline,
                   width: isSelected ? 2 : 1,
                 ),
               ),
               child: Icon(
                 entry.value,
                 size: 24,
-                color: isSelected
-                    ? (accentColor ?? colorScheme.primary)
-                    : colorScheme.onSurfaceVariant,
+                color:
+                    isSelected
+                        ? (accentColor ?? colorScheme.primary)
+                        : colorScheme.onSurfaceVariant,
               ),
             ),
           );

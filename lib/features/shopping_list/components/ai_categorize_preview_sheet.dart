@@ -51,10 +51,11 @@ Future<List<AICategorizeCandidate>?> showAICategorizePreviewSheet({
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
     ),
-    builder: (_) => _AICategorizePreviewSheet(
-      categorized: categorized,
-      existingCategoryNames: existingCategoryNames,
-    ),
+    builder:
+        (_) => _AICategorizePreviewSheet(
+          categorized: categorized,
+          existingCategoryNames: existingCategoryNames,
+        ),
   );
 }
 
@@ -78,13 +79,16 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
   @override
   void initState() {
     super.initState();
-    _candidates = widget.categorized
-        .map((e) => AICategorizeCandidate(
-              itemName: e.name,
-              categoryName: e.categoryName,
-              included: true,
-            ))
-        .toList();
+    _candidates =
+        widget.categorized
+            .map(
+              (e) => AICategorizeCandidate(
+                itemName: e.name,
+                categoryName: e.categoryName,
+                included: true,
+              ),
+            )
+            .toList();
   }
 
   /// 選択肢として提示するカテゴリ名（既存 ∪ AI提案）。表示順は安定させる。
@@ -107,8 +111,9 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
       parameters: {'index': index.toString()},
     );
     setState(() {
-      _candidates[index] =
-          _candidates[index].copyWith(included: !_candidates[index].included);
+      _candidates[index] = _candidates[index].copyWith(
+        included: !_candidates[index].included,
+      );
     });
   }
 
@@ -118,8 +123,9 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
       parameters: {'index': index.toString()},
     );
     setState(() {
-      _candidates[index] =
-          _candidates[index].copyWith(categoryName: categoryName);
+      _candidates[index] = _candidates[index].copyWith(
+        categoryName: categoryName,
+      );
     });
   }
 
@@ -130,10 +136,11 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
       ),
-      builder: (sheetContext) => _CategoryPickerSheet(
-        options: _categoryNameOptions,
-        current: _candidates[index].categoryName,
-      ),
+      builder:
+          (sheetContext) => _CategoryPickerSheet(
+            options: _categoryNameOptions,
+            current: _candidates[index].categoryName,
+          ),
     );
     if (selected != null && selected.isNotEmpty) {
       _changeCategory(index, selected);
@@ -170,8 +177,9 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
     }
     final orderedCategoryNames = [
       ..._categoryNameOptions.where(indicesByCategory.containsKey),
-      ...indicesByCategory.keys
-          .where((name) => !_categoryNameOptions.contains(name)),
+      ...indicesByCategory.keys.where(
+        (name) => !_categoryNameOptions.contains(name),
+      ),
     ];
 
     return DraggableScrollableSheet(
@@ -202,26 +210,28 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
                       children: [
                         Text(
                           '自動カテゴリ分け',
-                          style:
-                              Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    color: neutral.ink,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleLarge?.copyWith(
+                            color: neutral.ink,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           'カテゴリを確認・調整して登録してください',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: neutral.ink3,
-                                  ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(color: neutral.ink3),
                         ),
                       ],
                     ),
                   ),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: tokens.accentSoft,
                       borderRadius: BorderRadius.circular(10),
@@ -229,9 +239,9 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
                     child: Text(
                       '$includedCount / ${_candidates.length}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: tokens.accent,
-                            fontWeight: FontWeight.w700,
-                          ),
+                        color: tokens.accent,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ],
@@ -239,30 +249,31 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
             ),
             Divider(height: 0.5, thickness: 0.5, color: neutral.divider),
             Expanded(
-              child: _candidates.isEmpty
-                  ? Center(
-                      child: Text(
-                        '分類できる候補がありませんでした',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(color: neutral.ink3),
-                      ),
-                    )
-                  : ListView(
-                      controller: scrollController,
-                      children: [
-                        for (final categoryName in orderedCategoryNames) ...[
-                          _CategoryHeader(name: categoryName),
-                          for (final index in indicesByCategory[categoryName]!)
-                            _CandidateRow(
-                              candidate: _candidates[index],
-                              onToggle: () => _toggle(index),
-                              onTapCategory: () => _pickCategory(index),
-                            ),
+              child:
+                  _candidates.isEmpty
+                      ? Center(
+                        child: Text(
+                          '分類できる候補がありませんでした',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyMedium?.copyWith(color: neutral.ink3),
+                        ),
+                      )
+                      : ListView(
+                        controller: scrollController,
+                        children: [
+                          for (final categoryName in orderedCategoryNames) ...[
+                            _CategoryHeader(name: categoryName),
+                            for (final index
+                                in indicesByCategory[categoryName]!)
+                              _CandidateRow(
+                                candidate: _candidates[index],
+                                onToggle: () => _toggle(index),
+                                onTapCategory: () => _pickCategory(index),
+                              ),
+                          ],
                         ],
-                      ],
-                    ),
+                      ),
             ),
             SafeArea(
               top: false,
@@ -315,9 +326,9 @@ class _CategoryHeader extends StatelessWidget {
       child: Text(
         name,
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: tokens.accent,
-              fontWeight: FontWeight.w700,
-            ),
+          color: tokens.accent,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }
@@ -352,10 +363,10 @@ class _CandidateRow extends StatelessWidget {
             child: Text(
               candidate.itemName,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: candidate.included ? neutral.ink : neutral.ink3,
-                    decoration:
-                        candidate.included ? null : TextDecoration.lineThrough,
-                  ),
+                color: candidate.included ? neutral.ink : neutral.ink3,
+                decoration:
+                    candidate.included ? null : TextDecoration.lineThrough,
+              ),
             ),
           ),
           const SizedBox(width: 8),
@@ -375,9 +386,9 @@ class _CandidateRow extends StatelessWidget {
                   Text(
                     candidate.categoryName,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: neutral.ink2,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      color: neutral.ink2,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(width: 4),
                   Icon(Icons.expand_more, size: 16, color: neutral.ink3),
@@ -441,9 +452,9 @@ class _CategoryPickerSheetState extends State<_CategoryPickerSheet> {
                 child: Text(
                   'カテゴリを選択',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: neutral.ink,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    color: neutral.ink,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),
@@ -454,9 +465,10 @@ class _CategoryPickerSheetState extends State<_CategoryPickerSheet> {
                   for (final option in widget.options)
                     ListTile(
                       title: Text(option),
-                      trailing: option == widget.current
-                          ? Icon(Icons.check, color: tokens.accent)
-                          : null,
+                      trailing:
+                          option == widget.current
+                              ? Icon(Icons.check, color: tokens.accent)
+                              : null,
                       onTap: () => Navigator.pop<String>(context, option),
                     ),
                 ],

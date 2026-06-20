@@ -38,14 +38,15 @@ abstract class UserAIUsage with _$UserAIUsage {
 
   /// Firestoreからの読み込み用コンバータ。
   static UserAIUsage fromFirestore(
-          DocumentSnapshot<Map<String, dynamic>> snapshot,
-          SnapshotOptions? options) =>
-      UserAIUsage.fromJson(snapshot.data()!..['id'] = snapshot.id);
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+    SnapshotOptions? options,
+  ) => UserAIUsage.fromJson(snapshot.data()!..['id'] = snapshot.id);
 
   /// Firestoreへの書き込み用コンバータ。
   static Map<String, dynamic> toFirestore(
-          UserAIUsage userAIUsage, SetOptions? options) =>
-      userAIUsage.toJson();
+    UserAIUsage userAIUsage,
+    SetOptions? options,
+  ) => userAIUsage.toJson();
 }
 
 /// 指定日時をUTC基準の "yyyy-MM" 形式へ変換する。

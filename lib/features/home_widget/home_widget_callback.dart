@@ -31,9 +31,10 @@ FutureOr<void> homeWidgetBackgroundCallback(Uri? uri) async {
       return;
     }
 
-    final newStatus = currentStatus == 'checked'
-        ? GroupShoppingListItemStatus.unchecked
-        : GroupShoppingListItemStatus.checked;
+    final newStatus =
+        currentStatus == 'checked'
+            ? GroupShoppingListItemStatus.unchecked
+            : GroupShoppingListItemStatus.checked;
 
     final docRef = firestore
         .collection('/groups/$groupID/shoppingLists/$shoppingListID/items')
@@ -45,17 +46,19 @@ FutureOr<void> homeWidgetBackgroundCallback(Uri? uri) async {
     final existingData = await HomeWidget.getWidgetData<String>(key);
     if (existingData != null) {
       final List<dynamic> items = jsonDecode(existingData);
-      final updatedItems = items.map((item) {
-        if (item['id'] == itemID) {
-          return {...item, 'status': newStatus.name};
-        }
-        return item;
-      }).toList();
+      final updatedItems =
+          items.map((item) {
+            if (item['id'] == itemID) {
+              return {...item, 'status': newStatus.name};
+            }
+            return item;
+          }).toList();
       await HomeWidget.saveWidgetData(key, jsonEncode(updatedItems));
     }
 
     await HomeWidgetDataSync.updateWidget();
     debugPrint(
-        '[homeWidgetBackgroundCallback] toggled item $itemID to ${newStatus.name}');
+      '[homeWidgetBackgroundCallback] toggled item $itemID to ${newStatus.name}',
+    );
   }
 }

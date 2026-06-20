@@ -46,7 +46,8 @@ void main() async {
     // ホーム画面ウィジェットの設定
     await HomeWidget.setAppGroupId(HomeWidgetDataSync.appGroupId);
     await HomeWidget.registerInteractivityCallback(
-        homeWidgetBackgroundCallback);
+      homeWidgetBackgroundCallback,
+    );
 
     if (kDebugMode) {
       overrideDebugPrint();
@@ -56,12 +57,13 @@ void main() async {
     await FirebaseMessaging.instance.requestPermission();
 
     // ignore: prefer_typing_uninitialized_variables
-    final (sharedPreferences, _, _, _) = await (
-      SharedPreferences.getInstance(),
-      setupRemoteConfig(),
-      initializePurchase(),
-      localNotificationsInitialize(),
-    ).wait;
+    final (sharedPreferences, _, _, _) =
+        await (
+          SharedPreferences.getInstance(),
+          setupRemoteConfig(),
+          initializePurchase(),
+          localNotificationsInitialize(),
+        ).wait;
 
     // MEMO: FirebaseCrashlytics#recordFlutterError called dumpErrorToConsole in function.
     // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
@@ -70,9 +72,11 @@ void main() async {
         sharedPreferencesProvider.overrideWith((ref) => sharedPreferences),
       ],
     );
-    runApp(UncontrolledProviderScope(
-      container: appProviderContainer,
-      child: const App(),
-    ));
+    runApp(
+      UncontrolledProviderScope(
+        container: appProviderContainer,
+        child: const App(),
+      ),
+    );
   }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
 }

@@ -10,6 +10,12 @@ appId: ${APP_ID}
     commands:
       - tapOn: "許可"
       - waitForAnimationToEnd
+# clearState 直後は design v2 オンボーディングが表示されるためスキップする
+- extendedWaitUntil:
+    visible: "スキップ"
+    timeout: 90000
+- tapOn: "スキップ"
+- waitForAnimationToEnd
 - extendedWaitUntil:
     visible: "匿名サインイン（デバッグ用）"
     timeout: 30000
@@ -29,8 +35,14 @@ appId: ${APP_ID}
     commands:
       - tapOn: "Retry"
       - waitForAnimationToEnd
-# ホーム画面への遷移を確認（「アイテムを追加」が表示されるまで待つ）
+# 匿名サインイン後は GroupJoinOrCreatePage が表示されるため「自分のリストを作る」でホームへ進む。
 - extendedWaitUntil:
-    visible: "アイテムを追加"
+    visible: "自分のリストを作る"
+    timeout: 90000
+- tapOn: "自分のリストを作る"
+- waitForAnimationToEnd
+# ホーム画面への遷移を確認（design v2 空状態の「タップで入力開始」が表示されるまで待つ）
+- extendedWaitUntil:
+    visible: "タップで入力開始"
     timeout: 30000
 - takeScreenshot: maestro/test-results/auth_page_04_home_after_signin

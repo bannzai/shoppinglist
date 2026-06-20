@@ -51,13 +51,14 @@ abstract class GroupShoppingLocation with _$GroupShoppingLocation {
       _$GroupShoppingLocationFromJson(json);
 
   static GroupShoppingLocation fromFirestore(
-          DocumentSnapshot<Map<String, dynamic>> snapshot,
-          SnapshotOptions? options) =>
-      GroupShoppingLocation.fromJson(snapshot.data()!..['id'] = snapshot.id);
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+    SnapshotOptions? options,
+  ) => GroupShoppingLocation.fromJson(snapshot.data()!..['id'] = snapshot.id);
 
   static Map<String, dynamic> toFirestore(
-          GroupShoppingLocation shoppingLocation, SetOptions? options) =>
-      shoppingLocation.toJson();
+    GroupShoppingLocation shoppingLocation,
+    SetOptions? options,
+  ) => shoppingLocation.toJson();
 }
 
 /// ジオフェンスのデフォルト半径（メートル）。

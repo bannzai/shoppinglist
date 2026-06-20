@@ -92,15 +92,17 @@ appId: ${APP_ID}
 # juice 行のアイテム詳細（…）からシートを開く（空入力行削除済みで juice のみ）
 - tapOn: "アイテム詳細"
 - waitForAnimationToEnd
-# 未分類アイテムのシート: カテゴリ「未分類」+「カテゴリを管理」
-- assertVisible: "カテゴリを管理"
+# 未分類アイテムのシート: カテゴリ「未分類」+「カテゴリを選択」（未分類時のボタン文言）
+- assertVisible: "カテゴリを選択"
 - takeScreenshot: screenshots/category_select_03_sheet_uncategorized
 
-# 「カテゴリを管理」→ カテゴリ一覧が選択モードで開く
-- tapOn: "カテゴリを管理"
+# 「カテゴリを選択」→ カテゴリ一覧が選択モードで開く
+- tapOn: "カテゴリを選択"
 - waitForAnimationToEnd
-# 選択モードの決定的証跡: AppBar タイトルが「カテゴリを選択」
-- assertVisible: "カテゴリを選択"
+# 選択モードの決定的証跡: 一覧に対象カテゴリ「飲料」が表示される
+- extendedWaitUntil:
+    visible: "(?s).*飲料.*"
+    timeout: 10000
 - takeScreenshot: screenshots/category_select_04_selection_mode
 
 # 「飲料」行をタップ → juice を飲料の完全一致キーワードに追記し、シートへ pop して戻る。
@@ -109,18 +111,22 @@ appId: ${APP_ID}
     text: "(?s).*飲料.*"
 - waitForAnimationToEnd
 # ref.watch によりシートのカテゴリ表示が自動更新される。Firestore 反映待ち。
+# 割り当て済みになるとボタンが「カテゴリを選択」→「カテゴリを変更」に変わる。
 - extendedWaitUntil:
-    visible: "カテゴリを編集"
+    visible: "カテゴリを変更"
     timeout: 10000
-# 「カテゴリを編集」が出る = juice が飲料にマッチ = 割り当て成功
+# 「カテゴリを変更」が出る = juice が飲料に割り当て済み = 成功
 - assertVisible:
     text: "(?s).*飲料.*"
-- assertNotVisible: "カテゴリを管理"
+# 割り当て後はボタンが「カテゴリを選択」→「カテゴリを編集」に変わる
+- assertNotVisible: "カテゴリを選択"
 - takeScreenshot: screenshots/category_select_05_sheet_assigned
 
 # --- 買い物リスト上でも juice が「飲料」セクションへ移動したことを確認 ---
-# シートを閉じる（保存ボタンでアイテムを保存しつつ閉じる）
-- tapOn: "保存"
+# シートを下スワイプで閉じる（保存ボタンは廃止、変更は自動保存される）
+- swipe:
+    start: "50%, 8%"
+    end: "50%, 75%"
 - waitForAnimationToEnd
 # 一覧のセクションヘッダが「飲料\n0/1」に変わる（結合要素のため正規表現で待つ）
 - extendedWaitUntil:

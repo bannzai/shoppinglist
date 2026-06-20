@@ -11,7 +11,8 @@ Stream<UserAIUsage?> currentMonthAIUsage(Ref ref) {
   final database = ref.watch(userDatabaseProvider);
   return database
       .aiUsageDocumentReference(
-          yearMonth: currentYearMonth(now: DateTime.now()))
+        yearMonth: currentYearMonth(now: DateTime.now()),
+      )
       .snapshots()
       .map((snapshot) => snapshot.data());
 }
@@ -20,9 +21,10 @@ Stream<UserAIUsage?> currentMonthAIUsage(Ref ref) {
 @Riverpod(dependencies: [currentMonthAIUsage])
 int remainingImageRecognitionCount(Ref ref, {required bool isPremium}) {
   final aiUsage = ref.watch(currentMonthAIUsageProvider).valueOrNull;
-  final limit = isPremium
-      ? premiumMonthlyImageRecognitionLimit
-      : freeMonthlyImageRecognitionLimit;
+  final limit =
+      isPremium
+          ? premiumMonthlyImageRecognitionLimit
+          : freeMonthlyImageRecognitionLimit;
   final used = aiUsage?.imageRecognitionCount ?? 0;
   return (limit - used).clamp(0, limit);
 }
@@ -31,9 +33,10 @@ int remainingImageRecognitionCount(Ref ref, {required bool isPremium}) {
 @Riverpod(dependencies: [currentMonthAIUsage])
 int remainingURLRecognitionCount(Ref ref, {required bool isPremium}) {
   final aiUsage = ref.watch(currentMonthAIUsageProvider).valueOrNull;
-  final limit = isPremium
-      ? premiumMonthlyURLRecognitionLimit
-      : freeMonthlyURLRecognitionLimit;
+  final limit =
+      isPremium
+          ? premiumMonthlyURLRecognitionLimit
+          : freeMonthlyURLRecognitionLimit;
   final used = aiUsage?.urlRecognitionCount ?? 0;
   return (limit - used).clamp(0, limit);
 }

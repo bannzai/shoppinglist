@@ -64,8 +64,9 @@ class AppUserCreateResolver extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final optionalAppUser = ref.watch(optionalAppUserProvider);
-    final appUserCreate =
-        AppUserCreate(userDatabase: ref.watch(userDatabaseProvider));
+    final appUserCreate = AppUserCreate(
+      userDatabase: ref.watch(userDatabaseProvider),
+    );
     final userDeveloperTokenSync = ref.watch(userDeveloperTokenSyncProvider);
 
     // 初回ログイン時にFirestoreにAppUserドキュメントが存在しない場合、ここで作成する。

@@ -10,6 +10,12 @@ appId: ${APP_ID}
     commands:
       - tapOn: "許可"
       - waitForAnimationToEnd
+# clearState 直後は design v2 オンボーディングが表示されるためスキップする
+- extendedWaitUntil:
+    visible: "スキップ"
+    timeout: 90000
+- tapOn: "スキップ"
+- waitForAnimationToEnd
 - extendedWaitUntil:
     visible: "匿名サインイン（デバッグ用）"
     timeout: 30000

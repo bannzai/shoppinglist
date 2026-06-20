@@ -1,38 +1,38 @@
 appId: ${APP_ID}
 ---
-# プレミアム状態ではリスト複製でも 6 個目以降を作成できることを確認する。
-# non_premium では複製で 6 個目を作ろうとすると SnackBar で遮断される。
+# プレミアム状態ではリスト複製でも 21 個目以降を作成できることを確認する。
+# non_premium では複製で 21 個目を作ろうとすると上限 SnackBar の CTA「アップグレード」で遮断される
+# （shopping_list_limit_duplicate_non_premium.yaml 参照）。
 
 - runFlow: shared/anonymous_sign_in.yaml
 - runFlow: shared/grant_premium_via_debug.yaml
 
-# 5 個のリストを作成
-# メニュー → 「買い物リストを追加」（PopupMenuItem）→ BottomSheet 表示 →
-# BottomSheet 内の「買い物リストを追加」ListTile で名前なしリストを作成する。
+# 初期 1 個 + CreateListFab で 19 個追加 = 20 個（free 上限）。
+# design v2: リスト追加は CreateListFab（右下 89%,83%）を展開し「今日の日付でリストを追加」。
+# 作成後はキーボードが FAB を覆うため毎回 hideKeyboard で閉じてから次の追加を行う。
 - repeat:
-    times: 5
+    times: 19
     commands:
-      - tapOn: "メニュー"
-      - waitForAnimationToEnd
-      - tapOn: "買い物リストを追加"
+      - tapOn:
+          point: "89%, 83%"
       - extendedWaitUntil:
-          visible: "現在の買い物リストを複製"
-          timeout: 5000
-      - tapOn: "買い物リストを追加"
+          visible: "今日の日付でリストを追加"
+          timeout: 8000
+      - tapOn: "今日の日付でリストを追加"
+      - waitForAnimationToEnd
+      - hideKeyboard
       - waitForAnimationToEnd
 
-# 現在のリストを複製して 6 個目にする
-# 「現在の買い物リストを複製」は BottomSheet 内にあるため先に BottomSheet を開く必要がある
-- tapOn: "メニュー"
-- waitForAnimationToEnd
-- tapOn: "買い物リストを追加"
+# 21 個目を複製で作成する。CreateListFab 展開 →「現在のリストを複製」。
+# premium では上限 SnackBar の CTA「アップグレード」が出ず複製が成功する。
+- tapOn:
+    point: "89%, 83%"
 - extendedWaitUntil:
-    visible: "現在の買い物リストを複製"
-    timeout: 5000
-- tapOn: "現在の買い物リストを複製"
+    visible: "現在のリストを複製"
+    timeout: 8000
+- tapOn: "現在のリストを複製"
 - waitForAnimationToEnd
 
-# non_premium 時の上限 SnackBar が出ないこと
-- assertNotVisible: "無料プランでは1グループあたり5個までリストを作成できます"
-
+# 上限 SnackBar の CTA「アップグレード」が出ないこと = premium で複製でも無制限。
+- assertNotVisible: "アップグレード"
 - takeScreenshot: screenshots/premium_shopping_list_limit_duplicate_unlocked

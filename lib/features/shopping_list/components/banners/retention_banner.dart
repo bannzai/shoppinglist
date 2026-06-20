@@ -26,16 +26,17 @@ class RetentionBanner extends StatelessWidget {
           Expanded(
             child: Text(
               '無料プランは作成から30日でリストが整理されます',
-              style: Theme.of(context)
-                  .textTheme
-                  .labelSmall
-                  ?.copyWith(color: tokens.neutral.ink2),
+              style: Theme.of(
+                context,
+              ).textTheme.labelSmall?.copyWith(color: tokens.neutral.ink2),
             ),
           ),
           InkWell(
             onTap: () {
               analytics.logEvent(
-                  name: 'tap_retention_banner_detail', parameters: null);
+                name: 'tap_retention_banner_detail',
+                parameters: null,
+              );
               showPaywall(context: context);
             },
             child: Padding(
@@ -43,9 +44,9 @@ class RetentionBanner extends StatelessWidget {
               child: Text(
                 '詳しく',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: tokens.accent,
-                    ),
+                  fontWeight: FontWeight.w700,
+                  color: tokens.accent,
+                ),
               ),
             ),
           ),

@@ -6,13 +6,12 @@ import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/invitation_code_validator.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupInvitationAcceptPage extends HookConsumerWidget {
-  const GroupInvitationAcceptPage({
-    super.key,
-  });
+  const GroupInvitationAcceptPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,9 +23,10 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final hasError = errorMessage.value != null;
-    final borderColor = hasError
-        ? neutral.danger
-        : (isValidCode.value ? tokens.accent : neutral.divider);
+    final borderColor =
+        hasError
+            ? neutral.danger
+            : (isValidCode.value ? tokens.accent : neutral.divider);
 
     return Scaffold(
       backgroundColor: neutral.paper,
@@ -61,9 +61,9 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
               Text(
                 'グループのメンバーから共有された8桁のコードを入力してください',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: neutral.ink2,
-                      height: 1.6,
-                    ),
+                  color: neutral.ink2,
+                  height: 1.6,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -73,19 +73,19 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                 textAlign: TextAlign.center,
                 maxLength: 8,
                 style: monoTextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                        color: neutral.ink,
-                        letterSpacing: null)
-                    .copyWith(letterSpacing: 6),
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                  color: neutral.ink,
+                  letterSpacing: null,
+                ).copyWith(letterSpacing: 6),
                 decoration: InputDecoration(
                   hintText: 'ABCD3456',
                   hintStyle: monoTextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w400,
-                          color: neutral.ink4,
-                          letterSpacing: null)
-                      .copyWith(letterSpacing: 6),
+                    fontSize: 28,
+                    fontWeight: FontWeight.w400,
+                    color: neutral.ink4,
+                    letterSpacing: null,
+                  ).copyWith(letterSpacing: 6),
                   counterText: '',
                   filled: true,
                   fillColor: neutral.card,
@@ -107,10 +107,9 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                 const SizedBox(height: 12),
                 Text(
                   errorMessage.value!,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: neutral.danger),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: neutral.danger),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -118,15 +117,18 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: AppPill(
-                    label: isAccepting.value ? '参加中...' : '参加する',
-                    variant: AppPillVariant.accent,
-                    large: true,
-                    expanded: true,
-                    onPressed: isAccepting.value || !isValidCode.value
-                        ? null
-                        : () async {
+                  label: isAccepting.value ? '参加中...' : '参加する',
+                  variant: AppPillVariant.accent,
+                  large: true,
+                  expanded: true,
+                  onPressed:
+                      isAccepting.value || !isValidCode.value
+                          ? null
+                          : () async {
                             analytics.logEvent(
-                                name: 'tap_join_group', parameters: null);
+                              name: 'tap_join_group',
+                              parameters: null,
+                            );
                             isAccepting.value = true;
                             errorMessage.value = null;
                             // i-invitation-verifying: AppDialogShell ベースで
@@ -138,17 +140,20 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                               await ref
                                   .read(acceptGroupInvitationProvider)
                                   .call(
-                                      invitationCode:
-                                          codeController.text.toUpperCase());
+                                    invitationCode:
+                                        codeController.text.toUpperCase(),
+                                  );
                               if (context.mounted) {
                                 Navigator.of(context).pop(); // verifying dialog
                               }
                               if (context.mounted) {
-                                Navigator.of(context)
-                                    .popUntil((route) => route.isFirst);
+                                Navigator.of(
+                                  context,
+                                ).popUntil((route) => route.isFirst);
                               }
-                            } catch (e) {
-                              errorMessage.value = e.toString();
+                            } catch (e, st) {
+                              logError(e, st);
+                              errorMessage.value = describeError(e, st).message;
                               if (context.mounted) {
                                 Navigator.of(context).pop(); // verifying dialog
                               }
@@ -156,24 +161,29 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                               isAccepting.value = false;
                             }
                           },
-                    icon: null),
+                  icon: null,
+                ),
               ),
               const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
                 child: AppPill(
-                    label: 'キャンセル',
-                    variant: AppPillVariant.ghost,
-                    large: true,
-                    expanded: true,
-                    onPressed: isAccepting.value
-                        ? null
-                        : () {
+                  label: 'キャンセル',
+                  variant: AppPillVariant.ghost,
+                  large: true,
+                  expanded: true,
+                  onPressed:
+                      isAccepting.value
+                          ? null
+                          : () {
                             analytics.logEvent(
-                                name: 'cancel_join_group', parameters: null);
+                              name: 'cancel_join_group',
+                              parameters: null,
+                            );
                             Navigator.pop(context);
                           },
-                    icon: null),
+                  icon: null,
+                ),
               ),
             ],
           ),
@@ -217,10 +227,9 @@ void _showVerifyingDialog(BuildContext context) {
             Text(
               'サーバー側でグループへの参加を処理しています。',
               textAlign: TextAlign.center,
-              style: Theme.of(dialogContext)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(color: tokens.neutral.ink3),
+              style: Theme.of(
+                dialogContext,
+              ).textTheme.bodySmall?.copyWith(color: tokens.neutral.ink3),
             ),
           ],
         ),

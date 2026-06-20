@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 /// テーマカラー（5 色プリセット）の選択画面。プレミアム機能。
@@ -16,7 +17,7 @@ class ThemeColorSelectionPage extends ConsumerWidget {
     final neutral = tokens.neutral;
     final selectedHex =
         ref.watch(appUserProvider).asData?.value.themeColorHex ??
-            defaultThemeColorHex;
+        defaultThemeColorHex;
 
     return Scaffold(
       backgroundColor: neutral.paper,
@@ -35,9 +36,9 @@ class ThemeColorSelectionPage extends ConsumerWidget {
                 child: Text(
                   '和の伝統色 5 色から選んで、アプリ全体の差し色を切り替えます。',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: neutral.ink2,
-                        height: 1.6,
-                      ),
+                    color: neutral.ink2,
+                    height: 1.6,
+                  ),
                 ),
               ),
               GridView.count(
@@ -47,36 +48,37 @@ class ThemeColorSelectionPage extends ConsumerWidget {
                 childAspectRatio: 0.78,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                children: themeColorPresets
-                    .map(
-                      (preset) => _ColorSwatch(
-                        preset: preset.preset,
-                        selected: preset.hex == selectedHex,
-                        onTap: () async {
-                          analytics.logEvent(
-                            name: 'select_theme_color',
-                            parameters: {'themeColorHex': preset.hex},
-                          );
-                          try {
-                            await ref
-                                .read(themeColorUpdateProvider)
-                                .call(preset: preset.preset);
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('テーマカラーを変更しました')),
+                children:
+                    themeColorPresets
+                        .map(
+                          (preset) => _ColorSwatch(
+                            preset: preset.preset,
+                            selected: preset.hex == selectedHex,
+                            onTap: () async {
+                              analytics.logEvent(
+                                name: 'select_theme_color',
+                                parameters: {'themeColorHex': preset.hex},
                               );
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(e.toString())),
-                              );
-                            }
-                          }
-                        },
-                      ),
-                    )
-                    .toList(),
+                              try {
+                                await ref
+                                    .read(themeColorUpdateProvider)
+                                    .call(preset: preset.preset);
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('テーマカラーを変更しました'),
+                                    ),
+                                  );
+                                }
+                              } catch (e, st) {
+                                if (context.mounted) {
+                                  showErrorSnackBar(context, e, st);
+                                }
+                              }
+                            },
+                          ),
+                        )
+                        .toList(),
               ),
             ],
           ),
@@ -118,29 +120,33 @@ class _ColorSwatch extends StatelessWidget {
               decoration: BoxDecoration(
                 color: color,
                 shape: BoxShape.circle,
-                border: selected
-                    ? Border.all(color: neutral.surface, width: 3)
-                    : null,
-                boxShadow: selected
-                    ? [
-                        BoxShadow(
-                          color: color.withValues(alpha: 0.4),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ]
-                    : null,
+                border:
+                    selected
+                        ? Border.all(color: neutral.surface, width: 3)
+                        : null,
+                boxShadow:
+                    selected
+                        ? [
+                          BoxShadow(
+                            color: color.withValues(alpha: 0.4),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                        : null,
               ),
-              foregroundDecoration: selected
-                  ? BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: neutral.ink, width: 2),
-                    )
-                  : null,
+              foregroundDecoration:
+                  selected
+                      ? BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: neutral.ink, width: 2),
+                      )
+                      : null,
               alignment: Alignment.center,
-              child: selected
-                  ? const Icon(Icons.check, color: Colors.white, size: 22)
-                  : null,
+              child:
+                  selected
+                      ? const Icon(Icons.check, color: Colors.white, size: 22)
+                      : null,
             ),
             const SizedBox(height: 8),
             Text(

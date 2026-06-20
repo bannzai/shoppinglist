@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/components/error/error_view.dart';
 import 'package:shoppinglist/components/primitives/app_cell.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
@@ -15,39 +16,45 @@ import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupSettingPage extends ConsumerWidget {
   final String groupID;
 
-  const GroupSettingPage({
-    super.key,
-    required this.groupID,
-  });
+  const GroupSettingPage({super.key, required this.groupID});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final groupAsync = ref.watch(groupProvider(groupID: groupID));
-    final groupUserProfilesAsync =
-        ref.watch(groupUserProfilesProvider(groupID: groupID));
+    final groupUserProfilesAsync = ref.watch(
+      groupUserProfilesProvider(groupID: groupID),
+    );
 
     return groupAsync.when(
-      data: (group) => groupUserProfilesAsync.when(
-        data: (profiles) => _GroupSettingBody(
-          groupID: groupID,
-          group: group,
-          profiles: profiles,
-        ),
-        error: (e, st) =>
-            _PaperScaffold(child: Center(child: Text(e.toString()))),
-        loading: () => const _PaperScaffold(
-            child: Center(child: CircularProgressIndicator())),
-      ),
-      error: (e, st) =>
-          _PaperScaffold(child: Center(child: Text(e.toString()))),
-      loading: () => const _PaperScaffold(
-          child: Center(child: CircularProgressIndicator())),
+      data:
+          (group) => groupUserProfilesAsync.when(
+            data:
+                (profiles) => _GroupSettingBody(
+                  groupID: groupID,
+                  group: group,
+                  profiles: profiles,
+                ),
+            error:
+                (e, st) =>
+                    _PaperScaffold(child: ErrorView(error: e, stackTrace: st)),
+            loading:
+                () => const _PaperScaffold(
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+          ),
+      error:
+          (e, st) => _PaperScaffold(child: ErrorView(error: e, stackTrace: st)),
+      loading:
+          () => const _PaperScaffold(
+            child: Center(child: CircularProgressIndicator()),
+          ),
     );
   }
 }
@@ -86,8 +93,9 @@ class _GroupSettingBody extends HookConsumerWidget {
     final currentUserID = ref.watch(currentUserIDProvider);
     final isOwner =
         group.ownerUserID != null && group.ownerUserID == currentUserID;
-    final groupNameController =
-        useTextEditingController(text: group.name ?? '');
+    final groupNameController = useTextEditingController(
+      text: group.name ?? '',
+    );
     final isCreatingInvitation = useState(false);
     final isRemovingMember = useState(false);
 
@@ -112,7 +120,9 @@ class _GroupSettingBody extends HookConsumerWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 4.0),
+                      horizontal: 16.0,
+                      vertical: 4.0,
+                    ),
                     child: TextField(
                       controller: groupNameController,
                       readOnly: !isOwner,
@@ -121,19 +131,21 @@ class _GroupSettingBody extends HookConsumerWidget {
                         hintText: 'グループ名を入力',
                         border: InputBorder.none,
                       ),
-                      onSubmitted: !isOwner
-                          ? null
-                          : (value) {
-                              final newName = value.trim();
-                              if (newName.isEmpty ||
-                                  newName == (group.name ?? '')) {
-                                return;
-                              }
-                              ref
-                                  .read(
-                                      groupNameUpdateProvider(groupID: groupID))
-                                  .call(name: newName);
-                            },
+                      onSubmitted:
+                          !isOwner
+                              ? null
+                              : (value) {
+                                final newName = value.trim();
+                                if (newName.isEmpty ||
+                                    newName == (group.name ?? '')) {
+                                  return;
+                                }
+                                ref
+                                    .read(
+                                      groupNameUpdateProvider(groupID: groupID),
+                                    )
+                                    .call(name: newName);
+                              },
                     ),
                   ),
                 ],
@@ -155,28 +167,33 @@ class _GroupSettingBody extends HookConsumerWidget {
                         }
                         return null;
                       }(),
-                      trailing: (isOwner && !isProfileOwner)
-                          ? IconButton(
-                              icon: Icon(Icons.remove_circle,
-                                  color: context.appTheme.neutral.danger),
-                              onPressed: isRemovingMember.value
-                                  ? null
-                                  : () {
-                                      analytics.logEvent(
-                                          name: 'tap_remove_member',
-                                          parameters: {
-                                            'groupID': groupID,
-                                            'targetUserID': profile.userID
-                                          });
-                                      _showRemoveMemberDialog(
-                                        context: context,
-                                        ref: ref,
-                                        profile: profile,
-                                        isRemovingMember: isRemovingMember,
-                                      );
-                                    },
-                            )
-                          : null,
+                      trailing:
+                          (isOwner && !isProfileOwner)
+                              ? IconButton(
+                                icon: Icon(
+                                  Icons.remove_circle,
+                                  color: context.appTheme.neutral.danger,
+                                ),
+                                onPressed:
+                                    isRemovingMember.value
+                                        ? null
+                                        : () {
+                                          analytics.logEvent(
+                                            name: 'tap_remove_member',
+                                            parameters: {
+                                              'groupID': groupID,
+                                              'targetUserID': profile.userID,
+                                            },
+                                          );
+                                          _showRemoveMemberDialog(
+                                            context: context,
+                                            ref: ref,
+                                            profile: profile,
+                                            isRemovingMember: isRemovingMember,
+                                          );
+                                        },
+                              )
+                              : null,
                     );
                   }),
                 ],
@@ -187,44 +204,46 @@ class _GroupSettingBody extends HookConsumerWidget {
               AppSettingSection(
                 children: [
                   AppCell(
-                      icon: Icons.store_outlined,
-                      title: '買い物する場所',
-                      subtitle: '店舗の登録・編集',
-                      onTap: () {
-                        analytics.logEvent(
-                          name: 'navigate_shopping_location_from_group_setting',
-                          parameters: {'groupID': groupID},
-                        );
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                ShoppingLocationPage(groupID: groupID),
-                          ),
-                        );
-                      },
-                      detail: null,
-                      onSwitch: null,
-                      switchValue: null),
+                    icon: Icons.store_outlined,
+                    title: '買い物する場所',
+                    subtitle: '店舗の登録・編集',
+                    onTap: () {
+                      analytics.logEvent(
+                        name: 'navigate_shopping_location_from_group_setting',
+                        parameters: {'groupID': groupID},
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => ShoppingLocationPage(groupID: groupID),
+                        ),
+                      );
+                    },
+                    detail: null,
+                    onSwitch: null,
+                    switchValue: null,
+                  ),
                   AppCell(
-                      icon: Icons.category_outlined,
-                      title: 'カテゴリ',
-                      subtitle: '自動分類のキーワード管理',
-                      onTap: () {
-                        analytics.logEvent(
-                          name: 'navigate_group_category_from_group_setting',
-                          parameters: {'groupID': groupID},
-                        );
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => GroupCategoryPage(groupID: groupID),
-                          ),
-                        );
-                      },
-                      detail: null,
-                      onSwitch: null,
-                      switchValue: null),
+                    icon: Icons.category_outlined,
+                    title: 'カテゴリ',
+                    subtitle: '自動分類のキーワード管理',
+                    onTap: () {
+                      analytics.logEvent(
+                        name: 'navigate_group_category_from_group_setting',
+                        parameters: {'groupID': groupID},
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => GroupCategoryPage(groupID: groupID),
+                        ),
+                      );
+                    },
+                    detail: null,
+                    onSwitch: null,
+                    switchValue: null,
+                  ),
                 ],
               ),
               AppSettingSection(
@@ -232,43 +251,70 @@ class _GroupSettingBody extends HookConsumerWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 10),
+                      horizontal: 16.0,
+                      vertical: 10,
+                    ),
                     child: AppPill(
-                      label: isCreatingInvitation.value
-                          ? '招待コードを発行中...'
-                          : '招待コードを発行',
+                      label:
+                          isCreatingInvitation.value
+                              ? '招待コードを発行中...'
+                              : '招待コードを発行',
                       icon: Icons.person_add,
                       variant: AppPillVariant.soft,
-                      onPressed: isCreatingInvitation.value
-                          ? null
-                          : () async {
-                              analytics.logEvent(
+                      onPressed:
+                          isCreatingInvitation.value
+                              ? null
+                              : () async {
+                                analytics.logEvent(
                                   name: 'tap_create_grp_invitation',
-                                  parameters: {'groupID': groupID});
-                              isCreatingInvitation.value = true;
-                              try {
-                                final invitation = await ref
-                                    .read(createGroupInvitationProvider)
-                                    .call(groupID: groupID);
-                                if (context.mounted) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => _InvitationCodeDialog(
-                                        groupID: groupID,
-                                        invitationCode:
-                                            invitation.invitationCode),
+                                  parameters: {'groupID': groupID},
+                                );
+                                // Issue #432: グループ名未設定のまま招待すると、招待された側が
+                                // 名称未設定のグループに参加することになり混乱を招く。招待前に
+                                // グループ名の登録を必須化する。入力欄に名前が入っていれば
+                                // （onSubmitted 未確定でも）それを採用し、未保存なら先に保存する。
+                                final inputGroupName =
+                                    groupNameController.text.trim();
+                                if (inputGroupName.isEmpty) {
+                                  showGlobalToast(
+                                    '招待する前にグループ名を設定してください',
+                                    title: null,
                                   );
+                                  return;
                                 }
-                              } catch (e) {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(e.toString())),
-                                  );
+                                isCreatingInvitation.value = true;
+                                try {
+                                  if (inputGroupName != (group.name ?? '')) {
+                                    await ref
+                                        .read(
+                                          groupNameUpdateProvider(
+                                            groupID: groupID,
+                                          ),
+                                        )
+                                        .call(name: inputGroupName);
+                                  }
+                                  final invitation = await ref
+                                      .read(createGroupInvitationProvider)
+                                      .call(groupID: groupID);
+                                  if (context.mounted) {
+                                    showDialog(
+                                      context: context,
+                                      builder:
+                                          (context) => _InvitationCodeDialog(
+                                            groupID: groupID,
+                                            invitationCode:
+                                                invitation.invitationCode,
+                                          ),
+                                    );
+                                  }
+                                } catch (e, st) {
+                                  if (context.mounted) {
+                                    showErrorSnackBar(context, e, st);
+                                  }
+                                } finally {
+                                  isCreatingInvitation.value = false;
                                 }
-                              } finally {
-                                isCreatingInvitation.value = false;
-                              }
-                            },
+                              },
                     ),
                   ),
                 ],
@@ -289,61 +335,63 @@ class _GroupSettingBody extends HookConsumerWidget {
   }) {
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text('${profile.displayName ?? '名前未設定'}をグループから削除しますか？'),
-        content: const Text('削除されたメンバーはこのグループにアクセスできなくなります'),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              analytics.logEvent(
-                  name: 'tap_confirm_remove_member',
-                  parameters: {
-                    'groupID': groupID,
-                    'targetUserID': profile.userID
-                  });
-              Navigator.pop(dialogContext);
-              isRemovingMember.value = true;
-              try {
-                await functions.removeGroupMember(
-                  groupID: groupID,
-                  targetUserID: profile.userID,
-                );
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content:
-                            Text('${profile.displayName ?? 'メンバー'}を削除しました')),
+      builder:
+          (dialogContext) => AlertDialog(
+            title: Text('${profile.displayName ?? '名前未設定'}をグループから削除しますか？'),
+            content: const Text('削除されたメンバーはこのグループにアクセスできなくなります'),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  analytics.logEvent(
+                    name: 'tap_confirm_remove_member',
+                    parameters: {
+                      'groupID': groupID,
+                      'targetUserID': profile.userID,
+                    },
                   );
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString())),
+                  Navigator.pop(dialogContext);
+                  isRemovingMember.value = true;
+                  try {
+                    await functions.removeGroupMember(
+                      groupID: groupID,
+                      targetUserID: profile.userID,
+                    );
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            '${profile.displayName ?? 'メンバー'}を削除しました',
+                          ),
+                        ),
+                      );
+                    }
+                  } catch (e, st) {
+                    if (context.mounted) {
+                      showErrorSnackBar(context, e, st);
+                    }
+                  } finally {
+                    isRemovingMember.value = false;
+                  }
+                },
+                child: Text(
+                  '削除',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: context.appTheme.neutral.danger,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  analytics.logEvent(
+                    name: 'cancel_remove_member',
+                    parameters: {'groupID': groupID},
                   );
-                }
-              } finally {
-                isRemovingMember.value = false;
-              }
-            },
-            child: Text(
-              '削除',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: context.appTheme.neutral.danger),
-            ),
+                  Navigator.pop(dialogContext);
+                },
+                child: const Text('キャンセル'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              analytics.logEvent(
-                  name: 'cancel_remove_member',
-                  parameters: {'groupID': groupID});
-              Navigator.pop(dialogContext);
-            },
-            child: const Text('キャンセル'),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -354,8 +402,10 @@ class _InvitationCodeDialog extends StatelessWidget {
   final String groupID;
   final String invitationCode;
 
-  const _InvitationCodeDialog(
-      {required this.groupID, required this.invitationCode});
+  const _InvitationCodeDialog({
+    required this.groupID,
+    required this.invitationCode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -369,18 +419,17 @@ class _InvitationCodeDialog extends StatelessWidget {
           SelectableText(
             invitationCode,
             style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 4,
-                ),
+              fontWeight: FontWeight.w700,
+              letterSpacing: 4,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             '有効期限: 7日間',
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall
-                ?.copyWith(color: Colors.grey),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: Colors.grey),
           ),
         ],
       ),
@@ -388,8 +437,9 @@ class _InvitationCodeDialog extends StatelessWidget {
         TextButton(
           onPressed: () async {
             analytics.logEvent(
-                name: 'tap_copy_invitation_code',
-                parameters: {'groupID': groupID});
+              name: 'tap_copy_invitation_code',
+              parameters: {'groupID': groupID},
+            );
             await Clipboard.setData(ClipboardData(text: invitationCode));
             // ダイアログ上の SnackBar は背後の Scaffold に描画されて
             // 見えないため、前面に出るグローバルトーストで通知する。
@@ -400,8 +450,9 @@ class _InvitationCodeDialog extends StatelessWidget {
         TextButton(
           onPressed: () {
             analytics.logEvent(
-                name: 'cancel_invitation_dialog',
-                parameters: {'groupID': groupID});
+              name: 'cancel_invitation_dialog',
+              parameters: {'groupID': groupID},
+            );
             Navigator.pop(context);
           },
           child: const Text('閉じる'),

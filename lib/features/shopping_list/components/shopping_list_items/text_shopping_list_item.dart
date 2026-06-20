@@ -4,12 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item_detail_bottom_sheet.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
@@ -36,19 +38,26 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
   final List<GroupShoppingListItem> shoppingListItems;
   final int? reorderIndex;
 
+  /// 未分類アイテムの行に「カテゴリ +」ボタンを出すか。タップで [GroupCategoryPage] の
+  /// カテゴリ選択モードへ遷移し、このアイテムを既存カテゴリへ割り当てられる。
+  /// カテゴリにマッチ済み(分類済み)の行・入力行(空メッセージ)では false にする。
+  final bool showAddCategoryButton;
+
   const TextShoppingListItemWidget({
     super.key,
     required this.groupID,
     required this.textShoppingListItem,
     required this.shoppingListItems,
     required this.reorderIndex,
+    this.showAddCategoryButton = false,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final focusNode = useFocusNode();
-    final textEditingController =
-        useTextEditingController(text: textShoppingListItem.message);
+    final textEditingController = useTextEditingController(
+      text: textShoppingListItem.message,
+    );
     final isEditing = useState(false);
 
     // 初回に空行(入力行)へフォーカスし、フォーカスの有無を isEditing に同期する。加えて、
@@ -75,13 +84,16 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
           ref
               .read(groupDatabaseProvider(groupID: groupID))
               .shoppingListItemsReference(
-                  shoppingListID: textShoppingListItem.shoppingListID)
+                shoppingListID: textShoppingListItem.shoppingListID,
+              )
               .doc(textShoppingListItem.id)
               .delete();
         } else if (text != textShoppingListItem.message) {
           // 入力/編集途中のテキストをフォーカス喪失時に確定保存する。Enter 確定が走った直後は
           // message==text となりこの分岐は skip される(二重更新を避ける)。
-          ref.read(updateShoppingListItemProvider(groupID: groupID)).call(
+          ref
+              .read(updateShoppingListItemProvider(groupID: groupID))
+              .call(
                 shoppingListID: textShoppingListItem.shoppingListID,
                 item: textShoppingListItem.copyWith(message: text),
                 editedByUserID: ref.read(currentUserIDProvider)!,
@@ -96,8 +108,9 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
     // 既存アイテムの編集を Enter 確定した後など、入力行へフォーカスを戻す要求(カウンタ増加)を
     // 受けたら、空行(入力行)を再フォーカスする。依存配列はカウンタのみ — 要求のたびに一度実行する。
     // 確定済みアイテムが消えた id の GlobalKey 掃除等とは無関係に、空行のみ反応する。
-    final inputRowFocusRequest =
-        ref.watch(shoppingListInputRowFocusRequestProvider);
+    final inputRowFocusRequest = ref.watch(
+      shoppingListInputRowFocusRequestProvider,
+    );
     useEffect(() {
       if (inputRowFocusRequest > 0 && textShoppingListItem.message.isEmpty) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -110,6 +123,39 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       return null;
     }, [inputRowFocusRequest]);
 
+    // 入力行がフォーカス中に、キーボード表示(viewInsets 変化)や Enter 確定で確定アイテムが
+    // 挿入されて入力行が下へ繰り下がる(order 変化)と、入力行がキーボードの裏に隠れて入力中の
+    // 文字が見えなくなる(Issue #429)。これらの変化のたびに入力行を可視領域の下端へスクロールし、
+    // 入力中の行を常に見えるようにする。プログラムによる ensureVisible のアニメーションは
+    // dragDetails を持たないため、ReorderableListView の keyboardDismissBehavior.onDrag を
+    // 誤発火させず、フォーカス(ソフトキーボード表示)も維持される(fix-350 の挙動を壊さない)。
+    //
+    // keyboardInset は入力行(空メッセージ)でだけ viewInsets を購読する。確定行はキーボードの
+    // 高さに依存させず、キーボード開閉のたびに全行が再ビルドされるのを避ける。
+    final keyboardInset =
+        textShoppingListItem.message.isEmpty
+            ? MediaQuery.viewInsetsOf(context).bottom
+            : 0.0;
+    // 目的: 入力行をキーボード上端の可視領域へ追従させる。
+    // 依存配列: キーボード高さ・入力行の order・編集状態。レイアウトに影響する変化だけで追従させ、
+    // 各文字のテキスト編集では再実行しない(文字単位のキャレット追従は EditableText が担うため)。
+    useEffect(() {
+      if (textShoppingListItem.message.isEmpty && isEditing.value) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final scrollContext = focusNode.context;
+          if (scrollContext != null) {
+            Scrollable.ensureVisible(
+              scrollContext,
+              alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+            );
+          }
+        });
+      }
+      return null;
+    }, [keyboardInset, textShoppingListItem.order, isEditing.value]);
+
     final currentUserID = ref.watch(currentUserIDProvider)!;
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
@@ -118,19 +164,22 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
     // 空のメッセージ(新規入力待ちの行・未保存の編集中の行)はチェック対象にしない。
     // チェックボックスのタップ・右スワイプの両方を無効化するための判定。
     final isEmptyMessage = textShoppingListItem.message.trim().isEmpty;
-    final hasDescription = textShoppingListItem.description != null &&
+    final hasDescription =
+        textShoppingListItem.description != null &&
         textShoppingListItem.description!.isNotEmpty;
-    final itemColor = textShoppingListItem.color != null
-        ? colorFromHex(textShoppingListItem.color!).withValues(alpha: 0.1)
-        : null;
+    final itemColor =
+        textShoppingListItem.color != null
+            ? colorFromHex(textShoppingListItem.color!).withValues(alpha: 0.1)
+            : null;
     final focused = isEditing.value;
     // チェック済み行に背景は塗らない（screens-list.jsx#ItemRow は checked でも transparent）。
     // divider2 半透過を塗るとカテゴリヘッダーの surface とほぼ同色になり、チェックを入れると
     // セクションの境界が見分けられなくなる（Issue #374）。チェック状態は Checkbox 塗り +
     // 取り消し線 + checked 文字色で表現する。
-    final backgroundColor = focused
-        ? tokens.accentSoft.withValues(alpha: 0.6)
-        : itemColor ?? Colors.transparent;
+    final backgroundColor =
+        focused
+            ? tokens.accentSoft.withValues(alpha: 0.6)
+            : itemColor ?? Colors.transparent;
 
     // ReorderableListView のドラッグ移動中に Material が必要
     final content = Material(
@@ -156,31 +205,37 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
               label: textShoppingListItem.message,
               child: _CircleCheckbox(
                 checked: isChecked,
-                color: textShoppingListItem.color != null
-                    ? colorFromHex(textShoppingListItem.color!)
-                    : tokens.accent,
+                color:
+                    textShoppingListItem.color != null
+                        ? colorFromHex(textShoppingListItem.color!)
+                        : tokens.accent,
                 // 空行は onChanged を null にしてタップを無効化する。
-                onChanged: isEmptyMessage
-                    ? null
-                    : (_) {
-                        analytics.logEvent(
+                onChanged:
+                    isEmptyMessage
+                        ? null
+                        : (_) {
+                          analytics.logEvent(
                             name: 'tap_toggle_item_checkbox',
                             parameters: {
                               'groupID': groupID,
                               'shoppingListID':
                                   textShoppingListItem.shoppingListID,
                               'itemID': textShoppingListItem.id,
-                            });
-                        ref
-                            .read(toggleShoppingListItemCheckProvider(
-                                groupID: groupID))
-                            .call(
-                              shoppingListID:
-                                  textShoppingListItem.shoppingListID,
-                              item: textShoppingListItem,
-                              userID: currentUserID,
-                            );
-                      },
+                            },
+                          );
+                          ref
+                              .read(
+                                toggleShoppingListItemCheckProvider(
+                                  groupID: groupID,
+                                ),
+                              )
+                              .call(
+                                shoppingListID:
+                                    textShoppingListItem.shoppingListID,
+                                item: textShoppingListItem,
+                                userID: currentUserID,
+                              );
+                        },
               ),
             ),
             const SizedBox(width: 12),
@@ -211,6 +266,40 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                 ],
               ),
             ),
+            if (showAddCategoryButton) ...[
+              const SizedBox(width: 8),
+              AddCategoryChip(
+                onTap: () {
+                  analytics.logEvent(
+                    name: 'tap_add_category_from_item_row',
+                    parameters: {
+                      'groupID': groupID,
+                      'itemID': textShoppingListItem.id,
+                    },
+                  );
+                  // 既存行を Enter 未確定で編集中のままチップを押した場合、build 時点の
+                  // 古い message ではなく入力欄の最新テキストでカテゴリ選択を開く。push に伴う
+                  // フォーカス喪失で同じ値が確定保存される(FocusNode listener)ため、選択先の
+                  // キーワード追加と保存後の message が一致する。空のときは保存済み値に委ねる。
+                  final editedMessage = textEditingController.text.trim();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => GroupCategoryPage(
+                            groupID: groupID,
+                            selectionForItem:
+                                editedMessage.isEmpty
+                                    ? textShoppingListItem
+                                    : textShoppingListItem.copyWith(
+                                      message: editedMessage,
+                                    ),
+                          ),
+                    ),
+                  );
+                },
+              ),
+            ],
             if (textShoppingListItem.imageURL != null)
               ShoppingListItemThumbnail(
                 imageURL: textShoppingListItem.imageURL!,
@@ -218,10 +307,13 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
             IconButton(
               tooltip: 'アイテム詳細',
               onPressed: () {
-                analytics.logEvent(name: 'tap_open_item_detail', parameters: {
-                  'groupID': groupID,
-                  'itemID': textShoppingListItem.id,
-                });
+                analytics.logEvent(
+                  name: 'tap_open_item_detail',
+                  parameters: {
+                    'groupID': groupID,
+                    'itemID': textShoppingListItem.id,
+                  },
+                );
                 appShowModalBottomSheet(
                   context: context,
                   builder: (context) {
@@ -243,17 +335,21 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       ),
     );
 
-    final widget = reorderIndex != null
-        ? ReorderableDelayedDragStartListener(
-            index: reorderIndex!, child: content)
-        : content;
+    final widget =
+        reorderIndex != null
+            ? ReorderableDelayedDragStartListener(
+              index: reorderIndex!,
+              child: content,
+            )
+            : content;
 
     return Dismissible(
       key: ValueKey(textShoppingListItem.id),
       // 空行は右スワイプでのチェックを禁止し、左スワイプ削除のみ許可する。
-      direction: isEmptyMessage
-          ? DismissDirection.endToStart
-          : DismissDirection.horizontal,
+      direction:
+          isEmptyMessage
+              ? DismissDirection.endToStart
+              : DismissDirection.horizontal,
       // i-8 右スワイプでチェックトグル: `design_handoff_shopping_list/README.md` §8
       background: Container(
         color: neutral.ok,
@@ -271,7 +367,8 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
           // 右スワイプ: チェック状態をトグルし、行は残す
-          final wasChecked = textShoppingListItem.status ==
+          final wasChecked =
+              textShoppingListItem.status ==
               GroupShoppingListItemStatus.checked;
           analytics.logEvent(
             name: 'swipe_toggle_shopping_list_item',
@@ -288,16 +385,14 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                 )
                 .doc(textShoppingListItem.id)
                 .update({
-              GroupShoppingListItemFirestoreKeys.status: wasChecked
-                  ? GroupShoppingListItemStatus.unchecked.name
-                  : GroupShoppingListItemStatus.checked.name,
-            });
+                  GroupShoppingListItemFirestoreKeys.status:
+                      wasChecked
+                          ? GroupShoppingListItemStatus.unchecked.name
+                          : GroupShoppingListItemStatus.checked.name,
+                });
           } catch (e, st) {
-            debugPrint('アイテムのチェック切替に失敗: $e\n$st');
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(e.toString())),
-              );
+              showErrorSnackBar(context, e, st);
             }
           }
           return false;
@@ -305,18 +400,19 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         // 左スワイプ: 削除
         analytics.logEvent(
           name: 'swipe_delete_shopping_list_item',
-          parameters: {
-            'groupShoppingListItemID': textShoppingListItem.id,
-          },
+          parameters: {'groupShoppingListItemID': textShoppingListItem.id},
         );
         // 削除が成功すると Stream 更新でこの Widget は dispose され context.mounted が
         // false になり得る。await 後に SnackBar 表示・Undo 操作ができるよう、
         // ScaffoldMessenger と復元用 call クラスを await 前に捕捉しておく。
         final messenger = ScaffoldMessenger.of(context);
-        final restore =
-            ref.read(restoreShoppingListItemProvider(groupID: groupID));
+        final restore = ref.read(
+          restoreShoppingListItemProvider(groupID: groupID),
+        );
         try {
-          await ref.read(deleteShoppingListItemProvider(groupID: groupID)).call(
+          await ref
+              .read(deleteShoppingListItemProvider(groupID: groupID))
+              .call(
                 shoppingListID: textShoppingListItem.shoppingListID,
                 itemID: textShoppingListItem.id,
               );
@@ -346,9 +442,9 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
             );
           return true;
         } catch (e, st) {
-          debugPrint('アイテムの削除に失敗: $e\n$st');
+          logError(e, st);
           messenger.showSnackBar(
-            SnackBar(content: Text(e.toString())),
+            SnackBar(content: Text(describeError(e, st).message)),
           );
           return false;
         }
@@ -364,10 +460,7 @@ class ShoppingListItemDescriptionText extends StatelessWidget {
   /// 表示する説明文。
   final String description;
 
-  const ShoppingListItemDescriptionText({
-    super.key,
-    required this.description,
-  });
+  const ShoppingListItemDescriptionText({super.key, required this.description});
 
   @override
   Widget build(BuildContext context) {
@@ -375,10 +468,9 @@ class ShoppingListItemDescriptionText extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 4),
       child: Text(
         description,
-        style: Theme.of(context)
-            .textTheme
-            .bodySmall
-            ?.copyWith(color: context.appTheme.neutral.ink3),
+        style: Theme.of(
+          context,
+        ).textTheme.bodySmall?.copyWith(color: context.appTheme.neutral.ink3),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
@@ -392,10 +484,7 @@ class ShoppingListItemThumbnail extends StatelessWidget {
   /// 商品写真のダウンロードURL。
   final String imageURL;
 
-  const ShoppingListItemThumbnail({
-    super.key,
-    required this.imageURL,
-  });
+  const ShoppingListItemThumbnail({super.key, required this.imageURL});
 
   @override
   Widget build(BuildContext context) {
@@ -409,22 +498,79 @@ class ShoppingListItemThumbnail extends StatelessWidget {
           width: 36,
           height: 36,
           fit: BoxFit.cover,
-          placeholder: (context, url) => SizedBox(
-            width: 36,
-            height: 36,
-            child: Center(
-              child: SizedBox(
-                width: 14,
-                height: 14,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(tokens.accent),
+          placeholder:
+              (context, url) => SizedBox(
+                width: 36,
+                height: 36,
+                child: Center(
+                  child: SizedBox(
+                    width: 14,
+                    height: 14,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(tokens.accent),
+                    ),
+                  ),
                 ),
               ),
+          errorWidget:
+              (context, url, error) => Icon(
+                Icons.broken_image,
+                size: 18,
+                color: tokens.neutral.ink3,
+              ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 未分類アイテムの行に表示する「カテゴリ +」ショートカットボタン。
+///
+/// タップで [GroupCategoryPage] のカテゴリ選択モード(`selectionForItem`)へ push する。
+/// 一覧でカテゴリを選ぶと、アイテム名がそのカテゴリの完全一致キーワードに追記され、
+/// このアイテムがそのカテゴリへ分類される（割り当て処理は [GroupCategoryPage] 側に集約）。
+class AddCategoryChip extends StatelessWidget {
+  /// 「カテゴリ +」タップ時に実行する遷移処理。
+  final VoidCallback onTap;
+
+  const AddCategoryChip({super.key, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.appTheme;
+    // 背景の装飾は Ink に持たせ、その内側の InkWell でタップ波紋を描く。
+    // InkWell の child に背景色付き Container を置くと波紋が Container に隠れるため
+    // (Material のインクは子の手前に描かれない)、Ink + InkWell + Padding 構成にする。
+    return Semantics(
+      button: true,
+      label: 'カテゴリを追加',
+      child: Ink(
+        decoration: BoxDecoration(
+          color: tokens.accentSoft.withValues(alpha: 0.6),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: tokens.accent.withValues(alpha: 0.4)),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(14),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'カテゴリ',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: tokens.accentInk,
+                  ),
+                ),
+                const SizedBox(width: 2),
+                Icon(Icons.add, size: 14, color: tokens.accentInk),
+              ],
             ),
           ),
-          errorWidget: (context, url, error) =>
-              Icon(Icons.broken_image, size: 18, color: tokens.neutral.ink3),
         ),
       ),
     );
@@ -490,16 +636,20 @@ class _CircleCheckboxState extends State<_CircleCheckbox>
             shape: BoxShape.circle,
             color: widget.checked ? widget.color : Colors.transparent,
             border: Border.all(
-              color: widget.checked
-                  ? widget.color
-                  : (disabled ? tokens.neutral.divider2 : tokens.neutral.ink4),
+              color:
+                  widget.checked
+                      ? widget.color
+                      : (disabled
+                          ? tokens.neutral.divider2
+                          : tokens.neutral.ink4),
               width: 1.5,
             ),
           ),
           alignment: Alignment.center,
-          child: widget.checked
-              ? const Icon(Icons.check, size: 14, color: Colors.white)
-              : null,
+          child:
+              widget.checked
+                  ? const Icon(Icons.check, size: 14, color: Colors.white)
+                  : null,
         ),
       ),
     );
@@ -549,7 +699,8 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
           ref
               .read(groupDatabaseProvider(groupID: groupID))
               .shoppingListItemsReference(
-                  shoppingListID: textShoppingListItem.shoppingListID)
+                shoppingListID: textShoppingListItem.shoppingListID,
+              )
               .doc(textShoppingListItem.id)
               .delete();
         }
@@ -581,14 +732,14 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
         cursorWidth: 1.5,
         cursorOpacityAnimates: true,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-              letterSpacing: -0.16,
-              color: isChecked ? neutral.checked : neutral.ink,
-              decoration:
-                  isChecked ? TextDecoration.lineThrough : TextDecoration.none,
-              decorationColor: neutral.ink4,
-              decorationThickness: 1.2,
-            ),
+          fontWeight: FontWeight.w500,
+          letterSpacing: -0.16,
+          color: isChecked ? neutral.checked : neutral.ink,
+          decoration:
+              isChecked ? TextDecoration.lineThrough : TextDecoration.none,
+          decorationColor: neutral.ink4,
+          decorationThickness: 1.2,
+        ),
         // 改行(Enter)を onChanged で検知して確定する。newline では performAction が
         // 走らないため onSubmitted は使わない。
         //
@@ -608,10 +759,10 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
             text: value,
             selection: TextSelection.collapsed(offset: value.length),
           );
-          analytics.logEvent(name: 'submit_item_text', parameters: {
-            'groupID': groupID,
-            'itemID': textShoppingListItem.id,
-          });
+          analytics.logEvent(
+            name: 'submit_item_text',
+            parameters: {'groupID': groupID, 'itemID': textShoppingListItem.id},
+          );
 
           // 保存済み message が空 = 新規入力用の入力行。非空 = 既存アイテムの編集中。
           final isInputRow = textShoppingListItem.message.isEmpty;
@@ -635,7 +786,9 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
             // 入力行: 確定テキストを別アイテム E として入力行の位置(order)へ追加し、
             // 入力行(C)は nextOrder へ繰り下げて E の下に保つ。入力行は空のまま
             // フォーカスを維持する（移譲しないのでキーボードは閉じない）。
-            ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+            ref
+                .read(addShoppingListItemProvider(groupID: groupID))
+                .call(
                   shoppingListID: textShoppingListItem.shoppingListID,
                   userID: currentUserID,
                   message: value,
@@ -646,32 +799,39 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
             ref
                 .read(shoppingListItemBatchUpdateProvider(groupID: groupID))
                 .call(
-              shoppingListID: textShoppingListItem.shoppingListID,
-              shoppingListItems: [
-                textShoppingListItem.copyWith(
-                    order: shoppingListItems.nextOrder),
-              ],
-            );
+                  shoppingListID: textShoppingListItem.shoppingListID,
+                  shoppingListItems: [
+                    textShoppingListItem.copyWith(
+                      order: shoppingListItems.nextOrder,
+                    ),
+                  ],
+                );
             textEditingController.clear();
           } else {
             // 既存アイテムの編集確定: 内容を更新し、末尾の入力行へフォーカスを移して
             // 続けて追加できるようにする(origin/main の「Enter で次の入力へ」を踏襲)。
             // 移譲先は新規生成行ではなく既存の安定した入力行(GlobalKey で要素保持)なので
             // キーボードは閉じない。入力行が無ければ新規作成する。
-            ref.read(updateShoppingListItemProvider(groupID: groupID)).call(
+            ref
+                .read(updateShoppingListItemProvider(groupID: groupID))
+                .call(
                   shoppingListID: textShoppingListItem.shoppingListID,
                   item: textShoppingListItem.copyWith(message: value),
                   editedByUserID: currentUserID,
                 );
-            final hasInputRow = shoppingListItems.any((item) =>
-                item.id != textShoppingListItem.id &&
-                item.message.trim().isEmpty);
+            final hasInputRow = shoppingListItems.any(
+              (item) =>
+                  item.id != textShoppingListItem.id &&
+                  item.message.trim().isEmpty,
+            );
             if (hasInputRow) {
               ref
                   .read(shoppingListInputRowFocusRequestProvider.notifier)
                   .state++;
             } else {
-              ref.read(addShoppingListItemProvider(groupID: groupID)).call(
+              ref
+                  .read(addShoppingListItemProvider(groupID: groupID))
+                  .call(
                     shoppingListID: textShoppingListItem.shoppingListID,
                     userID: currentUserID,
                     message: '',

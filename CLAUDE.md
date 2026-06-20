@@ -28,7 +28,7 @@ iOS,Androidアプリをサポートします。Firebase の設定ファイルは
 
 #### 実行時引数と launch.json
 - `flutter run` に渡す `--dart-define` や `--flavor` 等の実行時引数を追加・変更した場合は、`.vscode/launch.json` の対応する configuration にも同じ引数を反映すること
-- `.vscode/launch.json` は `.gitignore` 対象だが、VS Code デバッグ起動とコマンドライン実行で条件差を生まないよう常に同期する
+- `.vscode/launch.json` は git 管理対象。VS Code デバッグ起動とコマンドライン実行で条件差を生まないよう常に同期する
 
 ### Firebase
 firebase/ ディレクトリ配下についてです。主にbackendで動くFirebase Functionsの設定です。クライアントから呼ぶ処理は GenKit を使って定義します。AIを使わなくてもGenKitでonCallの関数を定義します。なぜならAPI コンソールがついてきて検証がしやすいから
@@ -46,7 +46,7 @@ firebase/ ディレクトリ配下についてです。主にbackendで動くFir
 Firebase Functions の規約です
 - 原則: onDocumentCreated,onDocumentUpdated によるトリガーによる処理を禁止します。コードがトレースしにくくなり、思わぬタイミングで発動してしまうのでコントロールがむず痒いためです
 - 原則: クライアントから呼ぶ Functions は GenKit を使用して定義します
-- Deployはユーザーが行うので禁止
+- Deployはユーザーが行うので禁止。ただしユーザーに deploy を依頼する際は、実行すべき deploy コマンド（対象関数を絞ったもの・実行ディレクトリ込み）を必ず提示すること
 
 ### コーディング規約
 - Entityのフィールド名は省略せず、長くても実態がわかる名前をつける（例: `categoryID` ではなく `groupShoppingListItemCategoryID`）
@@ -59,6 +59,10 @@ Firebase Functions の規約です
 
 ### テスト方針
 - 実装後は手動テスト前に必ず、ユニットテスト・MaestroによるE2Eテストを実行する。該当するものがなければテストを新規作成をする。作成・実行が難しい場合はユーザーに報告する
+- 動作確認は、極力あなたが行うこと。 /sim-manager skill を使用して動作確認をすること
+- 検証で**有料会員（プレミアム）状態が必要な場合は、課金せず開発者オプションのデバッグ機能でプレミアムを付与する**（開発者オプション →「プレミアム付与（1日）」。Maestro は `maestro/flows/shared/grant_premium_via_debug.yaml`）
+- 検証で**グループの他のユーザーを操作・同期したい場合は、開発者オプションの「デバッグユーザー作成」を使う**（Maestro は `maestro/flows/virtual_pairing/02_create_debug_user.yaml`）
+- 上記のように、プレミアム化・他ユーザー操作は実課金・実アカウントではなく開発者オプションのデバッグ機能で行う。**該当するデバッグ機能が無ければ `lib/features/developer_options/` に追加してから検証する**
 
 ### プロジェクト構成・ドキュメント方針
 - 実装のことは全てコード上のコメントに記載する

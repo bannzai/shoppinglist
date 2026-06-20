@@ -1,27 +1,29 @@
 appId: ${APP_ID}
 ---
-# プレミアム状態では 1 グループあたり 6 個目以降のリストも作成できることを確認する。
-# non_premium では 6 個目で SnackBar「無料プランでは 5 個まで」で遮断される。
+# プレミアム状態では 1 グループあたり 21 個目以降のリストも作成できることを確認する。
+# non_premium では 21 個目で上限 SnackBar の CTA「アップグレード」で遮断される
+# （shopping_list_limit_non_premium.yaml 参照）。
 
 - runFlow: shared/anonymous_sign_in.yaml
 - runFlow: shared/grant_premium_via_debug.yaml
 
-# 6 個のリストを連続追加する（non_premium では 6 個目で block される）
-# メニュー → 「買い物リストを追加」（PopupMenuItem）→ BottomSheet 表示 →
-# BottomSheet 内の「買い物リストを追加」ListTile で名前なしリストを作成する。
+# 初期 1 個 + CreateListFab で 20 個追加 = 21 個（free 上限 20 を超過）。
+# design v2: リスト追加は CreateListFab（右下 89%,83%）を展開し「今日の日付でリストを追加」。
+# 作成後はキーボードが FAB を覆うため毎回 hideKeyboard で閉じてから次の追加を行う。
 - repeat:
-    times: 6
+    times: 20
     commands:
-      - tapOn: "メニュー"
-      - waitForAnimationToEnd
-      - tapOn: "買い物リストを追加"
+      - tapOn:
+          point: "89%, 83%"
       - extendedWaitUntil:
-          visible: "現在の買い物リストを複製"
-          timeout: 5000
-      - tapOn: "買い物リストを追加"
+          visible: "今日の日付でリストを追加"
+          timeout: 8000
+      - tapOn: "今日の日付でリストを追加"
+      - waitForAnimationToEnd
+      - hideKeyboard
       - waitForAnimationToEnd
 
-# non_premium 時の上限 SnackBar が出ないこと
-- assertNotVisible: "無料プランでは1グループあたり5個までリストを作成できます"
-
+# 上限 SnackBar の CTA「アップグレード」が出ないこと = premium で無制限に作成できている。
+# （「アップグレード」は通常ホームには存在せず上限 SnackBar 出現時のみ可視の一意信号）
+- assertNotVisible: "アップグレード"
 - takeScreenshot: screenshots/premium_shopping_list_limit_unlocked

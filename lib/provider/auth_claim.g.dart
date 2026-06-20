@@ -18,13 +18,14 @@ String _$firestoreIsPremiumHash() =>
 final firestoreIsPremiumProvider = FutureProvider<bool>.internal(
   firestoreIsPremium,
   name: r'firestoreIsPremiumProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$firestoreIsPremiumHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$firestoreIsPremiumHash,
   dependencies: <ProviderOrFamily>[firebaseUserChangesProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     firebaseUserChangesProvider,
-    ...?firebaseUserChangesProvider.allTransitiveDependencies
+    ...?firebaseUserChangesProvider.allTransitiveDependencies,
   },
 );
 

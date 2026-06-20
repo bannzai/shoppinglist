@@ -8,16 +8,17 @@ GroupCategory _makeCategory({
   Map<String, int> locationOrders = const {},
 }) {
   return GroupCategory(
-      id: id,
-      groupID: 'group1',
-      userID: 'user1',
-      groupCategoryAxisID: 'axis1',
-      name: 'カテゴリ $id',
-      order: order,
-      locationOrders: locationOrders,
-      keywords: [],
-      color: null,
-      iconName: null);
+    id: id,
+    groupID: 'group1',
+    userID: 'user1',
+    groupCategoryAxisID: 'axis1',
+    name: 'カテゴリ $id',
+    order: order,
+    locationOrders: locationOrders,
+    keywords: [],
+    color: null,
+    iconName: null,
+  );
 }
 
 void main() {
@@ -40,7 +41,10 @@ void main() {
     test('locationOrders にエントリがある場合、そのロケーションの順序でソートされる', () {
       final categories = [
         _makeCategory(
-            id: 'vegetables', order: 0, locationOrders: {'storeA': 0}),
+          id: 'vegetables',
+          order: 0,
+          locationOrders: {'storeA': 0},
+        ),
         _makeCategory(id: 'meat', order: 1, locationOrders: {'storeA': 2}),
         _makeCategory(id: 'fish', order: 2, locationOrders: {'storeA': 1}),
       ];
@@ -57,7 +61,10 @@ void main() {
     test('一部のカテゴリのみ locationOrders がある場合、ない分は order にフォールバック', () {
       final categories = [
         _makeCategory(
-            id: 'vegetables', order: 0, locationOrders: {'storeA': 2}),
+          id: 'vegetables',
+          order: 0,
+          locationOrders: {'storeA': 2},
+        ),
         _makeCategory(id: 'meat', order: 1), // locationOrders なし → order=1
         _makeCategory(id: 'fish', order: 2, locationOrders: {'storeA': 0}),
       ];
@@ -90,13 +97,20 @@ void main() {
     test('ロケーションAとBで異なる順序が返される', () {
       final categories = [
         _makeCategory(
-            id: 'vegetables',
-            order: 0,
-            locationOrders: {'storeA': 0, 'storeB': 2}),
+          id: 'vegetables',
+          order: 0,
+          locationOrders: {'storeA': 0, 'storeB': 2},
+        ),
         _makeCategory(
-            id: 'meat', order: 1, locationOrders: {'storeA': 2, 'storeB': 0}),
+          id: 'meat',
+          order: 1,
+          locationOrders: {'storeA': 2, 'storeB': 0},
+        ),
         _makeCategory(
-            id: 'fish', order: 2, locationOrders: {'storeA': 1, 'storeB': 1}),
+          id: 'fish',
+          order: 2,
+          locationOrders: {'storeA': 1, 'storeB': 1},
+        ),
       ];
 
       final sortedA = sortCategoriesByLocation(

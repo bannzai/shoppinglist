@@ -11,8 +11,9 @@ class HomeWidgetDataSync {
   static const iOSWidgetName = 'ShoppingListWidget';
   static const androidWidgetName = 'ShoppingListWidgetProvider';
 
-  static final _hexColorRegExp =
-      RegExp(r'^#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$');
+  static final _hexColorRegExp = RegExp(
+    r'^#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$',
+  );
 
   /// 朱（5 色プリセットのデフォルト）。
   /// design_handoff_shopping_list の AccentPreset.shu と同じ値。
@@ -38,9 +39,7 @@ class HomeWidgetDataSync {
   }
 
   /// ユーザーのテーマカラーHEXをウィジェットストレージに同期する。
-  static Future<void> syncThemeColor({
-    required String themeColorHex,
-  }) async {
+  static Future<void> syncThemeColor({required String themeColorHex}) async {
     await HomeWidget.saveWidgetData(
       'widget_theme_color_hex',
       _normalizeThemeColorHex(themeColorHex),
@@ -50,9 +49,7 @@ class HomeWidgetDataSync {
   }
 
   /// プレミアム状態をウィジェットストレージに同期する。
-  static Future<void> syncPremiumStatus({
-    required bool isPremium,
-  }) async {
+  static Future<void> syncPremiumStatus({required bool isPremium}) async {
     await HomeWidget.saveWidgetData('widget_is_premium', isPremium);
     debugPrint('[HomeWidgetDataSync] syncPremiumStatus');
     await updateWidget();
@@ -63,21 +60,25 @@ class HomeWidgetDataSync {
     required String groupID,
     required String groupName,
   }) async {
-    final listsJson = shoppingLists
-        .map((sl) => {
-              'id': sl.id,
-              'name': sl.name,
-              'groupID': sl.groupID,
-              'groupName': groupName,
-            })
-        .toList();
+    final listsJson =
+        shoppingLists
+            .map(
+              (sl) => {
+                'id': sl.id,
+                'name': sl.name,
+                'groupID': sl.groupID,
+                'groupName': groupName,
+              },
+            )
+            .toList();
     await HomeWidget.saveWidgetData(
       'widget_shopping_lists',
       jsonEncode(listsJson),
     );
     await HomeWidget.saveWidgetData('widget_current_group_id', groupID);
     debugPrint(
-        '[HomeWidgetDataSync] syncShoppingLists: ${shoppingLists.length}件');
+      '[HomeWidgetDataSync] syncShoppingLists: ${shoppingLists.length}件',
+    );
   }
 
   static Future<void> syncCurrentShoppingListItems({
@@ -87,38 +88,51 @@ class HomeWidgetDataSync {
     required List<GroupShoppingListItem> items,
   }) async {
     await HomeWidget.saveWidgetData(
-        'widget_current_shopping_list_id', shoppingListID);
+      'widget_current_shopping_list_id',
+      shoppingListID,
+    );
     await HomeWidget.saveWidgetData(
-        'widget_current_shopping_list_name', shoppingListName);
+      'widget_current_shopping_list_name',
+      shoppingListName,
+    );
 
-    final itemsJson = items
-        .map((item) => {
-              'id': item.id,
-              'groupID': item.groupID,
-              'shoppingListID': item.shoppingListID,
-              'message': item.message,
-              'status': item.status.name,
-              'order': item.order,
-              'color': item.color,
-            })
-        .toList();
+    final itemsJson =
+        items
+            .map(
+              (item) => {
+                'id': item.id,
+                'groupID': item.groupID,
+                'shoppingListID': item.shoppingListID,
+                'message': item.message,
+                'status': item.status.name,
+                'order': item.order,
+                'color': item.color,
+              },
+            )
+            .toList();
     final key = 'widget_items_${groupID}_$shoppingListID';
     await HomeWidget.saveWidgetData(key, jsonEncode(itemsJson));
 
     // done/total を progress sliver / mono 表記用に同期する
     // (design_handoff_shoppinglist/preview/widgets-and-micro.jsx 準拠)
     final totalCount = items.length;
-    final doneCount = items
-        .where((item) => item.status == GroupShoppingListItemStatus.checked)
-        .length;
+    final doneCount =
+        items
+            .where((item) => item.status == GroupShoppingListItemStatus.checked)
+            .length;
     final countKeyPrefix = '${groupID}_$shoppingListID';
     await HomeWidget.saveWidgetData(
-        'widget_total_count_$countKeyPrefix', totalCount);
+      'widget_total_count_$countKeyPrefix',
+      totalCount,
+    );
     await HomeWidget.saveWidgetData(
-        'widget_done_count_$countKeyPrefix', doneCount);
+      'widget_done_count_$countKeyPrefix',
+      doneCount,
+    );
 
     debugPrint(
-        '[HomeWidgetDataSync] syncCurrentShoppingListItems: ${items.length}件, done=$doneCount, key=$key');
+      '[HomeWidgetDataSync] syncCurrentShoppingListItems: ${items.length}件, done=$doneCount, key=$key',
+    );
     await updateWidget();
   }
 

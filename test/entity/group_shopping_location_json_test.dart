@@ -4,11 +4,7 @@ import 'package:shoppinglist/entity/group_shopping_location.dart';
 void main() {
   group('GroupShoppingLocation JSON', () {
     test('既存データ（lat/lng なし）からのデシリアライズで null になる', () {
-      final json = {
-        'id': 'loc1',
-        'groupID': 'group1',
-        'name': 'スーパー',
-      };
+      final json = {'id': 'loc1', 'groupID': 'group1', 'name': 'スーパー'};
       final location = GroupShoppingLocation.fromJson(json);
       expect(location.latitude, isNull);
       expect(location.longitude, isNull);
@@ -51,11 +47,7 @@ void main() {
     });
 
     test('address フィールドが付与されていない既存データは空文字になる', () {
-      final json = {
-        'id': 'loc1',
-        'groupID': 'group1',
-        'name': 'スーパー',
-      };
+      final json = {'id': 'loc1', 'groupID': 'group1', 'name': 'スーパー'};
       expect(GroupShoppingLocation.fromJson(json).address, '');
     });
 
@@ -71,11 +63,12 @@ void main() {
       );
       // toJson は ServerCreatedTimestamp 等で FieldValue を埋めるため、ラウンドトリップ
       // 用にサーバータイムスタンプ系を除外する。
-      final json = location.toJson()
-        ..remove('createdDateTime')
-        ..remove('updatedDateTime')
-        ..remove('serverCreatedDateTime')
-        ..remove('serverUpdatedDateTime');
+      final json =
+          location.toJson()
+            ..remove('createdDateTime')
+            ..remove('updatedDateTime')
+            ..remove('serverCreatedDateTime')
+            ..remove('serverUpdatedDateTime');
       expect(json['address'], '東京都千代田区丸の内1-1');
       expect(GroupShoppingLocation.fromJson(json).address, '東京都千代田区丸の内1-1');
     });

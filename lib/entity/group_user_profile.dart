@@ -32,13 +32,14 @@ abstract class GroupUserProfile with _$GroupUserProfile {
       _$GroupUserProfileFromJson(json);
 
   static GroupUserProfile fromFirestore(
-          DocumentSnapshot<Map<String, dynamic>> snapshot,
-          SnapshotOptions? options) =>
-      GroupUserProfile.fromJson(snapshot.data()!..['id'] = snapshot.id);
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+    SnapshotOptions? options,
+  ) => GroupUserProfile.fromJson(snapshot.data()!..['id'] = snapshot.id);
 
   static Map<String, dynamic> toFirestore(
-          GroupUserProfile profile, SetOptions? options) =>
-      profile.toJson();
+    GroupUserProfile profile,
+    SetOptions? options,
+  ) => profile.toJson();
 
   /// composite ID: GroupUserProfile_groups_{groupID}_users_{userID}
   static String documentID({required String groupID, required String userID}) =>
