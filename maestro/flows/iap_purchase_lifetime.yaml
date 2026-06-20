@@ -6,18 +6,11 @@ appId: com.bannzai.shoppinglist
 
 - runFlow: shared/mock_purchase_lifetime.yaml
 
-# 設定画面に戻って premium 状態を確認。Flutter ListTile の title/subtitle が
-# 1 つの Semantics 要素にマージされるため `.*プレミアム会員.*` の regex で部分一致させる。
-# 購入完了直後はアクセシビリティツリーが安定しないことがあるので extendedWaitUntil で待つ。
-- tapOn:
-    text: "設定.*"
-    index: 0
-- waitForAnimationToEnd
+# 購入完了後、PaywallPage が pop して設定画面に戻る。プレミアムカードが加入済み表示
+# （title "プレミアム会員"、title+subtitle 結合のため (?s) 部分一致）に変わったことを確認する。
+# （旧フローの ".*有効.*" は現行 UI に存在しないため削除）
 - extendedWaitUntil:
-    visible: ".*プレミアム会員.*"
-    timeout: 15000
-- extendedWaitUntil:
-    visible: ".*有効.*"
+    visible: "(?s).*プレミアム会員.*"
     timeout: 15000
 
 - takeScreenshot: screenshots/iap_purchase_lifetime_completed

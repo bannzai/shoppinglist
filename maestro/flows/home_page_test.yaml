@@ -14,8 +14,14 @@ appId: com.bannzai.shoppinglist
           retryTapIfNoChange: false
       - waitForAnimationToEnd
 
+# clearState 直後は design v2 オンボーディングが表示されるためスキップする
 - extendedWaitUntil:
-    visible: "サインイン"
+    visible: "スキップ"
+    timeout: 90000
+- tapOn: "スキップ"
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "匿名サインイン（デバッグ用）"
     timeout: 30000
 - tapOn: "匿名サインイン（デバッグ用）"
 - waitForAnimationToEnd
@@ -32,26 +38,36 @@ appId: com.bannzai.shoppinglist
     commands:
       - tapOn: "Retry"
       - waitForAnimationToEnd
+# 匿名サインイン後は GroupJoinOrCreatePage が表示されるため「自分のリストを作る」でホームへ進む。
 - extendedWaitUntil:
-    visible: "アイテムを追加"
+    visible: "自分のリストを作る"
+    timeout: 90000
+- tapOn: "自分のリストを作る"
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "タップで入力開始"
     timeout: 30000
 
 # 確認1: 起動時に ShoppingListPage が表示される（下部タブは廃止済み）
-- assertVisible: "アイテムを追加"
+- assertVisible: "タップで入力開始"
 - takeScreenshot: screenshots/home_01_shopping_list_only
 
 # 確認2: ヘッダー右上の設定アイコンタップで SettingPage が push 遷移
-- tapOn:
-    id: "app_settings_button"
+# Flutter の Key は Maestro の id に露出しないため、icon の tooltip が変換される
+# accessibilityText "設定" で tap する。
+- tapOn: "設定"
 - extendedWaitUntil:
     visible: "プロフィール"
     timeout: 5000
 - takeScreenshot: screenshots/home_02_app_settings_pushed
 
-# 確認3: 閉じる(×)で買い物リスト画面に戻る
+# 確認3: 閉じる(×)で買い物リスト画面に戻る。
+# × は AppBar leading(左上)の Icons.close(Navigator.pop)。Flutter の Key/icon は
+# Maestro の id/text に露出しないため、左上の close アイコンを座標でタップする
+# (hierarchy 実測 bounds [4,66][52,114] → 中心 ≈ 7%,10%)。
 - tapOn:
-    id: "close"
+    point: "7%,10%"
 - extendedWaitUntil:
-    visible: "アイテムを追加"
+    visible: "タップで入力開始"
     timeout: 5000
 - takeScreenshot: screenshots/home_03_back_to_shopping_list

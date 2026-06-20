@@ -52,14 +52,14 @@ appId: com.bannzai.shoppinglist
     point: "7%,23%"
 - waitForAnimationToEnd
 
-# レシートセクション（チェック済み>0で footer に出現）まで下スクロールして「追加」
+# レシート追加ボタン（チェック済み>0で AIカテゴリ分けボタン上部に出現。
+# receipt_section.dart の ReceiptAddButton, label="レシートを追加"）をタップ。
 - scrollUntilVisible:
     element:
-      text: "レシート"
+      text: "レシートを追加"
     direction: DOWN
     timeout: 15000
-- tapOn:
-    text: "追加"
+- tapOn: "レシートを追加"
 - waitForAnimationToEnd
 
 # 非プレミアムなら Paywall に飛ぶ。プレミアムではレシート編集シートが開くことを確認
@@ -87,11 +87,18 @@ appId: com.bannzai.shoppinglist
 - tapOn: "保存"
 - waitForAnimationToEnd
 
-# 成功確認: シートが閉じてメインに戻り、INTERNAL 等のエラートーストが出ていないこと。
-# （デプロイ済み Functions の inputSchema 不一致で出ていた `[firebase_functions/internal]
-#   INTERNAL` のリグレッション検知）
-- assertNotVisible: "レシートを追加"
+# 成功確認:
+# アップロード完了でレシートサムネイルセクション（ReceiptThumbnails の "レシート" 見出し、
+# receipts.isNotEmpty のときのみ表示）が出現すること。これがアップロード成功の証跡。
+# 注意: 編集シートのタイトル "レシートを追加"(receipt==null時) は、checkedCount>0 で常設の
+# 追加ボタン(ReceiptAddButton, label="レシートを追加")と同一文言のため、シート開閉判定には
+# 使えない。シートが閉じたことは固有ボタン "レシートを撮影 / 選択" の不在で判定する。
+- extendedWaitUntil:
+    visible: "レシート"
+    timeout: 30000
+- assertNotVisible: "レシートを撮影 / 選択"
+# デプロイ済み Functions の inputSchema 不一致で出ていた
+# `[firebase_functions/internal] INTERNAL` のリグレッション検知
 - assertNotVisible:
     text: ".*INTERNAL.*"
-- assertVisible: "レシート"
 - takeScreenshot: screenshots/premium_receipt_image_upload

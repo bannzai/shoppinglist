@@ -12,20 +12,19 @@ appId: com.bannzai.shoppinglist
     index: 0
 - waitForAnimationToEnd
 
-# 設定画面は長いので、プレミアム会員 ListTile までスクロール。
-# ListTile の title/subtitle が 1 つのセマンティクス要素に merge されるため、
-# scrollUntilVisible は text 単独マッチが不安定。swipe + 部分一致 regex tapOn で対応する。
-- swipe:
-    start: "50%,80%"
-    end: "50%,20%"
-- swipe:
-    start: "50%,80%"
-    end: "50%,20%"
-- waitForAnimationToEnd
-- tapOn:
-    text: ".*プレミアム会員.*"
+# design v2: 設定上部（プロフィール直下）のプレミアムカード。非プレミアム時は
+# title "プレミアムにアップグレード" + 「はじめる」pill。カード自体は非タップで、
+# 「はじめる」pill が showPaywall を開く（settings/page.dart の _PremiumCard）。
+- scrollUntilVisible:
+    element:
+      text: "はじめる"
+    direction: DOWN
+    timeout: 15000
+- tapOn: "はじめる"
+# Paywall（タイトルは "プレミアムにアップグレード"）。RC Offering から 3 プランが
+# 読み込まれると "購入" ボタンが出る。読み込み待ちで "購入" 出現を待つ。
 - extendedWaitUntil:
-    visible: "プレミアムプラン"
+    visible: "購入"
     timeout: 15000
 
 # PaywallPage 上の「購入」ボタンは monthly / annual / lifetime の順に並ぶ。

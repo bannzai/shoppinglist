@@ -39,6 +39,13 @@ appId: com.bannzai.shoppinglist
     commands:
       - tapOn: "Retry"
       - waitForAnimationToEnd
+# 匿名サインイン後はグループ未参加状態のため GroupJoinOrCreatePage が表示される。
+# E2E では招待コードを持たないので「自分のリストを作る」でソログループを作成しホームへ進む。
+- extendedWaitUntil:
+    visible: "自分のリストを作る"
+    timeout: 90000
+- tapOn: "自分のリストを作る"
+- waitForAnimationToEnd
 # design v2 の空状態（サインイン後のホーム）に到達したことを確認する
 - extendedWaitUntil:
     visible: "タップで入力開始"
