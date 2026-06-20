@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # カテゴリセクション並び替え (Issue #386)
 # 買い物リスト画面でセクションヘッダーを長押しドラッグすると、セクション(カテゴリ)単位で

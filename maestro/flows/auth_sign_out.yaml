@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # サインアウト時の挙動を検証する。
 # release/profile では signOut() 後に終了アラート(「サインアウトしました」/「終了する」)を出し

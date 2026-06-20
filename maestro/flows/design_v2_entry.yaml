@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # Onboarding 3 スライド + Auth 文言 SSOT 化 (PR-2) の検証。
 # - Onboarding body は screens-onboarding.jsx exact 文に差し替え済み

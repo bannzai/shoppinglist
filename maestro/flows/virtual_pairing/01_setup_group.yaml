@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # Phase 1: サインイン + グループ作成
 - runFlow: ../shared/anonymous_sign_in.yaml

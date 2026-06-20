@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # カテゴリ編集のテスト（カラー設定・カラー解除・アイコン設定）
 # 前提: category_location_orderの後、アプリはカテゴリ付き買い物リスト画面

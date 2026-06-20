@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # PR-7 Settings & Paywall の検証:
 # - 設定画面の主要セクションが描画される
