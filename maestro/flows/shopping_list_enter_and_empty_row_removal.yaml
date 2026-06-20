@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # 買い物リスト入力仕様の E2E 検証 (PR #360 / PR #365 の回帰ガード):
 # 1. アイテム入力中に Enter を押すと確定アイテムが積まれ、末尾に空の入力行が残って

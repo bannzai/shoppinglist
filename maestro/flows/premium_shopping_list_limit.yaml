@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # プレミアム状態では 1 グループあたり 6 個目以降のリストも作成できることを確認する。
 # non_premium では 6 個目で SnackBar「無料プランでは 5 個まで」で遮断される。

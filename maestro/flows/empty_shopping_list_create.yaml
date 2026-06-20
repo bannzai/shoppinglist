@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # グループ切り替え後もリストが重複せず正常に動作することを確認するテスト
 - runFlow: shared/anonymous_sign_in.yaml

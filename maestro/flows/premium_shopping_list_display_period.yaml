@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # プレミアム状態では買い物リストの表示期間が無制限になることを確認する。
 # 設定画面の表示テキストが non_premium の「作成から30日間表示されます」から

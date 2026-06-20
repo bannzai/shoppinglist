@@ -887,7 +887,6 @@
 			buildSettings = {
 				APP_BUNDLE_IDENTIFIER = com.bannzai.shoppinglist.dev;
 				APP_GROUP_ID = group.com.bannzai.shoppinglist.dev;
-				KEYCHAIN_ACCESS_GROUP = com.bannzai.shoppinglist.dev;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = ShoppingListWidget/ShoppingListWidget.entitlements;
@@ -899,6 +898,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = ShoppingListWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				KEYCHAIN_ACCESS_GROUP = com.bannzai.shoppinglist.dev;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1066,7 +1066,6 @@
 			buildSettings = {
 				APP_BUNDLE_IDENTIFIER = com.bannzai.shoppinglist;
 				APP_GROUP_ID = group.com.bannzai.shoppinglist;
-				KEYCHAIN_ACCESS_GROUP = com.bannzai.shoppinglist;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = ShoppingListWidget/ShoppingListWidget.entitlements;
@@ -1080,6 +1079,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = ShoppingListWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				KEYCHAIN_ACCESS_GROUP = com.bannzai.shoppinglist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1248,7 +1248,6 @@
 			buildSettings = {
 				APP_BUNDLE_IDENTIFIER = com.bannzai.shoppinglist;
 				APP_GROUP_ID = group.com.bannzai.shoppinglist;
-				KEYCHAIN_ACCESS_GROUP = com.bannzai.shoppinglist;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = ShoppingListWidget/ShoppingListWidget.entitlements;
@@ -1260,6 +1259,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = ShoppingListWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				KEYCHAIN_ACCESS_GROUP = com.bannzai.shoppinglist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

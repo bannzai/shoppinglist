@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # PR-9 Dark mode 検証:
 # - アプリ起動後に Light / Dark で同一画面のスクショを比較する

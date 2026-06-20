@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # ロケーション別カテゴリ並べ替えのE2Eテスト
 # 1. 買い物場所を作成
