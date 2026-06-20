@@ -242,15 +242,13 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     required String platform,
     required String appVersion,
   }) async {
-    final result = await httpsCallable('submitInquiry').call(
-      {
-        'email': email,
-        'categoryType': categoryType.wireValue,
-        'content': content,
-        'platform': platform,
-        'appVersion': appVersion,
-      },
-    );
+    final result = await httpsCallable('submitInquiry').call({
+      'email': email,
+      'categoryType': categoryType.wireValue,
+      'content': content,
+      'platform': platform,
+      'appVersion': appVersion,
+    });
     debugPrint('submitInquiry.result: ${result.data}');
     final response = mapToJSON(result.data);
     if (response['result'] != 'OK') {

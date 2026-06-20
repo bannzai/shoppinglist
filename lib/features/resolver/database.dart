@@ -29,13 +29,11 @@ abstract class _CollectionPath {
   static String shoppingListItems({
     required String groupID,
     required String shoppingListID,
-  }) =>
-      '/groups/$groupID/shoppingLists/$shoppingListID/items';
+  }) => '/groups/$groupID/shoppingLists/$shoppingListID/items';
   static String receipts({
     required String groupID,
     required String shoppingListID,
-  }) =>
-      '/groups/$groupID/shoppingLists/$shoppingListID/receipts';
+  }) => '/groups/$groupID/shoppingLists/$shoppingListID/receipts';
   static String shoppingLocations({required String groupID}) =>
       '/groups/$groupID/shoppingLocations';
   static String userCategoryAxes({required String groupID}) =>
@@ -43,8 +41,7 @@ abstract class _CollectionPath {
   static String categories({
     required String groupID,
     required String categoryAxisID,
-  }) =>
-      '/groups/$groupID/userCategoryAxes/$categoryAxisID/categories';
+  }) => '/groups/$groupID/userCategoryAxes/$categoryAxisID/categories';
   static String privates({required String userID}) => '/users/$userID/privates';
   static String userProfiles({required String groupID}) =>
       '/groups/$groupID/userProfiles';
@@ -55,7 +52,8 @@ abstract class _CollectionPath {
 UserDatabase userDatabase(Ref ref) {
   final firebaseUserChanges = ref.watch(firebaseUserChangesProvider);
   // 初回起動の時には.userChanges()のstreamは流れてこないので、currentUserのidを使う
-  final uid = firebaseUserChanges.asData?.value?.uid ??
+  final uid =
+      firebaseUserChanges.asData?.value?.uid ??
       FirebaseAuth.instance.currentUser?.uid;
   debugPrint('[DEBUG] database uid is $uid');
   if (uid == null) {
@@ -68,11 +66,13 @@ class UserDatabase {
   final String userID;
   UserDatabase({required this.userID});
 
-  DocumentReference<AppUser> userReference() =>
-      firestore.collection(_CollectionPath.users).doc(userID).withConverter(
-            fromFirestore: AppUser.fromFirestore,
-            toFirestore: AppUser.toFirestore,
-          );
+  DocumentReference<AppUser> userReference() => firestore
+      .collection(_CollectionPath.users)
+      .doc(userID)
+      .withConverter(
+        fromFirestore: AppUser.fromFirestore,
+        toFirestore: AppUser.toFirestore,
+      );
 
   DocumentReference<AppUserPrivate> privateReference() => firestore
       .collection(_CollectionPath.privates(userID: userID))
@@ -85,14 +85,13 @@ class UserDatabase {
   /// 指定月のAI利用回数ドキュメントへの参照。
   DocumentReference<UserAIUsage> aiUsageDocumentReference({
     required String yearMonth,
-  }) =>
-      firestore
-          .collection(_CollectionPath.aiUsage(userID: userID))
-          .doc(yearMonth)
-          .withConverter(
-            fromFirestore: UserAIUsage.fromFirestore,
-            toFirestore: UserAIUsage.toFirestore,
-          );
+  }) => firestore
+      .collection(_CollectionPath.aiUsage(userID: userID))
+      .doc(yearMonth)
+      .withConverter(
+        fromFirestore: UserAIUsage.fromFirestore,
+        toFirestore: UserAIUsage.toFirestore,
+      );
 }
 
 @Riverpod(keepAlive: true, dependencies: [])
@@ -104,11 +103,13 @@ class GroupDatabase {
   final String groupID;
   GroupDatabase({required this.groupID});
 
-  DocumentReference<Group> groupReference() =>
-      firestore.collection(_CollectionPath.groups).doc(groupID).withConverter(
-            fromFirestore: Group.fromFirestore,
-            toFirestore: Group.toFirestore,
-          );
+  DocumentReference<Group> groupReference() => firestore
+      .collection(_CollectionPath.groups)
+      .doc(groupID)
+      .withConverter(
+        fromFirestore: Group.fromFirestore,
+        toFirestore: Group.toFirestore,
+      );
 
   CollectionReference<GroupShoppingList> shoppingListsReference() => firestore
       .collection(_CollectionPath.shoppingLists(groupID: groupID))
@@ -124,46 +125,47 @@ class GroupDatabase {
     required DateTime date,
   }) async {
     final startOfDay = DateTime(date.year, date.month, date.day);
-    final aggregated = await firestore
-        .collection(_CollectionPath.shoppingLists(groupID: groupID))
-        .where(
-          GroupShoppingListFirestoreKeys.createdDateTime,
-          isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay),
-        )
-        .where(
-          GroupShoppingListFirestoreKeys.createdDateTime,
-          isLessThan: Timestamp.fromDate(
-            startOfDay.add(const Duration(days: 1)),
-          ),
-        )
-        .count()
-        .get();
+    final aggregated =
+        await firestore
+            .collection(_CollectionPath.shoppingLists(groupID: groupID))
+            .where(
+              GroupShoppingListFirestoreKeys.createdDateTime,
+              isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay),
+            )
+            .where(
+              GroupShoppingListFirestoreKeys.createdDateTime,
+              isLessThan: Timestamp.fromDate(
+                startOfDay.add(const Duration(days: 1)),
+              ),
+            )
+            .count()
+            .get();
     return aggregated.count ?? 0;
   }
 
   /// グループ内のアクティブ状態の買い物リスト数を返す。
   Future<int> countOfActiveGroupShoppingLists() async {
-    final aggregated = await firestore
-        .collection(_CollectionPath.shoppingLists(groupID: groupID))
-        .where(
-          GroupShoppingListFirestoreKeys.status,
-          isEqualTo: GroupShoppingListStatus.active.name,
-        )
-        .count()
-        .get();
+    final aggregated =
+        await firestore
+            .collection(_CollectionPath.shoppingLists(groupID: groupID))
+            .where(
+              GroupShoppingListFirestoreKeys.status,
+              isEqualTo: GroupShoppingListStatus.active.name,
+            )
+            .count()
+            .get();
     return aggregated.count ?? 0;
   }
 
   DocumentReference<GroupShoppingList> shoppingListReference({
     required String shoppingListID,
-  }) =>
-      firestore
-          .collection(_CollectionPath.shoppingLists(groupID: groupID))
-          .doc(shoppingListID)
-          .withConverter(
-            fromFirestore: GroupShoppingList.fromFirestore,
-            toFirestore: GroupShoppingList.toFirestore,
-          );
+  }) => firestore
+      .collection(_CollectionPath.shoppingLists(groupID: groupID))
+      .doc(shoppingListID)
+      .withConverter(
+        fromFirestore: GroupShoppingList.fromFirestore,
+        toFirestore: GroupShoppingList.toFirestore,
+      );
   DocumentReference<GroupShoppingList> newGroupShoppingListReference() =>
       firestore
           .collection(_CollectionPath.shoppingLists(groupID: groupID))
@@ -175,86 +177,81 @@ class GroupDatabase {
 
   CollectionReference<GroupShoppingListItem> shoppingListItemsReference({
     required String shoppingListID,
-  }) =>
-      firestore
-          .collection(
-            _CollectionPath.shoppingListItems(
-              groupID: groupID,
-              shoppingListID: shoppingListID,
-            ),
-          )
-          .withConverter(
-            fromFirestore: GroupShoppingListItem.fromFirestore,
-            toFirestore: GroupShoppingListItem.toFirestore,
-          );
+  }) => firestore
+      .collection(
+        _CollectionPath.shoppingListItems(
+          groupID: groupID,
+          shoppingListID: shoppingListID,
+        ),
+      )
+      .withConverter(
+        fromFirestore: GroupShoppingListItem.fromFirestore,
+        toFirestore: GroupShoppingListItem.toFirestore,
+      );
 
   DocumentReference<GroupShoppingListItem> shoppingListItemReference({
     required String shoppingListID,
     required String itemID,
-  }) =>
-      firestore
-          .collection(
-            _CollectionPath.shoppingListItems(
-              groupID: groupID,
-              shoppingListID: shoppingListID,
-            ),
-          )
-          .doc(itemID)
-          .withConverter(
-            fromFirestore: GroupShoppingListItem.fromFirestore,
-            toFirestore: GroupShoppingListItem.toFirestore,
-          );
+  }) => firestore
+      .collection(
+        _CollectionPath.shoppingListItems(
+          groupID: groupID,
+          shoppingListID: shoppingListID,
+        ),
+      )
+      .doc(itemID)
+      .withConverter(
+        fromFirestore: GroupShoppingListItem.fromFirestore,
+        toFirestore: GroupShoppingListItem.toFirestore,
+      );
 
   /// 買い物リストに紐づくレシートのコレクション参照。
   CollectionReference<GroupShoppingListReceipt> receiptsReference({
     required String shoppingListID,
-  }) =>
-      firestore
-          .collection(
-            _CollectionPath.receipts(
-              groupID: groupID,
-              shoppingListID: shoppingListID,
-            ),
-          )
-          .withConverter(
-            fromFirestore: GroupShoppingListReceipt.fromFirestore,
-            toFirestore: GroupShoppingListReceipt.toFirestore,
-          );
+  }) => firestore
+      .collection(
+        _CollectionPath.receipts(
+          groupID: groupID,
+          shoppingListID: shoppingListID,
+        ),
+      )
+      .withConverter(
+        fromFirestore: GroupShoppingListReceipt.fromFirestore,
+        toFirestore: GroupShoppingListReceipt.toFirestore,
+      );
 
   /// 既存レシートのドキュメント参照。
   DocumentReference<GroupShoppingListReceipt> receiptReference({
     required String shoppingListID,
     required String receiptID,
-  }) =>
-      firestore
-          .collection(
-            _CollectionPath.receipts(
-              groupID: groupID,
-              shoppingListID: shoppingListID,
-            ),
-          )
-          .doc(receiptID)
-          .withConverter(
-            fromFirestore: GroupShoppingListReceipt.fromFirestore,
-            toFirestore: GroupShoppingListReceipt.toFirestore,
-          );
+  }) => firestore
+      .collection(
+        _CollectionPath.receipts(
+          groupID: groupID,
+          shoppingListID: shoppingListID,
+        ),
+      )
+      .doc(receiptID)
+      .withConverter(
+        fromFirestore: GroupShoppingListReceipt.fromFirestore,
+        toFirestore: GroupShoppingListReceipt.toFirestore,
+      );
 
   /// 自動生成 ID を持つ新規レシートのドキュメント参照。
   DocumentReference<GroupShoppingListReceipt> newReceiptReference({
     required String shoppingListID,
-  }) =>
-      firestore
-          .collection(
-            _CollectionPath.receipts(
-              groupID: groupID,
-              shoppingListID: shoppingListID,
-            ),
-          )
-          .doc()
-          .withConverter(
-            fromFirestore: GroupShoppingListReceipt.fromFirestore,
-            toFirestore: GroupShoppingListReceipt.toFirestore,
-          );
+  }) => firestore
+      .collection(
+        _CollectionPath.receipts(
+          groupID: groupID,
+          shoppingListID: shoppingListID,
+        ),
+      )
+      .doc()
+      .withConverter(
+        fromFirestore: GroupShoppingListReceipt.fromFirestore,
+        toFirestore: GroupShoppingListReceipt.toFirestore,
+      );
 
   CollectionReference<GroupShoppingLocation> shoppingLocationsReference() =>
       firestore
@@ -266,14 +263,13 @@ class GroupDatabase {
 
   DocumentReference<GroupShoppingLocation> shoppingLocationReference({
     required String shoppingLocationID,
-  }) =>
-      firestore
-          .collection(_CollectionPath.shoppingLocations(groupID: groupID))
-          .doc(shoppingLocationID)
-          .withConverter(
-            fromFirestore: GroupShoppingLocation.fromFirestore,
-            toFirestore: GroupShoppingLocation.toFirestore,
-          );
+  }) => firestore
+      .collection(_CollectionPath.shoppingLocations(groupID: groupID))
+      .doc(shoppingLocationID)
+      .withConverter(
+        fromFirestore: GroupShoppingLocation.fromFirestore,
+        toFirestore: GroupShoppingLocation.toFirestore,
+      );
 
   DocumentReference<GroupShoppingLocation> newShoppingLocationReference() =>
       firestore
@@ -293,14 +289,13 @@ class GroupDatabase {
 
   DocumentReference<GroupCategoryAxis> categoryAxisReference({
     required String categoryAxisID,
-  }) =>
-      firestore
-          .collection(_CollectionPath.userCategoryAxes(groupID: groupID))
-          .doc(categoryAxisID)
-          .withConverter(
-            fromFirestore: GroupCategoryAxis.fromFirestore,
-            toFirestore: GroupCategoryAxis.toFirestore,
-          );
+  }) => firestore
+      .collection(_CollectionPath.userCategoryAxes(groupID: groupID))
+      .doc(categoryAxisID)
+      .withConverter(
+        fromFirestore: GroupCategoryAxis.fromFirestore,
+        toFirestore: GroupCategoryAxis.toFirestore,
+      );
 
   DocumentReference<GroupCategoryAxis> newCategoryAxisReference() => firestore
       .collection(_CollectionPath.userCategoryAxes(groupID: groupID))
@@ -312,51 +307,48 @@ class GroupDatabase {
 
   CollectionReference<GroupCategory> categoriesReference({
     required String categoryAxisID,
-  }) =>
-      firestore
-          .collection(
-            _CollectionPath.categories(
-              groupID: groupID,
-              categoryAxisID: categoryAxisID,
-            ),
-          )
-          .withConverter(
-            fromFirestore: GroupCategory.fromFirestore,
-            toFirestore: GroupCategory.toFirestore,
-          );
+  }) => firestore
+      .collection(
+        _CollectionPath.categories(
+          groupID: groupID,
+          categoryAxisID: categoryAxisID,
+        ),
+      )
+      .withConverter(
+        fromFirestore: GroupCategory.fromFirestore,
+        toFirestore: GroupCategory.toFirestore,
+      );
 
   DocumentReference<GroupCategory> categoryReference({
     required String categoryAxisID,
     required String categoryID,
-  }) =>
-      firestore
-          .collection(
-            _CollectionPath.categories(
-              groupID: groupID,
-              categoryAxisID: categoryAxisID,
-            ),
-          )
-          .doc(categoryID)
-          .withConverter(
-            fromFirestore: GroupCategory.fromFirestore,
-            toFirestore: GroupCategory.toFirestore,
-          );
+  }) => firestore
+      .collection(
+        _CollectionPath.categories(
+          groupID: groupID,
+          categoryAxisID: categoryAxisID,
+        ),
+      )
+      .doc(categoryID)
+      .withConverter(
+        fromFirestore: GroupCategory.fromFirestore,
+        toFirestore: GroupCategory.toFirestore,
+      );
 
   DocumentReference<GroupCategory> newCategoryReference({
     required String categoryAxisID,
-  }) =>
-      firestore
-          .collection(
-            _CollectionPath.categories(
-              groupID: groupID,
-              categoryAxisID: categoryAxisID,
-            ),
-          )
-          .doc()
-          .withConverter(
-            fromFirestore: GroupCategory.fromFirestore,
-            toFirestore: GroupCategory.toFirestore,
-          );
+  }) => firestore
+      .collection(
+        _CollectionPath.categories(
+          groupID: groupID,
+          categoryAxisID: categoryAxisID,
+        ),
+      )
+      .doc()
+      .withConverter(
+        fromFirestore: GroupCategory.fromFirestore,
+        toFirestore: GroupCategory.toFirestore,
+      );
 
   CollectionReference<GroupUserProfile> userProfilesReference() => firestore
       .collection(_CollectionPath.userProfiles(groupID: groupID))
@@ -367,14 +359,13 @@ class GroupDatabase {
 
   DocumentReference<GroupUserProfile> userProfileReference({
     required String userID,
-  }) =>
-      firestore
-          .collection(_CollectionPath.userProfiles(groupID: groupID))
-          .doc(GroupUserProfile.documentID(groupID: groupID, userID: userID))
-          .withConverter(
-            fromFirestore: GroupUserProfile.fromFirestore,
-            toFirestore: GroupUserProfile.toFirestore,
-          );
+  }) => firestore
+      .collection(_CollectionPath.userProfiles(groupID: groupID))
+      .doc(GroupUserProfile.documentID(groupID: groupID, userID: userID))
+      .withConverter(
+        fromFirestore: GroupUserProfile.fromFirestore,
+        toFirestore: GroupUserProfile.toFirestore,
+      );
 }
 
 class UserDatabaseResolver extends HookConsumerWidget {

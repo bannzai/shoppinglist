@@ -94,7 +94,8 @@ class InquiryPage extends HookConsumerWidget {
 
     // 必須項目(メールアドレス・種類・内容)が未入力の間は送信ボタンを無効にする。
     // メール形式の不正は「未入力」ではないので submit() 内でチェックする。
-    final isFormFilled = emailController.text.trim().isNotEmpty &&
+    final isFormFilled =
+        emailController.text.trim().isNotEmpty &&
         contentController.text.trim().isNotEmpty &&
         selectedCategory.value != null;
 
@@ -138,41 +139,47 @@ class InquiryPage extends HookConsumerWidget {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: InquiryCategory.values.map((category) {
-                  final isSelected = selectedCategory.value == category;
-                  return GestureDetector(
-                    onTap: () {
-                      analytics.logEvent(
-                        name: 'select_inquiry_category',
-                        parameters: {'categoryType': category.wireValue},
-                      );
-                      selectedCategory.value = category;
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected ? tokens.accentSoft : neutral.card,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                          color: isSelected ? tokens.accent : neutral.divider,
-                          width: isSelected ? 1.5 : 0.5,
-                        ),
-                      ),
-                      child: Text(
-                        category.label,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: isSelected ? tokens.accent : neutral.ink,
-                              fontWeight: isSelected
-                                  ? FontWeight.w700
-                                  : FontWeight.w400,
+                children:
+                    InquiryCategory.values.map((category) {
+                      final isSelected = selectedCategory.value == category;
+                      return GestureDetector(
+                        onTap: () {
+                          analytics.logEvent(
+                            name: 'select_inquiry_category',
+                            parameters: {'categoryType': category.wireValue},
+                          );
+                          selectedCategory.value = category;
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color:
+                                isSelected ? tokens.accentSoft : neutral.card,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color:
+                                  isSelected ? tokens.accent : neutral.divider,
+                              width: isSelected ? 1.5 : 0.5,
                             ),
-                      ),
-                    ),
-                  );
-                }).toList(),
+                          ),
+                          child: Text(
+                            category.label,
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.copyWith(
+                              color: isSelected ? tokens.accent : neutral.ink,
+                              fontWeight:
+                                  isSelected
+                                      ? FontWeight.w700
+                                      : FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
               ),
               const SizedBox(height: 20),
               _FieldLabel(label: 'お問い合わせ内容', neutral: neutral),
@@ -264,10 +271,10 @@ class _FieldLabel extends StatelessWidget {
     return Text(
       label,
       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            fontWeight: FontWeight.w700,
-            color: neutral.ink2,
-            letterSpacing: 0.04,
-          ),
+        fontWeight: FontWeight.w700,
+        color: neutral.ink2,
+        letterSpacing: 0.04,
+      ),
     );
   }
 }
