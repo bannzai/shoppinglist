@@ -1,27 +1,29 @@
 appId: com.bannzai.shoppinglist
 ---
-# 非プレミアムユーザーのカテゴリロケーション別並び替え制限テスト
-# 匿名ログイン（非プレミアム）でカテゴリ・買い物場所を作成し、
-# 買い物リストでロケーション別ソートがデフォルト順にフォールバックされることを確認する
-
+# 非プレミアムユーザーのカテゴリ・ロケーション別並び替え制限テスト（design v2 ナビ追従）。
+# 匿名ログイン（非プレミアム）で買い物場所とカテゴリを作成し、リストに場所を割り当てても
+# ロケーション別ソートは無効化され、デフォルト order 順（野菜=0, 肉=1 → 野菜が先）で
+# 表示されることを確認する。
+# design v2 では場所/カテゴリ追加は別画面に分離（category_location_order.yaml と同じナビ）。
 - runFlow: shared/anonymous_sign_in.yaml
 
-# --- リスト設定→グループ設定を開く ---
-
+# === Phase 1: リスト設定 → グループ設定 配下で 場所 + カテゴリ2件 を作成 ===
 - tapOn: "リスト設定"
 - assertVisible: "買い物リスト設定"
-# TextFieldのフォーカスを外す
-- tapOn:
-    point: "50%,12%"
-- waitForAnimationToEnd
-
+- scrollUntilVisible:
+    element: "グループ設定"
+    direction: DOWN
 - tapOn: "グループ設定"
-- waitForAnimationToEnd
 - assertVisible: "グループ設定"
 
-# --- 買い物場所の作成 ---
-
-- tapOn: "場所を追加"
+# 買い物場所「テストスーパー」を作成
+- scrollUntilVisible:
+    element: "(?s).*買い物する場所.*"
+    direction: DOWN
+- tapOn: "(?s).*買い物する場所.*"
+- assertVisible: "買い物する場所がまだありません"
+- tapOn:
+    point: "90%,93%"
 - assertVisible: "場所を追加"
 - tapOn: "場所の名前（例: スーパー）"
 - inputText: "テストスーパー"
@@ -30,109 +32,103 @@ appId: com.bannzai.shoppinglist
     index: 0
 - waitForAnimationToEnd
 - assertVisible: "テストスーパー"
-
-# --- カテゴリ作成: 野菜（キーワード: にんじん） ---
-
-- tapOn: "カテゴリを追加"
-- assertVisible: "カテゴリを追加"
-- tapOn: "カテゴリ名（例: 野菜）"
-- inputText: "野菜"
+# グループ設定へ戻る
 - tapOn:
-    text: "追加"
-    index: 0
+    point: "5%,10%"
+- waitForAnimationToEnd
+- assertVisible: "グループ設定"
+
+# カテゴリ画面へ（グループ設定のカテゴリセル → GroupCategoryPage）
+- scrollUntilVisible:
+    element: "(?s).*カテゴリ.*"
+    direction: DOWN
+- tapOn: "(?s).*カテゴリ.*"
+- assertVisible: "カテゴリを追加"
+
+# カテゴリ1: 野菜 / キーワード にんじん
+- tapOn: "カテゴリを追加"
 - waitForAnimationToEnd
 - assertVisible: "カテゴリ編集"
-
+- tapOn: "カテゴリ名を入力"
+- inputText: "野菜"
+- pressKey: enter
+- waitForAnimationToEnd
 - tapOn: "キーワードを追加"
-- assertVisible: "キーワードを追加"
+- waitForAnimationToEnd
 - inputText: "にんじん"
 - tapOn:
     text: "追加"
     index: 0
 - waitForAnimationToEnd
-
-# グループ設定に戻る
 - tapOn:
     point: "5%,10%"
 - waitForAnimationToEnd
-- assertVisible: "グループ設定"
+- extendedWaitUntil:
+    visible: "(?s).*野菜.*"
+    timeout: 10000
 
-# --- カテゴリ作成: 肉（キーワード: 鶏肉） ---
-
-- scrollUntilVisible:
-    element: "カテゴリを追加"
-    direction: DOWN
-- tapOn: "カテゴリを追加"
-- assertVisible: "カテゴリを追加"
-- tapOn: "カテゴリ名（例: 野菜）"
-- inputText: "肉"
+# カテゴリ2: 肉 / キーワード 鶏肉（右下 FAB から追加）
 - tapOn:
-    text: "追加"
-    index: 0
+    point: "90%,93%"
 - waitForAnimationToEnd
 - assertVisible: "カテゴリ編集"
-
+- tapOn: "カテゴリ名を入力"
+- inputText: "肉"
+- pressKey: enter
+- waitForAnimationToEnd
 - tapOn: "キーワードを追加"
-- assertVisible: "キーワードを追加"
+- waitForAnimationToEnd
 - inputText: "鶏肉"
 - tapOn:
     text: "追加"
     index: 0
 - waitForAnimationToEnd
-
-# グループ設定に戻る
 - tapOn:
     point: "5%,10%"
 - waitForAnimationToEnd
-- assertVisible: "グループ設定"
-- takeScreenshot: screenshots/premium_cat_loc_01_setup_done
+- extendedWaitUntil:
+    visible: "(?s).*肉.*"
+    timeout: 10000
+- takeScreenshot: screenshots/cat_loc_non_premium_01_setup_done
 
-# --- リスト設定に戻る ---
-- tapOn:
-    point: "5%,10%"
+# === Phase 2: home に戻る ===
+- launchApp
 - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "タップで入力開始"
+    timeout: 30000
+
+# === Phase 3: リストに「テストスーパー」を割り当て ===
+- tapOn: "リスト設定"
 - assertVisible: "買い物リスト設定"
-
-# TextFieldのフォーカスを外す
-- tapOn:
-    point: "50%,12%"
-- waitForAnimationToEnd
-
-# 買い物する場所で「テストスーパー」を選択
-- tapOn: "なし"
-- waitForAnimationToEnd
+- tapOn: "(?s).*未設定.*"
+- assertVisible: "買い物する場所を選ぶ"
 - tapOn: "テストスーパー"
 - waitForAnimationToEnd
-
-# BottomSheetを閉じる
+- assertVisible: "買い物リスト設定"
+# リスト設定(モーダル)を×で閉じる（実測 bounds [4,91][52,139] = 中心 ~7%,13%）
 - tapOn:
-    point: "5%,12%"
+    point: "7%,13%"
 - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "タップで入力開始"
+    timeout: 15000
 
-# --- アイテム追加 ---
-
-- tapOn: "アイテムを追加"
+# === Phase 4: アイテム追加 → デフォルト order で分類確認 ===
+- tapOn: "タップで入力開始"
 - inputText: "にんじん"
 - pressKey: enter
 - inputText: "鶏肉"
 - pressKey: enter
-# 空アイテム削除
 - pressKey: enter
-
-# キーボード閉じてフォーカス解除
-- tapOn:
-    point: "50%,6%"
+- hideKeyboard
 - waitForAnimationToEnd
-
-# Firestoreデータ同期待ち＆カテゴリヘッダー表示確認
+# 非プレミアムなのでロケーション別ソートは無効化され、デフォルト order 順
+# （野菜=0, 肉=1）で表示される。両ヘッダーが出ることを確認し、順序はスクショで目視確認する。
 - extendedWaitUntil:
-    visible: "野菜"
+    visible: "(?s).*野菜.*"
     timeout: 10000
 - extendedWaitUntil:
-    visible: "肉"
+    visible: "(?s).*肉.*"
     timeout: 5000
-
-# 非プレミアムユーザーなのでロケーション別ソートは無効化され、
-# デフォルトの order 順で表示される（野菜=0, 肉=1 → 野菜が先に表示される）
-# スクリーンショットで目視確認
-- takeScreenshot: screenshots/premium_cat_loc_02_default_order_non_premium
+- takeScreenshot: screenshots/cat_loc_non_premium_02_default_order

@@ -1,50 +1,55 @@
 appId: com.bannzai.shoppinglist
 ---
-# グループ切り替え後もリストが重複せず正常に動作することを確認するテスト
+# グループ切り替え後もリストが重複せず正常に動作することを確認するテスト。
+# design v2 にはボトムタブが無く、グループ切替は GroupChipsBar（home 上部の横スクロールチップ、
+# group_chips_bar.dart）で行う。新規グループに切り替えると日付名リストが1つだけ自動作成され、
+# 空入力行「タップで入力開始」が表示される。
 - runFlow: shared/anonymous_sign_in.yaml
 
-# 設定タブに切り替え
+# 設定（トップバーアイコン tooltip "設定"）→ グループ管理
 - tapOn:
     text: "設定.*"
     index: 0
-
-# グループ管理画面に遷移
 - tapOn: "グループ管理"
 - assertVisible: "グループ管理"
 
-# グループ作成
+# グループ作成（FAB → グループ名入力 → 作成する → 招待ダイアログ閉じる）
 - tapOn: "グループ作成"
-- waitForAnimationToEnd
-- assertVisible: "グループ作成"
-# autofocus: trueなのでそのまま入力
+- assertVisible: "グループ名"
+# autofocus: true のためそのまま入力できる
 - inputText: "TestEmptyGroup"
-- tapOn:
-    point: "50%,6%"
 - tapOn: "作成する"
-- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "閉じる"
+    timeout: 10000
+- tapOn: "閉じる"
+- extendedWaitUntil:
+    visible: "グループ管理"
+    timeout: 15000
 
-# グループ管理画面からAppBarの戻るボタンで設定画面へ戻る
-- tapOn: "Back"
-- waitForAnimationToEnd
-
-# 買い物リストタブに切り替え（NavigationBarの左側タブを座標でタップ）
+# home へ戻る: グループ管理(back 5%,10%) → 設定(×閉じ 7%,10%) → home
 - tapOn:
-    point: "25%,96%"
+    point: "5%,10%"
+- waitForAnimationToEnd
+- tapOn:
+    point: "7%,10%"
 - waitForAnimationToEnd
 
-# GroupSwitcherで作成したグループに切り替え
+# GroupChipsBar で TestEmptyGroup に切替（チップ label = group.name、未選択チップをタップ）
+- assertVisible: "TestEmptyGroup"
 - tapOn: "TestEmptyGroup"
 - waitForAnimationToEnd
 
-# app_entity_prepareがデフォルトグループにリストを自動作成するので、
-# 「アイテムを追加」が表示されるまで待つ（リストが1つだけ作成されることを確認）
+# 切替先グループには日付名リストが1つだけ自動作成され、空入力行が表示される。
+# （リスト重複が起きていれば表示が変わる。ここでは自動作成された単一リストの入力行が
+#  正しく出ることを確認する。）
 - extendedWaitUntil:
-    visible: "アイテムを追加"
+    visible: "タップで入力開始"
     timeout: 15000
 - takeScreenshot: screenshots/empty_list_01_group_switched
 
-# アイテムを追加して動作確認
-- tapOn: "アイテムを追加"
+# アイテムを追加して動作確認（空入力行 → 入力 → enter、2回目の enter で空行を畳む）
+- tapOn: "タップで入力開始"
 - inputText: "milk"
 - pressKey: enter
 - pressKey: enter

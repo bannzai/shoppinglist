@@ -3,76 +3,82 @@ appId: com.bannzai.shoppinglist
 - runFlow: shared/anonymous_sign_in.yaml
 
 # 設定タブに切り替え
+# text は正規表現。NavigationBar のラベル "設定\nTab 2 of 2" にマッチさせるため "設定.*" を使用
 - tapOn:
     text: "設定.*"
     index: 0
 - assertVisible: "設定.*"
 
-# グループ管理画面に遷移
+# グループ管理画面に遷移（設定の AppCell。title/subtitle は merge されないため bare text で可）
 - tapOn: "グループ管理"
 - assertVisible: "グループ管理"
 
-# グループ作成
+# グループ作成（FAB → グループ作成画面 → グループ名入力 → 作成する → 招待ダイアログ閉じる）
+# GroupCreatePage は section ラベル "グループ名" を持ち、name フィールドは autofocus のため
+# inputText を直接流せる（group_creation_limit_non_premium.yaml で実証済み）。
 - tapOn: "グループ作成"
-- assertVisible: "グループ作成"
-- tapOn: "グループ名を入力"
+- assertVisible: "グループ名"
 - inputText: "テストグループ"
-- pressKey: Enter
 - tapOn: "作成する"
+# 作成後「メンバーを招待」ダイアログ（招待コード）が出るため閉じる
+- extendedWaitUntil:
+    visible: "閉じる"
+    timeout: 10000
+- tapOn: "閉じる"
 - extendedWaitUntil:
     visible: "グループ管理"
     timeout: 15000
 
-# グループ設定画面に遷移（グループリストからタップ）
+# 作成したグループのカードをタップしてグループ設定へ。
+# グループカードは "テストグループ\nメンバー 1人" のような結合ラベルのため (?s) 部分一致で指定。
 - extendedWaitUntil:
-    visible: ".*テストグループ.*"
+    visible: "(?s).*テストグループ.*"
     timeout: 10000
-- tapOn: ".*テストグループ.*"
+- tapOn: "(?s).*テストグループ.*"
 - assertVisible: "グループ設定"
 - takeScreenshot: screenshots/group_setting_01_initial
 
-# グループ名編集 → onSubmittedで保存
+# グループ名編集 → onSubmitted で保存（オーナーなので readOnly ではない）。
+# name フィールドは現在値 "テストグループ"（7文字）を表示しているため bare text でタップ。
 - tapOn: "テストグループ"
 - eraseText: 7
-- inputText: "更新されたグループ"
+- inputText: "更新グループ"
 - pressKey: Enter
 - takeScreenshot: screenshots/group_setting_02_name_saved
 
-# 場所を追加
+# 「買い物する場所」AppCell から ShoppingLocationPage へ遷移できること。
+# design v2 ではグループ設定内のインライン場所追加は廃止され、別画面遷移に集約された。
+# AppCell の accessibilityText は title+subtitle が "買い物する場所\n店舗の登録・編集" と
+# 改行結合されるため (?s) 部分一致で指定する。
 - scrollUntilVisible:
-    element: "場所を追加"
+    element: "(?s).*買い物する場所.*"
     direction: DOWN
-- tapOn: "場所を追加"
-- assertVisible: "場所を追加"
-- inputText: "スーパー"
-- tapOn: "追加"
-- waitForAnimationToEnd
-- assertVisible: "スーパー"
-- takeScreenshot: screenshots/group_setting_03_location_added
-
-# カテゴリを追加
-- scrollUntilVisible:
-    element: "カテゴリを追加"
-    direction: DOWN
-- tapOn: "カテゴリを追加"
-- assertVisible: "カテゴリを追加"
-- inputText: "野菜"
-- tapOn: "追加"
-- waitForAnimationToEnd
-# カテゴリ追加後はカテゴリ編集画面に遷移する
-- assertVisible: "カテゴリ編集"
-- takeScreenshot: screenshots/group_setting_04_category_edit
-- tapOn: "Back"
-
-# グループ設定画面に戻り、カテゴリが表示されていることを確認
+- tapOn: "(?s).*買い物する場所.*"
+# ShoppingLocationPage の空状態（このグループは新規で場所0件）。
+# AppBar タイトルもセルも "買い物する場所" のため、遷移確認には空状態文言を使う。
+- assertVisible: "買い物する場所がまだありません"
+- takeScreenshot: screenshots/group_setting_03_location_page
+# AppBar 左上の back シェブロン（Flutter Key 非露出のため座標タップ）
+- tapOn:
+    point: "5%,10%"
 - assertVisible: "グループ設定"
-- extendedWaitUntil:
-    visible: ".*野菜.*"
-    timeout: 10000
-- takeScreenshot: screenshots/group_setting_05_category_added
 
-# スクリーンショット（最終状態）
+# 「カテゴリ」AppCell から GroupCategoryPage へ遷移できること。
+# accessibilityText は "カテゴリ\n自動分類のキーワード管理" のため (?s) 部分一致で指定する。
 - scrollUntilVisible:
-    element: "グループに招待"
+    element: "(?s).*カテゴリ.*"
     direction: DOWN
-- takeScreenshot: screenshots/group_setting_06_final
+- tapOn: "(?s).*カテゴリ.*"
+# GroupCategoryPage の空状態（カテゴリ0件の価値訴求カード）。
+- assertVisible: "買ったものを自動でグループ分け"
+- takeScreenshot: screenshots/group_setting_04_category_page
+- tapOn:
+    point: "5%,10%"
+- assertVisible: "グループ設定"
+
+# グループ招待セクション（design v2 では「招待コードを発行」。旧「グループに招待」は廃止）。
+- scrollUntilVisible:
+    element: "招待コードを発行"
+    direction: DOWN
+- assertVisible: "招待コードを発行"
+- takeScreenshot: screenshots/group_setting_05_final

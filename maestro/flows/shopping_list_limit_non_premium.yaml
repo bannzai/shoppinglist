@@ -20,14 +20,17 @@ appId: com.bannzai.shoppinglist
       - hideKeyboard
       - waitForAnimationToEnd
 
-# 21個目（上限超過）— SnackBar が表示されるはず
+# 21個目（上限超過）— ShoppingListLimitExceededException の SnackBar が表示される。
+# SnackBar 本文(content の Text)は Flutter の semantics に露出せず maestro の text 一致で
+# 拾えない(extendedWaitUntil でも 0 件)。一方 SnackBarAction のラベル「アップグレード」は
+# button semantics として露出し、tap 直後の assertVisible で確実に捕捉できる。
+# 「アップグレード」は通常ホームには存在せず上限 SnackBar 出現時のみ可視のため一意の信号になる
+# (assertNotVisible で誤検出が無いことを確認済み)。本文全文はスクリーンショットで視覚的に記録する。
 - tapOn:
     point: "89%, 83%"
 - extendedWaitUntil:
     visible: "今日の日付でリストを追加"
     timeout: 8000
 - tapOn: "今日の日付でリストを追加"
-- extendedWaitUntil:
-    visible: "無料プランでは1グループあたり20個まで"
-    timeout: 8000
+- assertVisible: "アップグレード"
 - takeScreenshot: screenshots/shopping_list_limit_01_exceeded
