@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # カテゴリ編集のテスト（カラー設定・カラー解除・アイコン設定 + 画面離脱時の自動保存）
 # design v2 ナビ: リスト設定 →「自動分類のキーワード管理」→ GroupCategoryPage。

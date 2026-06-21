@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # カテゴリマッチングテスト
 # 1. 完全一致: キーワード「牛乳」(完全一致) → 「牛乳」のみマッチ、「牛肉」はマッチしない

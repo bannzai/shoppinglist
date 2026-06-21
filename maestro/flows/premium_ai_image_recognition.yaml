@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # プレミアム状態では AI 画像認識の月間利用回数が 50 回に拡張されることを確認する。
 # non_premium では上限 5 回到達で SnackBar 末尾に「月50回まで利用できます」が付く。

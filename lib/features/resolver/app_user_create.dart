@@ -1,5 +1,6 @@
 // ignore: implementation_imports
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shoppinglist/utils/firestore/firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -22,7 +23,7 @@ class AppUserCreate {
     if (document.exists) {
       return;
     }
-    final batch = FirebaseFirestore.instance.batch();
+    final batch = firestore.batch();
     batch.set(
       userDatabase.userReference(),
       AppUser(

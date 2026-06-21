@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # 設定タブ → 開発者オプション画面への共通ナビゲーション
 # 「開発者オプション」ListTile は title 単独（subtitle なし）のため、

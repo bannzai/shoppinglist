@@ -11,7 +11,8 @@
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
     "genkit:start": "GENKIT_ENV=dev genkit start -- tsx --watch src/index.ts",
-    "test": "jest"
+    "test": "jest",
+    "script-restore-inquiry-snapshot": "npm run build && node ./lib/script/restoreInquirySnapshot.js"
   },
   "engines": {
     "node": "22"

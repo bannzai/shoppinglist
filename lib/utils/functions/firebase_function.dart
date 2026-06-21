@@ -1,5 +1,6 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shoppinglist/entity/inquiry_category.dart';
 
 // Genkitはus-central1にしか対応していない
 final functions = FirebaseFunctions.instanceFor(region: 'us-central1');
@@ -230,6 +231,30 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     if (response['result'] != 'OK') {
       throw Exception(response['error']['message']);
     }
+  }
+
+  /// お問い合わせを送信する。Firestore へのスナップショット保存と Slack 通知は
+  /// Functions 側で行う。戻り値は作成された問い合わせの ID。
+  Future<String> submitInquiry({
+    required String email,
+    required InquiryCategory categoryType,
+    required String content,
+    required String platform,
+    required String appVersion,
+  }) async {
+    final result = await httpsCallable('submitInquiry').call({
+      'email': email,
+      'categoryType': categoryType.wireValue,
+      'content': content,
+      'platform': platform,
+      'appVersion': appVersion,
+    });
+    debugPrint('submitInquiry.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    if (response['result'] != 'OK') {
+      throw Exception(response['error']['message']);
+    }
+    return response['data']['inquiryID'] as String;
   }
 
   /// カテゴリのロケーション別表示順序をテスト用に設定する。

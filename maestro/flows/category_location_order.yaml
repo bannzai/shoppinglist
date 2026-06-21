@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # ロケーション別カテゴリ並べ替えの E2E（design v2 ナビ追従）。
 # design v2 ではグループ設定内のインライン場所/カテゴリ追加は廃止され、

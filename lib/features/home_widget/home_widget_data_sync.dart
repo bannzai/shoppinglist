@@ -4,9 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/utils/config/app_identity.dart' as app_identity;
 
 class HomeWidgetDataSync {
-  static const appGroupId = 'group.com.bannzai.shoppinglist';
+  static const appGroupId = app_identity.appGroupId;
   static const iOSWidgetName = 'ShoppingListWidget';
   static const androidWidgetName = 'ShoppingListWidgetProvider';
 

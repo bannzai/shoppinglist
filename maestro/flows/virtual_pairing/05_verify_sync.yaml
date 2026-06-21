@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # Phase 5: リアルタイム同期確認（核心テスト）
 # launchApp で home（デフォルトグループ）に戻る。design v2 にボトムタブは無いため

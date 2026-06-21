@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # 開発者オプション画面 → 「プレミアム付与（1日）」ボタンタップ → 完了確認の共通サブフロー。
 #

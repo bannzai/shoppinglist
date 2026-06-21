@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # Settings & Paywall の検証:
 # - 設定画面に確実に到達する（top-bar 設定アイコン tooltip "設定"。home_page_test で実証済み）

@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 # 実行前にPreview用ビルドが必要:
 #   flutter build ios --simulator -t lib/features/previews/main_preview.dart
 #   xcrun simctl install booted build/ios/iphonesimulator/Runner.app

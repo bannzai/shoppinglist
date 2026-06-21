@@ -1,22 +1,17 @@
 import admin = require("firebase-admin");
 
 console.log("THIS IS NOT TEST ENVIRONMENT");
+// Functions ランタイムが設定する project id から Storage バケット名を導出し、
+// プロジェクト(dev/prod)ごとに正しいバケットを参照する。ハードコードしない。
+// gen2 では GCLOUD_PROJECT / GOOGLE_CLOUD_PROJECT のいずれかが設定されるためフォールバックする。
+const projectId = process.env.GCLOUD_PROJECT ?? process.env.GOOGLE_CLOUD_PROJECT;
+const storageBucket = `gs://${projectId}.firebasestorage.app`;
+console.log(`initializeApp storageBucket=${storageBucket}`);
 if (process.env.ENV === "local") {
   console.log("THIS IS LOCAL ENVIRONMENT");
-  // ローカル(エミュレータ)は GCLOUD_PROJECT が無いため prod バケットを明示する。
-  admin.initializeApp({
-    storageBucket: "gs://shopping-list-prod-a615c.firebasestorage.app",
-  });
+  admin.initializeApp({ storageBucket });
 } else {
-  // デプロイ環境ではデプロイ先プロジェクトのバケットを使う（dev→dev, prod→prod）。
-  // 以前は prod 固定だったため、dev 関数が prod バケットへ書き込もうとして
-  // permission-denied になり、dev の画像アップロード（レシート/商品写真）が全滅していた。
-  // バケット名は両プロジェクトとも `{projectID}.firebasestorage.app`。
-  const projectID =
-    process.env.GCLOUD_PROJECT ?? process.env.GOOGLE_CLOUD_PROJECT;
-  admin.initializeApp({
-    storageBucket: `gs://${projectID}.firebasestorage.app`,
-  });
+  admin.initializeApp({ storageBucket });
 }
 
 admin.firestore().settings({ ignoreUndefinedProperties: true });
@@ -124,4 +119,11 @@ if (
   process.env.FUNCTION_NAME === "categorizeShoppingListItems"
 ) {
   exports.categorizeShoppingListItems = require("./functions/categorizeShoppingListItems/function");
+}
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "submitInquiry"
+) {
+  exports.submitInquiry = require("./functions/submitInquiry/function");
 }

@@ -1113,6 +1113,140 @@ class _GroupCategoryBatchUpdateProviderElement
   String get groupID => (origin as GroupCategoryBatchUpdateProvider).groupID;
 }
 
+String _$groupCategoryKeywordAddHash() =>
+    r'ee267ec1aae08d5169e96a129f2a7121af068995';
+
+/// See also [groupCategoryKeywordAdd].
+@ProviderFor(groupCategoryKeywordAdd)
+const groupCategoryKeywordAddProvider = GroupCategoryKeywordAddFamily();
+
+/// See also [groupCategoryKeywordAdd].
+class GroupCategoryKeywordAddFamily extends Family<GroupCategoryKeywordAdd> {
+  /// See also [groupCategoryKeywordAdd].
+  const GroupCategoryKeywordAddFamily();
+
+  /// See also [groupCategoryKeywordAdd].
+  GroupCategoryKeywordAddProvider call({required String groupID}) {
+    return GroupCategoryKeywordAddProvider(groupID: groupID);
+  }
+
+  @override
+  GroupCategoryKeywordAddProvider getProviderOverride(
+    covariant GroupCategoryKeywordAddProvider provider,
+  ) {
+    return call(groupID: provider.groupID);
+  }
+
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    groupDatabaseProvider,
+  ];
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
+        groupDatabaseProvider,
+        ...?groupDatabaseProvider.allTransitiveDependencies,
+      };
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'groupCategoryKeywordAddProvider';
+}
+
+/// See also [groupCategoryKeywordAdd].
+class GroupCategoryKeywordAddProvider
+    extends AutoDisposeProvider<GroupCategoryKeywordAdd> {
+  /// See also [groupCategoryKeywordAdd].
+  GroupCategoryKeywordAddProvider({required String groupID})
+    : this._internal(
+        (ref) => groupCategoryKeywordAdd(
+          ref as GroupCategoryKeywordAddRef,
+          groupID: groupID,
+        ),
+        from: groupCategoryKeywordAddProvider,
+        name: r'groupCategoryKeywordAddProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$groupCategoryKeywordAddHash,
+        dependencies: GroupCategoryKeywordAddFamily._dependencies,
+        allTransitiveDependencies:
+            GroupCategoryKeywordAddFamily._allTransitiveDependencies,
+        groupID: groupID,
+      );
+
+  GroupCategoryKeywordAddProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.groupID,
+  }) : super.internal();
+
+  final String groupID;
+
+  @override
+  Override overrideWith(
+    GroupCategoryKeywordAdd Function(GroupCategoryKeywordAddRef provider)
+    create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GroupCategoryKeywordAddProvider._internal(
+        (ref) => create(ref as GroupCategoryKeywordAddRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        groupID: groupID,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<GroupCategoryKeywordAdd> createElement() {
+    return _GroupCategoryKeywordAddProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GroupCategoryKeywordAddProvider && other.groupID == groupID;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, groupID.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin GroupCategoryKeywordAddRef
+    on AutoDisposeProviderRef<GroupCategoryKeywordAdd> {
+  /// The parameter `groupID` of this provider.
+  String get groupID;
+}
+
+class _GroupCategoryKeywordAddProviderElement
+    extends AutoDisposeProviderElement<GroupCategoryKeywordAdd>
+    with GroupCategoryKeywordAddRef {
+  _GroupCategoryKeywordAddProviderElement(super.provider);
+
+  @override
+  String get groupID => (origin as GroupCategoryKeywordAddProvider).groupID;
+}
+
 String _$aiCategorizeApplyHash() => r'a841b666e6f93a6712cfc631d9b3dc5dba3df204';
 
 /// See also [aiCategorizeApply].

@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # Phase 2: デバッグユーザー作成
 - launchApp:

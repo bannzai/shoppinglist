@@ -12,11 +12,16 @@ OUTPUT_DIR="$PROJECT_ROOT/maestro/test-results/virtual_pairing"
 # デバイスUDID: 環境変数 MAESTRO_DEVICE_ID で上書き可能（デフォルト: iPhone 16 Plus）
 DEVICE_ID="${MAESTRO_DEVICE_ID:-A440EFCF-F99F-473D-940C-6E0E52FF526C}"
 
+# テスト対象アプリの bundle id。各 flow の appId: ${APP_ID} に -e で渡す。
+# 環境変数 APP_ID で上書き可能（デフォルト: prod）。dev 検証時は APP_ID=com.bannzai.shoppinglist.dev。
+APP_ID="${APP_ID:-com.bannzai.shoppinglist}"
+
 mkdir -p "$OUTPUT_DIR"
 
-MAESTRO_OPTS="--device $DEVICE_ID --debug-output $OUTPUT_DIR --flatten-debug-output"
+MAESTRO_OPTS="--device $DEVICE_ID -e APP_ID=$APP_ID --debug-output $OUTPUT_DIR --flatten-debug-output"
 
 echo "=== 仮想ペアリング グループ同期 E2E テスト ==="
+echo "対象アプリ: $APP_ID"
 echo "出力先: $OUTPUT_DIR"
 
 # Phase 1: サインイン + グループ作成
