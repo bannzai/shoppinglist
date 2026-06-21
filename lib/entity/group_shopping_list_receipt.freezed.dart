@@ -18,7 +18,7 @@ mixin _$GroupShoppingListReceipt {
  String get id; String get groupID; String get shoppingListID; String get userID;/// Firebase Storage 上のレシート画像のパス。
 /// 例: groups/{groupID}/shoppingLists/{shoppingListID}/receipts/{receiptID}.jpeg
 /// download URL は Firestore に保存せず、表示時に storagePath から getDownloadURL で
-/// 都度取得する（storage.rules でグループメンバーのみ read 許可）。
+/// 都度取得する（storage.rules で認証済みユーザーに read 許可）。
  String? get storagePath;/// レシートの金額（円・整数）。
  int? get amount;/// レシートに関するメモ。
  String? get memo;@ClientCreatedTimestamp() DateTime? get createdDateTime;@ClientUpdatedTimestamp() DateTime? get updatedDateTime;@ServerCreatedTimestamp() DateTime? get serverCreatedDateTime;@ServerUpdatedTimestamp() DateTime? get serverUpdatedDateTime;
@@ -235,7 +235,7 @@ class _GroupShoppingListReceipt implements GroupShoppingListReceipt {
 /// Firebase Storage 上のレシート画像のパス。
 /// 例: groups/{groupID}/shoppingLists/{shoppingListID}/receipts/{receiptID}.jpeg
 /// download URL は Firestore に保存せず、表示時に storagePath から getDownloadURL で
-/// 都度取得する（storage.rules でグループメンバーのみ read 許可）。
+/// 都度取得する（storage.rules で認証済みユーザーに read 許可）。
 @override final  String? storagePath;
 /// レシートの金額（円・整数）。
 @override final  int? amount;
