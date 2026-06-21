@@ -6,7 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 /// Firebase Storage の [storagePath] からレシート画像を表示する。
 ///
 /// download URL は Firestore に保存せず、表示時に storagePath から getDownloadURL で
-/// 取得する（storage.rules で認証済みグループメンバーのみ read 許可）。取得した URL は
+/// 取得する（storage.rules で認証済みユーザーに read 許可）。取得した URL は
 /// [CachedNetworkImage] でキャッシュする。storagePath は同一値ならキャッシュされ、
 /// 再 build のたびに getDownloadURL を呼ばない（useMemoized）。
 class ReceiptImage extends HookWidget {
@@ -48,7 +48,7 @@ class ReceiptImage extends HookWidget {
       placeholder:
           (context, _) =>
               _box(const Center(child: CircularProgressIndicator())),
-      errorWidget: (context, _, __) => _box(const Icon(Icons.broken_image)),
+      errorWidget: (context, _, _) => _box(const Icon(Icons.broken_image)),
     );
   }
 

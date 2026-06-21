@@ -1,4 +1,5 @@
 import admin from "firebase-admin";
+import { getDownloadURL } from "firebase-admin/storage";
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
@@ -151,6 +152,15 @@ const uploadReceiptImageFlow = ai.defineFlow(
           contentType: "image/jpeg",
         },
       });
+
+      // Admin SDK の file.save() は firebaseStorageDownloadTokens を生成しないため、
+      // このままだとクライアントの getDownloadURL(storagePath) がトークンの無い URL を返し、
+      // CachedNetworkImage の取得が 403 で失敗して画像が表示できない（レシートが
+      // broken_image アイコンになる原因）。getDownloadURL を呼んでダウンロードトークンを
+      // 生成しておくことで、クライアントは storagePath からトークン付き URL を取得できる。
+      // uploadShoppingListItemImage と同じ仕組み。戻り値の URL は Firestore に保存せず、
+      // 表示時にクライアントが storagePath から都度取得する設計のため破棄する。
+      await getDownloadURL(file);
 
       return {
         result: "OK" as const,

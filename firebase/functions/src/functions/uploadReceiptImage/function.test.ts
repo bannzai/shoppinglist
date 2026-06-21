@@ -4,6 +4,10 @@ const mockFirestoreInstance = {
 };
 const mockCurrentContext = jest.fn();
 const mockSave = jest.fn().mockResolvedValue(undefined);
+// file.save() 後にダウンロードトークン生成のため呼ぶ getDownloadURL のモック。
+const mockGetDownloadURL = jest
+  .fn()
+  .mockResolvedValue("https://example.com/receipt.jpeg");
 
 jest.mock("firebase-admin", () => ({
   __esModule: true,
@@ -13,6 +17,10 @@ jest.mock("firebase-admin", () => ({
       bucket: () => ({ file: () => ({ save: mockSave }) }),
     }),
   },
+}));
+
+jest.mock("firebase-admin/storage", () => ({
+  getDownloadURL: mockGetDownloadURL,
 }));
 
 // RevenueCat プレミアム判定のモック
@@ -98,6 +106,9 @@ describe("uploadReceiptImage", () => {
       "groups/group-1/shoppingLists/list-1/receipts/receipt-1.jpeg",
     );
     expect(mockSave).toHaveBeenCalled();
+    // クライアントが getDownloadURL(storagePath) でトークン付き URL を取得できるよう、
+    // サーバー側でダウンロードトークンを生成しておくこと。
+    expect(mockGetDownloadURL).toHaveBeenCalled();
   });
 
   test("異常系: 未認証ユーザーはエラー", async () => {
