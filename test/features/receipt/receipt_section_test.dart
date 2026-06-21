@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
+import 'package:shoppinglist/entity/group_shopping_list_receipt.dart';
 import 'package:shoppinglist/features/receipt/receipt_section.dart';
+import 'package:shoppinglist/provider/receipt.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
@@ -45,9 +47,21 @@ class _FakeEntitlementInfo implements EntitlementInfo {
       throw UnimplementedError(invocation.memberName.toString());
 }
 
+GroupShoppingListReceipt _receipt() => const GroupShoppingListReceipt(
+  id: 'receipt-001',
+  groupID: _testGroupID,
+  shoppingListID: _testListID,
+  userID: 'user-001',
+  storagePath:
+      'groups/$_testGroupID/shoppingLists/$_testListID/receipts/r.jpeg',
+  amount: null,
+  memo: null,
+);
+
 Future<void> _pumpAddButton(
   WidgetTester tester, {
   required bool premium,
+  List<GroupShoppingListReceipt> receipts = const [],
 }) async {
   await tester.pumpWidget(
     ProviderScope(
@@ -55,6 +69,10 @@ Future<void> _pumpAddButton(
         customerInfoProvider.overrideWith(
           (ref) => Stream.value(_FakeCustomerInfo(premium: premium)),
         ),
+        receiptsProvider(
+          groupID: _testGroupID,
+          shoppingListID: _testListID,
+        ).overrideWith((ref) => Stream.value(receipts)),
       ],
       child: MaterialApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
@@ -69,6 +87,10 @@ Future<void> _pumpAddButton(
   );
   await tester.pumpAndSettle();
 }
+
+/// 表示中の AppPill のラベルを取り出す（find.text に依存せずプロパティで検証する）。
+String _pillLabel(WidgetTester tester) =>
+    tester.widget<AppPill>(find.byType(AppPill)).label;
 
 void main() {
   group('ReceiptAddButton プレミアム表示', () {
@@ -91,6 +113,26 @@ void main() {
 
       expect(find.byType(AppPill), findsOneWidget);
       expect(find.byIcon(Icons.workspace_premium), findsNothing);
+    });
+  });
+
+  group('ReceiptAddButton ラベルの出し分け', () {
+    testWidgets('レシート未登録なら「レシートを追加」', (WidgetTester tester) async {
+      await _pumpAddButton(tester, premium: true, receipts: const []);
+
+      expect(_pillLabel(tester), 'レシートを追加');
+    });
+
+    testWidgets('プレミアムかつレシート登録済みなら「レシートを編集」', (WidgetTester tester) async {
+      await _pumpAddButton(tester, premium: true, receipts: [_receipt()]);
+
+      expect(_pillLabel(tester), 'レシートを編集');
+    });
+
+    testWidgets('非プレミアムはレシートがあっても「レシートを追加」のまま', (WidgetTester tester) async {
+      await _pumpAddButton(tester, premium: false, receipts: [_receipt()]);
+
+      expect(_pillLabel(tester), 'レシートを追加');
     });
   });
 }
