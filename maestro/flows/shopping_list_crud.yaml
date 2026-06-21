@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # 買い物リストの作成・リネーム・削除（design v2）。
 # - 追加: CreateListFab（右下 89%,83%）→「今日の日付でリストを追加」

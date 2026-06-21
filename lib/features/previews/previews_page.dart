@@ -8,11 +8,12 @@ import 'package:shoppinglist/features/group_setting/page.dart';
 import 'package:shoppinglist/features/group_category_edit/page.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/home/page.dart';
+import 'package:shoppinglist/features/inquiry/page.dart';
 import 'package:shoppinglist/features/onboarding/page.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/previews/screens/ai_categorize_preview_sheet_preview.dart';
-import 'package:shoppinglist/features/previews/screens/group_category_empty_state_preview.dart';
 import 'package:shoppinglist/features/previews/screens/ai_review_sheet_preview.dart';
+import 'package:shoppinglist/features/previews/screens/group_category_empty_state_preview.dart';
 import 'package:shoppinglist/features/previews/screens/invitation_verifying_preview.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_preview.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_setting_preview.dart';
@@ -40,7 +41,12 @@ final _previewEntries = <_PreviewEntry>[
     builder: (_) => const ShoppingListPreview(),
   ),
   _PreviewEntry(title: 'SettingPage', builder: (_) => const SettingPage()),
+  _PreviewEntry(title: 'InquiryPage', builder: (_) => const InquiryPage()),
   _PreviewEntry(title: 'GroupListPage', builder: (_) => const GroupListPage()),
+  _PreviewEntry(
+    title: 'GroupCategoryEmptyState',
+    builder: (_) => const GroupCategoryEmptyStatePreview(),
+  ),
   _PreviewEntry(
     title: 'GroupCreatePage',
     builder: (_) => const GroupCreatePage(),
@@ -60,10 +66,6 @@ final _previewEntries = <_PreviewEntry>[
   _PreviewEntry(
     title: 'GroupCategoryPage',
     builder: (_) => GroupCategoryPage(groupID: mockGroupID),
-  ),
-  _PreviewEntry(
-    title: 'GroupCategoryEmptyState',
-    builder: (_) => const GroupCategoryEmptyStatePreview(),
   ),
   _PreviewEntry(
     title: 'GroupCategoryEditPage',

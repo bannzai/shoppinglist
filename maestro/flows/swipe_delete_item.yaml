@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # 左スワイプ削除 → Undo（元に戻す）の E2E。
 # NOTE: 共通の shared/anonymous_sign_in.yaml は design v2 のオンボーディング表示と

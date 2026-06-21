@@ -40,8 +40,10 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        manifestPlaceholders["GOOGLE_MAPS_API_KEY"] =
-            project.findProperty("GOOGLE_MAPS_API_KEY") ?: ""
+        // Google Maps クライアントキー。AndroidManifest の geo.API_KEY=${GOOGLE_MAPS_API_KEY} が参照(全 buildType で必須)。
+        // 既定は prod(base applicationId 用。profile/release が継承)。debug は buildTypes で dev に上書き。
+        // クライアント埋め込み前提の公開情報のため直書き。GCP でアプリ制限(package+SHA-1)+API制限(Maps SDK for Android)を必須とする(Issue #410 / ADR 0030)。
+        manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = "AIzaSyACylrSYjCSNXVnfH3vTgg2nM1HJfB0VTI"
     }
 
     signingConfigs {
@@ -58,6 +60,14 @@ android {
     }
 
     buildTypes {
+        debug {
+            // dev Firebase プロジェクト(package=com.bannzai.shoppinglist.dev)に対応(Issue #410 / ADR 0030)。
+            // namespace(=R class package)は据え置き、applicationId のみ .dev を付与する。
+            // google-services.json は src/debug/(dev) を google-services plugin が優先採用する。
+            applicationIdSuffix = ".dev"
+            // dev applicationId(.dev)に対応する dev Maps キーへ上書き。
+            manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = "AIzaSyDcfsSO2_2lHNaP-yo-zU51iKEB-midNBw"
+        }
         release {
             // key.properties があればリリース署名（Google Play 配布用）、無ければ debug 署名にフォールバックして
             // ローカルの `flutter run --release` を維持する。

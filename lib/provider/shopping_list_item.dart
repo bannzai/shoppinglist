@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shoppinglist/utils/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
@@ -242,7 +243,7 @@ class ShoppingListItemBatchUpdate {
     required String shoppingListID,
     required List<GroupShoppingListItem> shoppingListItems,
   }) async {
-    final batch = FirebaseFirestore.instance.batch();
+    final batch = firestore.batch();
 
     for (final item in shoppingListItems) {
       final docRef = database

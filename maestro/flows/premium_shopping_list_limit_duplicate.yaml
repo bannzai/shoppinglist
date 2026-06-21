@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # プレミアム状態ではリスト複製でも 21 個目以降を作成できることを確認する。
 # non_premium では複製で 21 個目を作ろうとすると上限 SnackBar の CTA「アップグレード」で遮断される

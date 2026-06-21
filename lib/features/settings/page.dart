@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:shoppinglist/components/button/inquiry.dart';
 import 'package:shoppinglist/components/button/user_delete.dart';
 import 'package:shoppinglist/components/primitives/app_cell.dart';
 import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
@@ -15,6 +14,7 @@ import 'package:shoppinglist/components/primitives/app_setting_section.dart';
 import 'package:shoppinglist/features/developer_options/page.dart';
 import 'package:shoppinglist/features/group_invitation/page.dart';
 import 'package:shoppinglist/features/group_list/page.dart';
+import 'package:shoppinglist/features/inquiry/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/settings/components/auto_notify_toggle.dart';
 import 'package:shoppinglist/features/settings/components/location_reminder_toggle.dart';
@@ -287,7 +287,12 @@ class SettingPage extends HookConsumerWidget {
                         name: 'tap_open_inquiry',
                         parameters: {},
                       );
-                      inquiry();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const InquiryPage(),
+                        ),
+                      );
                     },
                     detail: null,
                     onSwitch: null,

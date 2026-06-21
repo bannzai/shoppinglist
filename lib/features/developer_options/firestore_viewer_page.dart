@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shoppinglist/utils/firestore/firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/app_user.dart';
@@ -92,7 +93,7 @@ class _GroupsSection extends StatelessWidget {
       icon: Icons.groups,
       future: () async {
         final snapshot =
-            await FirebaseFirestore.instance
+            await firestore
                 .collection('/groups')
                 .where('memberUserIDs', arrayContains: currentUID)
                 .withConverter(

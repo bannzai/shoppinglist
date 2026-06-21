@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # PR-3 AI review sheet の検証:
 # - AI 抽出後に review sheet が表示されることを assert

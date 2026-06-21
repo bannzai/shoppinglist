@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # monthly パッケージ購入 E2E。
 # 購入成功後に設定画面の「プレミアム会員」subtitle が「有効」になっていることを確認する。

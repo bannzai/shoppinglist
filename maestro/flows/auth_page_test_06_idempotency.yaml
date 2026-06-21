@@ -1,4 +1,4 @@
-appId: com.bannzai.shoppinglist
+appId: ${APP_ID}
 ---
 # アプリをstateを保持したまま再起動（clearState: false）
 - launchApp:
