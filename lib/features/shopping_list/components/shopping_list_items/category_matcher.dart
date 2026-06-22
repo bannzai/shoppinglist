@@ -82,24 +82,40 @@ Map<String, List<GroupShoppingListItem>> groupItemsByCategory({
 }
 
 /// アイテムにマッチするカテゴリのIDを返す。マッチしない場合はuncategorizedCategoryID。
-/// 複数カテゴリにマッチした場合はcategories先頭（order最小）のカテゴリを優先する。
+///
+/// マッチ優先順位:
+/// 1. 完全一致(exact)を全カテゴリで先に探す。exact はアイテム詳細でのカテゴリ選択
+///    ([MoveItemCategoryKeyword]) や AI 分類の確定など「このアイテムをこのカテゴリへ」という
+///    ユーザーの明示的な指定の結果なので、部分一致/正規表現より優先する。これにより、別カテゴリに
+///    部分一致キーワードがあっても、ユーザーが選んだカテゴリへ詳細画面・一覧の双方で確実に紐づく。
+/// 2. exact が無ければ部分一致(partial)/正規表現(regex)を判定する。
+///
+/// いずれの段でも、複数カテゴリにマッチした場合は categories 先頭（order 最小）を優先する。
 String findMatchingCategoryID({
   required GroupShoppingListItem item,
   required List<GroupCategory> categories,
 }) {
   final messageLower = item.message.toLowerCase();
 
+  // 1st pass: 完全一致(exact)を優先する。
   for (final category in categories) {
     for (final keyword in category.keywords) {
-      final keywordLower = keyword.keyword.toLowerCase();
+      if (keyword.matchingType == GroupCategoryKeywordMatchingType.exact &&
+          messageLower == keyword.keyword.toLowerCase()) {
+        return category.id;
+      }
+    }
+  }
 
+  // 2nd pass: 部分一致(partial)/正規表現(regex)を order 順で判定する。
+  for (final category in categories) {
+    for (final keyword in category.keywords) {
       switch (keyword.matchingType) {
         case GroupCategoryKeywordMatchingType.exact:
-          if (messageLower == keywordLower) {
-            return category.id;
-          }
+          // 1st pass で処理済み。
+          break;
         case GroupCategoryKeywordMatchingType.partial:
-          if (messageLower.contains(keywordLower)) {
+          if (messageLower.contains(keyword.keyword.toLowerCase())) {
             return category.id;
           }
         case GroupCategoryKeywordMatchingType.regex:
