@@ -16,7 +16,6 @@ import 'package:shoppinglist/features/group_invitation/page.dart';
 import 'package:shoppinglist/features/group_list/page.dart';
 import 'package:shoppinglist/features/inquiry/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
-import 'package:shoppinglist/features/settings/components/auto_notify_toggle.dart';
 import 'package:shoppinglist/features/settings/components/location_reminder_toggle.dart';
 import 'package:shoppinglist/features/settings/components/theme_color_tile.dart';
 import 'package:shoppinglist/provider/app_user.dart';
@@ -204,10 +203,7 @@ class SettingPage extends HookConsumerWidget {
               ),
               AppSettingSection(
                 title: '通知',
-                children: [
-                  const AutoNotifyToggle(),
-                  const LocationReminderToggle(),
-                ],
+                children: [const LocationReminderToggle()],
               ),
               const Padding(
                 padding: EdgeInsets.fromLTRB(16, 16, 16, 0),

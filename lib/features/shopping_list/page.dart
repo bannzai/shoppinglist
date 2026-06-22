@@ -11,7 +11,6 @@ import 'package:shoppinglist/features/shopping_list/components/banners/list_erro
 import 'package:shoppinglist/features/shopping_list/components/banners/retention_banner.dart';
 import 'package:shoppinglist/features/shopping_list/components/create_list_fab.dart';
 import 'package:shoppinglist/features/shopping_list/components/expandable_fab.dart';
-import 'package:shoppinglist/features/shopping_list/components/family_notification_trigger.dart';
 import 'package:shoppinglist/features/shopping_list/components/group_chips_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/list_top_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/progress_pill.dart';
@@ -165,8 +164,8 @@ class _GroupChips extends ConsumerWidget {
 }
 
 /// 有効な買い物リストが確定している(resolvedShoppingListID 非null)時のみマウントされる本体。
-/// item 系 provider の購読・通知トリガー(FamilyNotificationTrigger)をここで無条件に行うため、
-/// ShoppingListPage 側に条件付き ref.watch を持ち込まずに済む。
+/// item 系 provider の購読をここで無条件に行うため、ShoppingListPage 側に条件付き ref.watch を
+/// 持ち込まずに済む。
 class _ActiveShoppingList extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
@@ -202,7 +201,6 @@ class _ActiveShoppingList extends ConsumerWidget {
     );
 
     // チェック済み含む全件。FAB・リスト本体・進捗ピルがこの一覧を基準にする。
-    // (家族通知の発火は localShoppingListItemEditCountProvider 由来に分離した — Issue #430)
     final shoppingListItemsAsync = ref.watch(
       textShoppingListItemsProvider(
         groupID: groupID,
@@ -217,10 +215,8 @@ class _ActiveShoppingList extends ConsumerWidget {
 
     final aiProcessingType = ref.watch(aIProcessingProvider);
 
-    // 自分(ローカル端末)の変更検知 → 家族通知バー表示 / バックグラウンド自動通知は
-    // FamilyNotificationTrigger に委譲する(下の Stack 内に配置)。
-    // 他メンバーの変更が stream 同期されてきても通知バーを出さないため、検知は
-    // localShoppingListItemEditCountProvider(hasPendingWrites)由来に限定している(Issue #430)。
+    // グループへの更新通知は上部バー(ListTopBar)の手動ボタン(NotifyGroupButton)で行う。
+    // 自動検知による通知バーは廃止した(Issue #449)。
 
     return _ShoppingListScaffold(
       groupID: groupID,
@@ -281,13 +277,6 @@ class _ActiveShoppingList extends ConsumerWidget {
                 color: tokens.neutral.card,
                 child: Stack(
                   children: [
-                    // 自分(ローカル端末)の変更を検知して家族通知バー/自動通知を出す。
-                    // 描画はしない(SizedBox.shrink)が、リスト表示中は常駐させる。
-                    FamilyNotificationTrigger(
-                      groupID: groupID,
-                      shoppingListID: shoppingListID,
-                      shoppingListName: shoppingList?.name,
-                    ),
                     Column(
                       children: [
                         if (aiProcessingType != null)

@@ -29,35 +29,6 @@ Stream<List<GroupShoppingListItem>> textShoppingListItems(
       });
 }
 
-/// 表示中の買い物リストに対する「自分(ローカル端末)の編集」の累積回数を購読する。
-///
-/// Firestore snapshot の `metadata.hasPendingWrites` は、その snapshot に自分の端末からの
-/// 未コミット書き込み(latency compensation)が含まれる時のみ true になる。他メンバーの編集が
-/// 同期されてきた snapshot は false。これを使い「自分が変更した時だけ」家族へ通知を促すための
-/// 単調増加カウンタを発行する。値が変わること自体が「ローカル編集が起きた」イベントを表す。
-///
-/// 追加/文言編集/チェック/解除/並び替え/削除のいずれも、自分の端末からの書き込みなら
-/// hasPendingWrites=true の snapshot を伴うため、操作種別に依存せず一様に判別できる。
-/// (アイテムの lastEditedByUserID 等は操作ごとに設定が不統一で、削除では残らないため使えない)。
-///
-/// 注: 累積カウンタのため count を加算する副作用を持ち冪等ではないが、これは「イベントの
-/// 発生回数」を表現する Stream の本質的な状態であるため許容する。hasPendingWrites=true の
-/// snapshot は必ずデータ変更を伴うため、includeMetadataChanges は不要。
-@Riverpod(dependencies: [groupDatabase])
-Stream<int> localShoppingListItemEditCount(
-  Ref ref, {
-  required String groupID,
-  required String shoppingListID,
-}) {
-  var localEditCount = 0;
-  return ref
-      .watch(groupDatabaseProvider(groupID: groupID))
-      .shoppingListItemsReference(shoppingListID: shoppingListID)
-      .snapshots()
-      .where((snapshot) => snapshot.metadata.hasPendingWrites)
-      .map((_) => ++localEditCount);
-}
-
 class AddShoppingListItem {
   final GroupDatabase database;
 
