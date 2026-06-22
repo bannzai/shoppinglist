@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
@@ -18,7 +19,7 @@ import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 ///
 /// 自動検知による通知バー(旧 FamilyNotificationTrigger / NotificationMemberBar)を廃止し、
 /// 手動ボタンへ一本化した(Issue #449)。
-class NotifyGroupButton extends ConsumerWidget {
+class NotifyGroupButton extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final String? shoppingListName;
@@ -55,6 +56,10 @@ class NotifyGroupButton extends ConsumerWidget {
       boolSharedPreferencesProvider(key: BoolKey.hasSeenManualNotifyGuide),
     );
 
+    // 送信中フラグ。説明済みユーザーはタップ直後にダイアログが出ず送信完了までボタンが
+    // 有効なままになるため、連打/ダブルタップで同じ通知が重複送信されるのを防ぐ。
+    final isSending = useState(false);
+
     // 他メンバーが居ないグループ(ソロ)では通知導線を出さない。
     if (otherMemberIDs.isEmpty) {
       return const SizedBox.shrink();
@@ -65,7 +70,15 @@ class NotifyGroupButton extends ConsumerWidget {
       icon: const Icon(Icons.notifications_outlined),
       tooltip: 'グループに通知',
       onPressed:
-          () => _onPressed(context, ref, otherMemberIDs, hasSeen: hasSeen),
+          isSending.value
+              ? null
+              : () => _onPressed(
+                context,
+                ref,
+                otherMemberIDs,
+                hasSeen: hasSeen,
+                isSending: isSending,
+              ),
     );
   }
 
@@ -75,12 +88,15 @@ class NotifyGroupButton extends ConsumerWidget {
     WidgetRef ref,
     List<String> targetUserIDs, {
     required bool hasSeen,
+    required ValueNotifier<bool> isSending,
   }) async {
     analytics.logEvent(
       name: 'tap_notify_group',
       parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
     );
 
+    // 送信中はボタンを無効化する(二重送信防止)。タップ直後で Widget が生きているうちに立てる。
+    isSending.value = true;
     // 説明済みフラグの notifier を await の前に取得しておく。ダイアログ表示中にこの Widget が
     // 破棄(リスト再構築等)されても notifier(keepAlive)は生き続けるため、await 後に
     // ref を触って "Cannot use ref after the widget was disposed" になるのを避ける。
@@ -89,15 +105,15 @@ class NotifyGroupButton extends ConsumerWidget {
         key: BoolKey.hasSeenManualNotifyGuide,
       ).notifier,
     );
-    if (!hasSeen) {
-      final confirmed = await _showGuideDialog(context);
-      if (confirmed != true) {
-        return;
-      }
-      await guideNotifier.set(value: true);
-    }
-
     try {
+      if (!hasSeen) {
+        final confirmed = await _showGuideDialog(context);
+        if (confirmed != true) {
+          return;
+        }
+        await guideNotifier.set(value: true);
+      }
+
       await functions.sendShoppingListUpdateNotification(
         groupID: groupID,
         shoppingListID: shoppingListID,
@@ -107,6 +123,12 @@ class NotifyGroupButton extends ConsumerWidget {
       showGlobalToast('グループに通知しました', title: null);
     } catch (e, st) {
       showGlobalErrorToast(e, st);
+    } finally {
+      // ダイアログ表示中に Widget が破棄されると useState の ValueNotifier も破棄されるため、
+      // 生存している時だけフラグを戻す(破棄後の代入による例外を避ける)。
+      if (context.mounted) {
+        isSending.value = false;
+      }
     }
   }
 
