@@ -440,11 +440,11 @@ List<GroupCategoryKeyword>? keywordsAfterItemMove({
 
 /// アイテム(message)の所属カテゴリを、完全一致(exact)キーワードの付け替えで変更する。
 ///
-/// カテゴリをまたぐ D&D で「別カテゴリへ移す」永続化に使う。アイテムはカテゴリIDを持たず
-/// message とキーワードのマッチで分類されるため、同名(message)のアイテムは同じカテゴリへ
-/// 分類される(キーワードは message 単位)。手動の partial/regex は変更しない(削除対象は exact
-/// のみ)ため、partial/regex で別カテゴリにマッチしているアイテムは移動が効かない場合がある
-/// (分類エンジン findMatchingCategoryID を変えない方針による既知の限界)。
+/// カテゴリをまたぐ D&D・アイテム詳細でのカテゴリ選択で「別カテゴリへ移す」永続化に使う。
+/// アイテムはカテゴリIDを持たず message とキーワードのマッチで分類されるため、同名(message)の
+/// アイテムは同じカテゴリへ分類される(キーワードは message 単位)。手動の partial/regex は変更
+/// しない(削除対象は exact のみ)が、分類エンジン [findMatchingCategoryID] が exact を partial/regex
+/// より優先するため、別カテゴリに partial/regex マッチがあっても移動先へ確実に分類される。
 class MoveItemCategoryKeyword {
   final GroupDatabase database;
 
