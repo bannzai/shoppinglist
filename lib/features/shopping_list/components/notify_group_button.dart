@@ -33,6 +33,13 @@ class NotifyGroupButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUserID = ref.watch(currentUserIDProvider);
+    // 未ログイン時はボタンを出さない。currentUserID が null だと
+    // `p.userID != currentUserID` が常に true になり自分自身を他メンバー扱いしてしまうため、
+    // 防衛的に早期リターンする。
+    if (currentUserID == null) {
+      return const SizedBox.shrink();
+    }
+
     final memberProfiles =
         ref.watch(groupUserProfilesProvider(groupID: groupID)).asData?.value ??
         [];
@@ -41,6 +48,12 @@ class NotifyGroupButton extends ConsumerWidget {
             .where((p) => p.userID != currentUserID)
             .map((p) => p.userID)
             .toList();
+
+    // 説明済みフラグは状態 Provider のため build 内で watch し、callback へ値で渡す
+    // (callback 内での ref.read による状態取得を避ける — Riverpod 規約)。
+    final hasSeen = ref.watch(
+      boolSharedPreferencesProvider(key: BoolKey.hasSeenManualNotifyGuide),
+    );
 
     // 他メンバーが居ないグループ(ソロ)では通知導線を出さない。
     if (otherMemberIDs.isEmpty) {
@@ -51,7 +64,8 @@ class NotifyGroupButton extends ConsumerWidget {
       key: const Key('notify_group_button'),
       icon: const Icon(Icons.notifications_outlined),
       tooltip: 'グループに通知',
-      onPressed: () => _onPressed(context, ref, otherMemberIDs),
+      onPressed:
+          () => _onPressed(context, ref, otherMemberIDs, hasSeen: hasSeen),
     );
   }
 
@@ -59,16 +73,14 @@ class NotifyGroupButton extends ConsumerWidget {
   Future<void> _onPressed(
     BuildContext context,
     WidgetRef ref,
-    List<String> targetUserIDs,
-  ) async {
+    List<String> targetUserIDs, {
+    required bool hasSeen,
+  }) async {
     analytics.logEvent(
       name: 'tap_notify_group',
       parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
     );
 
-    final hasSeen = ref.read(
-      boolSharedPreferencesProvider(key: BoolKey.hasSeenManualNotifyGuide),
-    );
     // 説明済みフラグの notifier を await の前に取得しておく。ダイアログ表示中にこの Widget が
     // 破棄(リスト再構築等)されても notifier(keepAlive)は生き続けるため、await 後に
     // ref を触って "Cannot use ref after the widget was disposed" になるのを避ける。
