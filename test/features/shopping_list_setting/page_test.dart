@@ -55,15 +55,7 @@ void main() {
             .toList();
     expect(
       labels,
-      containsAll(<String>[
-        'リスト名',
-        '買い物する場所',
-        'カテゴリ',
-        '保存期間',
-        '通知',
-        '共有',
-        'リストの操作',
-      ]),
+      containsAll(<String>['リスト名', '買い物する場所', 'カテゴリ', '保存期間', '共有', 'リストの操作']),
     );
 
     expect(find.text('リスト名'.toUpperCase()), findsOneWidget);

@@ -170,37 +170,6 @@ class ShoppingListSettingPage extends HookConsumerWidget {
               const AppSectionLabel(text: '保存期間'),
               _StoragePeriodCard(isPremium: isPremium),
               const SizedBox(height: 14),
-              const AppSectionLabel(text: '通知'),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: Container(
-                  color: neutral.card,
-                  child: AppCell(
-                    icon: Icons.notifications_outlined,
-                    title: 'アイテム追加でグループに通知',
-                    subtitle: 'このリストでアイテム追加・チェック切替があったとき',
-                    switchValue: shoppingListState.value.autoNotifyEnabled,
-                    onSwitch: (value) {
-                      analytics.logEvent(
-                        name: 'toggle_list_auto_notify',
-                        parameters: {
-                          'groupID': groupID,
-                          'shoppingListID': shoppingListID,
-                          'value': value.toString(),
-                        },
-                      );
-                      autoSave(
-                        shoppingListState.value.copyWith(
-                          autoNotifyEnabled: value,
-                        ),
-                      );
-                    },
-                    detail: null,
-                    onTap: null,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 14),
               const AppSectionLabel(text: '共有'),
               ClipRRect(
                 borderRadius: BorderRadius.circular(14),
