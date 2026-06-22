@@ -74,29 +74,9 @@ const sendShoppingListUpdateNotificationFlow = ai.defineFlow(
         };
       }
 
-      // i-21 リスト単位の自動通知設定 (Group.GroupShoppingList.autoNotifyEnabled)。
-      // PR-1 で entity / PR-4 で UI を追加済み。リスト単位で false なら送信しない。
-      // 既存ドキュメントは autoNotifyEnabled フィールド未保持のため undefined のときは
-      // 後方互換で送信する (default true 扱い)。
-      const shoppingListDoc = await firestore
-        .collection(`groups/${groupID}/shoppingLists`)
-        .doc(shoppingListID)
-        .get();
-      interface ShoppingListData {
-        autoNotifyEnabled?: boolean;
-      }
-      const shoppingListData = shoppingListDoc.data() as
-        | ShoppingListData
-        | undefined;
-      if (shoppingListData?.autoNotifyEnabled === false) {
-        logger.info(
-          `Skip notification for group ${groupID} list ${shoppingListID}: autoNotifyEnabled=false`
-        );
-        return {
-          result: "OK" as const,
-          data: { successCount: 0, failureCount: 0 },
-        } as z.infer<typeof ResponseSchema>;
-      }
+      // 通知は AppBar の手動ボタン(NotifyGroupButton)からのみ呼ばれるため、
+      // リスト単位の自動通知設定 (autoNotifyEnabled) によるスキップは行わない。
+      // ユーザーが明示的に押した通知は常に送信する(Issue #449)。
 
       // 送信者のdisplayNameを取得
       const senderProfileDoc = await firestore
