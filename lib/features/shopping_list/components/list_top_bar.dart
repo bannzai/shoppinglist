@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/features/settings/page.dart';
 import 'package:shoppinglist/features/shopping_list/components/list_picker_sheet.dart';
+import 'package:shoppinglist/features/shopping_list/components/notify_group_button.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
@@ -98,6 +99,11 @@ class ListTopBar extends ConsumerWidget {
                   ],
                 ),
               ),
+            ),
+            NotifyGroupButton(
+              groupID: groupID,
+              shoppingListID: shoppingListID,
+              shoppingListName: shoppingList?.name,
             ),
             IconButton(
               key: const Key('list_setting_button'),
