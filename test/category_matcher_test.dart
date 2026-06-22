@@ -472,6 +472,54 @@ void main() {
         uncategorizedCategoryID,
       );
     });
+
+    test('完全一致は、より前のカテゴリの部分一致より優先される', () {
+      // order が先(0)のカテゴリが partial で当たっても、後ろ(1)のカテゴリの exact を優先する。
+      // アイテム詳細でのカテゴリ選択(exact 付与)が、別カテゴリの partial に負けないことを保証する。
+      expect(
+        findMatchingCategoryID(
+          item: item('オレンジジュース'),
+          categories: [
+            category(
+              id: 'cat-partial',
+              order: 0,
+              keyword: 'ジュース',
+              matchingType: GroupCategoryKeywordMatchingType.partial,
+            ),
+            category(
+              id: 'cat-exact',
+              order: 1,
+              keyword: 'オレンジジュース',
+              matchingType: GroupCategoryKeywordMatchingType.exact,
+            ),
+          ],
+        ),
+        'cat-exact',
+      );
+    });
+
+    test('完全一致が複数あれば order 最小のカテゴリを優先する', () {
+      expect(
+        findMatchingCategoryID(
+          item: item('牛乳'),
+          categories: [
+            category(
+              id: 'cat-a',
+              order: 0,
+              keyword: '牛乳',
+              matchingType: GroupCategoryKeywordMatchingType.exact,
+            ),
+            category(
+              id: 'cat-b',
+              order: 1,
+              keyword: '牛乳',
+              matchingType: GroupCategoryKeywordMatchingType.exact,
+            ),
+          ],
+        ),
+        'cat-a',
+      );
+    });
   });
 
   group('reorderedSectionItems', () {

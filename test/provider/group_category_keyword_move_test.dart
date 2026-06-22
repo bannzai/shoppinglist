@@ -60,13 +60,15 @@ void main() {
       expect(result!.map((keyword) => keyword.keyword), ['牛乳']);
     });
 
-    test('partial キーワードは削除しない(exact のみ対象=移動が効かない限界)', () {
+    test('partial キーワードは削除しない(削除対象は exact のみ)', () {
       final result = keywordsAfterItemMove(
         category: category('src', [partial('パン')]),
         itemMessage: 'パン',
         destinationCategoryID: 'dest',
       );
-      // partial は残すため変更なし(null)。partial マッチのアイテムは移動が効かない。
+      // partial は残すため変更なし(null)。元カテゴリの partial は他アイテムにも効くため消さない。
+      // それでも移動が成立するのは、分類エンジン findMatchingCategoryID が移動先の exact を
+      // 元カテゴリの partial より優先するため(category_matcher_test の exact 優先テスト参照)。
       expect(result, isNull);
     });
 
