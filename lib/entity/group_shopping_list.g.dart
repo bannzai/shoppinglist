@@ -18,7 +18,6 @@ _GroupShoppingList _$GroupShoppingListFromJson(Map<String, dynamic> json) =>
             json['status'],
           ) ??
           GroupShoppingListStatus.active,
-      autoNotifyEnabled: json['autoNotifyEnabled'] as bool? ?? false,
       shoppingLocationID: json['shoppingLocationID'] as String?,
       duplicatedFromGroupShoppingListID:
           json['duplicatedFromGroupShoppingListID'] as String?,
@@ -47,7 +46,6 @@ Map<String, dynamic> _$GroupShoppingListToJson(_GroupShoppingList instance) =>
       'groupID': instance.groupID,
       'name': instance.name,
       'status': _$GroupShoppingListStatusEnumMap[instance.status]!,
-      'autoNotifyEnabled': instance.autoNotifyEnabled,
       'shoppingLocationID': instance.shoppingLocationID,
       'duplicatedFromGroupShoppingListID':
           instance.duplicatedFromGroupShoppingListID,

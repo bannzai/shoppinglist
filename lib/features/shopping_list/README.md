@@ -163,27 +163,28 @@
   一覧で新規カテゴリを追加してそのまま選ぶこともできる。選択後は pop して詳細シートへ戻る。
 - 軸が無い（カテゴリ機能未使用）ときはカテゴリ行を表示しない。
 
-## 家族への更新通知（Issue #430）
-リスト更新時に家族へ通知を促すトースト（`NotificationMemberBar`）と、バックグラウンド遷移時の
-自動通知（設定「アイテム追加で家族に通知」が ON のとき）を `FamilyNotificationTrigger`
-（`components/family_notification_trigger.dart`）が担う。画面には何も描画しない常駐トリガーで、
-`page.dart` のリスト表示中の `Stack` に配置する。
+## グループへの更新通知（Issue #449）
+買い物リストを更新したことを、グループの他メンバーへプッシュ通知で知らせる機能。
+上部バー（`ListTopBar`）に置いた手動ボタン `NotifyGroupButton`
+（`components/notify_group_button.dart`）から送信する。
 
-要望は「**自分の変更を相手（他メンバー）に知らせたい**」こと。よって発火条件は次の通り。
+- **表示条件**: グループに他メンバーが居るときだけボタンを表示する（ソロでは非表示）。
+  `groupUserProfilesProvider` と `currentUserIDProvider` で「自分以外のメンバーが居るか」を判定する。
+- **初回タップ**: `BoolKey.hasSeenManualNotifyGuide` が false の初回のみ、機能説明ダイアログ
+  （`AppDialogShell`）を出す。[通知を送る] で確定したら送信し、フラグを true にする。以降は
+  ダイアログを出さず、タップで直接送信する。
+- **送信**: 他メンバー全員へ `functions.sendShoppingListUpdateNotification` を1回呼ぶ。
+  成功で「グループに通知しました」トースト、失敗は `showGlobalErrorToast` で生エラーを表示する。
 
-- **発火条件**: 自分（この端末）が変更したときのみ。他メンバーの変更が Firestore stream で
-  同期されてきても発火しない。
-- **ローカル変更の判別**: `localShoppingListItemEditCountProvider`（`provider/shopping_list_item.dart`）が
-  Firestore snapshot の `metadata.hasPendingWrites`（自分の端末由来の未コミット書き込み）を数える。
-  これにより、追加 / 文言編集 / チェック / 解除 / 並び替え / 削除など操作種別に依存せず、一様に
-  ローカル変更だけを検知する（アイテムの `lastEditedByUserID` 等は操作ごとに設定が不統一で、
-  削除では残らないため判別に使えない）。
-- **背景**: 以前は `textShoppingListItemsProvider` の任意の stream 更新で通知を出していたため、
-  「相手が編集したのに自分に通知バーが出る」不具合があった（Issue #430 で修正）。
+### 背景（自動検知の廃止）
+以前は、自分がリストを変更したことを `hasPendingWrites` で検知し、通知バー
+（`NotificationMemberBar`）を自動表示する `FamilyNotificationTrigger` を常駐させていた
+（Issue #430）。しかし通知バーが FAB・入力欄・キーボードと重なり編集の妨げになったため
+（Issue #445）、自動検知・通知バー・バックグラウンド自動送信・設定トグルを全廃し、手動ボタンへ
+一本化した（Issue #449）。
 
 ### 検証
-`test/features/shopping_list/components/family_notification_trigger_test.dart` で、ローカル変更
-イベント由来でのみ `NotificationMemberBar` が出ること（他メンバー変更相当のイベント無しでは
-出ないこと、ソログループでは出ないこと）を widget test で検証する。`hasPendingWrites` 自体は
-fake firestore で擬似できないため、Provider のフィルタ部分は実 Firestore のセマンティクスに依拠し、
-実機 local/remote 挙動はシミュレータ + 開発者オプションのデバッグユーザーで確認する。
+`test/features/shopping_list/components/notify_group_button_test.dart` で、ボタンの表示条件
+（ソロでは非表示・他メンバー居れば表示）と初回説明ダイアログのゲート（初回タップでダイアログ表示・
+キャンセルで送信しない）を widget test で検証する。送信（Firebase Functions 呼び出し）と2回目以降の
+直接送信は、シミュレータ + 開発者オプション「グループにデバッグユーザーを追加」で確認する。

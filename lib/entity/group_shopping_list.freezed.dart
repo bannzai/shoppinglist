@@ -15,12 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$GroupShoppingList {
 
- String get id; String get createUserID; String get groupID; String get name; GroupShoppingListStatus get status;/// このリストでのアイテム追加・チェック切替時にグループ全員へ通知 SnackBar を
-/// 表示するか。`design_handoff_shoppinglist/preview/screens-list-settings.jsx`
-/// 準拠でリスト単位の設定として持つ。
-/// グローバル通知設定 (SharedPreferences) と AND 条件で評価する。
-/// 既存ドキュメントにはこのフィールドが存在しないため default で `false` を返す。
- bool get autoNotifyEnabled; String? get shoppingLocationID; String? get duplicatedFromGroupShoppingListID;@TimestampConverter() DateTime? get ttlExpiresDateTime;@ClientCreatedTimestamp() DateTime? get createdDateTime;@ClientUpdatedTimestamp() DateTime? get updatedDateTime;@ServerCreatedTimestamp() DateTime? get serverCreatedDateTime;@ServerUpdatedTimestamp() DateTime? get serverUpdatedDateTime;
+ String get id; String get createUserID; String get groupID; String get name; GroupShoppingListStatus get status; String? get shoppingLocationID; String? get duplicatedFromGroupShoppingListID;@TimestampConverter() DateTime? get ttlExpiresDateTime;@ClientCreatedTimestamp() DateTime? get createdDateTime;@ClientUpdatedTimestamp() DateTime? get updatedDateTime;@ServerCreatedTimestamp() DateTime? get serverCreatedDateTime;@ServerUpdatedTimestamp() DateTime? get serverUpdatedDateTime;
 /// Create a copy of GroupShoppingList
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -33,16 +28,16 @@ $GroupShoppingListCopyWith<GroupShoppingList> get copyWith => _$GroupShoppingLis
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupShoppingList&&(identical(other.id, id) || other.id == id)&&(identical(other.createUserID, createUserID) || other.createUserID == createUserID)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.name, name) || other.name == name)&&(identical(other.status, status) || other.status == status)&&(identical(other.autoNotifyEnabled, autoNotifyEnabled) || other.autoNotifyEnabled == autoNotifyEnabled)&&(identical(other.shoppingLocationID, shoppingLocationID) || other.shoppingLocationID == shoppingLocationID)&&(identical(other.duplicatedFromGroupShoppingListID, duplicatedFromGroupShoppingListID) || other.duplicatedFromGroupShoppingListID == duplicatedFromGroupShoppingListID)&&(identical(other.ttlExpiresDateTime, ttlExpiresDateTime) || other.ttlExpiresDateTime == ttlExpiresDateTime)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupShoppingList&&(identical(other.id, id) || other.id == id)&&(identical(other.createUserID, createUserID) || other.createUserID == createUserID)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.name, name) || other.name == name)&&(identical(other.status, status) || other.status == status)&&(identical(other.shoppingLocationID, shoppingLocationID) || other.shoppingLocationID == shoppingLocationID)&&(identical(other.duplicatedFromGroupShoppingListID, duplicatedFromGroupShoppingListID) || other.duplicatedFromGroupShoppingListID == duplicatedFromGroupShoppingListID)&&(identical(other.ttlExpiresDateTime, ttlExpiresDateTime) || other.ttlExpiresDateTime == ttlExpiresDateTime)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,createUserID,groupID,name,status,autoNotifyEnabled,shoppingLocationID,duplicatedFromGroupShoppingListID,ttlExpiresDateTime,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+int get hashCode => Object.hash(runtimeType,id,createUserID,groupID,name,status,shoppingLocationID,duplicatedFromGroupShoppingListID,ttlExpiresDateTime,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
 
 @override
 String toString() {
-  return 'GroupShoppingList(id: $id, createUserID: $createUserID, groupID: $groupID, name: $name, status: $status, autoNotifyEnabled: $autoNotifyEnabled, shoppingLocationID: $shoppingLocationID, duplicatedFromGroupShoppingListID: $duplicatedFromGroupShoppingListID, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+  return 'GroupShoppingList(id: $id, createUserID: $createUserID, groupID: $groupID, name: $name, status: $status, shoppingLocationID: $shoppingLocationID, duplicatedFromGroupShoppingListID: $duplicatedFromGroupShoppingListID, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
 }
 
 
@@ -53,7 +48,7 @@ abstract mixin class $GroupShoppingListCopyWith<$Res>  {
   factory $GroupShoppingListCopyWith(GroupShoppingList value, $Res Function(GroupShoppingList) _then) = _$GroupShoppingListCopyWithImpl;
 @useResult
 $Res call({
- String id, String createUserID, String groupID, String name, GroupShoppingListStatus status, bool autoNotifyEnabled, String? shoppingLocationID, String? duplicatedFromGroupShoppingListID,@TimestampConverter() DateTime? ttlExpiresDateTime,@ClientCreatedTimestamp() DateTime? createdDateTime,@ClientUpdatedTimestamp() DateTime? updatedDateTime,@ServerCreatedTimestamp() DateTime? serverCreatedDateTime,@ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime
+ String id, String createUserID, String groupID, String name, GroupShoppingListStatus status, String? shoppingLocationID, String? duplicatedFromGroupShoppingListID,@TimestampConverter() DateTime? ttlExpiresDateTime,@ClientCreatedTimestamp() DateTime? createdDateTime,@ClientUpdatedTimestamp() DateTime? updatedDateTime,@ServerCreatedTimestamp() DateTime? serverCreatedDateTime,@ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime
 });
 
 
@@ -70,15 +65,14 @@ class _$GroupShoppingListCopyWithImpl<$Res>
 
 /// Create a copy of GroupShoppingList
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? createUserID = null,Object? groupID = null,Object? name = null,Object? status = null,Object? autoNotifyEnabled = null,Object? shoppingLocationID = freezed,Object? duplicatedFromGroupShoppingListID = freezed,Object? ttlExpiresDateTime = freezed,Object? createdDateTime = freezed,Object? updatedDateTime = freezed,Object? serverCreatedDateTime = freezed,Object? serverUpdatedDateTime = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? createUserID = null,Object? groupID = null,Object? name = null,Object? status = null,Object? shoppingLocationID = freezed,Object? duplicatedFromGroupShoppingListID = freezed,Object? ttlExpiresDateTime = freezed,Object? createdDateTime = freezed,Object? updatedDateTime = freezed,Object? serverCreatedDateTime = freezed,Object? serverUpdatedDateTime = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,createUserID: null == createUserID ? _self.createUserID : createUserID // ignore: cast_nullable_to_non_nullable
 as String,groupID: null == groupID ? _self.groupID : groupID // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as GroupShoppingListStatus,autoNotifyEnabled: null == autoNotifyEnabled ? _self.autoNotifyEnabled : autoNotifyEnabled // ignore: cast_nullable_to_non_nullable
-as bool,shoppingLocationID: freezed == shoppingLocationID ? _self.shoppingLocationID : shoppingLocationID // ignore: cast_nullable_to_non_nullable
+as GroupShoppingListStatus,shoppingLocationID: freezed == shoppingLocationID ? _self.shoppingLocationID : shoppingLocationID // ignore: cast_nullable_to_non_nullable
 as String?,duplicatedFromGroupShoppingListID: freezed == duplicatedFromGroupShoppingListID ? _self.duplicatedFromGroupShoppingListID : duplicatedFromGroupShoppingListID // ignore: cast_nullable_to_non_nullable
 as String?,ttlExpiresDateTime: freezed == ttlExpiresDateTime ? _self.ttlExpiresDateTime : ttlExpiresDateTime // ignore: cast_nullable_to_non_nullable
 as DateTime?,createdDateTime: freezed == createdDateTime ? _self.createdDateTime : createdDateTime // ignore: cast_nullable_to_non_nullable
@@ -170,10 +164,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String createUserID,  String groupID,  String name,  GroupShoppingListStatus status,  bool autoNotifyEnabled,  String? shoppingLocationID,  String? duplicatedFromGroupShoppingListID, @TimestampConverter()  DateTime? ttlExpiresDateTime, @ClientCreatedTimestamp()  DateTime? createdDateTime, @ClientUpdatedTimestamp()  DateTime? updatedDateTime, @ServerCreatedTimestamp()  DateTime? serverCreatedDateTime, @ServerUpdatedTimestamp()  DateTime? serverUpdatedDateTime)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String createUserID,  String groupID,  String name,  GroupShoppingListStatus status,  String? shoppingLocationID,  String? duplicatedFromGroupShoppingListID, @TimestampConverter()  DateTime? ttlExpiresDateTime, @ClientCreatedTimestamp()  DateTime? createdDateTime, @ClientUpdatedTimestamp()  DateTime? updatedDateTime, @ServerCreatedTimestamp()  DateTime? serverCreatedDateTime, @ServerUpdatedTimestamp()  DateTime? serverUpdatedDateTime)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GroupShoppingList() when $default != null:
-return $default(_that.id,_that.createUserID,_that.groupID,_that.name,_that.status,_that.autoNotifyEnabled,_that.shoppingLocationID,_that.duplicatedFromGroupShoppingListID,_that.ttlExpiresDateTime,_that.createdDateTime,_that.updatedDateTime,_that.serverCreatedDateTime,_that.serverUpdatedDateTime);case _:
+return $default(_that.id,_that.createUserID,_that.groupID,_that.name,_that.status,_that.shoppingLocationID,_that.duplicatedFromGroupShoppingListID,_that.ttlExpiresDateTime,_that.createdDateTime,_that.updatedDateTime,_that.serverCreatedDateTime,_that.serverUpdatedDateTime);case _:
   return orElse();
 
 }
@@ -191,10 +185,10 @@ return $default(_that.id,_that.createUserID,_that.groupID,_that.name,_that.statu
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String createUserID,  String groupID,  String name,  GroupShoppingListStatus status,  bool autoNotifyEnabled,  String? shoppingLocationID,  String? duplicatedFromGroupShoppingListID, @TimestampConverter()  DateTime? ttlExpiresDateTime, @ClientCreatedTimestamp()  DateTime? createdDateTime, @ClientUpdatedTimestamp()  DateTime? updatedDateTime, @ServerCreatedTimestamp()  DateTime? serverCreatedDateTime, @ServerUpdatedTimestamp()  DateTime? serverUpdatedDateTime)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String createUserID,  String groupID,  String name,  GroupShoppingListStatus status,  String? shoppingLocationID,  String? duplicatedFromGroupShoppingListID, @TimestampConverter()  DateTime? ttlExpiresDateTime, @ClientCreatedTimestamp()  DateTime? createdDateTime, @ClientUpdatedTimestamp()  DateTime? updatedDateTime, @ServerCreatedTimestamp()  DateTime? serverCreatedDateTime, @ServerUpdatedTimestamp()  DateTime? serverUpdatedDateTime)  $default,) {final _that = this;
 switch (_that) {
 case _GroupShoppingList():
-return $default(_that.id,_that.createUserID,_that.groupID,_that.name,_that.status,_that.autoNotifyEnabled,_that.shoppingLocationID,_that.duplicatedFromGroupShoppingListID,_that.ttlExpiresDateTime,_that.createdDateTime,_that.updatedDateTime,_that.serverCreatedDateTime,_that.serverUpdatedDateTime);case _:
+return $default(_that.id,_that.createUserID,_that.groupID,_that.name,_that.status,_that.shoppingLocationID,_that.duplicatedFromGroupShoppingListID,_that.ttlExpiresDateTime,_that.createdDateTime,_that.updatedDateTime,_that.serverCreatedDateTime,_that.serverUpdatedDateTime);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -211,10 +205,10 @@ return $default(_that.id,_that.createUserID,_that.groupID,_that.name,_that.statu
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String createUserID,  String groupID,  String name,  GroupShoppingListStatus status,  bool autoNotifyEnabled,  String? shoppingLocationID,  String? duplicatedFromGroupShoppingListID, @TimestampConverter()  DateTime? ttlExpiresDateTime, @ClientCreatedTimestamp()  DateTime? createdDateTime, @ClientUpdatedTimestamp()  DateTime? updatedDateTime, @ServerCreatedTimestamp()  DateTime? serverCreatedDateTime, @ServerUpdatedTimestamp()  DateTime? serverUpdatedDateTime)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String createUserID,  String groupID,  String name,  GroupShoppingListStatus status,  String? shoppingLocationID,  String? duplicatedFromGroupShoppingListID, @TimestampConverter()  DateTime? ttlExpiresDateTime, @ClientCreatedTimestamp()  DateTime? createdDateTime, @ClientUpdatedTimestamp()  DateTime? updatedDateTime, @ServerCreatedTimestamp()  DateTime? serverCreatedDateTime, @ServerUpdatedTimestamp()  DateTime? serverUpdatedDateTime)?  $default,) {final _that = this;
 switch (_that) {
 case _GroupShoppingList() when $default != null:
-return $default(_that.id,_that.createUserID,_that.groupID,_that.name,_that.status,_that.autoNotifyEnabled,_that.shoppingLocationID,_that.duplicatedFromGroupShoppingListID,_that.ttlExpiresDateTime,_that.createdDateTime,_that.updatedDateTime,_that.serverCreatedDateTime,_that.serverUpdatedDateTime);case _:
+return $default(_that.id,_that.createUserID,_that.groupID,_that.name,_that.status,_that.shoppingLocationID,_that.duplicatedFromGroupShoppingListID,_that.ttlExpiresDateTime,_that.createdDateTime,_that.updatedDateTime,_that.serverCreatedDateTime,_that.serverUpdatedDateTime);case _:
   return null;
 
 }
@@ -226,7 +220,7 @@ return $default(_that.id,_that.createUserID,_that.groupID,_that.name,_that.statu
 
 @JsonSerializable(explicitToJson: true)
 class _GroupShoppingList extends GroupShoppingList {
-  const _GroupShoppingList({required this.id, required this.createUserID, required this.groupID, this.name = '', this.status = GroupShoppingListStatus.active, this.autoNotifyEnabled = false, required this.shoppingLocationID, required this.duplicatedFromGroupShoppingListID, @TimestampConverter() required this.ttlExpiresDateTime, @ClientCreatedTimestamp() this.createdDateTime, @ClientUpdatedTimestamp() this.updatedDateTime, @ServerCreatedTimestamp() this.serverCreatedDateTime, @ServerUpdatedTimestamp() this.serverUpdatedDateTime}): super._();
+  const _GroupShoppingList({required this.id, required this.createUserID, required this.groupID, this.name = '', this.status = GroupShoppingListStatus.active, required this.shoppingLocationID, required this.duplicatedFromGroupShoppingListID, @TimestampConverter() required this.ttlExpiresDateTime, @ClientCreatedTimestamp() this.createdDateTime, @ClientUpdatedTimestamp() this.updatedDateTime, @ServerCreatedTimestamp() this.serverCreatedDateTime, @ServerUpdatedTimestamp() this.serverUpdatedDateTime}): super._();
   factory _GroupShoppingList.fromJson(Map<String, dynamic> json) => _$GroupShoppingListFromJson(json);
 
 @override final  String id;
@@ -234,12 +228,6 @@ class _GroupShoppingList extends GroupShoppingList {
 @override final  String groupID;
 @override@JsonKey() final  String name;
 @override@JsonKey() final  GroupShoppingListStatus status;
-/// このリストでのアイテム追加・チェック切替時にグループ全員へ通知 SnackBar を
-/// 表示するか。`design_handoff_shoppinglist/preview/screens-list-settings.jsx`
-/// 準拠でリスト単位の設定として持つ。
-/// グローバル通知設定 (SharedPreferences) と AND 条件で評価する。
-/// 既存ドキュメントにはこのフィールドが存在しないため default で `false` を返す。
-@override@JsonKey() final  bool autoNotifyEnabled;
 @override final  String? shoppingLocationID;
 @override final  String? duplicatedFromGroupShoppingListID;
 @override@TimestampConverter() final  DateTime? ttlExpiresDateTime;
@@ -261,16 +249,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupShoppingList&&(identical(other.id, id) || other.id == id)&&(identical(other.createUserID, createUserID) || other.createUserID == createUserID)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.name, name) || other.name == name)&&(identical(other.status, status) || other.status == status)&&(identical(other.autoNotifyEnabled, autoNotifyEnabled) || other.autoNotifyEnabled == autoNotifyEnabled)&&(identical(other.shoppingLocationID, shoppingLocationID) || other.shoppingLocationID == shoppingLocationID)&&(identical(other.duplicatedFromGroupShoppingListID, duplicatedFromGroupShoppingListID) || other.duplicatedFromGroupShoppingListID == duplicatedFromGroupShoppingListID)&&(identical(other.ttlExpiresDateTime, ttlExpiresDateTime) || other.ttlExpiresDateTime == ttlExpiresDateTime)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupShoppingList&&(identical(other.id, id) || other.id == id)&&(identical(other.createUserID, createUserID) || other.createUserID == createUserID)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.name, name) || other.name == name)&&(identical(other.status, status) || other.status == status)&&(identical(other.shoppingLocationID, shoppingLocationID) || other.shoppingLocationID == shoppingLocationID)&&(identical(other.duplicatedFromGroupShoppingListID, duplicatedFromGroupShoppingListID) || other.duplicatedFromGroupShoppingListID == duplicatedFromGroupShoppingListID)&&(identical(other.ttlExpiresDateTime, ttlExpiresDateTime) || other.ttlExpiresDateTime == ttlExpiresDateTime)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,createUserID,groupID,name,status,autoNotifyEnabled,shoppingLocationID,duplicatedFromGroupShoppingListID,ttlExpiresDateTime,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+int get hashCode => Object.hash(runtimeType,id,createUserID,groupID,name,status,shoppingLocationID,duplicatedFromGroupShoppingListID,ttlExpiresDateTime,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
 
 @override
 String toString() {
-  return 'GroupShoppingList(id: $id, createUserID: $createUserID, groupID: $groupID, name: $name, status: $status, autoNotifyEnabled: $autoNotifyEnabled, shoppingLocationID: $shoppingLocationID, duplicatedFromGroupShoppingListID: $duplicatedFromGroupShoppingListID, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+  return 'GroupShoppingList(id: $id, createUserID: $createUserID, groupID: $groupID, name: $name, status: $status, shoppingLocationID: $shoppingLocationID, duplicatedFromGroupShoppingListID: $duplicatedFromGroupShoppingListID, ttlExpiresDateTime: $ttlExpiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
 }
 
 
@@ -281,7 +269,7 @@ abstract mixin class _$GroupShoppingListCopyWith<$Res> implements $GroupShopping
   factory _$GroupShoppingListCopyWith(_GroupShoppingList value, $Res Function(_GroupShoppingList) _then) = __$GroupShoppingListCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String createUserID, String groupID, String name, GroupShoppingListStatus status, bool autoNotifyEnabled, String? shoppingLocationID, String? duplicatedFromGroupShoppingListID,@TimestampConverter() DateTime? ttlExpiresDateTime,@ClientCreatedTimestamp() DateTime? createdDateTime,@ClientUpdatedTimestamp() DateTime? updatedDateTime,@ServerCreatedTimestamp() DateTime? serverCreatedDateTime,@ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime
+ String id, String createUserID, String groupID, String name, GroupShoppingListStatus status, String? shoppingLocationID, String? duplicatedFromGroupShoppingListID,@TimestampConverter() DateTime? ttlExpiresDateTime,@ClientCreatedTimestamp() DateTime? createdDateTime,@ClientUpdatedTimestamp() DateTime? updatedDateTime,@ServerCreatedTimestamp() DateTime? serverCreatedDateTime,@ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime
 });
 
 
@@ -298,15 +286,14 @@ class __$GroupShoppingListCopyWithImpl<$Res>
 
 /// Create a copy of GroupShoppingList
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? createUserID = null,Object? groupID = null,Object? name = null,Object? status = null,Object? autoNotifyEnabled = null,Object? shoppingLocationID = freezed,Object? duplicatedFromGroupShoppingListID = freezed,Object? ttlExpiresDateTime = freezed,Object? createdDateTime = freezed,Object? updatedDateTime = freezed,Object? serverCreatedDateTime = freezed,Object? serverUpdatedDateTime = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? createUserID = null,Object? groupID = null,Object? name = null,Object? status = null,Object? shoppingLocationID = freezed,Object? duplicatedFromGroupShoppingListID = freezed,Object? ttlExpiresDateTime = freezed,Object? createdDateTime = freezed,Object? updatedDateTime = freezed,Object? serverCreatedDateTime = freezed,Object? serverUpdatedDateTime = freezed,}) {
   return _then(_GroupShoppingList(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,createUserID: null == createUserID ? _self.createUserID : createUserID // ignore: cast_nullable_to_non_nullable
 as String,groupID: null == groupID ? _self.groupID : groupID // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as GroupShoppingListStatus,autoNotifyEnabled: null == autoNotifyEnabled ? _self.autoNotifyEnabled : autoNotifyEnabled // ignore: cast_nullable_to_non_nullable
-as bool,shoppingLocationID: freezed == shoppingLocationID ? _self.shoppingLocationID : shoppingLocationID // ignore: cast_nullable_to_non_nullable
+as GroupShoppingListStatus,shoppingLocationID: freezed == shoppingLocationID ? _self.shoppingLocationID : shoppingLocationID // ignore: cast_nullable_to_non_nullable
 as String?,duplicatedFromGroupShoppingListID: freezed == duplicatedFromGroupShoppingListID ? _self.duplicatedFromGroupShoppingListID : duplicatedFromGroupShoppingListID // ignore: cast_nullable_to_non_nullable
 as String?,ttlExpiresDateTime: freezed == ttlExpiresDateTime ? _self.ttlExpiresDateTime : ttlExpiresDateTime // ignore: cast_nullable_to_non_nullable
 as DateTime?,createdDateTime: freezed == createdDateTime ? _self.createdDateTime : createdDateTime // ignore: cast_nullable_to_non_nullable
