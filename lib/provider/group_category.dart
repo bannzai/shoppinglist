@@ -90,8 +90,10 @@ Stream<List<GroupCategory>> groupCategories(
   required String categoryAxisID,
 }) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
+  final userDatabase = ref.watch(userDatabaseProvider);
   return database
       .categoriesReference(categoryAxisID: categoryAxisID)
+      .where(GroupCategoryFirestoreKeys.userID, isEqualTo: userDatabase.userID)
       .orderBy(GroupCategoryFirestoreKeys.order)
       .snapshots()
       .map((event) => event.docs.map((doc) => doc.data()).toList());
@@ -318,6 +320,7 @@ class AICategorizeApply {
     final existing =
         (await database
                 .categoriesReference(categoryAxisID: axisID)
+                .where(GroupCategoryFirestoreKeys.userID, isEqualTo: userID)
                 .orderBy(GroupCategoryFirestoreKeys.order)
                 .get())
             .docs
