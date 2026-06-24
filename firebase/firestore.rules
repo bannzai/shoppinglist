@@ -59,6 +59,11 @@ service cloud.firestore {
         return isMember(get(/databases/$(database)/documents/groups/$(groupID)).data.memberUserIDs);
       }
 
+      // userCategoryAxes / categories はユーザーごとのカテゴリ設定（グループ共有ではない）
+      function isCategoryDataOwner(userID) {
+        return isUserAuth(userID) || isDebugUserOf(userID);
+      }
+
       match /userProfiles/{profileID} {
         allow read, write: if isGroupMember();
       }
@@ -68,10 +73,14 @@ service cloud.firestore {
       }
 
       match /userCategoryAxes/{axisID} {
-        allow read, write: if isGroupMember();
+        allow read: if isGroupMember() && isCategoryDataOwner(resource.data.userID);
+        allow create: if isGroupMember() && isCategoryDataOwner(request.resource.data.userID);
+        allow update, delete: if isGroupMember() && isCategoryDataOwner(resource.data.userID);
 
         match /categories/{categoryID} {
-          allow read, write: if isGroupMember();
+          allow read: if isGroupMember() && isCategoryDataOwner(resource.data.userID);
+          allow create: if isGroupMember() && isCategoryDataOwner(request.resource.data.userID);
+          allow update, delete: if isGroupMember() && isCategoryDataOwner(resource.data.userID);
         }
       }
 
