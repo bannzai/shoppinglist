@@ -7,6 +7,7 @@ part 'group_category.g.dart';
 part 'group_category.freezed.dart';
 
 abstract class GroupCategoryFirestoreKeys {
+  static const userID = 'userID';
   static const order = 'order';
 }
 
