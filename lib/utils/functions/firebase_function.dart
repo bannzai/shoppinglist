@@ -2,8 +2,9 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shoppinglist/entity/inquiry_category.dart';
 
-// Genkitはus-central1にしか対応していない
-final functions = FirebaseFunctions.instanceFor(region: 'us-central1');
+// Functions は asia-northeast1(東京) にデプロイしている。
+// Firestore / Storage と同一リージョンに揃え、クロスリージョン往復を排除する。
+final functions = FirebaseFunctions.instanceFor(region: 'asia-northeast1');
 
 extension FirebaseFunctionsExt on FirebaseFunctions {
   /// 招待コードと有効期限を Functions から取得する。
