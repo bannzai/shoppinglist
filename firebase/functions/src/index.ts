@@ -1,4 +1,10 @@
 import admin = require("firebase-admin");
+import { setGlobalOptions } from "firebase-functions/v2";
+
+// 全 Functions を東京リージョンにデプロイする。
+// Firestore / Storage(asia-northeast1) とコロケーションしクロスリージョン往復を排除する。
+// 各 function モジュールの require より前に呼ぶ必要があるため最上部に置く。
+setGlobalOptions({ region: "asia-northeast1" });
 
 console.log("THIS IS NOT TEST ENVIRONMENT");
 // Functions ランタイムが設定する project id から Storage バケット名を導出し、
