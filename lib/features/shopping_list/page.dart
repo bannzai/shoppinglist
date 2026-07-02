@@ -218,6 +218,14 @@ class _ActiveShoppingList extends ConsumerWidget {
     // グループへの更新通知は上部バー(ListTopBar)の手動ボタン(NotifyGroupButton)で行う。
     // 自動検知による通知バーは廃止した(Issue #449)。
 
+    // ソフトキーボード表示中は、下部の浮遊要素(ダブル FAB・進捗ピル)を隠す。入力行は
+    // フォーカス時に keepVisibleAtEnd でキーボード直上へスクロールされる
+    // (text_shopping_list_item.dart, Issue #429)ため、同じくキーボード直上に浮く FAB・
+    // 進捗ピルと重なってしまう。キーボード表示中は入力行での連続追加が主操作で FAB は不要な
+    // ので、表示中だけ隠して重なりを解消する。この build は Scaffold の外側にあるため
+    // viewInsets はキーボード実高を保持する(Scaffold body 内では viewInsets が 0 に潰れる)。
+    final isKeyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
+
     return _ShoppingListScaffold(
       groupID: groupID,
       groups: groups,
@@ -237,28 +245,33 @@ class _ActiveShoppingList extends ConsumerWidget {
       },
       // ダブル FAB: 上がリスト作成（CreateListFab）、下がアイテム入力（ExpandableFab）。
       // CreateListFab(48px) は ExpandableFab(56px) と中心が揃うよう右に 4px 寄せる。
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 4),
-            child: CreateListFab(
-              groupID: groupID,
-              appUser: ref.watch(appUserProvider).asData?.value,
-              shoppingList: shoppingList,
-              shoppingListItems:
-                  shoppingListItemsAsync.asData?.value ?? const [],
-            ),
-          ),
-          const SizedBox(height: 12),
-          ExpandableFab(
-            groupID: groupID,
-            shoppingListID: shoppingListID,
-            shoppingListItems: shoppingListItemsAsync.asData?.value ?? const [],
-          ),
-        ],
-      ),
+      // キーボード表示中は入力行と重なるため隠す(Scaffold の FAB スケールアニメで消える)。
+      floatingActionButton:
+          isKeyboardVisible
+              ? null
+              : Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 4),
+                    child: CreateListFab(
+                      groupID: groupID,
+                      appUser: ref.watch(appUserProvider).asData?.value,
+                      shoppingList: shoppingList,
+                      shoppingListItems:
+                          shoppingListItemsAsync.asData?.value ?? const [],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ExpandableFab(
+                    groupID: groupID,
+                    shoppingListID: shoppingListID,
+                    shoppingListItems:
+                        shoppingListItemsAsync.asData?.value ?? const [],
+                  ),
+                ],
+              ),
       // NavBar(surface)の帯 + 白(card)コンテンツ部のハイブリッドサーフェス。
       child: Container(
         color: tokens.neutral.surface,
@@ -309,7 +322,8 @@ class _ActiveShoppingList extends ConsumerWidget {
                     ),
                     // チェック進捗を左下に浮かせる小さなピル(FAB は右下なので対称)。
                     // 外側 SafeArea が bottom:false のため、ホームインジケータ分を加味する。
-                    if (totalCount > 0)
+                    // キーボード表示中は入力行と重なるため隠す(FAB と同じ扱い)。
+                    if (totalCount > 0 && !isKeyboardVisible)
                       Positioned(
                         left: 16,
                         bottom: 16 + MediaQuery.of(context).padding.bottom,
