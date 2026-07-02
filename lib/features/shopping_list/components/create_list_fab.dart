@@ -9,6 +9,7 @@ import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list/components/fab_action_menu.dart';
 import 'package:shoppinglist/provider/current_shopping_list_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/provider/shopping_list_fab_menu.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
@@ -58,7 +59,12 @@ class CreateListFab extends HookConsumerWidget {
     // 新規リスト作成・複製リクエストの実行中フラグ。作成は上限カウント等のサーバー往復を
     // 伴い時間がかかるため、その間の連打による多重作成を防ぐ。
     final isCreating = useState(false);
-    final open = useState(false);
+    // 開閉状態は 2 つの FAB で共有する `shoppingListFabMenuProvider` に一元化している。
+    // この FAB のメニューが開いているかは、共有状態が createList のときのみ true。
+    // もう一方（アイテム追加）を開くと状態が addItem に置き換わり、ここは自動的に閉じる。
+    final open =
+        ref.watch(shoppingListFabMenuProvider) ==
+        ShoppingListFabMenuKind.createList;
     final controller = useAnimationController(
       duration: const Duration(milliseconds: 280),
       reverseDuration: const Duration(milliseconds: 200),
@@ -73,17 +79,17 @@ class CreateListFab extends HookConsumerWidget {
     );
 
     // 展開メニューの開閉に合わせてアニメーションを駆動する（`ExpandableFab` と同じ機構）。
-    // 依存配列は open.value のみ — 開閉の変化イベントだけで forward/reverse を切り替える。
+    // 依存配列は共有状態から導出した open のみ — 開閉の変化イベントだけで forward/reverse を切り替える。
     useEffect(() {
-      if (open.value) {
+      if (open) {
         controller.forward();
       } else {
         controller.reverse();
       }
       return null;
-    }, [open.value]);
+    }, [open]);
 
-    void close() => open.value = false;
+    void close() => ref.read(shoppingListFabMenuProvider.notifier).close();
 
     final actions = <FabMenuAction>[
       FabMenuAction(
@@ -187,7 +193,7 @@ class CreateListFab extends HookConsumerWidget {
                   isCreating.value || appUser == null
                       ? null
                       : () {
-                        if (open.value) {
+                        if (open) {
                           analytics.logEvent(
                             name: 'tap_close_create_list_menu',
                             parameters: {'groupID': groupID},
@@ -200,7 +206,9 @@ class CreateListFab extends HookConsumerWidget {
                           name: 'tap_open_create_list_menu',
                           parameters: {'groupID': groupID},
                         );
-                        open.value = true;
+                        ref
+                            .read(shoppingListFabMenuProvider.notifier)
+                            .open(ShoppingListFabMenuKind.createList);
                       },
               child: Center(
                 child:
@@ -231,7 +239,7 @@ class CreateListFab extends HookConsumerWidget {
                                 ),
                               ),
                           child:
-                              open.value
+                              open
                                   ? Icon(
                                     Icons.close,
                                     key: const ValueKey(true),

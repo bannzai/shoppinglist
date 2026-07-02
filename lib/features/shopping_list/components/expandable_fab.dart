@@ -14,6 +14,7 @@ import 'package:shoppinglist/features/shopping_list/components/fab_action_menu.d
 import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/ai_usage.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/shopping_list_fab_menu.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
@@ -53,7 +54,12 @@ class ExpandableFab extends HookConsumerWidget {
     final isAIProcessing = ref.watch(aIProcessingProvider) != null;
     // 状態 Provider は build 内で watch して変数として参照する（callback 内で read しない）。
     final currentUserID = ref.watch(currentUserIDProvider);
-    final open = useState(false);
+    // 開閉状態は 2 つの FAB で共有する `shoppingListFabMenuProvider` に一元化している。
+    // この FAB のメニューが開いているかは、共有状態が addItem のときのみ true。
+    // もう一方（リスト作成）を開くと状態が createList に置き換わり、ここは自動的に閉じる。
+    final open =
+        ref.watch(shoppingListFabMenuProvider) ==
+        ShoppingListFabMenuKind.addItem;
     final controller = useAnimationController(
       duration: const Duration(milliseconds: 280),
       reverseDuration: const Duration(milliseconds: 200),
@@ -67,16 +73,18 @@ class ExpandableFab extends HookConsumerWidget {
       [controller],
     );
 
+    // 共有状態から導出した open の変化に合わせてアニメを駆動する。
+    // 依存配列は open のみ — 開閉の変化イベントだけで forward/reverse を切り替える。
     useEffect(() {
-      if (open.value) {
+      if (open) {
         controller.forward();
       } else {
         controller.reverse();
       }
       return null;
-    }, [open.value]);
+    }, [open]);
 
-    void close() => open.value = false;
+    void close() => ref.read(shoppingListFabMenuProvider.notifier).close();
 
     final actions = <FabMenuAction>[
       FabMenuAction(
@@ -155,7 +163,7 @@ class ExpandableFab extends HookConsumerWidget {
             // タップでメニューを開閉する。
             onPressed: () {
               // メニュー展開中（x 状態）のタップは閉じるに倒す。
-              if (open.value) {
+              if (open) {
                 analytics.logEvent(
                   name: 'tap_close_fab_menu',
                   parameters: {
@@ -173,7 +181,9 @@ class ExpandableFab extends HookConsumerWidget {
                   'shoppingListID': shoppingListID,
                 },
               );
-              open.value = true;
+              ref
+                  .read(shoppingListFabMenuProvider.notifier)
+                  .open(ShoppingListFabMenuKind.addItem);
             },
             // 閉時は add_task（アイテム追加）、メニュー展開中は x（閉じる）。
             // AnimatedSwitcher の回転+フェードでアイコン自体を入れ替える。
@@ -185,8 +195,8 @@ class ExpandableFab extends HookConsumerWidget {
                     child: FadeTransition(opacity: animation, child: child),
                   ),
               child: Icon(
-                open.value ? Icons.close : Icons.add_task,
-                key: ValueKey(open.value),
+                open ? Icons.close : Icons.add_task,
+                key: ValueKey(open),
                 size: 24,
               ),
             ),
