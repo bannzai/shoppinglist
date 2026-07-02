@@ -23,6 +23,7 @@ import 'package:shoppinglist/provider/current_group_id.dart';
 import 'package:shoppinglist/provider/current_shopping_list_id.dart';
 import 'package:shoppinglist/provider/default_group_update.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/provider/shopping_list_fab_menu.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -260,69 +261,79 @@ class _ActiveShoppingList extends ConsumerWidget {
         ],
       ),
       // NavBar(surface)の帯 + 白(card)コンテンツ部のハイブリッドサーフェス。
-      child: Container(
-        color: tokens.neutral.surface,
-        child: Column(
-          children: [
-            ListTopBar(
-              groupID: groupID,
-              shoppingListID: shoppingListID,
-              shoppingLists: shoppingLists,
-              shoppingList: shoppingList,
-              onShoppingListIDChanged:
-                  (newID) => currentShoppingListIDNotifier.update(newID),
-            ),
-            Expanded(
-              child: Container(
-                color: tokens.neutral.card,
-                child: Stack(
-                  children: [
-                    Column(
-                      children: [
-                        if (aiProcessingType != null)
-                          AIProcessingBanner(type: aiProcessingType),
-                        Expanded(
-                          child: shoppingListItemsAsync.when(
-                            data:
-                                (shoppingListItems) => ShoppingListBodyContent(
-                                  groupID: groupID,
-                                  shoppingListID: shoppingListID,
-                                  shoppingLists: shoppingLists,
-                                  shoppingList: shoppingList,
-                                  shoppingListItems: shoppingListItems,
-                                  onShoppingListIDChanged:
-                                      (newID) => currentShoppingListIDNotifier
-                                          .update(newID),
-                                ),
-                            error:
-                                (e, st) => ListErrorCard(
-                                  exception: e,
-                                  stackTrace: st,
-                                  onRetry: () => Retry.of(context).retry(),
-                                ),
-                            loading: () => const Loading(),
+      // リスト本体のスクロール開始時に FAB の展開メニューを閉じる。onNotification は
+      // false を返して通知を上位へ伝播させ続ける（スクロール自体は通常どおり動く）。
+      child: NotificationListener<ScrollStartNotification>(
+        onNotification: (notification) {
+          ref.read(shoppingListFabMenuProvider.notifier).close();
+          return false;
+        },
+        child: Container(
+          color: tokens.neutral.surface,
+          child: Column(
+            children: [
+              ListTopBar(
+                groupID: groupID,
+                shoppingListID: shoppingListID,
+                shoppingLists: shoppingLists,
+                shoppingList: shoppingList,
+                onShoppingListIDChanged:
+                    (newID) => currentShoppingListIDNotifier.update(newID),
+              ),
+              Expanded(
+                child: Container(
+                  color: tokens.neutral.card,
+                  child: Stack(
+                    children: [
+                      Column(
+                        children: [
+                          if (aiProcessingType != null)
+                            AIProcessingBanner(type: aiProcessingType),
+                          Expanded(
+                            child: shoppingListItemsAsync.when(
+                              data:
+                                  (shoppingListItems) =>
+                                      ShoppingListBodyContent(
+                                        groupID: groupID,
+                                        shoppingListID: shoppingListID,
+                                        shoppingLists: shoppingLists,
+                                        shoppingList: shoppingList,
+                                        shoppingListItems: shoppingListItems,
+                                        onShoppingListIDChanged:
+                                            (newID) =>
+                                                currentShoppingListIDNotifier
+                                                    .update(newID),
+                                      ),
+                              error:
+                                  (e, st) => ListErrorCard(
+                                    exception: e,
+                                    stackTrace: st,
+                                    onRetry: () => Retry.of(context).retry(),
+                                  ),
+                              loading: () => const Loading(),
+                            ),
+                          ),
+                          if (!firestoreIsPremium && totalCount > 50)
+                            const RetentionBanner(),
+                        ],
+                      ),
+                      // チェック進捗を左下に浮かせる小さなピル(FAB は右下なので対称)。
+                      // 外側 SafeArea が bottom:false のため、ホームインジケータ分を加味する。
+                      if (totalCount > 0)
+                        Positioned(
+                          left: 16,
+                          bottom: 16 + MediaQuery.of(context).padding.bottom,
+                          child: ProgressPill(
+                            checkedCount: checkedCount,
+                            totalCount: totalCount,
                           ),
                         ),
-                        if (!firestoreIsPremium && totalCount > 50)
-                          const RetentionBanner(),
-                      ],
-                    ),
-                    // チェック進捗を左下に浮かせる小さなピル(FAB は右下なので対称)。
-                    // 外側 SafeArea が bottom:false のため、ホームインジケータ分を加味する。
-                    if (totalCount > 0)
-                      Positioned(
-                        left: 16,
-                        bottom: 16 + MediaQuery.of(context).padding.bottom,
-                        child: ProgressPill(
-                          checkedCount: checkedCount,
-                          totalCount: totalCount,
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
