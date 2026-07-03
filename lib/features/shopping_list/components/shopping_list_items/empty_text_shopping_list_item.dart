@@ -91,6 +91,7 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
                     _HintLine(text: '・タップしてそのまま入力'),
                     _HintLine(text: '・return で次の行へ'),
                     _HintLine(text: '・空行で delete で行を消せます'),
+                    const _FabLongPressHintLine(),
                   ],
                 ),
               ),
@@ -140,24 +141,54 @@ class _StarterRow extends StatelessWidget {
   }
 }
 
+/// ヒントカード本文（`_HintLine` / `_FabLongPressHintLine`）で共用する mono スタイル。
+TextStyle _hintTextStyle(BuildContext context) => monoTextStyle(
+  fontSize: 11.5,
+  fontWeight: FontWeight.w400,
+  color: context.appTheme.neutral.ink2,
+  height: 1.4,
+  letterSpacing: null,
+);
+
 class _HintLine extends StatelessWidget {
   final String text;
   const _HintLine({required this.text});
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.appTheme;
     return Padding(
       padding: const EdgeInsets.only(top: 2),
-      child: Text(
-        text,
-        style: monoTextStyle(
-          fontSize: 11.5,
-          fontWeight: FontWeight.w400,
-          color: tokens.neutral.ink2,
-          height: 1.4,
-          letterSpacing: null,
+      child: Text(text, style: _hintTextStyle(context)),
+    );
+  }
+}
+
+/// FAB 長押しメニュー（写真 / URL から追加）への導線を示すヒント行（Issue #462）。
+/// 長押しは見た目から気づけないため、空状態のうちに説明する。
+/// どのボタンを指すか結びつくよう、`ExpandableFab` と同じ add_task アイコンを文中に挟む。
+class _FabLongPressHintLine extends StatelessWidget {
+  const _FabLongPressHintLine();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 2),
+      child: Text.rich(
+        TextSpan(
+          children: [
+            const TextSpan(text: '・右下の '),
+            WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: Icon(
+                Icons.add_task,
+                size: 13,
+                color: context.appTheme.accent,
+              ),
+            ),
+            const TextSpan(text: ' を長押しすると写真やURLから追加できます'),
+          ],
         ),
+        style: _hintTextStyle(context),
       ),
     );
   }
