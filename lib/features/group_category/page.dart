@@ -15,6 +15,7 @@ import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/config/feature_flags.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
@@ -212,7 +213,9 @@ class _CategoryListBody extends HookConsumerWidget {
                         // ロケーション選択ドロップダウン
                         locationsAsync.when(
                           data: (locations) {
-                            if (locations.isEmpty) {
+                            // 店舗ごとの並び順はファーストリリースでは非表示 (issue #465)。
+                            if (!shoppingLocationFeatureEnabled ||
+                                locations.isEmpty) {
                               return const SizedBox.shrink();
                             }
                             return Padding(

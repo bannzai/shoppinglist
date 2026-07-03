@@ -20,6 +20,7 @@ import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/config/feature_flags.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
@@ -127,18 +128,21 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                 ),
               ),
               const SizedBox(height: 14),
-              const AppSectionLabel(text: '買い物する場所'),
-              _ShoppingLocationCell(
-                groupID: groupID,
-                currentLocationID: shoppingListState.value.shoppingLocationID,
-                onSelected:
-                    (newID) => autoSave(
-                      shoppingListState.value.copyWith(
-                        shoppingLocationID: newID,
+              // 買い物する場所はファーストリリースでは非表示 (issue #465)。
+              if (shoppingLocationFeatureEnabled) ...[
+                const AppSectionLabel(text: '買い物する場所'),
+                _ShoppingLocationCell(
+                  groupID: groupID,
+                  currentLocationID: shoppingListState.value.shoppingLocationID,
+                  onSelected:
+                      (newID) => autoSave(
+                        shoppingListState.value.copyWith(
+                          shoppingLocationID: newID,
+                        ),
                       ),
-                    ),
-              ),
-              const SizedBox(height: 14),
+                ),
+                const SizedBox(height: 14),
+              ],
               const AppSectionLabel(text: 'カテゴリ'),
               ClipRRect(
                 borderRadius: BorderRadius.circular(14),

@@ -23,6 +23,7 @@ import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/config/feature_flags.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
@@ -201,10 +202,12 @@ class SettingPage extends HookConsumerWidget {
                 title: '外観',
                 children: [const ThemeColorTile()],
               ),
-              AppSettingSection(
-                title: '通知',
-                children: [const LocationReminderToggle()],
-              ),
+              // 位置情報リマインダーはファーストリリースでは非表示 (issue #465)。
+              if (shoppingLocationFeatureEnabled)
+                AppSettingSection(
+                  title: '通知',
+                  children: [const LocationReminderToggle()],
+                ),
               const Padding(
                 padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
                 child: _PremiumCard(),

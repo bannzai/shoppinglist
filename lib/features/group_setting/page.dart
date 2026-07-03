@@ -16,6 +16,7 @@ import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/config/feature_flags.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -203,27 +204,29 @@ class _GroupSettingBody extends HookConsumerWidget {
               // GroupSettingPage 内のインライン管理を外して詳細画面に集約する)
               AppSettingSection(
                 children: [
-                  AppCell(
-                    icon: Icons.store_outlined,
-                    title: '買い物する場所',
-                    subtitle: '店舗の登録・編集',
-                    onTap: () {
-                      analytics.logEvent(
-                        name: 'navigate_shopping_location_from_group_setting',
-                        parameters: {'groupID': groupID},
-                      );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (_) => ShoppingLocationPage(groupID: groupID),
-                        ),
-                      );
-                    },
-                    detail: null,
-                    onSwitch: null,
-                    switchValue: null,
-                  ),
+                  // 買い物する場所はファーストリリースでは非表示 (issue #465)。
+                  if (shoppingLocationFeatureEnabled)
+                    AppCell(
+                      icon: Icons.store_outlined,
+                      title: '買い物する場所',
+                      subtitle: '店舗の登録・編集',
+                      onTap: () {
+                        analytics.logEvent(
+                          name: 'navigate_shopping_location_from_group_setting',
+                          parameters: {'groupID': groupID},
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => ShoppingLocationPage(groupID: groupID),
+                          ),
+                        );
+                      },
+                      detail: null,
+                      onSwitch: null,
+                      switchValue: null,
+                    ),
                   AppCell(
                     icon: Icons.category_outlined,
                     title: 'カテゴリ',
