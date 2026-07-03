@@ -7,6 +7,7 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_items.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/config/feature_flags.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 /// ShoppingListPage のメインコンテンツ部分。
@@ -92,7 +93,12 @@ class ShoppingListBodyContent extends StatelessWidget {
           child: ShoppingListItems(
             groupID: groupID,
             shoppingListID: shoppingListID,
-            shoppingLocationID: shoppingList?.shoppingLocationID,
+            // 店舗ごとの並び順はファーストリリースでは非表示のため、保存済みの
+            // shoppingLocationID があっても表示・並び替えに反映しない (issue #465)。
+            shoppingLocationID:
+                shoppingLocationFeatureEnabled
+                    ? shoppingList?.shoppingLocationID
+                    : null,
           ),
         ),
       ],

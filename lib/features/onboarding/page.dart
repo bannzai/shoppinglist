@@ -7,17 +7,20 @@ import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/provider/bool_shared_preferences.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/config/feature_flags.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 
-/// アプリ初回起動時の 3 スライドオンボーディング。
+/// アプリ初回起動時のスライド式オンボーディング。
 /// `design_handoff_shoppinglist/preview/screens-onboarding.jsx` 相当。
 ///
 /// 完走 / スキップで hasSeenOnboarding を true に保存し、二度と表示されないようにする。
 class OnboardingPage extends HookConsumerWidget {
   const OnboardingPage({super.key});
 
-  static const _slideCount = 3;
+  // 位置情報リマインダー非表示中 (issue #465) はスライド 3 (店舗近接通知の訴求) も
+  // 除外するため、枚数は flag に連動する。
+  static const _slideCount = shoppingLocationFeatureEnabled ? 3 : 2;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -44,15 +47,17 @@ class OnboardingPage extends HookConsumerWidget {
         assetPath: 'images/onboarding/slide_2.png',
         fallbackBuilder: (tokens) => _AvatarOrbitArt(tokens: tokens),
       ),
-      _SlideContent(
-        eyebrowIndex: 3,
-        title: 'お店の近くで、\nそっと思い出す',
-        body:
-            '登録した店舗の近くに来ると、買い物リストをやさしくお知らせ。'
-            '通知は必要な時だけ、押し付けがましくなく。',
-        assetPath: 'images/onboarding/slide_3.png',
-        fallbackBuilder: (tokens) => _MapHaloArt(tokens: tokens),
-      ),
+      // 位置情報リマインダーはファーストリリースでは非表示のため訴求スライドも出さない (issue #465)。
+      if (shoppingLocationFeatureEnabled)
+        _SlideContent(
+          eyebrowIndex: 3,
+          title: 'お店の近くで、\nそっと思い出す',
+          body:
+              '登録した店舗の近くに来ると、買い物リストをやさしくお知らせ。'
+              '通知は必要な時だけ、押し付けがましくなく。',
+          assetPath: 'images/onboarding/slide_3.png',
+          fallbackBuilder: (tokens) => _MapHaloArt(tokens: tokens),
+        ),
     ];
 
     Future<void> finish({required String reason}) async {
