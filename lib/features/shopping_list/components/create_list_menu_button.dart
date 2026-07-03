@@ -8,6 +8,7 @@ import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/provider/current_shopping_list_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/provider/shopping_list_fab_menu.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
@@ -104,6 +105,10 @@ class CreateListMenuButton extends HookConsumerWidget {
           name: 'tap_open_create_list_menu',
           parameters: {'groupID': groupID},
         );
+        // アイテム追加 FAB(`ExpandableFab`)の展開メニューが開いたままだと、この
+        // PopupMenu の背後に残り追加メニューが 2 つ同時表示されるため閉じる
+        // （旧ダブル FAB では共有状態の置換で自動的に閉じていた挙動の踏襲）。
+        ref.read(shoppingListFabMenuProvider.notifier).close();
         // 入力行フォーカス中はキーボードを閉じてからメニューを重ねる
         // （リスト設定等のシート系ボタンと同じ扱い）。
         FocusScope.of(context).unfocus();

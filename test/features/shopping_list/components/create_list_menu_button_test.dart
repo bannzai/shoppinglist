@@ -8,6 +8,7 @@ import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/create_list_menu_button.dart';
 import 'package:shoppinglist/provider/current_shopping_list_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/provider/shopping_list_fab_menu.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -469,6 +470,38 @@ void main() {
     expect(recordingDuplicate.callCount, 0);
     // 無効アクションのタップではメニューは閉じない。
     expect(find.text('現在のリストを複製'), findsOneWidget);
+  });
+
+  testWidgets('メニューを開くとアイテム追加 FAB の展開メニューを閉じる', (tester) async {
+    await pumpButton(
+      tester,
+      shoppingListAdd: _RecordingShoppingListAdd(),
+      addShoppingListItem: _RecordingAddShoppingListItem(),
+      shoppingListDuplicate: _RecordingShoppingListDuplicate(),
+      appUser: const AppUser(id: 'u'),
+      shoppingList: _sourceShoppingList,
+      shoppingListItems: const [],
+    );
+
+    // 実アプリで ExpandableFab が watch して保持する状況を再現して購読を張り、
+    // autoDispose による状態破棄を防ぐ。
+    final fabMenuSubscription = ProviderScope.containerOf(
+      tester.element(find.byType(CreateListMenuButton)),
+    ).listen(shoppingListFabMenuProvider, (_, _) {});
+    ProviderScope.containerOf(
+      tester.element(find.byType(CreateListMenuButton)),
+    ).read(shoppingListFabMenuProvider.notifier).open();
+    expect(fabMenuSubscription.read(), isTrue);
+
+    await tester.tap(buttonFinder);
+    await tester.pumpAndSettle();
+
+    expect(
+      fabMenuSubscription.read(),
+      isFalse,
+      reason: 'PopupMenu の背後に FAB メニューが残り、追加メニューが 2 つ同時表示されるのを防ぐ',
+    );
+    expect(find.text('今日の日付でリストを追加'), findsOneWidget);
   });
 
   testWidgets('アイテム一覧未取得(null)の間は複製アクションが無効でタップしても何もしない', (tester) async {
