@@ -4,9 +4,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/create_list_fab.dart';
 import 'package:shoppinglist/features/shopping_list/components/expandable_fab.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
@@ -24,8 +27,44 @@ const _shoppingList = GroupShoppingList(
   ttlExpiresDateTime: null,
 );
 
+/// アイテム追加 FAB のタップ（空行追加）を Firestore に繋がず記録するモック。
+class _RecordingAddShoppingListItem extends AddShoppingListItem {
+  int callCount = 0;
+
+  _RecordingAddShoppingListItem()
+    : super(database: GroupDatabase(groupID: 'g'));
+
+  @override
+  Future<GroupShoppingListItem> call({
+    required String shoppingListID,
+    required String userID,
+    required String message,
+    required int order,
+    required String? description,
+    required String? color,
+  }) async {
+    callCount++;
+    return GroupShoppingListItem(
+      id: 'id',
+      groupID: 'g',
+      shoppingListID: shoppingListID,
+      userID: userID,
+      message: message,
+      order: order,
+      description: description,
+      color: color,
+      checkedByUserID: null,
+      imageURL: null,
+      lastEditedByUserID: null,
+    );
+  }
+}
+
 void main() {
-  Future<void> pumpDoubleFab(WidgetTester tester) async {
+  Future<_RecordingAddShoppingListItem> pumpDoubleFab(
+    WidgetTester tester,
+  ) async {
+    final recordingAdd = _RecordingAddShoppingListItem();
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -33,6 +72,9 @@ void main() {
             (ref) => const Stream<CustomerInfo>.empty(),
           ),
           currentUserIDProvider.overrideWithValue('u'),
+          addShoppingListItemProvider(
+            groupID: 'g',
+          ).overrideWith((ref) => recordingAdd),
         ],
         child: MaterialApp(
           theme: buildAppTheme(accent: AccentPreset.shu),
@@ -60,6 +102,7 @@ void main() {
       ),
     );
     await tester.pump();
+    return recordingAdd;
   }
 
   testWidgets('アイテム追加メニューを開いた状態でリスト作成 FAB を押すと、アイテム追加メニューが閉じてリスト作成メニューが開く', (
@@ -133,6 +176,37 @@ void main() {
       find.byIcon(Icons.add_task),
       findsNothing,
       reason: 'アイテム追加メニューが開いて x になる',
+    );
+  });
+
+  testWidgets('リスト作成メニューを開いた状態でアイテム追加 FAB をタップすると、空行を追加しつつリスト作成メニューが閉じる', (
+    tester,
+  ) async {
+    final recordingAdd = await pumpDoubleFab(tester);
+
+    // リスト作成 FAB を開く。
+    await tester.tap(find.byIcon(Icons.receipt_long));
+    await tester.pumpAndSettle();
+    expect(
+      find.byIcon(Icons.receipt_long),
+      findsNothing,
+      reason: 'リスト作成 FAB が開いて x になる',
+    );
+
+    // アイテム追加 FAB をタップ（addItem メニューは開いていないので空行追加パス）。
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pumpAndSettle();
+
+    expect(recordingAdd.callCount, 1, reason: 'タップで空行が追加される');
+    expect(
+      find.byIcon(Icons.receipt_long),
+      findsOneWidget,
+      reason: '行追加時に close() が走り、開いていたリスト作成メニューも閉じる',
+    );
+    expect(
+      find.byIcon(Icons.add_task),
+      findsOneWidget,
+      reason: 'アイテム追加メニューは開かない（add_task のまま）',
     );
   });
 }

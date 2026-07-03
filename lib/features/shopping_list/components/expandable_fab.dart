@@ -181,6 +181,9 @@ class ExpandableFab extends HookConsumerWidget {
                   'shoppingListID': shoppingListID,
                 },
               );
+              // もう一方（リスト作成）のメニューが開いたまま行追加に入らないよう閉じる。
+              // close() は冪等なので、どちらのメニューも開いていない通常時に呼んでも安全。
+              close();
               ref
                   .read(addShoppingListItemProvider(groupID: groupID))
                   .call(
