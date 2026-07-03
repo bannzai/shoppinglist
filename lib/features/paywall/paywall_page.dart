@@ -6,6 +6,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/config/feature_flags.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
@@ -240,7 +241,9 @@ class _FeatureGrid extends StatelessWidget {
   const _FeatureGrid();
 
   static const _features = [
-    (Icons.location_on_outlined, '店舗ごとの並び順'),
+    // 店舗ごとの並び順はファーストリリースでは非表示 (issue #465)。
+    if (shoppingLocationFeatureEnabled)
+      (Icons.location_on_outlined, '店舗ごとの並び順'),
     (Icons.photo_camera_outlined, '写真からのアイテム抽出（月 50 回）'),
     (Icons.auto_fix_high, 'URL からのアイテム抽出（月 50 回）'),
     (Icons.palette_outlined, '5 色のテーマカラー'),

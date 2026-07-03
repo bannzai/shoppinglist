@@ -51,9 +51,11 @@
 	<string>お店の近くに来た時に買い物リストをお知らせするために、バックグラウンドでも位置情報を使用します</string>
 	<key>GMSApiKey</key>
 	<string>$(GOOGLE_MAPS_API_KEY)</string>
+	<!-- 位置情報機能はファーストリリースでは非表示のため location は宣言しない (issue #465)。
+	     NSLocation 系 purpose string は geolocator が CoreLocation をリンクする限り
+	     アップロード審査 (ITMS-90683) 対策として残す。 -->
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>location</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>

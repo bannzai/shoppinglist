@@ -6,7 +6,7 @@ appId: ${APP_ID}
 # 本フローは「場所作成 → カテゴリ2件作成(キーワード付き) → リストに場所割当 →
 # アイテム追加でキーワード分類されカテゴリヘッダーが出る」までを検証する。
 # NOTE: ロケーション別並べ替え（長押しD&D）の順序入替は別途 premium フローで検証する。
-- runFlow: shared/anonymous_sign_in.yaml
+- runFlow: ../shared/anonymous_sign_in.yaml
 
 # === Phase 1: リスト設定 → グループ設定 配下で 場所 + カテゴリ2件 を作成 ===
 - tapOn: "リスト設定"

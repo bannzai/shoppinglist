@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/config/feature_flags.dart';
 
 /// カテゴリ画面の空状態に表示する、カテゴリ機能の価値訴求カード。
 ///
@@ -66,13 +67,16 @@ class CategoryEmptyState extends StatelessWidget {
                     '「野菜」に トマト・玉ねぎ を登録すると、'
                     'リストで自動的に野菜セクションにまとまります',
               ),
-              const SizedBox(height: 12),
-              const _CategoryUseCaseRow(
-                icon: Icons.storefront,
-                text:
-                    '店ごとにカテゴリの並び順を変えられるので、'
-                    '売り場の動線どおりに回れます',
-              ),
+              // 店舗ごとの並び順はファーストリリースでは非表示のため訴求も出さない (issue #465)。
+              if (shoppingLocationFeatureEnabled) ...[
+                const SizedBox(height: 12),
+                const _CategoryUseCaseRow(
+                  icon: Icons.storefront,
+                  text:
+                      '店ごとにカテゴリの並び順を変えられるので、'
+                      '売り場の動線どおりに回れます',
+                ),
+              ],
               if (onAddCategory != null) ...[
                 const SizedBox(height: 24),
                 OutlinedButton.icon(

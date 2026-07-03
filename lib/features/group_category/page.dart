@@ -5,6 +5,7 @@ import 'package:shoppinglist/components/error/error_view.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/features/group_category/category_empty_state.dart';
 import 'package:shoppinglist/features/group_category_edit/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
@@ -15,6 +16,7 @@ import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/config/feature_flags.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
@@ -186,9 +188,13 @@ class _CategoryListBody extends HookConsumerWidget {
     final categoriesAsync = ref.watch(
       groupCategoriesProvider(groupID: groupID, categoryAxisID: axis.id),
     );
-    final locationsAsync = ref.watch(
-      shoppingLocationsProvider(groupID: groupID),
-    );
+    // 店舗ごとの並び順はファーストリリースでは非表示 (issue #465)。
+    // flag が false の間は provider を watch せず、Firestore への不要なクエリを発生させない。
+    // 条件はコンパイル時定数のため、rebuild 間で watch の有無が変わることはない。
+    final locationsAsync =
+        shoppingLocationFeatureEnabled
+            ? ref.watch(shoppingLocationsProvider(groupID: groupID))
+            : const AsyncValue<List<GroupShoppingLocation>>.data([]);
     final selectedLocationID = useState<String?>(null);
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;

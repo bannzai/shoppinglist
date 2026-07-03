@@ -1,7 +1,8 @@
 appId: ${APP_ID}
 ---
 # ShoppingListSettingPage (design v2 SSOT 準拠) の検証:
-# - 7 セクション label (UPPERCASE) が表示される
+# - 6 セクション label (UPPERCASE) が表示される
+#   (買い物する場所は位置情報機能非表示のため表示されない: issue #465)
 # - カテゴリ Cell タップで GroupCategoryPage に遷移する
 # - 共有セクションが 1 card 2 Cell 構成 (招待 / グループ設定) で表示される
 # - 「アイテム追加でグループに通知」AppCell が表示される
@@ -22,9 +23,8 @@ appId: ${APP_ID}
 - assertVisible:
     text: "リスト名"
     optional: true
-- assertVisible:
-    text: "買い物する場所"
-    optional: true
+# 買い物する場所は位置情報機能非表示のため表示されないこと (issue #465)
+- assertNotVisible: "買い物する場所"
 - assertVisible:
     text: "カテゴリ"
     optional: true
@@ -41,7 +41,7 @@ appId: ${APP_ID}
     text: "リストの操作"
     optional: true
 
-# カテゴリ Cell (買い物する場所 直後の独立セクション) タップで GroupCategoryPage に遷移
+# カテゴリ Cell (リスト名 直後の独立セクション) タップで GroupCategoryPage に遷移
 - assertVisible:
     text: "自動分類のキーワード管理"
     optional: true

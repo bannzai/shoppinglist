@@ -11,6 +11,7 @@ import 'package:shoppinglist/provider/geofence.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/root.dart';
 import 'package:shoppinglist/style/theme.dart';
+import 'package:shoppinglist/utils/config/feature_flags.dart';
 
 /// アプリケーションのルートWidget。テーマカラー・ナビゲーション・FCM通知を管理する。
 class App extends ConsumerStatefulWidget {
@@ -31,18 +32,21 @@ class _AppState extends ConsumerState<App> {
     // build ではなく initState で listenManual するのは、購読を1回だけ確立すれば以降の変化は
     // listener が追従するため（build 内 ref.listen は fireImmediately 非対応）。
     // fireImmediately: true で初回プランにも反応し、従来の ref.watch と同じ初回挙動を保つ。
-    ref.listenManual(geofenceMonitoringPlanProvider, (previous, next) {
-      final service = ref.read(geofenceServiceProvider);
-      if (!next.shouldMonitor) {
-        service.stopMonitoring();
-        return;
-      }
-      service.updateMonitoredData(
-        locationsByGroupID: next.locationsByGroupID,
-        activeListsByLocationID: next.activeListsByLocationID,
-      );
-      service.startMonitoring();
-    }, fireImmediately: true);
+    // 位置情報機能はファーストリリースでは非表示のため監視自体を確立しない (issue #465)。
+    if (shoppingLocationFeatureEnabled) {
+      ref.listenManual(geofenceMonitoringPlanProvider, (previous, next) {
+        final service = ref.read(geofenceServiceProvider);
+        if (!next.shouldMonitor) {
+          service.stopMonitoring();
+          return;
+        }
+        service.updateMonitoredData(
+          locationsByGroupID: next.locationsByGroupID,
+          activeListsByLocationID: next.activeListsByLocationID,
+        );
+        service.startMonitoring();
+      }, fireImmediately: true);
+    }
   }
 
   @override
