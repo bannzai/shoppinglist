@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
-/// FAB 長押しで展開するメニューの 1 アクション。
+/// FAB タップで展開するメニューの 1 アクション。
 class FabMenuAction {
   /// メニュー行の円形ボタンに表示するアイコン。
   final IconData icon;
@@ -15,7 +15,7 @@ class FabMenuAction {
   FabMenuAction({required this.icon, required this.label, required this.onTap});
 }
 
-/// FAB の上に展開するアクションメニュー。`ExpandableFab` / `CreateListFab` で共用する。
+/// FAB の上に展開するアクションメニュー。`ExpandableFab` で使用する。
 ///
 /// [animation] の値 0→1 に応じて、下端基準で上方向へ伸縮する。
 /// レイアウト内に収めることで Stack 境界外オーバーフローによるタップ不可を解消する。

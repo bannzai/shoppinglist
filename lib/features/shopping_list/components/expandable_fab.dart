@@ -27,10 +27,10 @@ import 'package:shoppinglist/utils/stdlib/navigator.dart';
 /// `ShoppingListPage` の右下に配置する展開式 FAB。
 /// `design_handoff_shopping_list/source/screens-list.jsx#FAB` 相当。
 ///
-/// 閉時: accent の add_task（アイテム追加）56×56 円。リスト作成の `CreateListFab` と
-/// 縦に並べるダブル FAB 構成のメイン側。
+/// 閉時: accent の add_task（アイテム追加）56×56 円。
 /// タップ: 空行を 1 件追加する（最頻操作をワンタップにする。Issue #462）。
 /// 長押し: 写真 / URL / テキスト貼り付け のメニューを上方向に展開する。
+/// リスト作成は上部バー(`ListTopBar`)の `CreateListMenuButton` が担う(Issue #461)。
 class ExpandableFab extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
@@ -54,12 +54,9 @@ class ExpandableFab extends HookConsumerWidget {
     final isAIProcessing = ref.watch(aIProcessingProvider) != null;
     // 状態 Provider は build 内で watch して変数として参照する（callback 内で read しない）。
     final currentUserID = ref.watch(currentUserIDProvider);
-    // 開閉状態は 2 つの FAB で共有する `shoppingListFabMenuProvider` に一元化している。
-    // この FAB のメニューが開いているかは、共有状態が addItem のときのみ true。
-    // もう一方（リスト作成）を開くと状態が createList に置き換わり、ここは自動的に閉じる。
-    final open =
-        ref.watch(shoppingListFabMenuProvider) ==
-        ShoppingListFabMenuKind.addItem;
+    // 開閉状態は `shoppingListFabMenuProvider` に一元化している。
+    // スクロール開始等の外部イベントからも close されるため、widget ローカルでは持たない。
+    final open = ref.watch(shoppingListFabMenuProvider);
     final controller = useAnimationController(
       duration: const Duration(milliseconds: 280),
       reverseDuration: const Duration(milliseconds: 200),
@@ -152,9 +149,7 @@ class ExpandableFab extends HookConsumerWidget {
                 'shoppingListID': shoppingListID,
               },
             );
-            ref
-                .read(shoppingListFabMenuProvider.notifier)
-                .open(ShoppingListFabMenuKind.addItem);
+            ref.read(shoppingListFabMenuProvider.notifier).open();
           },
           child: FloatingActionButton(
             backgroundColor: tokens.accent,
@@ -181,9 +176,6 @@ class ExpandableFab extends HookConsumerWidget {
                   'shoppingListID': shoppingListID,
                 },
               );
-              // もう一方（リスト作成）のメニューが開いたまま行追加に入らないよう閉じる。
-              // close() は冪等なので、どちらのメニューも開いていない通常時に呼んでも安全。
-              close();
               ref
                   .read(addShoppingListItemProvider(groupID: groupID))
                   .call(

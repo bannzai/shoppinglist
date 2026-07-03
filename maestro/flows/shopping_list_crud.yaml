@@ -1,14 +1,14 @@
 appId: ${APP_ID}
 ---
 # 買い物リストの作成・リネーム・削除（design v2）。
-# - 追加: CreateListFab（右下 89%,83%）→「今日の日付でリストを追加」
+# - 追加: 上部バー右の「リストを追加」メニュー（CreateListMenuButton, Issue #461）
+#   →「今日の日付でリストを追加」
 # - リネーム/削除: リスト設定（リスト名 セクション / このリストを削除）
 
 - runFlow: shared/anonymous_sign_in.yaml
 
 # --- 作成 ---
-- tapOn:
-    point: "89%, 83%"
+- tapOn: "リストを追加"
 - extendedWaitUntil:
     visible: "今日の日付でリストを追加"
     timeout: 8000

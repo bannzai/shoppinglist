@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/settings/page.dart';
+import 'package:shoppinglist/features/shopping_list/components/create_list_menu_button.dart';
 import 'package:shoppinglist/features/shopping_list/components/list_picker_sheet.dart';
 import 'package:shoppinglist/features/shopping_list/components/notify_group_button.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
@@ -13,7 +15,8 @@ import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
 /// ShoppingListPage の最上段（高さ 52）。
 /// `design_handoff_shopping_list/source/screens-list.jsx#ListTopBar` 相当。
-/// 左にリスト名 + ▼（タップでリスト切替シート）、右にリスト設定とユーザー設定のアイコン。
+/// 左にリスト名 + ▼（タップでリスト切替シート）、
+/// 右にリスト追加・グループ通知・リスト設定・ユーザー設定のアイコン。
 ///
 /// Scaffold の appBar スロットを使わず Column 内の通常 Widget として置いている理由:
 /// - paper/surface の上にフラットに乗せ、下の白い card と段差なく繋ぐハイブリッドサーフェス
@@ -27,6 +30,11 @@ class ListTopBar extends ConsumerWidget {
   final String shoppingListID;
   final List<GroupShoppingList> shoppingLists;
   final GroupShoppingList? shoppingList;
+
+  /// 表示中リストのアイテム一覧（チェック済み含む全件）。
+  /// リスト追加メニュー(`CreateListMenuButton`)の複製アクションで引き継ぐ。
+  /// 未取得（ロード中）は null を渡し、複製アクションを無効化する（空 [] とは区別する）。
+  final List<GroupShoppingListItem>? shoppingListItems;
   final void Function(String newID) onShoppingListIDChanged;
 
   const ListTopBar({
@@ -35,6 +43,7 @@ class ListTopBar extends ConsumerWidget {
     required this.shoppingListID,
     required this.shoppingLists,
     required this.shoppingList,
+    required this.shoppingListItems,
     required this.onShoppingListIDChanged,
   });
 
@@ -99,6 +108,12 @@ class ListTopBar extends ConsumerWidget {
                   ],
                 ),
               ),
+            ),
+            CreateListMenuButton(
+              groupID: groupID,
+              appUser: appUser,
+              shoppingList: shoppingList,
+              shoppingListItems: shoppingListItems,
             ),
             NotifyGroupButton(
               groupID: groupID,

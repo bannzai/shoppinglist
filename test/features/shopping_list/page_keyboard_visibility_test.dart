@@ -3,14 +3,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppinglist/features/previews/mock/mock_provider_overrides.dart';
-import 'package:shoppinglist/features/shopping_list/components/create_list_fab.dart';
+import 'package:shoppinglist/features/shopping_list/components/create_list_menu_button.dart';
 import 'package:shoppinglist/features/shopping_list/components/expandable_fab.dart';
 import 'package:shoppinglist/features/shopping_list/components/progress_pill.dart';
 import 'package:shoppinglist/features/shopping_list/page.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
-/// ソフトキーボード表示中は下部の浮遊要素(ダブル FAB・進捗ピル)が入力行と重なるため隠す、
+/// ソフトキーボード表示中は下部の浮遊要素(FAB・進捗ピル)が入力行と重なるため隠す、
 /// という page.dart の挙動を検証する。キーボードは MediaQuery.viewInsets で疑似的に再現する
 /// (ShoppingListPage は Scaffold の外側で viewInsets を読むため、ここで注入した値が効く)。
 Future<void> _pumpPage(
@@ -44,19 +44,27 @@ Future<void> _pumpPage(
 }
 
 void main() {
-  testWidgets('キーボード非表示時はダブル FAB と進捗ピルを表示する', (tester) async {
+  testWidgets('キーボード非表示時は FAB と進捗ピルを表示する', (tester) async {
     await _pumpPage(tester, isKeyboardVisible: false);
 
     expect(find.byType(ExpandableFab), findsOneWidget);
-    expect(find.byType(CreateListFab), findsOneWidget);
     expect(find.byType(ProgressPill), findsOneWidget);
+    expect(
+      find.byType(CreateListMenuButton),
+      findsOneWidget,
+      reason: 'リスト追加は上部バーのメニューボタン(Issue #461)',
+    );
   });
 
-  testWidgets('キーボード表示時はダブル FAB と進捗ピルを隠す', (tester) async {
+  testWidgets('キーボード表示時は FAB と進捗ピルを隠す', (tester) async {
     await _pumpPage(tester, isKeyboardVisible: true);
 
     expect(find.byType(ExpandableFab), findsNothing);
-    expect(find.byType(CreateListFab), findsNothing);
     expect(find.byType(ProgressPill), findsNothing);
+    expect(
+      find.byType(CreateListMenuButton),
+      findsOneWidget,
+      reason: '上部バーのリスト追加ボタンはキーボードと重ならないため隠さない',
+    );
   });
 }
