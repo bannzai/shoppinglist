@@ -33,7 +33,8 @@ class ListTopBar extends ConsumerWidget {
 
   /// 表示中リストのアイテム一覧（チェック済み含む全件）。
   /// リスト追加メニュー(`CreateListMenuButton`)の複製アクションで引き継ぐ。
-  final List<GroupShoppingListItem> shoppingListItems;
+  /// 未取得（ロード中）は null を渡し、複製アクションを無効化する（空 [] とは区別する）。
+  final List<GroupShoppingListItem>? shoppingListItems;
   final void Function(String newID) onShoppingListIDChanged;
 
   const ListTopBar({

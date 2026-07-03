@@ -272,8 +272,9 @@ class _ActiveShoppingList extends ConsumerWidget {
                 shoppingListID: shoppingListID,
                 shoppingLists: shoppingLists,
                 shoppingList: shoppingList,
-                shoppingListItems:
-                    shoppingListItemsAsync.asData?.value ?? const [],
+                // ロード中は null を渡し、リスト追加メニューの複製アクションを無効化する
+                // （空 [] で渡すとロード中の複製でアイテムが失われるため）。
+                shoppingListItems: shoppingListItemsAsync.valueOrNull,
                 onShoppingListIDChanged:
                     (newID) => currentShoppingListIDNotifier.update(newID),
               ),

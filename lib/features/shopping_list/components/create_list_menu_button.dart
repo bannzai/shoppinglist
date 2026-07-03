@@ -47,7 +47,9 @@ class CreateListMenuButton extends HookConsumerWidget {
   final GroupShoppingList? shoppingList;
 
   /// 表示中リストのアイテム一覧（チェック済み含む全件）。複製アクションで引き継ぐ。
-  final List<GroupShoppingListItem> shoppingListItems;
+  /// 未取得（null）の間は複製アクションを無効化（dim 表示）する。
+  /// 取得完了前に空リスト扱いで複製するとアイテムが失われるため、空（[]）とは区別する。
+  final List<GroupShoppingListItem>? shoppingListItems;
 
   const CreateListMenuButton({
     super.key,
@@ -64,12 +66,16 @@ class CreateListMenuButton extends HookConsumerWidget {
     // 参照できるよう final ローカルに束ねる。
     final appUser = this.appUser;
     final shoppingList = this.shoppingList;
+    final shoppingListItems = this.shoppingListItems;
     // 新規リスト作成・複製リクエストの実行中フラグ。作成は上限カウント等のサーバー往復を
     // 伴い時間がかかるため、その間の連打による多重作成を防ぐ。
     final isCreating = useState(false);
     // 複製はメニュー展開中に複製元リストの取得が完了することはない
     // （itemBuilder 時点の値がメニューに固定される）ため、build 時点の取得状況で判定する。
-    final canDuplicate = shoppingList != null && !isCreating.value;
+    // アイテム一覧未取得（null）の間も無効化する。ロード中に複製すると空リストとして
+    // 複製されアイテムが失われるため。
+    final canDuplicate =
+        shoppingList != null && shoppingListItems != null && !isCreating.value;
 
     return PopupMenuButton<_CreateListMenuAction>(
       key: const Key('create_list_menu_button'),
@@ -86,7 +92,12 @@ class CreateListMenuButton extends HookConsumerWidget {
                   valueColor: AlwaysStoppedAnimation<Color>(tokens.accent),
                 ),
               )
-              : const _AddListIcon(),
+              // AppUser 未ロードで無効の間は dim 表示し、タップ不可であることを見せる
+              // （enabled: false はアイコンの見た目を変えないため）。
+              : Opacity(
+                opacity: appUser == null ? 0.5 : 1,
+                child: const _AddListIcon(),
+              ),
       onOpened: () {
         HapticFeedback.mediumImpact();
         analytics.logEvent(
@@ -121,8 +132,9 @@ class CreateListMenuButton extends HookConsumerWidget {
               isCreating: isCreating,
             );
           case _CreateListMenuAction.duplicate:
-            // 複製元リスト未取得の間は enabled: false で選択されないため到達しない（防御）。
-            if (shoppingList == null) {
+            // 複製元リスト・アイテム一覧未取得の間は enabled: false で選択されないため
+            // 到達しない（防御）。
+            if (shoppingList == null || shoppingListItems == null) {
               return;
             }
             analytics.logEvent(
@@ -137,12 +149,14 @@ class CreateListMenuButton extends HookConsumerWidget {
               ref: ref,
               appUser: appUser,
               sourceShoppingList: shoppingList,
+              shoppingListItems: shoppingListItems,
               isCreating: isCreating,
               uncheckedOnly: false,
             );
           case _CreateListMenuAction.duplicateUncheckedOnly:
-            // 複製元リスト未取得の間は enabled: false で選択されないため到達しない（防御）。
-            if (shoppingList == null) {
+            // 複製元リスト・アイテム一覧未取得の間は enabled: false で選択されないため
+            // 到達しない（防御）。
+            if (shoppingList == null || shoppingListItems == null) {
               return;
             }
             analytics.logEvent(
@@ -157,6 +171,7 @@ class CreateListMenuButton extends HookConsumerWidget {
               ref: ref,
               appUser: appUser,
               sourceShoppingList: shoppingList,
+              shoppingListItems: shoppingListItems,
               isCreating: isCreating,
               uncheckedOnly: true,
             );
@@ -244,7 +259,13 @@ class CreateListMenuButton extends HookConsumerWidget {
           content: Text(e.toString()),
           action: SnackBarAction(
             label: 'アップグレード',
-            onPressed: () => showPaywall(context: context),
+            // SnackBar はこの widget の破棄後も ScaffoldMessenger 上に残るため、
+            // タップ時に破棄済み context で showPaywall しないようガードする。
+            onPressed: () {
+              if (context.mounted) {
+                showPaywall(context: context);
+              }
+            },
           ),
         ),
       );
@@ -263,11 +284,14 @@ class CreateListMenuButton extends HookConsumerWidget {
 
   /// 表示中のリストを複製し、複製先リストへ表示を切り替える。
   /// [uncheckedOnly] が true のときは未チェックのアイテムだけを引き継ぐ。
+  /// [shoppingListItems] はフィールドの null（未取得）を呼び出し元（onSelected の防御）で
+  /// 除いた非 null の一覧を受け取る。
   Future<void> _duplicateCurrentList({
     required BuildContext context,
     required WidgetRef ref,
     required AppUser appUser,
     required GroupShoppingList sourceShoppingList,
+    required List<GroupShoppingListItem> shoppingListItems,
     required ValueNotifier<bool> isCreating,
     required bool uncheckedOnly,
   }) async {
@@ -308,7 +332,13 @@ class CreateListMenuButton extends HookConsumerWidget {
           content: Text(e.toString()),
           action: SnackBarAction(
             label: 'アップグレード',
-            onPressed: () => showPaywall(context: context),
+            // SnackBar はこの widget の破棄後も ScaffoldMessenger 上に残るため、
+            // タップ時に破棄済み context で showPaywall しないようガードする。
+            onPressed: () {
+              if (context.mounted) {
+                showPaywall(context: context);
+              }
+            },
           ),
         ),
       );

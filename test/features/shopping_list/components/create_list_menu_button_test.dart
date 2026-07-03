@@ -178,7 +178,7 @@ void main() {
     required ShoppingListDuplicate shoppingListDuplicate,
     required AppUser? appUser,
     required GroupShoppingList? shoppingList,
-    required List<GroupShoppingListItem> shoppingListItems,
+    required List<GroupShoppingListItem>? shoppingListItems,
   }) async {
     await tester.pumpWidget(
       ProviderScope(
@@ -463,6 +463,33 @@ void main() {
     // メニュー自体は開く（「今日の日付でリストを追加」は使える）。
     expect(find.text('今日の日付でリストを追加'), findsOneWidget);
 
+    await tester.tap(find.text('現在のリストを複製'));
+    await tester.pumpAndSettle();
+
+    expect(recordingDuplicate.callCount, 0);
+    // 無効アクションのタップではメニューは閉じない。
+    expect(find.text('現在のリストを複製'), findsOneWidget);
+  });
+
+  testWidgets('アイテム一覧未取得(null)の間は複製アクションが無効でタップしても何もしない', (tester) async {
+    final recordingDuplicate = _RecordingShoppingListDuplicate();
+    await pumpButton(
+      tester,
+      shoppingListAdd: _RecordingShoppingListAdd(),
+      addShoppingListItem: _RecordingAddShoppingListItem(),
+      shoppingListDuplicate: recordingDuplicate,
+      appUser: const AppUser(id: 'u'),
+      shoppingList: _sourceShoppingList,
+      shoppingListItems: null,
+    );
+
+    await tester.tap(buttonFinder);
+    await tester.pumpAndSettle();
+
+    // メニュー自体は開く（「今日の日付でリストを追加」は使える）。
+    expect(find.text('今日の日付でリストを追加'), findsOneWidget);
+
+    // ロード中に空リストとして複製されアイテムが失われるのを防ぐため無効化されている。
     await tester.tap(find.text('現在のリストを複製'));
     await tester.pumpAndSettle();
 
