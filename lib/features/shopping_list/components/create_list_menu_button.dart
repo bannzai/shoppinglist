@@ -154,7 +154,11 @@ class CreateListMenuButton extends HookConsumerWidget {
               ref: ref,
               appUser: appUser,
               sourceShoppingList: shoppingList,
-              shoppingListItems: shoppingListItems,
+              shoppingListItems: _latestShoppingListItems(
+                ref: ref,
+                sourceShoppingList: shoppingList,
+                buildTimeShoppingListItems: shoppingListItems,
+              ),
               isCreating: isCreating,
               uncheckedOnly: false,
             );
@@ -176,7 +180,11 @@ class CreateListMenuButton extends HookConsumerWidget {
               ref: ref,
               appUser: appUser,
               sourceShoppingList: shoppingList,
-              shoppingListItems: shoppingListItems,
+              shoppingListItems: _latestShoppingListItems(
+                ref: ref,
+                sourceShoppingList: shoppingList,
+                buildTimeShoppingListItems: shoppingListItems,
+              ),
               isCreating: isCreating,
               uncheckedOnly: true,
             );
@@ -212,6 +220,29 @@ class CreateListMenuButton extends HookConsumerWidget {
             ),
           ],
     );
+  }
+
+  /// 複製に使う、選択時点の最新アイテム一覧を返す。
+  ///
+  /// メニュー表示中に onOpened の unfocus 起点でフォーカス喪失保存（編集中テキストの
+  /// 確定・空行削除。`TextShoppingListItemWidget` 参照）が非同期に走ることがあり、
+  /// build 時に固定した [buildTimeShoppingListItems] のままでは直前の入力が複製先から
+  /// 欠落する。選択時点で provider から読み直して確定済みの最新一覧を使う
+  /// （ストリーム未反映・エラー時は build 時の一覧に fallback）。
+  List<GroupShoppingListItem> _latestShoppingListItems({
+    required WidgetRef ref,
+    required GroupShoppingList sourceShoppingList,
+    required List<GroupShoppingListItem> buildTimeShoppingListItems,
+  }) {
+    return ref
+            .read(
+              textShoppingListItemsProvider(
+                groupID: groupID,
+                shoppingListID: sourceShoppingList.id,
+              ),
+            )
+            .valueOrNull ??
+        buildTimeShoppingListItems;
   }
 
   /// 今日の日付名でリストを作成 → 表示切替 → 空アイテム追加まで連鎖する。

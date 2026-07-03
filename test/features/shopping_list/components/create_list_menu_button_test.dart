@@ -180,6 +180,9 @@ void main() {
     required AppUser? appUser,
     required GroupShoppingList? shoppingList,
     required List<GroupShoppingListItem>? shoppingListItems,
+    // provider(選択時点の最新一覧)が build 時に渡した一覧より進んでいる状況を
+    // 再現するためのオーバーライド。省略時は build 時の一覧と同じ値を返す。
+    List<GroupShoppingListItem>? latestShoppingListItemsOnProvider,
   }) async {
     await tester.pumpWidget(
       ProviderScope(
@@ -193,6 +196,16 @@ void main() {
           shoppingListDuplicateProvider(
             groupID: 'g',
           ).overrideWith((ref) => shoppingListDuplicate),
+          textShoppingListItemsProvider(
+            groupID: 'g',
+            shoppingListID: _sourceShoppingList.id,
+          ).overrideWith(
+            (ref) => Stream.value(
+              latestShoppingListItemsOnProvider ??
+                  shoppingListItems ??
+                  const [],
+            ),
+          ),
         ],
         child: MaterialApp(
           theme: buildAppTheme(accent: AccentPreset.shu),
@@ -210,6 +223,17 @@ void main() {
           ),
         ),
       ),
+    );
+    // 実アプリで _ActiveShoppingList がアイテム一覧 provider を watch して保持している
+    // 状況を再現して購読を張り、複製選択時の ref.read で最新一覧が取れる状態にする。
+    ProviderScope.containerOf(
+      tester.element(find.byType(CreateListMenuButton)),
+    ).listen(
+      textShoppingListItemsProvider(
+        groupID: 'g',
+        shoppingListID: _sourceShoppingList.id,
+      ),
+      (_, _) {},
     );
     await tester.pump();
   }
@@ -470,6 +494,49 @@ void main() {
     expect(recordingDuplicate.callCount, 0);
     // 無効アクションのタップではメニューは閉じない。
     expect(find.text('現在のリストを複製'), findsOneWidget);
+  });
+
+  testWidgets('複製は選択時点の最新アイテム一覧(provider)を使う', (tester) async {
+    final recordingDuplicate = _RecordingShoppingListDuplicate();
+    // メニュー表示中に unfocus 起点のフォーカス喪失保存で入力が確定し、
+    // build 時に渡した一覧より provider の最新一覧が進んでいる状況を再現する。
+    await pumpButton(
+      tester,
+      shoppingListAdd: _RecordingShoppingListAdd(),
+      addShoppingListItem: _RecordingAddShoppingListItem(),
+      shoppingListDuplicate: recordingDuplicate,
+      appUser: const AppUser(id: 'u'),
+      shoppingList: _sourceShoppingList,
+      shoppingListItems: [
+        _sourceShoppingListItem(
+          id: 'existing-item',
+          status: GroupShoppingListItemStatus.unchecked,
+        ),
+      ],
+      latestShoppingListItemsOnProvider: [
+        _sourceShoppingListItem(
+          id: 'existing-item',
+          status: GroupShoppingListItemStatus.unchecked,
+        ),
+        _sourceShoppingListItem(
+          id: 'just-confirmed-item',
+          status: GroupShoppingListItemStatus.unchecked,
+        ),
+      ],
+    );
+
+    await tester.tap(buttonFinder);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('現在のリストを複製'));
+    await tester.pumpAndSettle();
+
+    expect(recordingDuplicate.callCount, 1);
+    expect(
+      recordingDuplicate.lastShoppingListItems?.map((item) => item.id),
+      ['existing-item', 'just-confirmed-item'],
+      reason: 'build 時の一覧ではなく選択時点の最新一覧で複製し、直前に確定した入力の欠落を防ぐ',
+    );
   });
 
   testWidgets('メニューを開くとアイテム追加 FAB の展開メニューを閉じる', (tester) async {
