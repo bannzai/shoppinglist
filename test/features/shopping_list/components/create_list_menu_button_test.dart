@@ -5,7 +5,7 @@ import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
-import 'package:shoppinglist/features/shopping_list/components/create_list_fab.dart';
+import 'package:shoppinglist/features/shopping_list/components/create_list_menu_button.dart';
 import 'package:shoppinglist/provider/current_shopping_list_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -169,7 +169,9 @@ GroupShoppingListItem _sourceShoppingListItem({
 }
 
 void main() {
-  Future<void> pumpFab(
+  final buttonFinder = find.byKey(const Key('create_list_menu_button'));
+
+  Future<void> pumpButton(
     WidgetTester tester, {
     required ShoppingListAdd shoppingListAdd,
     required AddShoppingListItem addShoppingListItem,
@@ -194,11 +196,15 @@ void main() {
         child: MaterialApp(
           theme: buildAppTheme(accent: AccentPreset.shu),
           home: Scaffold(
-            floatingActionButton: CreateListFab(
-              groupID: 'g',
-              appUser: appUser,
-              shoppingList: shoppingList,
-              shoppingListItems: shoppingListItems,
+            // 実アプリの ListTopBar と同じく画面右上に置く（メニューの展開位置を揃える）。
+            body: Align(
+              alignment: Alignment.topRight,
+              child: CreateListMenuButton(
+                groupID: 'g',
+                appUser: appUser,
+                shoppingList: shoppingList,
+                shoppingListItems: shoppingListItems,
+              ),
             ),
           ),
         ),
@@ -210,7 +216,7 @@ void main() {
   testWidgets('タップでメニューが開き、タップ単体ではリスト作成しない', (tester) async {
     final recordingListAdd = _RecordingShoppingListAdd();
     final recordingItemAdd = _RecordingAddShoppingListItem();
-    await pumpFab(
+    await pumpButton(
       tester,
       shoppingListAdd: recordingListAdd,
       addShoppingListItem: recordingItemAdd,
@@ -220,27 +226,23 @@ void main() {
       shoppingListItems: const [],
     );
 
-    // CreateListFab は展開メニューを含む Column のため、widget 中心はボタンを
-    // 外れる。ボタン内の receipt アイコンを狙ってタップする。
-    await tester.tap(find.byIcon(Icons.receipt_long));
+    await tester.tap(buttonFinder);
     await tester.pumpAndSettle();
 
-    // 展開メニュー（タップで開く）と、閉じる(x)アイコンへの切り替わりを確認する。
-    expect(
-      find.byIcon(Icons.close),
-      findsOneWidget,
-      reason: 'タップで展開し FAB アイコンが閉じる(x)に切り替わる',
-    );
-    expect(find.byIcon(Icons.receipt_long), findsNothing);
+    // 3 アクションのメニューが開く。
+    expect(find.text('今日の日付でリストを追加'), findsOneWidget);
+    expect(find.text('現在のリストを複製'), findsOneWidget);
+    expect(find.text('未チェックのみ引き継いで複製'), findsOneWidget);
     // 作成はメニュー内アクションに委ねるため、タップ単体では作成連鎖は走らない。
     expect(recordingListAdd.callCount, 0);
     expect(recordingItemAdd.callCount, 0);
   });
 
-  testWidgets('展開中にもう一度タップするとメニューが閉じる', (tester) async {
-    await pumpFab(
+  testWidgets('メニュー外をタップするとメニューが閉じる', (tester) async {
+    final recordingListAdd = _RecordingShoppingListAdd();
+    await pumpButton(
       tester,
-      shoppingListAdd: _RecordingShoppingListAdd(),
+      shoppingListAdd: recordingListAdd,
       addShoppingListItem: _RecordingAddShoppingListItem(),
       shoppingListDuplicate: _RecordingShoppingListDuplicate(),
       appUser: const AppUser(id: 'u'),
@@ -248,16 +250,16 @@ void main() {
       shoppingListItems: const [],
     );
 
-    // 1 回目のタップで開く。
-    await tester.tap(find.byIcon(Icons.receipt_long));
+    await tester.tap(buttonFinder);
     await tester.pumpAndSettle();
-    expect(find.byIcon(Icons.close), findsOneWidget);
+    expect(find.text('今日の日付でリストを追加'), findsOneWidget);
 
-    // 展開中（x 状態）にもう一度タップすると閉じ、合成アイコンへ戻る。
-    await tester.tap(find.byIcon(Icons.close));
+    // メニューはボタン（右上）から展開するため、左下はメニュー外（barrier）。
+    await tester.tapAt(const Offset(10, 500));
     await tester.pumpAndSettle();
-    expect(find.byIcon(Icons.close), findsNothing);
-    expect(find.byIcon(Icons.receipt_long), findsOneWidget);
+
+    expect(find.text('今日の日付でリストを追加'), findsNothing);
+    expect(recordingListAdd.callCount, 0);
   });
 
   testWidgets('メニューの「今日の日付でリストを追加」はリスト作成 → 表示切替 → 空アイテム追加まで連鎖する', (
@@ -266,7 +268,7 @@ void main() {
     final recordingListAdd = _RecordingShoppingListAdd();
     final recordingItemAdd = _RecordingAddShoppingListItem();
     final recordingDuplicate = _RecordingShoppingListDuplicate();
-    await pumpFab(
+    await pumpButton(
       tester,
       shoppingListAdd: recordingListAdd,
       addShoppingListItem: recordingItemAdd,
@@ -279,14 +281,13 @@ void main() {
     // currentShoppingListIDProvider は autoDispose のため、実アプリでページが
     // 常時 watch している状況を再現して購読を張り、update 後の状態破棄を防ぐ。
     final currentShoppingListIDSubscription = ProviderScope.containerOf(
-      tester.element(find.byType(CreateListFab)),
-    ).listen(currentShoppingListIDProvider, (_, __) {});
+      tester.element(find.byType(CreateListMenuButton)),
+    ).listen(currentShoppingListIDProvider, (_, _) {});
 
-    // タップでメニューを開いてから「今日の日付でリストを追加」をタップする。
-    await tester.tap(find.byIcon(Icons.receipt_long));
+    await tester.tap(buttonFinder);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byIcon(Icons.today_outlined));
+    await tester.tap(find.text('今日の日付でリストを追加'));
     await tester.pumpAndSettle();
 
     expect(recordingListAdd.callCount, 1);
@@ -304,7 +305,7 @@ void main() {
 
   testWidgets('上限超過時は SnackBar を表示しアイテム追加へ進まない', (tester) async {
     final recordingItemAdd = _RecordingAddShoppingListItem();
-    await pumpFab(
+    await pumpButton(
       tester,
       shoppingListAdd: _LimitExceededShoppingListAdd(),
       addShoppingListItem: recordingItemAdd,
@@ -314,11 +315,10 @@ void main() {
       shoppingListItems: const [],
     );
 
-    // タップでメニューを開いてから「今日の日付でリストを追加」をタップする。
-    await tester.tap(find.byIcon(Icons.receipt_long));
+    await tester.tap(buttonFinder);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byIcon(Icons.today_outlined));
+    await tester.tap(find.text('今日の日付でリストを追加'));
     await tester.pumpAndSettle();
 
     expect(find.byType(SnackBar), findsOneWidget);
@@ -333,7 +333,7 @@ void main() {
   testWidgets('AppUser 未ロード(null)の間はタップしてもメニューが開かない', (tester) async {
     final recordingListAdd = _RecordingShoppingListAdd();
     final recordingItemAdd = _RecordingAddShoppingListItem();
-    await pumpFab(
+    await pumpButton(
       tester,
       shoppingListAdd: recordingListAdd,
       addShoppingListItem: recordingItemAdd,
@@ -343,14 +343,11 @@ void main() {
       shoppingListItems: const [],
     );
 
-    // CreateListFab は展開メニューを含む Column のため、widget 中心はボタンを
-    // 外れる。ボタン内の receipt アイコンを狙ってタップする。
-    await tester.tap(find.byIcon(Icons.receipt_long));
+    await tester.tap(buttonFinder);
     await tester.pumpAndSettle();
 
-    // onTap 無効のためメニューは開かず、合成アイコンのままで作成も走らない。
-    expect(find.byIcon(Icons.close), findsNothing);
-    expect(find.byIcon(Icons.receipt_long), findsOneWidget);
+    // enabled: false のためメニューは開かず、作成も走らない。
+    expect(find.text('今日の日付でリストを追加'), findsNothing);
     expect(recordingListAdd.callCount, 0);
     expect(recordingItemAdd.callCount, 0);
   });
@@ -359,7 +356,7 @@ void main() {
     final recordingListAdd = _RecordingShoppingListAdd();
     final recordingItemAdd = _RecordingAddShoppingListItem();
     final recordingDuplicate = _RecordingShoppingListDuplicate();
-    await pumpFab(
+    await pumpButton(
       tester,
       shoppingListAdd: recordingListAdd,
       addShoppingListItem: recordingItemAdd,
@@ -379,14 +376,13 @@ void main() {
     );
 
     final currentShoppingListIDSubscription = ProviderScope.containerOf(
-      tester.element(find.byType(CreateListFab)),
-    ).listen(currentShoppingListIDProvider, (_, __) {});
+      tester.element(find.byType(CreateListMenuButton)),
+    ).listen(currentShoppingListIDProvider, (_, _) {});
 
-    // タップでメニューを開いてから「現在のリストを複製」をタップする。
-    await tester.tap(find.byIcon(Icons.receipt_long));
+    await tester.tap(buttonFinder);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byIcon(Icons.content_copy_outlined));
+    await tester.tap(find.text('現在のリストを複製'));
     await tester.pumpAndSettle();
 
     expect(recordingDuplicate.callCount, 1);
@@ -412,7 +408,7 @@ void main() {
 
   testWidgets('メニューの「未チェックのみ引き継いで複製」はチェック済みアイテムを引き継がない', (tester) async {
     final recordingDuplicate = _RecordingShoppingListDuplicate();
-    await pumpFab(
+    await pumpButton(
       tester,
       shoppingListAdd: _RecordingShoppingListAdd(),
       addShoppingListItem: _RecordingAddShoppingListItem(),
@@ -435,11 +431,10 @@ void main() {
       ],
     );
 
-    // タップでメニューを開いてから「未チェックのみ引き継いで複製」をタップする。
-    await tester.tap(find.byIcon(Icons.receipt_long));
+    await tester.tap(buttonFinder);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byIcon(Icons.check_box_outline_blank));
+    await tester.tap(find.text('未チェックのみ引き継いで複製'));
     await tester.pumpAndSettle();
 
     expect(recordingDuplicate.callCount, 1);
@@ -450,9 +445,9 @@ void main() {
     );
   });
 
-  testWidgets('複製元リスト未取得(null)の間は複製アクションをタップしても何もしない', (tester) async {
+  testWidgets('複製元リスト未取得(null)の間は複製アクションが無効でタップしても何もしない', (tester) async {
     final recordingDuplicate = _RecordingShoppingListDuplicate();
-    await pumpFab(
+    await pumpButton(
       tester,
       shoppingListAdd: _RecordingShoppingListAdd(),
       addShoppingListItem: _RecordingAddShoppingListItem(),
@@ -462,13 +457,17 @@ void main() {
       shoppingListItems: const [],
     );
 
-    // タップでメニューを開いてから複製アクションをタップする。
-    await tester.tap(find.byIcon(Icons.receipt_long));
+    await tester.tap(buttonFinder);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byIcon(Icons.content_copy_outlined));
+    // メニュー自体は開く（「今日の日付でリストを追加」は使える）。
+    expect(find.text('今日の日付でリストを追加'), findsOneWidget);
+
+    await tester.tap(find.text('現在のリストを複製'));
     await tester.pumpAndSettle();
 
     expect(recordingDuplicate.callCount, 0);
+    // 無効アクションのタップではメニューは閉じない。
+    expect(find.text('現在のリストを複製'), findsOneWidget);
   });
 }

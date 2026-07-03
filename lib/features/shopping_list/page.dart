@@ -9,7 +9,6 @@ import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/ai_processing_banner.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/list_error_card.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/retention_banner.dart';
-import 'package:shoppinglist/features/shopping_list/components/create_list_fab.dart';
 import 'package:shoppinglist/features/shopping_list/components/expandable_fab.dart';
 import 'package:shoppinglist/features/shopping_list/components/group_chips_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/list_top_bar.dart';
@@ -219,7 +218,7 @@ class _ActiveShoppingList extends ConsumerWidget {
     // グループへの更新通知は上部バー(ListTopBar)の手動ボタン(NotifyGroupButton)で行う。
     // 自動検知による通知バーは廃止した(Issue #449)。
 
-    // ソフトキーボード表示中は、下部の浮遊要素(ダブル FAB・進捗ピル)を隠す。入力行は
+    // ソフトキーボード表示中は、下部の浮遊要素(FAB・進捗ピル)を隠す。入力行は
     // フォーカス時に keepVisibleAtEnd でキーボード直上へスクロールされる
     // (text_shopping_list_item.dart, Issue #429)ため、同じくキーボード直上に浮く FAB・
     // 進捗ピルと重なってしまう。キーボード表示中は入力行での連続追加が主操作で FAB は不要な
@@ -244,34 +243,17 @@ class _ActiveShoppingList extends ConsumerWidget {
           ),
         );
       },
-      // ダブル FAB: 上がリスト作成（CreateListFab）、下がアイテム入力（ExpandableFab）。
-      // CreateListFab(48px) は ExpandableFab(56px) と中心が揃うよう右に 4px 寄せる。
+      // アイテム入力 FAB（ExpandableFab）。リスト作成は上部バー(ListTopBar)の
+      // CreateListMenuButton へ移動した(Issue #461)。
       // キーボード表示中は入力行と重なるため隠す(Scaffold の FAB スケールアニメで消える)。
       floatingActionButton:
           isKeyboardVisible
               ? null
-              : Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 4),
-                    child: CreateListFab(
-                      groupID: groupID,
-                      appUser: ref.watch(appUserProvider).asData?.value,
-                      shoppingList: shoppingList,
-                      shoppingListItems:
-                          shoppingListItemsAsync.asData?.value ?? const [],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  ExpandableFab(
-                    groupID: groupID,
-                    shoppingListID: shoppingListID,
-                    shoppingListItems:
-                        shoppingListItemsAsync.asData?.value ?? const [],
-                  ),
-                ],
+              : ExpandableFab(
+                groupID: groupID,
+                shoppingListID: shoppingListID,
+                shoppingListItems:
+                    shoppingListItemsAsync.asData?.value ?? const [],
               ),
       // NavBar(surface)の帯 + 白(card)コンテンツ部のハイブリッドサーフェス。
       // リスト本体のスクロール開始時に FAB の展開メニューを閉じる。onNotification は
@@ -290,6 +272,8 @@ class _ActiveShoppingList extends ConsumerWidget {
                 shoppingListID: shoppingListID,
                 shoppingLists: shoppingLists,
                 shoppingList: shoppingList,
+                shoppingListItems:
+                    shoppingListItemsAsync.asData?.value ?? const [],
                 onShoppingListIDChanged:
                     (newID) => currentShoppingListIDNotifier.update(newID),
               ),
