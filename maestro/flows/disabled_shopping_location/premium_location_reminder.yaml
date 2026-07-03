@@ -3,8 +3,8 @@ appId: ${APP_ID}
 # プレミアム状態では位置情報リマインダーを有効化できることを確認する。
 # non_premium 版では SnackBar で遮断される。
 
-- runFlow: shared/anonymous_sign_in.yaml
-- runFlow: shared/grant_premium_via_debug.yaml
+- runFlow: ../shared/anonymous_sign_in.yaml
+- runFlow: ../shared/grant_premium_via_debug.yaml
 
 # 設定 → 位置情報リマインダー Switch（grant_premium_via_debug.yaml 終了時点で設定画面の
 # 下方にいるため UP 方向にスクロールして位置情報リマインダー ListTile まで戻す）

@@ -1,13 +1,12 @@
 appId: ${APP_ID}
 ---
-# 非プレミアムユーザーのカテゴリ・ロケーション別並び替え制限テスト（design v2 ナビ追従）。
-# 匿名ログイン（非プレミアム）で買い物場所とカテゴリを作成し、リストに場所を割り当てても
-# ロケーション別ソートは無効化され、デフォルト order 順（野菜=0, 肉=1 → 野菜が先）で
-# 表示されることを確認する。
-# design v2 では場所/カテゴリ追加は別画面に分離（category_location_order.yaml と同じナビ）。
-- runFlow: shared/anonymous_sign_in.yaml
+# プレミアム状態でロケーション別カテゴリ並び替えが機能することを確認する（design v2 ナビ追従）。
+# 「テストスーパー」に対して「肉」(order=0)→「野菜」(order=1) の順序をデバッグ Function 経由で設定し、
+# 買い物リスト画面でデフォルト order（野菜=0, 肉=1）の逆順（肉→野菜）で表示されることを確認する。
+- runFlow: ../shared/anonymous_sign_in.yaml
+- runFlow: ../shared/grant_premium_via_debug.yaml
 
-# === Phase 1: リスト設定 → グループ設定 配下で 場所 + カテゴリ2件 を作成 ===
+# === Phase 1: 場所「テストスーパー」とカテゴリ「野菜」「肉」を作成 ===
 - tapOn: "リスト設定"
 - assertVisible: "買い物リスト設定"
 - scrollUntilVisible:
@@ -16,7 +15,7 @@ appId: ${APP_ID}
 - tapOn: "グループ設定"
 - assertVisible: "グループ設定"
 
-# 買い物場所「テストスーパー」を作成
+# 買い物場所「テストスーパー」
 - scrollUntilVisible:
     element: "(?s).*買い物する場所.*"
     direction: DOWN
@@ -32,20 +31,19 @@ appId: ${APP_ID}
     index: 0
 - waitForAnimationToEnd
 - assertVisible: "テストスーパー"
-# グループ設定へ戻る
 - tapOn:
     point: "5%,10%"
 - waitForAnimationToEnd
 - assertVisible: "グループ設定"
 
-# カテゴリ画面へ（グループ設定のカテゴリセル → GroupCategoryPage）
+# カテゴリ画面へ
 - scrollUntilVisible:
     element: "(?s).*カテゴリ.*"
     direction: DOWN
 - tapOn: "(?s).*カテゴリ.*"
 - assertVisible: "カテゴリを追加"
 
-# カテゴリ1: 野菜 / キーワード にんじん
+# カテゴリ1: 野菜 / にんじん
 - tapOn: "カテゴリを追加"
 - waitForAnimationToEnd
 - assertVisible: "カテゴリ編集"
@@ -67,7 +65,7 @@ appId: ${APP_ID}
     visible: "(?s).*野菜.*"
     timeout: 10000
 
-# カテゴリ2: 肉 / キーワード 鶏肉（右下 FAB から追加）
+# カテゴリ2: 肉 / 鶏肉
 - tapOn:
     point: "90%,93%"
 - waitForAnimationToEnd
@@ -89,7 +87,7 @@ appId: ${APP_ID}
 - extendedWaitUntil:
     visible: "(?s).*肉.*"
     timeout: 10000
-- takeScreenshot: screenshots/cat_loc_non_premium_01_setup_done
+- takeScreenshot: screenshots/premium_cat_loc_01_setup_done
 
 # === Phase 2: home に戻る ===
 - launchApp
@@ -98,7 +96,28 @@ appId: ${APP_ID}
     visible: "タップで入力開始"
     timeout: 30000
 
-# === Phase 3: リストに「テストスーパー」を割り当て ===
+# === Phase 3: 開発者オプション経由でカテゴリロケーション順序を設定 ===
+# 「肉」= locationOrders[テストスーパー]=0、「野菜」=1（デフォルトの逆順）。
+# setupTestCategoryLocationOrder Function が defaultGroupID に対して設定する。
+- runFlow: ../shared/open_developer_options.yaml
+- extendedWaitUntil:
+    visible: "カテゴリロケーション順序設定（テスト用）"
+    timeout: 10000
+- tapOn: "カテゴリロケーション順序設定（テスト用）"
+- extendedWaitUntil:
+    visible: "カテゴリロケーション順序設定 完了"
+    timeout: 30000
+# 開発者オプション → 設定 → home へ戻る（grant_premium_via_debug と同じ復帰手順）
+- tapOn: "Back"
+- waitForAnimationToEnd
+- tapOn:
+    point: "7%,10%"
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "タップで入力開始"
+    timeout: 15000
+
+# === Phase 4: リストに「テストスーパー」を割り当て ===
 - tapOn: "リスト設定"
 - assertVisible: "買い物リスト設定"
 - tapOn: "(?s).*未設定.*"
@@ -114,7 +133,7 @@ appId: ${APP_ID}
     visible: "タップで入力開始"
     timeout: 15000
 
-# === Phase 4: アイテム追加 → デフォルト order で分類確認 ===
+# === Phase 5: アイテム追加 → ロケーション別ソートで 肉→野菜 の逆順表示 ===
 - tapOn: "タップで入力開始"
 - inputText: "にんじん"
 - pressKey: enter
@@ -123,12 +142,17 @@ appId: ${APP_ID}
 - pressKey: enter
 - hideKeyboard
 - waitForAnimationToEnd
-# 非プレミアムなのでロケーション別ソートは無効化され、デフォルト order 順
-# （野菜=0, 肉=1）で表示される。両ヘッダーが出ることを確認し、順序はスクショで目視確認する。
-- extendedWaitUntil:
-    visible: "(?s).*野菜.*"
-    timeout: 10000
+
+# locationOrders: 肉=0, 野菜=1 → 肉が野菜より先（上）に表示される。
+# 「肉」ヘッダーが表示され、「野菜」は下方向に存在する（逆順が適用された証跡はスクショ）。
 - extendedWaitUntil:
     visible: "(?s).*肉.*"
-    timeout: 5000
-- takeScreenshot: screenshots/cat_loc_non_premium_02_default_order
+    timeout: 10000
+- assertVisible: "(?s).*肉.*"
+- scrollUntilVisible:
+    element: "(?s).*野菜.*"
+    direction: DOWN
+- assertVisible: "(?s).*野菜.*"
+# キーワードマッチが機能し未分類アイテムが無いこと
+- assertNotVisible: "未分類"
+- takeScreenshot: screenshots/premium_cat_loc_02_location_order_applied

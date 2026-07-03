@@ -46,22 +46,8 @@ appId: ${APP_ID}
 - pressKey: Enter
 - takeScreenshot: screenshots/group_setting_02_name_saved
 
-# 「買い物する場所」AppCell から ShoppingLocationPage へ遷移できること。
-# design v2 ではグループ設定内のインライン場所追加は廃止され、別画面遷移に集約された。
-# AppCell の accessibilityText は title+subtitle が "買い物する場所\n店舗の登録・編集" と
-# 改行結合されるため (?s) 部分一致で指定する。
-- scrollUntilVisible:
-    element: "(?s).*買い物する場所.*"
-    direction: DOWN
-- tapOn: "(?s).*買い物する場所.*"
-# ShoppingLocationPage の空状態（このグループは新規で場所0件）。
-# AppBar タイトルもセルも "買い物する場所" のため、遷移確認には空状態文言を使う。
-- assertVisible: "買い物する場所がまだありません"
-- takeScreenshot: screenshots/group_setting_03_location_page
-# AppBar 左上の back シェブロン（Flutter Key 非露出のため座標タップ）
-- tapOn:
-    point: "5%,10%"
-- assertVisible: "グループ設定"
+# 「買い物する場所」AppCell は位置情報機能非表示のため表示されないこと (issue #465)。
+- assertNotVisible: "(?s).*買い物する場所.*"
 
 # 「カテゴリ」AppCell から GroupCategoryPage へ遷移できること。
 # accessibilityText は "カテゴリ\n自動分類のキーワード管理" のため (?s) 部分一致で指定する。
