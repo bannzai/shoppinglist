@@ -161,8 +161,12 @@ class _NoOpCategoryAxisAdd extends GroupCategoryAxisAdd {
 }
 
 void main() {
-  group('GroupCategoryPage プレミアムゲーティング', () {
-    testWidgets('非プレミアムユーザーはドロップダウンにロックアイコンが表示される', (
+  group('GroupCategoryPage 買い物する場所の並び順', () {
+    // 位置情報機能はファーストリリースでは非表示 (issue #465)。
+    // shoppingLocationFeatureEnabled を true に戻す際は、ロックアイコン表示・
+    // 非プレミアム選択時の SnackBar 表示のプレミアムゲーティングテストを復活させること
+    // (git 履歴のこのテストファイルを参照)。
+    testWidgets('店舗が存在してもドロップダウンは表示されない (issue #465)', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
@@ -178,35 +182,8 @@ void main() {
       // StreamProviderのデータ読み込みを待つ
       await tester.pumpAndSettle();
 
-      // ロックアイコンが表示されている
-      expect(find.byIcon(Icons.lock), findsOneWidget);
-    });
-
-    testWidgets('非プレミアムユーザーが買い物場所を選択するとSnackBarが表示される', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: _nonPremiumOverrides(),
-          child: MaterialApp(
-            theme: buildAppTheme(accent: AccentPreset.shu),
-            home: const GroupCategoryPage(groupID: _testGroupID),
-          ),
-        ),
-      );
-
-      await tester.pumpAndSettle();
-
-      // ドロップダウンをタップ
-      await tester.tap(find.byType(DropdownButtonFormField<String?>));
-      await tester.pumpAndSettle();
-
-      // 「テストスーパー」の選択肢をタップ
-      await tester.tap(find.text('テストスーパー').last);
-      await tester.pumpAndSettle();
-
-      // SnackBarが表示される
-      expect(find.text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'), findsOneWidget);
+      expect(find.byType(DropdownButtonFormField<String?>), findsNothing);
+      expect(find.byIcon(Icons.lock), findsNothing);
     });
   });
 

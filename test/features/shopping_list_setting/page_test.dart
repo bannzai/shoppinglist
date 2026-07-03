@@ -55,24 +55,24 @@ void main() {
             .toList();
     expect(
       labels,
-      containsAll(<String>['リスト名', '買い物する場所', 'カテゴリ', '保存期間', '共有', 'リストの操作']),
+      containsAll(<String>['リスト名', 'カテゴリ', '保存期間', '共有', 'リストの操作']),
     );
+    // 位置情報機能はファーストリリースでは非表示 (issue #465)。
+    expect(labels, isNot(contains('買い物する場所')));
 
     expect(find.text('リスト名'.toUpperCase()), findsOneWidget);
     expect(find.text('共有'.toUpperCase()), findsOneWidget);
     expect(find.text('リストの操作'.toUpperCase()), findsOneWidget);
   });
 
-  testWidgets('買い物する場所 AppCell に detail「変更」が表示される', (tester) async {
+  testWidgets('買い物する場所 AppCell は表示されない (issue #465)', (tester) async {
     await _pumpPage(tester);
     final placeCell =
         tester
             .widgetList<AppCell>(find.byType(AppCell))
             .where((c) => c.icon == Icons.place_outlined)
             .firstOrNull;
-    expect(placeCell, isNotNull, reason: '買い物する場所 Cell が AppCell として描画されているべき');
-    expect(placeCell!.detail, '変更');
-    expect(find.text('変更'), findsOneWidget);
+    expect(placeCell, isNull, reason: '位置情報機能はファーストリリースでは非表示のため描画されないべき');
   });
 
   testWidgets('保存期間に「アップグレード」AppPill が表示される (非プレミアム時)', (tester) async {
