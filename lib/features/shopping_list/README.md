@@ -49,21 +49,20 @@
 - 利用回数: `lib/entity/ai_usage.dart` / `lib/provider/ai_usage.dart`（`remainingCategorizeCount`）
 - プレビュー（UI検証）: `lib/features/previews/screens/ai_categorize_preview_sheet_preview.dart`
 
-## 右下のダブル FAB
-右下には 2 つのボタンを縦に並べる。
-
-- 下（メイン・accent 塗り・鉛筆アイコン）: `expandable_fab.dart`（`ExpandableFab`）。
-  タップで空行追加→auto-focus。長押しで写真 / URL / テキスト貼り付けメニューを展開。
-- 上（白地・リスト+バッジの合成アイコン）: `create_list_fab.dart`（`CreateListFab`）。
-  タップで「今日の日付でリストを追加 / 現在のリストを複製 / 未チェックのみ引き継いで複製」の
-  3 メニューを上方向に展開する（展開中にもう一度タップで閉じる）。
+## アイテム追加 FAB とリスト追加メニュー
+- 右下 FAB（accent 塗り・add_task アイコン）: `expandable_fab.dart`（`ExpandableFab`）。
+  タップで「写真から追加 / URL から追加 / テキスト貼り付け / 1行追加」のメニューを上方向に
+  展開する（展開中にもう一度タップで閉じる）。展開メニュー（ラベルピル + 円形アイコンの行）は
+  `fab_action_menu.dart`（`FabActionMenu` / `FabMenuAction`）。
+- 上部バー（`ListTopBar`）右の「リストを追加」ボタン（リスト+バッジの合成アイコン）:
+  `create_list_menu_button.dart`（`CreateListMenuButton`）。右下ダブル FAB の上側
+  （旧 `CreateListFab`）から Issue #461 で移動した。タップで
+  「今日の日付でリストを追加 / 現在のリストを複製 / 未チェックのみ引き継いで複製」の
+  3 アクションのメニュー（PopupMenu）を開く。
   「今日の日付でリストを追加」は「リスト作成（日付名で自動命名）→ 作成リストへ切替 →
   空アイテム追加→auto-focus」まで連鎖し、新しい買い物の開始につなげる。無料プランの上限超過時は
   SnackBar（アップグレード導線付き）を表示する。複製は `ShoppingListDuplicate` に委譲し、
   完了後は複製先リストへ表示を切り替える。
-
-両 FAB の展開メニュー（ラベルピル + 円形アイコンの行）は `fab_action_menu.dart`
-（`FabActionMenu` / `FabMenuAction`）で共用する。
 
 ## 入力行と空行のライフサイクル
 入力行は `message=''` の `GroupShoppingListItem` ドキュメント。テキストはローカルの
@@ -74,7 +73,8 @@
 - フォーカス喪失時、入力途中のテキストがあれば確定保存する（空なら行を削除）。
 - 連続入力（Enter連打）中は入力行にフォーカスが残るためキーボードは閉じず、空行も消えない
   （キーボード維持は fix-350 の設計を踏襲）。
-- 再入力は FAB（`expandable_fab.dart`：タップで空行追加→auto-focus）または空状態のスターター行から。
+- 再入力は FAB（`expandable_fab.dart`：メニューの「1行追加」で空行追加→auto-focus）
+  または空状態のスターター行から。
 
 ## チェック済み・カテゴリ表示の固定（Issue #373）
 チェック済みアイテムは常に表示し、カテゴリ軸があれば常にカテゴリ順で表示する。

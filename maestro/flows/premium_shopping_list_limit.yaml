@@ -7,14 +7,14 @@ appId: ${APP_ID}
 - runFlow: shared/anonymous_sign_in.yaml
 - runFlow: shared/grant_premium_via_debug.yaml
 
-# 初期 1 個 + CreateListFab で 20 個追加 = 21 個（free 上限 20 を超過）。
-# design v2: リスト追加は CreateListFab（右下 89%,83%）を展開し「今日の日付でリストを追加」。
-# 作成後はキーボードが FAB を覆うため毎回 hideKeyboard で閉じてから次の追加を行う。
+# 初期 1 個 + リスト追加メニューで 20 個追加 = 21 個（free 上限 20 を超過）。
+# リスト追加は上部バー右の「リストを追加」メニュー（CreateListMenuButton, Issue #461）から
+# 「今日の日付でリストを追加」。作成後はキーボードが開くため毎回 hideKeyboard で閉じて
+# 画面状態を揃えてから次の追加を行う。
 - repeat:
     times: 20
     commands:
-      - tapOn:
-          point: "89%, 83%"
+      - tapOn: "リストを追加"
       - extendedWaitUntil:
           visible: "今日の日付でリストを追加"
           timeout: 8000
