@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -9,7 +8,6 @@ import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item_detail_bottom_sheet.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
-import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -27,7 +25,6 @@ final shoppingListInputRowFocusRequestProvider = StateProvider<int>((ref) => 0);
 /// 構造:
 /// - 円形 Checkbox（22px stroke 1.5px、チェック ON で pop アニメ scale 1→1.2→1）
 /// - TextField（編集中フォーカス枠なし）
-/// - description / imageURL（任意）
 /// - 詳細アイコン
 ///
 /// focused 中は左端に 2px の accent ボーダーと accentSoft 0.4 の背景を出す。
@@ -164,22 +161,13 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
     // 空のメッセージ(新規入力待ちの行・未保存の編集中の行)はチェック対象にしない。
     // チェックボックスのタップ・右スワイプの両方を無効化するための判定。
     final isEmptyMessage = textShoppingListItem.message.trim().isEmpty;
-    final hasDescription =
-        textShoppingListItem.description != null &&
-        textShoppingListItem.description!.isNotEmpty;
-    final itemColor =
-        textShoppingListItem.color != null
-            ? colorFromHex(textShoppingListItem.color!).withValues(alpha: 0.1)
-            : null;
     final focused = isEditing.value;
     // チェック済み行に背景は塗らない（screens-list.jsx#ItemRow は checked でも transparent）。
     // divider2 半透過を塗るとカテゴリヘッダーの surface とほぼ同色になり、チェックを入れると
     // セクションの境界が見分けられなくなる（Issue #374）。チェック状態は Checkbox 塗り +
     // 取り消し線 + checked 文字色で表現する。
     final backgroundColor =
-        focused
-            ? tokens.accentSoft.withValues(alpha: 0.6)
-            : itemColor ?? Colors.transparent;
+        focused ? tokens.accentSoft.withValues(alpha: 0.6) : Colors.transparent;
 
     // ReorderableListView のドラッグ移動中に Material が必要
     final content = Material(
@@ -187,7 +175,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       // 行の長押しは ReorderableDelayedDragStartListener（並び替えドラッグ）に委ねる。
       // 以前あった長押し context menu(複製/メモ/削除)は、長押しジェスチャが並び替え
       // ドラッグと競合してドラッグ開始を阻害するため廃止した。削除は左スワイプ、
-      // 説明・カラー編集は末尾の詳細アイコン(more_horiz)から行う。
+      // カテゴリ変更・削除は末尾の詳細アイコン(more_horiz)から行う。
       child: Container(
         decoration: BoxDecoration(
           border: Border(
@@ -205,10 +193,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
               label: textShoppingListItem.message,
               child: _CircleCheckbox(
                 checked: isChecked,
-                color:
-                    textShoppingListItem.color != null
-                        ? colorFromHex(textShoppingListItem.color!)
-                        : tokens.accent,
+                color: tokens.accent,
                 // 空行は onChanged を null にしてタップを無効化する。
                 onChanged:
                     isEmptyMessage
@@ -240,30 +225,20 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 固定高さ(44)を付けると複数行 TextField(maxLines: 7) が枠を上端から
-                  // 埋めて文字が上にずれる。高さを与えず Row の crossAxisAlignment.center
-                  // に縦中央化を任せる（GhostItemRow と同じ仕組み）。行の高さは末尾の
-                  // IconButton(最小 48px) が確保するため、タップ領域は維持される。
-                  SizedBox(
-                    width: double.infinity,
-                    child: TextShoppingListItemTextField(
-                      groupID: groupID,
-                      textEditingController: textEditingController,
-                      focusNode: focusNode,
-                      textShoppingListItem: textShoppingListItem,
-                      shoppingListItems: shoppingListItems,
-                      isEditing: isEditing.value,
-                    ),
-                  ),
-                  if (hasDescription)
-                    ShoppingListItemDescriptionText(
-                      description: textShoppingListItem.description!,
-                    ),
-                ],
+              // 固定高さ(44)を付けると複数行 TextField(maxLines: 7) が枠を上端から
+              // 埋めて文字が上にずれる。高さを与えず Row の crossAxisAlignment.center
+              // に縦中央化を任せる（GhostItemRow と同じ仕組み）。行の高さは末尾の
+              // IconButton(最小 48px) が確保するため、タップ領域は維持される。
+              child: SizedBox(
+                width: double.infinity,
+                child: TextShoppingListItemTextField(
+                  groupID: groupID,
+                  textEditingController: textEditingController,
+                  focusNode: focusNode,
+                  textShoppingListItem: textShoppingListItem,
+                  shoppingListItems: shoppingListItems,
+                  isEditing: isEditing.value,
+                ),
               ),
             ),
             if (showAddCategoryButton) ...[
@@ -300,10 +275,6 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                 },
               ),
             ],
-            if (textShoppingListItem.imageURL != null)
-              ShoppingListItemThumbnail(
-                imageURL: textShoppingListItem.imageURL!,
-              ),
             IconButton(
               tooltip: 'アイテム詳細',
               onPressed: () {
@@ -316,6 +287,9 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                 );
                 appShowModalBottomSheet(
                   context: context,
+                  // シートの中身はカテゴリ行と削除のみで少ないため、90% 固定高では
+                  // なくコンテンツ高にフィットさせる（Issue #464）。
+                  fitContentHeight: true,
                   builder: (context) {
                     return TextShoppingListItemDetailBottomSheet(
                       groupID: groupID,
@@ -450,77 +424,6 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         }
       },
       child: widget,
-    );
-  }
-}
-
-/// アイテムの説明（[GroupShoppingListItem.description]）を message の下に表示するテキスト。
-/// 一覧では 1 行に省略表示し、全文はアイテム詳細シートで確認・編集する。
-class ShoppingListItemDescriptionText extends StatelessWidget {
-  /// 表示する説明文。
-  final String description;
-
-  const ShoppingListItemDescriptionText({super.key, required this.description});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: Text(
-        description,
-        style: Theme.of(
-          context,
-        ).textTheme.bodySmall?.copyWith(color: context.appTheme.neutral.ink3),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-    );
-  }
-}
-
-/// アイテムに添付された商品写真（[GroupShoppingListItem.imageURL]）のサムネイル。
-/// 一覧の行末、詳細アイコン(more_horiz)の左に小さく表示する。
-class ShoppingListItemThumbnail extends StatelessWidget {
-  /// 商品写真のダウンロードURL。
-  final String imageURL;
-
-  const ShoppingListItemThumbnail({super.key, required this.imageURL});
-
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.appTheme;
-    return Padding(
-      padding: const EdgeInsets.only(left: 4),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: CachedNetworkImage(
-          imageUrl: imageURL,
-          width: 36,
-          height: 36,
-          fit: BoxFit.cover,
-          placeholder:
-              (context, url) => SizedBox(
-                width: 36,
-                height: 36,
-                child: Center(
-                  child: SizedBox(
-                    width: 14,
-                    height: 14,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(tokens.accent),
-                    ),
-                  ),
-                ),
-              ),
-          errorWidget:
-              (context, url, error) => Icon(
-                Icons.broken_image,
-                size: 18,
-                color: tokens.neutral.ink3,
-              ),
-        ),
-      ),
     );
   }
 }
