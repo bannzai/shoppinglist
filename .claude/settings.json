@@ -14,5 +14,27 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(gh-r2-image:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git status:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(mkdir:*)",
+      "Bash(ls:*)",
+      "Bash(date:*)",
+      "Bash(bash /Users/bannzai/.claude/skills/run-qa/scripts/affected_features.sh:*)",
+      "Bash(bash /Users/bannzai/.claude/skills/run-qa/scripts/mark_verified.sh:*)",
+      "Bash(sim-boot:*)",
+      "Bash(sim-list:*)",
+      "Bash(sim-shutdown:*)",
+      "Bash(xcrun simctl:*)",
+      "Bash(maestro:*)",
+      "mcp__mobile",
+      "Bash(flutter:*)",
+      "Bash(dart:*)"
+    ]
   }
 }

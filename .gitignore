@@ -70,3 +70,6 @@ tmp/implement-issue/
 tmp/pr-quality-checks/
 
 .claude/skills/*/.venv/
+
+# run-qa の作業ファイル
+tmp/qa/
