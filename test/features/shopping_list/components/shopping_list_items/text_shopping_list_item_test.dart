@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,7 +13,6 @@ import 'package:shoppinglist/features/previews/mock/mock_provider_overrides.dart
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
-import 'package:shoppinglist/style/color.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
@@ -230,7 +230,9 @@ void main() {
       expect(_rowMaterial(tester).color, Colors.transparent);
     });
 
-    testWidgets('アイテムカラー指定時はチェック状態に関わらずカラー 10% を塗る', (tester) async {
+    testWidgets('color を持つ既存データでも背景は transparent（Issue #464: カラー表示は廃止）', (
+      tester,
+    ) async {
       await _pump(
         tester,
         _item(
@@ -240,28 +242,20 @@ void main() {
           color: '#1F6B4E',
         ),
       );
-      expect(
-        _rowMaterial(tester).color,
-        colorFromHex('#1F6B4E').withValues(alpha: 0.1),
-      );
+      expect(_rowMaterial(tester).color, Colors.transparent);
     });
   });
 
-  group('説明 (description) と商品写真サムネイルの一覧表示', () {
-    testWidgets('description 設定時は説明テキストを表示する', (tester) async {
+  group('説明・商品写真の一覧表示の廃止（Issue #464）', () {
+    testWidgets('description を持つ既存データでも説明テキストを表示しない', (tester) async {
       await _pump(
         tester,
         _item(id: 'desc', message: '牛乳', description: '低脂肪 1L'),
       );
-      expect(find.byType(ShoppingListItemDescriptionText), findsOneWidget);
+      expect(find.text('低脂肪 1L'), findsNothing);
     });
 
-    testWidgets('description 未設定時は説明テキストを表示しない', (tester) async {
-      await _pump(tester, _item(id: 'no-desc', message: '牛乳'));
-      expect(find.byType(ShoppingListItemDescriptionText), findsNothing);
-    });
-
-    testWidgets('imageURL 設定時はサムネイルを詳細アイコン (3点リーダー) の左に表示する', (tester) async {
+    testWidgets('imageURL を持つ既存データでもサムネイルを表示しない', (tester) async {
       await _pump(
         tester,
         _item(
@@ -270,17 +264,7 @@ void main() {
           imageURL: 'https://example.com/item.jpg',
         ),
       );
-      expect(find.byType(ShoppingListItemThumbnail), findsOneWidget);
-      // 行末の more_horiz (3点リーダー) より左に位置すること。
-      expect(
-        tester.getCenter(find.byType(ShoppingListItemThumbnail)).dx,
-        lessThan(tester.getCenter(find.byIcon(Icons.more_horiz)).dx),
-      );
-    });
-
-    testWidgets('imageURL 未設定時はサムネイルを表示しない', (tester) async {
-      await _pump(tester, _item(id: 'no-img', message: '牛乳'));
-      expect(find.byType(ShoppingListItemThumbnail), findsNothing);
+      expect(find.byType(CachedNetworkImage), findsNothing);
     });
   });
 
