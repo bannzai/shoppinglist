@@ -11,33 +11,18 @@ appId: ${APP_ID}
 - hideKeyboard
 - waitForAnimationToEnd
 
-# 詳細ボトムシートを開く（info アイコンに tooltip: 'アイテム詳細' を設定済み）
+# 詳細ボトムシートを開く（詳細アイコンに tooltip: 'アイテム詳細' を設定済み）
+# Issue #464 で説明・写真・カラーの編集は廃止し、シートはカテゴリ確認・変更と削除のみ。
 - tapOn: "アイテム詳細"
-
-# 説明を入力（80文字以内）
-- assertVisible: "説明"
-- tapOn: "補足説明を入力"
-- inputText: "キッコーマンの丸大豆"
-
-# カラーを選択（赤）
-# カラー円に Semantics(label: preset.label) を設定済み
-- tapOn: "赤"
 - waitForAnimationToEnd
 
-# 説明フィールドのフォーカスでキーボードが残りタップではシートが閉じないため、
-# ドラッグハンドル(上部)から下方向へスワイプしてシートを dismiss する（=変更を自動保存）。
-- swipe:
-    start: "50%, 8%"
-    end: "50%, 75%"
-- waitForAnimationToEnd
-
-# 再度詳細を開いて、説明・カラーが自動保存されていることを確認
-- tapOn: "アイテム詳細"
-- assertVisible: "キッコーマンの丸大豆"
-- takeScreenshot: screenshots/item_detail_01_with_memo_color
+# 廃止した説明・写真・カラーのセクションが表示されないこと
+- assertNotVisible: "説明"
+- assertNotVisible: "写真"
+- assertNotVisible: "カラー"
+- takeScreenshot: screenshots/item_detail_01_sheet
 
 # 削除（タイトル右上のゴミ箱アイコン。tooltip: 'アイテムを削除'）
-- assertVisible: "説明"
 - tapOn: "アイテムを削除"
 - assertVisible: "このアイテムを削除しますか？"
 - tapOn:
