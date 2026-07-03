@@ -71,8 +71,8 @@ void main() {
     // 開閉判定は各 FAB のアイコンで行う（既存 FAB テストと同じ方針）:
     // - アイテム追加 FAB: 閉=add_task / 開=close、リスト作成 FAB: 閉=receipt_long / 開=close。
 
-    // アイテム追加 FAB（FloatingActionButton）を開く。
-    await tester.tap(find.byType(FloatingActionButton));
+    // アイテム追加 FAB（FloatingActionButton）を長押しで開く（タップは空行追加）。
+    await tester.longPress(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
     expect(
       find.byIcon(Icons.add_task),
@@ -120,8 +120,8 @@ void main() {
       reason: 'アイテム追加 FAB は閉じたまま',
     );
 
-    // もう一方（アイテム追加 FAB）を開く。
-    await tester.tap(find.byType(FloatingActionButton));
+    // もう一方（アイテム追加 FAB）を長押しで開く（タップは空行追加）。
+    await tester.longPress(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
 
     expect(

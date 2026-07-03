@@ -29,8 +29,8 @@ import 'package:shoppinglist/utils/stdlib/navigator.dart';
 ///
 /// 閉時: accent の add_task（アイテム追加）56×56 円。リスト作成の `CreateListFab` と
 /// 縦に並べるダブル FAB 構成のメイン側。
-/// タップ: 1行追加 / 写真 / URL / テキスト貼り付け のメニューを上方向に展開する。
-/// 長押し: 反応しない。
+/// タップ: 空行を 1 件追加する（最頻操作をワンタップにする。Issue #462）。
+/// 長押し: 写真 / URL / テキスト貼り付け のメニューを上方向に展開する。
 class ExpandableFab extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
@@ -120,28 +120,6 @@ class ExpandableFab extends HookConsumerWidget {
           _pasteFromClipboard(context, ref);
         },
       ),
-      FabMenuAction(
-        icon: Icons.add,
-        label: '1行追加',
-        // 空行を直接追加する最頻操作。AI 処理を使わないため常に有効。
-        onTap: () {
-          analytics.logEvent(
-            name: 'tap_add_item_fab',
-            parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
-          );
-          close();
-          ref
-              .read(addShoppingListItemProvider(groupID: groupID))
-              .call(
-                shoppingListID: shoppingListID,
-                userID: currentUserID!,
-                message: '',
-                order: shoppingListItems.nextOrder,
-                description: null,
-                color: null,
-              );
-        },
-      ),
     ];
 
     return Column(
@@ -150,19 +128,41 @@ class ExpandableFab extends HookConsumerWidget {
       children: [
         // 展開メニュー。FAB の上に積み、open に応じて下端基準で上方向へ伸縮する。
         FabActionMenu(animation: curve, actions: actions),
-        // 長押しは無反応にする。FloatingActionButton(InkWell) は onLongPress 未設定だと
-        // 「長押し→指離し」がタップに退化してメニューが開いてしまうため、GestureDetector の
-        // 空 onLongPress でジェスチャーアリーナの長押しを勝たせて握りつぶす。
-        // タップ（FAB の onPressed）だけがメニュー開閉に効くようにする。
+        // 長押しでメニューを開閉する。FloatingActionButton(InkWell) は onLongPress 未設定だと
+        // 「長押し→指離し」がタップに退化して空行追加が走ってしまうため、GestureDetector の
+        // onLongPress でジェスチャーアリーナの長押しを勝たせ、メニュー開閉に割り当てる。
         GestureDetector(
-          onLongPress: () {},
+          onLongPress: () {
+            // メニュー展開中（x 状態）の長押しは閉じるに倒す。
+            if (open) {
+              analytics.logEvent(
+                name: 'long_press_close_fab_menu',
+                parameters: {
+                  'groupID': groupID,
+                  'shoppingListID': shoppingListID,
+                },
+              );
+              close();
+              return;
+            }
+            analytics.logEvent(
+              name: 'long_press_open_fab_menu',
+              parameters: {
+                'groupID': groupID,
+                'shoppingListID': shoppingListID,
+              },
+            );
+            ref
+                .read(shoppingListFabMenuProvider.notifier)
+                .open(ShoppingListFabMenuKind.addItem);
+          },
           child: FloatingActionButton(
             backgroundColor: tokens.accent,
             foregroundColor: Colors.white,
             shape: const CircleBorder(),
-            // タップでメニューを開閉する。
+            // タップで空行を 1 件追加する。
             onPressed: () {
-              // メニュー展開中（x 状態）のタップは閉じるに倒す。
+              // メニュー展開中（x 状態）のタップは追加せず閉じるに倒す。
               if (open) {
                 analytics.logEvent(
                   name: 'tap_close_fab_menu',
@@ -175,15 +175,22 @@ class ExpandableFab extends HookConsumerWidget {
                 return;
               }
               analytics.logEvent(
-                name: 'tap_open_fab_menu',
+                name: 'tap_add_item_fab',
                 parameters: {
                   'groupID': groupID,
                   'shoppingListID': shoppingListID,
                 },
               );
               ref
-                  .read(shoppingListFabMenuProvider.notifier)
-                  .open(ShoppingListFabMenuKind.addItem);
+                  .read(addShoppingListItemProvider(groupID: groupID))
+                  .call(
+                    shoppingListID: shoppingListID,
+                    userID: currentUserID!,
+                    message: '',
+                    order: shoppingListItems.nextOrder,
+                    description: null,
+                    color: null,
+                  );
             },
             // 閉時は add_task（アイテム追加）、メニュー展開中は x（閉じる）。
             // AnimatedSwitcher の回転+フェードでアイコン自体を入れ替える。
