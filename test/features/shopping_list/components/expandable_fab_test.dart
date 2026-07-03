@@ -96,11 +96,11 @@ void main() {
     return recordingAdd;
   }
 
-  testWidgets('③ タップで開いた「写真から追加」がタップ到達しダイアログが開く', (tester) async {
+  testWidgets('長押しで開いた「写真から追加」がタップ到達しダイアログが開く', (tester) async {
     await pumpFab(tester);
 
-    // タップで FAB メニューを開く。
-    await tester.tap(find.byType(FloatingActionButton));
+    // 長押しで FAB メニューを開く。
+    await tester.longPress(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byIcon(Icons.photo_camera_outlined));
@@ -112,10 +112,10 @@ void main() {
     expect(find.text('フォトライブラリ'), findsOneWidget);
   });
 
-  testWidgets('③ ラベル文字をタップしても（行全体が反応し）ダイアログが開く', (tester) async {
+  testWidgets('ラベル文字をタップしても（行全体が反応し）ダイアログが開く', (tester) async {
     await pumpFab(tester);
 
-    await tester.tap(find.byType(FloatingActionButton));
+    await tester.longPress(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
 
     // アイコンの 44px ではなくラベル文字側をタップ。行全体がタップ領域。
@@ -126,15 +126,15 @@ void main() {
     expect(find.text('カメラ'), findsOneWidget);
   });
 
-  testWidgets('② x 状態で FAB をタップしても Row を追加せず閉じる', (tester) async {
+  testWidgets('x 状態で FAB をタップすると Row を追加せず閉じる', (tester) async {
     final recordingAdd = await pumpFab(tester);
 
-    // タップでメニューを開く（× 状態）。
-    await tester.tap(find.byType(FloatingActionButton));
+    // 長押しでメニューを開く（× 状態）。
+    await tester.longPress(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
     expect(find.byIcon(Icons.close), findsOneWidget);
 
-    // × 状態の FAB を再タップ → 閉じるだけ。
+    // × 状態の FAB をタップ → 閉じるだけ。
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
 
@@ -146,44 +146,54 @@ void main() {
     );
   });
 
-  testWidgets('② 通常状態の FAB タップはメニューを開くだけで Row を追加しない', (tester) async {
+  testWidgets('通常状態の FAB タップは空行を 1 件追加しメニューは開かない', (tester) async {
     final recordingAdd = await pumpFab(tester);
 
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
 
-    // タップは追加せずメニューを開く（× 表示）。
-    expect(recordingAdd.callCount, 0);
-    expect(find.byIcon(Icons.close), findsOneWidget);
-  });
-
-  testWidgets('② メニューの「1行追加」タップで空行を 1 件追加する', (tester) async {
-    final recordingAdd = await pumpFab(tester);
-
-    await tester.tap(find.byType(FloatingActionButton));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text('1行追加'));
-    await tester.pump();
-
+    // タップは空行追加のみ。メニューは開かない（add_task のまま・× は出ない）。
     expect(recordingAdd.callCount, 1);
+    expect(find.byIcon(Icons.add_task), findsOneWidget);
+    expect(find.byIcon(Icons.close), findsNothing);
   });
 
-  testWidgets('長押しではメニューが開かない', (tester) async {
-    await pumpFab(tester);
+  testWidgets('長押しでメニューが開き Row は追加しない', (tester) async {
+    final recordingAdd = await pumpFab(tester);
 
     await tester.longPress(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
 
-    // 長押しは無反応。閉じたまま（add_task のまま・× は出ない）。
-    expect(find.byIcon(Icons.add_task), findsOneWidget);
-    expect(find.byIcon(Icons.close), findsNothing);
+    // 長押しでメニューが開く（× 表示）。空行追加は走らない。
+    expect(recordingAdd.callCount, 0);
+    expect(find.byIcon(Icons.close), findsOneWidget);
+    // タップで空行追加できるため、メニューに「1行追加」（Icons.add）は置かない。
+    expect(find.byIcon(Icons.add), findsNothing);
+  });
+
+  testWidgets('x 状態で FAB を長押しすると Row を追加せず閉じる', (tester) async {
+    final recordingAdd = await pumpFab(tester);
+
+    await tester.longPress(find.byType(FloatingActionButton));
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.close), findsOneWidget);
+
+    // × 状態の FAB を再長押し → 閉じるだけ。
+    await tester.longPress(find.byType(FloatingActionButton));
+    await tester.pumpAndSettle();
+
+    expect(recordingAdd.callCount, 0);
+    expect(
+      find.byIcon(Icons.add_task),
+      findsOneWidget,
+      reason: '閉じて add_task に戻る',
+    );
   });
 
   testWidgets('AI 処理中は「写真から追加」をタップしてもダイアログが開かない', (tester) async {
     await pumpFab(tester, aiProcessingType: AIProcessingType.categorize);
 
-    await tester.tap(find.byType(FloatingActionButton));
+    await tester.longPress(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byIcon(Icons.photo_camera_outlined));
@@ -197,7 +207,7 @@ void main() {
   testWidgets('AI 処理中は「URL から追加」をタップしてもダイアログが開かない', (tester) async {
     await pumpFab(tester, aiProcessingType: AIProcessingType.categorize);
 
-    await tester.tap(find.byType(FloatingActionButton));
+    await tester.longPress(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byIcon(Icons.link));
