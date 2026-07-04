@@ -59,6 +59,28 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **サインアウトは確認ダイアログを経由し、キャンセルでサインアウトされない**: 「サインアウト」ボタンタップで確認ダイアログ（「サインアウトしますか?」）が表示され、「キャンセル」で閉じてサインアウトされないことを確認する。maestro/flows/design_v2_settings_paywall.yaml で確認。
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
+
+### **デバッグビルドではサインアウト確定後に終了アラートが出ない**: 確認ダイアログで「サインアウト」を選ぶとサインアウトされるが、デバッグビルドでは「サインアウトしました」の終了アラートが出ずアプリも終了しない（`kDebugMode` ガードの回帰防止）。maestro/flows/auth_sign_out.yaml で確認。
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
+
+### **アカウント削除は確認ダイアログを経由し、削除実行後は完了ダイアログが表示される**: 「アカウントを削除する」→確認ダイアログの「キャンセル」では削除されず、「削除する」確定後は `FirebaseAuth.instance.currentUser?.delete()` が成功し「アカウントを削除しました」ダイアログが表示される。`requires-recent-login` で再認証が必要になるケースはApple/Google連携時のみ発生し実OAuth操作を要するため、Simulatorでの完全な確認は代替困難（匿名サインインアカウントで正常系のみ確認する）。
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
 
 </details>

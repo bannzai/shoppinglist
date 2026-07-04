@@ -54,7 +54,29 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **アプリ起動**: dev Firebase project に接続した状態でアプリが起動し、認証状態に応じて AuthPage / Home が正しく分岐する
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
+
+### **匿名サインイン**: AuthPage の匿名サインインボタンからサインインでき、`AppResolvers`（`lib/features/resolver/`）経由で AppUser ドキュメントが作成されて Home に遷移する
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
+
+### **サインアウト**: 設定画面からサインアウトでき、AuthPage に戻る
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
 
 </details>
 
@@ -69,7 +91,21 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **リアルタイム同期**: 開発者オプションの「デバッグユーザーとしてアイテム追加」実行後、Firestore の変更がリアルタイムでリスト画面に反映される
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
+
+### **グループ招待・参加**: グループ作成 → 招待コード発行 → 別ユーザー（デバッグユーザー）参加ができる
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
 
 </details>
 
@@ -84,7 +120,21 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **非プレミアム制限**: 非プレミアム状態でリスト数上限・カテゴリロケーション順・AI画像/URL認識回数などの制限が正しく機能する
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
+
+### **プレミアム解放**: 開発者オプションの「プレミアム付与（1日）」実行後、上記制限が解除される（実課金は行わない）
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
 
 </details>
 
@@ -98,7 +148,13 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **強制アップデートダイアログ**: 強制アップデート対象と判定された場合、`ForceUpdateResolver`（`lib/features/resolver/force_update.dart`）がダイアログを表示しストアへ誘導する
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
 
 </details>
 

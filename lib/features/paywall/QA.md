@@ -38,6 +38,36 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **オファリング取得失敗時はエラー表示と再試行ボタンが出る**: オフライン状態などでOffering取得に失敗すると、エラーメッセージと「再試行」ボタンが表示され、タップで再取得が走る。
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
+
+### **購入失敗時は例外メッセージがSnackBarで表示される**: Test Storeモーダルの「Test failed purchase」を選ぶと、決済失敗の例外内容がSnackBarでそのまま表示される。
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
+
+### **フッターの「復元」で購入を復元できる**: 「復元」タップで `Purchases.restorePurchases()` が呼ばれ、成功すると「購入を復元しました」SnackBarが表示される。
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
+
+### **フッターの利用規約・プライバシーリンクが開く**: 「利用規約」「プライバシー」タップでそれぞれ外部ブラウザが開く。
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
 
 </details>

@@ -15,7 +15,13 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **初期表示**: 「招待コードで参加」経由で開くと、アイコン・見出し「招待コードを入力してください」・説明文・8桁コード入力欄・非活性の「参加する」ボタン・「キャンセル」ボタンが表示される。maestro/flows/group_join_or_create.yaml で確認。
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
 
 </details>
 
@@ -31,7 +37,29 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **不正な形式では参加ボタン非活性**: バックエンドの許容文字（`ABCDEFGHJKMNPQRSTVWXY3456789`）以外を含む、または8桁未満の入力では「参加する」ボタンが非活性のまま。
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
+
+### **正しい形式で参加ボタンが活性化**: 許容文字のみで8桁入力すると入力欄の枠線がアクセントカラーに変わり「参加する」ボタンが活性化する。
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
+
+### **入力の自動大文字変換**: 小文字を入力しても表示上は自動的に大文字になる（textCapitalization: characters）。
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
 
 </details>
 
@@ -48,7 +76,37 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **参加中オーバーレイ表示**: 「参加する」タップ直後に「招待コードを確認中」の非タップ可能なオーバーレイダイアログが表示される。
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
+
+### **参加成功→ホームへ遷移**: 有効な招待コードで参加が成功すると、それまでの画面が全てpopされ参加後のグループのホーム画面（買い物リスト）に遷移する。
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
+
+### **存在しない招待コードでのエラー表示**: 発行されていないコードを入力すると、オーバーレイが閉じて「有効な招待が見つかりません」のエラーメッセージが画面内に赤字表示される。
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
+
+### **期限切れ・使用済みコードでのエラー表示**: 発行から7日経過した期限切れコード、または既に他ユーザーが使用済みのコードを入力すると、それぞれ「招待の有効期限が切れています」「この招待コードは既に使用されています」のエラーメッセージが表示される。事前に該当状態の招待コードを用意する必要があり、期限切れは日付操作またはFirestore直接編集で代替する。
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
 
 </details>
 
@@ -62,7 +120,13 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **キャンセルボタン**: 「キャンセル」をタップすると入力内容を破棄して前の画面（GroupJoinOrCreatePage等）に戻る。maestro/flows/group_join_or_create.yaml で確認。
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
 
 </details>
 
@@ -76,7 +140,13 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **実際の別ユーザーによる招待コード参加**: 別ユーザーが発行した招待コードで本画面から参加し、グループのデータ（買い物リスト）が共有されることを確認する。1台のiOS Simulatorでは物理的に別ユーザーを用意できないため、developer_options の「デバッグユーザー作成」「グループにデバッグユーザーを追加」機能（maestro/flows/virtual_pairing/ 一式、multi-device-group-invite-test skill）で代替する。
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
 
 </details>
 

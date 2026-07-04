@@ -20,7 +20,21 @@ mobile-mcp（`/verify-ui-mobile-mcp` の手順）でのみ検証する。
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **ホーム画面へのウィジェット追加**: iOS標準のウィジェットギャラリーから「ShoppingListWidget」を検索してホーム画面に追加すると、現在のグループの買い物リスト名とアイテム一覧、done/total件数が表示される。
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
+
+### **リスト・アイテム変更の同期**: アプリでアイテムを追加/チェック/削除すると、`HomeWidgetSync` によりウィジェットストレージが更新され、ウィジェットの表示内容とdone/total件数に反映される（タイムラインは最大15分毎の更新のため、即時反映されない場合はアプリ再起動やしばらく待っての確認が必要）。
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
 
 </details>
 
@@ -34,7 +48,13 @@ mobile-mcp（`/verify-ui-mobile-mcp` の手順）でのみ検証する。
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **ウィジェット上でのチェック切替とアプリへの同期**: ウィジェット内のアイテムをタップしてチェック状態を切り替えると（`homeWidgetBackgroundCallback`）、Firestore上のstatusが更新され、アプリを開いた際にも同じチェック状態が反映されている。
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
 
 </details>
 
@@ -49,7 +69,21 @@ mobile-mcp（`/verify-ui-mobile-mcp` の手順）でのみ検証する。
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **表示リストの選択（プレミアム限定）**: プレミアムユーザーはウィジェットを長押し→編集で任意の買い物リストを選んで固定表示できる。非プレミアムでは選択肢が使えず、常にアプリで現在表示中のリストが使われる。
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
+
+### **チェック済みアイテムの表示切替**: ウィジェット編集の「チェック済みアイテムを表示」設定をオフにすると、ウィジェットには未チェックのアイテムのみが表示される（done/totalの件数表示は全件基準のまま変わらない）。
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
 
 </details>
 
@@ -63,7 +97,13 @@ mobile-mcp（`/verify-ui-mobile-mcp` の手順）でのみ検証する。
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **テーマカラーの反映はプレミアム限定**: プレミアムでアプリのテーマカラー（5色プリセット）を変更するとウィジェットの配色にも反映される。非プレミアムでは変更してもウィジェットは常にデフォルトカラー（朱 #C2410C）で表示される。
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
 
 </details>
 

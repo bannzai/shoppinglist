@@ -39,6 +39,28 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **サインイン後にFirestoreへユーザーデータが作成される**: 匿名サインイン後、設定 > 開発者オプション > Firestoreデータ確認でAppUserドキュメントが存在し展開できることを確認する。maestro/flows/auth_page_test_05_firestore_dump.yaml で確認。
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
+
+### **アプリを再起動してもAuthPageを経由せずホーム画面に直接遷移する**: `clearState: false` で再起動した場合、既存のサインイン状態を引き継ぎ、ホーム画面（上部バーの「リスト設定」アイコン）が直接表示される。maestro/flows/auth_page_test_06_idempotency.yaml で確認。
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
+
+### **再起動前後でUID・defaultGroupIDが変化しない（冪等性）**: 開発者オプション画面に表示されるUID/defaultGroupIDを再起動前後で比較し一致することを確認する。maestro/flows/auth_page_test_05b_devopt_info.yaml, maestro/flows/auth_page_test_06_idempotency.yaml で確認。
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
 
 </details>

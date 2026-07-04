@@ -18,7 +18,37 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **スライド枚数**: 現行リリース（`shoppingLocationFeatureEnabled` = false）では2枚（「家族と作る、買い物リスト」「同じリストを同時に編集」）のみ表示され、店舗近接通知の訴求スライドは表示されない（issue #465）
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
+
+### **スライド内容表示**: 各スライドにタイトル・本文・イラスト（画像またはフォールバック描画）・ページ番号「01/02」形式が表示される
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
+
+### **画像読み込み失敗時のフォールバック**: `images/onboarding/slide_*.png` の読み込みに失敗した場合、Flutter描画のフォールバックアート（傾いたリストカード／アバターオービット）が代わりに表示される
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
+
+### **ドットインジケーター**: 現在のスライド位置に応じてアクティブなドットのみ横長表示になる
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
 
 </details>
 
@@ -34,7 +64,29 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **スワイプでスライド送り**: 左右スワイプでスライドが切り替わり、ドットインジケーターとページ番号が連動して更新される
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
+
+### **「次へ」ボタンでスライド送り**: 最終スライド以外では下部ボタンが「次へ」と表示され、タップで次のスライドにアニメーション遷移する
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
+
+### **最終スライドで「はじめる」表示**: 最終スライドではボタンラベルが「はじめる」に変わる
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
 
 </details>
 
@@ -50,6 +102,28 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **スキップで終了**: 右上「スキップ」タップで `hasSeenOnboarding` がtrueに保存され、認証画面（AuthPage）に遷移する。maestro/flows/group_join_or_create.yaml の冒頭で「スキップ」タップによる遷移を確認できる（オンボーディング専用フローではなく他機能フローの前段として使用されている点に注意）
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
+
+### **「はじめる」で完走終了**: 最終スライドで「はじめる」タップで `hasSeenOnboarding` がtrueに保存され、認証画面に遷移する
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
+
+### **再表示されないこと**: 一度スキップ／完走した後にアプリを再起動しても、オンボーディングは再表示されず認証画面（未サインインの場合）またはホーム（サインイン済みの場合）が表示される
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
 
 </details>

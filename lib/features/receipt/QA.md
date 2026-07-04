@@ -15,7 +15,13 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **レシート導線の表示条件**: 買い物リストのアイテムを1件以上チェックすると、リスト上部（AIカテゴリ分けボタンの直上）に「レシートを追加」ボタンが出現する。チェック済みアイテムが0件の間は表示されない。
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
 
 </details>
 
@@ -30,7 +36,21 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **非プレミアムはPaywallへ誘導**: 非プレミアムユーザーが「レシートを追加」をタップするとPaywallが表示され、登録シートは開かない。
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
+
+### **プレミアムでの新規登録**: プレミアムユーザーが「レシートを追加」→写真を撮影/選択（Simulatorではフォトライブラリのみ利用可）→金額・メモを入力→保存すると、画像がアップロードされレシートが登録される。写真が未選択のままでは保存ボタンが無効化される。maestro/flows/premium_receipt_image_upload.yaml で確認。
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
 
 </details>
 
@@ -45,7 +65,21 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **登録済みレシートの編集**: レシートが1件でもあるとボタンラベルが「レシートを編集」に変わり、タップすると既存の画像・金額・メモが表示された編集シートが開く。画像を選択し直すと既存画像が差し替えられ、未選択なら既存画像のまま金額・メモだけ保存できる。
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
+
+### **レシート画像の表示**: 編集シートのプレビューにStorageから取得したレシート画像が表示される（取得に失敗した場合は破損画像アイコンにフォールバックする）。
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
+
+</details>
 
 </details>
 
@@ -59,7 +93,13 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
+### **削除機能が無いこと**: レシート編集シートには削除ボタンが存在せず、登録・編集のみ可能であることを確認する（`firestore.rules` でも create/update のみ許可）。
+
+<details><summary>動作確認スクショ</summary>
+
 （未実行）
+
+</details>
 
 </details>
 

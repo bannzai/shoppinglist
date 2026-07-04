@@ -34,7 +34,8 @@
       "Bash(maestro:*)",
       "mcp__mobile",
       "Bash(flutter:*)",
-      "Bash(dart:*)"
+      "Bash(dart:*)",
+      "Bash(bash /Users/bannzai/.claude/skills/setup-qa/scripts/sync_evidence.sh:*)"
     ]
   }
 }
