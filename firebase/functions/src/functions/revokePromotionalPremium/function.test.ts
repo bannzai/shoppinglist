@@ -110,4 +110,18 @@ describe("revokePromotionalPremium", () => {
     expect(result.result).toBe("NG");
     expect(result.error.message).toContain("RevenueCat APIエラー: 500");
   });
+
+  test("正常系: 取り消し対象のPromotional Entitlementが既に存在しない場合(404)も成功として扱う", async () => {
+    mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
+    mockFetch.mockResolvedValue({
+      ok: false,
+      status: 404,
+      text: async () => "Not Found",
+    });
+
+    const result = await capturedFlowFn({});
+
+    expect(result.result).toBe("OK");
+    expect(result.data.success).toBe(true);
+  });
 });

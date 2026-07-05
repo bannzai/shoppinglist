@@ -239,7 +239,9 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
         // プレミアム剥奪（RC Promotions API revoke 経由）
         _ActionTile(
           title: 'プレミアム剥奪',
-          subtitle: 'RC Promo経由で付与したプレミアムEntitlementを取り消す（dev環境のみ）',
+          subtitle:
+              'RC Promo経由で付与したプレミアムEntitlementを取り消す（dev環境のみ）。'
+              'RevenueCat側の反映に数秒〜数十秒かかる場合があります',
           icon: Icons.star_border,
           isProcessing: isProcessing.value,
           onTap:
@@ -248,9 +250,7 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
                 resultMessage: resultMessage,
                 action: () async {
                   await functions.revokePromotionalPremium();
-                  await Purchases.invalidateCustomerInfoCache();
-                  await Purchases.getCustomerInfo();
-                  ref.invalidate(customerInfoProvider);
+                  await _refreshCustomerInfoUntilNotPremium(ref);
                 },
                 actionName: 'プレミアム剥奪',
               ),
@@ -383,6 +383,28 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
       debugPrint('[DeveloperOptions] $actionName エラー: $e');
     } finally {
       isProcessing.value = false;
+    }
+  }
+
+  /// revokePromotionalPremium 完了直後、RevenueCatの購読者向けAPI
+  /// （Purchases.getCustomerInfo() が参照する側）にサーバー側の反映遅延があり、
+  /// invalidateCustomerInfoCache() + getCustomerInfo() を1回行うだけではPremiumの
+  /// まま返ってくることがある（RevenueCat公式コミュニティで報告されている既知の挙動）。
+  /// 非Premiumに変わるか上限回数（10回・約30秒）に達するまで再取得を繰り返す。
+  /// Issue #474
+  Future<void> _refreshCustomerInfoUntilNotPremium(WidgetRef ref) async {
+    const maxAttempts = 10;
+    const interval = Duration(seconds: 3);
+    for (var attempt = 0; attempt < maxAttempts; attempt++) {
+      await Purchases.invalidateCustomerInfoCache();
+      final customerInfo = await Purchases.getCustomerInfo();
+      ref.invalidate(customerInfoProvider);
+      if (!customerInfo.isPremium) {
+        return;
+      }
+      if (attempt < maxAttempts - 1) {
+        await Future.delayed(interval);
+      }
     }
   }
 }
