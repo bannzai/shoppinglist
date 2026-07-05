@@ -1,8 +1,8 @@
 ---
 feature: _root
 verification: mobile-mcp
-last_verified_commit: null
-last_verified_at: null
+last_verified_commit: 2d72174fa713d1fc25d91c862113470193694a22
+last_verified_at: 2026-07-05
 ---
 
 # QA 全体ガイド
@@ -46,9 +46,9 @@ last_verified_at: null
 
 ## 1. 起動・認証
 
-- [ ] **アプリ起動**: dev Firebase project に接続した状態でアプリが起動し、認証状態に応じて AuthPage / Home が正しく分岐する
-- [ ] **匿名サインイン**: AuthPage の匿名サインインボタンからサインインでき、`AppResolvers`（`lib/features/resolver/`）経由で AppUser ドキュメントが作成されて Home に遷移する
-- [ ] **サインアウト**: 設定画面からサインアウトでき、AuthPage に戻る
+- [x] **アプリ起動**: dev Firebase project に接続した状態でアプリが起動し、認証状態に応じて AuthPage / Home が正しく分岐する
+- [x] **匿名サインイン**: AuthPage の匿名サインインボタンからサインインでき、`AppResolvers`（`lib/features/resolver/`）経由で AppUser ドキュメントが作成されて Home に遷移する
+- [x] **サインアウト**: 設定画面からサインアウトでき、AuthPage に戻る
 
 #### 動作確認
 <details>
@@ -58,7 +58,11 @@ last_verified_at: null
 
 <details><summary>動作確認スクショ</summary>
 
-（未実行）
+**確認日: 2026-07-04**
+
+`maestro/flows/auth_page_test_04_anon_signin.yaml` 実行（`clearState: true` で未サインイン状態から起動 → AuthPage表示 → サインイン後Home表示まで確認）
+
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260704/c12b6008-68c0-4c3a-919a-fe112ca0e4c2.png" width="320">
 
 </details>
 
@@ -66,7 +70,11 @@ last_verified_at: null
 
 <details><summary>動作確認スクショ</summary>
 
-（未実行）
+**確認日: 2026-07-04**
+
+同上の `auth_page_test_04_anon_signin.yaml` 実行で「匿名サインイン（デバッグ用）」タップ→GroupJoinOrCreatePage→「自分のリストを作る」→Home（タップで入力開始）まで到達
+
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260704/c12b6008-68c0-4c3a-919a-fe112ca0e4c2.png" width="320">
 
 </details>
 
@@ -74,7 +82,11 @@ last_verified_at: null
 
 <details><summary>動作確認スクショ</summary>
 
-（未実行）
+**確認日: 2026-07-04**
+
+`maestro/flows/auth_sign_out.yaml` でサインアウト確定 → `FirebaseAuth.instance.signOut()` 実行を確認（デバッグビルドでは `kDebugMode` ガードにより終了アラート・自動再起動なしで即座にreturnする設計のため、実行直後の画面は設定画面のまま）。その後アプリを再起動（`launchApp: clearState:false`）すると AuthPage が表示され、セッションが正しくクリアされていることを確認した。
+
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260704/f7e2ebcd-f6cc-40d7-8b28-29de148aff7e.png" width="320">
 
 </details>
 
@@ -84,8 +96,8 @@ last_verified_at: null
 
 ## 2. データ同期
 
-- [ ] **リアルタイム同期**: 開発者オプションの「デバッグユーザーとしてアイテム追加」実行後、Firestore の変更がリアルタイムでリスト画面に反映される
-- [ ] **グループ招待・参加**: グループ作成 → 招待コード発行 → 別ユーザー（デバッグユーザー）参加ができる
+- [x] **リアルタイム同期**: 開発者オプションの「デバッグユーザーとしてアイテム追加」実行後、Firestore の変更がリアルタイムでリスト画面に反映される
+- [x] **グループ招待・参加**: グループ作成 → 招待コード発行 → 別ユーザー（デバッグユーザー）参加ができる
 
 #### 動作確認
 <details>
@@ -95,7 +107,11 @@ last_verified_at: null
 
 <details><summary>動作確認スクショ</summary>
 
-（未実行）
+**確認日: 2026-07-04**
+
+`maestro/flows/virtual_pairing/01〜05` を実行。デバッグユーザーをグループに追加した状態で「デバッグユーザーとしてアイテム追加」を実行後、アプリを再起動すると `debug_item_test` が Home のリストにリアルタイム同期で表示されることを確認した（06_cleanup でデバッグデータは削除済み）。
+
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260704/acf8c2f5-8013-4fec-8fa9-d2bbd90e96fa.png" width="320">
 
 </details>
 
@@ -103,7 +119,11 @@ last_verified_at: null
 
 <details><summary>動作確認スクショ</summary>
 
-（未実行）
+**確認日: 2026-07-04**
+
+CLAUDE.md の方針に基づき、実招待コードフロー（別途 `lib/features/group_invitation/QA.md` で検証）の代わりに開発者オプションの「デバッグユーザー作成」→「グループにデバッグユーザーを追加」（`maestro/flows/virtual_pairing/02, 03`）で検証。グループ管理画面で「メンバー 2人」となり、デバッグユーザーがグループに参加できていることを確認した。
+
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260704/8eebcc5c-01cd-4400-a84c-0b19655440c8.png" width="320">
 
 </details>
 
@@ -113,8 +133,8 @@ last_verified_at: null
 
 ## 3. 課金ゲート
 
-- [ ] **非プレミアム制限**: 非プレミアム状態でリスト数上限・カテゴリロケーション順・AI画像/URL認識回数などの制限が正しく機能する
-- [ ] **プレミアム解放**: 開発者オプションの「プレミアム付与（1日）」実行後、上記制限が解除される（実課金は行わない）
+- [x] **非プレミアム制限**: 非プレミアム状態でリスト数上限・カテゴリロケーション順・AI画像/URL認識回数などの制限が正しく機能する
+- [x] **プレミアム解放**: 開発者オプションの「プレミアム付与（1日）」実行後、上記制限が解除される（実課金は行わない）
 
 #### 動作確認
 <details>
@@ -124,7 +144,11 @@ last_verified_at: null
 
 <details><summary>動作確認スクショ</summary>
 
-（未実行）
+**確認日: 2026-07-04**
+
+`maestro/flows/shopping_list_limit_non_premium.yaml` 実行。非プレミアム状態で1グループ20個目までリストを作成でき、21個目で上限 SnackBar（「無料プランでは1グループあたり20個までリストを作成できます」+「アップグレード」CTA）が表示されることを確認した（他の制限項目=カテゴリロケーション順・AI認識回数は各機能別 QA.md で検証）。
+
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260704/568cdf11-8506-4171-ba3d-a497da40cc4c.png" width="320">
 
 </details>
 
@@ -132,7 +156,17 @@ last_verified_at: null
 
 <details><summary>動作確認スクショ</summary>
 
-（未実行）
+**確認日: 2026-07-05**
+
+`maestro/flows/zz_adhoc_premium_grant_evidence.yaml`（`shared/grant_premium_via_debug.yaml` を利用）を実行。付与前は設定のプレミアムカードが「プレミアムにアップグレード / 5 色テーマ・画像/URL読み取り回数アップなど」＋「はじめる」ボタンの非会員表示（下記1枚目）。開発者オプション →「プレミアム付与（1日）」（`functions.grantPromotionalPremium(duration: 'daily')`）で「プレミアム付与 完了」となり、付与後は同カードが「プレミアム会員 / すべての機能が利用できます」の会員表示に変わり、テーマカラー等のゲート済み機能が解放されることを確認した（下記2枚目。`customerInfoProvider.isPremium` が true になり全制限が解除される。実課金は行っていない）。
+
+付与前（非会員）:
+
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/1f27498d-f06d-4c91-9517-b4934fdc740f.png" width="320">
+
+付与後（プレミアム会員）:
+
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/2de6eb4f-8a27-40f4-979b-a35973fd9cd3.png" width="320">
 
 </details>
 
@@ -153,6 +187,8 @@ last_verified_at: null
 <details><summary>動作確認スクショ</summary>
 
 （未実行）
+
+⏭️ スキップ: 実機トリガーには Firebase Remote Config の `minimumAppVersion`（`lib/entity/remote_config_parameter.dart` のデフォルト値 `1.0.0`。現在のアプリバージョンと同一）を dev project 上で現在のアプリバージョンより高い値に変更する必要がある。dev project の Remote Config は共有インフラであり、このバッチ実行では `_root` の後に `shopping_list` / `home` / `auth` など多数の feature QA が同一 dev 環境に対して連続実行される予定のため、ここで変更すると後続の全 QA が強制アップデート画面でブロックされる。ロジックは静的検証で確認済み: `lib/provider/force_update.dart` の `CheckForceUpdate.call()` が `Version.fromPackage()` と `config.minimumAppVersion` を比較し、`lib/features/resolver/force_update.dart` の `ForceUpdateResolver` が該当時に `showOKDialog` でストア誘導する。実機での動作確認は、他の QA バッチ実行と競合しないタイミングで別途 Remote Config を変更して単独実行することを推奨する。
 
 </details>
 
