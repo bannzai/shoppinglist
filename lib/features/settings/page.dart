@@ -225,7 +225,7 @@ class SettingPage extends HookConsumerWidget {
                       );
                       launchUrl(
                         Uri.parse(
-                          'https://bannzai.github.io/shoppinglist/TermsOfService',
+                          'https://bannzai.github.io/shoppinglist/Terms',
                         ),
                         mode: LaunchMode.externalApplication,
                       );
@@ -267,7 +267,7 @@ class SettingPage extends HookConsumerWidget {
                       );
                       launchUrl(
                         Uri.parse(
-                          'https://bannzai.github.io/shoppinglist/SpecifiedCommercialTransactionAct',
+                          'https://bannzai.github.io/shoppinglist/SpecifiedCommercialTransactionAct-ja',
                         ),
                         mode: LaunchMode.externalApplication,
                       );
