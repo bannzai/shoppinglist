@@ -555,7 +555,9 @@ class _SignOutButton extends ConsumerWidget {
             // debug 時は exit(0) すると Hot Restart の手間が増えるため、終了アラートを
             // 出さず終了もしない（開発者が手動で Hot Restart する想定）。
             // release/profile 時のみ、サインアウト完了を伝えてアプリを終了する。
-            // アカウント削除フロー(user_delete.dart の _CompletedDialog)と同方針。
+            // 「終了する」タップで exit(0) する点はアカウント削除フロー
+            // (user_delete.dart の _CompletedDialog) と同方針だが、こちらは debug 時に
+            // ダイアログ自体を出さない点が異なる（想定内の差分。Issue #477 参照）。
             if (kDebugMode) {
               return;
             }
@@ -576,7 +578,9 @@ class _SignOutButton extends ConsumerWidget {
 
 /// サインアウト完了アラート。
 /// release/profile ビルドで `FirebaseAuth.instance.signOut()` 後に表示し、
-/// 「終了する」タップで `exit(0)` する。アカウント削除フローの `_CompletedDialog` と同方針。
+/// 「終了する」タップで `exit(0)` する。
+/// アカウント削除フローの `_CompletedDialog` と同様に `exit(0)` を使うが、
+/// このダイアログ自体は debug 時には表示されない（想定内の差分。Issue #477 参照）。
 class _SignOutCompletedDialog extends StatelessWidget {
   const _SignOutCompletedDialog();
   @override
