@@ -206,6 +206,7 @@ void _showVerifyingDialog(BuildContext context) {
     pageBuilder: (dialogContext, _, __) {
       final tokens = dialogContext.appTheme;
       return AppDialogShell(
+        barrierDismissible: false,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,

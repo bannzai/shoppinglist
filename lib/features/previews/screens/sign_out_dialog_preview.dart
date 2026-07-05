@@ -28,6 +28,7 @@ class _SignOutDialogPreviewState extends State<SignOutDialogPreview> {
         pageBuilder: (dialogContext, _, __) {
           final tokens = dialogContext.appTheme;
           return AppDialogShell(
+            barrierDismissible: true,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
