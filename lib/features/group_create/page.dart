@@ -295,8 +295,15 @@ class _PostCreateInvitationDialog extends StatelessWidget {
               name: 'tap_share_invitation_code_post_create',
               parameters: null,
             );
+            final box = context.findRenderObject() as RenderBox?;
             await SharePlus.instance.share(
-              ShareParams(text: '買い物リストの招待コード: $invitationCode'),
+              ShareParams(
+                text: '買い物リストの招待コード: $invitationCode',
+                sharePositionOrigin:
+                    box == null
+                        ? null
+                        : box.localToGlobal(Offset.zero) & box.size,
+              ),
             );
           },
           child: const Text('共有'),
