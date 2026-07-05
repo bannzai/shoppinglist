@@ -143,6 +143,7 @@ class NotifyGroupButton extends HookConsumerWidget {
       transitionDuration: const Duration(milliseconds: 160),
       pageBuilder: (dialogContext, _, _) {
         return AppDialogShell(
+          barrierDismissible: true,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,

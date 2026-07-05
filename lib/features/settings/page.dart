@@ -502,6 +502,7 @@ class _SignOutButton extends ConsumerWidget {
               transitionDuration: const Duration(milliseconds: 160),
               pageBuilder: (dialogContext, _, __) {
                 return AppDialogShell(
+                  barrierDismissible: true,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
