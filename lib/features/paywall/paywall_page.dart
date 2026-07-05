@@ -91,8 +91,7 @@ class PaywallPage extends ConsumerWidget {
 class _PaywallFooterLinks extends ConsumerWidget {
   const _PaywallFooterLinks();
 
-  static const _termsUrl =
-      'https://bannzai.github.io/shoppinglist/TermsOfService';
+  static const _termsUrl = 'https://bannzai.github.io/shoppinglist/Terms';
   static const _privacyUrl =
       'https://bannzai.github.io/shoppinglist/PrivacyPolicy';
 
