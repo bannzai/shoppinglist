@@ -45,11 +45,24 @@ class HomeWidgetSync extends HookConsumerWidget {
       shoppingLists: shoppingListsAsync.valueOrNull ?? [],
     );
 
-    // 初回マウント時にテーマカラーとプレミアム状態を同期する。
-    // 以降の変更は ref.listen で検知して同期するため、依存配列は空にしている。
+    // 初回マウント時にテーマカラー・プレミアム状態・買い物リスト一覧を同期する。
+    // 買い物リスト一覧は AppEntityPrepareResolver が HomeWidgetSync より先に同じ
+    // shoppingListsProvider を ref.watch して既に AsyncData に解決済みのことがあり、
+    // その場合 ref.listen だけでは初回のLoading→Data遷移を検知できず
+    // syncShoppingLists が一度も呼ばれないままになる(Issue #475)。
+    // 以降の変更はいずれも ref.listen で検知して同期するため、依存配列は空にしている。
     useEffect(() {
       HomeWidgetDataSync.syncThemeColor(themeColorHex: themeColorHex);
       HomeWidgetDataSync.syncPremiumStatus(isPremium: firestoreIsPremium);
+      final lists = shoppingListsAsync.valueOrNull ?? [];
+      if (lists.isNotEmpty) {
+        final group = groups.firstWhereOrNull((g) => g.id == groupID);
+        HomeWidgetDataSync.syncShoppingLists(
+          shoppingLists: lists,
+          groupID: groupID,
+          groupName: group?.name ?? '',
+        );
+      }
       return null;
     }, const []);
 
