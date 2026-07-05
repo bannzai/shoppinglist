@@ -64,6 +64,19 @@ const revokePromotionalPremiumFlow = ai.defineFlow(
 
       if (!revenueCatResponse.ok) {
         const errorBody = await revenueCatResponse.text();
+        // RevenueCatは取り消し対象のPromotional Entitlementが既に存在しない場合も
+        // 404を返す。このFunctionの目的（非Promotional状態にすること）は既に
+        // 達成されているため、冪等性のため成功として扱う。
+        // 参照: https://community.revenuecat.com/general-questions-7/rest-api-grant-promotional-retruns-error-with-not-found-4449
+        if (revenueCatResponse.status === 404) {
+          logger.info(
+            `No promotional entitlement to revoke for ${uid} (already revoked)`
+          );
+          return {
+            result: "OK" as const,
+            data: { success: true },
+          } as z.infer<typeof ResponseSchema>;
+        }
         logger.error(
           `RevenueCat Revoke Promotions API error: ${revenueCatResponse.status} ${errorBody}`
         );
