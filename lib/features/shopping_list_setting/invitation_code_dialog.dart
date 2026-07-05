@@ -49,15 +49,31 @@ class InvitationCodeDialog extends HookWidget {
             : '有効期限: 7日間 ・ 残り ${remaining.inDays}日${remaining.inHours.remainder(24)}時間';
 
     return AppDialogShell(
+      barrierDismissible: true,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            '招待コード',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: neutral.ink2,
-              fontWeight: FontWeight.w600,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '招待コード',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: neutral.ink2,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.close, color: neutral.ink3),
+                onPressed: () {
+                  analytics.logEvent(
+                    name: 'tap_close_invite_code_dialog',
+                    parameters: null,
+                  );
+                  Navigator.pop(context);
+                },
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           DashedBorderBox(
