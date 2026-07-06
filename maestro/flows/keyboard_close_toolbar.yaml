@@ -1,0 +1,28 @@
+appId: ${APP_ID}
+---
+# キーボード上の閉じるツールバーの E2E 検証 (Issue #488):
+# アイテム入力の textInputAction は newline のためキーボードに done ボタンが出ない。
+# 代わりにキーボード表示中だけキーボード直上に「閉じる」ツールバーを出し、
+# タップでフォーカスが外れてキーボードが閉じることを検証する。
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 空リストのスターター行から入力を開始する(キーボードが開く)
+- tapOn: "タップで入力開始"
+- waitForAnimationToEnd
+
+# キーボード表示中は閉じるツールバーが表示される
+- assertVisible: "閉じる"
+- inputText: "牛乳"
+- pressKey: enter
+- assertVisible: "牛乳"
+- takeScreenshot: screenshots/keyboard_close_toolbar_01_visible
+
+# 閉じるタップでキーボードとツールバーが消える。フォーカス喪失により
+# 空の入力行(hint「メモを書く...」)も削除される(既存仕様)。確定アイテムは残る。
+- tapOn: "閉じる"
+- waitForAnimationToEnd
+- assertNotVisible: "閉じる"
+- assertNotVisible: "メモを書く..."
+- assertVisible: "牛乳"
+- takeScreenshot: screenshots/keyboard_close_toolbar_02_closed
