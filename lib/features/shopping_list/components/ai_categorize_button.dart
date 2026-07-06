@@ -92,7 +92,17 @@ class AICategorizeButton extends ConsumerWidget {
       return;
     }
 
-    ref.read(aIProcessingProvider.notifier).start(AIProcessingType.categorize);
+    // プレビューシート表示中にこのボタンが unmount される（シート内のキーボード表示で
+    // リストが縮み、スクロールアウトした行が dispose される等）と、以降 ref を使うと
+    // StateError で登録が失敗する(#486 と同型)。await を跨いで使う Provider の
+    // 値・インスタンスは unmount 前にここで確保する。
+    final aiProcessing = ref.read(aIProcessingProvider.notifier);
+    final aiCategorizeApply = ref.read(
+      aiCategorizeApplyProvider(groupID: groupID),
+    );
+    final userID = ref.read(currentUserIDProvider)!;
+
+    aiProcessing.start(AIProcessingType.categorize);
     List<({String name, String categoryName})> categorized;
     try {
       categorized = await functions.categorizeShoppingListItems(
@@ -105,7 +115,7 @@ class AICategorizeButton extends ConsumerWidget {
       }
       return;
     } finally {
-      ref.read(aIProcessingProvider.notifier).end();
+      aiProcessing.end();
     }
     if (!context.mounted) {
       return;
@@ -125,22 +135,17 @@ class AICategorizeButton extends ConsumerWidget {
     }
 
     try {
-      await ref
-          .read(aiCategorizeApplyProvider(groupID: groupID))
-          .call(
-            groupID: groupID,
-            userID: ref.read(currentUserIDProvider)!,
-            categoryAxisID: categoryAxisID,
-            assignments:
-                included
-                    .map(
-                      (c) => (
-                        itemName: c.itemName,
-                        categoryName: c.categoryName,
-                      ),
-                    )
-                    .toList(),
-          );
+      await aiCategorizeApply.call(
+        groupID: groupID,
+        userID: userID,
+        categoryAxisID: categoryAxisID,
+        assignments:
+            included
+                .map(
+                  (c) => (itemName: c.itemName, categoryName: c.categoryName),
+                )
+                .toList(),
+      );
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
