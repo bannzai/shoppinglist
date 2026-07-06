@@ -11,6 +11,7 @@ import 'package:shoppinglist/features/shopping_list/components/banners/list_erro
 import 'package:shoppinglist/features/shopping_list/components/banners/retention_banner.dart';
 import 'package:shoppinglist/features/shopping_list/components/expandable_fab.dart';
 import 'package:shoppinglist/features/shopping_list/components/group_chips_bar.dart';
+import 'package:shoppinglist/features/shopping_list/components/keyboard_close_toolbar.dart';
 import 'package:shoppinglist/features/shopping_list/components/list_top_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/progress_pill.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_body_content.dart';
@@ -331,6 +332,15 @@ class _ActiveShoppingList extends ConsumerWidget {
                   ),
                 ),
               ),
+              // キーボード表示中だけ、キーボード直上に閉じるボタン付きツールバーを出す
+              // (Issue #488)。入力の textInputAction が newline のため done ボタンが出ず、
+              // キーボードを閉じる手段がわからない問題への導線。Scaffold body はキーボード分
+              // 縮む(resizeToAvoidBottomInset)ので、Column 末尾に置けばキーボード直上に載る。
+              if (isKeyboardVisible)
+                KeyboardCloseToolbar(
+                  groupID: groupID,
+                  shoppingListID: shoppingListID,
+                ),
             ],
           ),
         ),
