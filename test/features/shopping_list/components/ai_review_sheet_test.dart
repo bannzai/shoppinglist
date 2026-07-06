@@ -55,6 +55,25 @@ void main() {
     expect(find.text('2 件追加'), findsOneWidget);
   });
 
+  testWidgets('キーボード表示中はシート全体がキーボードの上に退避する', (tester) async {
+    // Issue #487: 候補名の TextField 編集でキーボードが出ると、下部の候補行と
+    // フッターのボタンがキーボードに隠れて操作できなかった。
+    // キーボードは view の viewInsets (物理ピクセル) で疑似的に再現する。
+    await pumpSheet(tester, const ['りんご', 'バナナ']);
+
+    tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+    addTearDown(tester.view.reset);
+    await tester.pumpAndSettle();
+
+    final keyboardTop =
+        (tester.view.physicalSize.height - 300) / tester.view.devicePixelRatio;
+    expect(
+      tester.getBottomLeft(find.text('2 件追加')).dy,
+      lessThanOrEqualTo(keyboardTop),
+      reason: 'フッターの追加ボタンがキーボードに隠れず操作できること',
+    );
+  });
+
   testWidgets('TextField で候補名を編集すると編集後の名前で確定する', (tester) async {
     // 戻り値を捕捉するため、showAIReviewSheet の結果を保持するホストを pump する。
     List<AIShoppingListCandidate>? result;
