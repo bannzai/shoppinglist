@@ -37,6 +37,10 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.appTheme;
+    final addShoppingListItem = ref.watch(
+      addShoppingListItemProvider(groupID: groupID),
+    );
+    final currentUserID = ref.watch(currentUserIDProvider);
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 8),
       children: [
@@ -49,16 +53,14 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
                 'shoppingListID': shoppingListID,
               },
             );
-            await ref
-                .read(addShoppingListItemProvider(groupID: groupID))
-                .call(
-                  shoppingListID: shoppingListID,
-                  userID: ref.read(currentUserIDProvider)!,
-                  message: '',
-                  order: shoppingListItems.nextOrder,
-                  description: null,
-                  color: null,
-                );
+            await addShoppingListItem.call(
+              shoppingListID: shoppingListID,
+              userID: currentUserID!,
+              message: '',
+              order: shoppingListItems.nextOrder,
+              description: null,
+              color: null,
+            );
           },
         ),
         for (final hint in _hints) GhostItemRow(hint: hint),

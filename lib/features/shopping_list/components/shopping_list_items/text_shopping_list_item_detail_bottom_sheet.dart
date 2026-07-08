@@ -27,6 +27,7 @@ class TextShoppingListItemDetailBottomSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final groupDatabase = ref.watch(groupDatabaseProvider(groupID: groupID));
 
     // カテゴリは先頭軸(axes.first)のキーワードマッチで動的に決まる(アイテムはカテゴリIDを持たない)。
     // appShowModalBottomSheet は AppResolvers でラップされているため build 内の ref.watch が機能する。
@@ -103,10 +104,7 @@ class TextShoppingListItemDetailBottomSheet extends ConsumerWidget {
                                       'itemID': textShoppingListItem.id,
                                     },
                                   );
-                                  ref
-                                      .read(
-                                        groupDatabaseProvider(groupID: groupID),
-                                      )
+                                  groupDatabase
                                       .shoppingListItemsReference(
                                         shoppingListID:
                                             textShoppingListItem.shoppingListID,

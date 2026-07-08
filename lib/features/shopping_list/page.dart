@@ -152,13 +152,18 @@ class _GroupChips extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentGroupIDNotifier = ref.watch(currentGroupIDProvider.notifier);
+    final currentShoppingListIDNotifier = ref.watch(
+      currentShoppingListIDProvider.notifier,
+    );
+    final defaultGroupUpdate = ref.watch(defaultGroupUpdateProvider);
     return GroupChipsBar(
       groups: groups,
       currentGroupID: currentGroupID,
       onGroupChanged: (newGroupID) {
-        ref.read(currentGroupIDProvider.notifier).update(newGroupID);
-        ref.read(currentShoppingListIDProvider.notifier).update(null);
-        ref.read(defaultGroupUpdateProvider).call(groupID: newGroupID);
+        currentGroupIDNotifier.update(newGroupID);
+        currentShoppingListIDNotifier.update(null);
+        defaultGroupUpdate.call(groupID: newGroupID);
       },
     );
   }
@@ -200,6 +205,7 @@ class _ActiveShoppingList extends ConsumerWidget {
     final currentShoppingListIDNotifier = ref.watch(
       currentShoppingListIDProvider.notifier,
     );
+    final fabMenuNotifier = ref.watch(shoppingListFabMenuProvider.notifier);
 
     // チェック済み含む全件。FAB・リスト本体・進捗ピルがこの一覧を基準にする。
     final shoppingListItemsAsync = ref.watch(
@@ -261,7 +267,7 @@ class _ActiveShoppingList extends ConsumerWidget {
       // false を返して通知を上位へ伝播させ続ける（スクロール自体は通常どおり動く）。
       child: NotificationListener<ScrollStartNotification>(
         onNotification: (notification) {
-          ref.read(shoppingListFabMenuProvider.notifier).close();
+          fabMenuNotifier.close();
           return false;
         },
         child: Container(
@@ -358,6 +364,9 @@ class _NoListYet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.appTheme;
+    final shoppingListAdd = ref.watch(
+      shoppingListAddProvider(groupID: groupID),
+    );
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -389,14 +398,12 @@ class _NoListYet extends ConsumerWidget {
                   parameters: {'groupID': groupID},
                 );
                 try {
-                  await ref
-                      .read(shoppingListAddProvider(groupID: groupID))
-                      .call(
-                        createUserID: appUserID!,
-                        groupID: groupID,
-                        shoppingLocationID: null,
-                        duplicatedFromGroupShoppingListID: null,
-                      );
+                  await shoppingListAdd.call(
+                    createUserID: appUserID!,
+                    groupID: groupID,
+                    shoppingLocationID: null,
+                    duplicatedFromGroupShoppingListID: null,
+                  );
                 } on ShoppingListLimitExceededException catch (e) {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(

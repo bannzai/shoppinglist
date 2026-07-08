@@ -78,6 +78,20 @@ class CreateListMenuButton extends HookConsumerWidget {
     final canDuplicate =
         shoppingList != null && shoppingListItems != null && !isCreating.value;
 
+    final fabMenuNotifier = ref.watch(shoppingListFabMenuProvider.notifier);
+    final shoppingListAdd = ref.watch(
+      shoppingListAddProvider(groupID: groupID),
+    );
+    final addShoppingListItem = ref.watch(
+      addShoppingListItemProvider(groupID: groupID),
+    );
+    final shoppingListDuplicate = ref.watch(
+      shoppingListDuplicateProvider(groupID: groupID),
+    );
+    final currentShoppingListIDNotifier = ref.watch(
+      currentShoppingListIDProvider.notifier,
+    );
+
     return PopupMenuButton<_CreateListMenuAction>(
       key: const Key('create_list_menu_button'),
       tooltip: 'リストを追加',
@@ -108,7 +122,7 @@ class CreateListMenuButton extends HookConsumerWidget {
         // アイテム追加 FAB(`ExpandableFab`)の展開メニューが開いたままだと、この
         // PopupMenu の背後に残り追加メニューが 2 つ同時表示されるため閉じる
         // （旧ダブル FAB では共有状態の置換で自動的に閉じていた挙動の踏襲）。
-        ref.read(shoppingListFabMenuProvider.notifier).close();
+        fabMenuNotifier.close();
         // 入力行フォーカス中はキーボードを閉じてからメニューを重ねる
         // （リスト設定等のシート系ボタンと同じ扱い）。
         FocusScope.of(context).unfocus();
@@ -132,9 +146,11 @@ class CreateListMenuButton extends HookConsumerWidget {
             );
             _createTodayList(
               context: context,
-              ref: ref,
               appUser: appUser,
               isCreating: isCreating,
+              shoppingListAdd: shoppingListAdd,
+              addShoppingListItem: addShoppingListItem,
+              currentShoppingListIDNotifier: currentShoppingListIDNotifier,
             );
           case _CreateListMenuAction.duplicate:
             // 複製元リスト・アイテム一覧未取得の間は enabled: false で選択されないため
@@ -151,7 +167,6 @@ class CreateListMenuButton extends HookConsumerWidget {
             );
             _duplicateCurrentList(
               context: context,
-              ref: ref,
               appUser: appUser,
               sourceShoppingList: shoppingList,
               shoppingListItems: _latestShoppingListItems(
@@ -161,6 +176,8 @@ class CreateListMenuButton extends HookConsumerWidget {
               ),
               isCreating: isCreating,
               uncheckedOnly: false,
+              shoppingListDuplicate: shoppingListDuplicate,
+              currentShoppingListIDNotifier: currentShoppingListIDNotifier,
             );
           case _CreateListMenuAction.duplicateUncheckedOnly:
             // 複製元リスト・アイテム一覧未取得の間は enabled: false で選択されないため
@@ -177,7 +194,6 @@ class CreateListMenuButton extends HookConsumerWidget {
             );
             _duplicateCurrentList(
               context: context,
-              ref: ref,
               appUser: appUser,
               sourceShoppingList: shoppingList,
               shoppingListItems: _latestShoppingListItems(
@@ -187,6 +203,8 @@ class CreateListMenuButton extends HookConsumerWidget {
               ),
               isCreating: isCreating,
               uncheckedOnly: true,
+              shoppingListDuplicate: shoppingListDuplicate,
+              currentShoppingListIDNotifier: currentShoppingListIDNotifier,
             );
         }
       },
@@ -248,23 +266,13 @@ class CreateListMenuButton extends HookConsumerWidget {
   /// 今日の日付名でリストを作成 → 表示切替 → 空アイテム追加まで連鎖する。
   Future<void> _createTodayList({
     required BuildContext context,
-    required WidgetRef ref,
     required AppUser appUser,
     required ValueNotifier<bool> isCreating,
+    required ShoppingListAdd shoppingListAdd,
+    required AddShoppingListItem addShoppingListItem,
+    required CurrentShoppingListID currentShoppingListIDNotifier,
   }) async {
     final messenger = ScaffoldMessenger.of(context);
-    // リスト作成が Stream へ反映されると、_ActiveShoppingList が
-    // 先頭リストフォールバック(resolveShoppingListID)で新リストへ
-    // 切り替わり ValueKey 差し替えでこの widget ごと破棄される。
-    // 破棄後の ref.read は使えないため、await を挟む前に
-    // call クラスと notifier を束縛しておく。
-    final shoppingListAdd = ref.read(shoppingListAddProvider(groupID: groupID));
-    final addShoppingListItem = ref.read(
-      addShoppingListItemProvider(groupID: groupID),
-    );
-    final currentShoppingListIDNotifier = ref.read(
-      currentShoppingListIDProvider.notifier,
-    );
     isCreating.value = true;
     try {
       final newShoppingList = await shoppingListAdd(
@@ -324,23 +332,15 @@ class CreateListMenuButton extends HookConsumerWidget {
   /// 除いた非 null の一覧を受け取る。
   Future<void> _duplicateCurrentList({
     required BuildContext context,
-    required WidgetRef ref,
     required AppUser appUser,
     required GroupShoppingList sourceShoppingList,
     required List<GroupShoppingListItem> shoppingListItems,
     required ValueNotifier<bool> isCreating,
     required bool uncheckedOnly,
+    required ShoppingListDuplicate shoppingListDuplicate,
+    required CurrentShoppingListID currentShoppingListIDNotifier,
   }) async {
     final messenger = ScaffoldMessenger.of(context);
-    // 複製が Stream へ反映されると _ActiveShoppingList の ValueKey 差し替えで
-    // この widget ごと破棄されるため、await を挟む前に call クラスと notifier を
-    // 束縛しておく（_createTodayList と同じ理由）。
-    final shoppingListDuplicate = ref.read(
-      shoppingListDuplicateProvider(groupID: groupID),
-    );
-    final currentShoppingListIDNotifier = ref.read(
-      currentShoppingListIDProvider.notifier,
-    );
     isCreating.value = true;
     try {
       final newShoppingList = await shoppingListDuplicate(

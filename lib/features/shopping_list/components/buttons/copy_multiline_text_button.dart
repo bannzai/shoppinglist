@@ -20,6 +20,10 @@ class CopyMultilineTextButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final addShoppingListItem = ref.watch(
+      addShoppingListItemProvider(groupID: groupID),
+    );
+    final currentUserID = ref.watch(currentUserIDProvider);
     return OutlinedButton(
       onPressed: () async {
         analytics.logEvent(
@@ -34,16 +38,14 @@ class CopyMultilineTextButton extends ConsumerWidget {
             if (shoppingListItems.any((item) => item.message == line)) {
               continue;
             }
-            await ref
-                .read(addShoppingListItemProvider(groupID: groupID))
-                .call(
-                  shoppingListID: shoppingListID,
-                  userID: ref.read(currentUserIDProvider)!,
-                  message: line,
-                  order: shoppingListItems.nextOrder + index,
-                  description: null,
-                  color: null,
-                );
+            await addShoppingListItem.call(
+              shoppingListID: shoppingListID,
+              userID: currentUserID!,
+              message: line,
+              order: shoppingListItems.nextOrder + index,
+              description: null,
+              color: null,
+            );
           }
         }
       },

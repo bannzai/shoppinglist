@@ -152,6 +152,9 @@ class _FlatShoppingListItems extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final rowKeys = ref.watch(shoppingListItemRowKeysProvider);
+    final shoppingListItemBatchUpdate = ref.watch(
+      shoppingListItemBatchUpdateProvider(groupID: groupID),
+    );
     final list = ReorderableListView.builder(
       padding: _listBottomPadding(context),
       // 最終アイテムの下に表示する footer（レシートセクション等）。並び替え対象外。
@@ -178,12 +181,10 @@ class _FlatShoppingListItems extends ConsumerWidget {
                 .entries
                 .map((entry) => entry.value.copyWith(order: entry.key))
                 .toList();
-        ref
-            .read(shoppingListItemBatchUpdateProvider(groupID: groupID))
-            .call(
-              shoppingListID: shoppingListID,
-              shoppingListItems: orderedItems,
-            );
+        shoppingListItemBatchUpdate.call(
+          shoppingListID: shoppingListID,
+          shoppingListItems: orderedItems,
+        );
       },
       itemCount: shoppingListItems.length,
       itemBuilder: (context, index) {
@@ -449,6 +450,16 @@ class _GroupedListView extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final groupCategoryBatchUpdate = ref.watch(
+      groupCategoryBatchUpdateProvider(groupID: groupID),
+    );
+    final moveItemCategoryKeyword = ref.watch(
+      moveItemCategoryKeywordProvider(groupID: groupID),
+    );
+    final shoppingListItemBatchUpdate = ref.watch(
+      shoppingListItemBatchUpdateProvider(groupID: groupID),
+    );
+
     // カテゴリ表示の D&D 直後に同期適用する楽観状態。ドロップ後に新しい並び・分類で即描画し、
     // Firestore stream が追いつくまでの一瞬を覆ってチラつきを防ぐ。
     final optimistic = useState<_OptimisticReorder?>(null);
@@ -748,8 +759,7 @@ class _GroupedListView extends HookConsumerWidget {
 
                 final locationID = shoppingLocationID;
                 if (locationID == null) {
-                  ref
-                      .read(groupCategoryBatchUpdateProvider(groupID: groupID))
+                  groupCategoryBatchUpdate
                       .call(
                         categoryAxisID: categoryAxisID,
                         categories:
@@ -765,8 +775,7 @@ class _GroupedListView extends HookConsumerWidget {
                       .catchError(rollbackIfCurrent);
                 } else {
                   // 買い物場所選択時(プレミアム限定で渡される)はその場所専用の並び順だけを更新する。
-                  ref
-                      .read(groupCategoryBatchUpdateProvider(groupID: groupID))
+                  groupCategoryBatchUpdate
                       .call(
                         categoryAxisID: categoryAxisID,
                         categories:
@@ -837,8 +846,7 @@ class _GroupedListView extends HookConsumerWidget {
 
                 // 別カテゴリへ移動した場合のみ、完全一致キーワードを付け替えて分類を変更する。
                 if (toCategoryID != moved.categoryID) {
-                  ref
-                      .read(moveItemCategoryKeywordProvider(groupID: groupID))
+                  moveItemCategoryKeyword
                       .call(
                         categoryAxisID: categoryAxisID,
                         itemMessage: moved.item.message,
@@ -847,8 +855,7 @@ class _GroupedListView extends HookConsumerWidget {
                       )
                       .catchError(rollbackIfCurrent);
                 }
-                ref
-                    .read(shoppingListItemBatchUpdateProvider(groupID: groupID))
+                shoppingListItemBatchUpdate
                     .call(
                       shoppingListID: shoppingListID,
                       shoppingListItems: orderedItems,

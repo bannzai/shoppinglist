@@ -57,6 +57,17 @@ class ExpandableFab extends HookConsumerWidget {
     // 開閉状態は `shoppingListFabMenuProvider` に一元化している。
     // スクロール開始等の外部イベントからも close されるため、widget ローカルでは持たない。
     final open = ref.watch(shoppingListFabMenuProvider);
+    final addShoppingListItem = ref.watch(
+      addShoppingListItemProvider(groupID: groupID),
+    );
+    final aiProcessingNotifier = ref.watch(aIProcessingProvider.notifier);
+    final fabMenuNotifier = ref.watch(shoppingListFabMenuProvider.notifier);
+    final remainingImageRecognition = ref.watch(
+      remainingImageRecognitionCountProvider(isPremium: isPremium),
+    );
+    final remainingURLRecognition = ref.watch(
+      remainingURLRecognitionCountProvider(isPremium: isPremium),
+    );
     final controller = useAnimationController(
       duration: const Duration(milliseconds: 280),
       reverseDuration: const Duration(milliseconds: 200),
@@ -81,7 +92,7 @@ class ExpandableFab extends HookConsumerWidget {
       return null;
     }, [open]);
 
-    void close() => ref.read(shoppingListFabMenuProvider.notifier).close();
+    void close() => fabMenuNotifier.close();
 
     final actions = <FabMenuAction>[
       FabMenuAction(
@@ -93,7 +104,14 @@ class ExpandableFab extends HookConsumerWidget {
                 ? null
                 : () {
                   close();
-                  _showImagePicker(context, ref, isPremium);
+                  _showImagePicker(
+                    context,
+                    isPremium: isPremium,
+                    remainingImageRecognition: remainingImageRecognition,
+                    aiProcessingNotifier: aiProcessingNotifier,
+                    addShoppingListItem: addShoppingListItem,
+                    currentUserID: currentUserID,
+                  );
                 },
       ),
       FabMenuAction(
@@ -105,7 +123,11 @@ class ExpandableFab extends HookConsumerWidget {
                 ? null
                 : () {
                   close();
-                  _showURLInputDialog(context, ref, isPremium);
+                  _showURLInputDialog(
+                    context,
+                    isPremium: isPremium,
+                    remainingURLRecognition: remainingURLRecognition,
+                  );
                 },
       ),
       FabMenuAction(
@@ -114,7 +136,11 @@ class ExpandableFab extends HookConsumerWidget {
         // テキスト貼り付けは AI 処理（バナー）を使わないため常に有効。
         onTap: () {
           close();
-          _pasteFromClipboard(context, ref);
+          _pasteFromClipboard(
+            context,
+            addShoppingListItem: addShoppingListItem,
+            currentUserID: currentUserID,
+          );
         },
       ),
     ];
@@ -149,7 +175,7 @@ class ExpandableFab extends HookConsumerWidget {
                 'shoppingListID': shoppingListID,
               },
             );
-            ref.read(shoppingListFabMenuProvider.notifier).open();
+            fabMenuNotifier.open();
           },
           child: FloatingActionButton(
             backgroundColor: tokens.accent,
@@ -176,16 +202,14 @@ class ExpandableFab extends HookConsumerWidget {
                   'shoppingListID': shoppingListID,
                 },
               );
-              ref
-                  .read(addShoppingListItemProvider(groupID: groupID))
-                  .call(
-                    shoppingListID: shoppingListID,
-                    userID: currentUserID!,
-                    message: '',
-                    order: shoppingListItems.nextOrder,
-                    description: null,
-                    color: null,
-                  );
+              addShoppingListItem.call(
+                shoppingListID: shoppingListID,
+                userID: currentUserID!,
+                message: '',
+                order: shoppingListItems.nextOrder,
+                description: null,
+                color: null,
+              );
             },
             // 閉時は add_task（アイテム追加）、メニュー展開中は x（閉じる）。
             // AnimatedSwitcher の回転+フェードでアイコン自体を入れ替える。
@@ -208,15 +232,19 @@ class ExpandableFab extends HookConsumerWidget {
     );
   }
 
-  void _showImagePicker(BuildContext context, WidgetRef ref, bool isPremium) {
+  void _showImagePicker(
+    BuildContext context, {
+    required bool isPremium,
+    required int remainingImageRecognition,
+    required AIProcessing aiProcessingNotifier,
+    required AddShoppingListItem addShoppingListItem,
+    required String? currentUserID,
+  }) {
     analytics.logEvent(
       name: 'tap_open_image_picker',
       parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
     );
-    final remaining = ref.read(
-      remainingImageRecognitionCountProvider(isPremium: isPremium),
-    );
-    if (remaining <= 0) {
+    if (remainingImageRecognition <= 0) {
       final limit =
           isPremium
               ? premiumMonthlyImageRecognitionLimit
@@ -270,7 +298,13 @@ class ExpandableFab extends HookConsumerWidget {
                     Navigator.of(dialogContext).pop();
                   }
                   if (context.mounted) {
-                    await _addShoppingListItemsFromImage(context, ref, photo);
+                    await _addShoppingListItemsFromImage(
+                      context,
+                      photo: photo,
+                      aiProcessingNotifier: aiProcessingNotifier,
+                      addShoppingListItem: addShoppingListItem,
+                      currentUserID: currentUserID,
+                    );
                   }
                 },
               ),
@@ -297,7 +331,13 @@ class ExpandableFab extends HookConsumerWidget {
                     Navigator.of(dialogContext).pop();
                   }
                   if (context.mounted) {
-                    await _addShoppingListItemsFromImage(context, ref, photo);
+                    await _addShoppingListItemsFromImage(
+                      context,
+                      photo: photo,
+                      aiProcessingNotifier: aiProcessingNotifier,
+                      addShoppingListItem: addShoppingListItem,
+                      currentUserID: currentUserID,
+                    );
                   }
                 },
               ),
@@ -324,11 +364,13 @@ class ExpandableFab extends HookConsumerWidget {
   }
 
   Future<void> _addShoppingListItemsFromImage(
-    BuildContext context,
-    WidgetRef ref,
-    XFile photo,
-  ) async {
-    ref.read(aIProcessingProvider.notifier).start(AIProcessingType.image);
+    BuildContext context, {
+    required XFile photo,
+    required AIProcessing aiProcessingNotifier,
+    required AddShoppingListItem addShoppingListItem,
+    required String? currentUserID,
+  }) async {
+    aiProcessingNotifier.start(AIProcessingType.image);
     List<String> rawItems;
     try {
       final file = File(photo.path);
@@ -343,7 +385,7 @@ class ExpandableFab extends HookConsumerWidget {
       }
       return;
     } finally {
-      ref.read(aIProcessingProvider.notifier).end();
+      aiProcessingNotifier.end();
     }
     if (!context.mounted) {
       return;
@@ -366,16 +408,14 @@ class ExpandableFab extends HookConsumerWidget {
     final selected = reviewed.where((c) => c.selected).toList();
     for (var (i, c) in selected.indexed) {
       try {
-        await ref
-            .read(addShoppingListItemProvider(groupID: groupID))
-            .call(
-              shoppingListID: shoppingListID,
-              userID: ref.read(currentUserIDProvider)!,
-              message: c.name,
-              order: shoppingListItems.nextOrder + i,
-              description: null,
-              color: null,
-            );
+        await addShoppingListItem.call(
+          shoppingListID: shoppingListID,
+          userID: currentUserID!,
+          message: c.name,
+          order: shoppingListItems.nextOrder + i,
+          description: null,
+          color: null,
+        );
       } catch (e) {
         debugPrint('Error: $e');
       }
@@ -383,18 +423,15 @@ class ExpandableFab extends HookConsumerWidget {
   }
 
   void _showURLInputDialog(
-    BuildContext context,
-    WidgetRef ref,
-    bool isPremium,
-  ) {
+    BuildContext context, {
+    required bool isPremium,
+    required int remainingURLRecognition,
+  }) {
     analytics.logEvent(
       name: 'tap_open_url_input',
       parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
     );
-    final remaining = ref.read(
-      remainingURLRecognitionCountProvider(isPremium: isPremium),
-    );
-    if (remaining <= 0) {
+    if (remainingURLRecognition <= 0) {
       final limit =
           isPremium
               ? premiumMonthlyURLRecognitionLimit
@@ -427,7 +464,11 @@ class ExpandableFab extends HookConsumerWidget {
     );
   }
 
-  Future<void> _pasteFromClipboard(BuildContext context, WidgetRef ref) async {
+  Future<void> _pasteFromClipboard(
+    BuildContext context, {
+    required AddShoppingListItem addShoppingListItem,
+    required String? currentUserID,
+  }) async {
     analytics.logEvent(
       name: 'tap_paste_multiline',
       parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
@@ -445,16 +486,14 @@ class ExpandableFab extends HookConsumerWidget {
       if (shoppingListItems.any((item) => item.message == line)) {
         continue;
       }
-      await ref
-          .read(addShoppingListItemProvider(groupID: groupID))
-          .call(
-            shoppingListID: shoppingListID,
-            userID: ref.read(currentUserIDProvider)!,
-            message: line,
-            order: shoppingListItems.nextOrder + index,
-            description: null,
-            color: null,
-          );
+      await addShoppingListItem.call(
+        shoppingListID: shoppingListID,
+        userID: currentUserID!,
+        message: line,
+        order: shoppingListItems.nextOrder + index,
+        description: null,
+        color: null,
+      );
     }
   }
 }
@@ -476,6 +515,11 @@ class _URLInputDialog extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final urlController = useTextEditingController();
     final isLoading = useState(false);
+    final addShoppingListItem = ref.watch(
+      addShoppingListItemProvider(groupID: groupID),
+    );
+    final aiProcessingNotifier = ref.watch(aIProcessingProvider.notifier);
+    final currentUserID = ref.watch(currentUserIDProvider);
 
     return AlertDialog(
       title: const Text('URLから買い物リストを生成'),
@@ -547,9 +591,7 @@ class _URLInputDialog extends HookConsumerWidget {
                     final navigator = Navigator.of(context);
                     final dialogRoute = ModalRoute.of(context);
                     isLoading.value = true;
-                    ref
-                        .read(aIProcessingProvider.notifier)
-                        .start(AIProcessingType.url);
+                    aiProcessingNotifier.start(AIProcessingType.url);
                     List<String> rawItems;
                     try {
                       rawItems = await functions
@@ -561,7 +603,7 @@ class _URLInputDialog extends HookConsumerWidget {
                       if (context.mounted) {
                         isLoading.value = false;
                       }
-                      ref.read(aIProcessingProvider.notifier).end();
+                      aiProcessingNotifier.end();
                     }
                     if (!context.mounted) {
                       return;
@@ -594,16 +636,14 @@ class _URLInputDialog extends HookConsumerWidget {
                     final selected = reviewed.where((c) => c.selected).toList();
                     for (var (i, c) in selected.indexed) {
                       try {
-                        await ref
-                            .read(addShoppingListItemProvider(groupID: groupID))
-                            .call(
-                              shoppingListID: shoppingListID,
-                              userID: ref.read(currentUserIDProvider)!,
-                              message: c.name,
-                              order: shoppingListItems.nextOrder + i,
-                              description: null,
-                              color: null,
-                            );
+                        await addShoppingListItem.call(
+                          shoppingListID: shoppingListID,
+                          userID: currentUserID!,
+                          message: c.name,
+                          order: shoppingListItems.nextOrder + i,
+                          description: null,
+                          color: null,
+                        );
                       } catch (e) {
                         debugPrint('Error: $e');
                       }
