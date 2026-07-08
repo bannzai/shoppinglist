@@ -328,7 +328,17 @@ class ExpandableFab extends HookConsumerWidget {
     WidgetRef ref,
     XFile photo,
   ) async {
-    ref.read(aIProcessingProvider.notifier).start(AIProcessingType.image);
+    // review sheet 表示中にキーボードが出ると、この FAB は page.dart の
+    // isKeyboardVisible でツリーから外れ unmount される。unmount 後に ref を使うと
+    // StateError で追加が全件失敗する(#486)ため、await を跨いで使う Provider の
+    // 値・インスタンスは unmount 前にここで確保する。
+    final aiProcessing = ref.read(aIProcessingProvider.notifier);
+    final addShoppingListItem = ref.read(
+      addShoppingListItemProvider(groupID: groupID),
+    );
+    final userID = ref.read(currentUserIDProvider)!;
+
+    aiProcessing.start(AIProcessingType.image);
     List<String> rawItems;
     try {
       final file = File(photo.path);
@@ -343,7 +353,7 @@ class ExpandableFab extends HookConsumerWidget {
       }
       return;
     } finally {
-      ref.read(aIProcessingProvider.notifier).end();
+      aiProcessing.end();
     }
     if (!context.mounted) {
       return;
@@ -351,35 +361,18 @@ class ExpandableFab extends HookConsumerWidget {
     // 既存アイテムに存在しない候補だけ review sheet にかける。
     // 候補が空（画像から読み取れなかった／すべて既存）でも review sheet を開き、
     // 「候補がありませんでした」を表示して画像が読み取れたか判断できるようにする。
-    final candidates =
-        rawItems
-            .where((e) => !shoppingListItems.any((item) => item.message == e))
-            .toList();
-    final reviewed = await showAIReviewSheet(
+    await reviewAndAddAICandidates(
       context: context,
-      rawNames: candidates,
+      addShoppingListItem: addShoppingListItem,
+      shoppingListID: shoppingListID,
+      userID: userID,
+      shoppingListItems: shoppingListItems,
+      candidateNames:
+          rawItems
+              .where((e) => !shoppingListItems.any((item) => item.message == e))
+              .toList(),
       source: 'image',
     );
-    if (reviewed == null) {
-      return;
-    }
-    final selected = reviewed.where((c) => c.selected).toList();
-    for (var (i, c) in selected.indexed) {
-      try {
-        await ref
-            .read(addShoppingListItemProvider(groupID: groupID))
-            .call(
-              shoppingListID: shoppingListID,
-              userID: ref.read(currentUserIDProvider)!,
-              message: c.name,
-              order: shoppingListItems.nextOrder + i,
-              description: null,
-              color: null,
-            );
-      } catch (e) {
-        debugPrint('Error: $e');
-      }
-    }
   }
 
   void _showURLInputDialog(
@@ -432,6 +425,13 @@ class ExpandableFab extends HookConsumerWidget {
       name: 'tap_paste_multiline',
       parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
     );
+    // await 中にこの FAB が unmount される（キーボード表示で page.dart の
+    // isKeyboardVisible がツリーから外す）と ref は使えなくなる(#486)ため、
+    // await を跨いで使う Provider の値・インスタンスは先に確保する。
+    final addShoppingListItem = ref.read(
+      addShoppingListItemProvider(groupID: groupID),
+    );
+    final userID = ref.read(currentUserIDProvider)!;
     final data = await Clipboard.getData(Clipboard.kTextPlain);
     final text = data?.text;
     if (text == null) {
@@ -445,16 +445,57 @@ class ExpandableFab extends HookConsumerWidget {
       if (shoppingListItems.any((item) => item.message == line)) {
         continue;
       }
-      await ref
-          .read(addShoppingListItemProvider(groupID: groupID))
-          .call(
-            shoppingListID: shoppingListID,
-            userID: ref.read(currentUserIDProvider)!,
-            message: line,
-            order: shoppingListItems.nextOrder + index,
-            description: null,
-            color: null,
-          );
+      await addShoppingListItem.call(
+        shoppingListID: shoppingListID,
+        userID: userID,
+        message: line,
+        order: shoppingListItems.nextOrder + index,
+        description: null,
+        color: null,
+      );
+    }
+  }
+}
+
+/// AI 抽出候補を review sheet（プレビュー）にかけ、確定した選択分をリストへ追加する。
+/// 写真 / URL フロー共通の確定処理。
+///
+/// review sheet 表示中に呼び出し元 widget は unmount され得る。FAB はキーボード表示で
+/// ツリーから外れ（page.dart の isKeyboardVisible。候補名 TextField タップでキーボードが
+/// 出る）、URL ダイアログは sheet 表示前に pop 済み。unmount 後に WidgetRef を使うと
+/// StateError で追加が全件失敗する(#486)ため、ref には依存せず、呼び出し元が
+/// unmount 前に確保した [addShoppingListItem]・[userID] を受け取る。
+Future<void> reviewAndAddAICandidates({
+  required BuildContext context,
+  required AddShoppingListItem addShoppingListItem,
+  required String shoppingListID,
+  required String userID,
+  required List<GroupShoppingListItem> shoppingListItems,
+  required List<String> candidateNames,
+  required String source,
+}) async {
+  final reviewed = await showAIReviewSheet(
+    context: context,
+    rawNames: candidateNames,
+    source: source,
+  );
+  if (reviewed == null) {
+    return;
+  }
+  final selected = reviewed.where((c) => c.selected).toList();
+  for (var (i, c) in selected.indexed) {
+    try {
+      await addShoppingListItem.call(
+        shoppingListID: shoppingListID,
+        userID: userID,
+        message: c.name,
+        order: shoppingListItems.nextOrder + i,
+        description: null,
+        color: null,
+      );
+    } catch (e) {
+      // 1 件の追加失敗で残りが止まらないよう、失敗はログに残して続行する。
+      debugPrint('Error: $e');
     }
   }
 }
@@ -546,10 +587,19 @@ class _URLInputDialog extends HookConsumerWidget {
                     // ホームまで剥がして黒画面になるため、pop は自ルートに限定する (#372)。
                     final navigator = Navigator.of(context);
                     final dialogRoute = ModalRoute.of(context);
+                    // このダイアログは review sheet 表示前に pop され unmount される。
+                    // unmount 後に ref を使うと StateError で追加が全件失敗する(#486)
+                    // ため、await を跨いで使う Provider の値・インスタンスは
+                    // pop 前にここで確保する。
+                    final aiProcessing = ref.read(
+                      aIProcessingProvider.notifier,
+                    );
+                    final addShoppingListItem = ref.read(
+                      addShoppingListItemProvider(groupID: groupID),
+                    );
+                    final userID = ref.read(currentUserIDProvider)!;
                     isLoading.value = true;
-                    ref
-                        .read(aIProcessingProvider.notifier)
-                        .start(AIProcessingType.url);
+                    aiProcessing.start(AIProcessingType.url);
                     List<String> rawItems;
                     try {
                       rawItems = await functions
@@ -561,7 +611,7 @@ class _URLInputDialog extends HookConsumerWidget {
                       if (context.mounted) {
                         isLoading.value = false;
                       }
-                      ref.read(aIProcessingProvider.notifier).end();
+                      aiProcessing.end();
                     }
                     if (!context.mounted) {
                       return;
@@ -583,31 +633,15 @@ class _URLInputDialog extends HookConsumerWidget {
                     if (candidates.isEmpty) {
                       return;
                     }
-                    final reviewed = await showAIReviewSheet(
+                    await reviewAndAddAICandidates(
                       context: context,
-                      rawNames: candidates,
+                      addShoppingListItem: addShoppingListItem,
+                      shoppingListID: shoppingListID,
+                      userID: userID,
+                      shoppingListItems: shoppingListItems,
+                      candidateNames: candidates,
                       source: 'url',
                     );
-                    if (reviewed == null) {
-                      return;
-                    }
-                    final selected = reviewed.where((c) => c.selected).toList();
-                    for (var (i, c) in selected.indexed) {
-                      try {
-                        await ref
-                            .read(addShoppingListItemProvider(groupID: groupID))
-                            .call(
-                              shoppingListID: shoppingListID,
-                              userID: ref.read(currentUserIDProvider)!,
-                              message: c.name,
-                              order: shoppingListItems.nextOrder + i,
-                              description: null,
-                              color: null,
-                            );
-                      } catch (e) {
-                        debugPrint('Error: $e');
-                      }
-                    }
                   },
           child: const Text('生成'),
         ),
