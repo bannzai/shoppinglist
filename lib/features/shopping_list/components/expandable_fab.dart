@@ -393,33 +393,18 @@ class ExpandableFab extends HookConsumerWidget {
     // 既存アイテムに存在しない候補だけ review sheet にかける。
     // 候補が空（画像から読み取れなかった／すべて既存）でも review sheet を開き、
     // 「候補がありませんでした」を表示して画像が読み取れたか判断できるようにする。
-    final candidates =
-        rawItems
-            .where((e) => !shoppingListItems.any((item) => item.message == e))
-            .toList();
-    final reviewed = await showAIReviewSheet(
+    await reviewAndAddAICandidates(
       context: context,
-      rawNames: candidates,
+      addShoppingListItem: addShoppingListItem,
+      shoppingListID: shoppingListID,
+      userID: currentUserID!,
+      shoppingListItems: shoppingListItems,
+      candidateNames:
+          rawItems
+              .where((e) => !shoppingListItems.any((item) => item.message == e))
+              .toList(),
       source: 'image',
     );
-    if (reviewed == null) {
-      return;
-    }
-    final selected = reviewed.where((c) => c.selected).toList();
-    for (var (i, c) in selected.indexed) {
-      try {
-        await addShoppingListItem.call(
-          shoppingListID: shoppingListID,
-          userID: currentUserID!,
-          message: c.name,
-          order: shoppingListItems.nextOrder + i,
-          description: null,
-          color: null,
-        );
-      } catch (e) {
-        debugPrint('Error: $e');
-      }
-    }
   }
 
   void _showURLInputDialog(
@@ -494,6 +479,49 @@ class ExpandableFab extends HookConsumerWidget {
         description: null,
         color: null,
       );
+    }
+  }
+}
+
+/// AI 抽出候補を review sheet（プレビュー）にかけ、確定した選択分をリストへ追加する。
+/// 写真 / URL フロー共通の確定処理。
+///
+/// review sheet 表示中に呼び出し元 widget は unmount され得る。FAB はキーボード表示で
+/// ツリーから外れ（page.dart の isKeyboardVisible。候補名 TextField タップでキーボードが
+/// 出る）、URL ダイアログは sheet 表示前に pop 済み。unmount 後に WidgetRef を使うと
+/// StateError で追加が全件失敗する(#486)ため、ref には依存せず、呼び出し元が
+/// build 時に確保した [addShoppingListItem]・[userID] を受け取る。
+Future<void> reviewAndAddAICandidates({
+  required BuildContext context,
+  required AddShoppingListItem addShoppingListItem,
+  required String shoppingListID,
+  required String userID,
+  required List<GroupShoppingListItem> shoppingListItems,
+  required List<String> candidateNames,
+  required String source,
+}) async {
+  final reviewed = await showAIReviewSheet(
+    context: context,
+    rawNames: candidateNames,
+    source: source,
+  );
+  if (reviewed == null) {
+    return;
+  }
+  final selected = reviewed.where((c) => c.selected).toList();
+  for (var (i, c) in selected.indexed) {
+    try {
+      await addShoppingListItem.call(
+        shoppingListID: shoppingListID,
+        userID: userID,
+        message: c.name,
+        order: shoppingListItems.nextOrder + i,
+        description: null,
+        color: null,
+      );
+    } catch (e) {
+      // 1 件の追加失敗で残りが止まらないよう、失敗はログに残して続行する。
+      debugPrint('Error: $e');
     }
   }
 }
@@ -625,29 +653,15 @@ class _URLInputDialog extends HookConsumerWidget {
                     if (candidates.isEmpty) {
                       return;
                     }
-                    final reviewed = await showAIReviewSheet(
+                    await reviewAndAddAICandidates(
                       context: context,
-                      rawNames: candidates,
+                      addShoppingListItem: addShoppingListItem,
+                      shoppingListID: shoppingListID,
+                      userID: currentUserID!,
+                      shoppingListItems: shoppingListItems,
+                      candidateNames: candidates,
                       source: 'url',
                     );
-                    if (reviewed == null) {
-                      return;
-                    }
-                    final selected = reviewed.where((c) => c.selected).toList();
-                    for (var (i, c) in selected.indexed) {
-                      try {
-                        await addShoppingListItem.call(
-                          shoppingListID: shoppingListID,
-                          userID: currentUserID!,
-                          message: c.name,
-                          order: shoppingListItems.nextOrder + i,
-                          description: null,
-                          color: null,
-                        );
-                      } catch (e) {
-                        debugPrint('Error: $e');
-                      }
-                    }
                   },
           child: const Text('生成'),
         ),

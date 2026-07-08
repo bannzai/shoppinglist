@@ -134,158 +134,164 @@ class _AIReviewSheetState extends State<_AIReviewSheet> {
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final selectedCount = _candidates.where((c) => c.selected).length;
-    return DraggableScrollableSheet(
-      initialChildSize: 0.6,
-      minChildSize: 0.3,
-      maxChildSize: 0.92,
-      expand: false,
-      builder: (sheetContext, scrollController) {
-        return Column(
-          children: [
-            const SizedBox(height: 10),
-            Container(
-              width: 36,
-              height: 4,
-              decoration: BoxDecoration(
-                color: neutral.divider,
-                borderRadius: BorderRadius.circular(2),
+    return Padding(
+      // キーボード表示中はシート全体をキーボードの上に退避させる。これが無いと
+      // 候補名の TextField 編集時に下部の候補行とフッターのボタンがキーボードに
+      // 隠れて操作できない (Issue #487)。
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        minChildSize: 0.3,
+        maxChildSize: 0.92,
+        expand: false,
+        builder: (sheetContext, scrollController) {
+          return Column(
+            children: [
+              const SizedBox(height: 10),
+              Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: neutral.divider,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '読み取った候補',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.titleLarge?.copyWith(
-                            color: neutral.ink,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '追加するアイテムを選んでください',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodySmall?.copyWith(color: neutral.ink3),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: tokens.accentSoft,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      '$selectedCount / ${_candidates.length}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: tokens.accent,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Divider(height: 0.5, thickness: 0.5, color: neutral.divider),
-            Expanded(
-              child:
-                  _candidates.isEmpty
-                      ? Center(
-                        child: Text(
-                          '候補がありませんでした',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodyMedium?.copyWith(color: neutral.ink3),
-                        ),
-                      )
-                      : ListView.separated(
-                        controller: scrollController,
-                        itemCount: _candidates.length,
-                        separatorBuilder:
-                            (_, __) => Divider(
-                              height: 0.5,
-                              thickness: 0.5,
-                              color: neutral.divider2,
-                            ),
-                        itemBuilder: (_, index) {
-                          final c = _candidates[index];
-                          return CheckboxListTile(
-                            value: c.selected,
-                            onChanged: (_) => _toggle(index),
-                            title: TextField(
-                              controller: _nameControllers[index],
-                              maxLines: 1,
-                              textInputAction: TextInputAction.done,
-                              style: Theme.of(context).textTheme.bodyLarge
-                                  ?.copyWith(color: neutral.ink),
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.zero,
-                                isCollapsed: true,
-                              ),
-                              cursorColor: tokens.accent,
-                              onSubmitted: (_) {
-                                analytics.logEvent(
-                                  name: 'edit_ai_review_candidate',
-                                  parameters: {
-                                    'source': widget.source,
-                                    'index': index.toString(),
-                                  },
-                                );
-                              },
-                            ),
-                            activeColor: tokens.accent,
-                            controlAffinity: ListTileControlAffinity.leading,
-                          );
-                        },
-                      ),
-            ),
-            SafeArea(
-              top: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
                 child: Row(
                   children: [
                     Expanded(
-                      child: AppPill(
-                        label: 'キャンセル',
-                        variant: AppPillVariant.ghost,
-                        expanded: true,
-                        onPressed: _cancel,
-                        icon: null,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '読み取った候補',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleLarge?.copyWith(
+                              color: neutral.ink,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '追加するアイテムを選んでください',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: neutral.ink3),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: AppPill(
-                        label: '$selectedCount 件追加',
-                        variant: AppPillVariant.accent,
-                        large: true,
-                        expanded: true,
-                        onPressed: selectedCount == 0 ? null : _confirm,
-                        icon: null,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: tokens.accentSoft,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        '$selectedCount / ${_candidates.length}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: tokens.accent,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
-        );
-      },
+              Divider(height: 0.5, thickness: 0.5, color: neutral.divider),
+              Expanded(
+                child:
+                    _candidates.isEmpty
+                        ? Center(
+                          child: Text(
+                            '候補がありませんでした',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(color: neutral.ink3),
+                          ),
+                        )
+                        : ListView.separated(
+                          controller: scrollController,
+                          itemCount: _candidates.length,
+                          separatorBuilder:
+                              (_, __) => Divider(
+                                height: 0.5,
+                                thickness: 0.5,
+                                color: neutral.divider2,
+                              ),
+                          itemBuilder: (_, index) {
+                            final c = _candidates[index];
+                            return CheckboxListTile(
+                              value: c.selected,
+                              onChanged: (_) => _toggle(index),
+                              title: TextField(
+                                controller: _nameControllers[index],
+                                maxLines: 1,
+                                textInputAction: TextInputAction.done,
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(color: neutral.ink),
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.zero,
+                                  isCollapsed: true,
+                                ),
+                                cursorColor: tokens.accent,
+                                onSubmitted: (_) {
+                                  analytics.logEvent(
+                                    name: 'edit_ai_review_candidate',
+                                    parameters: {
+                                      'source': widget.source,
+                                      'index': index.toString(),
+                                    },
+                                  );
+                                },
+                              ),
+                              activeColor: tokens.accent,
+                              controlAffinity: ListTileControlAffinity.leading,
+                            );
+                          },
+                        ),
+              ),
+              SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: AppPill(
+                          label: 'キャンセル',
+                          variant: AppPillVariant.ghost,
+                          expanded: true,
+                          onPressed: _cancel,
+                          icon: null,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: AppPill(
+                          label: '$selectedCount 件追加',
+                          variant: AppPillVariant.accent,
+                          large: true,
+                          expanded: true,
+                          onPressed: selectedCount == 0 ? null : _confirm,
+                          icon: null,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
