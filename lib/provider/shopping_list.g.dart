@@ -220,7 +220,7 @@ class _ShoppingListsProviderElement
   bool get isPremium => (origin as ShoppingListsProvider).isPremium;
 }
 
-String _$shoppingListAddHash() => r'd5fae19930c027d97c9feff05a2081b5cd85e984';
+String _$shoppingListAddHash() => r'e48ab29140de51c3ffa031651c8bdec48501260d';
 
 /// See also [shoppingListAdd].
 @ProviderFor(shoppingListAdd)

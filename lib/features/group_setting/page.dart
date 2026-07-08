@@ -92,6 +92,10 @@ class _GroupSettingBody extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUserID = ref.watch(currentUserIDProvider);
+    final groupNameUpdate = ref.watch(
+      groupNameUpdateProvider(groupID: groupID),
+    );
+    final createGroupInvitation = ref.watch(createGroupInvitationProvider);
     final isOwner =
         group.ownerUserID != null && group.ownerUserID == currentUserID;
     final groupNameController = useTextEditingController(
@@ -141,11 +145,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                                     newName == (group.name ?? '')) {
                                   return;
                                 }
-                                ref
-                                    .read(
-                                      groupNameUpdateProvider(groupID: groupID),
-                                    )
-                                    .call(name: newName);
+                                groupNameUpdate.call(name: newName);
                               },
                     ),
                   ),
@@ -288,16 +288,11 @@ class _GroupSettingBody extends HookConsumerWidget {
                                 isCreatingInvitation.value = true;
                                 try {
                                   if (inputGroupName != (group.name ?? '')) {
-                                    await ref
-                                        .read(
-                                          groupNameUpdateProvider(
-                                            groupID: groupID,
-                                          ),
-                                        )
-                                        .call(name: inputGroupName);
+                                    await groupNameUpdate.call(
+                                      name: inputGroupName,
+                                    );
                                   }
-                                  final invitation = await ref
-                                      .read(createGroupInvitationProvider)
+                                  final invitation = await createGroupInvitation
                                       .call(groupID: groupID);
                                   if (context.mounted) {
                                     showDialog(

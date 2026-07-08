@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/features/group_invitation/page.dart';
 import 'package:shoppinglist/features/group_join_or_create/page.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/group_create.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -32,7 +33,14 @@ class _FakeCreateGroup extends CreateGroup {
 const _appUser = AppUser(id: 'test-user-001');
 
 Widget _wrap(_FakeCreateGroup fake) => ProviderScope(
-  overrides: [createGroupProvider.overrideWithValue(fake)],
+  overrides: [
+    createGroupProvider.overrideWithValue(fake),
+    // GroupInvitationAcceptPage が build 時に acceptGroupInvitationProvider を
+    // watch するため、依存先の userDatabaseProvider（Firebase 必須）を差し替える
+    userDatabaseProvider.overrideWith(
+      (ref) => UserDatabase(userID: _appUser.id),
+    ),
+  ],
   child: MaterialApp(
     theme: buildAppTheme(accent: AccentPreset.shu),
     home: const GroupJoinOrCreatePage(appUser: _appUser),

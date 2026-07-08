@@ -51,6 +51,9 @@ class ListTopBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.appTheme;
     final appUser = ref.watch(appUserProvider).asData?.value;
+    final shoppingListDelete = ref.watch(
+      shoppingListDeleteProvider(groupID: groupID),
+    );
 
     return SizedBox(
       height: 52,
@@ -144,13 +147,9 @@ class ListTopBar extends ConsumerWidget {
                                 shoppingListID: shoppingListID,
                                 shoppingList: shoppingList!,
                                 onDelete: () {
-                                  ref
-                                      .read(
-                                        shoppingListDeleteProvider(
-                                          groupID: groupID,
-                                        ),
-                                      )
-                                      .call(shoppingListID: shoppingListID);
+                                  shoppingListDelete.call(
+                                    shoppingListID: shoppingListID,
+                                  );
                                   Navigator.of(
                                     sheetContext,
                                   ).popUntil((route) => route.isFirst);

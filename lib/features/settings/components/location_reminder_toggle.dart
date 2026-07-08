@@ -20,6 +20,14 @@ class LocationReminderToggle extends ConsumerWidget {
     final isEnabled = ref.watch(
       boolSharedPreferencesProvider(key: BoolKey.locationReminderEnabled),
     );
+    final localNotificationsPlugin = ref.watch(
+      localNotificationsPluginProvider,
+    );
+    final locationReminderNotifier = ref.watch(
+      boolSharedPreferencesProvider(
+        key: BoolKey.locationReminderEnabled,
+      ).notifier,
+    );
 
     return SwitchListTile(
       title: const Text('位置情報リマインダー'),
@@ -44,8 +52,7 @@ class LocationReminderToggle extends ConsumerWidget {
                 if (value) {
                   // Android通知権限の確認
                   final androidNotifications =
-                      ref
-                          .read(localNotificationsPluginProvider)
+                      localNotificationsPlugin
                           .resolvePlatformSpecificImplementation<
                             AndroidFlutterLocalNotificationsPlugin
                           >();
@@ -81,13 +88,7 @@ class LocationReminderToggle extends ConsumerWidget {
                   }
                 }
 
-                await ref
-                    .read(
-                      boolSharedPreferencesProvider(
-                        key: BoolKey.locationReminderEnabled,
-                      ).notifier,
-                    )
-                    .set(value: value);
+                await locationReminderNotifier.set(value: value);
               }
               : (value) {
                 analytics.logEvent(

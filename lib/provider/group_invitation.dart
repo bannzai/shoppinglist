@@ -41,5 +41,5 @@ class AcceptGroupInvitation {
 
 @Riverpod(dependencies: [userDatabase])
 AcceptGroupInvitation acceptGroupInvitation(Ref ref) {
-  return AcceptGroupInvitation(userDatabase: ref.read(userDatabaseProvider));
+  return AcceptGroupInvitation(userDatabase: ref.watch(userDatabaseProvider));
 }

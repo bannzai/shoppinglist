@@ -57,6 +57,24 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
     );
     final isEditing = useState(false);
 
+    // Provider は build で watch してローカルにキャプチャし、コールバック・listener はこの変数を
+    // 参照する（コールバック内 ref.read 禁止）。これらは下の `[]` deps useEffect が登録する
+    // FocusNode listener が捕捉するため、useEffect より前に宣言する。
+    final currentUserID = ref.watch(currentUserIDProvider)!;
+    final groupDatabase = ref.watch(groupDatabaseProvider(groupID: groupID));
+    final updateShoppingListItem = ref.watch(
+      updateShoppingListItemProvider(groupID: groupID),
+    );
+    final toggleShoppingListItemCheck = ref.watch(
+      toggleShoppingListItemCheckProvider(groupID: groupID),
+    );
+    final restoreShoppingListItem = ref.watch(
+      restoreShoppingListItemProvider(groupID: groupID),
+    );
+    final deleteShoppingListItem = ref.watch(
+      deleteShoppingListItemProvider(groupID: groupID),
+    );
+
     // 初回に空行(入力行)へフォーカスし、フォーカスの有無を isEditing に同期する。加えて、
     // フォーカスが外れた瞬間に「入力途中テキストの確定 or 空行の削除」を行い、常駐する空入力行を
     // 残さない。依存配列は空 — FocusNode のライフサイクルに listener を 1 度だけ登録するため。
@@ -78,8 +96,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         if (text.isEmpty) {
           // 空のままフォーカスが外れた行は削除する(入力行・既存問わず中身がないので残さない)。
           // Backspace 削除と同じく一時行の掃除なので物理削除する。
-          ref
-              .read(groupDatabaseProvider(groupID: groupID))
+          groupDatabase
               .shoppingListItemsReference(
                 shoppingListID: textShoppingListItem.shoppingListID,
               )
@@ -88,13 +105,11 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         } else if (text != textShoppingListItem.message) {
           // 入力/編集途中のテキストをフォーカス喪失時に確定保存する。Enter 確定が走った直後は
           // message==text となりこの分岐は skip される(二重更新を避ける)。
-          ref
-              .read(updateShoppingListItemProvider(groupID: groupID))
-              .call(
-                shoppingListID: textShoppingListItem.shoppingListID,
-                item: textShoppingListItem.copyWith(message: text),
-                editedByUserID: ref.read(currentUserIDProvider)!,
-              );
+          updateShoppingListItem.call(
+            shoppingListID: textShoppingListItem.shoppingListID,
+            item: textShoppingListItem.copyWith(message: text),
+            editedByUserID: currentUserID,
+          );
         }
       }
 
@@ -153,7 +168,6 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
       return null;
     }, [keyboardInset, textShoppingListItem.order, isEditing.value]);
 
-    final currentUserID = ref.watch(currentUserIDProvider)!;
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final isChecked =
@@ -208,18 +222,11 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                               'itemID': textShoppingListItem.id,
                             },
                           );
-                          ref
-                              .read(
-                                toggleShoppingListItemCheckProvider(
-                                  groupID: groupID,
-                                ),
-                              )
-                              .call(
-                                shoppingListID:
-                                    textShoppingListItem.shoppingListID,
-                                item: textShoppingListItem,
-                                userID: currentUserID,
-                              );
+                          toggleShoppingListItemCheck.call(
+                            shoppingListID: textShoppingListItem.shoppingListID,
+                            item: textShoppingListItem,
+                            userID: currentUserID,
+                          );
                         },
               ),
             ),
@@ -352,8 +359,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
             },
           );
           try {
-            await ref
-                .read(groupDatabaseProvider(groupID: groupID))
+            await groupDatabase
                 .shoppingListItemsReference(
                   shoppingListID: textShoppingListItem.shoppingListID,
                 )
@@ -377,19 +383,14 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
           parameters: {'groupShoppingListItemID': textShoppingListItem.id},
         );
         // 削除が成功すると Stream 更新でこの Widget は dispose され context.mounted が
-        // false になり得る。await 後に SnackBar 表示・Undo 操作ができるよう、
-        // ScaffoldMessenger と復元用 call クラスを await 前に捕捉しておく。
+        // false になり得る。await 後に SnackBar 表示ができるよう ScaffoldMessenger は
+        // await 前に捕捉しておく（復元用 call クラスは build で watch 済み）。
         final messenger = ScaffoldMessenger.of(context);
-        final restore = ref.read(
-          restoreShoppingListItemProvider(groupID: groupID),
-        );
         try {
-          await ref
-              .read(deleteShoppingListItemProvider(groupID: groupID))
-              .call(
-                shoppingListID: textShoppingListItem.shoppingListID,
-                itemID: textShoppingListItem.id,
-              );
+          await deleteShoppingListItem.call(
+            shoppingListID: textShoppingListItem.shoppingListID,
+            itemID: textShoppingListItem.id,
+          );
           messenger
             ..hideCurrentSnackBar()
             ..showSnackBar(
@@ -406,7 +407,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
                         'groupShoppingListItemID': textShoppingListItem.id,
                       },
                     );
-                    restore.call(
+                    restoreShoppingListItem.call(
                       shoppingListID: textShoppingListItem.shoppingListID,
                       item: textShoppingListItem,
                     );
@@ -579,6 +580,21 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUserID = ref.watch(currentUserIDProvider)!;
+    // Provider は build で watch してローカルにキャプチャし、onKey / onChanged はこの変数を参照する
+    // （コールバック内 ref.read 禁止）。
+    final groupDatabase = ref.watch(groupDatabaseProvider(groupID: groupID));
+    final addShoppingListItem = ref.watch(
+      addShoppingListItemProvider(groupID: groupID),
+    );
+    final shoppingListItemBatchUpdate = ref.watch(
+      shoppingListItemBatchUpdateProvider(groupID: groupID),
+    );
+    final updateShoppingListItem = ref.watch(
+      updateShoppingListItemProvider(groupID: groupID),
+    );
+    final inputRowFocusRequestNotifier = ref.watch(
+      shoppingListInputRowFocusRequestProvider.notifier,
+    );
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final isChecked =
@@ -599,8 +615,7 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
       onKey: (event) {
         if (event.logicalKey == LogicalKeyboardKey.backspace &&
             textEditingController.text.isEmpty) {
-          ref
-              .read(groupDatabaseProvider(groupID: groupID))
+          groupDatabase
               .shoppingListItemsReference(
                 shoppingListID: textShoppingListItem.shoppingListID,
               )
@@ -674,8 +689,7 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
             // 空のまま確定。既存アイテムを空にした場合のみ削除し、入力行(元から空)は
             // 何もせず入力欄として残す。
             if (!isInputRow) {
-              ref
-                  .read(groupDatabaseProvider(groupID: groupID))
+              groupDatabase
                   .shoppingListItemReference(
                     shoppingListID: textShoppingListItem.shoppingListID,
                     itemID: textShoppingListItem.id,
@@ -689,59 +703,49 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
             // 入力行: 確定テキストを別アイテム E として入力行の位置(order)へ追加し、
             // 入力行(C)は nextOrder へ繰り下げて E の下に保つ。入力行は空のまま
             // フォーカスを維持する（移譲しないのでキーボードは閉じない）。
-            ref
-                .read(addShoppingListItemProvider(groupID: groupID))
-                .call(
-                  shoppingListID: textShoppingListItem.shoppingListID,
-                  userID: currentUserID,
-                  message: value,
-                  order: textShoppingListItem.order,
-                  description: null,
-                  color: null,
-                );
-            ref
-                .read(shoppingListItemBatchUpdateProvider(groupID: groupID))
-                .call(
-                  shoppingListID: textShoppingListItem.shoppingListID,
-                  shoppingListItems: [
-                    textShoppingListItem.copyWith(
-                      order: shoppingListItems.nextOrder,
-                    ),
-                  ],
-                );
+            addShoppingListItem.call(
+              shoppingListID: textShoppingListItem.shoppingListID,
+              userID: currentUserID,
+              message: value,
+              order: textShoppingListItem.order,
+              description: null,
+              color: null,
+            );
+            shoppingListItemBatchUpdate.call(
+              shoppingListID: textShoppingListItem.shoppingListID,
+              shoppingListItems: [
+                textShoppingListItem.copyWith(
+                  order: shoppingListItems.nextOrder,
+                ),
+              ],
+            );
             textEditingController.clear();
           } else {
             // 既存アイテムの編集確定: 内容を更新し、末尾の入力行へフォーカスを移して
             // 続けて追加できるようにする(origin/main の「Enter で次の入力へ」を踏襲)。
             // 移譲先は新規生成行ではなく既存の安定した入力行(GlobalKey で要素保持)なので
             // キーボードは閉じない。入力行が無ければ新規作成する。
-            ref
-                .read(updateShoppingListItemProvider(groupID: groupID))
-                .call(
-                  shoppingListID: textShoppingListItem.shoppingListID,
-                  item: textShoppingListItem.copyWith(message: value),
-                  editedByUserID: currentUserID,
-                );
+            updateShoppingListItem.call(
+              shoppingListID: textShoppingListItem.shoppingListID,
+              item: textShoppingListItem.copyWith(message: value),
+              editedByUserID: currentUserID,
+            );
             final hasInputRow = shoppingListItems.any(
               (item) =>
                   item.id != textShoppingListItem.id &&
                   item.message.trim().isEmpty,
             );
             if (hasInputRow) {
-              ref
-                  .read(shoppingListInputRowFocusRequestProvider.notifier)
-                  .state++;
+              inputRowFocusRequestNotifier.state++;
             } else {
-              ref
-                  .read(addShoppingListItemProvider(groupID: groupID))
-                  .call(
-                    shoppingListID: textShoppingListItem.shoppingListID,
-                    userID: currentUserID,
-                    message: '',
-                    order: shoppingListItems.nextOrder,
-                    description: null,
-                    color: null,
-                  );
+              addShoppingListItem.call(
+                shoppingListID: textShoppingListItem.shoppingListID,
+                userID: currentUserID,
+                message: '',
+                order: shoppingListItems.nextOrder,
+                description: null,
+                color: null,
+              );
             }
           }
         },

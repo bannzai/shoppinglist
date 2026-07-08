@@ -23,6 +23,15 @@ class ShoppingLocationPage extends ConsumerWidget {
     );
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
+    final shoppingLocationAdd = ref.watch(
+      shoppingLocationAddProvider(groupID: groupID),
+    );
+    final shoppingLocationUpdate = ref.watch(
+      shoppingLocationUpdateProvider(groupID: groupID),
+    );
+    final shoppingLocationDelete = ref.watch(
+      shoppingLocationDeleteProvider(groupID: groupID),
+    );
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
 
@@ -132,7 +141,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                         );
                         _showEditDialog(
                           context: context,
-                          ref: ref,
+                          shoppingLocationUpdate: shoppingLocationUpdate,
                           location: location,
                         );
                       },
@@ -149,7 +158,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                         );
                         _showDeleteDialog(
                           context: context,
-                          ref: ref,
+                          shoppingLocationDelete: shoppingLocationDelete,
                           location: location,
                         );
                       },
@@ -171,7 +180,11 @@ class ShoppingLocationPage extends ConsumerWidget {
             name: 'tap_add_location',
             parameters: {'groupID': groupID},
           );
-          _showAddDialog(context: context, ref: ref, isPremium: isPremium);
+          _showAddDialog(
+            context: context,
+            shoppingLocationAdd: shoppingLocationAdd,
+            isPremium: isPremium,
+          );
         },
         child: const Icon(Icons.add),
       ),
@@ -180,7 +193,7 @@ class ShoppingLocationPage extends ConsumerWidget {
 
   void _showAddDialog({
     required BuildContext context,
-    required WidgetRef ref,
+    required ShoppingLocationAdd shoppingLocationAdd,
     required bool isPremium,
   }) {
     final controller = TextEditingController();
@@ -296,17 +309,13 @@ class ShoppingLocationPage extends ConsumerWidget {
                         );
                         Navigator.pop(dialogContext);
                         try {
-                          await ref
-                              .read(
-                                shoppingLocationAddProvider(groupID: groupID),
-                              )
-                              .call(
-                                name: name,
-                                address: selectedAddress,
-                                latitude: selectedLatitude,
-                                longitude: selectedLongitude,
-                                geofenceRadiusMeters: null,
-                              );
+                          await shoppingLocationAdd.call(
+                            name: name,
+                            address: selectedAddress,
+                            latitude: selectedLatitude,
+                            longitude: selectedLongitude,
+                            geofenceRadiusMeters: null,
+                          );
                         } catch (e, st) {
                           if (context.mounted) {
                             showErrorSnackBar(context, e, st);
@@ -333,7 +342,7 @@ class ShoppingLocationPage extends ConsumerWidget {
 
   void _showEditDialog({
     required BuildContext context,
-    required WidgetRef ref,
+    required ShoppingLocationUpdate shoppingLocationUpdate,
     required GroupShoppingLocation location,
   }) {
     final controller = TextEditingController(text: location.name);
@@ -360,12 +369,10 @@ class ShoppingLocationPage extends ConsumerWidget {
                   );
                   Navigator.pop(dialogContext);
                   try {
-                    await ref
-                        .read(shoppingLocationUpdateProvider(groupID: groupID))
-                        .call(
-                          shoppingLocationID: location.id,
-                          shoppingLocation: location.copyWith(name: name),
-                        );
+                    await shoppingLocationUpdate.call(
+                      shoppingLocationID: location.id,
+                      shoppingLocation: location.copyWith(name: name),
+                    );
                   } catch (e, st) {
                     if (context.mounted) {
                       showErrorSnackBar(context, e, st);
@@ -391,7 +398,7 @@ class ShoppingLocationPage extends ConsumerWidget {
 
   void _showDeleteDialog({
     required BuildContext context,
-    required WidgetRef ref,
+    required ShoppingLocationDelete shoppingLocationDelete,
     required GroupShoppingLocation location,
   }) {
     showDialog(
@@ -409,9 +416,9 @@ class ShoppingLocationPage extends ConsumerWidget {
                   );
                   Navigator.pop(dialogContext);
                   try {
-                    await ref
-                        .read(shoppingLocationDeleteProvider(groupID: groupID))
-                        .call(shoppingLocationID: location.id);
+                    await shoppingLocationDelete.call(
+                      shoppingLocationID: location.id,
+                    );
                   } catch (e, st) {
                     if (context.mounted) {
                       showErrorSnackBar(context, e, st);

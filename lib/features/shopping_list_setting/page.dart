@@ -61,13 +61,24 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     // 即座に反映できる (Custom Claims はリアルタイムに更新されない)。
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
+    final shoppingListUpdate = ref.watch(
+      shoppingListUpdateProvider(groupID: groupID),
+    );
+    final createGroupInvitation = ref.watch(createGroupInvitationProvider);
+    final items =
+        ref
+            .watch(
+              textShoppingListItemsProvider(
+                groupID: groupID,
+                shoppingListID: shoppingListID,
+              ),
+            )
+            .valueOrNull ??
+        const <GroupShoppingListItem>[];
 
     void autoSave(GroupShoppingList updated) {
       shoppingListState.value = updated;
-      ref.read(shoppingListUpdateProvider(groupID: groupID))(
-        shoppingListID: shoppingListID,
-        shoppingList: updated,
-      );
+      shoppingListUpdate(shoppingListID: shoppingListID, shoppingList: updated);
     }
 
     final neutral = context.appTheme.neutral;
@@ -190,6 +201,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                 : () => _onTapInvite(
                                   context: context,
                                   ref: ref,
+                                  createGroupInvitation: createGroupInvitation,
                                   isCreatingInvitation: isCreatingInvitation,
                                 ),
                         detail: null,
@@ -242,7 +254,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                     onTap:
                         () => _onTapDelete(
                           context: context,
-                          ref: ref,
+                          items: items,
                           currentShoppingListName: shoppingListState.value.name,
                         ),
                     borderRadius: BorderRadius.circular(14),
@@ -286,6 +298,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
   Future<void> _onTapInvite({
     required BuildContext context,
     required WidgetRef ref,
+    required CreateGroupInvitation createGroupInvitation,
     required ValueNotifier<bool> isCreatingInvitation,
   }) async {
     analytics.logEvent(
@@ -317,9 +330,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     }
     isCreatingInvitation.value = true;
     try {
-      final invitation = await ref
-          .read(createGroupInvitationProvider)
-          .call(groupID: groupID);
+      final invitation = await createGroupInvitation.call(groupID: groupID);
       if (!context.mounted) {
         return;
       }
@@ -346,23 +357,13 @@ class ShoppingListSettingPage extends HookConsumerWidget {
 
   Future<void> _onTapDelete({
     required BuildContext context,
-    required WidgetRef ref,
+    required List<GroupShoppingListItem> items,
     required String currentShoppingListName,
   }) async {
     analytics.logEvent(
       name: 'tap_delete_list',
       parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
     );
-    final items =
-        ref
-            .read(
-              textShoppingListItemsProvider(
-                groupID: groupID,
-                shoppingListID: shoppingListID,
-              ),
-            )
-            .valueOrNull ??
-        const <GroupShoppingListItem>[];
     await showGeneralDialog<void>(
       context: context,
       barrierLabel: '買い物リスト削除確認',
@@ -546,6 +547,9 @@ class _ListActionsCard extends ConsumerWidget {
             )
             .valueOrNull ??
         const <GroupShoppingListItem>[];
+    final shoppingListDuplicate = ref.watch(
+      shoppingListDuplicateProvider(groupID: groupID),
+    );
     return ClipRRect(
       borderRadius: BorderRadius.circular(14),
       child: Container(
@@ -555,7 +559,12 @@ class _ListActionsCard extends ConsumerWidget {
             AppCell(
               icon: Icons.content_copy_outlined,
               title: '現在のリストを複製',
-              onTap: () => _duplicate(context: context, ref: ref, items: items),
+              onTap:
+                  () => _duplicate(
+                    context: context,
+                    shoppingListDuplicate: shoppingListDuplicate,
+                    items: items,
+                  ),
               detail: null,
               onSwitch: null,
               subtitle: null,
@@ -569,7 +578,7 @@ class _ListActionsCard extends ConsumerWidget {
 
   Future<void> _duplicate({
     required BuildContext context,
-    required WidgetRef ref,
+    required ShoppingListDuplicate shoppingListDuplicate,
     required List<GroupShoppingListItem> items,
   }) async {
     analytics.logEvent(
@@ -582,14 +591,12 @@ class _ListActionsCard extends ConsumerWidget {
     // 生存し続ける root Navigator の context を束ねておく。
     final paywallContext = Navigator.of(context, rootNavigator: true).context;
     try {
-      await ref
-          .read(shoppingListDuplicateProvider(groupID: groupID))
-          .call(
-            createUserID: shoppingList.createUserID,
-            groupID: groupID,
-            sourceShoppingList: shoppingList,
-            shoppingListItems: items,
-          );
+      await shoppingListDuplicate.call(
+        createUserID: shoppingList.createUserID,
+        groupID: groupID,
+        sourceShoppingList: shoppingList,
+        shoppingListItems: items,
+      );
       showGlobalToast('リストを複製しました', title: null);
     } on ShoppingListLimitExceededException catch (e) {
       showGlobalActionToast(

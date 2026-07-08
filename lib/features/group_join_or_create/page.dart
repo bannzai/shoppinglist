@@ -25,6 +25,7 @@ class GroupJoinOrCreatePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isCreating = useState(false);
     final errorMessage = useState<String?>(null);
+    final createGroup = ref.watch(createGroupProvider);
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
 
@@ -121,14 +122,12 @@ class GroupJoinOrCreatePage extends HookConsumerWidget {
                             isCreating.value = true;
                             errorMessage.value = null;
                             try {
-                              await ref
-                                  .read(createGroupProvider)
-                                  .call(
-                                    appUser: appUser,
-                                    name: null,
-                                    setAsDefault: true,
-                                    iconName: 'home',
-                                  );
+                              await createGroup.call(
+                                appUser: appUser,
+                                name: null,
+                                setAsDefault: true,
+                                iconName: 'home',
+                              );
                               // 成功時は defaultGroupID がセットされ
                               // AppEntityPrepareResolver が再ビルドされて本画面が置き換わる。
                               // 破棄済み hook への書き込みを避けるため isCreating は戻さない。

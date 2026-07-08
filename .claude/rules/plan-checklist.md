@@ -30,7 +30,7 @@ Plan mode で .plans/ にプランファイルを作成する際、以下のチ�
 - [ ] Entity命名: フィールド名が省略されていない
 - [ ] DB操作: Firestore操作は `call` クラスのProvider経由
 - [ ] 引数: 関数・コンストラクタの引数に `{required}` あり（timestamp等メタデータ除く）
-- [ ] ref使い分け: build内は `ref.watch`、コールバック・操作は `ref.read`
+- [ ] ref使い分け: Providerはbuild内で`ref.watch`しローカル変数にキャプチャ、コールバック内で新たに`ref.read`/`ref.watch`を呼んでいない
 - [ ] サブコレクションEntityに親ドキュメントIDフィールドあり（該当する場合）
 
 ### Firebase（firebase/ に変更がある場合）

@@ -23,8 +23,10 @@ RemoveGroupMember removeGroupMember(RemoveGroupMemberRef ref) {
   return RemoveGroupMember();
 }
 
-// 呼び出し
-await ref.read(removeGroupMemberProvider).call(groupID: groupID, targetUserID: targetUserID);
+// 呼び出し（build内でwatchしてキャプチャする必要があり、さらに冗長）
+final removeGroupMember = ref.watch(removeGroupMemberProvider);
+...
+await removeGroupMember.call(groupID: groupID, targetUserID: targetUserID);
 ```
 
 ### OK: 直接呼ぶ

@@ -119,6 +119,13 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
     final firstShoppingListID =
         shoppingLists.isNotEmpty ? shoppingLists.first.id : null;
 
+    // defaultGroupID は未参加ユーザーで null になり得るため、その間はキャプチャできない。
+    // onTap は defaultGroupID == null の間 null ガード済みなので addShoppingListItem! で参照する。
+    final addShoppingListItem =
+        defaultGroupID != null
+            ? ref.watch(addShoppingListItemProvider(groupID: defaultGroupID))
+            : null;
+
     final itemsAsync =
         (defaultGroupID != null && firstShoppingListID != null)
             ? ref.watch(
@@ -320,20 +327,14 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
                     isProcessing: isProcessing,
                     resultMessage: resultMessage,
                     action:
-                        () => ref
-                            .read(
-                              addShoppingListItemProvider(
-                                groupID: defaultGroupID,
-                              ),
-                            )
-                            .call(
-                              shoppingListID: firstShoppingListID,
-                              userID: debugUID!,
-                              message: itemMessage.value,
-                              order: items.nextOrder,
-                              description: null,
-                              color: null,
-                            ),
+                        () => addShoppingListItem!.call(
+                          shoppingListID: firstShoppingListID,
+                          userID: debugUID!,
+                          message: itemMessage.value,
+                          order: items.nextOrder,
+                          description: null,
+                          color: null,
+                        ),
                     actionName: 'アイテム追加',
                   ),
         ),

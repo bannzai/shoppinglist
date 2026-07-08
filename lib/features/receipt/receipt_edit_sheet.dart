@@ -52,6 +52,9 @@ class _ReceiptEditSheet extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUserID = ref.watch(currentUserIDProvider);
+    final groupDatabase = ref.watch(groupDatabaseProvider(groupID: groupID));
+    final addReceipt = ref.watch(addReceiptProvider(groupID: groupID));
+    final updateReceipt = ref.watch(updateReceiptProvider(groupID: groupID));
     final selectedPhoto = useState<XFile?>(null);
     final storagePath = useState<String?>(receipt?.storagePath);
     final isSaving = useState<bool>(false);
@@ -124,8 +127,7 @@ class _ReceiptEditSheet extends HookConsumerWidget {
           // 新規: receiptID を採番 → 画像アップロード → ドキュメント作成の順。
           // 画像アップロードに失敗した場合はドキュメントを作らないため孤児が残らない。
           final receiptID =
-              ref
-                  .read(groupDatabaseProvider(groupID: groupID))
+              groupDatabase
                   .newReceiptReference(shoppingListID: shoppingListID)
                   .id;
           final file = File(selectedPhoto.value!.path);
@@ -135,16 +137,14 @@ class _ReceiptEditSheet extends HookConsumerWidget {
             receiptID: receiptID,
             base64Image: await base64CompressImage(file),
           );
-          await ref
-              .read(addReceiptProvider(groupID: groupID))
-              .call(
-                shoppingListID: shoppingListID,
-                receiptID: receiptID,
-                userID: userID,
-                storagePath: uploadedStoragePath,
-                amount: amount,
-                memo: memo.isEmpty ? null : memo,
-              );
+          await addReceipt.call(
+            shoppingListID: shoppingListID,
+            receiptID: receiptID,
+            userID: userID,
+            storagePath: uploadedStoragePath,
+            amount: amount,
+            memo: memo.isEmpty ? null : memo,
+          );
         } else {
           // 編集: 画像が差し替えられていればアップロードする。storage path は receiptID
           // から決定的に決まるため、再アップロードは同じパスを上書きする。
@@ -158,15 +158,13 @@ class _ReceiptEditSheet extends HookConsumerWidget {
               base64Image: await base64CompressImage(file),
             );
           }
-          await ref
-              .read(updateReceiptProvider(groupID: groupID))
-              .call(
-                receipt: receipt!.copyWith(
-                  storagePath: nextStoragePath,
-                  amount: amount,
-                  memo: memo.isEmpty ? null : memo,
-                ),
-              );
+          await updateReceipt.call(
+            receipt: receipt!.copyWith(
+              storagePath: nextStoragePath,
+              amount: amount,
+              memo: memo.isEmpty ? null : memo,
+            ),
+          );
         }
 
         popRouteSafely(navigator: navigator, route: sheetRoute);

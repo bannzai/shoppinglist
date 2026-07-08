@@ -24,6 +24,10 @@ class ImagePickerButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final addShoppingListItem = ref.watch(
+      addShoppingListItemProvider(groupID: groupID),
+    );
+    final currentUserID = ref.watch(currentUserIDProvider);
     return OutlinedButton(
       onPressed: () async {
         analytics.logEvent(
@@ -58,9 +62,10 @@ class ImagePickerButton extends ConsumerWidget {
                         if (context.mounted) {
                           await _addShoppingListItems(
                             context,
-                            ref,
                             photo,
                             shoppingListItems,
+                            addShoppingListItem: addShoppingListItem,
+                            currentUserID: currentUserID,
                           );
                         }
                         if (context.mounted) {
@@ -87,9 +92,10 @@ class ImagePickerButton extends ConsumerWidget {
                         if (context.mounted) {
                           await _addShoppingListItems(
                             context,
-                            ref,
                             photo,
                             shoppingListItems,
+                            addShoppingListItem: addShoppingListItem,
+                            currentUserID: currentUserID,
                           );
                         }
                         if (context.mounted) {
@@ -128,10 +134,11 @@ class ImagePickerButton extends ConsumerWidget {
 
   Future<void> _addShoppingListItems(
     BuildContext context,
-    WidgetRef ref,
     XFile photo,
-    List<GroupShoppingListItem> shoppingListItems,
-  ) async {
+    List<GroupShoppingListItem> shoppingListItems, {
+    required AddShoppingListItem addShoppingListItem,
+    required String? currentUserID,
+  }) async {
     final file = File(photo.path);
     final base64Image = await base64CompressImage(file);
     final rawItems = await functions.generateShoppingListItemsFromImage(
@@ -148,16 +155,14 @@ class ImagePickerButton extends ConsumerWidget {
       }
 
       try {
-        await ref
-            .read(addShoppingListItemProvider(groupID: groupID))
-            .call(
-              shoppingListID: shoppingListID,
-              userID: ref.read(currentUserIDProvider)!,
-              message: e,
-              order: shoppingListItems.nextOrder + i,
-              description: null,
-              color: null,
-            );
+        await addShoppingListItem.call(
+          shoppingListID: shoppingListID,
+          userID: currentUserID!,
+          message: e,
+          order: shoppingListItems.nextOrder + i,
+          description: null,
+          color: null,
+        );
       } catch (e) {
         // エラーが発生しても次の凍レーションを継続する
         debugPrint('Error: $e');

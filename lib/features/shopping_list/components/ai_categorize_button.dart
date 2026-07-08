@@ -41,6 +41,16 @@ class AICategorizeButton extends ConsumerWidget {
     // 画像/URL/カテゴリ分けはどれも同じ aIProcessingProvider・同じバナーを共有するため、
     // いずれかが実行中なら無効化する。
     final isAIProcessing = ref.watch(aIProcessingProvider) != null;
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
+    final remainingCategorize = ref.watch(
+      remainingCategorizeCountProvider(isPremium: isPremium),
+    );
+    final aiProcessingNotifier = ref.watch(aIProcessingProvider.notifier);
+    final aiCategorizeApply = ref.watch(
+      aiCategorizeApplyProvider(groupID: groupID),
+    );
+    final currentUserID = ref.watch(currentUserIDProvider);
     return Padding(
       // リスト先頭のカテゴリセクションと密着しないよう下側に余白を確保する。
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
@@ -49,12 +59,29 @@ class AICategorizeButton extends ConsumerWidget {
         icon: Icons.auto_fix_high,
         variant: AppPillVariant.accent,
         expanded: true,
-        onPressed: isAIProcessing ? null : () => _run(context, ref),
+        onPressed:
+            isAIProcessing
+                ? null
+                : () => _run(
+                  context,
+                  isPremium: isPremium,
+                  remainingCategorize: remainingCategorize,
+                  aiProcessingNotifier: aiProcessingNotifier,
+                  aiCategorizeApply: aiCategorizeApply,
+                  currentUserID: currentUserID,
+                ),
       ),
     );
   }
 
-  Future<void> _run(BuildContext context, WidgetRef ref) async {
+  Future<void> _run(
+    BuildContext context, {
+    required bool isPremium,
+    required int remainingCategorize,
+    required AIProcessing aiProcessingNotifier,
+    required AICategorizeApply aiCategorizeApply,
+    required String? currentUserID,
+  }) async {
     analytics.logEvent(
       name: 'tap_ai_categorize',
       parameters: {
@@ -64,12 +91,7 @@ class AICategorizeButton extends ConsumerWidget {
       },
     );
 
-    final isPremium =
-        ref.read(customerInfoProvider).asData?.value.isPremium ?? false;
-    final remaining = ref.read(
-      remainingCategorizeCountProvider(isPremium: isPremium),
-    );
-    if (remaining <= 0) {
+    if (remainingCategorize <= 0) {
       final limit =
           isPremium
               ? premiumMonthlyCategorizeLimit
@@ -92,17 +114,7 @@ class AICategorizeButton extends ConsumerWidget {
       return;
     }
 
-    // プレビューシート表示中にこのボタンが unmount される（シート内のキーボード表示で
-    // リストが縮み、スクロールアウトした行が dispose される等）と、以降 ref を使うと
-    // StateError で登録が失敗する(#486 と同型)。await を跨いで使う Provider の
-    // 値・インスタンスは unmount 前にここで確保する。
-    final aiProcessing = ref.read(aIProcessingProvider.notifier);
-    final aiCategorizeApply = ref.read(
-      aiCategorizeApplyProvider(groupID: groupID),
-    );
-    final userID = ref.read(currentUserIDProvider)!;
-
-    aiProcessing.start(AIProcessingType.categorize);
+    aiProcessingNotifier.start(AIProcessingType.categorize);
     List<({String name, String categoryName})> categorized;
     try {
       categorized = await functions.categorizeShoppingListItems(
@@ -115,7 +127,7 @@ class AICategorizeButton extends ConsumerWidget {
       }
       return;
     } finally {
-      aiProcessing.end();
+      aiProcessingNotifier.end();
     }
     if (!context.mounted) {
       return;
@@ -137,7 +149,7 @@ class AICategorizeButton extends ConsumerWidget {
     try {
       await aiCategorizeApply.call(
         groupID: groupID,
-        userID: userID,
+        userID: currentUserID!,
         categoryAxisID: categoryAxisID,
         assignments:
             included
