@@ -18,6 +18,7 @@ class ThemeColorSelectionPage extends ConsumerWidget {
     final selectedHex =
         ref.watch(appUserProvider).asData?.value.themeColorHex ??
         defaultThemeColorHex;
+    final themeColorUpdate = ref.watch(themeColorUpdateProvider);
 
     return Scaffold(
       backgroundColor: neutral.paper,
@@ -60,9 +61,9 @@ class ThemeColorSelectionPage extends ConsumerWidget {
                                 parameters: {'themeColorHex': preset.hex},
                               );
                               try {
-                                await ref
-                                    .read(themeColorUpdateProvider)
-                                    .call(preset: preset.preset);
+                                await themeColorUpdate.call(
+                                  preset: preset.preset,
+                                );
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(

@@ -391,6 +391,7 @@ class _PaywallPackageTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
+    final purchase = ref.watch(purchaseProvider);
     return Container(
       margin: const EdgeInsets.only(top: 12),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -485,9 +486,7 @@ class _PaywallPackageTile extends ConsumerWidget {
               final navigator = Navigator.of(context);
               final paywallRoute = ModalRoute.of(context);
               try {
-                final completed = await ref
-                    .read(purchaseProvider)
-                    .call(package);
+                final completed = await purchase.call(package);
                 if (!context.mounted) {
                   return;
                 }

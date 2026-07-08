@@ -18,6 +18,7 @@ class CurrentGroupResolver extends HookConsumerWidget {
     final currentGroupID = ref.watch(currentGroupIDProvider);
     final defaultGroupID =
         ref.watch(appUserProvider).valueOrNull?.defaultGroupID;
+    final currentGroupIDNotifier = ref.watch(currentGroupIDProvider.notifier);
 
     // currentGroupID が未設定の時だけ defaultGroupID で初期化する。
     // build 中の state 変更を避けるため postFrame で反映する。手動切替後は
@@ -26,7 +27,7 @@ class CurrentGroupResolver extends HookConsumerWidget {
     useEffect(() {
       if (currentGroupID == null && defaultGroupID != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          ref.read(currentGroupIDProvider.notifier).update(defaultGroupID);
+          currentGroupIDNotifier.update(defaultGroupID);
         });
       }
       return null;

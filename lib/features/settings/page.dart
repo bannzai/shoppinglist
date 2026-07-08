@@ -60,6 +60,13 @@ class SettingPage extends HookConsumerWidget {
       return null;
     }, [myGroupUserProfile]);
 
+    // groupID は defaultGroupID 未設定時に null になり得るため、その間はキャプチャできない。
+    // saveDisplayName の null ガード（groupID == null で return）と対で groupID! 前提にする。
+    final groupUserProfileUpdate =
+        groupID != null
+            ? ref.watch(groupUserProfileUpdateProvider(groupID: groupID))
+            : null;
+
     // 表示名を保存する。保存ボタンは廃止し、TextFieldのフォーカスが外れた時(blur)に
     // この関数を呼んで自動保存する。保存済みの値と同じ場合は書き込みをスキップし、
     // 不要な更新を避けて冪等にする。
@@ -76,9 +83,10 @@ class SettingPage extends HookConsumerWidget {
         parameters: {'groupID': groupID},
       );
       try {
-        await ref
-            .read(groupUserProfileUpdateProvider(groupID: groupID))
-            .call(userID: currentUserID, displayName: displayName);
+        await groupUserProfileUpdate!.call(
+          userID: currentUserID,
+          displayName: displayName,
+        );
         if (context.mounted) {
           ScaffoldMessenger.of(
             context,

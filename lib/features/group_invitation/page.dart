@@ -19,6 +19,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
     final errorMessage = useState<String?>(null);
     final codeController = useTextEditingController();
     final isValidCode = useState(false);
+    final acceptGroupInvitation = ref.watch(acceptGroupInvitationProvider);
 
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
@@ -137,12 +138,10 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                             // 準拠で、サーバー応答中の手触りを伝える。
                             _showVerifyingDialog(context);
                             try {
-                              await ref
-                                  .read(acceptGroupInvitationProvider)
-                                  .call(
-                                    invitationCode:
-                                        codeController.text.toUpperCase(),
-                                  );
+                              await acceptGroupInvitation.call(
+                                invitationCode:
+                                    codeController.text.toUpperCase(),
+                              );
                               if (context.mounted) {
                                 Navigator.of(context).pop(); // verifying dialog
                               }

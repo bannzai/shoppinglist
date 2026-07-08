@@ -91,8 +91,8 @@ class _CategoryEditBody extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final nameController = useTextEditingController(text: category.name);
 
-    // disappear 時に未保存のカテゴリ名を保存するための更新オブジェクトを build 時にキャプチャする。
-    // useOnDisappear の closure は Widget unmount 後にも呼ばれ ref を使えないため、ここで掴む。
+    // カテゴリ名の自動保存・色/アイコン/キーワード編集で使う更新オブジェクトを build 時にキャプチャする。
+    // useOnDisappear の closure や各操作コールバックは Widget unmount 後にも呼ばれ ref を使えないため、ここで掴む。
     final update = ref.watch(groupCategoryUpdateProvider(groupID: groupID));
 
     // 画面離脱・アプリの background 移行時に、未保存のカテゴリ名を保存する。
@@ -162,13 +162,11 @@ class _CategoryEditBody extends HookConsumerWidget {
                       },
                     );
                     try {
-                      await ref
-                          .read(groupCategoryUpdateProvider(groupID: groupID))
-                          .call(
-                            categoryAxisID: categoryAxisID,
-                            categoryID: category.id,
-                            category: category.copyWith(color: color),
-                          );
+                      await update.call(
+                        categoryAxisID: categoryAxisID,
+                        categoryID: category.id,
+                        category: category.copyWith(color: color),
+                      );
                     } catch (e, st) {
                       if (context.mounted) {
                         showErrorSnackBar(context, e, st);
@@ -196,13 +194,11 @@ class _CategoryEditBody extends HookConsumerWidget {
                       },
                     );
                     try {
-                      await ref
-                          .read(groupCategoryUpdateProvider(groupID: groupID))
-                          .call(
-                            categoryAxisID: categoryAxisID,
-                            categoryID: category.id,
-                            category: category.copyWith(iconName: iconName),
-                          );
+                      await update.call(
+                        categoryAxisID: categoryAxisID,
+                        categoryID: category.id,
+                        category: category.copyWith(iconName: iconName),
+                      );
                     } catch (e, st) {
                       if (context.mounted) {
                         showErrorSnackBar(context, e, st);
@@ -230,7 +226,10 @@ class _CategoryEditBody extends HookConsumerWidget {
                             'categoryID': category.id,
                           },
                         );
-                        _showAddKeywordDialog(context: context, ref: ref);
+                        _showAddKeywordDialog(
+                          context: context,
+                          groupCategoryUpdate: update,
+                        );
                       },
                       icon: const Icon(Icons.add),
                     ),
@@ -275,7 +274,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                         onPressed:
                             () => _deleteKeyword(
                               context: context,
-                              ref: ref,
+                              groupCategoryUpdate: update,
                               index: index,
                             ),
                       ),
@@ -291,7 +290,7 @@ class _CategoryEditBody extends HookConsumerWidget {
 
   void _showAddKeywordDialog({
     required BuildContext context,
-    required WidgetRef ref,
+    required GroupCategoryUpdate groupCategoryUpdate,
   }) {
     final keywordController = TextEditingController();
     var selectedMatchingType = GroupCategoryKeywordMatchingType.partial;
@@ -390,15 +389,11 @@ class _CategoryEditBody extends HookConsumerWidget {
                         );
 
                         try {
-                          await ref
-                              .read(
-                                groupCategoryUpdateProvider(groupID: groupID),
-                              )
-                              .call(
-                                categoryAxisID: categoryAxisID,
-                                categoryID: category.id,
-                                category: updatedCategory,
-                              );
+                          await groupCategoryUpdate.call(
+                            categoryAxisID: categoryAxisID,
+                            categoryID: category.id,
+                            category: updatedCategory,
+                          );
                         } catch (e, st) {
                           if (context.mounted) {
                             showErrorSnackBar(context, e, st);
@@ -428,7 +423,7 @@ class _CategoryEditBody extends HookConsumerWidget {
 
   void _deleteKeyword({
     required BuildContext context,
-    required WidgetRef ref,
+    required GroupCategoryUpdate groupCategoryUpdate,
     required int index,
   }) async {
     analytics.logEvent(
@@ -439,13 +434,11 @@ class _CategoryEditBody extends HookConsumerWidget {
     final updatedCategory = category.copyWith(keywords: updatedKeywords);
 
     try {
-      await ref
-          .read(groupCategoryUpdateProvider(groupID: groupID))
-          .call(
-            categoryAxisID: categoryAxisID,
-            categoryID: category.id,
-            category: updatedCategory,
-          );
+      await groupCategoryUpdate.call(
+        categoryAxisID: categoryAxisID,
+        categoryID: category.id,
+        category: updatedCategory,
+      );
     } catch (e, st) {
       if (context.mounted) {
         showErrorSnackBar(context, e, st);
