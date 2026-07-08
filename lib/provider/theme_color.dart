@@ -73,5 +73,5 @@ class ThemeColorUpdate {
 /// テーマカラー更新操作を提供するProvider。
 @Riverpod(dependencies: [userDatabase])
 ThemeColorUpdate themeColorUpdate(Ref ref) {
-  return ThemeColorUpdate(userDatabase: ref.read(userDatabaseProvider));
+  return ThemeColorUpdate(userDatabase: ref.watch(userDatabaseProvider));
 }

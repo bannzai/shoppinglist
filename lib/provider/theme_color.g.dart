@@ -6,7 +6,7 @@ part of 'theme_color.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$themeColorUpdateHash() => r'483c9c21d4b24367d50a7d04480f9fe71c366c55';
+String _$themeColorUpdateHash() => r'918a6417158a116910455aeee795f9d1da8c24a8';
 
 /// テーマカラー更新操作を提供するProvider。
 ///
