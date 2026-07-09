@@ -5,7 +5,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/features/group_category/category_empty_state.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
-import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/theme.dart';
@@ -29,9 +29,7 @@ void main() {
     testWidgets('軸が0件のとき CategoryEmptyState（追加ボタン付き）を表示する', (tester) async {
       await tester.pumpWidget(
         _wrap([
-          userDatabaseProvider.overrideWith(
-            (ref) => UserDatabase(userID: _testUserID),
-          ),
+          currentUserIDProvider.overrideWithValue(_testUserID),
           groupCategoryAxesProvider(
             groupID: _testGroupID,
           ).overrideWith((ref) => Stream.value(const [])),
@@ -52,9 +50,7 @@ void main() {
           customerInfoProvider.overrideWith(
             (ref) => const Stream<CustomerInfo>.empty(),
           ),
-          userDatabaseProvider.overrideWith(
-            (ref) => UserDatabase(userID: _testUserID),
-          ),
+          currentUserIDProvider.overrideWithValue(_testUserID),
           groupCategoryAxesProvider(groupID: _testGroupID).overrideWith(
             (ref) => Stream.value(const [
               GroupCategoryAxis(
