@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
@@ -11,6 +12,7 @@ import 'package:shoppinglist/features/shopping_list/components/banners/list_erro
 import 'package:shoppinglist/features/shopping_list/components/banners/retention_banner.dart';
 import 'package:shoppinglist/features/shopping_list/components/expandable_fab.dart';
 import 'package:shoppinglist/features/shopping_list/components/group_chips_bar.dart';
+import 'package:shoppinglist/features/shopping_list/components/create_list_spotlight.dart';
 import 'package:shoppinglist/features/shopping_list/components/keyboard_close_toolbar.dart';
 import 'package:shoppinglist/features/shopping_list/components/list_top_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/progress_pill.dart';
@@ -172,7 +174,7 @@ class _GroupChips extends ConsumerWidget {
 /// 有効な買い物リストが確定している(resolvedShoppingListID 非null)時のみマウントされる本体。
 /// item 系 provider の購読をここで無条件に行うため、ShoppingListPage 側に条件付き ref.watch を
 /// 持ち込まずに済む。
-class _ActiveShoppingList extends ConsumerWidget {
+class _ActiveShoppingList extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupShoppingList> shoppingLists;
@@ -194,6 +196,10 @@ class _ActiveShoppingList extends ConsumerWidget {
     final shoppingList = shoppingLists.firstWhereOrNull(
       (sl) => sl.id == shoppingListID,
     );
+
+    // リスト追加ボタンの位置を特定する GlobalKey。スポットライト(Issue #494)の切り抜き対象に使う。
+    // rebuild をまたいで同一 Key を保つため useMemoized で1度だけ生成する。
+    final createListButtonKey = useMemoized(() => GlobalKey(), const []);
 
     // 表示リスト切替に使う notifier を build 時に束ねる。
     // この notifier を子(ListTopBar / ListPickerSheet)へ渡す onShoppingListIDChanged
@@ -284,6 +290,7 @@ class _ActiveShoppingList extends ConsumerWidget {
                 shoppingListItems: shoppingListItemsAsync.valueOrNull,
                 onShoppingListIDChanged:
                     (newID) => currentShoppingListIDNotifier.update(newID),
+                createListButtonKey: createListButtonKey,
               ),
               Expanded(
                 child: Container(
@@ -347,6 +354,14 @@ class _ActiveShoppingList extends ConsumerWidget {
                   groupID: groupID,
                   shoppingListID: shoppingListID,
                 ),
+              // リスト追加スポットライト(Issue #494)。build は SizedBox.shrink を返し
+              // Overlay を命令的に管理するため、レイアウトに影響しない位置(Column 末尾)に置く。
+              CreateListSpotlightHost(
+                groupID: groupID,
+                shoppingLists: shoppingLists,
+                shoppingListItems: shoppingListItemsAsync.valueOrNull,
+                targetKey: createListButtonKey,
+              ),
             ],
           ),
         ),
