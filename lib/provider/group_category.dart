@@ -4,6 +4,7 @@ import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_category_keyword.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -11,19 +12,22 @@ part 'group_category.g.dart';
 
 // --- CategoryAxis Providers ---
 
-@Riverpod(dependencies: [groupDatabase, userDatabase])
+@Riverpod(dependencies: [groupDatabase])
 Stream<List<GroupCategoryAxis>> groupCategoryAxes(
   Ref ref, {
   required String groupID,
 }) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
-  final userDatabase = ref.watch(userDatabaseProvider);
+  final currentUserID = ref.watch(currentUserIDProvider);
+  // ログアウト・ユーザー切替直後のティアダウン中に古い uid で group 配下を
+  // クエリすると permission-denied や別ユーザーのデータ参照になり得るため、
+  // uid が無い間は Firestore を触らず空リストを流す。
+  if (currentUserID == null) {
+    return Stream.value(const <GroupCategoryAxis>[]);
+  }
   return database
       .categoryAxesReference()
-      .where(
-        GroupCategoryAxisFirestoreKeys.userID,
-        isEqualTo: userDatabase.userID,
-      )
+      .where(GroupCategoryAxisFirestoreKeys.userID, isEqualTo: currentUserID)
       .orderBy(GroupCategoryAxisFirestoreKeys.order)
       .snapshots()
       .map((event) => event.docs.map((doc) => doc.data()).toList());
@@ -83,17 +87,22 @@ GroupCategoryAxisDelete groupCategoryAxisDelete(
 
 // --- Category Providers ---
 
-@Riverpod(dependencies: [groupDatabase, userDatabase])
+@Riverpod(dependencies: [groupDatabase])
 Stream<List<GroupCategory>> groupCategories(
   Ref ref, {
   required String groupID,
   required String categoryAxisID,
 }) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
-  final userDatabase = ref.watch(userDatabaseProvider);
+  final currentUserID = ref.watch(currentUserIDProvider);
+  // ログアウト・ユーザー切替直後のティアダウン中に古い uid でクエリしないよう、
+  // uid が無い間は Firestore を触らず空リストを流す。
+  if (currentUserID == null) {
+    return Stream.value(const <GroupCategory>[]);
+  }
   return database
       .categoriesReference(categoryAxisID: categoryAxisID)
-      .where(GroupCategoryFirestoreKeys.userID, isEqualTo: userDatabase.userID)
+      .where(GroupCategoryFirestoreKeys.userID, isEqualTo: currentUserID)
       .orderBy(GroupCategoryFirestoreKeys.order)
       .snapshots()
       .map((event) => event.docs.map((doc) => doc.data()).toList());
