@@ -13,6 +13,11 @@ extension BoolKey on String {
 extension StringKey on String {
   static const String lastSignInFirebaseAuthUserID =
       'lastSignInFirebaseAuthUserID';
+
+  /// リスト追加スポットライトを最後に表示した日時(ISO8601 文字列)。
+  /// 「その日」「そのチェック機会」に対して表示済みかの重複判定に使う(Issue #494)。
+  static const String createListSpotlightLastShownDateTime =
+      'createListSpotlightLastShownDateTime';
 }
 
 extension ReleaseNoteKey on String {}
