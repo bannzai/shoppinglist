@@ -14,6 +14,8 @@ import 'package:shoppinglist/provider/current_group_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 const _testGroupID = 'group-1';
 const _testShoppingListID = 'list-1';
@@ -76,6 +78,11 @@ void main() {
         () => _FixedCurrentGroupID(_testGroupID),
       ),
       firestoreIsPremiumProvider.overrideWith((ref) async => false),
+      // HomeWidgetSync が watch する RC の CustomerInfo。テストでは Purchases SDK の
+      // MethodChannel が使えないため空 Stream に差し替える (isPremium は false 扱い)。
+      customerInfoProvider.overrideWith(
+        (ref) => const Stream<CustomerInfo>.empty(),
+      ),
       appUserProvider.overrideWith(
         (ref) => Stream.value(
           const AppUser(
