@@ -9,8 +9,8 @@ import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/features/group_category/category_empty_state.dart';
 import 'package:shoppinglist/features/group_category_edit/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
-import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/category_presets.dart';
@@ -38,7 +38,7 @@ class GroupCategoryPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
-    final userID = ref.watch(userDatabaseProvider).userID;
+    final currentUserID = ref.watch(currentUserIDProvider);
     final groupCategoryAxisAdd = ref.watch(
       groupCategoryAxisAddProvider(groupID: groupID),
     );
@@ -46,6 +46,16 @@ class GroupCategoryPage extends ConsumerWidget {
       groupCategoryAddProvider(groupID: groupID),
     );
     final title = selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ';
+
+    // ログアウト・ユーザー切替直後は uid が null になる。このページが Navigator 上に
+    // 残ったまま追加操作されると null 例外で落ちるため、uid が取れるまで
+    // ローディング表示にして操作させない。
+    if (currentUserID == null) {
+      return _CategoryScaffold(
+        title: title,
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return axesAsync.when(
       data: (axes) {
@@ -60,7 +70,7 @@ class GroupCategoryPage extends ConsumerWidget {
                 );
                 _addCategoryWithAutoAxis(
                   context: context,
-                  userID: userID,
+                  userID: currentUserID,
                   groupCategoryAxisAdd: groupCategoryAxisAdd,
                   groupCategoryAdd: groupCategoryAdd,
                   existingAxes: axes,
@@ -210,10 +220,20 @@ class _CategoryListBody extends HookConsumerWidget {
     final selectedLocationID = useState<String?>(null);
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
-    final userID = ref.watch(userDatabaseProvider).userID;
+    final currentUserID = ref.watch(currentUserIDProvider);
     final groupCategoryAdd = ref.watch(
       groupCategoryAddProvider(groupID: groupID),
     );
+
+    // ログアウト・ユーザー切替直後の uid=null の間に FAB から追加操作されると
+    // null 例外で落ちるため、uid が取れるまでローディング表示にして操作させない。
+    // hook (useState) の後に置くことで build 間の hook 呼び出し順を変えない。
+    if (currentUserID == null) {
+      return _CategoryScaffold(
+        title: selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ',
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     final tokens = context.appTheme;
     return categoriesAsync.when(
@@ -327,7 +347,7 @@ class _CategoryListBody extends HookConsumerWidget {
                 _addCategoryAndNavigateToEdit(
                   context: context,
                   groupCategoryAdd: groupCategoryAdd,
-                  userID: userID,
+                  userID: currentUserID,
                   groupID: groupID,
                   categoryAxisID: axis.id,
                   order: categories.length,
