@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppinglist/components/spotlight/spotlight_view.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
+import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list/components/create_list_spotlight.dart';
 import 'package:shoppinglist/provider/app_navigator_key.dart';
 import 'package:shoppinglist/provider/app_provider_container.dart';
@@ -168,6 +169,85 @@ void main() {
     expect(find.byType(SpotlightView), findsNothing);
 
     // 遷移完了後に表示される。
+    await tester.pumpAndSettle();
+    expect(find.byType(SpotlightView), findsOneWidget);
+  });
+
+  // 別ルート(設定画面・シート等)が Host の上にある間は current でないため評価を保留し、
+  // foreground 復帰(resumed)で評価が走っても表示しない。上のルートを閉じたら post-frame 再試行で
+  // 拾って表示する。非 current 時に評価を捨てると、設定画面を開いたまま復帰 → 閉じても取りこぼす
+  // (codex レビュー指摘)ため、その回帰を防ぐ。
+  testWidgets('別ルートが上にある間は resumed 評価でも表示せず、pop 後に表示する', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final sharedPreferences = await SharedPreferences.getInstance();
+    final container = ProviderContainer(
+      overrides: [
+        sharedPreferencesProvider.overrideWith((ref) => sharedPreferences),
+      ],
+    );
+    addTearDown(container.dispose);
+    appProviderContainer = container;
+
+    final targetKey = GlobalKey();
+    final shoppingList = _list(
+      createdDateTime: DateTime.now().subtract(const Duration(days: 1)),
+    );
+
+    // shoppingListItems の null(未ロード)→ 非 null(ロード完了)で初回評価タイミングを制御する。
+    Widget buildApp({required List<GroupShoppingListItem>? shoppingListItems}) {
+      return UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          navigatorKey: appNavigatorKey,
+          theme: buildAppTheme(accent: AccentPreset.shu),
+          home: Scaffold(
+            body: Column(
+              children: [
+                SizedBox(key: targetKey, width: 40, height: 40),
+                CreateListSpotlightHost(
+                  groupID: _groupID,
+                  shoppingLists: [shoppingList],
+                  shoppingListItems: shoppingListItems,
+                  targetKey: targetKey,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // 未ロード状態で開始する(初回 post-frame 評価はまだ走らない)。
+    await tester.pumpWidget(buildApp(shoppingListItems: null));
+    await tester.pumpAndSettle();
+    expect(find.byType(SpotlightView), findsNothing);
+
+    // Host の上に別ルートを push する(以降 Host は current でない)。
+    appNavigatorKey.currentState!.push(
+      MaterialPageRoute<void>(
+        builder: (context) => const Scaffold(body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // アイテムがロードされ初回評価が走るが、上に別ルートがあるため表示は保留される。
+    await tester.pumpWidget(buildApp(shoppingListItems: const []));
+    await tester.pumpAndSettle();
+    expect(find.byType(SpotlightView), findsNothing);
+
+    // foreground 復帰相当の評価が走っても、current でないため表示しない(評価は捨てず保留)。
+    // AppLifecycleListener は隣接状態の遷移のみ許すため、background 移行→復帰を段階的に流す。
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pumpAndSettle();
+    expect(find.byType(SpotlightView), findsNothing);
+
+    // 上のルートを閉じると、保留していた評価が post-frame 再試行で拾われ表示される。
+    appNavigatorKey.currentState!.pop();
     await tester.pumpAndSettle();
     expect(find.byType(SpotlightView), findsOneWidget);
   });

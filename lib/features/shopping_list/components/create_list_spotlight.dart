@@ -151,23 +151,32 @@ class CreateListSpotlightHost extends HookConsumerWidget {
       if (entryRef.value != null) {
         return true;
       }
-      // シート/ダイアログが上にある時は表示しない。
+      // route 自体が無い(まだツリーに乗っていない)時だけ即座に諦める。
       final route = ModalRoute.of(context);
-      if (route == null || !route.isCurrent) {
+      if (route == null) {
         return false;
       }
-      // ルート遷移が完了するまで測定・表示しない。
-      // isCurrent は上のルートが pop された「瞬間」に true になるが、Cupertino の pop 遷移中は
-      // 下層ページ(この画面)がまだ横スライド中で、renderObject.localToGlobal(下記)がスライド中の
-      // 誤った座標(ずれ幅 ≈ 画面幅/3)を返す。animation が completed かつ secondaryAnimation が
-      // dismissed になる(= 遷移完全終了)まで待ち、それまでは post-frame で再試行する。
-      // これは強制表示・通常(初回/resumed)いずれの経路もこの共通箇所を通るため一律で効く。
-      if (!_isRouteSettled(route)) {
+      // 「current でない(シート・設定画面などが上にある)」と「遷移が未完了」を1つの保留分岐に統合する。
+      // どちらも今は測定・表示すべきでないが、評価をここで捨てず post-frame 再試行で保留する。
+      //
+      // - !route.isCurrent: シートや設定画面が上に乗っている間。この Host は上のルートが pop されても
+      //   再 build されないため、ここで false を返して評価を捨てると、上のルートを閉じた後に評価する
+      //   機会が失われる(設定画面を開いたまま foreground 復帰 → 閉じても取りこぼす。codex レビュー指摘)。
+      //   current に戻るまで保留し、閉じた後の再試行で拾う。
+      // - !_isRouteSettled(route): 遷移アニメーション中。isCurrent は上のルートが pop された「瞬間」に
+      //   true になるが、Cupertino の pop 遷移中は下層ページ(この画面)がまだ横スライド中で、
+      //   renderObject.localToGlobal(下記)がスライド中の誤った座標(ずれ幅 ≈ 画面幅/3)を返す。
+      //   animation が completed かつ secondaryAnimation が dismissed になる(= 遷移完全終了)まで待つ。
+      //
+      // 再試行はフレームが生成された時だけ発火する軽量チェック(addPostFrameCallback は自らフレームを
+      // 予約しないため busy-loop しない)。current かつ settled の評価に到達して発火するか、unmount で
+      // context.mounted ガードに弾かれて自然に止まる。強制表示・通常(初回/resumed)いずれの経路も
+      // この共通箇所を通るため一律で効く。
+      if (!route.isCurrent || !_isRouteSettled(route)) {
         if (!retryScheduledRef.value) {
           retryScheduledRef.value = true;
           WidgetsBinding.instance.addPostFrameCallback((_) {
             retryScheduledRef.value = false;
-            // 遷移中はフレームが継続生成されるため、完了するまで毎フレーム再評価される。
             // unmount 後に発火しても何もしないよう mounted をガードする。
             if (context.mounted) {
               attemptShow(force: force);
@@ -249,7 +258,12 @@ class CreateListSpotlightHost extends HookConsumerWidget {
     useEffect(() {
       if (itemsLoaded) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          attemptShow(force: false);
+          // リスト切替(親が ValueKey を変え element ごと破棄)や画面遷移で Host 破棄直後に
+          // 発火し得るため、無効な context で ModalRoute.of / targetKey 参照が走らないよう
+          // mounted をガードする。
+          if (context.mounted) {
+            attemptShow(force: false);
+          }
         });
       }
       return null;
