@@ -33,8 +33,13 @@ iOS/Android のホームウィジェット（`ShoppingListWidget`）が参照す
 - `widget_items_{groupID}_{shoppingListID}`（JSON配列）
 - `widget_total_count_{groupID}_{shoppingListID}` / `widget_done_count_{groupID}_{shoppingListID}`
 
-## 既知の制約
-アプリ本体プロセスから `HomeWidget.updateWidget()` を呼んでも、既に追加済みのウィジェットが
-再描画されないことがある（Issue #475 Root Cause 2、未解決）。ウィジェット拡張自身が呼ぶ
-`WidgetCenter.shared.reloadAllTimelines()`（`ToggleItemIntent.swift`）は正常に動作するため、
-データの書き込み自体は成功していても表示が追従しない場合がある。実機での再検証が必要。
+## ウィジェット再描画（Issue #475 Root Cause 2）
+`home_widget` の `updateWidget()` は iOS で `WidgetCenter.reloadTimelines(ofKind:)` しか呼ばず、
+正しい kind を渡しても既に追加済みのウィジェットが再描画されないことがある。
+一方、ウィジェット拡張自身が呼ぶ `WidgetCenter.shared.reloadAllTimelines()`
+（`ToggleItemIntent.swift`）は確実に反映される。
+
+このため `HomeWidgetDataSync.updateWidget()` は iOS のとき、`HomeWidget.updateWidget()` に加えて
+`AppDelegate` に登録した MethodChannel（`com.bannzai.shoppinglist/home_widget_reload`）経由で
+`reloadAllTimelines()` を追加で呼ぶ。バックグラウンド isolate 等チャンネル未登録のエンジンから
+呼ばれた場合は `MissingPluginException` を無視し、`HomeWidget.updateWidget()` のみで続行する。

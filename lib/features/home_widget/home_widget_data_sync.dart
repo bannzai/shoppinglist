@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
@@ -79,6 +80,7 @@ class HomeWidgetDataSync {
     debugPrint(
       '[HomeWidgetDataSync] syncShoppingLists: ${shoppingLists.length}件',
     );
+    await updateWidget();
   }
 
   static Future<void> syncCurrentShoppingListItems({
@@ -136,10 +138,27 @@ class HomeWidgetDataSync {
     await updateWidget();
   }
 
+  /// home_widget の updateWidget は iOS で WidgetCenter.reloadTimelines(ofKind:) を呼ぶが、
+  /// 正しい kind を渡しても再描画されないことがある (Issue #475 Root Cause 2)。
+  /// ウィジェット拡張内の ToggleItemIntent では reloadAllTimelines() で確実に反映されるため、
+  /// アプリ本体からも AppDelegate の MethodChannel 経由で reloadAllTimelines() を追加で呼ぶ。
+  static const _reloadChannel = MethodChannel(
+    'com.bannzai.shoppinglist/home_widget_reload',
+  );
+
   static Future<void> updateWidget() async {
     await HomeWidget.updateWidget(
       iOSName: iOSWidgetName,
       androidName: androidWidgetName,
     );
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      try {
+        await _reloadChannel.invokeMethod<void>('reloadAllTimelines');
+      } on MissingPluginException {
+        // バックグラウンド isolate (homeWidgetBackgroundCallback) など、
+        // AppDelegate のチャンネル登録が無いエンジンから呼ばれた場合は
+        // HomeWidget.updateWidget の reloadTimelines(ofKind:) のみで続行する。
+      }
+    }
   }
 }
