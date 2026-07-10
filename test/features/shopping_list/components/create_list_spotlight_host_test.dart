@@ -251,4 +251,86 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(SpotlightView), findsOneWidget);
   });
+
+  // 保留再試行は「最新 build の attemptShow」を ref 経由で呼ぶため、保留中に props(判定材料)が
+  // 変わればその最新値で評価する。別ルートで保留中に条件を成立→不成立へ変えて rebuild し、
+  // pop 後に表示されないことを検証する(古い closure を掴み続けると条件成立時の値で表示してしまう。
+  // codex レビュー指摘の stale closure 回帰防止)。
+  testWidgets('保留中に条件が不成立へ変わったら pop 後に表示しない(最新の判定材料で評価)', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final sharedPreferences = await SharedPreferences.getInstance();
+    final container = ProviderContainer(
+      overrides: [
+        sharedPreferencesProvider.overrideWith((ref) => sharedPreferences),
+      ],
+    );
+    addTearDown(container.dispose);
+    appProviderContainer = container;
+
+    final targetKey = GlobalKey();
+
+    // shoppingLists / shoppingListItems を差し替え可能にして、保留中の props 更新を再現する。
+    Widget buildApp({
+      required GroupShoppingList shoppingList,
+      required List<GroupShoppingListItem>? shoppingListItems,
+    }) {
+      return UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          navigatorKey: appNavigatorKey,
+          theme: buildAppTheme(accent: AccentPreset.shu),
+          home: Scaffold(
+            body: Column(
+              children: [
+                SizedBox(key: targetKey, width: 40, height: 40),
+                CreateListSpotlightHost(
+                  groupID: _groupID,
+                  shoppingLists: [shoppingList],
+                  shoppingListItems: shoppingListItems,
+                  targetKey: targetKey,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // 未ロード状態で開始する(初回 post-frame 評価はまだ走らない)。
+    final yesterdayList = _list(
+      createdDateTime: DateTime.now().subtract(const Duration(days: 1)),
+    );
+    await tester.pumpWidget(
+      buildApp(shoppingList: yesterdayList, shoppingListItems: null),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(SpotlightView), findsNothing);
+
+    // Host の上に別ルートを push する(以降 Host は current でない)。
+    appNavigatorKey.currentState!.push(
+      MaterialPageRoute<void>(
+        builder: (context) => const Scaffold(body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // 条件成立(昨日作成)のままアイテムをロードし、初回評価を保留状態にする。
+    await tester.pumpWidget(
+      buildApp(shoppingList: yesterdayList, shoppingListItems: const []),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(SpotlightView), findsNothing);
+
+    // 保留中に先頭リストの作成日時が今日に変わる(= cond1 不成立)。最新の判定材料で評価されるべき。
+    final todayList = _list(createdDateTime: DateTime.now());
+    await tester.pumpWidget(
+      buildApp(shoppingList: todayList, shoppingListItems: const []),
+    );
+    await tester.pumpAndSettle();
+
+    // 上のルートを閉じる。最新 build の attemptShow で評価されるため条件不成立で表示されない。
+    appNavigatorKey.currentState!.pop();
+    await tester.pumpAndSettle();
+    expect(find.byType(SpotlightView), findsNothing);
+  });
 }

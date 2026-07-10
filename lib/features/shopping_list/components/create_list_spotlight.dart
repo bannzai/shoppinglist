@@ -138,6 +138,16 @@ class CreateListSpotlightHost extends HookConsumerWidget {
     // ルート遷移完了待ちの post-frame 再試行を1本に絞るためのフラグ(多重スケジュール防止)。
     final retryScheduledRef = useRef(false);
 
+    // 遅延実行されるコールバック(post-frame 再試行・resumed・強制表示ポーリング・初回アイテム到達)が
+    // 常に「最新 build の attemptShow」を呼ぶための ref。attemptShow closure は build ごとに
+    // shoppingLists / shoppingListItems / lastShownString を束ね直すが、保留再試行中(シートや別ルートが
+    // 上にある間)に Firestore のリスト/アイテムや prefs が更新されても、build 時に束ねた古い closure を
+    // 呼び続けると古い判定材料で評価してしまう(stale closure。codex レビュー指摘。例: 設定画面を開いた
+    // まま別端末で今日のリストが作られると、戻った瞬間に不要なスポットライトを出す)。Host は props/provider
+    // 変化で毎回 rebuild されるため、ref 経由で呼べば常に最新の判定材料で評価される。値は attemptShow
+    // 定義直後に毎 build 更新する。
+    final attemptShowRef = useRef<bool Function({required bool force})?>(null);
+
     void removeEntry() {
       entryRef.value?.remove();
       entryRef.value?.dispose();
@@ -178,8 +188,9 @@ class CreateListSpotlightHost extends HookConsumerWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             retryScheduledRef.value = false;
             // unmount 後に発火しても何もしないよう mounted をガードする。
+            // ref 経由で最新 build の attemptShow を呼び、保留中に更新された判定材料で再評価する。
             if (context.mounted) {
-              attemptShow(force: force);
+              attemptShowRef.value!(force: force);
             }
           });
         }
@@ -252,6 +263,9 @@ class CreateListSpotlightHost extends HookConsumerWidget {
       return true;
     }
 
+    // 遅延実行されるコールバックが最新 build の判定材料で評価できるよう、毎 build 更新する。
+    attemptShowRef.value = attemptShow;
+
     // 初回のアイテム一覧到達(null→非null)後に、post-frame で1回だけ評価する。
     // itemsLoaded を依存にすることで、ロード完了時の1回のみ評価し連続 rebuild では評価しない。
     final itemsLoaded = shoppingListItems != null;
@@ -260,9 +274,9 @@ class CreateListSpotlightHost extends HookConsumerWidget {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           // リスト切替(親が ValueKey を変え element ごと破棄)や画面遷移で Host 破棄直後に
           // 発火し得るため、無効な context で ModalRoute.of / targetKey 参照が走らないよう
-          // mounted をガードする。
+          // mounted をガードする。ref 経由で最新 build の attemptShow を呼ぶ。
           if (context.mounted) {
-            attemptShow(force: false);
+            attemptShowRef.value!(force: false);
           }
         });
       }
@@ -270,8 +284,9 @@ class CreateListSpotlightHost extends HookConsumerWidget {
     }, [itemsLoaded]);
 
     // foreground 復帰時に条件を再評価する(チェックから1時間経過などをアプリ復帰で拾う)。
+    // ref 経由で最新 build の attemptShow を呼ぶ(復帰時の最新の判定材料で評価する)。
     useOnResumed(() {
-      attemptShow(force: false);
+      attemptShowRef.value!(force: false);
     });
 
     // 開発者オプションの強制表示。フラグが立っている間、買い物リスト画面が前面に来て
@@ -283,8 +298,9 @@ class CreateListSpotlightHost extends HookConsumerWidget {
       if (!debugForce) {
         return null;
       }
+      // ref 経由で最新 build の attemptShow を呼ぶ(ポーリング中に更新された判定材料で評価する)。
       final timer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
-        if (attemptShow(force: true)) {
+        if (attemptShowRef.value!(force: true)) {
           timer.cancel();
         }
       });
