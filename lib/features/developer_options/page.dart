@@ -4,14 +4,17 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/developer_options/firestore_viewer_page.dart';
 import 'package:shoppinglist/features/developer_options/provider.dart';
+import 'package:shoppinglist/features/shopping_list/components/create_list_spotlight.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/provider/string_shared_preferences.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 
 /// 開発者オプションのモーダルボトムシートを表示する。
 void showDeveloperOptionsModal(BuildContext context) {
@@ -136,6 +139,16 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
             )
             : null;
     final items = itemsAsync?.asData?.value ?? <GroupShoppingListItem>[];
+
+    // リスト追加スポットライト(Issue #494)のデバッグ操作用。build 内で notifier をキャプチャする。
+    final debugForceSpotlightNotifier = ref.watch(
+      debugForceCreateListSpotlightProvider.notifier,
+    );
+    final spotlightPrefsNotifier = ref.watch(
+      stringSharedPreferencesProvider(
+        key: StringKey.createListSpotlightLastShownDateTime,
+      ).notifier,
+    );
 
     return ListView(
       controller: scrollController,
@@ -360,6 +373,35 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
                         ),
                     actionName: 'クリーンアップ',
                   ),
+        ),
+
+        const Divider(height: 24),
+
+        // リスト追加スポットライト(Issue #494)を強制表示
+        _ActionTile(
+          title: 'リスト追加スポットライトを強制表示',
+          subtitle: '買い物リスト画面に戻ると表示されます（条件を無視・履歴は汚しません）',
+          icon: Icons.highlight,
+          isProcessing: false,
+          onTap: () {
+            debugForceSpotlightNotifier.show();
+            resultMessage.value = 'スポットライト強制表示をON。買い物リスト画面に戻ってください';
+          },
+        ),
+
+        // リスト追加スポットライトの表示履歴をリセット
+        _ActionTile(
+          title: 'リスト追加スポットライト履歴をリセット',
+          subtitle: '最終表示日時を削除し、条件を満たせば再表示できるようにする',
+          icon: Icons.restore,
+          isProcessing: isProcessing.value,
+          onTap:
+              () => _execute(
+                isProcessing: isProcessing,
+                resultMessage: resultMessage,
+                action: () => spotlightPrefsNotifier.remove(),
+                actionName: 'スポットライト履歴リセット',
+              ),
         ),
       ],
     );

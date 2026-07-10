@@ -359,17 +359,15 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
             },
           );
           try {
-            await groupDatabase
-                .shoppingListItemsReference(
-                  shoppingListID: textShoppingListItem.shoppingListID,
-                )
-                .doc(textShoppingListItem.id)
-                .update({
-                  GroupShoppingListItemFirestoreKeys.status:
-                      wasChecked
-                          ? GroupShoppingListItemStatus.unchecked.name
-                          : GroupShoppingListItemStatus.checked.name,
-                });
+            // チェックボックスのタップと同じく Provider 経由でトグルする。直接 update だと
+            // status しか書けず、チェック時の checkedByUserID / lastCheckedDateTime が
+            // 更新されない。lastCheckedDateTime を書かないと create_list_spotlight の
+            // 条件2(チェック後1時間経過の再訪ナッジ)が成立しなくなる(Issue #494)。
+            await toggleShoppingListItemCheck.call(
+              shoppingListID: textShoppingListItem.shoppingListID,
+              item: textShoppingListItem,
+              userID: currentUserID,
+            );
           } catch (e, st) {
             if (context.mounted) {
               showErrorSnackBar(context, e, st);
