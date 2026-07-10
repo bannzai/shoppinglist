@@ -11,8 +11,9 @@ import 'package:shoppinglist/features/shopping_list/page.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
-/// ソフトキーボード表示中は下部の浮遊要素(FAB・進捗ピル)が入力行と重なるため隠す、
-/// という page.dart の挙動を検証する。キーボードは MediaQuery.viewInsets で疑似的に再現する
+/// ソフトキーボード表示中の下部浮遊要素の扱い(進捗ピルは隠す・FAB は隠さず表示し続けて
+/// キーボードを閉じる導線にする。Issue #498)を検証する。
+/// キーボードは MediaQuery.viewInsets で疑似的に再現する
 /// (ShoppingListPage は Scaffold の外側で viewInsets を読むため、ここで注入した値が効く)。
 Future<void> _pumpPage(
   WidgetTester tester, {
@@ -62,10 +63,14 @@ void main() {
     );
   });
 
-  testWidgets('キーボード表示時は FAB と進捗ピルを隠す', (tester) async {
+  testWidgets('キーボード表示時は進捗ピルを隠し FAB は表示し続ける', (tester) async {
     await _pumpPage(tester, isKeyboardVisible: true);
 
-    expect(find.byType(ExpandableFab), findsNothing);
+    expect(
+      find.byType(ExpandableFab),
+      findsOneWidget,
+      reason: 'FAB は隠さずタップ・長押しでキーボードを閉じる導線にする(Issue #498)',
+    );
     expect(find.byType(ProgressPill), findsNothing);
     expect(
       find.byType(CreateListMenuButton),
@@ -77,6 +82,39 @@ void main() {
       findsOneWidget,
       reason: 'キーボードの閉じ方がわからない問題への導線(Issue #488)',
     );
+  });
+
+  testWidgets('キーボード表示中の FAB は閉じるツールバーと重ならない位置に持ち上がる', (tester) async {
+    await _pumpPage(tester, isKeyboardVisible: true);
+
+    // FAB は body 下端に出る KeyboardCloseToolbar の高さ分持ち上がるため、
+    // FAB の下端はツールバーの上端より上にある(右端の閉じるボタンを塞がない)。
+    expect(
+      tester.getBottomRight(find.byType(FloatingActionButton)).dy,
+      lessThanOrEqualTo(
+        tester.getTopLeft(find.byType(KeyboardCloseToolbar)).dy,
+      ),
+    );
+  });
+
+  testWidgets('キーボード表示中に FAB をタップするとフォーカスが外れ空行は追加されない', (tester) async {
+    await _pumpPage(tester, isKeyboardVisible: true);
+
+    // アイテム行の TextField にフォーカスを当てて入力中の状態を作る。
+    await tester.showKeyboard(find.byType(TextField).first);
+    await tester.pump();
+    final focusNode =
+        tester.widget<TextField>(find.byType(TextField).first).focusNode!;
+    expect(focusNode.hasFocus, isTrue);
+    final textFieldCount = find.byType(TextField).evaluate().length;
+
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pumpAndSettle();
+
+    // フォーカスが外れる = 実機ではソフトキーボードが閉じる(Issue #498)。
+    // 空行を追加すると新規行の autofocus でキーボードが開き直るため、行は増えない。
+    expect(focusNode.hasFocus, isFalse);
+    expect(find.byType(TextField).evaluate().length, textFieldCount);
   });
 
   testWidgets('閉じるツールバーは Scaffold body の最下部 = キーボード直上に置く', (tester) async {

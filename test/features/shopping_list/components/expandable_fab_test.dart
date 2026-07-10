@@ -60,6 +60,8 @@ void main() {
   Future<_RecordingAddShoppingListItem> pumpFab(
     WidgetTester tester, {
     AIProcessingType? aiProcessingType,
+    bool isKeyboardVisible = false,
+    FocusNode? textFieldFocusNode,
   }) async {
     final recordingAdd = _RecordingAddShoppingListItem();
     await tester.pumpWidget(
@@ -82,11 +84,17 @@ void main() {
         ],
         child: MaterialApp(
           theme: buildAppTheme(accent: AccentPreset.shu),
-          home: const Scaffold(
+          home: Scaffold(
+            // キーボード表示中の unfocus 検証用にフォーカスを当てる先の TextField。
+            body:
+                textFieldFocusNode != null
+                    ? TextField(focusNode: textFieldFocusNode)
+                    : null,
             floatingActionButton: ExpandableFab(
               groupID: 'g',
               shoppingListID: 's',
-              shoppingListItems: [],
+              shoppingListItems: const [],
+              isKeyboardVisible: isKeyboardVisible,
             ),
           ),
         ),
@@ -188,6 +196,51 @@ void main() {
       findsOneWidget,
       reason: '閉じて add_task に戻る',
     );
+  });
+
+  testWidgets('キーボード表示中のタップは空行を追加せずフォーカスを外す', (tester) async {
+    final focusNode = FocusNode();
+    addTearDown(focusNode.dispose);
+    final recordingAdd = await pumpFab(
+      tester,
+      isKeyboardVisible: true,
+      textFieldFocusNode: focusNode,
+    );
+
+    await tester.showKeyboard(find.byType(TextField));
+    await tester.pump();
+    expect(focusNode.hasFocus, isTrue);
+
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pumpAndSettle();
+
+    // フォーカスが外れる = 実機ではソフトキーボードが閉じる(Issue #498)。
+    // 空行を追加すると新規行の autofocus でキーボードが開き直るため、追加はしない。
+    expect(focusNode.hasFocus, isFalse);
+    expect(recordingAdd.callCount, 0);
+    expect(find.byIcon(Icons.close), findsNothing, reason: 'メニューも開かない');
+  });
+
+  testWidgets('キーボード表示中の長押しはフォーカスを外してメニューを開く', (tester) async {
+    final focusNode = FocusNode();
+    addTearDown(focusNode.dispose);
+    final recordingAdd = await pumpFab(
+      tester,
+      isKeyboardVisible: true,
+      textFieldFocusNode: focusNode,
+    );
+
+    await tester.showKeyboard(find.byType(TextField));
+    await tester.pump();
+    expect(focusNode.hasFocus, isTrue);
+
+    await tester.longPress(find.byType(FloatingActionButton));
+    await tester.pumpAndSettle();
+
+    // キーボードを閉じつつ(unfocus)、メニュー開閉は通常どおり行う(Issue #498)。
+    expect(focusNode.hasFocus, isFalse);
+    expect(find.byIcon(Icons.close), findsOneWidget);
+    expect(recordingAdd.callCount, 0);
   });
 
   testWidgets('AI 処理中は「写真から追加」をタップしてもダイアログが開かない', (tester) async {
