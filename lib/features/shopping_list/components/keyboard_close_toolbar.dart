@@ -9,6 +9,11 @@ import 'package:shoppinglist/utils/logger/analytics.dart';
 /// キーボードに done ボタンが出ず閉じる手段がわからない。そこでキーボード表示中だけ
 /// このツールバーを出し、「閉じる」でフォーカスを外してキーボードを閉じられるようにする。
 class KeyboardCloseToolbar extends StatelessWidget {
+  /// ツールバーの固定高。キーボード表示中は FAB を隠さない(Issue #498)ため、
+  /// page.dart がこの分だけ FAB を持ち上げて右端の閉じるボタンとの重なりを避ける。
+  /// レイアウト計算に使えるよう固定値にしている(TextButton の既定タップ領域 48px)。
+  static const double height = 48;
+
   final String groupID;
   final String shoppingListID;
 
@@ -23,6 +28,7 @@ class KeyboardCloseToolbar extends StatelessWidget {
     final tokens = context.appTheme;
     return Container(
       width: double.infinity,
+      height: height,
       decoration: BoxDecoration(
         color: tokens.neutral.surface,
         border: Border(top: BorderSide(color: tokens.neutral.divider2)),

@@ -225,11 +225,10 @@ class _ActiveShoppingList extends ConsumerWidget {
     // グループへの更新通知は上部バー(ListTopBar)の手動ボタン(NotifyGroupButton)で行う。
     // 自動検知による通知バーは廃止した(Issue #449)。
 
-    // ソフトキーボード表示中は、下部の浮遊要素(FAB・進捗ピル)を隠す。入力行は
-    // フォーカス時に keepVisibleAtEnd でキーボード直上へスクロールされる
-    // (text_shopping_list_item.dart, Issue #429)ため、同じくキーボード直上に浮く FAB・
-    // 進捗ピルと重なってしまう。キーボード表示中は入力行での連続追加が主操作で FAB は不要な
-    // ので、表示中だけ隠して重なりを解消する。この build は Scaffold の外側にあるため
+    // ソフトキーボード表示中の下部浮遊要素の扱い: 進捗ピルは入力行(フォーカス時に
+    // keepVisibleAtEnd でキーボード直上へスクロールされる。text_shopping_list_item.dart,
+    // Issue #429)と重なるため隠す。FAB は隠さず表示し続け、タップ・長押しでキーボードを
+    // 閉じられるようにする(Issue #498)。この build は Scaffold の外側にあるため
     // viewInsets はキーボード実高を保持する(Scaffold body 内では viewInsets が 0 に潰れる)。
     final isKeyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
 
@@ -252,16 +251,19 @@ class _ActiveShoppingList extends ConsumerWidget {
       },
       // アイテム入力 FAB（ExpandableFab）。リスト作成は上部バー(ListTopBar)の
       // CreateListMenuButton へ移動した(Issue #461)。
-      // キーボード表示中は入力行と重なるため隠す(Scaffold の FAB スケールアニメで消える)。
-      floatingActionButton:
-          isKeyboardVisible
-              ? null
-              : ExpandableFab(
-                groupID: groupID,
-                shoppingListID: shoppingListID,
-                shoppingListItems:
-                    shoppingListItemsAsync.asData?.value ?? const [],
-              ),
+      // キーボード表示中も隠さない(Issue #498)。body 下端に出る KeyboardCloseToolbar の
+      // 閉じるボタン(右端)と FAB が重ならないよう、ツールバーの高さ分だけ持ち上げる。
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(
+          bottom: isKeyboardVisible ? KeyboardCloseToolbar.height : 0,
+        ),
+        child: ExpandableFab(
+          groupID: groupID,
+          shoppingListID: shoppingListID,
+          shoppingListItems: shoppingListItemsAsync.asData?.value ?? const [],
+          isKeyboardVisible: isKeyboardVisible,
+        ),
+      ),
       // NavBar(surface)の帯 + 白(card)コンテンツ部のハイブリッドサーフェス。
       // リスト本体のスクロール開始時に FAB の展開メニューを閉じる。onNotification は
       // false を返して通知を上位へ伝播させ続ける（スクロール自体は通常どおり動く）。
@@ -324,7 +326,8 @@ class _ActiveShoppingList extends ConsumerWidget {
                       ),
                       // チェック進捗を左下に浮かせる小さなピル(FAB は右下なので対称)。
                       // 外側 SafeArea が bottom:false のため、ホームインジケータ分を加味する。
-                      // キーボード表示中は入力行と重なるため隠す(FAB と同じ扱い)。
+                      // キーボード表示中は入力行と重なるため隠す(表示のみの要素で、
+                      // キーボードを閉じる導線を担う FAB と違い出し続ける理由がない。Issue #498)。
                       if (totalCount > 0 && !isKeyboardVisible)
                         Positioned(
                           left: 16,
