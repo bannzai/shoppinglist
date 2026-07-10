@@ -78,5 +78,21 @@ void main() {
       expect(find.byType(OutlinedButton), findsNothing);
       expect(find.byType(FloatingActionButton), findsOneWidget);
     });
+
+    testWidgets('uid が null の間はローディングを表示し追加導線を出さない', (tester) async {
+      await tester.pumpWidget(
+        _wrap([
+          currentUserIDProvider.overrideWithValue(null),
+          groupCategoryAxesProvider(
+            groupID: _testGroupID,
+          ).overrideWith((ref) => Stream.value(const [])),
+        ]),
+      );
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(CategoryEmptyState), findsNothing);
+      expect(find.byType(FloatingActionButton), findsNothing);
+    });
   });
 }
