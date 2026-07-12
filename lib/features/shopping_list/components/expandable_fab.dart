@@ -31,16 +31,24 @@ import 'package:shoppinglist/utils/stdlib/navigator.dart';
 /// タップ: 空行を 1 件追加する（最頻操作をワンタップにする。Issue #462）。
 /// 長押し: 写真 / URL / テキスト貼り付け のメニューを上方向に展開する。
 /// リスト作成は上部バー(`ListTopBar`)の `CreateListMenuButton` が担う(Issue #461)。
+/// キーボード表示中も隠さず表示し続け、タップ・長押しでキーボードを閉じる(Issue #498)。
 class ExpandableFab extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
+
+  /// ソフトキーボード表示中か。page.dart が Scaffold の外側で viewInsets から判定して
+  /// 渡す(Scaffold body 内では resizeToAvoidBottomInset により viewInsets が 0 に潰れる
+  /// ため、この widget 内では自前判定できない)。表示中はタップ・長押しでキーボードを
+  /// 閉じる(Issue #498)。
+  final bool isKeyboardVisible;
 
   const ExpandableFab({
     super.key,
     required this.groupID,
     required this.shoppingListID,
     required this.shoppingListItems,
+    required this.isKeyboardVisible,
   });
 
   @override
@@ -156,6 +164,12 @@ class ExpandableFab extends HookConsumerWidget {
         // onLongPress でジェスチャーアリーナの長押しを勝たせ、メニュー開閉に割り当てる。
         GestureDetector(
           onLongPress: () {
+            // キーボード表示中の長押しはキーボードを閉じてからメニューを開閉する
+            // (Issue #498)。入力途中テキストの確定保存・空の入力行の削除はフォーカス
+            // 喪失を検知する行側の listener (text_shopping_list_item.dart) が担う。
+            if (isKeyboardVisible) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            }
             // メニュー展開中（x 状態）の長押しは閉じるに倒す。
             if (open) {
               analytics.logEvent(
@@ -192,7 +206,29 @@ class ExpandableFab extends HookConsumerWidget {
                     'shoppingListID': shoppingListID,
                   },
                 );
+                // メニュー展開中でも「キーボード表示中の FAB タップはキーボードを
+                // 閉じる」(Issue #498)を保つ(メニュー表示中に入力行をタップして
+                // キーボードが開き直っているケース)。
+                if (isKeyboardVisible) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                }
                 close();
+                return;
+              }
+              // キーボード表示中のタップはキーボードを閉じる操作に割り当てる
+              // (Issue #498)。空行を追加すると新規行の autofocus
+              // (text_shopping_list_item.dart) でキーボードが開き直ってしまうため
+              // 追加はしない。入力途中テキストの確定保存・空の入力行の削除は
+              // フォーカス喪失を検知する行側の listener が担う。
+              if (isKeyboardVisible) {
+                analytics.logEvent(
+                  name: 'tap_fab_close_keyboard',
+                  parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                  },
+                );
+                FocusManager.instance.primaryFocus?.unfocus();
                 return;
               }
               analytics.logEvent(
@@ -486,9 +522,8 @@ class ExpandableFab extends HookConsumerWidget {
 /// AI 抽出候補を review sheet（プレビュー）にかけ、確定した選択分をリストへ追加する。
 /// 写真 / URL フロー共通の確定処理。
 ///
-/// review sheet 表示中に呼び出し元 widget は unmount され得る。FAB はキーボード表示で
-/// ツリーから外れ（page.dart の isKeyboardVisible。候補名 TextField タップでキーボードが
-/// 出る）、URL ダイアログは sheet 表示前に pop 済み。unmount 後に WidgetRef を使うと
+/// review sheet 表示中に呼び出し元 widget は unmount され得る（画面遷移・リスト切替等。
+/// URL ダイアログは sheet 表示前に pop 済み）。unmount 後に WidgetRef を使うと
 /// StateError で追加が全件失敗する(#486)ため、ref には依存せず、呼び出し元が
 /// build 時に確保した [addShoppingListItem]・[userID] を受け取る。
 Future<void> reviewAndAddAICandidates({
