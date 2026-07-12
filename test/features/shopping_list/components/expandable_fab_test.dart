@@ -221,6 +221,33 @@ void main() {
     expect(find.byIcon(Icons.close), findsNothing, reason: 'メニューも開かない');
   });
 
+  testWidgets('メニュー展開中かつキーボード表示中のタップはメニューを閉じフォーカスも外す', (tester) async {
+    final focusNode = FocusNode();
+    addTearDown(focusNode.dispose);
+    final recordingAdd = await pumpFab(
+      tester,
+      isKeyboardVisible: true,
+      textFieldFocusNode: focusNode,
+    );
+
+    // 長押しでメニューを開き（× 状態）、その後 TextField をタップして
+    // キーボードが開き直った状態を作る。
+    await tester.longPress(find.byType(FloatingActionButton));
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.close), findsOneWidget);
+    await tester.showKeyboard(find.byType(TextField));
+    await tester.pump();
+    expect(focusNode.hasFocus, isTrue);
+
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pumpAndSettle();
+
+    // メニューが閉じ(add_task に戻り)、フォーカスも外れる(Issue #498)。
+    expect(find.byIcon(Icons.add_task), findsOneWidget);
+    expect(focusNode.hasFocus, isFalse);
+    expect(recordingAdd.callCount, 0);
+  });
+
   testWidgets('キーボード表示中の長押しはフォーカスを外してメニューを開く', (tester) async {
     final focusNode = FocusNode();
     addTearDown(focusNode.dispose);

@@ -320,7 +320,12 @@ class _ActiveShoppingList extends ConsumerWidget {
                               loading: () => const Loading(),
                             ),
                           ),
-                          if (!firestoreIsPremium && totalCount > 50)
+                          // キーボード表示中は隠す。表示したままだと body 下端に出る
+                          // KeyboardCloseToolbar の直上に並び、ツールバー分だけ持ち上げた
+                          // FAB がバナー右側の操作領域に重なってしまうため(Issue #498)。
+                          if (!firestoreIsPremium &&
+                              totalCount > 50 &&
+                              !isKeyboardVisible)
                             const RetentionBanner(),
                         ],
                       ),

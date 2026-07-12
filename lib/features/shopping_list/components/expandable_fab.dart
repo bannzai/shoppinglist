@@ -206,6 +206,12 @@ class ExpandableFab extends HookConsumerWidget {
                     'shoppingListID': shoppingListID,
                   },
                 );
+                // メニュー展開中でも「キーボード表示中の FAB タップはキーボードを
+                // 閉じる」(Issue #498)を保つ(メニュー表示中に入力行をタップして
+                // キーボードが開き直っているケース)。
+                if (isKeyboardVisible) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                }
                 close();
                 return;
               }
