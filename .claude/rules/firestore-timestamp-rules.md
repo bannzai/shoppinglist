@@ -22,19 +22,26 @@ Firestoreのドキュメントを更新する際は、サーバー側のタイ�
 ### 実装例
 
 **Firebase Functions（TypeScript）:**
+
+`FieldValue` / `Timestamp` の static は必ず `firebase-admin/firestore` からのモジュラー import で参照する。
+`admin.firestore.FieldValue` 形式（名前空間 import の static 参照）は Functions Emulator ランタイム上で
+undefined になり emulator で動作しないため使用しない（bannzai/shoppinglist#501 参照）。
+
 ```typescript
+import { FieldValue } from "firebase-admin/firestore";
+
 // 更新時
 transaction.update(ref, {
-  updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-  serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+  updatedDateTime: FieldValue.serverTimestamp(),
+  serverUpdatedDateTime: FieldValue.serverTimestamp(),
 });
 
 // 新規作成時
 transaction.set(ref, {
-  createdDateTime: admin.firestore.FieldValue.serverTimestamp(),
-  updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-  serverCreatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-  serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+  createdDateTime: FieldValue.serverTimestamp(),
+  updatedDateTime: FieldValue.serverTimestamp(),
+  serverCreatedDateTime: FieldValue.serverTimestamp(),
+  serverUpdatedDateTime: FieldValue.serverTimestamp(),
 });
 ```
 
