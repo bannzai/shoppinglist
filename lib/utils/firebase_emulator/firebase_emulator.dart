@@ -28,6 +28,13 @@ Future<void> connectFirebaseEmulatorIfEnabled() async {
           : (defaultTargetPlatform == TargetPlatform.android
               ? '10.0.2.2'
               : 'localhost');
+  // 過去に実プロジェクトへ接続した際や前回の Emulator 実行時のディスクキャッシュが
+  // Emulator の空データより優先して返り、E2E が本番非接触・再現可能でなくなるのを防ぐため、
+  // Emulator 接続時は Firestore の永続キャッシュを無効化する (メモリキャッシュのみ)。
+  // useFirestoreEmulator は settings を copyWith で上書きするため、先に設定する。
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: false,
+  );
   // ポートは firebase/firebase.json の emulators セクションと一致させる。
   await FirebaseAuth.instance.useAuthEmulator(emulatorHost, 9099);
   FirebaseFirestore.instance.useFirestoreEmulator(emulatorHost, 8080);
