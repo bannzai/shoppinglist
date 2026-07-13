@@ -1,4 +1,5 @@
 import admin from "firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
@@ -185,10 +186,9 @@ const sendShoppingListUpdateNotificationFlow = ai.defineFlow(
             .collection("privates")
             .doc(appUserPrivateDocumentID({ userID }))
             .update({
-              fcmTokens: admin.firestore.FieldValue.arrayRemove(...tokens),
-              updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-              serverUpdatedDateTime:
-                admin.firestore.FieldValue.serverTimestamp(),
+              fcmTokens: FieldValue.arrayRemove(...tokens),
+              updatedDateTime: FieldValue.serverTimestamp(),
+              serverUpdatedDateTime: FieldValue.serverTimestamp(),
             });
         })
       );

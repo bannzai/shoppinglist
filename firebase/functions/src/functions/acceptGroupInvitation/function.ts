@@ -1,4 +1,5 @@
 import admin from "firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
@@ -67,8 +68,8 @@ const acceptGroupInvitationFlow = ai.defineFlow(
         // ステータスを expired に更新
         await invitationDoc.ref.update({
           status: "expired",
-          updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          updatedDateTime: FieldValue.serverTimestamp(),
+          serverUpdatedDateTime: FieldValue.serverTimestamp(),
         });
         return {
           result: "NG" as const,
@@ -106,14 +107,14 @@ const acceptGroupInvitationFlow = ai.defineFlow(
         }
 
         transaction.update(groupDoc.ref, {
-          memberUserIDs: admin.firestore.FieldValue.arrayUnion(uid),
-          updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          memberUserIDs: FieldValue.arrayUnion(uid),
+          updatedDateTime: FieldValue.serverTimestamp(),
+          serverUpdatedDateTime: FieldValue.serverTimestamp(),
         });
         transaction.update(invitationDoc.ref, {
           status: "accepted",
-          updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          updatedDateTime: FieldValue.serverTimestamp(),
+          serverUpdatedDateTime: FieldValue.serverTimestamp(),
         });
 
         // 参加ユーザーのプロフィールを作成
@@ -127,8 +128,8 @@ const acceptGroupInvitationFlow = ai.defineFlow(
           groupID: groupID,
           userID: uid,
           displayName: userRecord.displayName || null,
-          serverCreatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          serverCreatedDateTime: FieldValue.serverTimestamp(),
+          serverUpdatedDateTime: FieldValue.serverTimestamp(),
         });
 
         return true;

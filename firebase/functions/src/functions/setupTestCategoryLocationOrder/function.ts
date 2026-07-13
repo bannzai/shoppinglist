@@ -1,4 +1,5 @@
 import admin from "firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
@@ -127,11 +128,11 @@ const setupTestCategoryLocationOrderFlow = ai.defineFlow(
 
         transaction.update(firstCategoryRef, {
           locationOrders: { ...firstData.locationOrders, [locationID]: 0 },
-          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          serverUpdatedDateTime: FieldValue.serverTimestamp(),
         });
         transaction.update(secondCategoryRef, {
           locationOrders: { ...secondData.locationOrders, [locationID]: 1 },
-          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          serverUpdatedDateTime: FieldValue.serverTimestamp(),
         });
       });
 

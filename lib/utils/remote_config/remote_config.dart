@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/entity/remote_config_parameter.dart';
 import 'package:shoppinglist/utils/config/version.dart';
+import 'package:shoppinglist/utils/firebase_emulator/firebase_emulator.dart';
 import 'package:shoppinglist/utils/logger/error.dart';
 
 part 'remote_config.g.dart';
@@ -24,8 +25,17 @@ Future<void> setupRemoteConfig() async {
         RemoteConfigKeys.releasedVersion:
             RemoteConfigParameterDefaultValues.releasedVersion,
       }),
-      remoteConfig.fetchAndActivate(),
     ).wait;
+
+    // Firebase Emulator Suite に Remote Config の emulator は無く、fetch すると
+    // 実プロジェクトへ接触して「本番非接触」の前提が崩れるため、Emulator 接続時は
+    // defaults のみで運用し fetch と realtime 購読をスキップする。
+    if (useFirebaseEmulator) {
+      debugPrintRemoteConfig();
+      return;
+    }
+
+    await remoteConfig.fetchAndActivate();
 
     debugPrintRemoteConfig();
 

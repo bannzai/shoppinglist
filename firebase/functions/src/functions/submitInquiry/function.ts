@@ -1,4 +1,5 @@
 import admin from "firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
@@ -131,9 +132,9 @@ const submitInquiryFlow = ai.defineFlow(
       await inquiryRef.set({
         ...inquiry,
         slackNotified,
-        createdDateTime: admin.firestore.FieldValue.serverTimestamp(),
-        serverCreatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-        serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+        createdDateTime: FieldValue.serverTimestamp(),
+        serverCreatedDateTime: FieldValue.serverTimestamp(),
+        serverUpdatedDateTime: FieldValue.serverTimestamp(),
       });
 
       logger.info(
