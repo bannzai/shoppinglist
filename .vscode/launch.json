@@ -9,7 +9,9 @@
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
-      "args": [
+      // --dart-define 等の flutter run 向け引数は args (main() への引数) ではなく
+      // toolArgs に置く。参照: https://dartcode.org/docs/launch-configuration/
+      "toolArgs": [
         "--debug",
         "--dart-define=SHOPPINGLIST_DEVELOPER_TOKEN=${env:SHOPPINGLIST_DEVELOPER_TOKEN}",
         "--dart-define=REVENUECAT_TEST_STORE_API_KEY=${env:REVENUECAT_TEST_STORE_API_KEY}"
@@ -20,7 +22,7 @@
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
-      "args": [
+      "toolArgs": [
         "--debug",
         "--dart-define=SHOPPINGLIST_DEVELOPER_TOKEN=${env:SHOPPINGLIST_DEVELOPER_TOKEN}",
         "--dart-define=REVENUECAT_TEST_STORE_API_KEY=${env:REVENUECAT_TEST_STORE_API_KEY}",
