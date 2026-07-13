@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,11 +45,25 @@ void main() async {
     // Cloud Functions は instanceFor(region:) が (app, region) 単位でインスタンスをキャッシュするため、
     // ここで接続したインスタンスは utils/functions/firebase_function.dart のグローバル functions と同一で、そちらにも効く。
     if (const bool.fromEnvironment('USE_FIREBASE_EMULATOR')) {
-      await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-      FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+      // Android (Emulator) では localhost が端末自身を指すため、ホストマシンへの
+      // ループバックである 10.0.2.2 を既定にする。Android 実機などホストマシンに
+      // 別アドレスで到達する構成では FIREBASE_EMULATOR_HOST で明示的に上書きする。
+      const overrideHost = String.fromEnvironment('FIREBASE_EMULATOR_HOST');
+      final emulatorHost =
+          overrideHost.isNotEmpty
+              ? overrideHost
+              : (defaultTargetPlatform == TargetPlatform.android
+                  ? '10.0.2.2'
+                  : 'localhost');
+      // ポートは firebase/firebase.json の emulators セクションと一致させる。
+      await FirebaseAuth.instance.useAuthEmulator(emulatorHost, 9099);
+      FirebaseFirestore.instance.useFirestoreEmulator(emulatorHost, 8080);
       FirebaseFunctions.instanceFor(
         region: 'asia-northeast1',
-      ).useFunctionsEmulator('localhost', 5001);
+      ).useFunctionsEmulator(emulatorHost, 5001);
+      // レシート画像 (receipt_image.dart の FirebaseStorage.instance /
+      // Functions の admin.storage()) も本番非接触にするため Storage も Emulator に向ける。
+      await FirebaseStorage.instance.useStorageEmulator(emulatorHost, 9199);
     }
 
     await GoogleSignIn.instance.initialize();
