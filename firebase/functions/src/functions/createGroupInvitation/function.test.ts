@@ -12,25 +12,24 @@ const mockTimestampFromMillis = jest.fn((ms: number) => ({
 }));
 const mockServerTimestamp = jest.fn(() => "SERVER_TIMESTAMP");
 
-// admin.firestore() を呼ぶとインスタンスを返し、admin.firestore.Timestamp 等にもアクセスできるようにする
-const firestoreFunction = Object.assign(
-  jest.fn(() => mockFirestoreInstance),
-  {
-    Timestamp: {
-      now: mockTimestampNow,
-      fromMillis: mockTimestampFromMillis,
-    },
-    FieldValue: {
-      serverTimestamp: mockServerTimestamp,
-    },
-  }
-);
-
 jest.mock("firebase-admin", () => ({
   __esModule: true,
   default: {
-    firestore: firestoreFunction,
+    firestore: jest.fn(() => mockFirestoreInstance),
     initializeApp: jest.fn(),
+  },
+}));
+
+jest.mock("firebase-admin/firestore", () => ({
+  // zTimestamp (z.instanceof(Timestamp)) 等が実物の Timestamp クラスを必要とするため、
+  // モジュール全体を潰さず必要な static だけ差し替える
+  ...jest.requireActual("firebase-admin/firestore"),
+  Timestamp: {
+    now: mockTimestampNow,
+    fromMillis: mockTimestampFromMillis,
+  },
+  FieldValue: {
+    serverTimestamp: mockServerTimestamp,
   },
 }));
 

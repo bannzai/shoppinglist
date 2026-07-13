@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import { GoogleAIFileManager } from "@google/generative-ai/server";
 import admin from "firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
@@ -139,16 +140,16 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
 
       if (aiUsageDoc.exists) {
         tx.update(aiUsageRef, {
-          imageRecognitionCount: admin.firestore.FieldValue.increment(1),
-          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          imageRecognitionCount: FieldValue.increment(1),
+          serverUpdatedDateTime: FieldValue.serverTimestamp(),
         });
       } else {
         tx.set(aiUsageRef, {
           id: yearMonth,
           userID: uid,
           imageRecognitionCount: 1,
-          serverCreatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          serverCreatedDateTime: FieldValue.serverTimestamp(),
+          serverUpdatedDateTime: FieldValue.serverTimestamp(),
         });
       }
       return { isLimitReached: false as const };

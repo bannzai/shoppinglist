@@ -1,4 +1,5 @@
 import admin from "firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
@@ -139,12 +140,10 @@ const createGroupFlow = ai.defineFlow(
               memberUserIDs: [uid],
               name: normalizedName?.length ? normalizedName : null,
               iconName,
-              createdDateTime: admin.firestore.FieldValue.serverTimestamp(),
-              updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-              serverCreatedDateTime:
-                admin.firestore.FieldValue.serverTimestamp(),
-              serverUpdatedDateTime:
-                admin.firestore.FieldValue.serverTimestamp(),
+              createdDateTime: FieldValue.serverTimestamp(),
+              updatedDateTime: FieldValue.serverTimestamp(),
+              serverCreatedDateTime: FieldValue.serverTimestamp(),
+              serverUpdatedDateTime: FieldValue.serverTimestamp(),
             },
             { merge: true }
           );
@@ -155,10 +154,8 @@ const createGroupFlow = ai.defineFlow(
               id: profileRef.id,
               groupID: groupRef.id,
               userID: uid,
-              serverCreatedDateTime:
-                admin.firestore.FieldValue.serverTimestamp(),
-              serverUpdatedDateTime:
-                admin.firestore.FieldValue.serverTimestamp(),
+              serverCreatedDateTime: FieldValue.serverTimestamp(),
+              serverUpdatedDateTime: FieldValue.serverTimestamp(),
             },
             { merge: true }
           );
@@ -168,8 +165,7 @@ const createGroupFlow = ai.defineFlow(
               userRef,
               {
                 defaultGroupID: groupRef.id,
-                serverUpdatedDateTime:
-                  admin.firestore.FieldValue.serverTimestamp(),
+                serverUpdatedDateTime: FieldValue.serverTimestamp(),
               },
               { merge: true }
             );

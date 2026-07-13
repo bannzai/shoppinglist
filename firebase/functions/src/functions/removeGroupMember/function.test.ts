@@ -12,22 +12,21 @@ const mockArrayRemove = jest.fn((...args: any[]) => ({
   values: args,
 }));
 
-// admin.firestore() でインスタンス返却 + admin.firestore.FieldValue にアクセス可能にする
-const firestoreFunction = Object.assign(
-  jest.fn(() => mockFirestoreInstance),
-  {
-    FieldValue: {
-      serverTimestamp: mockServerTimestamp,
-      arrayRemove: mockArrayRemove,
-    },
-  }
-);
-
 jest.mock("firebase-admin", () => ({
   __esModule: true,
   default: {
-    firestore: firestoreFunction,
+    firestore: jest.fn(() => mockFirestoreInstance),
     initializeApp: jest.fn(),
+  },
+}));
+
+jest.mock("firebase-admin/firestore", () => ({
+  // zTimestamp (z.instanceof(Timestamp)) 等が実物の Timestamp クラスを必要とするため、
+  // モジュール全体を潰さず必要な static だけ差し替える
+  ...jest.requireActual("firebase-admin/firestore"),
+  FieldValue: {
+    serverTimestamp: mockServerTimestamp,
+    arrayRemove: mockArrayRemove,
   },
 }));
 
