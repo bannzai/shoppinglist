@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,6 +38,19 @@ void main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp();
+
+    // ローカルの Firebase Emulator に接続する開発用ゲート。
+    // `--dart-define=USE_FIREBASE_EMULATOR=true` を付けたビルドのみ有効で、デフォルト(未指定)では本番に接続する。
+    // Cloud Functions は instanceFor(region:) が (app, region) 単位でインスタンスをキャッシュするため、
+    // ここで接続したインスタンスは utils/functions/firebase_function.dart のグローバル functions と同一で、そちらにも効く。
+    if (const bool.fromEnvironment('USE_FIREBASE_EMULATOR')) {
+      await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+      FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+      FirebaseFunctions.instanceFor(
+        region: 'asia-northeast1',
+      ).useFunctionsEmulator('localhost', 5001);
+    }
+
     await GoogleSignIn.instance.initialize();
 
     // Keychain sharing の設定 (iOS/macOSでのみ有効)

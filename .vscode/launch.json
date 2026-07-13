@@ -16,6 +16,18 @@
       ]
     },
     {
+      "name": "shoppinglist(dev, emulator)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--debug",
+        "--dart-define=SHOPPINGLIST_DEVELOPER_TOKEN=${env:SHOPPINGLIST_DEVELOPER_TOKEN}",
+        "--dart-define=REVENUECAT_TEST_STORE_API_KEY=${env:REVENUECAT_TEST_STORE_API_KEY}",
+        "--dart-define=USE_FIREBASE_EMULATOR=true"
+      ]
+    },
+    {
       "name": "shoppinglist (profile mode)",
       "request": "launch",
       "type": "dart",
