@@ -63,10 +63,7 @@ ios/build
 # Temporary PR body files
 .pr_body_tmp_*
 
-# implement-issue skill temp files
-tmp/implement-issue/
-
-# run-pr-quality-checks skill temp files
-tmp/pr-quality-checks/
+# 一時ファイル置き場 (run-qa のプロンプト・ログ出力先を含む)
+tmp/
 
 .claude/skills/*/.venv/
