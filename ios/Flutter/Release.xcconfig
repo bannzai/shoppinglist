@@ -11,3 +11,9 @@ KEYCHAIN_ACCESS_GROUP = com.bannzai.shoppinglist
 // クライアント埋め込み前提の公開情報のため直書き。GCP 側でアプリ制限(bundleId)+API制限(Maps SDK for iOS)を必須とする。
 GOOGLE_MAPS_API_KEY = AIzaSyDhdAhZIgKuIwjsQesJTlayEWnjXx-fvcI
 
+// Google Sign-In OAuth クライアント(prod, Issue #504)。dev/prod で Firebase プロジェクトが異なり
+// OAuth クライアントも別になるため、Info.plist の GIDClientID / CFBundleURLSchemes は xcconfig 経由で注入する。
+// 値は shoppinglist-prod-857bb の GoogleService-Info.plist の CLIENT_ID / REVERSED_CLIENT_ID と一致させる。
+GID_CLIENT_ID = 323773689605-k2hfptltunveoigmrqfcsln2l0p630m0.apps.googleusercontent.com
+GID_REVERSED_CLIENT_ID = com.googleusercontent.apps.323773689605-k2hfptltunveoigmrqfcsln2l0p630m0
+

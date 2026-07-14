@@ -31,12 +31,14 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.1036365966980-r0cueu9ul4b67undueepi9h3el0lkc3o</string>
+				<string>$(GID_REVERSED_CLIENT_ID)</string>
 			</array>
 		</dict>
 	</array>
+	<!-- Google Sign-In の OAuth クライアントは dev/prod で異なるため xcconfig
+	     (Debug=dev / Release・Profile=prod) から注入する (issue #504)。 -->
 	<key>GIDClientID</key>
-	<string>1036365966980-r0cueu9ul4b67undueepi9h3el0lkc3o.apps.googleusercontent.com</string>
+	<string>$(GID_CLIENT_ID)</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
