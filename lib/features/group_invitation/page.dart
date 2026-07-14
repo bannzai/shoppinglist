@@ -36,155 +36,168 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
         backgroundColor: neutral.paper,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: 72,
-                height: 72,
-                decoration: BoxDecoration(
-                  color: tokens.accentSoft,
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: Icon(Icons.group_add, size: 32, color: tokens.accent),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                '招待コードを入力してください',
-                style: Theme.of(context).textTheme.headlineSmall,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'グループのメンバーから共有された8桁のコードを入力してください',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: neutral.ink2,
-                  height: 1.6,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              TextField(
-                controller: codeController,
-                textCapitalization: TextCapitalization.characters,
-                textAlign: TextAlign.center,
-                maxLength: 8,
-                style: monoTextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                  color: neutral.ink,
-                  letterSpacing: null,
-                ).copyWith(letterSpacing: 6),
-                decoration: InputDecoration(
-                  hintText: 'ABCD3456',
-                  hintStyle: monoTextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w400,
-                    color: neutral.ink4,
-                    letterSpacing: null,
-                  ).copyWith(letterSpacing: 6),
-                  counterText: '',
-                  filled: true,
-                  fillColor: neutral.card,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide(color: borderColor, width: 1),
+        // キーボード表示で viewport が縮んでも下端が overflow しないよう
+        // スクロール可能にする (#506)。コンテンツが収まる間は Center が
+        // 中央寄せを維持し、収まらない時だけスクロールする。
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: tokens.accentSoft,
+                    shape: BoxShape.circle,
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide(color: borderColor, width: 1.5),
-                  ),
+                  alignment: Alignment.center,
+                  child: Icon(Icons.group_add, size: 32, color: tokens.accent),
                 ),
-                onChanged: (value) {
-                  errorMessage.value = null;
-                  isValidCode.value = isValidInvitationCode(value);
-                },
-              ),
-              if (hasError) ...[
-                const SizedBox(height: 12),
+                const SizedBox(height: 24),
                 Text(
-                  errorMessage.value!,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: neutral.danger),
+                  '招待コードを入力してください',
+                  style: Theme.of(context).textTheme.headlineSmall,
                   textAlign: TextAlign.center,
                 ),
-              ],
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: AppPill(
-                  label: isAccepting.value ? '参加中...' : '参加する',
-                  variant: AppPillVariant.accent,
-                  large: true,
-                  expanded: true,
-                  onPressed:
-                      isAccepting.value || !isValidCode.value
-                          ? null
-                          : () async {
-                            analytics.logEvent(
-                              name: 'tap_join_group',
-                              parameters: null,
-                            );
-                            isAccepting.value = true;
-                            errorMessage.value = null;
-                            // i-invitation-verifying: AppDialogShell ベースで
-                            // 「コードを確認中」のオーバレイを表示する。
-                            // `design_handoff_shoppinglist/preview/screens-groups.jsx`
-                            // 準拠で、サーバー応答中の手触りを伝える。
-                            _showVerifyingDialog(context);
-                            try {
-                              await acceptGroupInvitation.call(
-                                invitationCode:
-                                    codeController.text.toUpperCase(),
+                const SizedBox(height: 12),
+                Text(
+                  'グループのメンバーから共有された8桁のコードを入力してください',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: neutral.ink2,
+                    height: 1.6,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: codeController,
+                  textCapitalization: TextCapitalization.characters,
+                  textAlign: TextAlign.center,
+                  maxLength: 8,
+                  style: monoTextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                    color: neutral.ink,
+                    letterSpacing: null,
+                  ).copyWith(letterSpacing: 6),
+                  decoration: InputDecoration(
+                    hintText: 'ABCD3456',
+                    hintStyle: monoTextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w400,
+                      color: neutral.ink4,
+                      letterSpacing: null,
+                    ).copyWith(letterSpacing: 6),
+                    counterText: '',
+                    filled: true,
+                    fillColor: neutral.card,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide(color: borderColor, width: 1),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide(color: borderColor, width: 1.5),
+                    ),
+                  ),
+                  onChanged: (value) {
+                    errorMessage.value = null;
+                    isValidCode.value = isValidInvitationCode(value);
+                  },
+                ),
+                if (hasError) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    key: const ValueKey('group_invitation_error_message'),
+                    errorMessage.value!,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: neutral.danger),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: AppPill(
+                    key: const ValueKey('group_invitation_accept_button'),
+                    label: isAccepting.value ? '参加中...' : '参加する',
+                    variant: AppPillVariant.accent,
+                    large: true,
+                    expanded: true,
+                    onPressed:
+                        isAccepting.value || !isValidCode.value
+                            ? null
+                            : () async {
+                              analytics.logEvent(
+                                name: 'tap_join_group',
+                                parameters: null,
                               );
-                              if (context.mounted) {
-                                Navigator.of(context).pop(); // verifying dialog
+                              isAccepting.value = true;
+                              errorMessage.value = null;
+                              // i-invitation-verifying: AppDialogShell ベースで
+                              // 「コードを確認中」のオーバレイを表示する。
+                              // `design_handoff_shoppinglist/preview/screens-groups.jsx`
+                              // 準拠で、サーバー応答中の手触りを伝える。
+                              _showVerifyingDialog(context);
+                              try {
+                                await acceptGroupInvitation.call(
+                                  invitationCode:
+                                      codeController.text.toUpperCase(),
+                                );
+                                if (context.mounted) {
+                                  Navigator.of(
+                                    context,
+                                  ).pop(); // verifying dialog
+                                }
+                                if (context.mounted) {
+                                  Navigator.of(
+                                    context,
+                                  ).popUntil((route) => route.isFirst);
+                                }
+                              } catch (e, st) {
+                                logError(e, st);
+                                errorMessage.value =
+                                    describeError(e, st).message;
+                                if (context.mounted) {
+                                  Navigator.of(
+                                    context,
+                                  ).pop(); // verifying dialog
+                                }
+                              } finally {
+                                isAccepting.value = false;
                               }
-                              if (context.mounted) {
-                                Navigator.of(
-                                  context,
-                                ).popUntil((route) => route.isFirst);
-                              }
-                            } catch (e, st) {
-                              logError(e, st);
-                              errorMessage.value = describeError(e, st).message;
-                              if (context.mounted) {
-                                Navigator.of(context).pop(); // verifying dialog
-                              }
-                            } finally {
-                              isAccepting.value = false;
-                            }
-                          },
-                  icon: null,
+                            },
+                    icon: null,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: AppPill(
-                  label: 'キャンセル',
-                  variant: AppPillVariant.ghost,
-                  large: true,
-                  expanded: true,
-                  onPressed:
-                      isAccepting.value
-                          ? null
-                          : () {
-                            analytics.logEvent(
-                              name: 'cancel_join_group',
-                              parameters: null,
-                            );
-                            Navigator.pop(context);
-                          },
-                  icon: null,
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: AppPill(
+                    key: const ValueKey('group_invitation_cancel_button'),
+                    label: 'キャンセル',
+                    variant: AppPillVariant.ghost,
+                    large: true,
+                    expanded: true,
+                    onPressed:
+                        isAccepting.value
+                            ? null
+                            : () {
+                              analytics.logEvent(
+                                name: 'cancel_join_group',
+                                parameters: null,
+                              );
+                              Navigator.pop(context);
+                            },
+                    icon: null,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
