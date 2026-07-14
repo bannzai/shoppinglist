@@ -11,22 +11,13 @@ last_verified_at: null
 
 ## 1. プロフィール（表示名）
 
-- [ ] **表示名を編集してフォーカスを外すと自動保存される**: 「自分の表示名」欄に入力しフォーカスを外す（blur / キーボードの完了キー）と `GroupUserProfileUpdate` で保存され、「表示名を更新しました」の SnackBar が表示される。保存値と同一なら書き込みをスキップする（既存 E2E: maestro/flows/settings_profile.yaml）
-- [ ] **既存の表示名が初期表示される**: 設定を開いた際、入力欄が空なら Firestore の既存 displayName を反映する（入力中の値は上書きしない）
+- [ ] **表示名を編集してフォーカスを外すと自動保存される**: 「自分の表示名」欄に入力しフォーカスを外す（blur / キーボードの完了キー）と `GroupUserProfileUpdate` で保存され、「表示名を更新しました」の SnackBar が表示される。保存値と同一なら書き込みをスキップする。設定を開いた際は入力欄が空なら既存 displayName を初期表示する（既存 E2E: maestro/flows/settings_profile.yaml）
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **表示名を編集してフォーカスを外すと自動保存される**: 「自分の表示名」欄に入力しフォーカスを外す（blur / キーボードの完了キー）と `GroupUserProfileUpdate` で保存され、「表示名を更新しました」の SnackBar が表示される。保存値と同一なら書き込みをスキップする（既存 E2E: maestro/flows/settings_profile.yaml）
-
-<details><summary>動作確認スクショ</summary>
-
-（未実行）
-
-</details>
-
-### **既存の表示名が初期表示される**: 設定を開いた際、入力欄が空なら Firestore の既存 displayName を反映する（入力中の値は上書きしない）
+### **表示名を編集してフォーカスを外すと自動保存される**: 「自分の表示名」欄に入力しフォーカスを外す（blur / キーボードの完了キー）と `GroupUserProfileUpdate` で保存され、「表示名を更新しました」の SnackBar が表示される。保存値と同一なら書き込みをスキップする。設定を開いた際は入力欄が空なら既存 displayName を初期表示する（既存 E2E: maestro/flows/settings_profile.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
@@ -234,7 +225,6 @@ last_verified_at: null
 
 - [ ] **開発者オプションは debug ビルドのみ表示**: 「デバッグ」セクションの「開発者オプション」は kDebugMode でのみ表示され、タップで開発者オプション画面へ遷移する
 - [ ] **アプリバージョンが表示される**: 画面下部に `vX.Y.Z (build N)` 形式のバージョンが mono フォントで表示される
-- [ ] **閉じる（×）でホームへ戻る**: AppBar 左上の閉じるアイコン（Navigator.pop）で買い物リスト画面に戻る
 
 #### 動作確認
 <details>
@@ -249,14 +239,6 @@ last_verified_at: null
 </details>
 
 ### **アプリバージョンが表示される**: 画面下部に `vX.Y.Z (build N)` 形式のバージョンが mono フォントで表示される
-
-<details><summary>動作確認スクショ</summary>
-
-（未実行）
-
-</details>
-
-### **閉じる（×）でホームへ戻る**: AppBar 左上の閉じるアイコン（Navigator.pop）で買い物リスト画面に戻る
 
 <details><summary>動作確認スクショ</summary>
 
