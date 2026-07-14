@@ -18,7 +18,7 @@ last_verified_at: null
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **表示名を編集してフォーカスを外すと自動保存される**: 「自分の表示名」欄に入力しフォーカスを外す（blur / キーボードの完了キー）と `GroupUserProfileUpdate` で保存され、「表示名を更新しました」の SnackBar が表示される（既存 E2E: maestro/flows/settings_profile.yaml）
+### **表示名を編集してフォーカスを外すと自動保存される**: 「自分の表示名」欄に入力しフォーカスを外す（blur / キーボードの完了キー）と `GroupUserProfileUpdate` で保存され、「表示名を更新しました」の SnackBar が表示される。保存値と同一なら書き込みをスキップする（既存 E2E: maestro/flows/settings_profile.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
@@ -26,15 +26,7 @@ last_verified_at: null
 
 </details>
 
-### **保存済みと同じ値なら書き込みしない**: 表示名が現在の保存値と同一の場合は Firestore への書き込みをスキップする（冪等）
-
-<details><summary>動作確認スクショ</summary>
-
-（未実行）
-
-</details>
-
-### **初回読み込み時に既存の表示名が反映される**: Firestore からプロフィールを読み込んだ際、入力欄が空なら既存 displayName を反映する（入力中の値は上書きしない）
+### **既存の表示名が初期表示される**: 設定を開いた際、入力欄が空なら Firestore の既存 displayName を反映する（入力中の値は上書きしない）
 
 <details><summary>動作確認スクショ</summary>
 
