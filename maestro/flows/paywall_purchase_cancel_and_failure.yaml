@@ -1,0 +1,45 @@
+appId: ${APP_ID}
+---
+# RC Test Store mock purchase modal で「Cancel」「Test failed purchase」を選んだ場合、
+# プレミアム化されないこと・エラー時はエラー表示されることを検証する
+# （shared/mock_purchase.yaml の「Test valid purchase」パスの対となる異常系）。
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      text: "はじめる"
+    direction: DOWN
+    timeout: 15000
+- tapOn: "はじめる"
+- extendedWaitUntil:
+    visible: "購入"
+    timeout: 30000
+
+# --- Cancel ---
+- tapOn:
+    text: "購入"
+    index: 0
+- extendedWaitUntil:
+    visible: "Cancel"
+    timeout: 30000
+- tapOn: "Cancel"
+- waitForAnimationToEnd
+# キャンセル後もPaywall上に留まり、購入完了トーストは出ない（同じ「購入」ボタンが再度押せる状態）。
+- assertVisible: "購入"
+- takeScreenshot: screenshots/paywall_purchase_cancelled
+
+# --- Test failed purchase ---
+- tapOn:
+    text: "購入"
+    index: 0
+- extendedWaitUntil:
+    visible: "Test failed purchase"
+    timeout: 30000
+- tapOn: "Test failed purchase"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/paywall_purchase_failed

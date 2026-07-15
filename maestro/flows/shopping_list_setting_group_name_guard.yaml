@@ -1,0 +1,29 @@
+appId: ${APP_ID}
+---
+# 買い物リスト設定「グループに招待コードを送る」のグループ名未設定ガード検証 (Issue #432)。
+# 匿名サインイン → 「自分のリストを作る」で name=null のソログループを作成した状態から、
+# 招待コード作成前に「招待する前にグループ名を設定してください」トーストが表示され、
+# 招待コードダイアログが開かない（＝招待コードを作成しない）ことを確認する。
+#
+# グループ名を持つ既存グループでは本ガードは発火しないため、name=null のグループを作る
+# anonymous_sign_in.yaml（自分のリストを作る = createGroup(name: null)）が前提になる。
+#
+# 実行例:
+#   maestro --device <UDID> test -e APP_ID=com.bannzai.shoppinglist.dev \
+#     maestro/flows/shopping_list_setting_group_name_guard.yaml
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 上部バー右の「リスト設定」アイコンから買い物リスト設定シートを開く
+- tapOn: "リスト設定"
+- waitForAnimationToEnd
+- assertVisible: "買い物リスト設定"
+
+# 「グループに招待コードを送る」→ グループ名未設定ガードのトースト
+- tapOn: "グループに招待コードを送る"
+- waitForAnimationToEnd
+- assertVisible: "招待する前にグループ名を設定してください"
+- takeScreenshot: screenshots/list_setting_group_name_guard
+
+# ガード時は招待コードダイアログ（「招待コード」見出し）が開かないこと
+- assertNotVisible: "有効期限: 7日間"
