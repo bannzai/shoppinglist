@@ -1,4 +1,5 @@
 import admin from "firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
@@ -99,9 +100,9 @@ const removeGroupMemberFlow = ai.defineFlow(
         const userDoc = await transaction.get(userRef);
 
         transaction.update(groupRef, {
-          memberUserIDs: admin.firestore.FieldValue.arrayRemove(targetUserID),
-          updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          memberUserIDs: FieldValue.arrayRemove(targetUserID),
+          updatedDateTime: FieldValue.serverTimestamp(),
+          serverUpdatedDateTime: FieldValue.serverTimestamp(),
         });
 
         // 対象ユーザーのプロフィールを削除
@@ -116,8 +117,8 @@ const removeGroupMemberFlow = ai.defineFlow(
           if (userData?.defaultGroupID === groupID) {
             transaction.update(userRef, {
               defaultGroupID: null,
-              updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-              serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+              updatedDateTime: FieldValue.serverTimestamp(),
+              serverUpdatedDateTime: FieldValue.serverTimestamp(),
             });
           }
         }

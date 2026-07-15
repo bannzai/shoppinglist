@@ -31,6 +31,8 @@ class GroupCreatePage extends HookConsumerWidget {
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final appUser = ref.watch(appUserProvider).asData?.value;
+    final createGroup = ref.watch(createGroupProvider);
+    final createGroupInvitation = ref.watch(createGroupInvitationProvider);
 
     return Scaffold(
       backgroundColor: neutral.paper,
@@ -185,19 +187,16 @@ class GroupCreatePage extends HookConsumerWidget {
                               if (appUser == null) {
                                 throw StateError('AppUser is not available');
                               }
-                              final groupID = await ref
-                                  .read(createGroupProvider)
-                                  .call(
-                                    appUser: appUser,
-                                    name: trimmedGroupName,
-                                    setAsDefault: false,
-                                    iconName: selectedIconName.value,
-                                  );
+                              final groupID = await createGroup.call(
+                                appUser: appUser,
+                                name: trimmedGroupName,
+                                setAsDefault: false,
+                                iconName: selectedIconName.value,
+                              );
                               // 作成後、招待コードを直ちに生成して共有 dialog を表示する。
                               // `design_handoff_shoppinglist/preview/screens-groups.jsx` 準拠。
                               try {
-                                final invitation = await ref
-                                    .read(createGroupInvitationProvider)
+                                final invitation = await createGroupInvitation
                                     .call(groupID: groupID);
                                 if (context.mounted) {
                                   await showDialog<void>(
@@ -295,8 +294,15 @@ class _PostCreateInvitationDialog extends StatelessWidget {
               name: 'tap_share_invitation_code_post_create',
               parameters: null,
             );
+            final box = context.findRenderObject() as RenderBox?;
             await SharePlus.instance.share(
-              ShareParams(text: '買い物リストの招待コード: $invitationCode'),
+              ShareParams(
+                text: '買い物リストの招待コード: $invitationCode',
+                sharePositionOrigin:
+                    box == null
+                        ? null
+                        : box.localToGlobal(Offset.zero) & box.size,
+              ),
             );
           },
           child: const Text('共有'),

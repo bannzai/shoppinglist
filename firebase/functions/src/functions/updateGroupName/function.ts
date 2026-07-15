@@ -1,4 +1,5 @@
 import admin from "firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
@@ -81,8 +82,8 @@ const updateGroupNameFlow = ai.defineFlow(
 
       await groupRef.update({
         name,
-        updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-        serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+        updatedDateTime: FieldValue.serverTimestamp(),
+        serverUpdatedDateTime: FieldValue.serverTimestamp(),
       });
 
       logger.info(`Group ${groupID} name updated to "${name}" by ${uid}`);

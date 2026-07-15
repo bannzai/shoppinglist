@@ -27,6 +27,9 @@ class OnboardingPage extends HookConsumerWidget {
     final tokens = context.appTheme;
     final controller = usePageController();
     final index = useState(0);
+    final onboardingSeenNotifier = ref.watch(
+      boolSharedPreferencesProvider(key: BoolKey.hasSeenOnboarding).notifier,
+    );
 
     final slides = <_SlideContent>[
       _SlideContent(
@@ -65,13 +68,7 @@ class OnboardingPage extends HookConsumerWidget {
         name: 'finish_onboarding',
         parameters: {'reason': reason, 'lastIndex': index.value.toString()},
       );
-      await ref
-          .read(
-            boolSharedPreferencesProvider(
-              key: BoolKey.hasSeenOnboarding,
-            ).notifier,
-          )
-          .set(value: true);
+      await onboardingSeenNotifier.set(value: true);
     }
 
     return Scaffold(

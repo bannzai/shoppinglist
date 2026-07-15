@@ -37,6 +37,10 @@ class ListTopBar extends ConsumerWidget {
   final List<GroupShoppingListItem>? shoppingListItems;
   final void Function(String newID) onShoppingListIDChanged;
 
+  /// リスト追加ボタンの位置を特定するための GlobalKey。
+  /// スポットライト(`CreateListSpotlightHost`, Issue #494)の切り抜き対象に使う。
+  final GlobalKey createListButtonKey;
+
   const ListTopBar({
     super.key,
     required this.groupID,
@@ -45,12 +49,16 @@ class ListTopBar extends ConsumerWidget {
     required this.shoppingList,
     required this.shoppingListItems,
     required this.onShoppingListIDChanged,
+    required this.createListButtonKey,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.appTheme;
     final appUser = ref.watch(appUserProvider).asData?.value;
+    final shoppingListDelete = ref.watch(
+      shoppingListDeleteProvider(groupID: groupID),
+    );
 
     return SizedBox(
       height: 52,
@@ -109,11 +117,15 @@ class ListTopBar extends ConsumerWidget {
                 ),
               ),
             ),
-            CreateListMenuButton(
-              groupID: groupID,
-              appUser: appUser,
-              shoppingList: shoppingList,
-              shoppingListItems: shoppingListItems,
+            // スポットライトの切り抜き対象を特定するため KeyedSubtree で GlobalKey を付ける。
+            KeyedSubtree(
+              key: createListButtonKey,
+              child: CreateListMenuButton(
+                groupID: groupID,
+                appUser: appUser,
+                shoppingList: shoppingList,
+                shoppingListItems: shoppingListItems,
+              ),
             ),
             NotifyGroupButton(
               groupID: groupID,
@@ -144,13 +156,9 @@ class ListTopBar extends ConsumerWidget {
                                 shoppingListID: shoppingListID,
                                 shoppingList: shoppingList!,
                                 onDelete: () {
-                                  ref
-                                      .read(
-                                        shoppingListDeleteProvider(
-                                          groupID: groupID,
-                                        ),
-                                      )
-                                      .call(shoppingListID: shoppingListID);
+                                  shoppingListDelete.call(
+                                    shoppingListID: shoppingListID,
+                                  );
                                   Navigator.of(
                                     sheetContext,
                                   ).popUntil((route) => route.isFirst);

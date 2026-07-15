@@ -99,6 +99,25 @@ class _RecordingUpdateShoppingListItem extends UpdateShoppingListItem {
   }
 }
 
+/// [ToggleShoppingListItemCheck] の呼び出しごとの item を記録するフェイク。
+class _RecordingToggleShoppingListItemCheck
+    extends ToggleShoppingListItemCheck {
+  /// 呼び出しごとの item。
+  final List<GroupShoppingListItem> calls = [];
+
+  _RecordingToggleShoppingListItemCheck()
+    : super(database: GroupDatabase(groupID: mockGroupID));
+
+  @override
+  Future<void> call({
+    required String shoppingListID,
+    required GroupShoppingListItem item,
+    required String userID,
+  }) async {
+    calls.add(item);
+  }
+}
+
 /// フォーカス喪失時の空行削除 (`doc(id).delete()`) を記録する [GroupDatabase] のフェイク。
 /// 本物は FirebaseFirestore.instance に触れて未初期化の test 環境で落ちるため差し替える。
 class _RecordingGroupDatabase extends GroupDatabase {
@@ -299,6 +318,62 @@ void main() {
         DismissDirection.horizontal,
       );
     });
+  });
+
+  group('右スワイプチェック（Issue #494: lastCheckedDateTime を書くため Provider 経由でトグル）', () {
+    testWidgets('未チェック行を右スワイプすると ToggleShoppingListItemCheck を対象 item で呼ぶ', (
+      tester,
+    ) async {
+      // 直接 Firestore update は status しか書かず lastCheckedDateTime を更新しないため、
+      // create_list_spotlight の条件2 が成立しなくなる回帰を防ぐ。スワイプが Provider
+      // 経由でトグルすることを検証する(Provider が checkedByUserID / lastCheckedDateTime を書く)。
+      final toggle = _RecordingToggleShoppingListItemCheck();
+      await _pump(
+        tester,
+        _item(id: 'filled', message: '牛乳'),
+        extraOverrides: [
+          toggleShoppingListItemCheckProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => toggle),
+        ],
+      );
+      // 右スワイプ(startToEnd)の confirmDismiss を直接呼び、Provider 経由でトグルされることを
+      // 検証する。実ドラッグは中央の TextField にジェスチャを吸われ confirmDismiss まで届かない
+      // ため、コールバックの分岐配線をここで直接確認する。startToEnd はトグルのみで行は残す。
+      final confirmDismiss =
+          tester.widget<Dismissible>(find.byType(Dismissible)).confirmDismiss!;
+      expect(await confirmDismiss(DismissDirection.startToEnd), isFalse);
+      expect(toggle.calls.single.id, 'filled');
+    });
+
+    testWidgets(
+      'チェック済み行を右スワイプしても ToggleShoppingListItemCheck を呼ぶ（トグル解除は Provider が判定）',
+      (tester) async {
+        final toggle = _RecordingToggleShoppingListItemCheck();
+        await _pump(
+          tester,
+          _item(
+            id: 'checked',
+            message: '牛乳',
+            status: GroupShoppingListItemStatus.checked,
+          ),
+          extraOverrides: [
+            toggleShoppingListItemCheckProvider(
+              groupID: mockGroupID,
+            ).overrideWith((ref) => toggle),
+          ],
+        );
+        final confirmDismiss =
+            tester
+                .widget<Dismissible>(find.byType(Dismissible))
+                .confirmDismiss!;
+        expect(await confirmDismiss(DismissDirection.startToEnd), isFalse);
+        // 次の status(checked→unchecked)は Provider の status 判定に委ねる。Widget 側は
+        // 現在の item をそのまま渡すだけ。
+        expect(toggle.calls.single.id, 'checked');
+        expect(toggle.calls.single.status, GroupShoppingListItemStatus.checked);
+      },
+    );
   });
 
   group('TextShoppingListItemWidget の長押し挙動（複製メニュー廃止・並び替えドラッグ）', () {

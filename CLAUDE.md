@@ -7,6 +7,10 @@
 
 あなたにはこの「買い物リスト」の開発の手伝い、および相談にのっていただきたいです
 
+## 開発時の Firebase 接続先
+- 開発時は Firebase Emulator を使う。`cd firebase && firebase emulators:start` で起動し、アプリは `--dart-define=USE_FIREBASE_EMULATOR=true`（VS Code は `shoppinglist(dev, emulator)` 構成）で接続する
+- Emulator では都合が悪い場合（Remote Config・FCM・RevenueCat の実検証、永続データが必要な確認など）は dev 環境を直接使う（`--dart-define` なしの debug ビルドが dev プロジェクトに接続する）
+
 ## Plan時に考慮すること
 - 必ず実装修正内容の動作確認のチェックリストを作ってください。それを確認するテストも後述する検証方法を参考に用意して検証完了までを行ってください
 - プランファイルには必ず具体的な実装コード提案（コードブロック）を含めること。説明のみのプランは不可
@@ -53,7 +57,7 @@ Firebase Functions の規約です
 - FirestoreのDBをクライアントから操作する場合は、`call` 関数を定義したclassを通じて行う（例: `ShoppingListAdd`, `CreateGroup` など。Providerからそのclassのインスタンスを返却する）
 - 関数の引数は原則 `{required}` でラベルが呼び出し元につくようにする
 - コンストラクタの引数も nullable であっても `required` をつける。ただしtimestamp等のメタデータフィールドは除く
-- firestoreのDBに書き込むProviderでは、ref.readを使用してClosureの中で呼ぶ
+- Providerの取得はbuild内で`ref.watch`しローカル変数にキャプチャし、コールバックはその変数を参照する（詳細: `.claude/rules/riverpod-rules.md`）
 - エラーメッセージについては、基本的にそのまま表示する（`e.toString()` の加工・プレフィックス除去等はしない）
 - Firestoreのサブコレクションに保存されるEntityは、親ドキュメントのIDをフィールドとして保持する
 

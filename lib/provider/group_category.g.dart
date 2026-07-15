@@ -6,7 +6,7 @@ part of 'group_category.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$groupCategoryAxesHash() => r'6c49d99fa772a78f3b4874d3cfa012b821992190';
+String _$groupCategoryAxesHash() => r'659ba6989ab7693f1e8786760ad4116b6a30717c';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -53,7 +53,6 @@ class GroupCategoryAxesFamily
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
     groupDatabaseProvider,
-    userDatabaseProvider,
   ];
 
   @override
@@ -63,8 +62,6 @@ class GroupCategoryAxesFamily
       <ProviderOrFamily>{
         groupDatabaseProvider,
         ...?groupDatabaseProvider.allTransitiveDependencies,
-        userDatabaseProvider,
-        ...?userDatabaseProvider.allTransitiveDependencies,
       };
 
   @override
@@ -428,7 +425,7 @@ class _GroupCategoryAxisDeleteProviderElement
   String get groupID => (origin as GroupCategoryAxisDeleteProvider).groupID;
 }
 
-String _$groupCategoriesHash() => r'a67e399f9c9856f1d903d496d0b4313a45b2116e';
+String _$groupCategoriesHash() => r'7d284084ea3d6472713eb13956f479012779cc42';
 
 /// See also [groupCategories].
 @ProviderFor(groupCategories)
@@ -462,7 +459,6 @@ class GroupCategoriesFamily extends Family<AsyncValue<List<GroupCategory>>> {
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
     groupDatabaseProvider,
-    userDatabaseProvider,
   ];
 
   @override
@@ -472,8 +468,6 @@ class GroupCategoriesFamily extends Family<AsyncValue<List<GroupCategory>>> {
       <ProviderOrFamily>{
         groupDatabaseProvider,
         ...?groupDatabaseProvider.allTransitiveDependencies,
-        userDatabaseProvider,
-        ...?userDatabaseProvider.allTransitiveDependencies,
       };
 
   @override

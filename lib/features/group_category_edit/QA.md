@@ -1,42 +1,68 @@
 ---
 feature: group_category_edit
 verification: mobile-mcp, maestro
-last_verified_commit: 2d72174fa713d1fc25d91c862113470193694a22
-last_verified_at: 2026-07-05
+last_verified_commit: 272db0ce414922e3eb1d7de51253b64e88ab8798
+last_verified_at: 2026-07-15
 ---
 
 # group_category_edit QA
 
-## 1. カテゴリ名編集（自動保存）
+## 1. カテゴリ名の編集と自動保存
 
-- [x] **名前入力→画面離脱で自動保存**: カテゴリ名TextFieldに入力後、戻るシェブロンで画面を離脱すると、未保存の名前が自動的に保存される（useOnDisappear）。maestro/flows/category_edit_test.yaml で確認。
-- [x] **Enterキーで確定**: TextFieldでEnter(onSubmitted)を押すとキーボードが閉じ、その後の離脱でも入力した名前が保持・保存される。maestro/flows/category_crud.yaml で確認。
+- [x] **名前入力欄の表示**: カテゴリ名 TextField を表示し、未入力時は hint「カテゴリ名を入力」を表示する
+- [x] **画面離脱時の自動保存**: 名前を変更して back で戻る（pop）と、変更後の名前が Firestore に保存され、一覧の行に反映される（既存 E2E: maestro/flows/category_edit_test.yaml）
+- [x] **変更なし・空名では保存しない**: 名前を変更していない、または trim 後が空の場合、離脱時に保存を行わない
+- [x] **バックグラウンド移行時の自動保存**: 名前変更後にアプリがバックグラウンドへ移行した場合も、変更後の名前を自動保存する
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **名前入力→画面離脱で自動保存**: カテゴリ名TextFieldに入力後、戻るシェブロンで画面を離脱すると、未保存の名前が自動的に保存される（useOnDisappear）。maestro/flows/category_edit_test.yaml で確認。
+### **名前入力欄の表示**: カテゴリ名 TextField を表示し、未入力時は hint「カテゴリ名を入力」を表示する
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-`maestro/flows/category_edit_test.yaml` 実行。カテゴリ名「テスト用」を入力しEnterでキーボードを閉じた後、「完了」を押さず戻るシェブロンで離脱→カテゴリ一覧に「テスト用」が反映されていることを確認した（useOnDisappearによる自動保存）。
+新規カテゴリ作成直後（未入力）の編集画面で、名前 TextField に hint「カテゴリ名を入力」が表示された。
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/a87b58ef-f8e7-47a0-adc7-00db75e3edd1.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/ebf6e5e9-ddf9-4b0d-8a55-13420f457511.png" width="320">
 
 </details>
 
-### **Enterキーで確定**: TextFieldでEnter(onSubmitted)を押すとキーボードが閉じ、その後の離脱でも入力した名前が保持・保存される。maestro/flows/category_crud.yaml で確認。
+### **画面離脱時の自動保存**: 名前を変更して back で戻る（pop）と、変更後の名前が Firestore に保存され、一覧の行に反映される（既存 E2E: maestro/flows/category_edit_test.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-`maestro/flows/category_crud.yaml` 実行。カテゴリ名「野菜」入力→Enterでキーボードを閉じ→戻るシェブロンで離脱後、一覧に「野菜」が保存されていることを確認した。
+maestro/flows/category_edit_test.yaml を実行。名前「テスト用」入力後、back シェブロンで離脱すると一覧に「テスト用」が反映された。
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/2408ee4e-b4f1-4b5f-aeff-1202b3fe27d9.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/fc0eb7da-919a-4eb1-8c9d-b32eead81e51.png" width="320">
+
+</details>
+
+### **変更なし・空名では保存しない**: 名前を変更していない、または trim 後が空の場合、離脱時に保存を行わない
+
+<details><summary>動作確認スクショ</summary>
+
+**確認日: 2026-07-15**
+
+新規カテゴリ（空名で作成）で名前を入力せずに back シェブロンで離脱すると、一覧の2件目行は名前欄が空のまま表示された（クラッシュ・不正な値での上書きなし）。コード上も `if (name.isEmpty || name == category.name) return;`（lib/features/group_category_edit/page.dart:104）で保存自体をスキップするガードを確認済み。
+
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/624d6bcb-4f5b-40b9-a784-8ebe53a016ea.png" width="320">
+
+</details>
+
+### **バックグラウンド移行時の自動保存**: 名前変更後にアプリがバックグラウンドへ移行した場合も、変更後の名前を自動保存する
+
+<details><summary>動作確認スクショ</summary>
+
+**確認日: 2026-07-15**
+
+新規カテゴリの名前欄に「バックグラウンドテスト」を入力後、maestro `pressKey: Home` でバックグラウンドへ移行 → `xcrun simctl launch <udid> com.bannzai.shoppinglist.dev` で前面復帰 → 編集画面から戻ると一覧に「バックグラウンドテスト」が反映されていた（Firestore への保存を確認）。手順の詳細は root QA.md の「再現が難しい操作の手順」を参照。
+
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/b73f9429-3770-4209-b040-4c3aa891fad9.png" width="320">
 
 </details>
 
@@ -44,36 +70,36 @@ last_verified_at: 2026-07-05
 
 ---
 
-## 2. カラー設定
+## 2. カテゴリカラーの設定・解除
 
-- [x] **カラー選択**: プリセットカラーの1つをタップすると即座に保存され、選択中の色にチェックマークと太枠が表示される。maestro/flows/category_edit_test.yaml で確認。
-- [x] **カラー解除**: 「色なし」オプション（⊘アイコン）をタップするとカラーがクリアされ、選択枠が「色なし」側に移動する。
+- [x] **プリセットカラーの選択**: カラーサークルをタップすると即座にそのカラーを保存する（選択中は枠が強調され、一覧行のアイコン色にも反映される）（既存 E2E: maestro/flows/category_edit_test.yaml）
+- [x] **カラー解除**: 先頭の「色なし」（⊘ アイコン）をタップすると color を null にして保存する（既存 E2E: maestro/flows/category_edit_test.yaml）
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **カラー選択**: プリセットカラーの1つをタップすると即座に保存され、選択中の色にチェックマークと太枠が表示される。maestro/flows/category_edit_test.yaml で確認。
+### **プリセットカラーの選択**: カラーサークルをタップすると即座にそのカラーを保存する（選択中は枠が強調され、一覧行のアイコン色にも反映される）（既存 E2E: maestro/flows/category_edit_test.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-`maestro/flows/category_edit_test.yaml` 実行。赤色をタップすると即座に選択され、チェックマークと太枠が表示されることを確認した。
+赤いカラーサークルをタップすると即座にチェックマーク付きで強調表示された。
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/b60cfc69-67a7-446b-87de-4d73dc68ee4b.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/91cb78b8-89fb-44fa-83a9-6cff36abb11d.png" width="320">
 
 </details>
 
-### **カラー解除**: 「色なし」オプション（⊘アイコン）をタップするとカラーがクリアされ、選択枠が「色なし」側に移動する。
+### **カラー解除**: 先頭の「色なし」（⊘ アイコン）をタップすると color を null にして保存する（既存 E2E: maestro/flows/category_edit_test.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-同フローで「色なし」（⊘アイコン）をタップすると赤色の選択が解除され、太枠が「色なし」側に移動することを確認した。
+「色なし」（⊘）をタップするとそちらが強調表示され、色サークルの選択は解除された。
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/fa3b3174-925a-46f3-be10-ac9d03f71356.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/9e40d497-32c7-40ec-9670-7dc44adadb06.png" width="320">
 
 </details>
 
@@ -81,37 +107,36 @@ last_verified_at: 2026-07-05
 
 ---
 
-## 3. アイコン設定
+## 3. カテゴリアイコンの設定・解除
 
-- [x] **アイコン選択**: アイコンプリセットの1つをタップすると即座に保存され、選択中のタイルの背景色・枠線がアクセントカラー（カテゴリカラー優先）に変わる。maestro/flows/category_edit_test.yaml で確認。
-- [x] **アイコン解除**: 「アイコンなし」オプション（⊘アイコン）をタップするとアイコンがクリアされる。
+- [x] **プリセットアイコンの選択**: アイコンをタップすると即座にそのアイコンを保存する（選択中は枠とアイコン色が強調される）（既存 E2E: maestro/flows/category_edit_test.yaml）
+- [x] **アイコン解除**: 先頭の「アイコンなし」（⊘）をタップすると iconName を null にして保存する
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **アイコン選択**: アイコンプリセットの1つをタップすると即座に保存され、選択中のタイルの背景色・枠線がアクセントカラー（カテゴリカラー優先）に変わる。maestro/flows/category_edit_test.yaml で確認。
+### **プリセットアイコンの選択**: アイコンをタップすると即座にそのアイコンを保存する（選択中は枠とアイコン色が強調される）（既存 E2E: maestro/flows/category_edit_test.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-`maestro/flows/category_edit_test.yaml` 実行。カートアイコンをタップすると即座に選択され、タイルの背景色・枠線がアクセントカラー（選択中のカテゴリカラー）に変わることを確認した。
+カートアイコンをタップすると即座に枠とアイコン色が強調表示された。
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/d8a69626-438e-496e-b83c-24bd11df4647.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/f9b27342-4a4e-49c6-9165-2cbf06a2c520.png" width="320">
 
 </details>
 
-### **アイコン解除**: 「アイコンなし」オプション（⊘アイコン）をタップするとアイコンがクリアされる。
+### **アイコン解除**: 先頭の「アイコンなし」（⊘）をタップすると iconName を null にして保存する
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-mobile-mcpで「肉」カテゴリの編集画面にてカートアイコンを選択後（1枚目）、「アイコンなし」（⊘アイコン）をタップするとカートの選択枠が消え、「アイコンなし」側の枠線がアクセントカラーに変わることを確認した（2枚目）。
+カート選択済みの状態から「アイコンなし」（⊘）をタップすると即座に⊘側が強調表示された。
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/02e6f42b-8224-42b8-9b0d-3d2a6b319376.png" width="320">
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/b4c8d7b2-2bdd-4470-8c4e-645be96d721b.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/3f20e583-5475-412d-a7f9-db9a5d41e9cd.png" width="320">
 
 </details>
 
@@ -119,64 +144,49 @@ mobile-mcpで「肉」カテゴリの編集画面にてカートアイコンを�
 
 ---
 
-## 4. キーワード管理
+## 4. キーワードの追加
 
-- [x] **キーワード追加**: 「キーワード」セクション右の＋アイコンからダイアログを開き、キーワードを入力してSegmentedButtonで「部分一致/完全一致/正規表現」を選択し「追加」をタップすると、一覧に選んだマッチング種別のラベル付きで反映される。maestro/flows/category_matching_test.yaml で確認。
-- [x] **キーワード削除**: キーワード行の削除アイコンをタップすると確認ダイアログなしで即座に一覧から消える。
-- [x] **キーワード追加キャンセル**: 追加ダイアログで「キャンセル」をタップすると何も追加されない。
-- [x] **キーワード0件時の表示**: キーワードが1件もない場合「キーワードがまだありません」というグレーのテキストが表示される。
+- [x] **追加ダイアログの表示**: 「キーワード」セクションの＋ボタンで「キーワードを追加」ダイアログを開き、キーワード入力欄とマッチング種別（部分一致/完全一致/正規表現）の SegmentedButton を表示する。既定は部分一致（既存 E2E: maestro/flows/category_crud.yaml）
+- [x] **キーワードの確定**: 入力して「追加」をタップすると、選択したマッチング種別でキーワードを category に追加保存する。入力が空（trim 後）の場合は何もしない（既存 E2E: maestro/flows/category_matching_test.yaml）
+- [x] **追加のキャンセル**: 「キャンセル」でダイアログを閉じ、キーワードを追加しない
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **キーワード追加**: 「キーワード」セクション右の＋アイコンからダイアログを開き、キーワードを入力してSegmentedButtonで「部分一致/完全一致/正規表現」を選択し「追加」をタップすると、一覧に選んだマッチング種別のラベル付きで反映される。maestro/flows/category_matching_test.yaml で確認。
+### **追加ダイアログの表示**: 「キーワード」セクションの＋ボタンで「キーワードを追加」ダイアログを開き、キーワード入力欄とマッチング種別（部分一致/完全一致/正規表現）の SegmentedButton を表示する。既定は部分一致（既存 E2E: maestro/flows/category_crud.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-`maestro/flows/category_crud.yaml` 実行。「にんじん」を部分一致で追加すると、一覧に「にんじん / 部分一致」のラベル付きで反映されることを確認した。
+「キーワードを追加」ボタンでダイアログが開き、入力欄と部分一致/完全一致/正規表現の SegmentedButton（既定: 部分一致）が表示された。
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/ee9e541f-6854-419b-a13f-6d20575015ae.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/fbee5fc7-6159-4bd3-9215-2b17fd80e14a.png" width="320">
 
 </details>
 
-### **キーワード削除**: キーワード行の削除アイコンをタップすると確認ダイアログなしで即座に一覧から消える。
+### **キーワードの確定**: 入力して「追加」をタップすると、選択したマッチング種別でキーワードを category に追加保存する。入力が空（trim 後）の場合は何もしない（既存 E2E: maestro/flows/category_matching_test.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-mobile-mcpで「肉」カテゴリ編集画面にてキーワード「牛」（部分一致、1枚目）の削除アイコンをタップすると、確認ダイアログなしで即座に一覧から消え「キーワードがまだありません」表示に変わることを確認した（2枚目）。
+「テストキーワード」を入力し部分一致のまま「追加」をタップすると、一覧に「テストキーワード」（部分一致）が反映された。
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/b4c8d7b2-2bdd-4470-8c4e-645be96d721b.png" width="320">
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/a720bd5f-ae93-4a67-bc4f-00f2cfe2bc6f.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/27f8ec37-3b8d-4a29-a550-0ac9b93057e4.png" width="320">
 
 </details>
 
-### **キーワード追加キャンセル**: 追加ダイアログで「キャンセル」をタップすると何も追加されない。
+### **追加のキャンセル**: 「キャンセル」でダイアログを閉じ、キーワードを追加しない
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-mobile-mcpでキーワード追加ダイアログに「テスト」を入力後（1枚目）、「キャンセル」をタップするとダイアログが閉じ、キーワード一覧は追加前と変わらず0件のままであることを確認した（2枚目）。
+「キャンセルテスト」を入力後「キャンセル」をタップすると、ダイアログが閉じてキーワードは追加されず「キーワードがまだありません」のままだった。
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/effb07f4-4321-4cde-a2ae-1dba54453174.png" width="320">
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/e911ced5-91d8-4916-8941-4b821475dd86.png" width="320">
-
-</details>
-
-### **キーワード0件時の表示**: キーワードが1件もない場合「キーワードがまだありません」というグレーのテキストが表示される。
-
-<details><summary>動作確認スクショ</summary>
-
-**確認日: 2026-07-05**
-
-mobile-mcpでキーワードを全削除した「肉」カテゴリの編集画面にて「キーワードがまだありません」というグレーのテキストが表示されることを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/a720bd5f-ae93-4a67-bc4f-00f2cfe2bc6f.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/0c05ba53-8d2d-4882-b995-14e4ddbcb9b5.png" width="320">
 
 </details>
 
@@ -184,36 +194,36 @@ mobile-mcpでキーワードを全削除した「肉」カテゴリの編集画�
 
 ---
 
-## 5. マッチング判定（エッジケース）
+## 5. キーワードの一覧表示・削除
 
-- [x] **完全一致は完全一致のみマッチ**: 完全一致キーワード「牛乳」を登録した場合、買い物リストで「牛乳」は該当カテゴリに分類されるが「牛肉」は分類されない。maestro/flows/category_matching_test.yaml で確認。
-- [x] **部分一致は大文字小文字を無視**: 部分一致キーワード「Milk」を登録した場合、買い物リストの「milk」「MILK」のどちらも該当カテゴリにマッチする。maestro/flows/category_matching_test.yaml で確認。
+- [x] **キーワード一覧の表示**: 登録済みキーワードを行で表示し、サブタイトルにマッチング種別（完全一致/部分一致/正規表現）を表示する。0件時は「キーワードがまだありません」を表示する
+- [x] **キーワードの削除**: 各行の削除アイコンをタップすると、そのキーワードを即座に削除保存する
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **完全一致は完全一致のみマッチ**: 完全一致キーワード「牛乳」を登録した場合、買い物リストで「牛乳」は該当カテゴリに分類されるが「牛肉」は分類されない。maestro/flows/category_matching_test.yaml で確認。
+### **キーワード一覧の表示**: 登録済みキーワードを行で表示し、サブタイトルにマッチング種別（完全一致/部分一致/正規表現）を表示する。0件時は「キーワードがまだありません」を表示する
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-`maestro/flows/category_matching_test.yaml` 実行。「乳製品」に完全一致キーワード「牛乳」、「肉」に部分一致キーワード「牛」を登録した状態でアイテム「牛乳」「牛肉」「milk」「MILK」を追加。「牛乳」は乳製品セクションに、「牛肉」は完全一致に一致しないため乳製品には入らず肉セクションに分類されることを確認した。
+0件時は「キーワードがまだありません」を表示（下記スクショ上部の他項目でも同一状態を確認済み）。キーワード追加後は「テストキーワード」行にサブタイトル「部分一致」が表示された。
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/0aedb103-2517-427d-9ff2-86f5967d4a70.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/27f8ec37-3b8d-4a29-a550-0ac9b93057e4.png" width="320">
 
 </details>
 
-### **部分一致は大文字小文字を無視**: 部分一致キーワード「Milk」を登録した場合、買い物リストの「milk」「MILK」のどちらも該当カテゴリにマッチする。maestro/flows/category_matching_test.yaml で確認。
+### **キーワードの削除**: 各行の削除アイコンをタップすると、そのキーワードを即座に削除保存する
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-同フローで部分一致キーワード「Milk」を登録した「乳製品」カテゴリに、大文字小文字違いの「milk」「MILK」の両方が正しくマッチして乳製品セクションに分類されることを確認した（牛乳 / milk / MILK の3件が乳製品セクションに表示）。
+「テストキーワード」行の削除アイコンをタップすると即座に削除され、「キーワードがまだありません」の空状態に戻った。
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/0aedb103-2517-427d-9ff2-86f5967d4a70.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/6a99f412-f473-43dd-834f-095f975af20b.png" width="320">
 
 </details>
 

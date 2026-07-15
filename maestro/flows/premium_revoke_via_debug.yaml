@@ -1,0 +1,39 @@
+appId: ${APP_ID}
+---
+# 開発者オプションの「プレミアム剥奪」ボタンで、RevenueCat側の反映
+# （Premium(RC)表示がfalseになること）まで確認するE2Eフロー。
+#
+# 経緯:
+# Issue #474 (https://github.com/bannzai/shoppinglist/issues/474) — 剥奪操作の
+# Cloud Function自体は成功する（トーストで「プレミアム剥奪 完了」と出る）にも
+# かかわらず、RevenueCatのSDK向けAPI（Purchases.getCustomerInfo()が参照する側）に
+# 反映遅延がありPremium(RC)表示がtrueのまま残っていた。
+# `lib/features/developer_options/page.dart` の `_refreshCustomerInfoUntilNotPremium`
+# で反映されるまで再取得をリトライするように修正したため、このフローで実際に
+# Premium(RC): false に切り替わることを確認する。
+#
+# Flutter ListTile の title/subtitle が 1 つのセマンティクス要素にマージされるため
+# `assertVisible` の text 単独マッチが iOS で不安定。`extendedWaitUntil` + 部分一致
+# regex で安定化する（shared/grant_premium_via_debug.yaml と同じ方針）。
+
+- runFlow: shared/anonymous_sign_in.yaml
+- runFlow: shared/grant_premium_via_debug.yaml
+
+- runFlow: shared/open_developer_options.yaml
+
+- extendedWaitUntil:
+    visible: "Premium\\(RC\\): true.*"
+    timeout: 10000
+
+- tapOn: "プレミアム剥奪"
+
+# `_execute` が完了時に resultMessage.value = '$actionName 完了' を表示する。
+- extendedWaitUntil:
+    visible: "プレミアム剥奪 完了"
+    timeout: 40000
+
+# Issue #474 の再現条件: 剥奪直後もPremium(RC)がtrueのまま残っていないか確認する。
+# _refreshCustomerInfoUntilNotPremium の内部リトライ（最大約30秒）を待ってfalseになることを検証。
+- extendedWaitUntil:
+    visible: "Premium\\(RC\\): false.*"
+    timeout: 60000

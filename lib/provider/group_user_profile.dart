@@ -54,6 +54,6 @@ GroupUserProfileUpdate groupUserProfileUpdate(
   Ref ref, {
   required String groupID,
 }) {
-  final database = ref.read(groupDatabaseProvider(groupID: groupID));
+  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupUserProfileUpdate(database: database);
 }

@@ -131,10 +131,11 @@ class ShoppingListAdd {
 @Riverpod(dependencies: [groupDatabase, firestoreIsPremium])
 ShoppingListAdd shoppingListAdd(Ref ref, {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
+  final isPremium =
+      ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
   return ShoppingListAdd(
     database: database,
-    isPremiumResolver:
-        () => ref.read(firestoreIsPremiumProvider).asData?.value ?? false,
+    isPremiumResolver: () => isPremium,
   );
 }
 

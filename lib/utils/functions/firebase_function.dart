@@ -6,6 +6,28 @@ import 'package:shoppinglist/entity/inquiry_category.dart';
 // Firestore / Storage と同一リージョンに揃え、クロスリージョン往復を排除する。
 final functions = FirebaseFunctions.instanceFor(region: 'asia-northeast1');
 
+/// Functions呼び出しがバックエンドから `result: "NG"` を受け取った場合に投げる例外。
+/// [message] はバックエンドが返した `error.message` をそのまま保持する。
+/// 素の `Exception` は `toString()` が `"Exception: $message"` になり、
+/// 規約（エラーメッセージは加工しない）に反して余分なプレフィックスが
+/// 画面に表示されてしまうため、代わりにこの例外を使う。
+class FunctionsCallException implements Exception {
+  FunctionsCallException(this.message);
+
+  /// バックエンドが返したエラーメッセージ。
+  final String message;
+
+  @override
+  String toString() => message;
+}
+
+/// Functions呼び出しの [response] が NG の場合、[FunctionsCallException] を投げる。
+void _throwIfNotOK(Map<String, dynamic> response) {
+  if (response['result'] != 'OK') {
+    throw FunctionsCallException(response['error']['message'] as String);
+  }
+}
+
 extension FirebaseFunctionsExt on FirebaseFunctions {
   /// 招待コードと有効期限を Functions から取得する。
   /// 戻り値の `expiresDateTime` は `Functions` が ISO8601 文字列で返したものを
@@ -17,9 +39,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     ).call({'groupID': groupID});
     debugPrint('createGroupInvitation.result: ${result.data}');
     final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
+    _throwIfNotOK(response);
     return (
       invitationCode: response['data']['invitationCode'] as String,
       expiresDateTime: DateTime.parse(
@@ -36,9 +56,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     ).call({'invitationCode': invitationCode});
     debugPrint('acceptGroupInvitation.result: ${result.data}');
     final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
+    _throwIfNotOK(response);
     return response['data']['groupID'] as String;
   }
 
@@ -53,9 +71,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     ).call({'mimeType': mimeType, 'base64Image': base64Image});
     debugPrint('generateShoppingListItemsFromImage.result: ${result.data}');
     final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
+    _throwIfNotOK(response);
 
     // as List<String> に直接変換するとExceptionが発生するため、一旦List<dynamic>に変換してからStringに変換する
     final list = response['data']['shoppingListItems'] as List<dynamic>;
@@ -71,9 +87,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     ).call({'url': url});
     debugPrint('generateShoppingListItemsFromURL.result: ${result.data}');
     final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
+    _throwIfNotOK(response);
 
     final list = response['data']['shoppingListItems'] as List<dynamic>;
     return list.map((e) => e.toString()).toList();
@@ -93,9 +107,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     });
     debugPrint('categorizeShoppingListItems.result: ${result.data}');
     final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
+    _throwIfNotOK(response);
 
     final list = response['data']['categorizedItems'] as List<dynamic>;
     return list.map((e) {
@@ -117,9 +129,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     ).call({'groupID': groupID, 'targetUserID': targetUserID});
     debugPrint('removeGroupMember.result: ${result.data}');
     final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
+    _throwIfNotOK(response);
   }
 
   /// 買い物リストの更新を、指定したグループメンバーにプッシュ通知で知らせる。
@@ -139,9 +149,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     });
     debugPrint('sendShoppingListUpdateNotification.result: ${result.data}');
     final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
+    _throwIfNotOK(response);
   }
 
   /// サーバー側で上限チェックを行った上でグループを作成する。
@@ -162,9 +170,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     });
     debugPrint('createGroup.result: ${result.data}');
     final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
+    _throwIfNotOK(response);
     return response['data']['groupID'] as String;
   }
 
@@ -178,9 +184,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     ).call({'groupID': groupID, 'name': name});
     debugPrint('updateGroupName.result: ${result.data}');
     final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
+    _throwIfNotOK(response);
   }
 
   /// 商品写真をFirebase Storageにアップロードし、ダウンロードURLを返す。
@@ -200,9 +204,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     });
     // token付きURLを含む可能性があるためresult.dataはログ出力しない
     final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
+    _throwIfNotOK(response);
     return response['data']['imageURL'] as String;
   }
 
@@ -214,9 +216,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     ).call({'duration': duration});
     debugPrint('grantPromotionalPremium.result: ${result.data}');
     final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
+    _throwIfNotOK(response);
   }
 
   /// RevenueCat Promotions API経由で付与済みのプレミアムEntitlementを取り消す。
@@ -229,9 +229,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     ).call(<String, dynamic>{});
     debugPrint('revokePromotionalPremium.result: ${result.data}');
     final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
+    _throwIfNotOK(response);
   }
 
   /// お問い合わせを送信する。Firestore へのスナップショット保存と Slack 通知は
@@ -252,9 +250,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     });
     debugPrint('submitInquiry.result: ${result.data}');
     final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
+    _throwIfNotOK(response);
     return response['data']['inquiryID'] as String;
   }
 
@@ -275,9 +271,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     });
     debugPrint('setupTestCategoryLocationOrder.result: ${result.data}');
     final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
+    _throwIfNotOK(response);
   }
 
   /// 商品写真をFirebase Storageから削除する。
@@ -293,9 +287,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     });
     debugPrint('deleteShoppingListItemImage.result: ${result.data}');
     final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
+    _throwIfNotOK(response);
   }
 
   /// レシート画像をFirebase Storageにアップロードし、ダウンロードURLを返す。
@@ -312,9 +304,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
       'base64Image': base64Image,
     });
     final response = mapToJSON(result.data);
-    if (response['result'] != 'OK') {
-      throw Exception(response['error']['message']);
-    }
+    _throwIfNotOK(response);
     // Storage path を返す（download URL は Firestore に保存しない）。
     return response['data']['storagePath'] as String;
   }

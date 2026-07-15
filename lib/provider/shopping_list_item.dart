@@ -141,24 +141,47 @@ class ToggleShoppingListItemCheck {
 
   ToggleShoppingListItemCheck({required this.database});
 
+  /// [item] のチェック状態をトグルする。
+  ///
+  /// entity 全体を `set(..., merge: true)` で書き戻すのではなく、変更するフィールドだけを
+  /// `.update({...})` で部分更新する。チェックは「チェック状態だけを変える」操作であり、
+  /// build 後に別端末や詳細シートで message / description / imageURL / order 等が更新されて
+  /// いると、build 時点の古い entity 全体を書き戻して並行編集を巻き戻してしまうため
+  /// (create_list_spotlight 対応時の codex レビュー指摘)。
+  ///
+  /// `.claude/rules/firestore-fieldvalue-rules.md` は set + copyWith + merge への統一を
+  /// 推奨するが、それは FieldValue.delete 回避と null 扱いを一貫させる文脈のもの。ここは
+  /// フィールド削除を含まず、並行編集の巻き戻し防止を優先するため部分更新にしている。
+  /// タイムスタンプは `.claude/rules/firestore-timestamp-rules.md` に従い
+  /// updatedDateTime / serverUpdatedDateTime を serverTimestamp で付与する。
   Future<void> call({
     required String shoppingListID,
     required GroupShoppingListItem item,
     required String userID,
   }) async {
     final isChecking = item.status == GroupShoppingListItemStatus.unchecked;
-    final updated =
-        isChecking
-            ? item.copyWith(
-              status: GroupShoppingListItemStatus.checked,
-              checkedByUserID: userID,
-              lastCheckedDateTime: DateTime.now(),
-            )
-            : item.copyWith(status: GroupShoppingListItemStatus.unchecked);
     await database
         .shoppingListItemsReference(shoppingListID: shoppingListID)
         .doc(item.id)
-        .set(updated, SetOptions(merge: true));
+        .update({
+          GroupShoppingListItemFirestoreKeys.status:
+              (isChecking
+                      ? GroupShoppingListItemStatus.checked
+                      : GroupShoppingListItemStatus.unchecked)
+                  .name,
+          // チェック時のみ checkedByUserID / lastCheckedDateTime を書く。チェック解除時は
+          // lastCheckedDateTime をクリアしない(create_list_spotlight の条件2 が「最後に
+          // チェックした時刻」を見るため既存挙動を維持する)。
+          if (isChecking) ...{
+            GroupShoppingListItemFirestoreKeys.checkedByUserID: userID,
+            GroupShoppingListItemFirestoreKeys
+                .lastCheckedDateTime: Timestamp.fromDate(DateTime.now()),
+          },
+          GroupShoppingListItemFirestoreKeys.updatedDateTime:
+              FieldValue.serverTimestamp(),
+          GroupShoppingListItemFirestoreKeys.serverUpdatedDateTime:
+              FieldValue.serverTimestamp(),
+        });
   }
 }
 

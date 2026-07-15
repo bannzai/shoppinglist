@@ -42,6 +42,9 @@ class ListPickerSheet extends HookConsumerWidget {
     // フィールドは null promotion が効かないため、コールバックで `appUser.id` を
     // 参照できるよう final ローカルに束ねる。
     final appUser = this.appUser;
+    final shoppingListAdd = ref.watch(
+      shoppingListAddProvider(groupID: groupID),
+    );
     // 新規リスト作成リクエストの実行中フラグ。作成は上限カウント等のサーバー往復を
     // 伴い時間がかかるため、その間の連打による作成と pop の多重実行を防ぐ (#372)。
     final isCreatingList = useState(false);
@@ -121,14 +124,12 @@ class ListPickerSheet extends HookConsumerWidget {
                 final sheetRoute = ModalRoute.of(context);
                 isCreatingList.value = true;
                 try {
-                  final newList = await ref
-                      .read(shoppingListAddProvider(groupID: groupID))
-                      .call(
-                        createUserID: appUser.id,
-                        groupID: groupID,
-                        shoppingLocationID: null,
-                        duplicatedFromGroupShoppingListID: null,
-                      );
+                  final newList = await shoppingListAdd.call(
+                    createUserID: appUser.id,
+                    groupID: groupID,
+                    shoppingLocationID: null,
+                    duplicatedFromGroupShoppingListID: null,
+                  );
                   popRouteSafely(navigator: navigator, route: sheetRoute);
                   onShoppingListIDChanged(newList.id);
                 } on ShoppingListLimitExceededException catch (e) {

@@ -10,6 +10,7 @@ import 'package:home_widget/home_widget.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_data_sync.dart';
 import 'package:shoppinglist/utils/config/app_identity.dart' as app_identity;
+import 'package:shoppinglist/utils/firebase_emulator/firebase_emulator.dart';
 
 @pragma('vm:entry-point')
 FutureOr<void> homeWidgetBackgroundCallback(Uri? uri) async {
@@ -20,6 +21,9 @@ FutureOr<void> homeWidgetBackgroundCallback(Uri? uri) async {
     final currentStatus = uri.queryParameters['currentStatus']!;
 
     await Firebase.initializeApp();
+    // この callback は main() と別 entry-point の isolate で動くため、
+    // Emulator 接続 (isolate ごとの設定) をここでも行う。
+    await connectFirebaseEmulatorIfEnabled();
     await FirebaseAuth.instance.setSettings(
       userAccessGroup: app_identity.keychainAccessGroup,
     );

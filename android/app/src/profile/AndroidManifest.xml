@@ -4,4 +4,9 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- USE_FIREBASE_EMULATOR=true のとき、10.0.2.2 (Android Emulator) や
+         FIREBASE_EMULATOR_HOST で指定した LAN IP 上の Firebase Emulator へ
+         HTTP (cleartext) で接続するため、開発ビルドのみ許可する。
+         main の manifest には設定しないため release には適用されない。 -->
+    <application android:usesCleartextTraffic="true" />
 </manifest>

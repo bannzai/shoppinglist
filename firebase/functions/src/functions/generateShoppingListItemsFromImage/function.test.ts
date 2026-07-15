@@ -9,27 +9,27 @@ const mockFirestoreInstance = {
 const mockServerTimestamp = jest.fn(() => "SERVER_TIMESTAMP");
 const mockIncrement = jest.fn((n: number) => `INCREMENT_${n}`);
 
-// admin.firestore() でインスタンス返却 + admin.firestore.FieldValue にアクセス可能にする
-const firestoreFunction = Object.assign(
-  jest.fn(() => mockFirestoreInstance),
-  {
-    FieldValue: {
-      serverTimestamp: mockServerTimestamp,
-      increment: mockIncrement,
-    },
-  }
-);
-
 jest.mock("firebase-admin", () => ({
   __esModule: true,
   default: {
-    firestore: firestoreFunction,
+    firestore: jest.fn(() => mockFirestoreInstance),
     initializeApp: jest.fn(),
     storage: jest.fn(() => ({
       bucket: jest.fn(() => ({
         file: jest.fn(() => ({ delete: jest.fn() })),
       })),
     })),
+  },
+}));
+
+// このファイルは Timestamp クラス(zTimestamp等)を使用しないため、
+// jest.requireActual による実モジュール読み込みは行わない。
+// 実読み込みすると @grpc/grpc-js の GrpcStatus getter が評価され、
+// このNode.jsバージョン環境下でクラッシュするため回避する。
+jest.mock("firebase-admin/firestore", () => ({
+  FieldValue: {
+    serverTimestamp: mockServerTimestamp,
+    increment: mockIncrement,
   },
 }));
 

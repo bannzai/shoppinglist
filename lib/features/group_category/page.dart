@@ -9,8 +9,8 @@ import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/features/group_category/category_empty_state.dart';
 import 'package:shoppinglist/features/group_category_edit/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
-import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/category_presets.dart';
@@ -38,7 +38,24 @@ class GroupCategoryPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
+    final currentUserID = ref.watch(currentUserIDProvider);
+    final groupCategoryAxisAdd = ref.watch(
+      groupCategoryAxisAddProvider(groupID: groupID),
+    );
+    final groupCategoryAdd = ref.watch(
+      groupCategoryAddProvider(groupID: groupID),
+    );
     final title = selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ';
+
+    // ログアウト・ユーザー切替直後は uid が null になる。このページが Navigator 上に
+    // 残ったまま追加操作されると null 例外で落ちるため、uid が取れるまで
+    // ローディング表示にして操作させない。
+    if (currentUserID == null) {
+      return _CategoryScaffold(
+        title: title,
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return axesAsync.when(
       data: (axes) {
@@ -53,7 +70,9 @@ class GroupCategoryPage extends ConsumerWidget {
                 );
                 _addCategoryWithAutoAxis(
                   context: context,
-                  ref: ref,
+                  userID: currentUserID,
+                  groupCategoryAxisAdd: groupCategoryAxisAdd,
+                  groupCategoryAdd: groupCategoryAdd,
                   existingAxes: axes,
                 );
               },
@@ -85,16 +104,20 @@ class GroupCategoryPage extends ConsumerWidget {
 
   void _addCategoryWithAutoAxis({
     required BuildContext context,
-    required WidgetRef ref,
+    required String userID,
+    required GroupCategoryAxisAdd groupCategoryAxisAdd,
+    required GroupCategoryAdd groupCategoryAdd,
     required List<GroupCategoryAxis> existingAxes,
   }) async {
     // Axisがなければ自動作成
     GroupCategoryAxis axis;
     if (existingAxes.isEmpty) {
-      final userID = ref.read(userDatabaseProvider).userID;
-      axis = await ref
-          .read(groupCategoryAxisAddProvider(groupID: groupID))
-          .call(groupID: groupID, userID: userID, name: 'デフォルト', order: 0);
+      axis = await groupCategoryAxisAdd.call(
+        groupID: groupID,
+        userID: userID,
+        name: 'デフォルト',
+        order: 0,
+      );
     } else {
       axis = existingAxes.first;
     }
@@ -102,7 +125,8 @@ class GroupCategoryPage extends ConsumerWidget {
     if (context.mounted) {
       await _addCategoryAndNavigateToEdit(
         context: context,
-        ref: ref,
+        groupCategoryAdd: groupCategoryAdd,
+        userID: userID,
         groupID: groupID,
         categoryAxisID: axis.id,
         order: 0,
@@ -118,22 +142,20 @@ class GroupCategoryPage extends ConsumerWidget {
 /// 編集画面の TextField には hint（カテゴリ名を入力）のみが表示される。
 Future<void> _addCategoryAndNavigateToEdit({
   required BuildContext context,
-  required WidgetRef ref,
+  required GroupCategoryAdd groupCategoryAdd,
+  required String userID,
   required String groupID,
   required String categoryAxisID,
   required int order,
 }) async {
   try {
-    final userID = ref.read(userDatabaseProvider).userID;
-    final category = await ref
-        .read(groupCategoryAddProvider(groupID: groupID))
-        .call(
-          groupID: groupID,
-          userID: userID,
-          categoryAxisID: categoryAxisID,
-          name: '',
-          order: order,
-        );
+    final category = await groupCategoryAdd.call(
+      groupID: groupID,
+      userID: userID,
+      categoryAxisID: categoryAxisID,
+      name: '',
+      order: order,
+    );
     if (context.mounted) {
       Navigator.push(
         context,
@@ -198,6 +220,20 @@ class _CategoryListBody extends HookConsumerWidget {
     final selectedLocationID = useState<String?>(null);
     final isPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
+    final currentUserID = ref.watch(currentUserIDProvider);
+    final groupCategoryAdd = ref.watch(
+      groupCategoryAddProvider(groupID: groupID),
+    );
+
+    // ログアウト・ユーザー切替直後の uid=null の間に FAB から追加操作されると
+    // null 例外で落ちるため、uid が取れるまでローディング表示にして操作させない。
+    // hook (useState) の後に置くことで build 間の hook 呼び出し順を変えない。
+    if (currentUserID == null) {
+      return _CategoryScaffold(
+        title: selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ',
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     final tokens = context.appTheme;
     return categoriesAsync.when(
@@ -310,7 +346,8 @@ class _CategoryListBody extends HookConsumerWidget {
                 );
                 _addCategoryAndNavigateToEdit(
                   context: context,
-                  ref: ref,
+                  groupCategoryAdd: groupCategoryAdd,
+                  userID: currentUserID,
                   groupID: groupID,
                   categoryAxisID: axis.id,
                   order: categories.length,
@@ -352,6 +389,15 @@ class _CategoryReorderableList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final groupCategoryBatchUpdate = ref.watch(
+      groupCategoryBatchUpdateProvider(groupID: groupID),
+    );
+    final moveItemCategoryKeyword = ref.watch(
+      moveItemCategoryKeywordProvider(groupID: groupID),
+    );
+    final groupCategoryDelete = ref.watch(
+      groupCategoryDeleteProvider(groupID: groupID),
+    );
     // ロケーション別にソートしたカテゴリリストを表示
     final sortedCategories = sortCategoriesByLocation(
       categories: categories,
@@ -396,12 +442,10 @@ class _CategoryReorderableList extends ConsumerWidget {
                   .map((entry) => entry.value.copyWith(order: entry.key))
                   .toList();
 
-          ref
-              .read(groupCategoryBatchUpdateProvider(groupID: groupID))
-              .call(
-                categoryAxisID: categoryAxisID,
-                categories: orderedCategories,
-              );
+          groupCategoryBatchUpdate.call(
+            categoryAxisID: categoryAxisID,
+            categories: orderedCategories,
+          );
         } else {
           // ロケーション別順序の更新（locationOrdersマップ）
           final orderedCategories =
@@ -415,12 +459,10 @@ class _CategoryReorderableList extends ConsumerWidget {
                 );
               }).toList();
 
-          ref
-              .read(groupCategoryBatchUpdateProvider(groupID: groupID))
-              .call(
-                categoryAxisID: categoryAxisID,
-                categories: orderedCategories,
-              );
+          groupCategoryBatchUpdate.call(
+            categoryAxisID: categoryAxisID,
+            categories: orderedCategories,
+          );
         }
       },
       itemCount: sortedCategories.length,
@@ -450,16 +492,12 @@ class _CategoryReorderableList extends ConsumerWidget {
                       // キーワードを追加し、他カテゴリから同名の完全一致キーワードを
                       // 削除する(= カテゴリ間 D&D と同じ付け替え)。これにより既に別
                       // カテゴリへ分類済みのアイテムでも選んだカテゴリへ正しく移動する。
-                      await ref
-                          .read(
-                            moveItemCategoryKeywordProvider(groupID: groupID),
-                          )
-                          .call(
-                            categoryAxisID: categoryAxisID,
-                            itemMessage: selectionForItem!.message,
-                            destinationCategoryID: category.id,
-                            categories: categories,
-                          );
+                      await moveItemCategoryKeyword.call(
+                        categoryAxisID: categoryAxisID,
+                        itemMessage: selectionForItem!.message,
+                        destinationCategoryID: category.id,
+                        categories: categories,
+                      );
                       if (context.mounted) {
                         Navigator.pop(context);
                       }
@@ -510,7 +548,7 @@ class _CategoryReorderableList extends ConsumerWidget {
                   );
                   _showDeleteDialog(
                     context: context,
-                    ref: ref,
+                    groupCategoryDelete: groupCategoryDelete,
                     category: category,
                   );
                 },
@@ -524,7 +562,7 @@ class _CategoryReorderableList extends ConsumerWidget {
 
   void _showDeleteDialog({
     required BuildContext context,
-    required WidgetRef ref,
+    required GroupCategoryDelete groupCategoryDelete,
     required GroupCategory category,
   }) {
     showDialog(
@@ -542,12 +580,10 @@ class _CategoryReorderableList extends ConsumerWidget {
                   );
                   Navigator.pop(dialogContext);
                   try {
-                    await ref
-                        .read(groupCategoryDeleteProvider(groupID: groupID))
-                        .call(
-                          categoryAxisID: categoryAxisID,
-                          categoryID: category.id,
-                        );
+                    await groupCategoryDelete.call(
+                      categoryAxisID: categoryAxisID,
+                      categoryID: category.id,
+                    );
                   } catch (e, st) {
                     if (context.mounted) {
                       showErrorSnackBar(context, e, st);

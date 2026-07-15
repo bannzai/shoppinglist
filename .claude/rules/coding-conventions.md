@@ -9,6 +9,6 @@ paths:
 - FirestoreのDBに対して変更（書き込み・更新・削除）を行う場合は、`call` メソッドを持ったclassを提供するProviderを用意し、そのProvider経由で操作すること（例: `AddShoppingListItem`, `ToggleShoppingListItemCheck` など）
 - 関数の引数は原則 `{required}` でラベルが呼び出し元につくようにする
 - コンストラクタの引数も nullable であっても `required` をつける。ただしtimestamp等のメタデータフィールドは除く
-- `ref.watch` は状態の同期に使う（例: `currentUserIDProvider` 等のデータ/状態Provider）。`ref.read` は機能・操作を提供するProvider（`call` クラス等、アプリの表示に関係ないもの）に限定する
+- Providerの取得は状態・機能を問わずbuild内で`ref.watch`しローカル変数にキャプチャし、コールバックはその変数を参照する（詳細: `.claude/rules/riverpod-rules.md`）
 - エラーメッセージについては、基本的にそのまま表示する（`e.toString()` の加工・プレフィックス除去等はしない）
 - Firestoreのサブコレクションに保存されるEntityは、親ドキュメントのIDをフィールドとして保持する

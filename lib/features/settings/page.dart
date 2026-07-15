@@ -60,6 +60,13 @@ class SettingPage extends HookConsumerWidget {
       return null;
     }, [myGroupUserProfile]);
 
+    // groupID は defaultGroupID 未設定時に null になり得るため、その間はキャプチャできない。
+    // saveDisplayName の null ガード（groupID == null で return）と対で groupID! 前提にする。
+    final groupUserProfileUpdate =
+        groupID != null
+            ? ref.watch(groupUserProfileUpdateProvider(groupID: groupID))
+            : null;
+
     // 表示名を保存する。保存ボタンは廃止し、TextFieldのフォーカスが外れた時(blur)に
     // この関数を呼んで自動保存する。保存済みの値と同じ場合は書き込みをスキップし、
     // 不要な更新を避けて冪等にする。
@@ -76,9 +83,10 @@ class SettingPage extends HookConsumerWidget {
         parameters: {'groupID': groupID},
       );
       try {
-        await ref
-            .read(groupUserProfileUpdateProvider(groupID: groupID))
-            .call(userID: currentUserID, displayName: displayName);
+        await groupUserProfileUpdate!.call(
+          userID: currentUserID,
+          displayName: displayName,
+        );
         if (context.mounted) {
           ScaffoldMessenger.of(
             context,
@@ -225,7 +233,7 @@ class SettingPage extends HookConsumerWidget {
                       );
                       launchUrl(
                         Uri.parse(
-                          'https://bannzai.github.io/shoppinglist/TermsOfService',
+                          'https://bannzai.github.io/shoppinglist/Terms',
                         ),
                         mode: LaunchMode.externalApplication,
                       );
@@ -267,7 +275,7 @@ class SettingPage extends HookConsumerWidget {
                       );
                       launchUrl(
                         Uri.parse(
-                          'https://bannzai.github.io/shoppinglist/SpecifiedCommercialTransactionAct',
+                          'https://bannzai.github.io/shoppinglist/SpecifiedCommercialTransactionAct-ja',
                         ),
                         mode: LaunchMode.externalApplication,
                       );
@@ -502,6 +510,7 @@ class _SignOutButton extends ConsumerWidget {
               transitionDuration: const Duration(milliseconds: 160),
               pageBuilder: (dialogContext, _, __) {
                 return AppDialogShell(
+                  barrierDismissible: true,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -555,7 +564,9 @@ class _SignOutButton extends ConsumerWidget {
             // debug 時は exit(0) すると Hot Restart の手間が増えるため、終了アラートを
             // 出さず終了もしない（開発者が手動で Hot Restart する想定）。
             // release/profile 時のみ、サインアウト完了を伝えてアプリを終了する。
-            // アカウント削除フロー(user_delete.dart の _CompletedDialog)と同方針。
+            // 「終了する」タップで exit(0) する点はアカウント削除フロー
+            // (user_delete.dart の _CompletedDialog) と同方針だが、こちらは debug 時に
+            // ダイアログ自体を出さない点が異なる（想定内の差分。Issue #477 参照）。
             if (kDebugMode) {
               return;
             }
@@ -576,7 +587,9 @@ class _SignOutButton extends ConsumerWidget {
 
 /// サインアウト完了アラート。
 /// release/profile ビルドで `FirebaseAuth.instance.signOut()` 後に表示し、
-/// 「終了する」タップで `exit(0)` する。アカウント削除フローの `_CompletedDialog` と同方針。
+/// 「終了する」タップで `exit(0)` する。
+/// アカウント削除フローの `_CompletedDialog` と同様に `exit(0)` を使うが、
+/// このダイアログ自体は debug 時には表示されない（想定内の差分。Issue #477 参照）。
 class _SignOutCompletedDialog extends StatelessWidget {
   const _SignOutCompletedDialog();
   @override

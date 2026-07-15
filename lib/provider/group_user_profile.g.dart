@@ -160,7 +160,7 @@ class _GroupUserProfilesProviderElement
 }
 
 String _$groupUserProfileUpdateHash() =>
-    r'4303c9dd6531e4b14bd0e020276574f2fafbecc3';
+    r'4a25962065264675c61852baf08df2e575f0b37b';
 
 /// See also [groupUserProfileUpdate].
 @ProviderFor(groupUserProfileUpdate)

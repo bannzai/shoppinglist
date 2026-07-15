@@ -19,6 +19,7 @@ import 'package:shoppinglist/features/home_widget/home_widget_data_sync.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shoppinglist/utils/development/debug.dart';
+import 'package:shoppinglist/utils/firebase_emulator/firebase_emulator.dart';
 import 'package:shoppinglist/utils/local_notification/local_notification.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:shoppinglist/utils/remote_config/remote_config.dart';
@@ -36,6 +37,9 @@ void main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp();
+
+    await connectFirebaseEmulatorIfEnabled();
+
     await GoogleSignIn.instance.initialize();
 
     // Keychain sharing の設定 (iOS/macOSでのみ有効)

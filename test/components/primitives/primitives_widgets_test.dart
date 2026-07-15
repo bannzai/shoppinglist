@@ -19,6 +19,34 @@ Widget _wrap(Widget child) => MaterialApp(
   home: Scaffold(body: Center(child: child)),
 );
 
+/// [barrierDismissible] を与えて [AppDialogShell] を push する画面を組み立てるヘルパー。
+/// issue #473: 背景 overlay の `Container(color: ...)` がヒットテストを吸収し、
+/// `showGeneralDialog(barrierDismissible: true)` の背景タップ dismiss が機能しない不具合の回帰確認用。
+Widget _wrapPushableAppDialogShell({required bool barrierDismissible}) =>
+    MaterialApp(
+      theme: buildAppTheme(accent: AccentPreset.shu),
+      home: Builder(
+        builder:
+            (context) => Scaffold(
+              body: Center(
+                child: ElevatedButton(
+                  onPressed:
+                      () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder:
+                              (_) => AppDialogShell(
+                                barrierDismissible: barrierDismissible,
+                                child: const Text('確認ダイアログ'),
+                              ),
+                        ),
+                      ),
+                  child: const Text('open'),
+                ),
+              ),
+            ),
+      ),
+    );
+
 void main() {
   testWidgets('AppPill: 各 variant が落ちずに描画される', (tester) async {
     await tester.pumpWidget(
@@ -294,9 +322,56 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
-        home: const Scaffold(body: AppDialogShell(child: Text('確認ダイアログ'))),
+        home: const Scaffold(
+          body: AppDialogShell(
+            barrierDismissible: true,
+            child: Text('確認ダイアログ'),
+          ),
+        ),
       ),
     );
+    expect(find.text('確認ダイアログ'), findsOneWidget);
+  });
+
+  testWidgets('AppDialogShell: barrierDismissible=true で背景タップにより閉じる', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrapPushableAppDialogShell(barrierDismissible: true),
+    );
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+    expect(find.text('確認ダイアログ'), findsOneWidget);
+
+    // card は画面高さの 32% より下から始まるため、上端付近は背景 overlay 領域。
+    await tester.tapAt(const Offset(200, 5));
+    await tester.pumpAndSettle();
+    expect(find.text('確認ダイアログ'), findsNothing);
+  });
+
+  testWidgets('AppDialogShell: barrierDismissible=false では背景タップで閉じない', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrapPushableAppDialogShell(barrierDismissible: false),
+    );
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+
+    await tester.tapAt(const Offset(200, 5));
+    await tester.pumpAndSettle();
+    expect(find.text('確認ダイアログ'), findsOneWidget);
+  });
+
+  testWidgets('AppDialogShell: card 内のタップでは閉じない', (tester) async {
+    await tester.pumpWidget(
+      _wrapPushableAppDialogShell(barrierDismissible: true),
+    );
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('確認ダイアログ'));
+    await tester.pumpAndSettle();
     expect(find.text('確認ダイアログ'), findsOneWidget);
   });
 }

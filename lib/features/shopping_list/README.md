@@ -65,6 +65,53 @@
   SnackBar（アップグレード導線付き）を表示する。複製は `ShoppingListDuplicate` に委譲し、
   完了後は複製先リストへ表示を切り替える。
 
+## リスト追加スポットライト（Issue #494）
+`ListTopBar` 右の「リストを追加」ボタン（`CreateListMenuButton`）にユーザーが気づけるよう、
+背景をディム（黒半透明）で覆いボタン部分だけを切り抜いて強調し、説明バブルを出すスポットライト
+（コーチマーク）。パッケージは使わず自作する。
+
+- 汎用の表示コンポーネント: `components/spotlight/spotlight_view.dart`（`SpotlightView`）。
+  対象の global Rect を `CustomPainter` + `Path.combine(difference)` で切り抜き、フェードインで表示する。
+  切り抜き形状は `SpotlightOval` / `SpotlightRoundedRect` の 2 種。**アプリ非依存**の presentation で、
+  将来のパッケージ切り出し（TsukiAkari 構想）を意識して機能ロジックを持たない。
+- 機能側のホスト: `components/create_list_spotlight.dart`（`CreateListSpotlightHost`）。
+  `build` は `SizedBox.shrink` を返し、`toast_overlay.dart` と同様に `appNavigatorKey` 経由で
+  root Overlay へ命令的に挿入する（route push はシートの pop 乗っ取りになるため使わない）。
+
+### 表示条件
+表示判定は純粋関数 `shouldShowCreateListSpotlight`（同ファイル）に切り出す。
+
+- 条件1（日次ナッジ）: 最後の買い物リスト作成日が、ローカルタイムで「日付が変わった」
+  （24 時間経過ではない。昨日 23:59 作成 → 今日 00:01 で成立）。
+- 条件2（チェック後の再訪ナッジ）: アイテムを最後にチェックしてから 1 時間以上経過。
+  アプリのライフサイクルに沿って評価する（初回データ到達後 1 回 + foreground 復帰時 `useOnResumed`。
+  アプリ内タイマーは持たない）。
+- 条件3（機会の消費）: 1 回の表示で「その日」と「現在のチェック機会」の両方を消費する。
+  翌日リスト未作成なら条件1で再度、再チェック+1 時間で条件2が再度成立する。
+
+判定式: `(cond1 && !今日表示済み) || (cond2 && !そのチェック機会に表示済み)`。
+
+### 評価タイミング・ガード
+- 評価は「初回にアイテム一覧が到達した後の post-frame で 1 回」と「foreground 復帰時」のみ。
+  連続 rebuild では評価しない。
+- 上にシート/ダイアログがある時（`ModalRoute.of(context).isCurrent != true`）・対象の
+  `RenderBox` が取れない時は表示しない。二重 insert もしない。
+- **表示した時点で**最終表示日時を記録する（dismiss 時ではない。アプリ kill でも再表示しないため）。
+
+### フラグの保存先
+最終表示日時は `SharedPreferences`（キー: `StringKey.createListSpotlightLastShownDateTime`、
+ISO8601 文字列）に保存する。読み書きは `provider/string_shared_preferences.dart`
+（`StringSharedPreferences`、`bool_shared_preferences.dart` と対称）経由。
+
+### analytics
+表示時に `show_create_list_spotlight`、タップで閉じた時に `tap_dismiss_create_list_spotlight`
+（いずれも parameters に `groupID`）。
+
+### デバッグ方法（開発者オプション）
+- 「リスト追加スポットライトを強制表示」: `debugForceCreateListSpotlightProvider` を ON にする。
+  買い物リスト画面へ戻ると条件を無視して表示する（強制表示時は履歴を書かず本番状態を汚さない）。
+- 「リスト追加スポットライト履歴をリセット」: 最終表示日時を削除し、条件を満たせば再表示できるようにする。
+
 ## 入力行と空行のライフサイクル
 入力行は `message=''` の `GroupShoppingListItem` ドキュメント。テキストはローカルの
 `TextEditingController` に保持し、Enter（改行）で確定して別アイテムに保存する。

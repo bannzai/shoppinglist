@@ -1,0 +1,9 @@
+node_modules/
+coverage/
+tmp/
+
+# Firestore Emulator が emulators:exec 実行時に生成するデバッグログ
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+pubsub-debug.log

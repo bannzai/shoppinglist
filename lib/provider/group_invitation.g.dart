@@ -28,7 +28,7 @@ final createGroupInvitationProvider =
 typedef CreateGroupInvitationRef =
     AutoDisposeProviderRef<CreateGroupInvitation>;
 String _$acceptGroupInvitationHash() =>
-    r'a8ea2f300c0a017166becc2afb1276000fc660a8';
+    r'bf63f948c8773b832b2c064d2d6157ef1dfaa271';
 
 /// See also [acceptGroupInvitation].
 @ProviderFor(acceptGroupInvitation)

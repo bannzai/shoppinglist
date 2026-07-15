@@ -4,14 +4,17 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/developer_options/firestore_viewer_page.dart';
 import 'package:shoppinglist/features/developer_options/provider.dart';
+import 'package:shoppinglist/features/shopping_list/components/create_list_spotlight.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/provider/string_shared_preferences.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 
 /// 開発者オプションのモーダルボトムシートを表示する。
 void showDeveloperOptionsModal(BuildContext context) {
@@ -119,6 +122,13 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
     final firstShoppingListID =
         shoppingLists.isNotEmpty ? shoppingLists.first.id : null;
 
+    // defaultGroupID は未参加ユーザーで null になり得るため、その間はキャプチャできない。
+    // onTap は defaultGroupID == null の間 null ガード済みなので addShoppingListItem! で参照する。
+    final addShoppingListItem =
+        defaultGroupID != null
+            ? ref.watch(addShoppingListItemProvider(groupID: defaultGroupID))
+            : null;
+
     final itemsAsync =
         (defaultGroupID != null && firstShoppingListID != null)
             ? ref.watch(
@@ -129,6 +139,16 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
             )
             : null;
     final items = itemsAsync?.asData?.value ?? <GroupShoppingListItem>[];
+
+    // リスト追加スポットライト(Issue #494)のデバッグ操作用。build 内で notifier をキャプチャする。
+    final debugForceSpotlightNotifier = ref.watch(
+      debugForceCreateListSpotlightProvider.notifier,
+    );
+    final spotlightPrefsNotifier = ref.watch(
+      stringSharedPreferencesProvider(
+        key: StringKey.createListSpotlightLastShownDateTime,
+      ).notifier,
+    );
 
     return ListView(
       controller: scrollController,
@@ -239,7 +259,9 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
         // プレミアム剥奪（RC Promotions API revoke 経由）
         _ActionTile(
           title: 'プレミアム剥奪',
-          subtitle: 'RC Promo経由で付与したプレミアムEntitlementを取り消す（dev環境のみ）',
+          subtitle:
+              'RC Promo経由で付与したプレミアムEntitlementを取り消す（dev環境のみ）。'
+              'RevenueCat側の反映に数秒〜数十秒かかる場合があります',
           icon: Icons.star_border,
           isProcessing: isProcessing.value,
           onTap:
@@ -248,9 +270,7 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
                 resultMessage: resultMessage,
                 action: () async {
                   await functions.revokePromotionalPremium();
-                  await Purchases.invalidateCustomerInfoCache();
-                  await Purchases.getCustomerInfo();
-                  ref.invalidate(customerInfoProvider);
+                  await _refreshCustomerInfoUntilNotPremium(ref);
                 },
                 actionName: 'プレミアム剥奪',
               ),
@@ -320,20 +340,14 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
                     isProcessing: isProcessing,
                     resultMessage: resultMessage,
                     action:
-                        () => ref
-                            .read(
-                              addShoppingListItemProvider(
-                                groupID: defaultGroupID,
-                              ),
-                            )
-                            .call(
-                              shoppingListID: firstShoppingListID,
-                              userID: debugUID!,
-                              message: itemMessage.value,
-                              order: items.nextOrder,
-                              description: null,
-                              color: null,
-                            ),
+                        () => addShoppingListItem!.call(
+                          shoppingListID: firstShoppingListID,
+                          userID: debugUID!,
+                          message: itemMessage.value,
+                          order: items.nextOrder,
+                          description: null,
+                          color: null,
+                        ),
                     actionName: 'アイテム追加',
                   ),
         ),
@@ -360,6 +374,35 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
                     actionName: 'クリーンアップ',
                   ),
         ),
+
+        const Divider(height: 24),
+
+        // リスト追加スポットライト(Issue #494)を強制表示
+        _ActionTile(
+          title: 'リスト追加スポットライトを強制表示',
+          subtitle: '買い物リスト画面に戻ると表示されます（条件を無視・履歴は汚しません）',
+          icon: Icons.highlight,
+          isProcessing: false,
+          onTap: () {
+            debugForceSpotlightNotifier.show();
+            resultMessage.value = 'スポットライト強制表示をON。買い物リスト画面に戻ってください';
+          },
+        ),
+
+        // リスト追加スポットライトの表示履歴をリセット
+        _ActionTile(
+          title: 'リスト追加スポットライト履歴をリセット',
+          subtitle: '最終表示日時を削除し、条件を満たせば再表示できるようにする',
+          icon: Icons.restore,
+          isProcessing: isProcessing.value,
+          onTap:
+              () => _execute(
+                isProcessing: isProcessing,
+                resultMessage: resultMessage,
+                action: () => spotlightPrefsNotifier.remove(),
+                actionName: 'スポットライト履歴リセット',
+              ),
+        ),
       ],
     );
   }
@@ -383,6 +426,28 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
       debugPrint('[DeveloperOptions] $actionName エラー: $e');
     } finally {
       isProcessing.value = false;
+    }
+  }
+
+  /// revokePromotionalPremium 完了直後、RevenueCatの購読者向けAPI
+  /// （Purchases.getCustomerInfo() が参照する側）にサーバー側の反映遅延があり、
+  /// invalidateCustomerInfoCache() + getCustomerInfo() を1回行うだけではPremiumの
+  /// まま返ってくることがある（RevenueCat公式コミュニティで報告されている既知の挙動）。
+  /// 非Premiumに変わるか上限回数（10回・約30秒）に達するまで再取得を繰り返す。
+  /// Issue #474
+  Future<void> _refreshCustomerInfoUntilNotPremium(WidgetRef ref) async {
+    const maxAttempts = 10;
+    const interval = Duration(seconds: 3);
+    for (var attempt = 0; attempt < maxAttempts; attempt++) {
+      await Purchases.invalidateCustomerInfoCache();
+      final customerInfo = await Purchases.getCustomerInfo();
+      ref.invalidate(customerInfoProvider);
+      if (!customerInfo.isPremium) {
+        return;
+      }
+      if (attempt < maxAttempts - 1) {
+        await Future.delayed(interval);
+      }
     }
   }
 }

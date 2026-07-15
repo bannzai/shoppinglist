@@ -7,7 +7,7 @@ part of 'default_group_update.dart';
 // **************************************************************************
 
 String _$defaultGroupUpdateHash() =>
-    r'2e1b798713b66b5ee237e6b26b9ea3f6222a5aa2';
+    r'14dc7bb6ee08c6921daf4c795fa16abe52ba8396';
 
 /// See also [defaultGroupUpdate].
 @ProviderFor(defaultGroupUpdate)

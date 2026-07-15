@@ -1,0 +1,35 @@
+appId: ${APP_ID}
+---
+# paywall フッタの「利用規約」「プライバシー」リンクをタップし、外部ブラウザ
+# (LaunchMode.externalApplication)で開かれることを検証する。
+#
+# `maestro hierarchy` 実測で「利用規約」「プライバシー」は個別のaccessibility要素
+# として正しく座標を持つことを確認済み（bounds [109,770][163,791] / [176,770][248,791]、
+# 画面サイズ402x874pt換算で中心 ≈ 34%,89% / 53%,89%）。tapOn: text指定が通らなかった
+# のはこの座標問題ではなく、直前に「復元」を実行した場合にSnackBarが画面下部
+# （まさにこの行の位置）を覆っていたためと判明。text指定でなく実測座標を使う。
+#
+# 外部ブラウザから launchApp で戻すと同一route(Paywall)への復帰が保証できないため、
+# 1リンクにつき1回、匿名サインインからやり直す。
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      text: "はじめる"
+    direction: DOWN
+    timeout: 15000
+- tapOn: "はじめる"
+- extendedWaitUntil:
+    visible: "購入"
+    timeout: 30000
+
+# --- プライバシー ---
+- tapOn:
+    point: "53%,89%"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/paywall_privacy_link_opened

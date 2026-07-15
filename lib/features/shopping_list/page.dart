@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/retry_page.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
@@ -11,6 +12,8 @@ import 'package:shoppinglist/features/shopping_list/components/banners/list_erro
 import 'package:shoppinglist/features/shopping_list/components/banners/retention_banner.dart';
 import 'package:shoppinglist/features/shopping_list/components/expandable_fab.dart';
 import 'package:shoppinglist/features/shopping_list/components/group_chips_bar.dart';
+import 'package:shoppinglist/features/shopping_list/components/create_list_spotlight.dart';
+import 'package:shoppinglist/features/shopping_list/components/keyboard_close_toolbar.dart';
 import 'package:shoppinglist/features/shopping_list/components/list_top_bar.dart';
 import 'package:shoppinglist/features/shopping_list/components/progress_pill.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_body_content.dart';
@@ -151,13 +154,18 @@ class _GroupChips extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentGroupIDNotifier = ref.watch(currentGroupIDProvider.notifier);
+    final currentShoppingListIDNotifier = ref.watch(
+      currentShoppingListIDProvider.notifier,
+    );
+    final defaultGroupUpdate = ref.watch(defaultGroupUpdateProvider);
     return GroupChipsBar(
       groups: groups,
       currentGroupID: currentGroupID,
       onGroupChanged: (newGroupID) {
-        ref.read(currentGroupIDProvider.notifier).update(newGroupID);
-        ref.read(currentShoppingListIDProvider.notifier).update(null);
-        ref.read(defaultGroupUpdateProvider).call(groupID: newGroupID);
+        currentGroupIDNotifier.update(newGroupID);
+        currentShoppingListIDNotifier.update(null);
+        defaultGroupUpdate.call(groupID: newGroupID);
       },
     );
   }
@@ -166,7 +174,7 @@ class _GroupChips extends ConsumerWidget {
 /// 有効な買い物リストが確定している(resolvedShoppingListID 非null)時のみマウントされる本体。
 /// item 系 provider の購読をここで無条件に行うため、ShoppingListPage 側に条件付き ref.watch を
 /// 持ち込まずに済む。
-class _ActiveShoppingList extends ConsumerWidget {
+class _ActiveShoppingList extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupShoppingList> shoppingLists;
@@ -189,6 +197,10 @@ class _ActiveShoppingList extends ConsumerWidget {
       (sl) => sl.id == shoppingListID,
     );
 
+    // リスト追加ボタンの位置を特定する GlobalKey。スポットライト(Issue #494)の切り抜き対象に使う。
+    // rebuild をまたいで同一 Key を保つため useMemoized で1度だけ生成する。
+    final createListButtonKey = useMemoized(() => GlobalKey(), const []);
+
     // 表示リスト切替に使う notifier を build 時に束ねる。
     // この notifier を子(ListTopBar / ListPickerSheet)へ渡す onShoppingListIDChanged
     // クロージャに閉じ込める。リスト作成が Stream へ反映されると、この
@@ -199,6 +211,7 @@ class _ActiveShoppingList extends ConsumerWidget {
     final currentShoppingListIDNotifier = ref.watch(
       currentShoppingListIDProvider.notifier,
     );
+    final fabMenuNotifier = ref.watch(shoppingListFabMenuProvider.notifier);
 
     // チェック済み含む全件。FAB・リスト本体・進捗ピルがこの一覧を基準にする。
     final shoppingListItemsAsync = ref.watch(
@@ -218,11 +231,10 @@ class _ActiveShoppingList extends ConsumerWidget {
     // グループへの更新通知は上部バー(ListTopBar)の手動ボタン(NotifyGroupButton)で行う。
     // 自動検知による通知バーは廃止した(Issue #449)。
 
-    // ソフトキーボード表示中は、下部の浮遊要素(FAB・進捗ピル)を隠す。入力行は
-    // フォーカス時に keepVisibleAtEnd でキーボード直上へスクロールされる
-    // (text_shopping_list_item.dart, Issue #429)ため、同じくキーボード直上に浮く FAB・
-    // 進捗ピルと重なってしまう。キーボード表示中は入力行での連続追加が主操作で FAB は不要な
-    // ので、表示中だけ隠して重なりを解消する。この build は Scaffold の外側にあるため
+    // ソフトキーボード表示中の下部浮遊要素の扱い: 進捗ピルは入力行(フォーカス時に
+    // keepVisibleAtEnd でキーボード直上へスクロールされる。text_shopping_list_item.dart,
+    // Issue #429)と重なるため隠す。FAB は隠さず表示し続け、タップ・長押しでキーボードを
+    // 閉じられるようにする(Issue #498)。この build は Scaffold の外側にあるため
     // viewInsets はキーボード実高を保持する(Scaffold body 内では viewInsets が 0 に潰れる)。
     final isKeyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
 
@@ -245,22 +257,25 @@ class _ActiveShoppingList extends ConsumerWidget {
       },
       // アイテム入力 FAB（ExpandableFab）。リスト作成は上部バー(ListTopBar)の
       // CreateListMenuButton へ移動した(Issue #461)。
-      // キーボード表示中は入力行と重なるため隠す(Scaffold の FAB スケールアニメで消える)。
-      floatingActionButton:
-          isKeyboardVisible
-              ? null
-              : ExpandableFab(
-                groupID: groupID,
-                shoppingListID: shoppingListID,
-                shoppingListItems:
-                    shoppingListItemsAsync.asData?.value ?? const [],
-              ),
+      // キーボード表示中も隠さない(Issue #498)。body 下端に出る KeyboardCloseToolbar の
+      // 閉じるボタン(右端)と FAB が重ならないよう、ツールバーの高さ分だけ持ち上げる。
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(
+          bottom: isKeyboardVisible ? KeyboardCloseToolbar.height : 0,
+        ),
+        child: ExpandableFab(
+          groupID: groupID,
+          shoppingListID: shoppingListID,
+          shoppingListItems: shoppingListItemsAsync.asData?.value ?? const [],
+          isKeyboardVisible: isKeyboardVisible,
+        ),
+      ),
       // NavBar(surface)の帯 + 白(card)コンテンツ部のハイブリッドサーフェス。
       // リスト本体のスクロール開始時に FAB の展開メニューを閉じる。onNotification は
       // false を返して通知を上位へ伝播させ続ける（スクロール自体は通常どおり動く）。
       child: NotificationListener<ScrollStartNotification>(
         onNotification: (notification) {
-          ref.read(shoppingListFabMenuProvider.notifier).close();
+          fabMenuNotifier.close();
           return false;
         },
         child: Container(
@@ -277,6 +292,7 @@ class _ActiveShoppingList extends ConsumerWidget {
                 shoppingListItems: shoppingListItemsAsync.valueOrNull,
                 onShoppingListIDChanged:
                     (newID) => currentShoppingListIDNotifier.update(newID),
+                createListButtonKey: createListButtonKey,
               ),
               Expanded(
                 child: Container(
@@ -311,13 +327,19 @@ class _ActiveShoppingList extends ConsumerWidget {
                               loading: () => const Loading(),
                             ),
                           ),
-                          if (!firestoreIsPremium && totalCount > 50)
+                          // キーボード表示中は隠す。表示したままだと body 下端に出る
+                          // KeyboardCloseToolbar の直上に並び、ツールバー分だけ持ち上げた
+                          // FAB がバナー右側の操作領域に重なってしまうため(Issue #498)。
+                          if (!firestoreIsPremium &&
+                              totalCount > 50 &&
+                              !isKeyboardVisible)
                             const RetentionBanner(),
                         ],
                       ),
                       // チェック進捗を左下に浮かせる小さなピル(FAB は右下なので対称)。
                       // 外側 SafeArea が bottom:false のため、ホームインジケータ分を加味する。
-                      // キーボード表示中は入力行と重なるため隠す(FAB と同じ扱い)。
+                      // キーボード表示中は入力行と重なるため隠す(表示のみの要素で、
+                      // キーボードを閉じる導線を担う FAB と違い出し続ける理由がない。Issue #498)。
                       if (totalCount > 0 && !isKeyboardVisible)
                         Positioned(
                           left: 16,
@@ -330,6 +352,23 @@ class _ActiveShoppingList extends ConsumerWidget {
                     ],
                   ),
                 ),
+              ),
+              // キーボード表示中だけ、キーボード直上に閉じるボタン付きツールバーを出す
+              // (Issue #488)。入力の textInputAction が newline のため done ボタンが出ず、
+              // キーボードを閉じる手段がわからない問題への導線。Scaffold body はキーボード分
+              // 縮む(resizeToAvoidBottomInset)ので、Column 末尾に置けばキーボード直上に載る。
+              if (isKeyboardVisible)
+                KeyboardCloseToolbar(
+                  groupID: groupID,
+                  shoppingListID: shoppingListID,
+                ),
+              // リスト追加スポットライト(Issue #494)。build は SizedBox.shrink を返し
+              // Overlay を命令的に管理するため、レイアウトに影響しない位置(Column 末尾)に置く。
+              CreateListSpotlightHost(
+                groupID: groupID,
+                shoppingLists: shoppingLists,
+                shoppingListItems: shoppingListItemsAsync.valueOrNull,
+                targetKey: createListButtonKey,
               ),
             ],
           ),
@@ -348,6 +387,9 @@ class _NoListYet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.appTheme;
+    final shoppingListAdd = ref.watch(
+      shoppingListAddProvider(groupID: groupID),
+    );
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -379,14 +421,12 @@ class _NoListYet extends ConsumerWidget {
                   parameters: {'groupID': groupID},
                 );
                 try {
-                  await ref
-                      .read(shoppingListAddProvider(groupID: groupID))
-                      .call(
-                        createUserID: appUserID!,
-                        groupID: groupID,
-                        shoppingLocationID: null,
-                        duplicatedFromGroupShoppingListID: null,
-                      );
+                  await shoppingListAdd.call(
+                    createUserID: appUserID!,
+                    groupID: groupID,
+                    shoppingLocationID: null,
+                    duplicatedFromGroupShoppingListID: null,
+                  );
                 } on ShoppingListLimitExceededException catch (e) {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(

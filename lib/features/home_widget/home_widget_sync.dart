@@ -12,6 +12,7 @@ import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 /// RootPage の Resolver パターンに倣い、builder で子ウィジェットをラップする。
 /// 表示中グループ/リストは currentGroupIDProvider / currentShoppingListIDProvider から内部で
@@ -33,6 +34,12 @@ class HomeWidgetSync extends HookConsumerWidget {
 
     final firestoreIsPremium =
         ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
+    // ウィジェット表示用のプレミアム状態は RC の customerInfoProvider を使う。
+    // Custom Claims の isPremium は購入時に設定する経路が無く常に false のため
+    // (Issue #385)、firestoreIsPremiumProvider を同期するとウィジェット側の
+    // テーマカラーがプレミアム会員でも反映されない (Issue #475)。
+    final customerInfoIsPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
     final themeColorHex =
         ref.watch(appUserProvider).valueOrNull?.themeColorHex ??
         defaultThemeColorHex;
@@ -45,11 +52,24 @@ class HomeWidgetSync extends HookConsumerWidget {
       shoppingLists: shoppingListsAsync.valueOrNull ?? [],
     );
 
-    // 初回マウント時にテーマカラーとプレミアム状態を同期する。
-    // 以降の変更は ref.listen で検知して同期するため、依存配列は空にしている。
+    // 初回マウント時にテーマカラー・プレミアム状態・買い物リスト一覧を同期する。
+    // 買い物リスト一覧は AppEntityPrepareResolver が HomeWidgetSync より先に同じ
+    // shoppingListsProvider を ref.watch して既に AsyncData に解決済みのことがあり、
+    // その場合 ref.listen だけでは初回のLoading→Data遷移を検知できず
+    // syncShoppingLists が一度も呼ばれないままになる(Issue #475)。
+    // 以降の変更はいずれも ref.listen で検知して同期するため、依存配列は空にしている。
     useEffect(() {
       HomeWidgetDataSync.syncThemeColor(themeColorHex: themeColorHex);
-      HomeWidgetDataSync.syncPremiumStatus(isPremium: firestoreIsPremium);
+      HomeWidgetDataSync.syncPremiumStatus(isPremium: customerInfoIsPremium);
+      final lists = shoppingListsAsync.valueOrNull ?? [];
+      if (lists.isNotEmpty) {
+        final group = groups.firstWhereOrNull((g) => g.id == groupID);
+        HomeWidgetDataSync.syncShoppingLists(
+          shoppingLists: lists,
+          groupID: groupID,
+          groupName: group?.name ?? '',
+        );
+      }
       return null;
     }, const []);
 
@@ -65,15 +85,17 @@ class HomeWidgetSync extends HookConsumerWidget {
       HomeWidgetDataSync.syncThemeColor(themeColorHex: nextThemeColorHex);
     });
 
-    // プレミアム状態の変更を検知して同期
-    ref.listen(firestoreIsPremiumProvider, (prev, next) {
-      final prevPremiumValue = prev?.valueOrNull;
-      final nextPremiumValue = next.valueOrNull;
-      if (prevPremiumValue == nextPremiumValue) {
+    // プレミアム状態の変更を検知して同期。
+    // RC の購入・プロモーション付与・剥奪は customerInfoProvider の
+    // CustomerInfo 更新として流れてくる (Custom Claims は使わない。上記コメント参照)。
+    ref.listen(customerInfoProvider, (prev, next) {
+      final prevIsPremium = prev?.valueOrNull?.isPremium;
+      final nextIsPremium = next.valueOrNull?.isPremium;
+      if (prevIsPremium == nextIsPremium) {
         return;
       }
-      if (nextPremiumValue != null) {
-        HomeWidgetDataSync.syncPremiumStatus(isPremium: nextPremiumValue);
+      if (nextIsPremium != null) {
+        HomeWidgetDataSync.syncPremiumStatus(isPremium: nextIsPremium);
       }
     });
 

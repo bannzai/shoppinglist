@@ -20,19 +20,21 @@ const mockFirestoreInstance = {
 };
 
 const mockServerTimestamp = jest.fn(() => "SERVER_TIMESTAMP");
-const firestoreFunction = Object.assign(
-  jest.fn(() => mockFirestoreInstance),
-  {
-    FieldValue: { serverTimestamp: mockServerTimestamp },
-  }
-);
 
 jest.mock("firebase-admin", () => ({
   __esModule: true,
   default: {
-    firestore: firestoreFunction,
+    firestore: jest.fn(() => mockFirestoreInstance),
     initializeApp: jest.fn(),
   },
+}));
+
+// このファイルは Timestamp クラス(zTimestamp等)を使用しないため、
+// jest.requireActual による実モジュール読み込みは行わない。
+// 実読み込みすると @grpc/grpc-js の GrpcStatus getter が評価され、
+// このNode.jsバージョン環境下でクラッシュするため回避する。
+jest.mock("firebase-admin/firestore", () => ({
+  FieldValue: { serverTimestamp: mockServerTimestamp },
 }));
 
 // genkit のモック

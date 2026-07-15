@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_data_sync.dart';
@@ -152,6 +153,74 @@ void main() {
         ),
         isTrue,
       );
+      expect(calls.any((c) => c.method == 'updateWidget'), isTrue);
+    });
+  });
+
+  group('syncShoppingLists', () {
+    test('買い物リスト一覧・グループIDを保存して Widget 更新する', () async {
+      await HomeWidgetDataSync.syncShoppingLists(
+        shoppingLists: const [],
+        groupID: 'group-1',
+        groupName: 'テストグループ',
+      );
+
+      expect(
+        calls.any(
+          (c) =>
+              c.method == 'saveWidgetData' &&
+              c.arguments['id'] == 'widget_shopping_lists',
+        ),
+        isTrue,
+      );
+      expect(
+        calls.any(
+          (c) =>
+              c.method == 'saveWidgetData' &&
+              c.arguments['id'] == 'widget_current_group_id' &&
+              c.arguments['data'] == 'group-1',
+        ),
+        isTrue,
+      );
+      expect(calls.any((c) => c.method == 'updateWidget'), isTrue);
+    });
+  });
+
+  // Issue #475 Root Cause 2: iOS では updateWidget が AppDelegate の
+  // reload チャンネル経由で reloadAllTimelines() を追加で呼ぶ。
+  group('updateWidget (iOS reloadAllTimelines)', () {
+    const reloadChannel = MethodChannel(
+      'com.bannzai.shoppinglist/home_widget_reload',
+    );
+
+    // defaultTargetPlatform をテスト内で iOS に固定する。tearDown で必ず null に戻し、
+    // 後続テストの既定プラットフォーム (android) に影響を残さないようにする。
+    setUp(() {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    });
+    tearDown(() {
+      debugDefaultTargetPlatformOverride = null;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(reloadChannel, null);
+    });
+
+    test('iOS では reload チャンネルに reloadAllTimelines が invoke される', () async {
+      final reloadCalls = <MethodCall>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(reloadChannel, (call) async {
+            reloadCalls.add(call);
+            return null;
+          });
+
+      await HomeWidgetDataSync.updateWidget();
+
+      expect(calls.any((c) => c.method == 'updateWidget'), isTrue);
+      expect(reloadCalls.any((c) => c.method == 'reloadAllTimelines'), isTrue);
+    });
+
+    test('reload チャンネル未登録 (MissingPluginException) でも例外を投げず完了する', () async {
+      // reloadChannel のモックを登録しない = ネイティブ側ハンドラが無い状態を再現。
+      await expectLater(HomeWidgetDataSync.updateWidget(), completes);
       expect(calls.any((c) => c.method == 'updateWidget'), isTrue);
     });
   });

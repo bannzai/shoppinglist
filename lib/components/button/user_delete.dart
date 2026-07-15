@@ -175,6 +175,12 @@ class DeleteUserButton extends HookConsumerWidget {
   }
 }
 
+/// アカウント削除完了アラート。
+/// `FirebaseAuth.instance.currentUser?.delete()` 後に debug/release/profile
+/// すべてのビルドで表示し、「終了する」タップで `exit(0)` する。
+/// サインアウト完了フロー（page.dart の `_SignOutCompletedDialog`）と異なり、
+/// debug 時にダイアログを抑制する分岐を設けていないが、これは想定内の差分
+/// （debug でも exit(0) を呼べる。Issue #477 参照）。
 class _CompletedDialog extends StatelessWidget {
   const _CompletedDialog();
   @override

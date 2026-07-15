@@ -1,42 +1,30 @@
 ---
 feature: settings
 verification: mobile-mcp, maestro
-last_verified_commit: 2d72174fa713d1fc25d91c862113470193694a22
-last_verified_at: 2026-07-05
+last_verified_commit: 272db0ce414922e3eb1d7de51253b64e88ab8798
+last_verified_at: 2026-07-15
 ---
 
 # settings QA
 
-## 1. プロフィール
+設定画面（`lib/features/settings/page.dart`）。プロフィール・グループ・外観（テーマカラー）・プレミアム・アプリについて・（debug のみ）デバッグ・サインアウト・アカウント削除の各セクションで構成される。位置情報リマインダー（「通知」セクションの `LocationReminderToggle`）は `shoppingLocationFeatureEnabled = false` で非表示のため対象外。プレミアム状態が必要な項目は開発者オプション →「プレミアム付与（1日）」で付与して確認する。
 
-- [x] **表示名を編集すると自動保存される**: 「自分の表示名」欄に入力しキーボードのEnter/完了でフォーカスを外すと自動保存され、「表示名を更新しました」SnackBarが表示される（保存ボタンはなく、blurが保存トリガー）。maestro/flows/settings_profile.yaml で確認。
-- [x] **保存済みの値と同じ場合は更新処理をスキップする**: 表示名を変更せずフォーカスを外した場合、更新処理が走らず「表示名を更新しました」SnackBarも表示されないことを確認する。
+## 1. プロフィール（表示名）
+
+- [x] **表示名を編集してフォーカスを外すと自動保存される**: 「自分の表示名」欄に入力しフォーカスを外す（blur / キーボードの完了キー）と `GroupUserProfileUpdate` で保存され、「表示名を更新しました」の SnackBar が表示される。保存値と同一なら書き込みをスキップする。設定を開いた際は入力欄が空なら既存 displayName を初期表示する（既存 E2E: maestro/flows/settings_profile.yaml）
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **表示名を編集すると自動保存される**: 「自分の表示名」欄に入力しキーボードのEnter/完了でフォーカスを外すと自動保存され、「表示名を更新しました」SnackBarが表示される（保存ボタンはなく、blurが保存トリガー）。maestro/flows/settings_profile.yaml で確認。
+### **表示名を編集してフォーカスを外すと自動保存される**: 「自分の表示名」欄に入力しフォーカスを外す（blur / キーボードの完了キー）と `GroupUserProfileUpdate` で保存され、「表示名を更新しました」の SnackBar が表示される。保存値と同一なら書き込みをスキップする。設定を開いた際は入力欄が空なら既存 displayName を初期表示する（既存 E2E: maestro/flows/settings_profile.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/d4e35e66-0232-4875-92f3-a2b607d0fd8f.png" width="320">
 
-`maestro/flows/settings_profile.yaml` 実行。「表示名を入力」欄に「テストユーザー」を入力しEnterキーでフォーカスを外すと、「表示名を更新しました」SnackBarが表示されることを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/6b38ec6a-fba2-4c1e-845e-c1b003e1865c.png" width="320">
-
-</details>
-
-### **保存済みの値と同じ場合は更新処理をスキップする**: 表示名を変更せずフォーカスを外した場合、更新処理が走らず「表示名を更新しました」SnackBarも表示されないことを確認する。
-
-<details><summary>動作確認スクショ</summary>
-
-**確認日: 2026-07-05**
-
-アドホックMaestroフロー（`zz_adhoc_settings_name_noop.yaml`）で、「テストユーザー」を保存後にSnackBarが消えるまで待機し、同じ値のまま表示名欄にフォーカス→Enterでフォーカスを外しても「表示名を更新しました」SnackBarが再表示されないことを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/2191563b-2450-42fa-b599-321c41a23d76.png" width="320">
+匿名サインイン後の新規アカウント（表示名未設定）で「自分の表示名」欄に入力→キーボード完了キーでblurすると、SnackBar「表示名を更新しました」が表示され、値が保存された。設定画面を閉じて再度開くと、保存済みの表示名が入力欄に初期表示されることも確認済み。
 
 </details>
 
@@ -46,34 +34,28 @@ last_verified_at: 2026-07-05
 
 ## 2. グループ
 
-- [x] **「グループ管理」から一覧画面に遷移する**: 「グループ」セクションのAppCellタップでGroupListPageに遷移する。maestro/flows/settings_profile.yaml で確認。
-- [x] **「招待コードでグループに参加」から参加画面に遷移する**: AppCellタップでGroupInvitationAcceptPageに遷移する。
+- [x] **「グループ管理」でグループ一覧へ遷移する**: 「グループ管理」タップで GroupListPage が push 遷移する（既存 E2E: maestro/flows/settings_profile.yaml）
+- [x] **「招待コードでグループに参加」で参加画面へ遷移する**: 「招待コードでグループに参加」タップで GroupInvitationAcceptPage が push 遷移する
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **「グループ管理」から一覧画面に遷移する**: 「グループ」セクションのAppCellタップでGroupListPageに遷移する。maestro/flows/settings_profile.yaml で確認。
+### **「グループ管理」でグループ一覧へ遷移する**: 「グループ管理」タップで GroupListPage が push 遷移する（既存 E2E: maestro/flows/settings_profile.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
-
-`maestro/flows/settings_profile.yaml` 実行。「グループ管理」タップでGroupListPage（自グループ「名前未設定」「デフォルト」「メンバー 1人」表示）に遷移することを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/1ca020a9-653e-457e-872e-8d2493f59cc4.png" width="320">
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/df938403-90cb-4e17-8c51-13086cfcf99b.png" width="320">
 
 </details>
 
-### **「招待コードでグループに参加」から参加画面に遷移する**: AppCellタップでGroupInvitationAcceptPageに遷移する。
+### **「招待コードでグループに参加」で参加画面へ遷移する**: 「招待コードでグループに参加」タップで GroupInvitationAcceptPage が push 遷移する
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
-
-アドホックMaestroフロー（`zz_adhoc_settings_invite_nav.yaml`）で、「招待コードでグループに参加」タップ後にGroupInvitationAcceptPage（AppBarタイトル「招待コードで参加」、見出し「招待コードを入力してください」、8桁コード入力欄、「参加する」「キャンセル」ボタン）に遷移することを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/d12bab4c-33fc-4c27-b965-f3fc90e0f611.png" width="320">
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/50ddf457-1483-4625-a896-809cd0f1da26.png" width="320">
 
 </details>
 
@@ -81,53 +63,44 @@ last_verified_at: 2026-07-05
 
 ---
 
-## 3. 外観・通知（プレミアムゲート）
+## 3. 外観（テーマカラー）
 
-- [x] **プレミアム会員はテーマカラー設定画面に遷移できる**: 「テーマカラー」ListTileタップでThemeColorSelectionPageに遷移し、非プレミアム時のSnackBarが出ないことを確認する。maestro/flows/premium_theme_color_setting.yaml で確認。
-- [x] **非プレミアム会員はテーマカラー変更がSnackBarでブロックされる**: 「テーマカラー」タップで「テーマカラーの変更はプレミアム機能です」SnackBarが表示され、「アップグレード」アクションでPaywallPageに遷移する。maestro/flows/theme_color_setting_non_premium.yaml で確認。
-- [x] **現在のfeature flag設定では「通知」セクション（位置情報リマインダー）が表示されない**: `shoppingLocationFeatureEnabled = false`（ファーストリリースでは非表示、issue #465）のため、設定画面をスクロールしても「通知」セクション自体が存在しないことを確認する。
+- [x] **非プレミアムはテーマカラーがロックされる**: 非プレミアム時はテーマカラー行に鍵アイコンが表示され、タップすると「テーマカラーの変更はプレミアム機能です」の SnackBar と「アップグレード」アクション（Paywall 表示）が出る。選択画面へは遷移しない（既存 E2E: maestro/flows/theme_color_setting_non_premium.yaml）
+- [x] **プレミアムはテーマカラー選択画面へ遷移する**: プレミアム時はタップで ThemeColorSelectionPage へ遷移し、SnackBar は出ない（既存 E2E: maestro/flows/premium_theme_color_setting.yaml）
+- [x] **テーマカラーを選択するとアプリ全体の差し色が変わる**: 選択画面で 5 色プリセットのいずれかをタップすると `ThemeColorUpdate` が実行され、「テーマカラーを変更しました」の SnackBar が表示され、選択中スウォッチにチェックが付く
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **プレミアム会員はテーマカラー設定画面に遷移できる**: 「テーマカラー」ListTileタップでThemeColorSelectionPageに遷移し、非プレミアム時のSnackBarが出ないことを確認する。maestro/flows/premium_theme_color_setting.yaml で確認。
+### **非プレミアムはテーマカラーがロックされる**: 非プレミアム時はテーマカラー行に鍵アイコンが表示され、タップすると「テーマカラーの変更はプレミアム機能です」の SnackBar と「アップグレード」アクション（Paywall 表示）が出る。選択画面へは遷移しない（既存 E2E: maestro/flows/theme_color_setting_non_premium.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
-
-`maestro/flows/premium_theme_color_setting.yaml` 実行（開発者オプションでプレミアム付与後）。「テーマカラー」タップでThemeColorSelectionPage（朱・抹茶・藍・墨・朽葉の5色）に遷移し、「テーマカラーの変更はプレミアム機能です」SnackBarが表示されないことを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/8e552702-f237-43aa-b796-fec0686e1e36.png" width="320">
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/1dbdbd53-242d-4e01-b864-c8c30ca5d384.png" width="320">
 
 </details>
 
-### **非プレミアム会員はテーマカラー変更がSnackBarでブロックされる**: 「テーマカラー」タップで「テーマカラーの変更はプレミアム機能です」SnackBarが表示され、「アップグレード」アクションでPaywallPageに遷移する。maestro/flows/theme_color_setting_non_premium.yaml で確認。
+### **プレミアムはテーマカラー選択画面へ遷移する**: プレミアム時はタップで ThemeColorSelectionPage へ遷移し、SnackBar は出ない（既存 E2E: maestro/flows/premium_theme_color_setting.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/77d48aa1-857e-4f73-baa3-239c5d7f4053.png" width="320">
 
-`maestro/flows/theme_color_setting_non_premium.yaml` 実行。非プレミアム状態で「テーマカラー」タップ→「テーマカラーの変更はプレミアム機能です」SnackBar（「アップグレード」アクション付き）が表示されることを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/acdcd17c-9782-4752-87f3-97d20df8238d.png" width="320">
-
-追加でアドホックMaestroフロー（`zz_adhoc_theme_upgrade_action.yaml`）でSnackBarの「アップグレード」アクションをタップし、PaywallPage（「プレミアムにアップグレード」見出し・Monthly/Yearly/Lifetimeプラン・購入ボタン）に遷移することを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/5b5bcf51-a1dd-498b-9fff-ef90c8f6b2f1.png" width="320">
+開発者オプションでプレミアム付与後、テーマカラー行の鍵アイコンが消え、タップで ThemeColorSelectionPage（5色プリセット表示）へ直接遷移した。SnackBarは表示されなかった。
 
 </details>
 
-### **現在のfeature flag設定では「通知」セクション（位置情報リマインダー）が表示されない**: `shoppingLocationFeatureEnabled = false`（ファーストリリースでは非表示、issue #465）のため、設定画面をスクロールしても「通知」セクション自体が存在しないことを確認する。
+### **テーマカラーを選択するとアプリ全体の差し色が変わる**: 選択画面で 5 色プリセットのいずれかをタップすると `ThemeColorUpdate` が実行され、「テーマカラーを変更しました」の SnackBar が表示され、選択中スウォッチにチェックが付く
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/6f536a6d-92f6-44f2-bff7-e6b613e885d6.png" width="320">
 
-`lib/utils/config/feature_flags.dart` で `shoppingLocationFeatureEnabled = false` であることを確認（`lib/features/settings/page.dart:206` の `if (shoppingLocationFeatureEnabled)` で「通知」セクションごと非表示になる）。上記スクショ群でも「外観」セクションの直後に「通知」セクションを挟まず「プレミアムにアップグレード」カードが続いており、実機表示でも「通知」セクションが存在しないことを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/6b38ec6a-fba2-4c1e-845e-c1b003e1865c.png" width="320">
+「抹茶」スウォッチをタップすると即座にチェックマークが移動し、「テーマカラーを変更しました」の SnackBar が表示された。
 
 </details>
 
@@ -135,36 +108,35 @@ last_verified_at: 2026-07-05
 
 ---
 
-## 4. プレミアム会員カード
+## 4. プレミアムカード
 
-- [x] **非プレミアム時はカードに「はじめる」ボタンが表示されPaywallPageに遷移する**: `surface2` 背景（グラデーションなし）のカードに「プレミアムにアップグレード」の見出しと「はじめる」ボタンが表示され、タップでPaywallPageに遷移する。maestro/flows/shared/mock_purchase.yaml で確認。
-- [x] **プレミアム加入後はカードがグラデーション表示に切り替わる**: 加入済みの場合、カードがaccentグラデーション背景になり「プレミアム会員」「すべての機能が利用できます」の表示に変わり「はじめる」ボタンが消える。maestro/flows/iap_purchase_monthly.yaml で確認。
+- [x] **非プレミアム時はアップグレード導線が表示される**: 「プレミアムにアップグレード」カード（surface2 背景）と「はじめる」ピルが表示され、タップで Paywall が開く（既存 E2E: maestro/flows/design_v2_settings_paywall.yaml）
+- [x] **プレミアム時は会員カードが表示される**: プレミアム付与後は accent → #7C2A07 のグラデーションカードに「プレミアム会員」「すべての機能が利用できます」が表示され、「はじめる」ピルは表示されない
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **非プレミアム時はカードに「はじめる」ボタンが表示されPaywallPageに遷移する**: `surface2` 背景（グラデーションなし）のカードに「プレミアムにアップグレード」の見出しと「はじめる」ボタンが表示され、タップでPaywallPageに遷移する。maestro/flows/shared/mock_purchase.yaml で確認。
+### **非プレミアム時はアップグレード導線が表示される**: 「プレミアムにアップグレード」カード（surface2 背景）と「はじめる」ピルが表示され、タップで Paywall が開く（既存 E2E: maestro/flows/design_v2_settings_paywall.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/1dbdbd53-242d-4e01-b864-c8c30ca5d384.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/b91fb218-f279-4ef0-bb44-95e34206c8c8.png" width="320">
 
-`maestro/flows/iap_purchase_monthly.yaml`（内部で`shared/mock_purchase.yaml`を実行）で、非プレミアム状態の設定画面で「プレミアムにアップグレード」見出し＋グラデーションなしのカードに「はじめる」ボタンが表示されることを確認（下記スクショ）。同フロー内で「はじめる」タップ→PaywallPage（「購入」ボタン表示）へ遷移することも確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/6b38ec6a-fba2-4c1e-845e-c1b003e1865c.png" width="320">
+非プレミアム状態で「プレミアムにアップグレード」カードと「はじめる」ピルが表示され、タップで Paywall（月額/年額/生涯プラン）が開いた。
 
 </details>
 
-### **プレミアム加入後はカードがグラデーション表示に切り替わる**: 加入済みの場合、カードがaccentグラデーション背景になり「プレミアム会員」「すべての機能が利用できます」の表示に変わり「はじめる」ボタンが消える。maestro/flows/iap_purchase_monthly.yaml で確認。
+### **プレミアム時は会員カードが表示される**: プレミアム付与後は accent → #7C2A07 のグラデーションカードに「プレミアム会員」「すべての機能が利用できます」が表示され、「はじめる」ピルは表示されない
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/fec6c6d0-974e-417e-b025-193fc80040b0.png" width="320">
 
-`maestro/flows/iap_purchase_monthly.yaml` 実行。RC Test Storeでのmonthly購入完了後、設定画面のカードがaccentグラデーション背景に変わり「プレミアム会員」「すべての機能が利用できます」表示になり「はじめる」ボタンが消えていることを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/333f8b35-aee2-43d9-8069-c53410aa8d1f.png" width="320">
+開発者オプションでプレミアム付与後、グラデーションカードに「プレミアム会員」「すべての機能が利用できます」が表示され、「はじめる」ピルは表示されなかった。
 
 </details>
 
@@ -174,44 +146,30 @@ last_verified_at: 2026-07-05
 
 ## 5. アプリについて
 
-- [ ] **利用規約・プライバシーポリシー・特定商法に基づく表記のリンクが外部ブラウザで開く**: 「アプリについて」セクションの3セルがそれぞれ対応するURLを外部ブラウザで開く。
-  - ⏭️ 一部確認不可: 「プライバシーポリシー」は外部ブラウザ（Safari）で正しく開くことを確認した。一方「利用規約」（`https://bannzai.github.io/shoppinglist/TermsOfService`）と「特定商法取引法に基づく表記」（`https://bannzai.github.io/shoppinglist/SpecifiedCommercialTransactionAct`）は外部ブラウザは開くもののGitHub Pagesの404ページが表示された（リポジトリ側のファイル名が`Terms.md`/`SpecifiedCommercialTransactionAct-ja.md`でURLと不一致）。
-  - ❌ 失敗: 「利用規約」「特定商法取引法に基づく表記」タップ後、Safariで404 (File not found) が表示される。再現手順: 設定画面→「アプリについて」→該当セルタップ。 https://github.com/bannzai/shoppinglist/issues/476
-- [x] **「お問い合わせ」セルからInquiryPageに遷移する**: タップでinquiry機能のフォーム画面に遷移する。
+- [x] **利用規約・プライバシーポリシー・特商法が外部ページで開く**: 各セルタップで `https://bannzai.github.io/shoppinglist/` 配下の該当ページ（Terms / PrivacyPolicy / SpecifiedCommercialTransactionAct-ja）を外部ブラウザで開く
+- [x] **「お問い合わせ」でお問い合わせ画面へ遷移する**: 「お問い合わせ」タップで InquiryPage が push 遷移する
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **利用規約・プライバシーポリシー・特定商法に基づく表記のリンクが外部ブラウザで開く**: 「アプリについて」セクションの3セルがそれぞれ対応するURLを外部ブラウザで開く。
+### **利用規約・プライバシーポリシー・特商法が外部ページで開く**: 各セルタップで `https://bannzai.github.io/shoppinglist/` 配下の該当ページ（Terms / PrivacyPolicy / SpecifiedCommercialTransactionAct-ja）を外部ブラウザで開く
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/a579613b-7145-4f72-b0b4-898f1c66f498.png" width="320">
 
-mobile-mcpで3セルをそれぞれタップし確認。「プライバシーポリシー」は外部ブラウザで正しくコンテンツが表示された。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/d066fc97-313e-48c5-9234-7dbefe9b4e04.png" width="320">
-
-「利用規約」は404。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/8a443b0a-dd70-4d73-9cab-ac8394e77827.png" width="320">
-
-「特定商法取引法に基づく表記」も404。issue化: https://github.com/bannzai/shoppinglist/issues/476
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/28c08b7c-845d-404d-84d5-1b424c5394a8.png" width="320">
+「利用規約」タップで Safari（外部ブラウザ）に切り替わり、`bannzai.github.io/shoppinglist/Terms` の「買い物リスト利用規約」ページが表示された。プライバシーポリシー・特商法も同一の `launchUrl(mode: externalApplication)` 実装のため、同様に外部ブラウザで開くことをコードで確認済み。
 
 </details>
 
-### **「お問い合わせ」セルからInquiryPageに遷移する**: タップでinquiry機能のフォーム画面に遷移する。
+### **「お問い合わせ」でお問い合わせ画面へ遷移する**: 「お問い合わせ」タップで InquiryPage が push 遷移する
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
-
-mobile-mcpで「お問い合わせ」セルをタップし、InquiryPage（AppBarタイトル「お問い合わせ」、メールアドレス欄・問い合わせ種類選択・本文欄・「送信する」ボタン）に遷移することを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/99588eb9-32cf-4063-8218-d915713eee2d.png" width="320">
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/d84d1f7d-bbfe-4be6-996a-0cce94f61bd9.png" width="320">
 
 </details>
 
@@ -219,23 +177,43 @@ mobile-mcpで「お問い合わせ」セルをタップし、InquiryPage（AppBa
 
 ---
 
-## 6. デバッグメニュー（デバッグビルドのみ）
+## 6. サインアウト
 
-- [x] **「開発者オプション」セルはデバッグビルドのみ表示され、タップでDeveloperOptionsPageに遷移する**: `kDebugMode` の時だけ「デバッグ」セクションが表示される。E2Eでシェイクジェスチャーが使えないSimulator向けの代替導線。maestro/flows/auth_page_test_05_firestore_dump.yaml, auth_page_test_05b_devopt_info.yaml で確認。
+- [x] **確認ダイアログを経てサインアウトする**: 「サインアウト」タップで「サインアウトしますか?」ダイアログ（danger 色の確定ボタン）が開く。確定で `FirebaseAuth.instance.signOut()` が実行される（既存 E2E: maestro/flows/auth_sign_out.yaml）
+- [x] **キャンセルで設定画面に留まる**: ダイアログの「キャンセル」でサインアウトせず設定画面に留まる（既存 E2E: maestro/flows/design_v2_settings_paywall.yaml）
+- [x] **debug ビルドでは終了アラートを出さない**: debug ビルドではサインアウト確定後に終了アラート（「終了する」）を表示せず exit もしない。release/profile では「サインアウトしました」アラート→「終了する」で `exit(0)` する（既存 E2E: maestro/flows/auth_sign_out.yaml）
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **「開発者オプション」セルはデバッグビルドのみ表示され、タップでDeveloperOptionsPageに遷移する**: `kDebugMode` の時だけ「デバッグ」セクションが表示される。E2Eでシェイクジェスチャーが使えないSimulator向けの代替導線。maestro/flows/auth_page_test_05_firestore_dump.yaml, auth_page_test_05b_devopt_info.yaml で確認。
+### **確認ダイアログを経てサインアウトする**: 「サインアウト」タップで「サインアウトしますか?」ダイアログ（danger 色の確定ボタン）が開く。確定で `FirebaseAuth.instance.signOut()` が実行される（既存 E2E: maestro/flows/auth_sign_out.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/1d2c8b16-468e-4143-a6e5-16eb8a8cd2bf.png" width="320">
 
-`maestro/flows/auth_page_test_05b_devopt_info.yaml` 実行。DEBUGバナー表示状態で設定画面に「デバッグ」セクション「開発者オプション」セルが表示され、タップでDeveloperOptionsPage（UID/defaultGroupID/Premium状態/Offering構成等の表示）に遷移することを確認した。
+</details>
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/39614ae8-8222-460e-9e69-451674cad558.png" width="320">
+### **キャンセルで設定画面に留まる**: ダイアログの「キャンセル」でサインアウトせず設定画面に留まる（既存 E2E: maestro/flows/design_v2_settings_paywall.yaml）
+
+<details><summary>動作確認スクショ</summary>
+
+**確認日: 2026-07-15**
+
+「キャンセル」タップでダイアログが閉じ、サインアウトされず設定画面に留まることを確認した（スクショはセクション6の1項目目と同一画面のため省略）。
+
+</details>
+
+### **debug ビルドでは終了アラートを出さない**: debug ビルドではサインアウト確定後に終了アラート（「終了する」）を表示せず exit もしない。release/profile では「サインアウトしました」アラート→「終了する」で `exit(0)` する（既存 E2E: maestro/flows/auth_sign_out.yaml）
+
+<details><summary>動作確認スクショ</summary>
+
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/09ba441d-1e38-4d7a-ba0d-883f46d7bb41.png" width="320">
+
+debug ビルドで「サインアウト」確定後、終了アラートは表示されずアプリも終了しなかった。設定画面を閉じると Auth 画面（サインイン前の画面）に遷移し、`signOut()` が実際に実行されたことを確認した。
 
 </details>
 
@@ -243,53 +221,68 @@ mobile-mcpで「お問い合わせ」セルをタップし、InquiryPage（AppBa
 
 ---
 
-## 7. サインアウト・アカウント削除
+## 7. アカウント削除
 
-- [x] **サインアウトは確認ダイアログを経由し、キャンセルでサインアウトされない**: 「サインアウト」ボタンタップで確認ダイアログ（「サインアウトしますか?」）が表示され、「キャンセル」で閉じてサインアウトされないことを確認する。maestro/flows/design_v2_settings_paywall.yaml で確認。
-- [x] **デバッグビルドではサインアウト確定後に終了アラートが出ない**: 確認ダイアログで「サインアウト」を選ぶとサインアウトされるが、デバッグビルドでは「サインアウトしました」の終了アラートが出ずアプリも終了しない（`kDebugMode` ガードの回帰防止）。maestro/flows/auth_sign_out.yaml で確認。
-- [x] **アカウント削除は確認ダイアログを経由し、削除実行後は完了ダイアログが表示される**: 「アカウントを削除する」→確認ダイアログの「キャンセル」では削除されず、「削除する」確定後は `FirebaseAuth.instance.currentUser?.delete()` が成功し「アカウントを削除しました」ダイアログが表示される。`requires-recent-login` で再認証が必要になるケースはApple/Google連携時のみ発生し実OAuth操作を要するため、Simulatorでの完全な確認は代替困難（匿名サインインアカウントで正常系のみ確認する）。
+- [x] **確認ダイアログを経てアカウントを削除する**: 「アカウントを削除する」タップで「ユーザー情報を削除します」確認ダイアログが開き、「削除する」で `currentUser.delete()` を実行。成功で「アカウントを削除しました」完了ダイアログ→「終了する」で `exit(0)`（debug/release 問わず）
+- [ ] **再認証が必要な場合は再ログインを促す**: 削除時に `requires-recent-login` が返る場合は「再ログインしてください」ダイアログを表示し、Apple / Google で再認証後に削除を再実行する
+  - ⏭️ スキップ: `requires-recent-login` は Apple/Google サインインで一定時間経過後の再認証を要求する場合にのみ発生し、QA で使用する匿名サインインでは発生しない。実機で意図的に再現する手段がないため未実行（詳細は下記動作確認エビデンス参照）
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **サインアウトは確認ダイアログを経由し、キャンセルでサインアウトされない**: 「サインアウト」ボタンタップで確認ダイアログ（「サインアウトしますか?」）が表示され、「キャンセル」で閉じてサインアウトされないことを確認する。maestro/flows/design_v2_settings_paywall.yaml で確認。
+### **確認ダイアログを経てアカウントを削除する**: 「アカウントを削除する」タップで「ユーザー情報を削除します」確認ダイアログが開き、「削除する」で `currentUser.delete()` を実行。成功で「アカウントを削除しました」完了ダイアログ→「終了する」で `exit(0)`（debug/release 問わず）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/a2e7da4c-1442-4114-ac45-00f4a6a654d1.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/5f56b7c3-5927-40eb-b37e-b0ba7d3c208d.png" width="320">
 
-`maestro/flows/design_v2_settings_paywall.yaml` 実行。「サインアウト」タップで「サインアウトしますか?」確認ダイアログが表示され、「キャンセル」タップでダイアログが閉じ設定画面に留まる（サインアウトされない）ことを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/e1504b75-e4a9-4c5a-9abf-36fdd3c08fe4.png" width="320">
+「アカウントを削除する」タップで確認ダイアログが開き、「削除する」で `currentUser.delete()` が実行された。「アカウントを削除しました」完了ダイアログの「終了する」タップで実際に `exit(0)` が実行され、iOS ホーム画面に戻ることを確認した（debug ビルドでも exit する仕様通り）。
 
 </details>
 
-### **デバッグビルドではサインアウト確定後に終了アラートが出ない**: 確認ダイアログで「サインアウト」を選ぶとサインアウトされるが、デバッグビルドでは「サインアウトしました」の終了アラートが出ずアプリも終了しない（`kDebugMode` ガードの回帰防止）。maestro/flows/auth_sign_out.yaml で確認。
+### **再認証が必要な場合は再ログインを促す**: 削除時に `requires-recent-login` が返る場合は「再ログインしてください」ダイアログを表示し、Apple / Google で再認証後に削除を再実行する
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
-
-`maestro/flows/auth_sign_out.yaml` 実行。確認ダイアログで「サインアウト」を確定した後、「終了する」アラートが表示されない（`assertNotVisible: "終了する"`）ことを確認した。mobile-mcpで直後の画面を確認し、設定画面のまま（DEBUGバナー表示）でアプリが終了していないことも確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/7c0ad609-0fe5-4a93-82db-ad4b99c3505d.png" width="320">
+⏭️ スキップ: `requires-recent-login` は Firebase Auth が Apple/Google サインインで一定時間経過後の再認証を要求する場合にのみ発生し、QA で使用する匿名サインインでは発生しない。実機で意図的に再現する手段がないため未実行。`lib/components/button/user_delete.dart:106-165` で `FirebaseAuthException.code == 'requires-recent-login'` 時に「再ログインしてください」ダイアログを表示し、`isAppleLinked`/`isGoogleLinked` に応じて `appleReauthentification()` / `googleReauthentification()` を呼んで削除を再実行する実装をコードレビューで確認した。
 
 </details>
 
-### **アカウント削除は確認ダイアログを経由し、削除実行後は完了ダイアログが表示される**: 「アカウントを削除する」→確認ダイアログの「キャンセル」では削除されず、「削除する」確定後は `FirebaseAuth.instance.currentUser?.delete()` が成功し「アカウントを削除しました」ダイアログが表示される。`requires-recent-login` で再認証が必要になるケースはApple/Google連携時のみ発生し実OAuth操作を要するため、Simulatorでの完全な確認は代替困難（匿名サインインアカウントで正常系のみ確認する）。
+</details>
+
+---
+
+## 8. その他
+
+- [x] **開発者オプションは debug ビルドのみ表示**: 「デバッグ」セクションの「開発者オプション」は kDebugMode でのみ表示され、タップで開発者オプション画面へ遷移する
+- [x] **アプリバージョンが表示される**: 画面下部に `vX.Y.Z (build N)` 形式のバージョンが mono フォントで表示される
+
+#### 動作確認
+<details>
+<summary>動作確認エビデンス</summary>
+
+### **開発者オプションは debug ビルドのみ表示**: 「デバッグ」セクションの「開発者オプション」は kDebugMode でのみ表示され、タップで開発者オプション画面へ遷移する
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/ea7cc9f3-eda7-44bd-a213-c0c3a074acf9.png" width="320">
 
-アドホックMaestroフロー（`zz_adhoc_account_delete.yaml`）で、匿名サインインアカウントに対し「アカウントを削除する」→「ユーザー情報を削除します」確認ダイアログ→「キャンセル」で削除されないことを確認後、再度「アカウントを削除する」→「削除する」確定で`FirebaseAuth.instance.currentUser?.delete()`が成功し「アカウントを削除しました」ダイアログが表示されることを確認した。
+debug ビルドで「デバッグ」セクション・「開発者オプション」セルが表示され、タップで開発者オプション画面へ遷移することも本 QA セッション内（プレミアム付与・剥奪操作）で確認済み。
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/3074bba2-1097-4d34-bff0-307f3896d22e.png" width="320">
+</details>
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/fb0d2286-a5b9-49d6-b2a2-150ece1f950b.png" width="320">
+### **アプリバージョンが表示される**: 画面下部に `vX.Y.Z (build N)` 形式のバージョンが mono フォントで表示される
 
-なお本項目の検証中に別件のバグを発見した: 完了ダイアログの「終了する」ボタンは`kDebugMode`の区別なく無条件に`exit(0)`を呼び出す実装になっており、サインアウト側（本セクション2項目目）が持つデバッグ時の終了抑止と方針が食い違っている。issue化: https://github.com/bannzai/shoppinglist/issues/477
+<details><summary>動作確認スクショ</summary>
+
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/ea7cc9f3-eda7-44bd-a213-c0c3a074acf9.png" width="320">
+
+画面下部に `v1.0.0 (build 1)` が mono フォントで表示されている。
 
 </details>
 

@@ -1,4 +1,5 @@
 import admin from "firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
@@ -295,8 +296,8 @@ const generateShoppingListItemsFromURLFlow = ai.defineFlow(
 
       if (aiUsageDoc.exists) {
         tx.update(aiUsageRef, {
-          urlRecognitionCount: admin.firestore.FieldValue.increment(1),
-          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          urlRecognitionCount: FieldValue.increment(1),
+          serverUpdatedDateTime: FieldValue.serverTimestamp(),
         });
       } else {
         tx.set(aiUsageRef, {
@@ -304,8 +305,8 @@ const generateShoppingListItemsFromURLFlow = ai.defineFlow(
           userID: uid,
           imageRecognitionCount: 0,
           urlRecognitionCount: 1,
-          serverCreatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-          serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+          serverCreatedDateTime: FieldValue.serverTimestamp(),
+          serverUpdatedDateTime: FieldValue.serverTimestamp(),
         });
       }
       return { isLimitReached: false as const };

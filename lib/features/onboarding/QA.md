@@ -1,69 +1,58 @@
 ---
 feature: onboarding
 verification: mobile-mcp, maestro
-last_verified_commit: 2d72174fa713d1fc25d91c862113470193694a22
-last_verified_at: 2026-07-05
+last_verified_commit: 272db0ce414922e3eb1d7de51253b64e88ab8798
+last_verified_at: 2026-07-15
 ---
 
 # onboarding QA
 
-## 1. スライド表示
+オンボーディングは「未認証 かつ hasSeenOnboarding=false」のユーザーにのみ表示される（`lib/features/resolver/auth.dart`）。再現するにはアプリ削除では不十分で（Keychain に認証が残存する）、`clearState: true` + `clearKeychain: true`、または新規シミュレータで未認証状態に戻す必要がある。位置情報機能は `shoppingLocationFeatureEnabled = false` で無効のため、店舗近接通知を訴求するスライド 3 は表示されず、スライドは 2 枚構成になる（`OnboardingPage._slideCount = 2`）。
 
-- [x] **スライド枚数**: 現行リリース（`shoppingLocationFeatureEnabled` = false）では2枚（「家族と作る、買い物リスト」「同じリストを同時に編集」）のみ表示され、店舗近接通知の訴求スライドは表示されない（issue #465）
-- [x] **スライド内容表示**: 各スライドにタイトル・本文・イラスト（画像またはフォールバック描画）・ページ番号「01/02」形式が表示される
-- [ ] **画像読み込み失敗時のフォールバック**: `images/onboarding/slide_*.png` の読み込みに失敗した場合、Flutter描画のフォールバックアート（傾いたリストカード／アバターオービット）が代わりに表示される
-- [x] **ドットインジケーター**: 現在のスライド位置に応じてアクティブなドットのみ横長表示になる
+## 1. 初回起動時の表示
+
+- [x] **スライド 2 枚が表示される**: 1 枚目「家族と作る、買い物リスト」、2 枚目「同じリストを同時に編集」の 2 スライドが表示される。位置情報スライドはフラグ無効のため出ない（既存 E2E: maestro/flows/design_v2_entry.yaml は 3 スライド前提のstale flowのため未使用。手順は本ファイル末尾の「再現手順」参照）
+- [x] **eyebrow が `01/02` 形式で表示される**: 各スライド上部に `現在番号/総数` を 2 桁ゼロ埋めした mono 表記（例: `01/02`）が accent 色で表示される
+- [x] **ドットインジケータが 2 個表示される**: 下部に 2 個のドットが並び、現在ページのドットのみ横長（幅 22）で accent 色になる
+- [x] **右上にスキップ、下部に進行ボタンが表示される**: 右上に「スキップ」テキストボタン、最下部に横幅いっぱいの accent ピルボタンが表示される
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **スライド枚数**: 現行リリース（`shoppingLocationFeatureEnabled` = false）では2枚（「家族と作る、買い物リスト」「同じリストを同時に編集」）のみ表示され、店舗近接通知の訴求スライドは表示されない（issue #465）
+### **スライド 2 枚が表示される**: 1 枚目「家族と作る、買い物リスト」、2 枚目「同じリストを同時に編集」の 2 スライドが表示される。位置情報スライドはフラグ無効のため出ない（既存 E2E: maestro/flows/design_v2_entry.yaml は 3 スライド前提のstale flowのため未使用。手順は本ファイル末尾の「再現手順」参照）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
-
-サインアウト→アプリ再インストール（`hasSeenOnboarding`/認証状態をクリア）した状態で起動。スライド1・スライド2ともにドットインジケーターは2個のみで、ページ番号も最大「02/02」までしか出ないことを確認した（`shoppingLocationFeatureEnabled = false` によりスライド3は生成されない）。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/fe4c6e8a-794c-4599-8b7c-1f2140fc18cf.png" width="320">
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/ab6efd21-96ff-4bec-8a1d-3d4f425b1686.png" width="320">
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/3625c1c1-d668-4233-a3a3-eda6ed9f9115.png" width="320">
 
 </details>
 
-### **スライド内容表示**: 各スライドにタイトル・本文・イラスト（画像またはフォールバック描画）・ページ番号「01/02」形式が表示される
+### **eyebrow が `01/02` 形式で表示される**: 各スライド上部に `現在番号/総数` を 2 桁ゼロ埋めした mono 表記（例: `01/02`）が accent 色で表示される
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
-
-スライド1「01/02 家族と作る、買い物リスト」＋チェックリスト画像、スライド2「02/02 同じリストを同時に編集」＋アバターオービット画像。タイトル・本文・イラスト・ページ番号がいずれも表示されることを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/fe4c6e8a-794c-4599-8b7c-1f2140fc18cf.png" width="320">
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/ab6efd21-96ff-4bec-8a1d-3d4f425b1686.png" width="320">
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/3625c1c1-d668-4233-a3a3-eda6ed9f9115.png" width="320">
 
 </details>
 
-### **画像読み込み失敗時のフォールバック**: `images/onboarding/slide_*.png` の読み込みに失敗した場合、Flutter描画のフォールバックアート（傾いたリストカード／アバターオービット）が代わりに表示される
+### **ドットインジケータが 2 個表示される**: 下部に 2 個のドットが並び、現在ページのドットのみ横長（幅 22）で accent 色になる
 
 <details><summary>動作確認スクショ</summary>
 
-（未実行）
-
-⏭️ スキップ: 実機トリガーには `images/onboarding/slide_*.png` を読み込み失敗させる必要がある。インストール済みアプリのバンドル内アセット（`Runner.app/Frameworks/App.framework/flutter_assets/images/onboarding/`）はこのセッションの作業ディレクトリ外にあり、サンドボックス制約でリネーム・削除ができない。リポジトリ側のアセットファイルを一時的に退避する方法は可能だが、`flutter run` の再ビルドが往復2回必要な上、セッション中断時にリポジトリのアセットが欠落した状態で残るリスクがあるため見送った。ロジックは静的検証で確認済み: `lib/features/onboarding/page.dart` の `_OnboardingSlide.build()` で `Image.asset(data.assetPath, errorBuilder: (context, error, stackTrace) => data.fallbackBuilder(tokens))` と実装されており、読み込み失敗時にスライド1は `_TiltedListArt`、スライド2は `_AvatarOrbitArt` を描画する。実機での動作確認は、別セッションでリポジトリのアセットを一時退避のうえ単独実行することを推奨する。
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/3625c1c1-d668-4233-a3a3-eda6ed9f9115.png" width="320">
 
 </details>
 
-### **ドットインジケーター**: 現在のスライド位置に応じてアクティブなドットのみ横長表示になる
+### **右上にスキップ、下部に進行ボタンが表示される**: 右上に「スキップ」テキストボタン、最下部に横幅いっぱいの accent ピルボタンが表示される
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
-
-スライド1では1個目のドットが横長（accent色）、2個目が小さい丸。スワイプでスライド2に切り替えると、1個目が小さい丸、2個目が横長に切り替わることを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/fe4c6e8a-794c-4599-8b7c-1f2140fc18cf.png" width="320">
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/ab6efd21-96ff-4bec-8a1d-3d4f425b1686.png" width="320">
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/3625c1c1-d668-4233-a3a3-eda6ed9f9115.png" width="320">
 
 </details>
 
@@ -73,47 +62,38 @@ last_verified_at: 2026-07-05
 
 ## 2. スライド操作
 
-- [x] **スワイプでスライド送り**: 左右スワイプでスライドが切り替わり、ドットインジケーターとページ番号が連動して更新される
-- [x] **「次へ」ボタンでスライド送り**: 最終スライド以外では下部ボタンが「次へ」と表示され、タップで次のスライドにアニメーション遷移する
-- [x] **最終スライドで「はじめる」表示**: 最終スライドではボタンラベルが「はじめる」に変わる
+- [x] **「次へ」ボタンで次スライドへ進む**: 最終スライド以外ではボタンラベルが「次へ」で、タップすると 240ms のアニメーションで次のページへ遷移する
+- [x] **最終スライドではボタンが「はじめる」になる**: 最後のスライド（2 枚目）ではボタンラベルが「はじめる」に変わる
+- [x] **左スワイプでスライドを移動できる**: PageView を左スワイプすると次スライドへ移動し、ドットインジケータと eyebrow が追従する（既存 E2E: maestro/flows/design_v2_entry.yaml は 3 スライド前提のstale flowのため未使用。手順は本ファイル末尾の「再現手順」参照）
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **スワイプでスライド送り**: 左右スワイプでスライドが切り替わり、ドットインジケーターとページ番号が連動して更新される
+### **「次へ」ボタンで次スライドへ進む**: 最終スライド以外ではボタンラベルが「次へ」で、タップすると 240ms のアニメーションで次のページへ遷移する
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
-
-スライド1で左スワイプするとスライド2（02/02、ドット2個目がアクティブ）へ切り替わり、右スワイプで戻ることを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/ab6efd21-96ff-4bec-8a1d-3d4f425b1686.png" width="320">
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/d49d84ec-cca0-473c-ab66-6820eac671e7.png" width="320">
 
 </details>
 
-### **「次へ」ボタンでスライド送り**: 最終スライド以外では下部ボタンが「次へ」と表示され、タップで次のスライドにアニメーション遷移する
+### **最終スライドではボタンが「はじめる」になる**: 最後のスライド（2 枚目）ではボタンラベルが「はじめる」に変わる
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
-
-スライド1で「次へ」ボタンをタップし、アニメーション遷移でスライド2（02/02）に切り替わることを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/2dca8d9d-1cce-492d-bfe1-68beb888a0df.png" width="320">
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/d49d84ec-cca0-473c-ab66-6820eac671e7.png" width="320">
 
 </details>
 
-### **最終スライドで「はじめる」表示**: 最終スライドではボタンラベルが「はじめる」に変わる
+### **左スワイプでスライドを移動できる**: PageView を左スワイプすると次スライドへ移動し、ドットインジケータと eyebrow が追従する（既存 E2E: maestro/flows/design_v2_entry.yaml は 3 スライド前提のstale flowのため未使用。手順は本ファイル末尾の「再現手順」参照）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
-
-最終スライド（02/02）で下部ボタンラベルが「はじめる」に変わることを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/2dca8d9d-1cce-492d-bfe1-68beb888a0df.png" width="320">
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/4ac0334c-b2af-43a4-b79a-55386df1f96a.png" width="320">
 
 </details>
 
@@ -121,50 +101,62 @@ last_verified_at: 2026-07-05
 
 ---
 
-## 3. オンボーディング終了
+## 3. 完了・スキップと再表示抑止
 
-- [x] **スキップで終了**: 右上「スキップ」タップで `hasSeenOnboarding` がtrueに保存され、認証画面（AuthPage）に遷移する。maestro/flows/group_join_or_create.yaml の冒頭で「スキップ」タップによる遷移を確認できる（オンボーディング専用フローではなく他機能フローの前段として使用されている点に注意）
-- [x] **「はじめる」で完走終了**: 最終スライドで「はじめる」タップで `hasSeenOnboarding` がtrueに保存され、認証画面に遷移する
-- [x] **再表示されないこと**: 一度スキップ／完走した後にアプリを再起動しても、オンボーディングは再表示されず認証画面（未サインインの場合）またはホーム（サインイン済みの場合）が表示される
+- [x] **「スキップ」で認証画面へ遷移する**: 右上「スキップ」タップで hasSeenOnboarding を true に保存し、AuthPage（認証画面）が表示される
+- [x] **最終スライドの「はじめる」で認証画面へ遷移する**: 最終スライドで「はじめる」をタップすると hasSeenOnboarding を true に保存し、AuthPage が表示される（既存 E2E: maestro/flows/design_v2_entry.yaml は 3 スライド前提のstale flowのため未使用。手順は本ファイル末尾の「再現手順」参照）
+- [x] **一度完了すると再表示されない**: 完了・スキップ後にアプリを再起動しても（Keychain / SharedPreferences を保持したまま）オンボーディングは表示されず、未認証なら AuthPage が表示される
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **スキップで終了**: 右上「スキップ」タップで `hasSeenOnboarding` がtrueに保存され、認証画面（AuthPage）に遷移する。maestro/flows/group_join_or_create.yaml の冒頭で「スキップ」タップによる遷移を確認できる（オンボーディング専用フローではなく他機能フローの前段として使用されている点に注意）
+### **「スキップ」で認証画面へ遷移する**: 右上「スキップ」タップで hasSeenOnboarding を true に保存し、AuthPage（認証画面）が表示される
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
-
-未サインイン・`hasSeenOnboarding=false` の状態でオンボーディングを起動し、右上「スキップ」をタップすると認証画面（AuthPage）に遷移することを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/70c673d1-f0c9-42e7-bbd0-57bbbc490135.png" width="320">
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/9d0c1790-a546-4c4f-9dfa-66ebd8848ec0.png" width="320">
 
 </details>
 
-### **「はじめる」で完走終了**: 最終スライドで「はじめる」タップで `hasSeenOnboarding` がtrueに保存され、認証画面に遷移する
+### **最終スライドの「はじめる」で認証画面へ遷移する**: 最終スライドで「はじめる」をタップすると hasSeenOnboarding を true に保存し、AuthPage が表示される（既存 E2E: maestro/flows/design_v2_entry.yaml は 3 スライド前提のstale flowのため未使用。手順は本ファイル末尾の「再現手順」参照）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
-
-最終スライド（02/02）で「はじめる」をタップすると `finish_onboarding`（reason: complete）が記録され、認証画面（AuthPage）に遷移することを確認した（`flutter run` の stdout でも `logEvent name: finish_onboarding, parameters: {reason: complete, lastIndex: 1}` を確認済み）。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/ad91ff7f-8fec-4e7d-8e1d-f63614c1468d.png" width="320">
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/f2d01ffb-4ffd-433a-9924-6e4ec62efe6a.png" width="320">
 
 </details>
 
-### **再表示されないこと**: 一度スキップ／完走した後にアプリを再起動しても、オンボーディングは再表示されず認証画面（未サインインの場合）またはホーム（サインイン済みの場合）が表示される
+### **一度完了すると再表示されない**: 完了・スキップ後にアプリを再起動しても（Keychain / SharedPreferences を保持したまま）オンボーディングは表示されず、未認証なら AuthPage が表示される
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/bfaf7be7-ba20-41f4-911f-9cb14ac3853a.png" width="320">
 
-「はじめる」で完走した直後にアプリを終了→再起動しても認証画面が直接表示され、オンボーディングは再表示されないことを確認した。同様に、別途アプリを再インストールして `hasSeenOnboarding=false` に戻した状態で「スキップ」を実行→再起動した場合も認証画面が直接表示されることを確認した（いずれも未サインイン状態のケース）。
+</details>
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/76577e16-6c52-4935-a467-5eae71bed5c6.png" width="320">
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/ec6bb5ac-4279-4392-b215-97a71ef486c4.png" width="320">
+</details>
+
+---
+
+## 4. 画像フォールバック
+
+- [ ] **スライド画像の読み込み失敗時に Flutter 描画アートが表示される**: `images/onboarding/slide_N.png` のロードに失敗した場合、各スライド固有の Flutter 描画（傾いたリストカード / アバターの周回図）にフォールバックしてレイアウトが崩れない
+  - ⏭️ 通常はアセットが同梱されているため画像側が表示される。フォールバックは画像を意図的に欠損させないと再現できないため、必要時のみ確認する
+  - 2026-07-15 の QA で slide_1.png / slide_2.png が実機で正しくイラストとして表示されること（Flutter 描画フォールバックではなく本来の画像）を確認済み（セクション1・2のスクショ参照）。フォールバック自体（画像欠損時の挙動）は本項目の通り未検証のまま
+
+#### 動作確認
+<details>
+<summary>動作確認エビデンス</summary>
+
+### **スライド画像の読み込み失敗時に Flutter 描画アートが表示される**: `images/onboarding/slide_N.png` のロードに失敗した場合、各スライド固有の Flutter 描画（傾いたリストカード / アバターの周回図）にフォールバックしてレイアウトが崩れない
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
 
 </details>
 

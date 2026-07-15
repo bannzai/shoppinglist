@@ -21,6 +21,7 @@ class ShoppingListItemAddButton extends ConsumerWidget {
     final addShoppingListItem = ref.watch(
       addShoppingListItemProvider(groupID: groupID),
     );
+    final currentUserID = ref.watch(currentUserIDProvider);
     return OutlinedButton(
       onPressed: () {
         analytics.logEvent(
@@ -29,7 +30,7 @@ class ShoppingListItemAddButton extends ConsumerWidget {
         );
         addShoppingListItem.call(
           shoppingListID: shoppingListID,
-          userID: ref.read(currentUserIDProvider)!,
+          userID: currentUserID!,
           message: '',
           order: shoppingListItems.nextOrder,
           description: null,

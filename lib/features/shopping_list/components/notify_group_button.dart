@@ -55,6 +55,11 @@ class NotifyGroupButton extends HookConsumerWidget {
     final hasSeen = ref.watch(
       boolSharedPreferencesProvider(key: BoolKey.hasSeenManualNotifyGuide),
     );
+    final guideNotifier = ref.watch(
+      boolSharedPreferencesProvider(
+        key: BoolKey.hasSeenManualNotifyGuide,
+      ).notifier,
+    );
 
     // 送信中フラグ。説明済みユーザーはタップ直後にダイアログが出ず送信完了までボタンが
     // 有効なままになるため、連打/ダブルタップで同じ通知が重複送信されるのを防ぐ。
@@ -74,10 +79,10 @@ class NotifyGroupButton extends HookConsumerWidget {
               ? null
               : () => _onPressed(
                 context,
-                ref,
                 otherMemberIDs,
                 hasSeen: hasSeen,
                 isSending: isSending,
+                guideNotifier: guideNotifier,
               ),
     );
   }
@@ -85,10 +90,10 @@ class NotifyGroupButton extends HookConsumerWidget {
   /// 初回のみ説明ダイアログを出し、確定されたら(または2回目以降は即)他メンバー全員へ送信する。
   Future<void> _onPressed(
     BuildContext context,
-    WidgetRef ref,
     List<String> targetUserIDs, {
     required bool hasSeen,
     required ValueNotifier<bool> isSending,
+    required BoolSharedPreferences guideNotifier,
   }) async {
     analytics.logEvent(
       name: 'tap_notify_group',
@@ -97,14 +102,6 @@ class NotifyGroupButton extends HookConsumerWidget {
 
     // 送信中はボタンを無効化する(二重送信防止)。タップ直後で Widget が生きているうちに立てる。
     isSending.value = true;
-    // 説明済みフラグの notifier を await の前に取得しておく。ダイアログ表示中にこの Widget が
-    // 破棄(リスト再構築等)されても notifier(keepAlive)は生き続けるため、await 後に
-    // ref を触って "Cannot use ref after the widget was disposed" になるのを避ける。
-    final guideNotifier = ref.read(
-      boolSharedPreferencesProvider(
-        key: BoolKey.hasSeenManualNotifyGuide,
-      ).notifier,
-    );
     try {
       if (!hasSeen) {
         final confirmed = await _showGuideDialog(context);
@@ -143,6 +140,7 @@ class NotifyGroupButton extends HookConsumerWidget {
       transitionDuration: const Duration(milliseconds: 160),
       pageBuilder: (dialogContext, _, _) {
         return AppDialogShell(
+          barrierDismissible: true,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,

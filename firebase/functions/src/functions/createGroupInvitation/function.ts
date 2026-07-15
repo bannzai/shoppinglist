@@ -1,4 +1,5 @@
 import admin from "firebase-admin";
+import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
@@ -103,8 +104,8 @@ const createGroupInvitationFlow = ai.defineFlow(
         };
       }
 
-      const now = admin.firestore.Timestamp.now();
-      const expiresDateTime = admin.firestore.Timestamp.fromMillis(
+      const now = Timestamp.now();
+      const expiresDateTime = Timestamp.fromMillis(
         now.toMillis() + day * INVITATION_EXPIRY_DAYS
       );
 
@@ -116,10 +117,10 @@ const createGroupInvitationFlow = ai.defineFlow(
         invitationCode,
         status: "pending",
         expiresDateTime,
-        createdDateTime: admin.firestore.FieldValue.serverTimestamp(),
-        updatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-        serverCreatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
-        serverUpdatedDateTime: admin.firestore.FieldValue.serverTimestamp(),
+        createdDateTime: FieldValue.serverTimestamp(),
+        updatedDateTime: FieldValue.serverTimestamp(),
+        serverCreatedDateTime: FieldValue.serverTimestamp(),
+        serverUpdatedDateTime: FieldValue.serverTimestamp(),
       });
 
       logger.info(

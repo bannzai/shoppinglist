@@ -31,16 +31,24 @@ import 'package:shoppinglist/utils/stdlib/navigator.dart';
 /// タップ: 空行を 1 件追加する（最頻操作をワンタップにする。Issue #462）。
 /// 長押し: 写真 / URL / テキスト貼り付け のメニューを上方向に展開する。
 /// リスト作成は上部バー(`ListTopBar`)の `CreateListMenuButton` が担う(Issue #461)。
+/// キーボード表示中も隠さず表示し続け、タップ・長押しでキーボードを閉じる(Issue #498)。
 class ExpandableFab extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
   final List<GroupShoppingListItem> shoppingListItems;
+
+  /// ソフトキーボード表示中か。page.dart が Scaffold の外側で viewInsets から判定して
+  /// 渡す(Scaffold body 内では resizeToAvoidBottomInset により viewInsets が 0 に潰れる
+  /// ため、この widget 内では自前判定できない)。表示中はタップ・長押しでキーボードを
+  /// 閉じる(Issue #498)。
+  final bool isKeyboardVisible;
 
   const ExpandableFab({
     super.key,
     required this.groupID,
     required this.shoppingListID,
     required this.shoppingListItems,
+    required this.isKeyboardVisible,
   });
 
   @override
@@ -57,6 +65,17 @@ class ExpandableFab extends HookConsumerWidget {
     // 開閉状態は `shoppingListFabMenuProvider` に一元化している。
     // スクロール開始等の外部イベントからも close されるため、widget ローカルでは持たない。
     final open = ref.watch(shoppingListFabMenuProvider);
+    final addShoppingListItem = ref.watch(
+      addShoppingListItemProvider(groupID: groupID),
+    );
+    final aiProcessingNotifier = ref.watch(aIProcessingProvider.notifier);
+    final fabMenuNotifier = ref.watch(shoppingListFabMenuProvider.notifier);
+    final remainingImageRecognition = ref.watch(
+      remainingImageRecognitionCountProvider(isPremium: isPremium),
+    );
+    final remainingURLRecognition = ref.watch(
+      remainingURLRecognitionCountProvider(isPremium: isPremium),
+    );
     final controller = useAnimationController(
       duration: const Duration(milliseconds: 280),
       reverseDuration: const Duration(milliseconds: 200),
@@ -81,7 +100,7 @@ class ExpandableFab extends HookConsumerWidget {
       return null;
     }, [open]);
 
-    void close() => ref.read(shoppingListFabMenuProvider.notifier).close();
+    void close() => fabMenuNotifier.close();
 
     final actions = <FabMenuAction>[
       FabMenuAction(
@@ -93,7 +112,14 @@ class ExpandableFab extends HookConsumerWidget {
                 ? null
                 : () {
                   close();
-                  _showImagePicker(context, ref, isPremium);
+                  _showImagePicker(
+                    context,
+                    isPremium: isPremium,
+                    remainingImageRecognition: remainingImageRecognition,
+                    aiProcessingNotifier: aiProcessingNotifier,
+                    addShoppingListItem: addShoppingListItem,
+                    currentUserID: currentUserID,
+                  );
                 },
       ),
       FabMenuAction(
@@ -105,7 +131,11 @@ class ExpandableFab extends HookConsumerWidget {
                 ? null
                 : () {
                   close();
-                  _showURLInputDialog(context, ref, isPremium);
+                  _showURLInputDialog(
+                    context,
+                    isPremium: isPremium,
+                    remainingURLRecognition: remainingURLRecognition,
+                  );
                 },
       ),
       FabMenuAction(
@@ -114,7 +144,11 @@ class ExpandableFab extends HookConsumerWidget {
         // テキスト貼り付けは AI 処理（バナー）を使わないため常に有効。
         onTap: () {
           close();
-          _pasteFromClipboard(context, ref);
+          _pasteFromClipboard(
+            context,
+            addShoppingListItem: addShoppingListItem,
+            currentUserID: currentUserID,
+          );
         },
       ),
     ];
@@ -130,6 +164,12 @@ class ExpandableFab extends HookConsumerWidget {
         // onLongPress でジェスチャーアリーナの長押しを勝たせ、メニュー開閉に割り当てる。
         GestureDetector(
           onLongPress: () {
+            // キーボード表示中の長押しはキーボードを閉じてからメニューを開閉する
+            // (Issue #498)。入力途中テキストの確定保存・空の入力行の削除はフォーカス
+            // 喪失を検知する行側の listener (text_shopping_list_item.dart) が担う。
+            if (isKeyboardVisible) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            }
             // メニュー展開中（x 状態）の長押しは閉じるに倒す。
             if (open) {
               analytics.logEvent(
@@ -149,7 +189,7 @@ class ExpandableFab extends HookConsumerWidget {
                 'shoppingListID': shoppingListID,
               },
             );
-            ref.read(shoppingListFabMenuProvider.notifier).open();
+            fabMenuNotifier.open();
           },
           child: FloatingActionButton(
             backgroundColor: tokens.accent,
@@ -166,7 +206,29 @@ class ExpandableFab extends HookConsumerWidget {
                     'shoppingListID': shoppingListID,
                   },
                 );
+                // メニュー展開中でも「キーボード表示中の FAB タップはキーボードを
+                // 閉じる」(Issue #498)を保つ(メニュー表示中に入力行をタップして
+                // キーボードが開き直っているケース)。
+                if (isKeyboardVisible) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                }
                 close();
+                return;
+              }
+              // キーボード表示中のタップはキーボードを閉じる操作に割り当てる
+              // (Issue #498)。空行を追加すると新規行の autofocus
+              // (text_shopping_list_item.dart) でキーボードが開き直ってしまうため
+              // 追加はしない。入力途中テキストの確定保存・空の入力行の削除は
+              // フォーカス喪失を検知する行側の listener が担う。
+              if (isKeyboardVisible) {
+                analytics.logEvent(
+                  name: 'tap_fab_close_keyboard',
+                  parameters: {
+                    'groupID': groupID,
+                    'shoppingListID': shoppingListID,
+                  },
+                );
+                FocusManager.instance.primaryFocus?.unfocus();
                 return;
               }
               analytics.logEvent(
@@ -176,16 +238,14 @@ class ExpandableFab extends HookConsumerWidget {
                   'shoppingListID': shoppingListID,
                 },
               );
-              ref
-                  .read(addShoppingListItemProvider(groupID: groupID))
-                  .call(
-                    shoppingListID: shoppingListID,
-                    userID: currentUserID!,
-                    message: '',
-                    order: shoppingListItems.nextOrder,
-                    description: null,
-                    color: null,
-                  );
+              addShoppingListItem.call(
+                shoppingListID: shoppingListID,
+                userID: currentUserID!,
+                message: '',
+                order: shoppingListItems.nextOrder,
+                description: null,
+                color: null,
+              );
             },
             // 閉時は add_task（アイテム追加）、メニュー展開中は x（閉じる）。
             // AnimatedSwitcher の回転+フェードでアイコン自体を入れ替える。
@@ -208,15 +268,19 @@ class ExpandableFab extends HookConsumerWidget {
     );
   }
 
-  void _showImagePicker(BuildContext context, WidgetRef ref, bool isPremium) {
+  void _showImagePicker(
+    BuildContext context, {
+    required bool isPremium,
+    required int remainingImageRecognition,
+    required AIProcessing aiProcessingNotifier,
+    required AddShoppingListItem addShoppingListItem,
+    required String? currentUserID,
+  }) {
     analytics.logEvent(
       name: 'tap_open_image_picker',
       parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
     );
-    final remaining = ref.read(
-      remainingImageRecognitionCountProvider(isPremium: isPremium),
-    );
-    if (remaining <= 0) {
+    if (remainingImageRecognition <= 0) {
       final limit =
           isPremium
               ? premiumMonthlyImageRecognitionLimit
@@ -270,7 +334,13 @@ class ExpandableFab extends HookConsumerWidget {
                     Navigator.of(dialogContext).pop();
                   }
                   if (context.mounted) {
-                    await _addShoppingListItemsFromImage(context, ref, photo);
+                    await _addShoppingListItemsFromImage(
+                      context,
+                      photo: photo,
+                      aiProcessingNotifier: aiProcessingNotifier,
+                      addShoppingListItem: addShoppingListItem,
+                      currentUserID: currentUserID,
+                    );
                   }
                 },
               ),
@@ -297,7 +367,13 @@ class ExpandableFab extends HookConsumerWidget {
                     Navigator.of(dialogContext).pop();
                   }
                   if (context.mounted) {
-                    await _addShoppingListItemsFromImage(context, ref, photo);
+                    await _addShoppingListItemsFromImage(
+                      context,
+                      photo: photo,
+                      aiProcessingNotifier: aiProcessingNotifier,
+                      addShoppingListItem: addShoppingListItem,
+                      currentUserID: currentUserID,
+                    );
                   }
                 },
               ),
@@ -324,11 +400,13 @@ class ExpandableFab extends HookConsumerWidget {
   }
 
   Future<void> _addShoppingListItemsFromImage(
-    BuildContext context,
-    WidgetRef ref,
-    XFile photo,
-  ) async {
-    ref.read(aIProcessingProvider.notifier).start(AIProcessingType.image);
+    BuildContext context, {
+    required XFile photo,
+    required AIProcessing aiProcessingNotifier,
+    required AddShoppingListItem addShoppingListItem,
+    required String? currentUserID,
+  }) async {
+    aiProcessingNotifier.start(AIProcessingType.image);
     List<String> rawItems;
     try {
       final file = File(photo.path);
@@ -343,7 +421,7 @@ class ExpandableFab extends HookConsumerWidget {
       }
       return;
     } finally {
-      ref.read(aIProcessingProvider.notifier).end();
+      aiProcessingNotifier.end();
     }
     if (!context.mounted) {
       return;
@@ -351,50 +429,30 @@ class ExpandableFab extends HookConsumerWidget {
     // 既存アイテムに存在しない候補だけ review sheet にかける。
     // 候補が空（画像から読み取れなかった／すべて既存）でも review sheet を開き、
     // 「候補がありませんでした」を表示して画像が読み取れたか判断できるようにする。
-    final candidates =
-        rawItems
-            .where((e) => !shoppingListItems.any((item) => item.message == e))
-            .toList();
-    final reviewed = await showAIReviewSheet(
+    await reviewAndAddAICandidates(
       context: context,
-      rawNames: candidates,
+      addShoppingListItem: addShoppingListItem,
+      shoppingListID: shoppingListID,
+      userID: currentUserID!,
+      shoppingListItems: shoppingListItems,
+      candidateNames:
+          rawItems
+              .where((e) => !shoppingListItems.any((item) => item.message == e))
+              .toList(),
       source: 'image',
     );
-    if (reviewed == null) {
-      return;
-    }
-    final selected = reviewed.where((c) => c.selected).toList();
-    for (var (i, c) in selected.indexed) {
-      try {
-        await ref
-            .read(addShoppingListItemProvider(groupID: groupID))
-            .call(
-              shoppingListID: shoppingListID,
-              userID: ref.read(currentUserIDProvider)!,
-              message: c.name,
-              order: shoppingListItems.nextOrder + i,
-              description: null,
-              color: null,
-            );
-      } catch (e) {
-        debugPrint('Error: $e');
-      }
-    }
   }
 
   void _showURLInputDialog(
-    BuildContext context,
-    WidgetRef ref,
-    bool isPremium,
-  ) {
+    BuildContext context, {
+    required bool isPremium,
+    required int remainingURLRecognition,
+  }) {
     analytics.logEvent(
       name: 'tap_open_url_input',
       parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
     );
-    final remaining = ref.read(
-      remainingURLRecognitionCountProvider(isPremium: isPremium),
-    );
-    if (remaining <= 0) {
+    if (remainingURLRecognition <= 0) {
       final limit =
           isPremium
               ? premiumMonthlyURLRecognitionLimit
@@ -427,7 +485,11 @@ class ExpandableFab extends HookConsumerWidget {
     );
   }
 
-  Future<void> _pasteFromClipboard(BuildContext context, WidgetRef ref) async {
+  Future<void> _pasteFromClipboard(
+    BuildContext context, {
+    required AddShoppingListItem addShoppingListItem,
+    required String? currentUserID,
+  }) async {
     analytics.logEvent(
       name: 'tap_paste_multiline',
       parameters: {'groupID': groupID, 'shoppingListID': shoppingListID},
@@ -445,16 +507,56 @@ class ExpandableFab extends HookConsumerWidget {
       if (shoppingListItems.any((item) => item.message == line)) {
         continue;
       }
-      await ref
-          .read(addShoppingListItemProvider(groupID: groupID))
-          .call(
-            shoppingListID: shoppingListID,
-            userID: ref.read(currentUserIDProvider)!,
-            message: line,
-            order: shoppingListItems.nextOrder + index,
-            description: null,
-            color: null,
-          );
+      await addShoppingListItem.call(
+        shoppingListID: shoppingListID,
+        userID: currentUserID!,
+        message: line,
+        order: shoppingListItems.nextOrder + index,
+        description: null,
+        color: null,
+      );
+    }
+  }
+}
+
+/// AI 抽出候補を review sheet（プレビュー）にかけ、確定した選択分をリストへ追加する。
+/// 写真 / URL フロー共通の確定処理。
+///
+/// review sheet 表示中に呼び出し元 widget は unmount され得る（画面遷移・リスト切替等。
+/// URL ダイアログは sheet 表示前に pop 済み）。unmount 後に WidgetRef を使うと
+/// StateError で追加が全件失敗する(#486)ため、ref には依存せず、呼び出し元が
+/// build 時に確保した [addShoppingListItem]・[userID] を受け取る。
+Future<void> reviewAndAddAICandidates({
+  required BuildContext context,
+  required AddShoppingListItem addShoppingListItem,
+  required String shoppingListID,
+  required String userID,
+  required List<GroupShoppingListItem> shoppingListItems,
+  required List<String> candidateNames,
+  required String source,
+}) async {
+  final reviewed = await showAIReviewSheet(
+    context: context,
+    rawNames: candidateNames,
+    source: source,
+  );
+  if (reviewed == null) {
+    return;
+  }
+  final selected = reviewed.where((c) => c.selected).toList();
+  for (var (i, c) in selected.indexed) {
+    try {
+      await addShoppingListItem.call(
+        shoppingListID: shoppingListID,
+        userID: userID,
+        message: c.name,
+        order: shoppingListItems.nextOrder + i,
+        description: null,
+        color: null,
+      );
+    } catch (e) {
+      // 1 件の追加失敗で残りが止まらないよう、失敗はログに残して続行する。
+      debugPrint('Error: $e');
     }
   }
 }
@@ -476,6 +578,11 @@ class _URLInputDialog extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final urlController = useTextEditingController();
     final isLoading = useState(false);
+    final addShoppingListItem = ref.watch(
+      addShoppingListItemProvider(groupID: groupID),
+    );
+    final aiProcessingNotifier = ref.watch(aIProcessingProvider.notifier);
+    final currentUserID = ref.watch(currentUserIDProvider);
 
     return AlertDialog(
       title: const Text('URLから買い物リストを生成'),
@@ -547,9 +654,7 @@ class _URLInputDialog extends HookConsumerWidget {
                     final navigator = Navigator.of(context);
                     final dialogRoute = ModalRoute.of(context);
                     isLoading.value = true;
-                    ref
-                        .read(aIProcessingProvider.notifier)
-                        .start(AIProcessingType.url);
+                    aiProcessingNotifier.start(AIProcessingType.url);
                     List<String> rawItems;
                     try {
                       rawItems = await functions
@@ -561,7 +666,7 @@ class _URLInputDialog extends HookConsumerWidget {
                       if (context.mounted) {
                         isLoading.value = false;
                       }
-                      ref.read(aIProcessingProvider.notifier).end();
+                      aiProcessingNotifier.end();
                     }
                     if (!context.mounted) {
                       return;
@@ -583,31 +688,15 @@ class _URLInputDialog extends HookConsumerWidget {
                     if (candidates.isEmpty) {
                       return;
                     }
-                    final reviewed = await showAIReviewSheet(
+                    await reviewAndAddAICandidates(
                       context: context,
-                      rawNames: candidates,
+                      addShoppingListItem: addShoppingListItem,
+                      shoppingListID: shoppingListID,
+                      userID: currentUserID!,
+                      shoppingListItems: shoppingListItems,
+                      candidateNames: candidates,
                       source: 'url',
                     );
-                    if (reviewed == null) {
-                      return;
-                    }
-                    final selected = reviewed.where((c) => c.selected).toList();
-                    for (var (i, c) in selected.indexed) {
-                      try {
-                        await ref
-                            .read(addShoppingListItemProvider(groupID: groupID))
-                            .call(
-                              shoppingListID: shoppingListID,
-                              userID: ref.read(currentUserIDProvider)!,
-                              message: c.name,
-                              order: shoppingListItems.nextOrder + i,
-                              description: null,
-                              color: null,
-                            );
-                      } catch (e) {
-                        debugPrint('Error: $e');
-                      }
-                    }
                   },
           child: const Text('生成'),
         ),

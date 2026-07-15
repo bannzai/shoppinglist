@@ -1,55 +1,37 @@
 ---
 feature: group_setting
 verification: mobile-mcp, maestro
-last_verified_commit: 2d72174fa713d1fc25d91c862113470193694a22
-last_verified_at: 2026-07-05
+last_verified_commit: 272db0ce414922e3eb1d7de51253b64e88ab8798
+last_verified_at: 2026-07-15
 ---
 
 # group_setting QA
 
 ## 1. 画面表示
 
-- [x] **画面表示**: 「グループ設定」タイトルでグループ設定画面が表示される。maestro/flows/group_setting.yaml で確認できる
-- [x] **メンバー一覧表示**: `/groups/{groupID}/userProfiles` のプロフィールがメンバー一覧に表示され、オーナーには「オーナー」、自分自身には「自分」のサブタイトルが付く
-- [x] **表示名未設定メンバーの表示**: displayNameが未設定のメンバーは「名前未設定」と表示される
+- [x] **グループ設定画面の表示**: 設定 →「グループ管理」→ グループカードから `GroupSettingPage` に遷移し、AppBar タイトル「グループ設定」、「グループ名」「メンバー一覧」「カテゴリ」「グループ招待」の各セクションが表示されること（既存 E2E: maestro/flows/group_setting.yaml）
+- [ ] **loading / error 表示**: グループ・プロフィール取得中は `CircularProgressIndicator`、取得失敗時は `ErrorView` が paper 背景の Scaffold 内に表示されること
+  - ⏭️ スキップ: dev 環境の Firestore ストリームは応答が速く、未訪問グループへの遷移直後にスクリーンショットを撮ってもローディング表示は撮り逃した（1回試行）。エラー表示は正規操作では到達不可（ネットワーク遮断は非対話セッションの許可コマンド範囲外）。コードレビューで `page.dart:36-59`（`groupAsync`/`groupUserProfilesAsync` の `when` 分岐）に loading→`CircularProgressIndicator`、error→`ErrorView` の実装があることを確認済み
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **画面表示**: 「グループ設定」タイトルでグループ設定画面が表示される。maestro/flows/group_setting.yaml で確認できる
+### **グループ設定画面の表示**: 設定 →「グループ管理」→ グループカードから `GroupSettingPage` に遷移し、AppBar タイトル「グループ設定」、「グループ名」「メンバー一覧」「カテゴリ」「グループ招待」の各セクションが表示されること（既存 E2E: maestro/flows/group_setting.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-`maestro/flows/group_setting.yaml` 実行。「グループ設定」タイトルで画面が表示されることを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/6d8803e6-6ad4-4e4b-ac01-6ca9a6ac6aa2.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/c536e39a-edd1-408f-92f9-394cbb51d8e4.png" width="320">
 
 </details>
 
-### **メンバー一覧表示**: `/groups/{groupID}/userProfiles` のプロフィールがメンバー一覧に表示され、オーナーには「オーナー」、自分自身には「自分」のサブタイトルが付く
+### **loading / error 表示**: グループ・プロフィール取得中は `CircularProgressIndicator`、取得失敗時は `ErrorView` が paper 背景の Scaffold 内に表示されること
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
-
-mobile-mcpで検証。開発者オプションの「デバッグユーザー作成」「グループにデバッグユーザーを追加」で2人目のメンバーを追加後、別の匿名アカウント（サインアウト→再サインイン）で招待コードから同グループに参加し、非オーナー視点でメンバー一覧を確認。オーナーの行に「オーナー」、自分の行に「自分」のサブタイトルが正しく付くことを確認した（オーナー自身が閲覧する場合はオーナー=自分のため「オーナー」のみ表示され、これは実装通り）。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/e3c5ac8e-cb89-4813-b4c5-9479e9e198b2.png" width="320">
-
-</details>
-
-### **表示名未設定メンバーの表示**: displayNameが未設定のメンバーは「名前未設定」と表示される
-
-<details><summary>動作確認スクショ</summary>
-
-**確認日: 2026-07-05**
-
-匿名サインインは displayName が未設定のため、メンバー一覧に「名前未設定」と表示されることを確認した（上記2スクショいずれでも確認できる）。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/6d8803e6-6ad4-4e4b-ac01-6ca9a6ac6aa2.png" width="320">
+⏭️ スキップ: dev 環境の Firestore ストリームが速く、未訪問グループへの遷移直後にスクリーンショットしてもローディング状態は撮り逃した。エラー表示は正規操作では到達不可。コードレビューで `page.dart:36-59` の `when` 分岐（loading→`CircularProgressIndicator`、error→`ErrorView`、両方 `_PaperScaffold` でラップ）を確認済み。
 
 </details>
 
@@ -59,47 +41,47 @@ mobile-mcpで検証。開発者オプションの「デバッグユーザー作�
 
 ## 2. グループ名編集
 
-- [x] **オーナーはグループ名を編集できる**: オーナーがグループ名入力欄を編集しEnter（onSubmitted）で確定すると保存される。maestro/flows/group_setting.yaml で確認できる
-- [x] **非オーナーは読み取り専用**: オーナー以外のメンバーが開いた場合、グループ名欄は読み取り専用（readOnly）で編集できない
-- [x] **空文字や変更なしでは更新されない**: 入力を空文字にする、または既存と同じ値でsubmitした場合は更新処理が呼ばれない
+- [x] **オーナーは編集可・保存**: オーナー（`group.ownerUserID == currentUserID`）はグループ名入力欄を編集でき、`onSubmitted`（Enter）で `groupNameUpdate.call` により保存されること（既存 E2E: maestro/flows/group_setting.yaml）
+- [x] **空・同名は保存しない**: トリム後が空、または現在の `group.name` と同一の場合は保存処理を行わないこと
+- [x] **非オーナーは読み取り専用**: 非オーナー（`ownerUserID` が null のレガシーグループ含む）では入力欄が `readOnly` で `onSubmitted` が無効になること
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **オーナーはグループ名を編集できる**: オーナーがグループ名入力欄を編集しEnter（onSubmitted）で確定すると保存される。maestro/flows/group_setting.yaml で確認できる
+### **オーナーは編集可・保存**: オーナー（`group.ownerUserID == currentUserID`）はグループ名入力欄を編集でき、`onSubmitted`（Enter）で `groupNameUpdate.call` により保存されること（既存 E2E: maestro/flows/group_setting.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-`maestro/flows/group_setting.yaml` 実行。「テストグループ」を「更新グループ」に編集しEnterで確定後、画面に反映されることを確認した。
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/a9bb7a60-47ed-486a-bcfd-7331833e64f4.png" width="320">
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/dca0cc5b-b03e-43a1-a1dc-9b98c1029b95.png" width="320">
+maestro/flows/group_setting.yaml 実行。「テストグループ」→「更新グループ」に変更・保存が反映されることを確認。
 
 </details>
 
-### **非オーナーは読み取り専用**: オーナー以外のメンバーが開いた場合、グループ名欄は読み取り専用（readOnly）で編集できない
+### **空・同名は保存しない**: トリム後が空、または現在の `group.name` と同一の場合は保存処理を行わないこと
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-mobile-mcpで検証。非オーナーアカウントで招待コードから参加後、グループ設定画面でグループ名欄をタップしてもキーボードが表示されず、readOnlyであることを確認した。
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/bc7f34f4-edda-4f26-ba83-21a46df240bf.png" width="320">
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/c1264455-f2c2-4199-807a-8fbb9a9149ff.png" width="320">
+グループ名入力欄を全選択してスペースのみに置換し Enter で確定。グループ一覧に戻ると「更新グループ」のまま変化なし（トリム後空文字のため保存されない）。同名時の分岐（`newName == group.name`）は同一コードパスのためコードレビューで確認済み。
 
 </details>
 
-### **空文字や変更なしでは更新されない**: 入力を空文字にする、または既存と同じ値でsubmitした場合は更新処理が呼ばれない
+### **非オーナーは読み取り専用**: 非オーナー（`ownerUserID` が null のレガシーグループ含む）では入力欄が `readOnly` で `onSubmitted` が無効になること
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-mobile-mcpで検証。オーナーがグループ名欄を空にしてEnterで確定後、グループ管理一覧へ戻って再度グループ設定画面を開くと、グループ名が「更新グループ」のまま（空文字で更新されていない）ことを確認した。また、変更なしで同じ値をEnter確定してもクラッシュ・エラーなく画面に変化がないことも確認した（コード上も `newName.isEmpty || newName == (group.name ?? '')` で更新処理をスキップする実装）。
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/e6d0cccb-b739-4107-9771-a5ff3ed4ce99.png" width="320">
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/4cac685e-3391-40fe-a7e1-6d2ce9389677.png" width="320">
+サインアウト→新規匿名サインイン→「招待コードで参加」（CPPS3AKV）で別ユーザーとして「招待テストグループ」に非オーナーとして参加。GroupSettingPage のグループ名欄をタップしてもキーボードが開かず、文字入力を試みても「招待テストグループ」のまま変化しないことを確認（readOnly + onSubmitted 無効）。メンバー一覧にも自分の行に削除アイコンが無いことを確認（オーナーのみが削除操作可能という表示条件とも整合）。
 
 </details>
 
@@ -107,49 +89,60 @@ mobile-mcpで検証。オーナーがグループ名欄を空にしてEnterで�
 
 ---
 
-## 3. メンバー削除
+## 3. メンバー一覧・削除
 
-- [x] **オーナーはメンバーを削除できる**: オーナーが自分以外のメンバーの削除アイコン（赤色）をタップすると確認ダイアログが表示され、「削除」で `removeGroupMember` Functionが呼ばれメンバーが一覧から消える
-- [x] **削除確認ダイアログのキャンセル**: 確認ダイアログの「キャンセル」でメンバーは削除されない
-- [x] **非オーナー・オーナー自身の行には削除ボタンが出ない**: 非オーナーが開いた画面、およびオーナー自身の行には削除アイコンが表示されない
+- [x] **メンバー一覧と役割表示**: `groupUserProfiles` の各メンバーが表示され、`displayName` 未設定は「名前未設定」、オーナーは subtitle「オーナー」、自分は「自分」と表示されること
+- [x] **削除アイコンの表示条件**: 削除アイコン（`remove_circle`）はオーナーが閲覧中かつ対象がオーナー以外のメンバーの行にのみ表示されること（自分・オーナー行には出ない）
+- [x] **メンバー削除の確認ダイアログ**: 削除アイコンタップで「〜をグループから削除しますか？」ダイアログが開き、「削除」で `functions.removeGroupMember` が実行され「〜を削除しました」SnackBar が出ること。「キャンセル」で閉じること（別ユーザーは開発者オプションの「デバッグユーザー作成」→「グループにデバッグユーザーを追加」で用意。maestro/flows/virtual_pairing/02・03）
+- [ ] **削除失敗時のエラー表示**: 削除に失敗した場合は `showErrorSnackBar` でエラーをそのまま表示すること
+  - ⏭️ スキップ: UI 上の削除アイコンは `isOwner && !isProfileOwner` の時のみ表示されるため、非オーナー操作・オーナー自身の削除といったクライアント側の失敗条件には到達できない。`firebase/functions/src/functions/removeGroupMember/function.ts` のサーバー側失敗条件（未認証・グループ不存在・オーナー未設定・非オーナー・自分自身）も同様に正規UI操作では到達不可で、意図的な再現には実ネットワーク障害かFunctions抜きEmulator起動が必要（group_join_or_create QA と同じ理由で非対話セッションの許可コマンド範囲外のため断念）
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **オーナーはメンバーを削除できる**: オーナーが自分以外のメンバーの削除アイコン（赤色）をタップすると確認ダイアログが表示され、「削除」で `removeGroupMember` Functionが呼ばれメンバーが一覧から消える
+### **メンバー一覧と役割表示**: `groupUserProfiles` の各メンバーが表示され、`displayName` 未設定は「名前未設定」、オーナーは subtitle「オーナー」、自分は「自分」と表示されること
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-mobile-mcpで検証。開発者オプションでデバッグユーザーをグループに追加後、オーナーが削除アイコンをタップ→確認ダイアログで「削除」をタップすると、Debug Userがメンバー一覧から消えることを確認した。
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/9da08b58-24e2-412c-8953-d0e1072baec5.png" width="320">
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/ea04fa6b-0dc8-41d0-b97a-c8514275bf75.png" width="320">
+開発者オプションの「デバッグユーザー作成」→「グループにデバッグユーザーを追加」で2人目のメンバーを追加。オーナー（自分・displayName未設定）は「名前未設定 / オーナー」、非オーナーは「Debug User」（subtitle なし）と表示。
 
 </details>
 
-### **削除確認ダイアログのキャンセル**: 確認ダイアログの「キャンセル」でメンバーは削除されない
+### **削除アイコンの表示条件**: 削除アイコン（`remove_circle`）はオーナーが閲覧中かつ対象がオーナー以外のメンバーの行にのみ表示されること（自分・オーナー行には出ない）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-mobile-mcpで検証。削除アイコンタップ後の確認ダイアログで「キャンセル」をタップすると、Debug Userがメンバー一覧に残ったままであることを確認した。
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/9da08b58-24e2-412c-8953-d0e1072baec5.png" width="320">
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/50e6bb3b-6244-49c6-bfca-96c1f1ce30c7.png" width="320">
+自分（オーナー）の行には削除アイコンが無く、Debug User（非オーナー）の行にのみ `remove_circle` が表示されることを確認。
 
 </details>
 
-### **非オーナー・オーナー自身の行には削除ボタンが出ない**: 非オーナーが開いた画面、およびオーナー自身の行には削除アイコンが表示されない
+### **メンバー削除の確認ダイアログ**: 削除アイコンタップで「〜をグループから削除しますか？」ダイアログが開き、「削除」で `functions.removeGroupMember` が実行され「〜を削除しました」SnackBar が出ること。「キャンセル」で閉じること（別ユーザーは開発者オプションの「デバッグユーザー作成」→「グループにデバッグユーザーを追加」で用意。maestro/flows/virtual_pairing/02・03）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-mobile-mcpで検証。オーナー視点ではオーナー自身の行に削除アイコンが表示されず、非オーナー（Debug User）の行にのみ表示されることを確認した。さらに非オーナーアカウントで開いた場合は、オーナー行・自分の行いずれにも削除アイコンが表示されないことを確認した。
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/4e234d67-a65d-4a76-95a8-b289f6a5aef5.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/18031158-af08-4e31-a9fe-a56a09900b1c.png" width="320">
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/040258fc-5469-4b26-9d85-b89d87b8c94f.png" width="320">
+「キャンセル」でダイアログが閉じメンバーは残ることを確認後、再度削除アイコンをタップし「削除」を実行。「Debug Userを削除しました」SnackBar が表示され、メンバー一覧から Debug User が消えたことを確認。
+
+</details>
+
+### **削除失敗時のエラー表示**: 削除に失敗した場合は `showErrorSnackBar` でエラーをそのまま表示すること
+
+<details><summary>動作確認スクショ</summary>
+
+⏭️ スキップ: 削除アイコンは `isOwner && !isProfileOwner`（page.dart:171-172）の時のみ表示されるため、正規UI操作では非オーナー操作・オーナー自身の削除といった失敗条件に到達できない。`removeGroupMember/function.ts` のサーバー側失敗条件（未認証・グループ不存在・オーナー未設定・非オーナー・自分自身の削除）も同様に到達不可。コードレビューでは `page.dart:366-370` の catch 節で `showErrorSnackBar(context, e, st)` を呼び `isRemovingMember.value = false` にリセットすることを確認済み。実ネットワーク障害の意図的発生やFunctions抜きEmulator起動は、`lib/features/group_join_or_create/QA.md` セクション4と同じ理由（非対話QAセッションの許可コマンド範囲外）で断念した。
 
 </details>
 
@@ -157,62 +150,34 @@ mobile-mcpで検証。オーナー視点ではオーナー自身の行に削除�
 
 ---
 
-## 4. グループ招待
+## 4. カテゴリ / 買い物する場所
 
-- [x] **招待コード発行**: 「招待コードを発行」ボタンをタップすると招待コードダイアログが表示される。maestro/flows/group_setting.yaml で確認できる
-- [x] **グループ名未設定時は発行をブロック**: グループ名が未入力（空・空白のみ）の状態で招待コード発行を試みると、「招待する前にグループ名を設定してください」とトースト表示され発行されない
-- [x] **未保存の入力中グループ名も招待時に保存される**: グループ名入力欄に未確定（onSubmitted前）の入力があっても、招待コード発行時にその値が先に保存されてから発行される
-- [x] **招待コードのコピー**: 招待コードダイアログの「コピー」タップでクリップボードにコードがコピーされ「招待コードをコピーしました」とトースト表示される
+- [x] **カテゴリ画面へ遷移**: 「カテゴリ」セル（`自動分類のキーワード管理`）タップで `GroupCategoryPage` に遷移すること（既存 E2E: maestro/flows/group_setting.yaml）
+- [x] **買い物する場所は非表示**: 「買い物する場所」セルは feature flag（`shoppingLocationFeatureEnabled == false`, issue #465）により表示されないこと（既存 E2E: maestro/flows/group_setting.yaml の `assertNotVisible`）
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **招待コード発行**: 「招待コードを発行」ボタンをタップすると招待コードダイアログが表示される。maestro/flows/group_setting.yaml で確認できる
+### **カテゴリ画面へ遷移**: 「カテゴリ」セル（`自動分類のキーワード管理`）タップで `GroupCategoryPage` に遷移すること（既存 E2E: maestro/flows/group_setting.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-`maestro/flows/group_setting.yaml` でボタン表示を確認、また mobile-mcp で実際にタップして招待コードダイアログ（8桁コード）が表示されることを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/4abf1cdb-e13b-4d19-9f8e-01aeb03bd6ad.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/62e66e5d-aeae-492a-8c0b-4ff38981be99.png" width="320">
 
 </details>
 
-### **グループ名未設定時は発行をブロック**: グループ名が未入力（空・空白のみ）の状態で招待コード発行を試みると、「招待する前にグループ名を設定してください」とトースト表示され発行されない
+### **買い物する場所は非表示**: 「買い物する場所」セルは feature flag（`shoppingLocationFeatureEnabled == false`, issue #465）により表示されないこと（既存 E2E: maestro/flows/group_setting.yaml の `assertNotVisible`）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-mobile-mcpで検証。グループ名欄を空にした状態で「招待コードを発行」をタップすると、「招待する前にグループ名を設定してください」とトースト表示され、招待コードダイアログは表示されないことを確認した。
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/a9bb7a60-47ed-486a-bcfd-7331833e64f4.png" width="320">
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/41b81c80-6493-4f61-a599-7f5ee4d1605e.png" width="320">
-
-</details>
-
-### **未保存の入力中グループ名も招待時に保存される**: グループ名入力欄に未確定（onSubmitted前）の入力があっても、招待コード発行時にその値が先に保存されてから発行される
-
-<details><summary>動作確認スクショ</summary>
-
-**確認日: 2026-07-05**
-
-mobile-mcpで検証。グループ名欄に「未保存グループ」と入力しEnterで確定せずに「招待コードを発行」をタップすると、招待コードダイアログが表示され、ダイアログを閉じた後もグループ名が「未保存グループ」として保存されていることを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/840bec49-80af-4667-aa02-c37a9c35d0e6.png" width="320">
-
-</details>
-
-### **招待コードのコピー**: 招待コードダイアログの「コピー」タップでクリップボードにコードがコピーされ「招待コードをコピーしました」とトースト表示される
-
-<details><summary>動作確認スクショ</summary>
-
-**確認日: 2026-07-05**
-
-mobile-mcpで検証。「コピー」タップ後、`xcrun simctl pbpaste` でシミュレータのクリップボードに招待コードがコピーされていることを確認し、また画面下部に「招待コードをコピーしました」というトーストが表示されることを確認した。
-
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/4abf1cdb-e13b-4d19-9f8e-01aeb03bd6ad.png" width="320">
+maestro flow で `assertNotVisible: "(?s).*買い物する場所.*"` が COMPLETED。上記スクショにもセルが存在しないことを確認。
 
 </details>
 
@@ -220,37 +185,62 @@ mobile-mcpで検証。「コピー」タップ後、`xcrun simctl pbpaste` で�
 
 ---
 
-## 5. 関連機能への導線
+## 5. グループ招待コード発行
 
-- [x] **カテゴリ画面への遷移**: 「カテゴリ」セルタップでGroupCategoryPageに遷移する。maestro/flows/group_setting.yaml で確認できる
-- [x] **買い物する場所セルは非表示（feature flag無効時）**: 現行リリースでは `shoppingLocationFeatureEnabled` がfalse（issue #465）のため「買い物する場所」セルは表示されない。maestro/flows/group_setting.yaml の assertNotVisible で確認できる
+- [x] **グループ名未設定時のトースト**: グループ名入力欄が空のまま「招待コードを発行」をタップすると「招待する前にグループ名を設定してください」トーストが出て、招待コードは発行されないこと（Issue #432）
+- [x] **名前入力ありで発行**: 入力欄に名前があれば（onSubmitted 未確定でも）現在の `group.name` と異なる場合は先に `groupNameUpdate.call` で保存し、`createGroupInvitation.call` で招待コードを発行して招待コードダイアログを表示すること（発行中はラベルが「招待コードを発行中...」）
+- [x] **招待コードダイアログ**: ダイアログに8桁コードと「有効期限: 7日間」が表示され、「コピー」で `Clipboard` にコピーして「招待コードをコピーしました」トーストが出ること。「閉じる」で閉じること
+- [ ] **発行失敗時のエラー表示**: 招待コード発行に失敗した場合は `showErrorSnackBar` でエラーをそのまま表示すること
+  - ⏭️ スキップ: `firebase/functions/src/functions/createGroupInvitation/function.ts` の失敗条件（未認証・グループ不存在・非メンバー・コード生成10回失敗）は、正規サインイン済みグループメンバーの通常UI操作では到達不可。group_join_or_create QA・本ファイルの削除失敗時エラー表示と同じ理由（実ネットワーク障害やFunctions抜きEmulator起動が非対話セッションの許可コマンド範囲外）で再現を断念
 
 #### 動作確認
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **カテゴリ画面への遷移**: 「カテゴリ」セルタップでGroupCategoryPageに遷移する。maestro/flows/group_setting.yaml で確認できる
+### **グループ名未設定時のトースト**: グループ名入力欄が空のまま「招待コードを発行」をタップすると「招待する前にグループ名を設定してください」トーストが出て、招待コードは発行されないこと（Issue #432）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-`maestro/flows/group_setting.yaml` 実行。「カテゴリ」セルタップでGroupCategoryPage（「買ったものを自動でグループ分け」空状態カード）に遷移することを確認した。
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/bbfba379-7556-4ab4-8608-c687d7e134af.png" width="320">
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/da037c8c-f63e-402c-8b6f-e405a95cb117.png" width="320">
+グループ名が空のグループで「招待コードを発行」をタップ。「招待する前にグループ名を設定してください」トーストが表示され、招待ダイアログは開かないことを確認。
 
 </details>
 
-### **買い物する場所セルは非表示（feature flag無効時）**: 現行リリースでは `shoppingLocationFeatureEnabled` がfalse（issue #465）のため「買い物する場所」セルは表示されない。maestro/flows/group_setting.yaml の assertNotVisible で確認できる
+### **名前入力ありで発行**: 入力欄に名前があれば（onSubmitted 未確定でも）現在の `group.name` と異なる場合は先に `groupNameUpdate.call` で保存し、`createGroupInvitation.call` で招待コードを発行して招待コードダイアログを表示すること（発行中はラベルが「招待コードを発行中...」）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-05**
+**確認日: 2026-07-15**
 
-`maestro/flows/group_setting.yaml` の `assertNotVisible: "(?s).*買い物する場所.*"` ステップが成功し、「買い物する場所」セルが表示されないことを確認した。
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/01eb62a8-7cf2-4b3c-95cb-d149ceec1886.png" width="320">
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260705/b15dada1-0a6d-432d-bddb-322e4ef7c248.png" width="320">
+グループ名欄に「招待テストグループ」を入力（Enter未確定）した状態で「招待コードを発行」をタップ。onSubmitted を経由せずに招待コードダイアログが表示され、名前が先行保存されたことを確認（発行できたこと自体が groupNameUpdate.call 成功の証跡）。
+
+</details>
+
+### **招待コードダイアログ**: ダイアログに8桁コードと「有効期限: 7日間」が表示され、「コピー」で `Clipboard` にコピーして「招待コードをコピーしました」トーストが出ること。「閉じる」で閉じること
+
+<details><summary>動作確認スクショ</summary>
+
+**確認日: 2026-07-15**
+
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/462e59c2-3e25-4b4b-888a-b18629e11040.png" width="320">
+
+8桁コード「CPPS3AKV」と「有効期限: 7日間」を確認。「コピー」タップで「招待コードをコピーしました」トーストを確認。「閉じる」タップでダイアログが閉じることを確認。
+
+</details>
+
+### **発行失敗時のエラー表示**: 招待コード発行に失敗した場合は `showErrorSnackBar` でエラーをそのまま表示すること
+
+<details><summary>動作確認スクショ</summary>
+
+⏭️ スキップ: `createGroupInvitation/function.ts` の失敗条件（未認証・グループ不存在・非メンバー・コード生成失敗）は正規サインイン済みグループメンバーの通常UI操作では到達不可。コードレビューでは `page.dart:308-311` の catch 節で `showErrorSnackBar(context, e, st)` を呼び `isCreatingInvitation.value = false` にリセットすることを確認済み。実ネットワーク障害の意図的発生は非対話QAセッションの許可コマンド範囲外のため断念（`lib/features/group_join_or_create/QA.md` セクション4と同じ理由）。
 
 </details>
 
 </details>
+
+---

@@ -1,0 +1,40 @@
+appId: ${APP_ID}
+---
+# グループへの更新通知ボタン(NotifyGroupButton)の検証。
+# ソログループでは非表示、他メンバーが居るときのみ表示され、
+# 初回タップのみ説明ダイアログを出し、2回目以降は確認なしで送信することを確認する。
+
+- runFlow: shared/anonymous_sign_in.yaml
+- extendedWaitUntil:
+    visible: "タップで入力開始"
+    timeout: 15000
+
+# ソログループでは通知ボタン(ベルアイコン、tooltip="グループに通知")が非表示であることを確認
+- assertNotVisible: "グループに通知"
+- takeScreenshot: screenshots/notify_group_01_solo_hidden
+
+# デバッグユーザーを作成し、グループに追加(2人以上のグループにする)
+- runFlow: virtual_pairing/02_create_debug_user.yaml
+- runFlow: virtual_pairing/03_add_to_group.yaml
+
+# 他メンバーが居るため通知ボタンが表示される
+- assertVisible: "グループに通知"
+- takeScreenshot: screenshots/notify_group_02_button_visible
+
+# 初回タップ: 説明ダイアログが出る
+# (ダイアログタイトルとボタン tooltip が同一テキスト"グループに通知"のため、
+#  モーダルの陰に隠れたボタン側の要素と誤認されないよう、ダイアログ固有の
+#  「通知を送る」ボタンでのみアサートする)
+- tapOn: "グループに通知"
+- assertVisible: "通知を送る"
+- takeScreenshot: screenshots/notify_group_03_guide_dialog
+- tapOn: "通知を送る"
+- assertVisible: "グループに通知しました"
+- takeScreenshot: screenshots/notify_group_04_toast_first_tap
+
+- waitForAnimationToEnd
+
+# 2回目タップ: ダイアログを出さず即送信する
+- tapOn: "グループに通知"
+- assertVisible: "グループに通知しました"
+- takeScreenshot: screenshots/notify_group_05_toast_second_tap

@@ -15,5 +15,5 @@ class DefaultGroupUpdate {
 
 @Riverpod(dependencies: [userDatabase])
 DefaultGroupUpdate defaultGroupUpdate(Ref ref) {
-  return DefaultGroupUpdate(userDatabase: ref.read(userDatabaseProvider));
+  return DefaultGroupUpdate(userDatabase: ref.watch(userDatabaseProvider));
 }
