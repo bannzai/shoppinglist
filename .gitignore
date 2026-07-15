@@ -67,3 +67,6 @@ ios/build
 tmp/
 
 .claude/skills/*/.venv/
+
+# run-qa の作業ファイル
+tmp/qa/
