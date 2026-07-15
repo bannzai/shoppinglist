@@ -1,0 +1,29 @@
+appId: ${APP_ID}
+---
+# 無料プランのリテンションバナー(RetentionBanner)の検証。
+# 条件: !firestoreIsPremium && totalCount > 50 && !isKeyboardVisible (page.dart)。
+# 51件のアイテムを入力してバナー表示条件を満たし、「詳しく」でペイウォールに遷移することを確認する。
+
+- runFlow: shared/anonymous_sign_in.yaml
+- tapOn: "タップで入力開始"
+- waitForAnimationToEnd
+
+- repeat:
+    times: 51
+    commands:
+      - inputText: "アイテム"
+      - pressKey: enter
+
+- hideKeyboard
+- waitForAnimationToEnd
+
+- assertVisible: "無料プランは作成から30日でリストが整理されます"
+- takeScreenshot: screenshots/retention_banner_01_visible
+
+- tapOn: "詳しく"
+# 見出しのUI hierarchy取得タイミングが不安定なため(paywall_display_and_dismiss.yaml参照)、
+# 「購入」ボタンの出現で paywall 到達を確認する。
+- extendedWaitUntil:
+    visible: "購入"
+    timeout: 30000
+- takeScreenshot: screenshots/retention_banner_02_paywall_opened

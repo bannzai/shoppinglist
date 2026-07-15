@@ -1,0 +1,148 @@
+appId: ${APP_ID}
+---
+# 自動カテゴリ分けAIの月間利用上限がプレミアムで拡張されることの検証。
+# 無料上限は5回(freeMonthlyCategorizeLimit)、プレミアムは50回(premiumMonthlyCategorizeLimit)
+# (firebase/functions/src/functions/categorizeShoppingListItems/function.ts)。
+# 上限はユーザー単位(userID)でカウントされるため、同一リストで積算されればよい。
+# 50回全ては消費しないが、無料上限の5回を超えて6回連続で正常実行できることを確認し、
+# 上限が拡張されていることを示す。利用回数はAI呼び出し自体で消費されるため、
+# プレビューシートは「登録」せず「キャンセル」で閉じてよい
+# (「分類できる候補がありませんでした」= 0件のときは登録ボタンが無効化されており
+#  タップしても閉じないため、キャンセルに統一したほうが安定する)。
+#
+# 各回、右下FAB(add_task、tooltipなしのためpoint指定)タップで新規空行を追加する。
+# 毎回「異なる」アイテム名を使う: category_matcher.dart の findMatchingCategoryID は
+# アイテムのmessageとカテゴリのkeyword(exact一致含む)をクライアント側で突き合わせて
+# 表示上のカテゴリを決めるため、同名アイテムを繰り返すと1回目のAI登録で作られた
+# exact keywordに2回目以降が自動マッチしてしまい、uncategorizedItems が常に0件になり
+# 「自動でカテゴリ分け」ボタンが二度と現れない(実際に検証中に踏んだ)。
+
+- runFlow: shared/anonymous_sign_in.yaml
+- runFlow: shared/grant_premium_via_debug.yaml
+
+- tapOn:
+    point: "89%,90%"
+- extendedWaitUntil:
+    visible: "メモを書く..."
+    timeout: 15000
+- inputText: "牛乳1リットル"
+- pressKey: enter
+- hideKeyboard
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "自動でカテゴリ分け.*"
+    timeout: 30000
+- tapOn: "自動でカテゴリ分け.*"
+- extendedWaitUntil:
+    visible: "キャンセル"
+    timeout: 40000
+- tapOn: "キャンセル"
+- assertNotVisible: "キャンセル"
+- waitForAnimationToEnd
+
+- tapOn:
+    point: "89%,90%"
+- extendedWaitUntil:
+    visible: "メモを書く..."
+    timeout: 15000
+- inputText: "卵1パック"
+- pressKey: enter
+- hideKeyboard
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "自動でカテゴリ分け.*"
+    timeout: 30000
+- tapOn: "自動でカテゴリ分け.*"
+- extendedWaitUntil:
+    visible: "キャンセル"
+    timeout: 40000
+- tapOn: "キャンセル"
+- assertNotVisible: "キャンセル"
+- waitForAnimationToEnd
+
+- tapOn:
+    point: "89%,90%"
+- extendedWaitUntil:
+    visible: "メモを書く..."
+    timeout: 15000
+- inputText: "食パン"
+- pressKey: enter
+- hideKeyboard
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "自動でカテゴリ分け.*"
+    timeout: 30000
+- tapOn: "自動でカテゴリ分け.*"
+- extendedWaitUntil:
+    visible: "キャンセル"
+    timeout: 40000
+- tapOn: "キャンセル"
+- assertNotVisible: "キャンセル"
+- waitForAnimationToEnd
+
+- tapOn:
+    point: "89%,90%"
+- extendedWaitUntil:
+    visible: "メモを書く..."
+    timeout: 15000
+- inputText: "玉ねぎ2個"
+- pressKey: enter
+- hideKeyboard
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "自動でカテゴリ分け.*"
+    timeout: 30000
+- tapOn: "自動でカテゴリ分け.*"
+- extendedWaitUntil:
+    visible: "キャンセル"
+    timeout: 40000
+- tapOn: "キャンセル"
+- assertNotVisible: "キャンセル"
+- waitForAnimationToEnd
+
+# ここまでで自動カテゴリ分けAIを4回消費(無料上限5回にまだ達していない)。
+# 5回目・6回目で無料上限の5回を超えることを確認する。
+
+- tapOn:
+    point: "89%,90%"
+- extendedWaitUntil:
+    visible: "メモを書く..."
+    timeout: 15000
+- inputText: "トマト3個"
+- pressKey: enter
+- hideKeyboard
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "自動でカテゴリ分け.*"
+    timeout: 30000
+- tapOn: "自動でカテゴリ分け.*"
+- extendedWaitUntil:
+    visible: "キャンセル"
+    timeout: 40000
+- tapOn: "キャンセル"
+- assertNotVisible: "キャンセル"
+- waitForAnimationToEnd
+
+# 6回目 = 無料上限(5回)を超える回。プレミアムなので上限SnackBarを出さず正常実行できるはず。
+- tapOn:
+    point: "89%,90%"
+- extendedWaitUntil:
+    visible: "メモを書く..."
+    timeout: 15000
+- inputText: "りんご4個"
+- pressKey: enter
+- hideKeyboard
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "自動でカテゴリ分け.*"
+    timeout: 30000
+- tapOn: "自動でカテゴリ分け.*"
+# 無料上限(5回)のSnackBarが出ていないこと(=premium拡張)をここで確認する。
+- assertNotVisible: "月間利用回数"
+- extendedWaitUntil:
+    visible: "キャンセル"
+    timeout: 40000
+- takeScreenshot: screenshots/premium_ai_categorize_limit_extension_01_sixth_success
+- tapOn: "キャンセル"
+- assertNotVisible: "キャンセル"
+- assertNotVisible: "月間利用回数"

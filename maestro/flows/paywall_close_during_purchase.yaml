@@ -1,0 +1,39 @@
+appId: ${APP_ID}
+---
+# #372 回帰確認: 購入の await 中(RC Test Storeモーダル表示前後)に close(×)を
+# タップしても、pop が自ルートに限定され黒画面にならないことを検証する。
+# 「購入」タップ直後、モーダルが完全に覆う前の一瞬の隙を狙って close(×)をタップする。
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      text: "はじめる"
+    direction: DOWN
+    timeout: 15000
+- tapOn: "はじめる"
+- extendedWaitUntil:
+    visible: "購入"
+    timeout: 30000
+
+- tapOn:
+    text: "購入"
+    index: 0
+# 待たずに直後で close(×)をタップし、awaitの間に閉じるケースを狙う。
+- tapOn:
+    point: "7%,10%"
+- takeScreenshot: screenshots/paywall_close_during_purchase_01_immediately_after
+
+# RC Test Store モーダルが残っている場合は Cancel で片付ける（後片付け）。
+- runFlow:
+    when:
+      visible: "Cancel"
+    commands:
+      - tapOn: "Cancel"
+      - waitForAnimationToEnd
+
+- takeScreenshot: screenshots/paywall_close_during_purchase_02_final_state

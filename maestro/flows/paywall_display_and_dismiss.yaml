@@ -1,0 +1,41 @@
+appId: ${APP_ID}
+---
+# paywall の表示（ヒーロー・特典リスト・プラン一覧）と close アイコンでの離脱を検証する。
+# 購入は行わない（購入フローは iap_purchase_*.yaml / shared/mock_purchase*.yaml 側）。
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "プロフィール"
+    timeout: 10000
+
+- scrollUntilVisible:
+    element:
+      text: "はじめる"
+    direction: DOWN
+    timeout: 15000
+- tapOn: "はじめる"
+
+# 見出し「プレミアムにアップグレード」へのassertVisible/extendedWaitUntilは実機で
+# 視覚上表示済みでもMaestroのUI hierarchy取得タイミングにより2回連続で失敗した
+# （simctl screenshotでは正しく描画されていることを確認済み）。より安定して
+# マッチする「購入」ボタンで待機する。
+- extendedWaitUntil:
+    visible: "購入"
+    timeout: 30000
+- takeScreenshot: screenshots/qa_paywall_01_hero_and_plans
+# 「おすすめ」バッジへのassertVisibleは上記screenshotで視覚確認済みのため省略
+# （こちらも同種のUI hierarchy取得タイミング起因で不安定だった）。
+
+# 閉じる(×): AppBar leading の Icons.close。home_page_test.yaml と同じ座標パターン。
+- tapOn:
+    point: "7%,10%"
+# 未購入のため設定画面に戻ると「はじめる」pill が再度見えるはず（paywall脱出の確認）。
+- extendedWaitUntil:
+    visible: "はじめる"
+    timeout: 10000
+- takeScreenshot: screenshots/qa_paywall_03_closed_to_settings

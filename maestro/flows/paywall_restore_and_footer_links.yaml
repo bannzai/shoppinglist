@@ -1,0 +1,43 @@
+appId: ${APP_ID}
+---
+# paywall フッタの「復元」「利用規約」「プライバシー」リンクを検証する。
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+- tapOn:
+    text: "設定.*"
+    index: 0
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      text: "はじめる"
+    direction: DOWN
+    timeout: 15000
+- tapOn: "はじめる"
+- extendedWaitUntil:
+    visible: "購入"
+    timeout: 30000
+
+# --- 復元 ---
+- tapOn: "復元"
+- extendedWaitUntil:
+    visible: "購入を復元しました"
+    timeout: 15000
+- takeScreenshot: screenshots/paywall_restore_success
+
+# --- 利用規約（外部ブラウザで開く） ---
+- tapOn: "利用規約"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/paywall_terms_link_opened
+# アプリに戻る
+- launchApp:
+    appId: ${APP_ID}
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "購入"
+    timeout: 15000
+
+# --- プライバシー（外部ブラウザで開く） ---
+- tapOn: "プライバシー"
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/paywall_privacy_link_opened
