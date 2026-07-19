@@ -16,49 +16,39 @@ import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 
 part 'create_list_spotlight.g.dart';
 
-/// リスト追加スポットライトを表示すべきかを判定する純粋関数(Issue #494)。
+/// リスト追加スポットライトを表示すべきかを判定する純粋関数(Issue #494, #508)。
 ///
 /// 引数はすべてローカル時刻の DateTime として扱う(日付比較のため呼び出し側で `toLocal()` 済みを渡す)。
 ///
 /// - cond1(日次ナッジ): 最後のリスト作成日のローカル日付が、今日より前 = 「日付が変わった」
 /// - cond2(チェック後の再訪ナッジ): 最後にアイテムをチェックしてから1時間以上経過
-/// - shownForToday: 最終表示日時が今日と同じローカル日付 = 「今日」の機会に対して表示済み
-/// - shownForCheckOccasion: 最終表示が最後のチェック以降 = 「そのチェックセッション」に対して表示済み
 ///
-/// return は `(cond1 && !shownForToday) || (cond2 && !shownForCheckOccasion)`。
-/// 意図: 1回の表示で「今日」と「現在のチェック機会」の両方を消費する
-/// (Issue 条件3「1,2 でいずれも showcase を出してない時」)。翌日リストが未作成なら cond1 で再び出る
-/// (日次ナッジ)。再チェック後1時間経過で cond2 が再び出る。
+/// 一度でも表示済み(spotlightLastShownDateTime が非 null)なら以後は表示しない。
+/// 当初(Issue #494)は日次・チェック機会ごとに再表示していたが、日を跨ぐたびに毎回出て
+/// 煩わしいため、生涯1回のみへ変更した(Issue #508)。
 bool shouldShowCreateListSpotlight({
   required DateTime now,
   required DateTime? lastShoppingListCreatedDateTime,
   required DateTime? lastShoppingListItemCheckedDateTime,
   required DateTime? spotlightLastShownDateTime,
 }) {
+  if (spotlightLastShownDateTime != null) {
+    return false;
+  }
   final lastCreated = lastShoppingListCreatedDateTime;
   final lastChecked = lastShoppingListItemCheckedDateTime;
-  final lastShown = spotlightLastShownDateTime;
 
   final cond1 = lastCreated != null && _isLocalDateBefore(lastCreated, now);
   final cond2 =
       lastChecked != null &&
       now.difference(lastChecked) >= const Duration(hours: 1);
-  final shownForToday = lastShown != null && _isSameLocalDate(lastShown, now);
-  final shownForCheckOccasion =
-      lastShown != null &&
-      lastChecked != null &&
-      !lastShown.isBefore(lastChecked);
 
-  return (cond1 && !shownForToday) || (cond2 && !shownForCheckOccasion);
+  return cond1 || cond2;
 }
 
 /// [a] のローカル日付が [b] のローカル日付より前か(時刻は無視)。
 bool _isLocalDateBefore(DateTime a, DateTime b) =>
     DateTime(a.year, a.month, a.day).isBefore(DateTime(b.year, b.month, b.day));
-
-/// [a] と [b] が同じローカル日付か(時刻は無視)。
-bool _isSameLocalDate(DateTime a, DateTime b) =>
-    a.year == b.year && a.month == b.month && a.day == b.day;
 
 /// 開発者オプションからスポットライトを強制表示するための in-memory フラグ。
 ///
