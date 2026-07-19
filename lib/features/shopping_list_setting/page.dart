@@ -10,6 +10,7 @@ import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/group_setting/page.dart';
+import 'package:shoppinglist/features/notification_permission/pre_permission_dialog.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list_setting/delete_confirm_dialog.dart';
 import 'package:shoppinglist/features/shopping_list_setting/invitation_code_dialog.dart';
@@ -346,6 +347,14 @@ class ShoppingListSettingPage extends HookConsumerWidget {
               expiresDateTime: invitation.expiresDateTime,
             ),
       );
+      // 招待した直後 = 相手の参加や更新をプッシュ通知で受け取る動機が最も高い
+      // タイミングのため、招待コード dialog を閉じた後に通知許可を促す (Issue #500)。
+      if (context.mounted) {
+        await maybeRequestNotificationPermission(
+          context,
+          trigger: 'create_list_invitation',
+        );
+      }
     } catch (e, st) {
       // このページはボトムシート上に表示されるため、SnackBar は背後の
       // Scaffold に描画されて見えない。前面に出るグローバルトーストで通知する。

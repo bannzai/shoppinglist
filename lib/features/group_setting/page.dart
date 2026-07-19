@@ -10,6 +10,7 @@ import 'package:shoppinglist/components/primitives/app_setting_section.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
+import 'package:shoppinglist/features/notification_permission/pre_permission_dialog.dart';
 import 'package:shoppinglist/features/shopping_location/page.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group.dart';
@@ -295,7 +296,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                                   final invitation = await createGroupInvitation
                                       .call(groupID: groupID);
                                   if (context.mounted) {
-                                    showDialog(
+                                    await showDialog<void>(
                                       context: context,
                                       builder:
                                           (context) => _InvitationCodeDialog(
@@ -303,6 +304,15 @@ class _GroupSettingBody extends HookConsumerWidget {
                                             invitationCode:
                                                 invitation.invitationCode,
                                           ),
+                                    );
+                                  }
+                                  // 招待した直後 = 相手の参加や更新をプッシュ通知で
+                                  // 受け取る動機が最も高いタイミングのため、招待コード
+                                  // dialog を閉じた後に通知許可を促す (Issue #500)。
+                                  if (context.mounted) {
+                                    await maybeRequestNotificationPermission(
+                                      context,
+                                      trigger: 'create_grp_invitation',
                                     );
                                   }
                                 } catch (e, st) {

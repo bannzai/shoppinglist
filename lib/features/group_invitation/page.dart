@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
+import 'package:shoppinglist/features/notification_permission/pre_permission_dialog.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -152,6 +153,15 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                                   Navigator.of(
                                     context,
                                   ).pop(); // verifying dialog
+                                }
+                                // 参加成功直後 = メンバーの更新をプッシュ通知で受け取る
+                                // 当事者になった直後のため、ホームへ戻る前に通知許可を
+                                // 促す (Issue #500)。
+                                if (context.mounted) {
+                                  await maybeRequestNotificationPermission(
+                                    context,
+                                    trigger: 'accept_group_invitation',
+                                  );
                                 }
                                 if (context.mounted) {
                                   Navigator.of(
