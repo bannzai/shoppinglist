@@ -15,7 +15,7 @@ extension StringKey on String {
       'lastSignInFirebaseAuthUserID';
 
   /// リスト追加スポットライトを最後に表示した日時(ISO8601 文字列)。
-  /// 「その日」「そのチェック機会」に対して表示済みかの重複判定に使う(Issue #494)。
+  /// 非 null = 表示済みとして、以後の表示を抑止する判定に使う(Issue #494, #508: 生涯1回のみ)。
   static const String createListSpotlightLastShownDateTime =
       'createListSpotlightLastShownDateTime';
 }

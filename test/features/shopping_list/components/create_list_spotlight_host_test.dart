@@ -14,7 +14,7 @@ import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 
-/// CreateListSpotlightHost の表示・非表示と、表示時の SharedPreferences 記録を検証する(Issue #494)。
+/// CreateListSpotlightHost の表示・非表示と、表示時の SharedPreferences 記録を検証する(Issue #494, #508)。
 /// 送信系(Firebase)を伴わないため widget test で完結する。
 const _groupID = 'group-001';
 
@@ -31,11 +31,16 @@ GroupShoppingList _list({required DateTime createdDateTime}) =>
     );
 
 /// Host を override 済みコンテナ下に pump する。target には固定サイズの箱を置く。
+/// [spotlightLastShownIso] を渡すと表示済み状態(最終表示日時が記録済み)で開始する。
 Future<ProviderContainer> _pump(
   WidgetTester tester, {
   required GroupShoppingList shoppingList,
+  String? spotlightLastShownIso,
 }) async {
-  SharedPreferences.setMockInitialValues({});
+  SharedPreferences.setMockInitialValues({
+    if (spotlightLastShownIso != null)
+      StringKey.createListSpotlightLastShownDateTime: spotlightLastShownIso,
+  });
   final sharedPreferences = await SharedPreferences.getInstance();
   final container = ProviderContainer(
     overrides: [
@@ -111,6 +116,21 @@ void main() {
       ),
       isNull,
     );
+  });
+
+  // Issue #508: 日を跨いで cond1 が再成立しても、一度表示済みなら再表示しない(生涯1回のみ)。
+  testWidgets('表示済み(前日に表示)なら、日を跨いで条件成立でも再表示しない', (tester) async {
+    await _pump(
+      tester,
+      shoppingList: _list(
+        createdDateTime: DateTime.now().subtract(const Duration(days: 1)),
+      ),
+      // 前日に表示済み。従来(Issue #494)は日付が変わると再表示していた。
+      spotlightLastShownIso:
+          DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
+    );
+
+    expect(find.byType(SpotlightView), findsNothing);
   });
 
   // ルート遷移中の localToGlobal はスライド中座標を返し切り抜き位置がずれるため、遷移完了まで表示を保留する。
