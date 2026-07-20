@@ -12,8 +12,11 @@ iOS では二度と再要求できないため、通知の価値が伝わるタ�
   - 「あとで」/ 背景タップで何もせず閉じる (OS ダイアログは消費されないため、次の機会に再表示される)
 
 ## フロー
-`maybeRequestNotificationPermission` は OS の許可状態が notDetermined の時だけダイアログを
-表示する (許可・拒否済みなら何もしない冪等設計)。以下の導線から呼び出す:
+`maybeRequestNotificationPermission` は通知許可がまだ要求されていない時だけダイアログを
+表示する (許可・拒否済みなら何もしない冪等設計)。判定は iOS では notDetermined、
+Android では「denied かつ requestPermission 未実行」(SharedPreferences で追跡) で行う。
+Android の firebase_messaging は authorizationStatus を authorized / denied にしかマップせず、
+未要求でも denied を返して notDetermined と区別できないため。以下の導線から呼び出す:
 
 1. 招待する側: 招待コード発行ダイアログを閉じた直後
    - `ShoppingListSettingPage` の「グループに招待」(trigger: `create_list_invitation`)

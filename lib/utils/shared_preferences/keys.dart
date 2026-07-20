@@ -8,6 +8,13 @@ extension BoolKey on String {
   /// グループ通知ボタンの初回説明ダイアログを表示済みか。
   /// 初回タップ時のみダイアログを出し、確定後に true を保存する(Issue #449)。
   static const String hasSeenManualNotifyGuide = 'hasSeenManualNotifyGuide';
+
+  /// 通知許可の requestPermission を一度でも実行したか。
+  /// Android は authorizationStatus が authorized / denied にしかマップされず、
+  /// 未要求でも denied を返して notDetermined と区別できないため、
+  /// 要求済みかどうかをアプリ側で追跡する必要がある(Issue #500)。
+  static const String hasRequestedNotificationPermission =
+      'hasRequestedNotificationPermission';
 }
 
 extension StringKey on String {
