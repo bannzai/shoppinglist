@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
+import 'package:shoppinglist/features/notification_permission/pre_permission_dialog.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/group_create.dart';
 import 'package:shoppinglist/provider/group_invitation.dart';
@@ -207,6 +208,16 @@ class GroupCreatePage extends HookConsumerWidget {
                                               invitationCode:
                                                   invitation.invitationCode,
                                             ),
+                                  );
+                                }
+                                // グループ作成 = 誰かと共有する意思の表明であり、
+                                // メンバーの更新をプッシュ通知で受け取る動機が高い
+                                // タイミングのため、招待 dialog を閉じた後に通知許可を
+                                // 促す (Issue #500)。
+                                if (context.mounted) {
+                                  await maybeRequestNotificationPermission(
+                                    context,
+                                    trigger: 'group_create',
                                   );
                                 }
                               } catch (e, st) {

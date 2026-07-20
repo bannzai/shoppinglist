@@ -23,6 +23,13 @@ appId: ${APP_ID}
     visible: "閉じる"
     timeout: 10000
 - tapOn: "閉じる"
+# 招待ダイアログ後に通知プリパーミッションが出る場合は「あとで」で閉じる (Issue #500)。
+# 通知許可が確定済みの環境では表示されないため optional でタップする。
+- waitForAnimationToEnd
+- tapOn:
+    text: "あとで"
+    optional: true
+- waitForAnimationToEnd
 - extendedWaitUntil:
     visible: "グループ管理"
     timeout: 15000
