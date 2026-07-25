@@ -290,6 +290,22 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     _throwIfNotOK(response);
   }
 
+  /// 買い物リストを削除する。
+  /// Firestore は親ドキュメント削除でサブコレクションを自動削除しないため、
+  /// リスト本体に加えて items / receipts サブコレクションと Storage 上の画像
+  /// （レシート画像・商品写真）も Functions の Admin SDK で再帰削除する（Issue #421）。
+  Future<void> deleteShoppingList({
+    required String groupID,
+    required String shoppingListID,
+  }) async {
+    final result = await httpsCallable(
+      'deleteShoppingList',
+    ).call({'groupID': groupID, 'shoppingListID': shoppingListID});
+    debugPrint('deleteShoppingList.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    _throwIfNotOK(response);
+  }
+
   /// レシート画像をFirebase Storageにアップロードし、ダウンロードURLを返す。
   Future<String> uploadReceiptImage({
     required String groupID,

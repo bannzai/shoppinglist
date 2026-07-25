@@ -139,25 +139,6 @@ ShoppingListAdd shoppingListAdd(Ref ref, {required String groupID}) {
   );
 }
 
-class ShoppingListDelete {
-  final GroupDatabase database;
-
-  ShoppingListDelete({required this.database});
-
-  Future<void> call({required String shoppingListID}) async {
-    final docRef = database.shoppingListReference(
-      shoppingListID: shoppingListID,
-    );
-    await docRef.delete();
-  }
-}
-
-@Riverpod(dependencies: [groupDatabase])
-ShoppingListDelete shoppingListDelete(Ref ref, {required String groupID}) {
-  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
-  return ShoppingListDelete(database: database);
-}
-
 class ShoppingListUpdate {
   final GroupDatabase database;
 

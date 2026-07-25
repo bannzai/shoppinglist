@@ -8,8 +8,8 @@ import 'package:shoppinglist/features/shopping_list/components/list_picker_sheet
 import 'package:shoppinglist/features/shopping_list/components/notify_group_button.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
 import 'package:shoppinglist/provider/app_user.dart';
-import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 
@@ -56,9 +56,6 @@ class ListTopBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.appTheme;
     final appUser = ref.watch(appUserProvider).asData?.value;
-    final shoppingListDelete = ref.watch(
-      shoppingListDeleteProvider(groupID: groupID),
-    );
 
     return SizedBox(
       height: 52,
@@ -156,7 +153,11 @@ class ListTopBar extends ConsumerWidget {
                                 shoppingListID: shoppingListID,
                                 shoppingList: shoppingList!,
                                 onDelete: () {
-                                  shoppingListDelete.call(
+                                  // リスト本体に加えて items / receipts サブコレクションと
+                                  // Storage 画像も消すため、Firestore 直接削除ではなく
+                                  // Functions (Admin SDK) 経由で削除する（Issue #421）。
+                                  functions.deleteShoppingList(
+                                    groupID: groupID,
                                     shoppingListID: shoppingListID,
                                   );
                                   Navigator.of(
