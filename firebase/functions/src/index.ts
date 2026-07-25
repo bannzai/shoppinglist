@@ -113,6 +113,13 @@ if (
 
 if (
   !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "deleteShoppingList"
+) {
+  exports.deleteShoppingList = require("./functions/deleteShoppingList/function");
+}
+
+if (
+  !process.env.FUNCTION_NAME ||
   process.env.FUNCTION_NAME === "uploadReceiptImage"
 ) {
   exports.uploadReceiptImage = require("./functions/uploadReceiptImage/function");
