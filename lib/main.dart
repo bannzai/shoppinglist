@@ -52,9 +52,7 @@ void main() async {
       homeWidgetBackgroundCallback,
     );
 
-    if (kDebugMode) {
-      overrideDebugPrint();
-    }
+    overrideDebugPrint();
 
     // ignore: prefer_typing_uninitialized_variables
     final (sharedPreferences, _, _, _) =

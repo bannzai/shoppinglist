@@ -10,10 +10,14 @@ import 'package:home_widget/home_widget.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_data_sync.dart';
 import 'package:shoppinglist/utils/config/app_identity.dart' as app_identity;
+import 'package:shoppinglist/utils/development/debug.dart';
 import 'package:shoppinglist/utils/firebase_emulator/firebase_emulator.dart';
 
 @pragma('vm:entry-point')
 FutureOr<void> homeWidgetBackgroundCallback(Uri? uri) async {
+  // この callback は main() と別 entry-point の isolate で動くため、
+  // debugPrint の差し替え (isolate ごとのグローバル変数) をここでも行う。
+  overrideDebugPrint();
   if (uri?.host == 'toggle-item') {
     final groupID = uri!.queryParameters['groupID']!;
     final shoppingListID = uri.queryParameters['shoppingListID']!;
