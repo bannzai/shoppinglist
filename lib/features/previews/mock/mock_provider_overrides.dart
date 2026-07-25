@@ -50,14 +50,6 @@ class _NoOpShoppingListAdd extends ShoppingListAdd {
   }
 }
 
-class _NoOpShoppingListDelete extends ShoppingListDelete {
-  _NoOpShoppingListDelete()
-    : super(database: GroupDatabase(groupID: mockGroupID));
-
-  @override
-  Future<void> call({required String shoppingListID}) async {}
-}
-
 class _NoOpShoppingListUpdate extends ShoppingListUpdate {
   _NoOpShoppingListUpdate()
     : super(database: GroupDatabase(groupID: mockGroupID));
@@ -356,9 +348,6 @@ List<Override> previewProviderOverrides({
     shoppingListAddProvider(
       groupID: mockGroupID,
     ).overrideWith((ref) => _NoOpShoppingListAdd()),
-    shoppingListDeleteProvider(
-      groupID: mockGroupID,
-    ).overrideWith((ref) => _NoOpShoppingListDelete()),
     shoppingListUpdateProvider(
       groupID: mockGroupID,
     ).overrideWith((ref) => _NoOpShoppingListUpdate()),
