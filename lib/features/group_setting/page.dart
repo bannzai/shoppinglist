@@ -14,7 +14,6 @@ import 'package:shoppinglist/features/notification_permission/pre_permission_dia
 import 'package:shoppinglist/features/shopping_location/page.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group.dart';
-import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/config/feature_flags.dart';
@@ -96,7 +95,6 @@ class _GroupSettingBody extends HookConsumerWidget {
     final groupNameUpdate = ref.watch(
       groupNameUpdateProvider(groupID: groupID),
     );
-    final createGroupInvitation = ref.watch(createGroupInvitationProvider);
     final isOwner =
         group.ownerUserID != null && group.ownerUserID == currentUserID;
     final groupNameController = useTextEditingController(
@@ -293,8 +291,8 @@ class _GroupSettingBody extends HookConsumerWidget {
                                       name: inputGroupName,
                                     );
                                   }
-                                  final invitation = await createGroupInvitation
-                                      .call(groupID: groupID);
+                                  final invitation = await functions
+                                      .createGroupInvitation(groupID: groupID);
                                   if (context.mounted) {
                                     await showDialog<void>(
                                       context: context,

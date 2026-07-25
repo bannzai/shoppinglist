@@ -4,9 +4,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/features/group_invitation/page.dart';
-import 'package:shoppinglist/provider/group_create.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
+import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 /// ログイン後・グループ未参加(defaultGroupID == null)のユーザーに表示する初期セットアップ画面。
@@ -25,7 +25,6 @@ class GroupJoinOrCreatePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isCreating = useState(false);
     final errorMessage = useState<String?>(null);
-    final createGroup = ref.watch(createGroupProvider);
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
 
@@ -66,6 +65,7 @@ class GroupJoinOrCreatePage extends HookConsumerWidget {
               if (errorMessage.value != null) ...[
                 const SizedBox(height: 16),
                 Text(
+                  key: const ValueKey('group_join_or_create_error_message'),
                   errorMessage.value!,
                   style: Theme.of(
                     context,
@@ -122,8 +122,8 @@ class GroupJoinOrCreatePage extends HookConsumerWidget {
                             isCreating.value = true;
                             errorMessage.value = null;
                             try {
-                              await createGroup.call(
-                                appUser: appUser,
+                              await functions.createGroup(
+                                createUserID: appUser.id,
                                 name: null,
                                 setAsDefault: true,
                                 iconName: 'home',

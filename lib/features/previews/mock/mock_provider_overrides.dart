@@ -1,7 +1,6 @@
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/entity/group_category.dart';
@@ -17,8 +16,6 @@ import 'package:shoppinglist/provider/current_shopping_list_id.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/default_group_update.dart';
 import 'package:shoppinglist/provider/group.dart';
-import 'package:shoppinglist/provider/group_create.dart';
-import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/remote_config_parameter.dart';
@@ -115,44 +112,12 @@ class _NoOpShoppingListItemBatchUpdate extends ShoppingListItemBatchUpdate {
   }) async {}
 }
 
-class _NoOpCreateGroupInvitation extends CreateGroupInvitation {
-  @override
-  Future<({String invitationCode, DateTime expiresDateTime})> call({
-    required String groupID,
-  }) async {
-    return (
-      invitationCode: 'PREVIEW',
-      expiresDateTime: DateTime.now().add(const Duration(days: 7)),
-    );
-  }
-}
-
-class _NoOpAcceptGroupInvitation extends AcceptGroupInvitation {
-  _NoOpAcceptGroupInvitation()
-    : super(userDatabase: UserDatabase(userID: mockUserID));
-
-  @override
-  Future<String> call({required String invitationCode}) async {
-    return mockGroupID;
-  }
-}
-
 class _NoOpDefaultGroupUpdate extends DefaultGroupUpdate {
   _NoOpDefaultGroupUpdate()
     : super(userDatabase: UserDatabase(userID: mockUserID));
 
   @override
   Future<void> call({required String groupID}) async {}
-}
-
-class _NoOpCreateGroup extends CreateGroup {
-  @override
-  Future<String> call({
-    required AppUser appUser,
-    required String? name,
-    required bool setAsDefault,
-    required String iconName,
-  }) async => mockGroupID;
 }
 
 class _NoOpCategoryAxisAdd extends GroupCategoryAxisAdd {
@@ -373,14 +338,7 @@ List<Override> previewProviderOverrides({
     ).overrideWith((ref) => _NoOpShoppingListItemBatchUpdate()),
 
     // 操作クラス (no-op) - Non-family providers
-    createGroupInvitationProvider.overrideWith(
-      (ref) => _NoOpCreateGroupInvitation(),
-    ),
-    acceptGroupInvitationProvider.overrideWith(
-      (ref) => _NoOpAcceptGroupInvitation(),
-    ),
     defaultGroupUpdateProvider.overrideWith((ref) => _NoOpDefaultGroupUpdate()),
-    createGroupProvider.overrideWith((ref) => _NoOpCreateGroup()),
 
     // カテゴリ操作 (no-op)
     groupCategoryAxisAddProvider(

@@ -16,12 +16,12 @@ import 'package:shoppinglist/features/shopping_list_setting/delete_confirm_dialo
 import 'package:shoppinglist/features/shopping_list_setting/invitation_code_dialog.dart';
 import 'package:shoppinglist/features/shopping_list_setting/shopping_location_select_page.dart';
 import 'package:shoppinglist/provider/group.dart';
-import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/config/feature_flags.dart';
+import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
@@ -65,7 +65,6 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     final shoppingListUpdate = ref.watch(
       shoppingListUpdateProvider(groupID: groupID),
     );
-    final createGroupInvitation = ref.watch(createGroupInvitationProvider);
     final items =
         ref
             .watch(
@@ -202,7 +201,6 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                                 : () => _onTapInvite(
                                   context: context,
                                   ref: ref,
-                                  createGroupInvitation: createGroupInvitation,
                                   isCreatingInvitation: isCreatingInvitation,
                                 ),
                         detail: null,
@@ -299,7 +297,6 @@ class ShoppingListSettingPage extends HookConsumerWidget {
   Future<void> _onTapInvite({
     required BuildContext context,
     required WidgetRef ref,
-    required CreateGroupInvitation createGroupInvitation,
     required ValueNotifier<bool> isCreatingInvitation,
   }) async {
     analytics.logEvent(
@@ -331,7 +328,9 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     }
     isCreatingInvitation.value = true;
     try {
-      final invitation = await createGroupInvitation.call(groupID: groupID);
+      final invitation = await functions.createGroupInvitation(
+        groupID: groupID,
+      );
       if (!context.mounted) {
         return;
       }
