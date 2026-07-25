@@ -3,21 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/features/group_invitation/page.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
-import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
-
-/// acceptGroupInvitation の Firebase Functions 呼び出しを差し替えるフェイク。
-/// 常に失敗し、エラーメッセージ表示状態を再現する。
-class _FailingAcceptGroupInvitation extends AcceptGroupInvitation {
-  _FailingAcceptGroupInvitation()
-    : super(userDatabase: UserDatabase(userID: 'test-user-001'));
-
-  @override
-  Future<String> call({required String invitationCode}) async {
-    throw Exception('有効な招待が見つかりません');
-  }
-}
 
 /// ソフトウェアキーボード表示中の viewport 縮小を MediaQuery.viewInsets で再現する。
 /// Scaffold の resizeToAvoidBottomInset がこの値を読んで body の高さを縮める。
@@ -26,8 +13,10 @@ const _keyboardInsets = EdgeInsets.only(bottom: 300);
 
 Widget _wrap() => ProviderScope(
   overrides: [
-    acceptGroupInvitationProvider.overrideWithValue(
-      _FailingAcceptGroupInvitation(),
+    // GroupInvitationAcceptPage が build 時に defaultGroupUpdateProvider を
+    // watch するため、依存先の userDatabaseProvider（Firebase 必須）を差し替える
+    userDatabaseProvider.overrideWith(
+      (ref) => UserDatabase(userID: 'test-user-001'),
     ),
   ],
   child: MaterialApp(
@@ -65,6 +54,8 @@ void main() {
     await tester.ensureVisible(
       find.byKey(const ValueKey('group_invitation_accept_button')),
     );
+    // widget test では Firebase 未初期化のため functions.acceptGroupInvitation が
+    // [core/no-app] で失敗し、エラーメッセージ表示状態を再現できる。
     await tester.tap(
       find.byKey(const ValueKey('group_invitation_accept_button')),
     );
