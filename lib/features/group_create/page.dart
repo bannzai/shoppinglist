@@ -7,11 +7,10 @@ import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/features/notification_permission/pre_permission_dialog.dart';
 import 'package:shoppinglist/provider/app_user.dart';
-import 'package:shoppinglist/provider/group_create.dart';
-import 'package:shoppinglist/provider/group_invitation.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
+import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 class GroupCreatePage extends HookConsumerWidget {
@@ -32,8 +31,6 @@ class GroupCreatePage extends HookConsumerWidget {
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final appUser = ref.watch(appUserProvider).asData?.value;
-    final createGroup = ref.watch(createGroupProvider);
-    final createGroupInvitation = ref.watch(createGroupInvitationProvider);
 
     return Scaffold(
       backgroundColor: neutral.paper,
@@ -188,8 +185,8 @@ class GroupCreatePage extends HookConsumerWidget {
                               if (appUser == null) {
                                 throw StateError('AppUser is not available');
                               }
-                              final groupID = await createGroup.call(
-                                appUser: appUser,
+                              final groupID = await functions.createGroup(
+                                createUserID: appUser.id,
                                 name: trimmedGroupName,
                                 setAsDefault: false,
                                 iconName: selectedIconName.value,
@@ -197,8 +194,8 @@ class GroupCreatePage extends HookConsumerWidget {
                               // 作成後、招待コードを直ちに生成して共有 dialog を表示する。
                               // `design_handoff_shoppinglist/preview/screens-groups.jsx` 準拠。
                               try {
-                                final invitation = await createGroupInvitation
-                                    .call(groupID: groupID);
+                                final invitation = await functions
+                                    .createGroupInvitation(groupID: groupID);
                                 if (context.mounted) {
                                   await showDialog<void>(
                                     context: context,

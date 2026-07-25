@@ -4,10 +4,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/features/notification_permission/pre_permission_dialog.dart';
-import 'package:shoppinglist/provider/group_invitation.dart';
+import 'package:shoppinglist/provider/default_group_update.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
+import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/invitation_code_validator.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -20,7 +21,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
     final errorMessage = useState<String?>(null);
     final codeController = useTextEditingController();
     final isValidCode = useState(false);
-    final acceptGroupInvitation = ref.watch(acceptGroupInvitationProvider);
+    final defaultGroupUpdate = ref.watch(defaultGroupUpdateProvider);
 
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
@@ -145,10 +146,13 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                               // 準拠で、サーバー応答中の手触りを伝える。
                               _showVerifyingDialog(context);
                               try {
-                                await acceptGroupInvitation.call(
-                                  invitationCode:
-                                      codeController.text.toUpperCase(),
-                                );
+                                final groupID = await functions
+                                    .acceptGroupInvitation(
+                                      invitationCode:
+                                          codeController.text.toUpperCase(),
+                                    );
+                                // 参加したグループをデフォルトグループに切り替える
+                                await defaultGroupUpdate.call(groupID: groupID);
                                 if (context.mounted) {
                                   Navigator.of(
                                     context,
