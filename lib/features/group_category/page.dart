@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/error_view.dart';
+import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
@@ -478,7 +479,7 @@ class _CategoryReorderableList extends ConsumerWidget {
           onTap:
               selectionForItem == null
                   ? null
-                  : () async {
+                  : () {
                     analytics.logEvent(
                       name: 'select_category_for_item',
                       parameters: {
@@ -486,26 +487,26 @@ class _CategoryReorderableList extends ConsumerWidget {
                         'categoryID': category.id,
                       },
                     );
-                    try {
-                      // アイテムはカテゴリIDを持たず message とキーワードのマッチで
-                      // 分類されるため、「選んだカテゴリへ変更」は移動先へ完全一致
-                      // キーワードを追加し、他カテゴリから同名の完全一致キーワードを
-                      // 削除する(= カテゴリ間 D&D と同じ付け替え)。これにより既に別
-                      // カテゴリへ分類済みのアイテムでも選んだカテゴリへ正しく移動する。
-                      await moveItemCategoryKeyword.call(
-                        categoryAxisID: categoryAxisID,
-                        itemMessage: selectionForItem!.message,
-                        destinationCategoryID: category.id,
-                        categories: categories,
-                      );
-                      if (context.mounted) {
-                        Navigator.pop(context);
-                      }
-                    } catch (e, st) {
-                      if (context.mounted) {
-                        showErrorSnackBar(context, e, st);
-                      }
-                    }
+                    // アイテムはカテゴリIDを持たず message とキーワードのマッチで
+                    // 分類されるため、「選んだカテゴリへ変更」は移動先へ完全一致
+                    // キーワードを追加し、他カテゴリから同名の完全一致キーワードを
+                    // 削除する(= カテゴリ間 D&D と同じ付け替え)。これにより既に別
+                    // カテゴリへ分類済みのアイテムでも選んだカテゴリへ正しく移動する。
+                    //
+                    // 付け替えは transaction のためサーバー往復が完了するまで返らず、
+                    // await してから pop するとカテゴリ数・回線速度に比例して画面戻り
+                    // が遅くなる(オフラインでは戻らない)(#517)。カテゴリ間 D&D と同じ
+                    // く完了を待たずに即 pop し、失敗時は pop 済みでも表示できる
+                    // グローバルトーストで通知する。
+                    moveItemCategoryKeyword
+                        .call(
+                          categoryAxisID: categoryAxisID,
+                          itemMessage: selectionForItem!.message,
+                          destinationCategoryID: category.id,
+                          categories: categories,
+                        )
+                        .catchError(showGlobalErrorToast);
+                    Navigator.pop(context);
                   },
           leading: Icon(
             categoryIconFromName(category.iconName),
