@@ -148,6 +148,39 @@ class _FakeMoveItemCategoryKeyword extends MoveItemCategoryKeyword {
   }
 }
 
+/// 完了タイミングを外部の [gate] で制御できる遅いフェイク。
+/// 画面戻り(pop)が永続化の完了にブロックされないことの検証に使う(#517)。
+class _SlowFakeMoveItemCategoryKeyword extends _FakeMoveItemCategoryKeyword {
+  _SlowFakeMoveItemCategoryKeyword({
+    required super.controller,
+    required super.current,
+    required this.gate,
+  });
+
+  /// 永続化(transaction)の完了を模擬する gate。complete するまで call が終わらない。
+  final Completer<void> gate;
+
+  /// call が開始されたかどうか。pop 時点で「開始済みかつ未完了」であることの検証に使う。
+  bool started = false;
+
+  @override
+  Future<void> call({
+    required String categoryAxisID,
+    required String itemMessage,
+    required String? destinationCategoryID,
+    required List<GroupCategory> categories,
+  }) async {
+    started = true;
+    await gate.future;
+    await super.call(
+      categoryAxisID: categoryAxisID,
+      itemMessage: itemMessage,
+      destinationCategoryID: destinationCategoryID,
+      categories: categories,
+    );
+  }
+}
+
 List<Override> _overrides({
   required StreamController<List<GroupCategory>> controller,
   required _FakeMoveItemCategoryKeyword fake,
@@ -266,6 +299,49 @@ void main() {
       expect(find.byType(GroupCategoryPage), findsNothing);
       // 選択した「デザート」に紐づくことを期待する（完全一致は部分一致より優先）。
       expect(find.text('matched: デザート'), findsOneWidget);
+    });
+
+    testWidgets('永続化の完了を待たずに即座に pop する', (tester) async {
+      final controller = StreamController<List<GroupCategory>>.broadcast();
+      addTearDown(controller.close);
+      final initial = [
+        _category(id: 'cat-001', name: '食品', order: 0),
+        _category(id: 'cat-002', name: '飲料', order: 1),
+      ];
+      final gate = Completer<void>();
+      final fake = _SlowFakeMoveItemCategoryKeyword(
+        controller: controller,
+        current: initial,
+        gate: gate,
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: _overrides(controller: controller, fake: fake),
+          child: MaterialApp(
+            theme: buildAppTheme(accent: AccentPreset.shu),
+            home: _DetailHost(item: _item(message: 'juice')),
+          ),
+        ),
+      );
+      controller.add(initial);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('カテゴリを選択'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('飲料'));
+      await tester.pumpAndSettle();
+
+      // 永続化(transaction)が未完了でも選択画面は既に pop している(#517)。
+      expect(fake.started, isTrue);
+      expect(gate.isCompleted, isFalse);
+      expect(find.byType(GroupCategoryPage), findsNothing);
+
+      // 永続化が完了すると stream 経由で紐づけが反映される。
+      gate.complete();
+      await tester.pumpAndSettle();
+      expect(find.text('matched: 飲料'), findsOneWidget);
     });
   });
 }
