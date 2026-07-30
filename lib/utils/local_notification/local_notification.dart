@@ -1,16 +1,10 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-part 'local_notification.g.dart';
-
+/// flutter_local_notifications のプラグインインスタンス。
+///
+/// 状態を持たない native への glue のため Provider でラップせず直接参照する
+/// （`functions` と同じ扱い。参照: .claude/rules/firebase-functions-call-rules.md）。
 final localNotifications = FlutterLocalNotificationsPlugin();
-
-/// flutter_local_notifications のプラグインインスタンスを提供するプロバイダー。
-@Riverpod(keepAlive: true, dependencies: [])
-FlutterLocalNotificationsPlugin localNotificationsPlugin(Ref ref) {
-  return localNotifications;
-}
 
 /// アプリ起動時にローカル通知プラグインを初期化する。
 Future<void> localNotificationsInitialize() async {
