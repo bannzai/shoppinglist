@@ -239,11 +239,10 @@ Google 公式の Native Templates(small) で描画し、読み込み完了まで
 - **表示条件**: 非プレミアムユーザーのみ（プレミアム機能: 広告削除、Issue #150）。
   判定は UI 表示用途のため `customerInfoProvider` の `isPremium` を使う（`provider/auth_claim.dart` 参照）。
   キーボード表示中は入力領域を優先して隠す（`RetentionBanner` と同じ扱い）。
-- **広告ユニット ID**: `lib/secret/secret.dart` の `iOSAdmobNativeAdvanceIdentifier` /
-  `androidAdmobNativeAdvanceIdentifier`。AdMob の App ID は iOS が
-  `ios/Flutter/{Debug,Release}.xcconfig` の `ADMOB_APP_ID`、Android が
+- **広告ユニット ID**: `lib/utils/config/admob.dart` に直書き(公開情報のため)。release ビルドは
+  実 ID、debug / profile ビルドは無効トラフィック対策で Google 公式のテスト用 ID を使う。
+  AdMob の App ID は iOS が `ios/Flutter/{Debug,Release}.xcconfig` の `ADMOB_APP_ID`、Android が
   `android/app/build.gradle` の `manifestPlaceholders["ADMOB_APP_ID"]`。
-  いずれも現在は Google 公式のテスト用 ID で、本番リリース前に実 ID への差し替えが必要。
 - **SDK 初期化**: `main.dart` で `MobileAds.instance.initialize()` を起動時に済ませる。
 - **ATT (App Tracking Transparency)**: iOS では広告ロード前に `app_tracking_transparency`
   パッケージで許可ダイアログを出す（広告を表示する非プレミアムユーザーのみ・初回のみ）。

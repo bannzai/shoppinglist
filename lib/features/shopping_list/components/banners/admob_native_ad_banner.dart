@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:shoppinglist/secret/secret.dart';
+import 'package:shoppinglist/utils/config/admob.dart';
 
 /// 買い物リスト一覧の上部に固定表示する AdMob Native 広告(Issue #77)。
 /// Google 公式の Native Templates(small) で描画し、読み込み完了までは高さ 0 で場所を取らない。
@@ -69,10 +69,7 @@ class _AdMobNativeAdBannerState extends State<AdMobNativeAdBanner> {
       }
     }
     final nativeAd = NativeAd(
-      adUnitId:
-          Platform.isAndroid
-              ? Secret.androidAdmobNativeAdvanceIdentifier
-              : Secret.iOSAdmobNativeAdvanceIdentifier,
+      adUnitId: admobNativeAdvanceAdUnitID,
       listener: NativeAdListener(
         onAdLoaded: (ad) {
           if (!mounted) {
