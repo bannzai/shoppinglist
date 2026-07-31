@@ -46,9 +46,10 @@ android {
         manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = "AIzaSyACylrSYjCSNXVnfH3vTgg2nM1HJfB0VTI"
         // AdMob App ID (Issue #77)。AndroidManifest の com.google.android.gms.ads.APPLICATION_ID が参照。
         // 未設定だと Google Mobile Ads SDK の初期化でクラッシュするため必須。
-        // 現在は Google 公式のサンプル App ID(テスト用)。AdMob でアプリ登録後、本番リリース前に必ず実 ID へ差し替える。
+        // クライアント埋め込み前提の公開情報のため直書き。debug ビルドで配信される広告は
+        // lib/utils/config/admob.dart がテスト用ユニット ID に切り替えるため、全 buildType で実 ID でよい。
         // https://developers.google.com/admob/android/quick-start#configure_your_app
-        manifestPlaceholders["ADMOB_APP_ID"] = "ca-app-pub-3940256099942544~3347511713"
+        manifestPlaceholders["ADMOB_APP_ID"] = "ca-app-pub-9127772965271297~5311886092"
     }
 
     signingConfigs {
