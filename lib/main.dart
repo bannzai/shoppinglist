@@ -16,6 +16,7 @@ import 'package:shoppinglist/utils/config/app_identity.dart' as app_identity;
 import 'package:shoppinglist/utils/config/environment.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_callback.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_data_sync.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shoppinglist/utils/development/debug.dart';
 import 'package:shoppinglist/utils/firebase_emulator/firebase_emulator.dart';
@@ -55,12 +56,14 @@ void main() async {
     overrideDebugPrint();
 
     // ignore: prefer_typing_uninitialized_variables
-    final (sharedPreferences, _, _, _) =
+    final (sharedPreferences, _, _, _, _) =
         await (
           SharedPreferences.getInstance(),
           setupRemoteConfig(),
           initializePurchase(),
           localNotificationsInitialize(),
+          // 広告表示(Issue #77)。ロードは AdMobNativeAdBanner が行うため初期化だけ済ませる。
+          MobileAds.instance.initialize(),
         ).wait;
 
     // MEMO: FirebaseCrashlytics#recordFlutterError called dumpErrorToConsole in function.

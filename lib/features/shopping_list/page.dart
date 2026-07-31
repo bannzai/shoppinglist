@@ -7,6 +7,7 @@ import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
+import 'package:shoppinglist/features/shopping_list/components/banners/admob_native_ad_banner.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/ai_processing_banner.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/list_error_card.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/retention_banner.dart';
@@ -31,6 +32,7 @@ import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 /// 買い物リストのメイン画面。買い物リスト一覧の状態(Loading/Error/空/データ)をハンドリングし、
 /// 共通レイアウト(_ShoppingListShell)と、有効なリストがある時の本体(_ActiveShoppingList)へ振り分ける。
@@ -238,6 +240,14 @@ class _ActiveShoppingList extends HookConsumerWidget {
     // viewInsets はキーボード実高を保持する(Scaffold body 内では viewInsets が 0 に潰れる)。
     final isKeyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
 
+    // 広告の表示可否(Issue #150)。UI 表示用途のプレミアム判定なので
+    // firestoreIsPremium ではなく customerInfoProvider を使う(auth_claim.dart 参照)。
+    // 未解決(ロード中)の間は表示しない側に倒す。`?? false` でマウントすると、
+    // プレミアムユーザーでも起動直後の1フレームで広告ロードと ATT ダイアログ表示
+    // (admob_native_ad_banner.dart)が走ってしまうため、非プレミアムと確定してから出す。
+    final customerInfo = ref.watch(customerInfoProvider).asData?.value;
+    final shouldShowAd = customerInfo != null && !customerInfo.isPremium;
+
     return _ShoppingListScaffold(
       groupID: groupID,
       groups: groups,
@@ -301,6 +311,11 @@ class _ActiveShoppingList extends HookConsumerWidget {
                     children: [
                       Column(
                         children: [
+                          // 一覧の上部に固定表示する Native 広告(Issue #77)。プレミアムユーザーには
+                          // 表示しない(Issue #150)。キーボード表示中は入力領域を優先して隠す
+                          // (RetentionBanner と同じ扱い)。
+                          if (shouldShowAd && !isKeyboardVisible)
+                            const AdMobNativeAdBanner(),
                           if (aiProcessingType != null)
                             AIProcessingBanner(type: aiProcessingType),
                           Expanded(
