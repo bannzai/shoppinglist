@@ -20,7 +20,6 @@ import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/remote_config_parameter.dart';
 import 'package:shoppinglist/provider/shared_preferences.dart';
-import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -257,7 +256,6 @@ List<Override> previewProviderOverrides({
     remoteConfigParameterProvider.overrideWith(
       (ref) => RemoteConfigParameter(),
     ),
-    firestoreIsPremiumProvider.overrideWith((ref) => Future.value(false)),
     // Preview では Purchases SDK 未初期化のため Stream.empty で逃がす。
     // asData が常に null → `?? false` で isPremium=false に解決される。
     customerInfoProvider.overrideWith(

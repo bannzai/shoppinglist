@@ -6,7 +6,6 @@ import 'package:shoppinglist/features/developer_options/firestore_viewer_page.da
 import 'package:shoppinglist/features/developer_options/provider.dart';
 import 'package:shoppinglist/features/shopping_list/components/create_list_spotlight.dart';
 import 'package:shoppinglist/provider/app_user.dart';
-import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -92,8 +91,6 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
 
     final customerInfo = ref.watch(customerInfoProvider).asData?.value;
     final revenueCatIsPremium = customerInfo?.isPremium ?? false;
-    final firestoreIsPremium =
-        ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
     // ④ Paywall 診断用: Offering / Package 構成のダンプ（確認後に削除可）。
     // 月額・年額が default(/current) Offering に標準 PackageType で入っているか確認する。
     final offerings = ref.watch(offeringsProvider).asData?.value;
@@ -114,7 +111,7 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
             ? ref.watch(
               shoppingListsProvider(
                 groupID: defaultGroupID,
-                isPremium: firestoreIsPremium,
+                isPremium: revenueCatIsPremium,
               ),
             )
             : null;
@@ -186,7 +183,7 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
           style: Theme.of(context).textTheme.bodySmall,
         ),
         Text(
-          'Premium(RC): $revenueCatIsPremium / Premium(Claims): $firestoreIsPremium',
+          'Premium(RC): $revenueCatIsPremium',
           style: Theme.of(context).textTheme.bodySmall,
         ),
         Text(

@@ -36,11 +36,21 @@ final customerInfoProvider = StreamProvider((ref) {
   // ref.invalidate 直後でも最新の CustomerInfo を即座に AsyncData として返せるよう、
   // Purchases.getCustomerInfo() の結果を初期値として流す。listener 経由の更新は
   // その後に上書きされる。
-  Purchases.getCustomerInfo().then((info) {
-    if (!stream.isClosed) {
-      stream.sink.add(info);
-    }
-  });
+  // 初回取得の失敗は AsyncError として流す。握りつぶすと AsyncLoading のまま残り、
+  // 本 Provider の解決を待つ AppEntityPrepareResolver が起動画面で止まり続けるため
+  // (Issue #523 でプレミアム判定の参照元を本 Provider に統一した)。
+  Purchases.getCustomerInfo().then(
+    (info) {
+      if (!stream.isClosed) {
+        stream.sink.add(info);
+      }
+    },
+    onError: (Object error, StackTrace stackTrace) {
+      if (!stream.isClosed) {
+        stream.sink.addError(error, stackTrace);
+      }
+    },
+  );
   void listener(CustomerInfo customerInfo) {
     stream.sink.add(customerInfo);
   }

@@ -5,7 +5,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_data_sync.dart';
 import 'package:shoppinglist/provider/app_user.dart';
-import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/current_group_id.dart';
 import 'package:shoppinglist/provider/current_shopping_list_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
@@ -32,12 +31,8 @@ class HomeWidgetSync extends HookConsumerWidget {
       return builder(context);
     }
 
-    final firestoreIsPremium =
-        ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
-    // ウィジェット表示用のプレミアム状態は RC の customerInfoProvider を使う。
-    // Custom Claims の isPremium は購入時に設定する経路が無く常に false のため
-    // (Issue #385)、firestoreIsPremiumProvider を同期するとウィジェット側の
-    // テーマカラーがプレミアム会員でも反映されない (Issue #475)。
+    // プレミアム状態は RC の customerInfoProvider を使う (SSOT は RevenueCat。
+    // ADR 0026 / Issue #475)。未解決(ロード中)は無料側に倒す。
     final customerInfoIsPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
     final themeColorHex =
@@ -45,7 +40,7 @@ class HomeWidgetSync extends HookConsumerWidget {
         defaultThemeColorHex;
     final groups = ref.watch(userGroupsProvider).valueOrNull ?? [];
     final shoppingListsAsync = ref.watch(
-      shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium),
+      shoppingListsProvider(groupID: groupID, isPremium: customerInfoIsPremium),
     );
     final resolvedShoppingListID = resolveShoppingListID(
       selected: ref.watch(currentShoppingListIDProvider),
@@ -87,7 +82,7 @@ class HomeWidgetSync extends HookConsumerWidget {
 
     // プレミアム状態の変更を検知して同期。
     // RC の購入・プロモーション付与・剥奪は customerInfoProvider の
-    // CustomerInfo 更新として流れてくる (Custom Claims は使わない。上記コメント参照)。
+    // CustomerInfo 更新として流れてくる。
     ref.listen(customerInfoProvider, (prev, next) {
       final prevIsPremium = prev?.valueOrNull?.isPremium;
       final nextIsPremium = next.valueOrNull?.isPremium;
@@ -101,7 +96,7 @@ class HomeWidgetSync extends HookConsumerWidget {
 
     // 買い物リスト一覧の変更を検知して同期
     ref.listen(
-      shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium),
+      shoppingListsProvider(groupID: groupID, isPremium: customerInfoIsPremium),
       (prev, next) {
         final lists = next.valueOrNull;
         if (lists != null && lists.isNotEmpty) {

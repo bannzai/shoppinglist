@@ -5,9 +5,9 @@ import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/features/group_join_or_create/page.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/app_user.dart';
-import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/fcm_token.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 class AppEntityPrepareResolver extends HookConsumerWidget {
   final Widget Function(BuildContext context) builder;
@@ -19,8 +19,9 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
     final appUserAsync = ref.watch(appUserProvider);
     final appUser = appUserAsync.asData?.value;
     final appUserDefaultGroupID = appUser?.defaultGroupID;
-    final firestoreIsPremiumAsync = ref.watch(firestoreIsPremiumProvider);
-    final isPremium = firestoreIsPremiumAsync.asData?.value;
+    // プレミアム判定の SSOT は RevenueCat の customerInfoProvider (ADR 0026)。
+    final customerInfoAsync = ref.watch(customerInfoProvider);
+    final isPremium = customerInfoAsync.asData?.value.isPremium;
 
     final shoppingListAdd =
         appUserDefaultGroupID != null
@@ -76,7 +77,7 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
     }
 
     // isPremium未解決時は初期リスト自動作成判定を実行しない
-    if (firestoreIsPremiumAsync.isLoading) {
+    if (customerInfoAsync.isLoading) {
       return LaunchLoading.shared();
     }
 
