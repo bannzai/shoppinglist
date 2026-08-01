@@ -13,11 +13,14 @@ appId: ${APP_ID}
 # design v2 のオンボーディングをスキップする。clearState 直後は必ず表示されるが、
 # 起動直後のスプラッシュ表示中に when:visible が空振りする race を避けるため、
 # スキップボタンが出るまで明示的に待ってから tap する。
-# timeout はホスト高負荷時(複数 Simulator 並走・ビルド同時実行)に cold start が
-# 30 秒を超えて flake するため、後段のサインイン待ちと同じ 90 秒にしている。
+# timeout は clearState 直後(フレッシュ状態)の cold start 実測に合わせる。
+# main() が runApp 前に Remote Config fetch(fetchTimeout 60秒)等のネットワーク
+# バリアを await するため、フレッシュ状態では first frame まで 60〜90 秒かかり得る
+# (issue #500 検証時の実測)。Maestro/XCUITest 計測のオーバーヘッドも乗るため、
+# 余裕を持って 180 秒にしている。
 - extendedWaitUntil:
     visible: "スキップ"
-    timeout: 90000
+    timeout: 180000
 - tapOn: "スキップ"
 - waitForAnimationToEnd
 - extendedWaitUntil:
