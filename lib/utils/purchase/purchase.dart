@@ -54,6 +54,19 @@ final customerInfoProvider = StreamProvider((ref) {
   return stream.stream;
 });
 
+/// RevenueCat の現在の App User ID。
+/// CustomerInfo の更新(AuthResolver の Purchases.logIn 完了・購入等)のたびに取り直し、
+/// ログイン完了後は Firebase uid と一致する。広告表示判定(shopping_list/page.dart の
+/// shouldShowAd)が「現在の Firebase ユーザーでログイン済みか」の判定に使う。
+/// CustomerInfo.originalAppUserId は「最初にその Customer を識別した ID」であり、
+/// 匿名状態から logIn で alias された端末では恒久的に $RCAnonymousID のままに
+/// なり得るため、現在ユーザーの判定には使わない。
+final revenueCatAppUserIDProvider = FutureProvider<String>((ref) async {
+  // 値は使わないが、CustomerInfo が更新されるたびに現在の App User ID を取り直す。
+  ref.watch(customerInfoProvider);
+  return Purchases.appUserID;
+});
+
 extension CustomerInfoExtension on CustomerInfo {
   // rc_promo_Premium `のみ` が含まれている場合は値を返す
   DateTime? get promotionExpirationDate {

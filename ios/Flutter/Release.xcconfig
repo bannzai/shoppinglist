@@ -17,3 +17,9 @@ GOOGLE_MAPS_API_KEY = AIzaSyDhdAhZIgKuIwjsQesJTlayEWnjXx-fvcI
 GID_CLIENT_ID = 323773689605-k2hfptltunveoigmrqfcsln2l0p630m0.apps.googleusercontent.com
 GID_REVERSED_CLIENT_ID = com.googleusercontent.apps.323773689605-k2hfptltunveoigmrqfcsln2l0p630m0
 
+// AdMob App ID (Issue #77)。Info.plist の GADApplicationIdentifier=$(ADMOB_APP_ID) が参照。
+// 未設定だと Google Mobile Ads SDK の初期化でクラッシュするため必須。
+// クライアント埋め込み前提の公開情報のため直書き。
+// https://developers.google.com/admob/ios/quick-start#update_your_infoplist
+ADMOB_APP_ID = ca-app-pub-9127772965271297~9433558962
+

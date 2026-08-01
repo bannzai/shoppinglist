@@ -44,6 +44,12 @@ android {
         // 既定は prod(base applicationId 用。profile/release が継承)。debug は buildTypes で dev に上書き。
         // クライアント埋め込み前提の公開情報のため直書き。GCP でアプリ制限(package+SHA-1)+API制限(Maps SDK for Android)を必須とする(Issue #410 / ADR 0030)。
         manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = "AIzaSyACylrSYjCSNXVnfH3vTgg2nM1HJfB0VTI"
+        // AdMob App ID (Issue #77)。AndroidManifest の com.google.android.gms.ads.APPLICATION_ID が参照。
+        // 未設定だと Google Mobile Ads SDK の初期化でクラッシュするため必須。
+        // クライアント埋め込み前提の公開情報のため直書き。debug ビルドで配信される広告は
+        // lib/utils/config/admob.dart がテスト用ユニット ID に切り替えるため、全 buildType で実 ID でよい。
+        // https://developers.google.com/admob/android/quick-start#configure_your_app
+        manifestPlaceholders["ADMOB_APP_ID"] = "ca-app-pub-9127772965271297~5311886092"
     }
 
     signingConfigs {

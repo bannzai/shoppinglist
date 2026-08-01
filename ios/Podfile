@@ -92,7 +92,18 @@ post_install do |installer|
   if runner_agg && widget_agg
     deps_path = File.expand_path(File.join('..', '.flutter-plugins-dependencies'), File.dirname(File.realpath(__FILE__)))
     flutter_plugins = File.exist?(deps_path) ? ((JSON.parse(File.read(deps_path)).dig('plugins', 'ios') || []).map { |p| p['name'] }) : []
-    exclude = flutter_plugins + ['Flutter']
+    # 広告 SDK (google_mobile_ads の transitive native framework) は Widget Extension で
+    # 一切使わず、extension 非対応 API を含むため archive の extension-safe 検証に失敗し得る。
+    # プラグイン名の除外だけでは Runner の OTHER_LDFLAGS に残るため明示的に除外する
+    # (PR #520 レビュー指摘)。名前は Pods-Runner の OTHER_LDFLAGS に現れる実フレームワーク名
+    # (例: Google-Mobile-Ads-SDK pod は "Google_Mobile_Ads_SDK")に合わせること。
+    ad_sdk_frameworks = [
+      'GoogleMobileAds',
+      'Google_Mobile_Ads_SDK',
+      'GoogleAdsOnDeviceConversion',
+      'UserMessagingPlatform',
+    ]
+    exclude = flutter_plugins + ['Flutter'] + ad_sdk_frameworks
     widget_agg.user_targets.each do |user_target|
       user_target.build_configurations.each do |config|
         runner_xcconfig = runner_agg.xcconfigs[config.name]

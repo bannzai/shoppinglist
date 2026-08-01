@@ -12,6 +12,10 @@
         android:label="shoppinglist"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- AdMob Native 広告 (Issue #77)。App ID は build.gradle の manifestPlaceholders から注入する。 -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${ADMOB_APP_ID}" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

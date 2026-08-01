@@ -16,6 +16,7 @@ import 'package:shoppinglist/utils/config/app_identity.dart' as app_identity;
 import 'package:shoppinglist/utils/config/environment.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_callback.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_data_sync.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shoppinglist/utils/development/debug.dart';
 import 'package:shoppinglist/utils/firebase_emulator/firebase_emulator.dart';
@@ -53,6 +54,18 @@ void main() async {
     );
 
     overrideDebugPrint();
+
+    // 広告 SDK の初期化(Issue #77)。広告は任意機能のため起動をブロックせず、
+    // 失敗しても runApp を妨げない(下の .wait に含めると、失敗時に ParallelWaitError が
+    // runZonedGuarded へ抜けて runApp 自体が実行されなくなる)。
+    // ロードは AdMobNativeAdBanner が行い、初期化完了前のロード要求は SDK 側で待たされる。
+    unawaited(() async {
+      try {
+        await MobileAds.instance.initialize();
+      } catch (e) {
+        debugPrint('MobileAds initialize error: $e');
+      }
+    }());
 
     // ignore: prefer_typing_uninitialized_variables
     final (sharedPreferences, _, _, _) =

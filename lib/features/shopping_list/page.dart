@@ -7,6 +7,7 @@ import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
+import 'package:shoppinglist/features/shopping_list/components/banners/admob_native_ad_banner.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/ai_processing_banner.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/list_error_card.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/retention_banner.dart';
@@ -23,6 +24,7 @@ import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/current_group_id.dart';
 import 'package:shoppinglist/provider/current_shopping_list_id.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/default_group_update.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_fab_menu.dart';
@@ -31,6 +33,7 @@ import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 /// 買い物リストのメイン画面。買い物リスト一覧の状態(Loading/Error/空/データ)をハンドリングし、
 /// 共通レイアウト(_ShoppingListShell)と、有効なリストがある時の本体(_ActiveShoppingList)へ振り分ける。
@@ -39,6 +42,14 @@ import 'package:shoppinglist/utils/logger/analytics.dart';
 /// HomePage(薄いラッパ)経由でも、Previews から直接生成されても、provider を介して動作する。
 /// item 系 provider の購読は resolvedShoppingListID が確定する _ActiveShoppingList 内でのみ行い、
 /// 条件付き ref.watch を持ち込まない。
+/// 広告バナーの State をリスト切替を跨いで保持するための GlobalKey。
+/// _ActiveShoppingList は ValueKey(resolvedShoppingListID) でリスト切替のたびに
+/// 破棄・再生成されるため、配下の広告バナーもそのままでは dispose され UMP/ATT と
+/// 広告ロードが再実行される。GlobalKey により同一フレーム内の再構築で Element ごと
+/// 引き継ぎ、ロード済み広告を保持する。ShoppingListPage(とバナー)は同時に 1 つしか
+/// マウントされないため Key の重複は起きない。
+final GlobalKey _adMobNativeAdBannerKey = GlobalKey();
+
 class ShoppingListPage extends ConsumerWidget {
   const ShoppingListPage({super.key});
 
@@ -238,6 +249,25 @@ class _ActiveShoppingList extends HookConsumerWidget {
     // viewInsets はキーボード実高を保持する(Scaffold body 内では viewInsets が 0 に潰れる)。
     final isKeyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
 
+    // 広告の表示可否(Issue #150)。UI 表示用途のプレミアム判定なので
+    // firestoreIsPremium ではなく customerInfoProvider を使う(auth_claim.dart 参照)。
+    // 未解決(ロード中)の間は表示しない側に倒す。`?? false` でマウントすると、
+    // プレミアムユーザーでも起動直後の1フレームで広告ロードと ATT ダイアログ表示
+    // (admob_native_ad_banner.dart)が走ってしまうため、非プレミアムと確定してから出す。
+    // さらに RevenueCat の現在の App User ID が Firebase uid と一致する
+    // (= 現在ユーザーでログイン済みの情報である)ことを要求する。AuthResolver の
+    // Purchases.logIn は unawaited のため、新規端末で既存プレミアムアカウントに
+    // サインインした直後は匿名ユーザーの非プレミアム情報が先に届くことがあり、
+    // それを根拠に広告・ATT を出さないため(revenueCatAppUserIDProvider 参照)。
+    final currentUserID = ref.watch(currentUserIDProvider);
+    final revenueCatAppUserID =
+        ref.watch(revenueCatAppUserIDProvider).asData?.value;
+    final customerInfo = ref.watch(customerInfoProvider).asData?.value;
+    final shouldShowAd =
+        customerInfo != null &&
+        !customerInfo.isPremium &&
+        revenueCatAppUserID == currentUserID;
+
     return _ShoppingListScaffold(
       groupID: groupID,
       groups: groups,
@@ -301,6 +331,19 @@ class _ActiveShoppingList extends HookConsumerWidget {
                     children: [
                       Column(
                         children: [
+                          // 一覧の上部に固定表示する Native 広告(Issue #77)。プレミアムユーザーには
+                          // 表示しない(Issue #150)。キーボード表示中は入力領域を優先して隠すが、
+                          // unmount するとロード済み広告が破棄され、キーボードを閉じるたびに
+                          // 再リクエストが発生するため、Visibility(maintainState) で State を
+                          // 保持したまま表示だけを消す。
+                          if (shouldShowAd)
+                            Visibility(
+                              visible: !isKeyboardVisible,
+                              maintainState: true,
+                              child: AdMobNativeAdBanner(
+                                key: _adMobNativeAdBannerKey,
+                              ),
+                            ),
                           if (aiProcessingType != null)
                             AIProcessingBanner(type: aiProcessingType),
                           Expanded(

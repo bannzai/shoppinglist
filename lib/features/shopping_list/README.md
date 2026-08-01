@@ -230,3 +230,25 @@ Issue #464 で一旦削除した（データフィールドと Functions は温�
 （ソロでは非表示・他メンバー居れば表示）と初回説明ダイアログのゲート（初回タップでダイアログ表示・
 キャンセルで送信しない）を widget test で検証する。送信（Firebase Functions 呼び出し）と2回目以降の
 直接送信は、シミュレータ + 開発者オプション「グループにデバッグユーザーを追加」で確認する。
+
+## Native 広告の固定表示と広告削除（Issue #77, #150）
+一覧の上部（`ListTopBar` 直下・白カード領域の先頭）に AdMob の Native 広告
+（`components/banners/admob_native_ad_banner.dart` の `AdMobNativeAdBanner`）を固定表示する。
+Google 公式の Native Templates(small) で描画し、読み込み完了までは高さ 0 で場所を取らない。
+
+- **表示条件**: 非プレミアムユーザーのみ（プレミアム機能: 広告削除、Issue #150）。
+  判定は UI 表示用途のため `customerInfoProvider` の `isPremium` を使う（`provider/auth_claim.dart` 参照）。
+  キーボード表示中は入力領域を優先して隠す（`RetentionBanner` と同じ扱い）。
+- **広告ユニット ID**: `lib/utils/config/admob.dart` に直書き(公開情報のため)。release ビルドは
+  実 ID、debug / profile ビルドは無効トラフィック対策で Google 公式のテスト用 ID を使う。
+  AdMob の App ID は iOS が `ios/Flutter/{Debug,Release}.xcconfig` の `ADMOB_APP_ID`、Android が
+  `android/app/build.gradle` の `manifestPlaceholders["ADMOB_APP_ID"]`。
+- **SDK 初期化**: `main.dart` で `MobileAds.instance.initialize()` を起動時に済ませる。
+- **ATT (App Tracking Transparency)**: iOS では広告ロード前に `app_tracking_transparency`
+  パッケージで許可ダイアログを出す（広告を表示する非プレミアムユーザーのみ・初回のみ）。
+  拒否されても広告は配信される（パーソナライズされないだけ）。文言は
+  `ios/Runner/Info.plist` の `NSUserTrackingUsageDescription`。
+
+### 検証
+`test/features/shopping_list/page_ad_visibility_test.dart` で、プレミアム状態による表示切り替えと
+キーボード表示中の非表示を widget test で検証する。実際の広告描画はシミュレータ + テスト広告で確認する。
