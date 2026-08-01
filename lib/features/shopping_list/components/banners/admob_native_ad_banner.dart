@@ -28,6 +28,12 @@ class _AdMobNativeAdBannerState extends State<AdMobNativeAdBanner> {
   // https://developers.google.com/admob/flutter/native/templates
   static const double _adAspectRatioSmall = 91 / 355;
 
+  // small テンプレートの高さレンジ。幅比例のままだと横向き iPhone(幅 844pt で約 216pt)や
+  // iPad(幅 1366pt で約 350pt)で広告が操作領域を圧迫するため上限を課し、
+  // 狭い幅でもテンプレートの推奨最小 90pt を下回らないよう下限を課す。
+  static const double _adMinHeight = 90;
+  static const double _adMaxHeight = 120;
+
   @override
   void initState() {
     super.initState();
@@ -45,11 +51,18 @@ class _AdMobNativeAdBannerState extends State<AdMobNativeAdBanner> {
     if (!_nativeAdIsLoaded || nativeAd == null) {
       return const SizedBox.shrink();
     }
-    final width = MediaQuery.sizeOf(context).width;
-    return SizedBox(
-      width: width,
-      height: width * _adAspectRatioSmall,
-      child: AdWidget(ad: nativeAd),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        return SizedBox(
+          width: width,
+          height: (width * _adAspectRatioSmall).clamp(
+            _adMinHeight,
+            _adMaxHeight,
+          ),
+          child: AdWidget(ad: nativeAd),
+        );
+      },
     );
   }
 

@@ -8,6 +8,7 @@ import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/previews/mock/mock_provider_overrides.dart';
 import 'package:shoppinglist/features/shopping_list/components/banners/admob_native_ad_banner.dart';
 import 'package:shoppinglist/features/shopping_list/page.dart';
+import 'package:shoppinglist/provider/current_shopping_list_id.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
@@ -172,6 +173,26 @@ void main() {
       find.byType(AdMobNativeAdBanner),
       findsNothing,
       reason: 'プレミアムユーザーの起動直後に広告ロードと ATT ダイアログが一瞬走るのを防ぐ',
+    );
+  });
+
+  testWidgets('リスト切替でも広告バナーの State を保持する', (tester) async {
+    await _pumpPage(tester, premium: false);
+    final stateBefore = tester.state(
+      find.byType(AdMobNativeAdBanner, skipOffstage: false),
+    );
+
+    // リスト切替で _ActiveShoppingList は ValueKey(resolvedShoppingListID) により
+    // 破棄・再生成されるが、GlobalKey(page.dart) により広告バナーの State は
+    // 引き継がれ、UMP/ATT と広告ロードが再実行されない。
+    ProviderScope.containerOf(
+      tester.element(find.byType(ShoppingListPage)),
+    ).read(currentShoppingListIDProvider.notifier).update(mockShoppingListID2);
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.state(find.byType(AdMobNativeAdBanner, skipOffstage: false)),
+      same(stateBefore),
     );
   });
 

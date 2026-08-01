@@ -42,6 +42,14 @@ import 'package:shoppinglist/utils/purchase/purchase.dart';
 /// HomePage(薄いラッパ)経由でも、Previews から直接生成されても、provider を介して動作する。
 /// item 系 provider の購読は resolvedShoppingListID が確定する _ActiveShoppingList 内でのみ行い、
 /// 条件付き ref.watch を持ち込まない。
+/// 広告バナーの State をリスト切替を跨いで保持するための GlobalKey。
+/// _ActiveShoppingList は ValueKey(resolvedShoppingListID) でリスト切替のたびに
+/// 破棄・再生成されるため、配下の広告バナーもそのままでは dispose され UMP/ATT と
+/// 広告ロードが再実行される。GlobalKey により同一フレーム内の再構築で Element ごと
+/// 引き継ぎ、ロード済み広告を保持する。ShoppingListPage(とバナー)は同時に 1 つしか
+/// マウントされないため Key の重複は起きない。
+final GlobalKey _adMobNativeAdBannerKey = GlobalKey();
+
 class ShoppingListPage extends ConsumerWidget {
   const ShoppingListPage({super.key});
 
@@ -332,7 +340,9 @@ class _ActiveShoppingList extends HookConsumerWidget {
                             Visibility(
                               visible: !isKeyboardVisible,
                               maintainState: true,
-                              child: const AdMobNativeAdBanner(),
+                              child: AdMobNativeAdBanner(
+                                key: _adMobNativeAdBannerKey,
+                              ),
                             ),
                           if (aiProcessingType != null)
                             AIProcessingBanner(type: aiProcessingType),
