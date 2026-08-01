@@ -154,6 +154,18 @@ const sendShoppingListUpdateNotificationFlow = ai.defineFlow(
 
       const response = await admin.messaging().sendEachForMulticast(message);
 
+      // 送信失敗の原因調査用にエラーコードを記録する。
+      // 無効トークン以外の失敗 (例: APNs 認証キー未設定の
+      // messaging/third-party-auth-error) はここでしか観測できない (issue #500)。
+      response.responses.forEach((resp, index) => {
+        if (!resp.success) {
+          logger.warn(
+            `FCM send failed for user ${tokenToUserMap.get(allTokens[index]) ?? "unknown"}: ` +
+              `code=${resp.error?.code ?? "unknown"} message=${resp.error?.message ?? ""}`
+          );
+        }
+      });
+
       // 無効トークンのクリーンアップ
       const invalidTokens: Map<string, string[]> = new Map();
       response.responses.forEach((resp, index) => {
