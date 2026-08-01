@@ -55,15 +55,25 @@ void main() async {
 
     overrideDebugPrint();
 
+    // 広告 SDK の初期化(Issue #77)。広告は任意機能のため起動をブロックせず、
+    // 失敗しても runApp を妨げない(下の .wait に含めると、失敗時に ParallelWaitError が
+    // runZonedGuarded へ抜けて runApp 自体が実行されなくなる)。
+    // ロードは AdMobNativeAdBanner が行い、初期化完了前のロード要求は SDK 側で待たされる。
+    unawaited(() async {
+      try {
+        await MobileAds.instance.initialize();
+      } catch (e) {
+        debugPrint('MobileAds initialize error: $e');
+      }
+    }());
+
     // ignore: prefer_typing_uninitialized_variables
-    final (sharedPreferences, _, _, _, _) =
+    final (sharedPreferences, _, _, _) =
         await (
           SharedPreferences.getInstance(),
           setupRemoteConfig(),
           initializePurchase(),
           localNotificationsInitialize(),
-          // 広告表示(Issue #77)。ロードは AdMobNativeAdBanner が行うため初期化だけ済ませる。
-          MobileAds.instance.initialize(),
         ).wait;
 
     // MEMO: FirebaseCrashlytics#recordFlutterError called dumpErrorToConsole in function.

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
@@ -54,11 +55,33 @@ class _AdMobNativeAdBannerState extends State<AdMobNativeAdBanner> {
 
   /// Native 広告をロードする。失敗時は高さ 0 のまま何も表示しない。
   ///
-  /// iOS はロード前に App Tracking Transparency の許可を求める(Pilll と同じく
-  /// 広告を表示する非プレミアムユーザーだけに出す)。ダイアログは初回のみ表示され、
-  /// 以降は決定済みステータスが即座に返る。拒否されても広告は配信される
-  /// (パーソナライズされないだけ)ため、結果に関わらずロードへ進む。
+  /// ロード前に順に以下を行う。初回フレーム後のコールバックは Widget の破棄で
+  /// キャンセルされないため、各 await の後に mounted を確認し、ツリーから外れていたら
+  /// 同意要求・ATT・広告リクエストを中止する。
+  ///
+  /// 1. UMP の同意状態更新と(必須地域のみ)同意フォーム表示。EEA 等では同意なしの
+  ///    AdRequest が AdMob の配信制限・アカウント措置につながるため、リクエスト可能と
+  ///    確認できた場合だけロードへ進む
+  /// 2. iOS のみ App Tracking Transparency の許可要求(Pilll と同じく広告を見る
+  ///    非プレミアムユーザーだけに出す)。拒否されても広告は配信される
+  ///    (パーソナライズされないだけ)ため、結果に関わらずロードへ進む
   Future<void> _loadAd() async {
+    if (!mounted) {
+      return;
+    }
+    try {
+      if (!await _consentGatheredAndCanRequestAds()) {
+        return;
+      }
+    } catch (e) {
+      // widget test 環境では platform channel が存在せず失敗する。
+      // 同意状態が不明のままのロードは行わない。
+      debugPrint('UMP consent error: $e');
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
     if (Platform.isIOS) {
       try {
         await AppTrackingTransparency.requestTrackingAuthorization();
@@ -66,6 +89,9 @@ class _AdMobNativeAdBannerState extends State<AdMobNativeAdBanner> {
         // widget test 環境では platform channel が存在せず失敗するが、
         // ATT はロード継続に必須ではないため握りつぶす。
         debugPrint('requestTrackingAuthorization error: $e');
+      }
+      if (!mounted) {
+        return;
       }
     }
     final nativeAd = NativeAd(
@@ -101,6 +127,34 @@ class _AdMobNativeAdBannerState extends State<AdMobNativeAdBanner> {
       nativeAd.dispose();
       _nativeAd = null;
     }
+  }
+
+  /// UMP(User Messaging Platform) の同意状態を更新し、必須地域では同意フォームを
+  /// 表示した上で、広告リクエスト可能かを返す。
+  /// フォームは AdMob コンソールのプライバシーメッセージ設定に従い必須地域でのみ表示される。
+  /// 同意状態の「更新」に失敗しても、前回セッションまでに取得済みの同意でリクエスト可能な
+  /// 場合がある(Google 公式サンプルと同じ扱い)ため、更新失敗では中断せず
+  /// canRequestAds の判定に委ねる。
+  Future<bool> _consentGatheredAndCanRequestAds() async {
+    final consentUpdated = Completer<void>();
+    ConsentInformation.instance.requestConsentInfoUpdate(
+      ConsentRequestParameters(),
+      () => consentUpdated.complete(),
+      (FormError error) {
+        debugPrint('requestConsentInfoUpdate error: ${error.message}');
+        consentUpdated.complete();
+      },
+    );
+    await consentUpdated.future;
+    final formDismissed = Completer<void>();
+    await ConsentForm.loadAndShowConsentFormIfRequired((FormError? error) {
+      if (error != null) {
+        debugPrint('loadAndShowConsentFormIfRequired error: ${error.message}');
+      }
+      formDismissed.complete();
+    });
+    await formDismissed.future;
+    return ConsentInformation.instance.canRequestAds();
   }
 
   @override

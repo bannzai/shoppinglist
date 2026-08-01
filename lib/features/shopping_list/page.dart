@@ -24,6 +24,7 @@ import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/current_group_id.dart';
 import 'package:shoppinglist/provider/current_shopping_list_id.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/default_group_update.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_fab_menu.dart';
@@ -245,8 +246,16 @@ class _ActiveShoppingList extends HookConsumerWidget {
     // 未解決(ロード中)の間は表示しない側に倒す。`?? false` でマウントすると、
     // プレミアムユーザーでも起動直後の1フレームで広告ロードと ATT ダイアログ表示
     // (admob_native_ad_banner.dart)が走ってしまうため、非プレミアムと確定してから出す。
+    // さらに CustomerInfo が現在の Firebase ユーザーで RevenueCat にログイン済みの
+    // 情報であることを要求する。AuthResolver の Purchases.logIn は unawaited のため、
+    // 新規端末で既存プレミアムアカウントにサインインした直後は匿名ユーザーの
+    // 非プレミアム情報が先に届くことがあり、それを根拠に広告・ATT を出さないため。
+    final currentUserID = ref.watch(currentUserIDProvider);
     final customerInfo = ref.watch(customerInfoProvider).asData?.value;
-    final shouldShowAd = customerInfo != null && !customerInfo.isPremium;
+    final shouldShowAd =
+        customerInfo != null &&
+        !customerInfo.isPremium &&
+        customerInfo.originalAppUserId == currentUserID;
 
     return _ShoppingListScaffold(
       groupID: groupID,
@@ -312,10 +321,16 @@ class _ActiveShoppingList extends HookConsumerWidget {
                       Column(
                         children: [
                           // 一覧の上部に固定表示する Native 広告(Issue #77)。プレミアムユーザーには
-                          // 表示しない(Issue #150)。キーボード表示中は入力領域を優先して隠す
-                          // (RetentionBanner と同じ扱い)。
-                          if (shouldShowAd && !isKeyboardVisible)
-                            const AdMobNativeAdBanner(),
+                          // 表示しない(Issue #150)。キーボード表示中は入力領域を優先して隠すが、
+                          // unmount するとロード済み広告が破棄され、キーボードを閉じるたびに
+                          // 再リクエストが発生するため、Visibility(maintainState) で State を
+                          // 保持したまま表示だけを消す。
+                          if (shouldShowAd)
+                            Visibility(
+                              visible: !isKeyboardVisible,
+                              maintainState: true,
+                              child: const AdMobNativeAdBanner(),
+                            ),
                           if (aiProcessingType != null)
                             AIProcessingBanner(type: aiProcessingType),
                           Expanded(
