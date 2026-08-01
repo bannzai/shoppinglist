@@ -15,6 +15,10 @@ class FcmNotificationHandler {
 
     // フォアグラウンド通知: グローバルトーストで表示（モーダルの上にも出る）
     FirebaseMessaging.onMessage.listen((message) {
+      debugPrint(
+        '[FCM] onMessage 受信: messageId=${message.messageId} '
+        'notification=${message.notification?.title}/${message.notification?.body}',
+      );
       final notification = message.notification;
       if (notification == null) {
         return;
