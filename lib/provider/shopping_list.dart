@@ -7,8 +7,8 @@ import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 part 'shopping_list.g.dart';
 
@@ -128,11 +128,14 @@ class ShoppingListAdd {
   }
 }
 
-@Riverpod(dependencies: [groupDatabase, firestoreIsPremium])
+@Riverpod(dependencies: [groupDatabase])
 ShoppingListAdd shoppingListAdd(Ref ref, {required String groupID}) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
+  // プレミアム判定の SSOT は RevenueCat (ADR 0026)。Custom Claims 由来の
+  // firestoreIsPremium は設定経路が無く常に false でプレミアム会員でも
+  // リスト作成上限に達していた (Issue #523)。未解決(ロード中)は無料側に倒す。
   final isPremium =
-      ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
+      ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
   return ShoppingListAdd(
     database: database,
     isPremiumResolver: () => isPremium,

@@ -30,3 +30,4 @@ Accepted
 - `homeWidgetBackgroundCallback`（バックグラウンド isolate）等、AppDelegate のチャンネル登録が無いエンジンから `updateWidget()` が呼ばれた場合は `MissingPluginException` を握って `HomeWidget.updateWidget()` のみで続行する（フォールバックのフォールバック）
 - ウィジェット kind を将来複数に増やす場合も `reloadAllTimelines()` は全 kind を更新するため動作するが、特定 kind のみ更新したい要件が出た時はチャンネルの引数設計を見直す必要がある
 - Custom Claims ベースの `firestoreIsPremiumProvider` は Firestore クエリフィルタ用途に限定される。claims に isPremium を設定する経路を将来追加する場合は、本 ADR の判定ソース分離を再評価すること
+  - 追記: Issue #523 で `firestoreIsPremiumProvider` は削除され、`shoppingListsProvider` への `isPremium` 引数を含むクライアント側のプレミアム判定はすべて RC の `customerInfoProvider` に統一された（ADR 0026 の追記参照）。本 ADR の「判定ソース分離」は解消済み

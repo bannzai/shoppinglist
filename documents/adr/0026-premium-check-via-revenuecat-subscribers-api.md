@@ -29,3 +29,4 @@ ADR 0008 の「RC Promo API 呼び出しと同時に Custom Claims も設定す�
 - プレミアム判定を行う Functions の呼び出しごとに RevenueCat API への HTTP 往復（数百 ms）が追加される。現状の呼び出し頻度では許容範囲だが、増加した場合はキャッシュの検討が必要
 - プレミアム判定を行うすべての Functions に `REVENUECAT_SECRET_API_KEY` の secret バインドが必要になる
 - クライアント側の `firestoreIsPremium`（Custom Claims 読み取り、home_widget_sync で使用）は依然 false を返し続ける問題が残っており、別途対応が必要
+  - 追記: Issue #523（課金後もリスト作成上限の課金催促が出る）でこの残課題が顕在化したため、クライアント側のプレミアム判定も RevenueCat SDK の `customerInfoProvider` に統一し、`firestoreIsPremium` は削除した

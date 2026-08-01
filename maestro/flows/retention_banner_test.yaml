@@ -1,7 +1,7 @@
 appId: ${APP_ID}
 ---
 # 無料プランのリテンションバナー(RetentionBanner)の検証。
-# 条件: !firestoreIsPremium && totalCount > 50 && !isKeyboardVisible (page.dart)。
+# 条件: !isPremium && totalCount > 50 && !isKeyboardVisible (page.dart)。
 # 51件のアイテムを入力してバナー表示条件を満たし、「詳しく」でペイウォールに遷移することを確認する。
 
 - runFlow: shared/anonymous_sign_in.yaml

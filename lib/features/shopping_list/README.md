@@ -237,7 +237,7 @@ Issue #464 で一旦削除した（データフィールドと Functions は温�
 Google 公式の Native Templates(small) で描画し、読み込み完了までは高さ 0 で場所を取らない。
 
 - **表示条件**: 非プレミアムユーザーのみ（プレミアム機能: 広告削除、Issue #150）。
-  判定は UI 表示用途のため `customerInfoProvider` の `isPremium` を使う（`provider/auth_claim.dart` 参照）。
+  判定は RevenueCat SDK の `customerInfoProvider` の `isPremium` を使う（プレミアム判定の SSOT。ADR 0026 / Issue #523 参照）。
   キーボード表示中は入力領域を優先して隠す（`RetentionBanner` と同じ扱い）。
 - **広告ユニット ID**: `lib/utils/config/admob.dart` に直書き(公開情報のため)。release ビルドは
   実 ID、debug / profile ビルドは無効トラフィック対策で Google 公式のテスト用 ID を使う。

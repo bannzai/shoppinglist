@@ -21,7 +21,6 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_bod
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
 import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/app_user.dart';
-import 'package:shoppinglist/provider/auth_claim.dart';
 import 'package:shoppinglist/provider/current_group_id.dart';
 import 'package:shoppinglist/provider/current_shopping_list_id.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
@@ -63,12 +62,14 @@ class ShoppingListPage extends ConsumerWidget {
       return LaunchLoading.shared();
     }
 
-    final firestoreIsPremium =
-        ref.watch(firestoreIsPremiumProvider).asData?.value ?? false;
+    // プレミアム判定の SSOT は RevenueCat の customerInfoProvider (ADR 0026)。
+    // 未解決(ロード中)は無料側(30日フィルタあり)に倒す。
+    final isPremium =
+        ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
     final groups = ref.watch(userGroupsProvider).asData?.value;
     final appUser = ref.watch(appUserProvider).asData?.value;
     final shoppingListsAsync = ref.watch(
-      shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium),
+      shoppingListsProvider(groupID: groupID, isPremium: isPremium),
     );
     final resolvedShoppingListID = resolveShoppingListID(
       selected: ref.watch(currentShoppingListIDProvider),
@@ -76,7 +77,7 @@ class ShoppingListPage extends ConsumerWidget {
     );
 
     void invalidateLists() => ref.invalidate(
-      shoppingListsProvider(groupID: groupID, isPremium: firestoreIsPremium),
+      shoppingListsProvider(groupID: groupID, isPremium: isPremium),
     );
 
     return shoppingListsAsync.when(
@@ -95,7 +96,7 @@ class ShoppingListPage extends ConsumerWidget {
           shoppingListID: resolvedShoppingListID,
           shoppingLists: lists,
           groups: groups,
-          firestoreIsPremium: firestoreIsPremium,
+          isPremium: isPremium,
         );
       },
       error:
@@ -190,7 +191,7 @@ class _ActiveShoppingList extends HookConsumerWidget {
   final String shoppingListID;
   final List<GroupShoppingList> shoppingLists;
   final List<Group>? groups;
-  final bool firestoreIsPremium;
+  final bool isPremium;
 
   const _ActiveShoppingList({
     super.key,
@@ -198,7 +199,7 @@ class _ActiveShoppingList extends HookConsumerWidget {
     required this.shoppingListID,
     required this.shoppingLists,
     required this.groups,
-    required this.firestoreIsPremium,
+    required this.isPremium,
   });
 
   @override
@@ -249,8 +250,7 @@ class _ActiveShoppingList extends HookConsumerWidget {
     // viewInsets はキーボード実高を保持する(Scaffold body 内では viewInsets が 0 に潰れる)。
     final isKeyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
 
-    // 広告の表示可否(Issue #150)。UI 表示用途のプレミアム判定なので
-    // firestoreIsPremium ではなく customerInfoProvider を使う(auth_claim.dart 参照)。
+    // 広告の表示可否(Issue #150)。
     // 未解決(ロード中)の間は表示しない側に倒す。`?? false` でマウントすると、
     // プレミアムユーザーでも起動直後の1フレームで広告ロードと ATT ダイアログ表示
     // (admob_native_ad_banner.dart)が走ってしまうため、非プレミアムと確定してから出す。
@@ -273,10 +273,7 @@ class _ActiveShoppingList extends HookConsumerWidget {
       groups: groups,
       onRetry: () {
         ref.invalidate(
-          shoppingListsProvider(
-            groupID: groupID,
-            isPremium: firestoreIsPremium,
-          ),
+          shoppingListsProvider(groupID: groupID, isPremium: isPremium),
         );
         ref.invalidate(
           textShoppingListItemsProvider(
@@ -373,7 +370,7 @@ class _ActiveShoppingList extends HookConsumerWidget {
                           // キーボード表示中は隠す。表示したままだと body 下端に出る
                           // KeyboardCloseToolbar の直上に並び、ツールバー分だけ持ち上げた
                           // FAB がバナー右側の操作領域に重なってしまうため(Issue #498)。
-                          if (!firestoreIsPremium &&
+                          if (!isPremium &&
                               totalCount > 50 &&
                               !isKeyboardVisible)
                             const RetentionBanner(),
