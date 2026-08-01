@@ -20,9 +20,6 @@ class LocationReminderToggle extends ConsumerWidget {
     final isEnabled = ref.watch(
       boolSharedPreferencesProvider(key: BoolKey.locationReminderEnabled),
     );
-    final localNotificationsPlugin = ref.watch(
-      localNotificationsPluginProvider,
-    );
     final locationReminderNotifier = ref.watch(
       boolSharedPreferencesProvider(
         key: BoolKey.locationReminderEnabled,
@@ -52,7 +49,7 @@ class LocationReminderToggle extends ConsumerWidget {
                 if (value) {
                   // Android通知権限の確認
                   final androidNotifications =
-                      localNotificationsPlugin
+                      localNotifications
                           .resolvePlatformSpecificImplementation<
                             AndroidFlutterLocalNotificationsPlugin
                           >();

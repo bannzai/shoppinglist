@@ -14,11 +14,9 @@ import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 part 'geofence.g.dart';
 
 /// GeofenceService のシングルトンインスタンスを提供するプロバイダー。
-@Riverpod(keepAlive: true, dependencies: [localNotificationsPlugin])
+@Riverpod(keepAlive: true, dependencies: [])
 GeofenceService geofenceService(Ref ref) {
-  final service = GeofenceService(
-    notificationsPlugin: ref.watch(localNotificationsPluginProvider),
-  );
+  final service = GeofenceService(notificationsPlugin: localNotifications);
   ref.onDispose(service.dispose);
   return service;
 }

@@ -6,7 +6,7 @@ part of 'geofence.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$geofenceServiceHash() => r'ebaeef2e7db157d0c444c375c27136cc553ac3fd';
+String _$geofenceServiceHash() => r'f0fb7c0f0a587f27b84f062eaf83838942fd2311';
 
 /// GeofenceService のシングルトンインスタンスを提供するプロバイダー。
 ///
@@ -19,11 +19,8 @@ final geofenceServiceProvider = Provider<GeofenceService>.internal(
       const bool.fromEnvironment('dart.vm.product')
           ? null
           : _$geofenceServiceHash,
-  dependencies: <ProviderOrFamily>[localNotificationsPluginProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    localNotificationsPluginProvider,
-    ...?localNotificationsPluginProvider.allTransitiveDependencies,
-  },
+  dependencies: const <ProviderOrFamily>[],
+  allTransitiveDependencies: const <ProviderOrFamily>{},
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
