@@ -66,9 +66,17 @@ fi
 printf '  → asset_id=%s\n' "$asset_id"
 
 # Step 2: PUT (JWT 不要、署名付き URL)
+# ヘッダ値に空白を含む ("Content-Type: image/png" 等) ため、eval + 文字列連結ではなく
+# 配列で curl に渡す (未クオートだと値が別引数に分割され curl が URL と誤認する)
 printf 'Uploading file to signed URL\n'
-upload_headers=$(printf '%s' "$reserve_response" | jq -r '.data.attributes.uploadOperations[0].requestHeaders[] | "-H \(.name + ": " + .value)"' | tr '\n' ' ')
-eval "curl -sS -X PUT $upload_headers --data-binary '@${PNG_PATH}' '${upload_url}'"
+declare -a upload_header_args=()
+while IFS=$'\t' read -r header_name header_value; do
+  upload_header_args+=(-H "${header_name}: ${header_value}")
+done < <(printf '%s' "$reserve_response" | jq -r '.data.attributes.uploadOperations[0].requestHeaders[] | [.name, .value] | @tsv')
+if ! curl -fsS -X PUT "${upload_header_args[@]}" --data-binary "@${PNG_PATH}" "$upload_url"; then
+  printf 'Upload PUT failed. Aborting before commit.\n' >&2
+  exit 1
+fi
 
 # Step 3: commit
 commit_body=$(jq -n --arg cs "$md5_checksum" --arg aid "$asset_id" \

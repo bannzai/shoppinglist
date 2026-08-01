@@ -3,6 +3,7 @@
 # Usage:
 #   set_prices.sh --subscription-id SUB_ID --price-jp 480 --territories US,JP,GB
 #   set_prices.sh --subscription-id SUB_ID --price-jp 480 --all-territories
+#   set_prices.sh --subscription-id SUB_ID --price-jp 480 --territories JPN --start-date 2026-01-01
 
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -14,7 +15,10 @@ SUB_ID=""
 PRICE_JP=""
 TERRITORIES=""
 ALL_TERRITORIES=0
-START_DATE="$(date -u +%Y-%m-%d)"
+# 初回価格は startDate なし (即時適用) でしか設定できず、ASC は当日以前の startDate を
+# "a future date is expected, and must be on or after <明日>" で拒否する。
+# そのためデフォルトは空 (= startDate を送らない)。予約価格変更のみ --start-date で翌日以降を指定する。
+START_DATE=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -98,24 +102,43 @@ for territory in "${TS[@]}"; do
     fi
   fi
 
-  body=$(jq -n \
-    --arg sd "$START_DATE" \
-    --arg sid "$SUB_ID" \
-    --arg pp "$target_pp_id" \
-    '{
-      data: {
-        type: "subscriptionPrices",
-        attributes: { startDate: $sd, preserveCurrentPrice: false },
-        relationships: {
-          subscription: { data: { type: "subscriptions", id: $sid } },
-          subscriptionPricePoint: { data: { type: "subscriptionPricePoints", id: $pp } }
+  if [[ -n "$START_DATE" ]]; then
+    body=$(jq -n \
+      --arg sd "$START_DATE" \
+      --arg sid "$SUB_ID" \
+      --arg pp "$target_pp_id" \
+      '{
+        data: {
+          type: "subscriptionPrices",
+          attributes: { startDate: $sd, preserveCurrentPrice: false },
+          relationships: {
+            subscription: { data: { type: "subscriptions", id: $sid } },
+            subscriptionPricePoint: { data: { type: "subscriptionPricePoints", id: $pp } }
+          }
         }
-      }
-    }')
+      }')
+  else
+    body=$(jq -n \
+      --arg sid "$SUB_ID" \
+      --arg pp "$target_pp_id" \
+      '{
+        data: {
+          type: "subscriptionPrices",
+          relationships: {
+            subscription: { data: { type: "subscriptions", id: $sid } },
+            subscriptionPricePoint: { data: { type: "subscriptionPricePoints", id: $pp } }
+          }
+        }
+      }')
+  fi
 
-  asc_api POST "/v1/subscriptionPrices" "$body" >/dev/null
+  response=$(asc_api POST "/v1/subscriptionPrices" "$body")
 
   if [[ "${DRY_RUN:-0}" != "1" ]]; then
+    if ! printf '%s' "$response" | jq -e '.data.id' >/dev/null 2>&1; then
+      printf '  → failed: %s\n' "$response" >&2
+      exit 1
+    fi
     printf '  → set\n'
     sleep 0.2  # スロットリング
   fi
