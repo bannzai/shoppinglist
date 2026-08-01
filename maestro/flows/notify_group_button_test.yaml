@@ -17,6 +17,10 @@ appId: ${APP_ID}
 - runFlow: virtual_pairing/02_create_debug_user.yaml
 - runFlow: virtual_pairing/03_add_to_group.yaml
 
+# この端末のFCMトークンをデバッグユーザーに登録し、
+# 送信するプッシュを自端末で受信できるようにする(1台でのプッシュ実受信検証)
+- runFlow: shared/register_debug_fcm_token_via_debug.yaml
+
 # 他メンバーが居るため通知ボタンが表示される
 - assertVisible: "グループに通知"
 - takeScreenshot: screenshots/notify_group_02_button_visible
@@ -32,9 +36,21 @@ appId: ${APP_ID}
 - assertVisible: "グループに通知しました"
 - takeScreenshot: screenshots/notify_group_04_toast_first_tap
 
+# プッシュ通知の実受信検証: デバッグユーザー宛に送られたプッシュがこの端末に届き、
+# フォアグラウンド受信ハンドラ(FcmNotificationHandler.onMessage)がグローバルトーストで
+# 通知タイトル「◯◯さんが買い物リストを更新しました」を表示することを確認する。
+# 既知の不具合: フォアグラウンド受信時に onMessage が発火せずトーストが出ない
+# (バックグラウンドではシステムバナー表示・配送自体は正常なことを issue #500 検証で確認済み)。
+# 不具合修正までこのアサートは optional とし、修正後に optional を外す。
+- extendedWaitUntil:
+    visible: ".*さんが買い物リストを更新しました.*"
+    timeout: 30000
+    optional: true
+- takeScreenshot: screenshots/notify_group_05_push_received
+
 - waitForAnimationToEnd
 
 # 2回目タップ: ダイアログを出さず即送信する
 - tapOn: "グループに通知"
 - assertVisible: "グループに通知しました"
-- takeScreenshot: screenshots/notify_group_05_toast_second_tap
+- takeScreenshot: screenshots/notify_group_06_toast_second_tap

@@ -1,0 +1,40 @@
+appId: ${APP_ID}
+---
+# 開発者オプション画面 → 「デバッグユーザーにFCMトークン登録」タップ → 完了確認の共通サブフロー。
+#
+# この端末の FCM トークンをデバッグユーザーの privates に登録することで、
+# グループ通知 (NotifyGroupButton → sendShoppingListUpdateNotification) のプッシュが
+# 自端末に届き、1台でプッシュ通知の実受信 (Functions → FCM → APNs → 端末) を検証できる。
+# 前提: デバッグユーザーが作成済み (virtual_pairing/02_create_debug_user.yaml)。
+#
+# 実装位置: `lib/features/developer_options/page.dart` の「デバッグユーザーにFCMトークン登録」
+# (`_ActionTile` + `_execute` パターン)。
+
+- runFlow: open_developer_options.yaml
+
+# デバッグ系タイルは開発者オプション下部にありフォールド下になり得るためスクロールで探す
+- scrollUntilVisible:
+    element:
+      text: "デバッグユーザーにFCMトークン登録"
+    direction: DOWN
+    timeout: 15000
+- tapOn: "デバッグユーザーにFCMトークン登録"
+
+# 結果メッセージ "<action> 完了" は開発者オプション上部（タイル群の上）に出る。
+# タイル探索で下にスクロール済みのため、上方向にスクロールして完了を確認する。
+- scrollUntilVisible:
+    element:
+      text: "FCMトークン登録 完了"
+    direction: UP
+    timeout: 15000
+
+# 開発者オプション → 設定 → home へ戻る（design v2 にボトムタブは無い。
+# grant_premium_via_debug.yaml と同じ Back + 設定×(7%,10%) の復帰手順）
+- tapOn: "Back"
+- waitForAnimationToEnd
+- tapOn:
+    point: "7%,10%"
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "タップで入力開始"
+    timeout: 10000
