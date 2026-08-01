@@ -246,16 +246,19 @@ class _ActiveShoppingList extends HookConsumerWidget {
     // 未解決(ロード中)の間は表示しない側に倒す。`?? false` でマウントすると、
     // プレミアムユーザーでも起動直後の1フレームで広告ロードと ATT ダイアログ表示
     // (admob_native_ad_banner.dart)が走ってしまうため、非プレミアムと確定してから出す。
-    // さらに CustomerInfo が現在の Firebase ユーザーで RevenueCat にログイン済みの
-    // 情報であることを要求する。AuthResolver の Purchases.logIn は unawaited のため、
-    // 新規端末で既存プレミアムアカウントにサインインした直後は匿名ユーザーの
-    // 非プレミアム情報が先に届くことがあり、それを根拠に広告・ATT を出さないため。
+    // さらに RevenueCat の現在の App User ID が Firebase uid と一致する
+    // (= 現在ユーザーでログイン済みの情報である)ことを要求する。AuthResolver の
+    // Purchases.logIn は unawaited のため、新規端末で既存プレミアムアカウントに
+    // サインインした直後は匿名ユーザーの非プレミアム情報が先に届くことがあり、
+    // それを根拠に広告・ATT を出さないため(revenueCatAppUserIDProvider 参照)。
     final currentUserID = ref.watch(currentUserIDProvider);
+    final revenueCatAppUserID =
+        ref.watch(revenueCatAppUserIDProvider).asData?.value;
     final customerInfo = ref.watch(customerInfoProvider).asData?.value;
     final shouldShowAd =
         customerInfo != null &&
         !customerInfo.isPremium &&
-        customerInfo.originalAppUserId == currentUserID;
+        revenueCatAppUserID == currentUserID;
 
     return _ShoppingListScaffold(
       groupID: groupID,

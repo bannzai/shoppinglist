@@ -263,6 +263,9 @@ List<Override> previewProviderOverrides({
     customerInfoProvider.overrideWith(
       (ref) => const Stream<CustomerInfo>.empty(),
     ),
+    // Purchases.appUserID は SDK 未初期化だと platform channel エラーになるため、
+    // 現在ユーザー(mockUserID)としてログイン済み相当の値を返す。
+    revenueCatAppUserIDProvider.overrideWith((ref) => Future.value(mockUserID)),
 
     // ユーザー・グループ (non-family)
     appUserProvider.overrideWith((ref) => Stream.value(mockAppUser())),

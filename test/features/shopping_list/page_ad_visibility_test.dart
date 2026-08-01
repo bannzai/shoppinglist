@@ -20,18 +20,12 @@ import 'package:shoppinglist/utils/purchase/purchase.dart';
 // CustomerInfo.isPremium は entitlements.active に premiumEntitlementIdentifier が
 // 含まれるかで判定される（purchase.dart の CustomerInfoExtension）。
 // テストでは entitlements のみ Fake して premium 状態を制御する。
-// originalAppUserId は「RevenueCat へのログイン完了前は広告を出さない」判定
-// (page.dart の shouldShowAd)が参照するため、既定で現在ユーザー(mockUserID)を返す。
 class _FakeCustomerInfo implements CustomerInfo {
-  _FakeCustomerInfo({required this.premium, this.appUserID = mockUserID});
+  _FakeCustomerInfo({required this.premium});
   final bool premium;
-  final String appUserID;
 
   @override
   EntitlementInfos get entitlements => _FakeEntitlementInfos(premium: premium);
-
-  @override
-  String get originalAppUserId => appUserID;
 
   @override
   dynamic noSuchMethod(Invocation invocation) =>
@@ -91,7 +85,9 @@ Future<void> _pumpPage(
   // null は customerInfo 未解決(ロード中)を表す。previewProviderOverrides の
   // Stream.empty をそのまま使い、上書きしない。
   required bool? premium,
-  String customerInfoAppUserID = mockUserID,
+  // RevenueCat の現在の App User ID。既定は previewProviderOverrides と同じく
+  // 現在ユーザー(mockUserID)でログイン済み相当。
+  String revenueCatAppUserID = mockUserID,
   bool isKeyboardVisible = false,
 }) async {
   _mockUMPChannel();
@@ -107,13 +103,11 @@ Future<void> _pumpPage(
         // 上書きしない。
         if (premium != null)
           customerInfoProvider.overrideWith(
-            (ref) => Stream.value(
-              _FakeCustomerInfo(
-                premium: premium,
-                appUserID: customerInfoAppUserID,
-              ),
-            ),
+            (ref) => Stream.value(_FakeCustomerInfo(premium: premium)),
           ),
+        revenueCatAppUserIDProvider.overrideWith(
+          (ref) => Future.value(revenueCatAppUserID),
+        ),
       ],
       child: MaterialApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
@@ -184,11 +178,12 @@ void main() {
   testWidgets('RevenueCat が現在ユーザーでログイン済みになるまで広告を表示しない', (tester) async {
     // AuthResolver の Purchases.logIn は unawaited のため、新規端末で既存プレミアム
     // アカウントにサインインした直後は匿名ユーザーの非プレミアム CustomerInfo が
-    // 先に届き得る。これを根拠に広告・ATT を出さない(page.dart の shouldShowAd)。
+    // 先に届き得る。現在の App User ID が Firebase uid と一致するまでは
+    // 広告・ATT を出さない(page.dart の shouldShowAd)。
     await _pumpPage(
       tester,
       premium: false,
-      customerInfoAppUserID: r'$RCAnonymousID:0123456789abcdef',
+      revenueCatAppUserID: r'$RCAnonymousID:0123456789abcdef',
     );
 
     expect(find.byType(AdMobNativeAdBanner, skipOffstage: false), findsNothing);
