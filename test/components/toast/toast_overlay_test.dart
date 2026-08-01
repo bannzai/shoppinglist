@@ -49,6 +49,36 @@ void main() {
     expect(find.text('保存しました'), findsNothing);
   });
 
+  testWidgets('UIイベント外からの show: アイドル状態でも自らフレームを予定して表示される(#528)', (
+    tester,
+  ) async {
+    await pumpOverlay(tester);
+
+    // FCM フォアグラウンド受信を模し、フレームが予定されていないアイドル状態で
+    // ウィジェットツリー外(プラットフォームイベント)から show する
+    await tester.pumpAndSettle();
+    expect(tester.binding.hasScheduledFrame, isFalse);
+    showGlobalToast('プッシュ本文', title: 'プッシュタイトル');
+
+    // 修正(#528)の契約: show がフレームを予定すること。実機ではこれが無いと
+    // addPostFrameCallback が発火せず、ユーザーが画面操作するまでトーストが
+    // 表示されない。なおテスト環境では riverpod の debug 専用フック
+    // (_debugCanModifyProviders → markNeedsBuild) も同時にフレームを予定するため、
+    // このアサート単独では退行を検出できない。退行検出は実機 E2E
+    // (maestro/flows/notify_group_button_test.yaml のプッシュ受信アサート) が担う
+    expect(tester.binding.hasScheduledFrame, isTrue);
+
+    await tester.pump(); // postFrameCallback 発火と OverlayEntry insert
+    await tester.pump(); // insert の反映
+    await tester.pump(const Duration(milliseconds: 250)); // 表示アニメーション
+    expect(find.text('プッシュ本文'), findsOneWidget);
+    expect(find.text('プッシュタイトル'), findsOneWidget);
+
+    // 後始末: 自動消滅タイマーを発火させる
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pump(const Duration(milliseconds: 250));
+  });
+
   testWidgets('show 連続: 最新メッセージで即置き換わる', (tester) async {
     await pumpOverlay(tester);
 
