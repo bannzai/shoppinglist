@@ -156,6 +156,13 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
     });
 
     if (limitCheckResult.isLimitReached) {
+      // 月次上限の発動を Cloud Logging から確認できるように記録する (Issue #524)。
+      logger.warn("generateShoppingListItemsFromImage: monthly limit reached", {
+        uid,
+        yearMonth,
+        monthlyLimit,
+        isPremium,
+      });
       return {
         result: "NG" as const,
         error: {
