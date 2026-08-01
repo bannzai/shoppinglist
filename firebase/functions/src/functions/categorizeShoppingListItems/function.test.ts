@@ -62,8 +62,9 @@ jest.mock("../utils/authPolicy", () => ({
   appAuthPolicy: jest.fn(() => () => true),
 }));
 
+const mockLoggerWarn = jest.fn();
 jest.mock("firebase-functions", () => ({
-  logger: { info: jest.fn(), error: jest.fn() },
+  logger: { info: jest.fn(), warn: mockLoggerWarn, error: jest.fn() },
 }));
 
 jest.mock("firebase-functions/params", () => ({
@@ -242,6 +243,15 @@ describe("categorizeShoppingListItems", () => {
     expect(result.result).toBe("NG");
     expect(result.error.message).toContain("月間利用回数");
     expect(mockGenerate).not.toHaveBeenCalled();
+    // 上限発動が Cloud Logging で確認できるよう warn ログが出ることを確認 (Issue #524)
+    expect(mockLoggerWarn).toHaveBeenCalledWith(
+      "categorizeShoppingListItems: monthly limit reached",
+      expect.objectContaining({
+        uid: "user-1",
+        monthlyLimit: 5,
+        isPremium: false,
+      })
+    );
   });
 
   test("プレミアムユーザーは無料上限(5回)超過後も利用できる", async () => {
