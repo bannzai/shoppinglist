@@ -17,5 +17,14 @@ service firebase.storage {
       allow read: if request.auth != null;
       allow write: if false;
     }
+
+    // 「写真から追加」の元画像（Issue #530）。書き込みは Cloud Function
+    // (generateShoppingListItemsFromImage, Admin SDK) 経由のみ。
+    // 読み取りはレシート画像と同じく認証済みユーザーに許可
+    // （クライアントが storagePath から getDownloadURL で取得）。
+    match /groups/{groupID}/shoppingLists/{shoppingListID}/sourceImages/{fileName} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
   }
 }

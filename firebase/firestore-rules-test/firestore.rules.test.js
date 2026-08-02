@@ -241,7 +241,31 @@ describe('groups/{id}/shoppingLists/{id}/receipts（delete のみ不可）', () 
   });
 });
 
-// 9. groups/{id}/userCategoryAxes（所有者判定付き）
+// 9. groups/{id}/shoppingLists/{id}/sourceImages（読み取りのみ。作成・削除は Admin SDK 経由）
+describe('groups/{id}/shoppingLists/{id}/sourceImages（読み取りのみ）', () => {
+  const sourceImagePath = 'groups/g1/shoppingLists/sl1/sourceImages/si1';
+
+  test('メンバー alice は read できるが create/update/delete は拒否', async () => {
+    await seed(sourceImagePath, {
+      storagePath: 'groups/g1/shoppingLists/sl1/sourceImages/si1.jpeg',
+    });
+    const d = db('alice');
+    await assertSucceeds(getDoc(doc(d, sourceImagePath)));
+    await assertFails(
+      setDoc(doc(d, 'groups/g1/shoppingLists/sl1/sourceImages/si2'), { storagePath: 'x' })
+    );
+    await assertFails(updateDoc(doc(d, sourceImagePath), { storagePath: 'x' }));
+    await assertFails(deleteDoc(doc(d, sourceImagePath)));
+  });
+
+  test('非メンバー charlie は read 拒否', async () => {
+    await seed(sourceImagePath, { storagePath: 'x' });
+    const d = db('charlie');
+    await assertFails(getDoc(doc(d, sourceImagePath)));
+  });
+});
+
+// 10. groups/{id}/userCategoryAxes（所有者判定付き）
 describe('groups/{id}/userCategoryAxes（所有者判定付き）', () => {
   const axisPath = 'groups/g1/userCategoryAxes/axis_alice';
 
@@ -280,7 +304,7 @@ describe('groups/{id}/userCategoryAxes（所有者判定付き）', () => {
   });
 });
 
-// 10. userCategoryAxes/{id}/categories（axis と同じ所有者判定）
+// 11. userCategoryAxes/{id}/categories（axis と同じ所有者判定）
 describe('userCategoryAxes/{id}/categories（axis と同じ所有者判定）', () => {
   const axisPath = 'groups/g1/userCategoryAxes/axis_alice';
   const categoryPath = `${axisPath}/categories/cat1`;

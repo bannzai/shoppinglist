@@ -97,6 +97,13 @@ service cloud.firestore {
         match /receipts/{receiptID} {
           allow read, create, update: if isGroupMember();
         }
+
+        // 「写真から追加」の元画像メタデータ（Issue #530）。作成・削除は
+        // Cloud Functions (generateShoppingListItemsFromImage, Admin SDK) 経由のみで、
+        // クライアントは読み取りのみ（画像本体は Storage。storage.rules を参照）。
+        match /sourceImages/{sourceImageID} {
+          allow read: if isGroupMember();
+        }
       }
     }
   }
