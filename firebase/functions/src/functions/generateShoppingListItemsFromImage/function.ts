@@ -2,6 +2,7 @@ import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import { GoogleAIFileManager } from "@google/generative-ai/server";
 import admin from "firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
+import { getDownloadURL } from "firebase-admin/storage";
 import { logger } from "firebase-functions";
 import { onCallGenkit } from "firebase-functions/https";
 import * as z from "zod";
@@ -47,6 +48,17 @@ const freeMonthlyImageRecognitionLimit = 5;
 /** プレミアムユーザーのAI画像認識月次上限。 */
 const premiumMonthlyImageRecognitionLimit = 50;
 
+/** Firestore document IDに使える文字のみ許可（`/` を拒否）。 */
+const firestoreIDPattern = /^[A-Za-z0-9_-]{1,128}$/;
+
+/** 1つの買い物リストに保存する元画像の上限枚数（Issue #530 の仕様）。超過分は古い順に削除する。 */
+const maxSourceImagesPerShoppingList = 5;
+
+/** グループメンバーシップ検証用。 */
+interface GroupData {
+  memberUserIDs: string[];
+}
+
 // 一時ファイルを削除する関数
 async function cleanupTemporaryImage(filePath: string): Promise<void> {
   try {
@@ -65,7 +77,9 @@ async function cleanupTemporaryImage(filePath: string): Promise<void> {
  * ```json
  * {
  *   "mimeType": "image/jpeg",
- *   "base64Image": "<base64エンコードされた画像データ>"
+ *   "base64Image": "<base64エンコードされた画像データ>",
+ *   "groupID": "group-id",
+ *   "shoppingListID": "list-id"
  * }
  * ```
  *
@@ -73,6 +87,9 @@ async function cleanupTemporaryImage(filePath: string): Promise<void> {
  * - 認証必須
  * - 画像: JPEG/PNG/WebP/HEIC/HEIF、10MB以下
  * - 月次利用上限: 無料5回、プレミアム50回（UTC基準）
+ * - groupID / shoppingListID（任意・両方セットで指定）: 指定すると生成に使った
+ *   元画像を買い物リストに保存する（Issue #530）。グループメンバーのみ。
+ *   保存済みの元画像が上限（5枚）を超えると古い順に削除される。
  */
 const generateShoppingListItemsFromImageFlow = ai.defineFlow(
   {
@@ -80,11 +97,19 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
     inputSchema: z.object({
       mimeType: z.string(),
       base64Image: z.string(),
+      // 元画像の保存先の買い物リスト。旧バージョンのクライアントは送らないため optional。
+      groupID: z.string().regex(firestoreIDPattern).optional(),
+      shoppingListID: z.string().regex(firestoreIDPattern).optional(),
     }),
     outputSchema: ResponseSchema,
   },
-  async (input: { mimeType: string; base64Image: string }) => {
-    const { mimeType, base64Image } = input;
+  async (input: {
+    mimeType: string;
+    base64Image: string;
+    groupID?: string;
+    shoppingListID?: string;
+  }) => {
+    const { mimeType, base64Image, groupID, shoppingListID } = input;
     const tempFilePath: string | null = null;
 
     // 認証チェック（クライアントからの回避を防ぐため Function 側で強制）
@@ -113,13 +138,49 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
       };
     }
 
+    const firestore = admin.firestore();
+
+    // 元画像の保存先が指定された場合は、AI利用回数を消費する前に
+    // グループメンバーであることと対象リストの存在を検証する。
+    if ((groupID == null) !== (shoppingListID == null)) {
+      return {
+        result: "NG" as const,
+        error: { message: "groupID と shoppingListID は両方指定してください" },
+      };
+    }
+    if (groupID != null && shoppingListID != null) {
+      const groupDoc = await firestore
+        .collection("groups")
+        .doc(groupID)
+        .get();
+      const groupData = groupDoc.data() as GroupData | undefined;
+      if (!groupData || !groupData.memberUserIDs.includes(uid)) {
+        return {
+          result: "NG" as const,
+          error: { message: "グループのメンバーではありません" },
+        };
+      }
+
+      const listDoc = await firestore
+        .collection("groups")
+        .doc(groupID)
+        .collection("shoppingLists")
+        .doc(shoppingListID)
+        .get();
+      if (!listDoc.exists) {
+        return {
+          result: "NG" as const,
+          error: { message: "対象の買い物リストが存在しません" },
+        };
+      }
+    }
+
     // サーバー管理データからプレミアム判定（クライアントの申告値は信用しない）
     const isPremium = await hasPremiumEntitlement(uid);
     const monthlyLimit = isPremium
       ? premiumMonthlyImageRecognitionLimit
       : freeMonthlyImageRecognitionLimit;
 
-    const firestore = admin.firestore();
     const now = new Date();
     const yearMonth = now.toISOString().slice(0, 7);
     const aiUsageRef = firestore
@@ -256,6 +317,27 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
         (functionCalls[0].args as { shoppingListItems?: string[] })
           .shoppingListItems ?? [];
 
+      // 生成に使った元画像を買い物リストに保存する（Issue #530）。
+      // 主目的のアイテム抽出を巻き添えにしないため、保存の失敗はログに残して
+      // 抽出結果はそのまま返す。
+      if (groupID != null && shoppingListID != null) {
+        try {
+          await saveSourceImage({ groupID, shoppingListID, uid, imageBytes });
+        } catch (error) {
+          logger.error(
+            "generateShoppingListItemsFromImage: saveSourceImage failed",
+            {
+              uid,
+              groupID,
+              shoppingListID,
+              errorName: error instanceof Error ? error.name : "unknown",
+              errorMessage:
+                error instanceof Error ? error.message : String(error),
+            }
+          );
+        }
+      }
+
       return {
         result: "OK",
         status: 200,
@@ -296,6 +378,82 @@ module.exports = onCallGenkit(
   },
   generateShoppingListItemsFromImageFlow
 );
+
+/**
+ * 「写真から追加」の元画像を Storage に保存し、メタデータを買い物リストの
+ * sourceImages サブコレクションに作成する（Issue #530）。
+ * 保存後、作成日時の新しい順で maxSourceImagesPerShoppingList 枚を超えた分
+ * （古い元画像）をドキュメント・Storage ファイルともに削除する。
+ *
+ * 冪等ではない: 呼び出しごとに新しい sourceImageID を採番して保存する。
+ * 同一画像の再送を判別する手段がなく、超過分の削除で総量を抑える設計のため。
+ */
+async function saveSourceImage({
+  groupID,
+  shoppingListID,
+  uid,
+  imageBytes,
+}: {
+  groupID: string;
+  shoppingListID: string;
+  uid: string;
+  imageBytes: Buffer;
+}): Promise<void> {
+  const sourceImagesRef = admin
+    .firestore()
+    .collection("groups")
+    .doc(groupID)
+    .collection("shoppingLists")
+    .doc(shoppingListID)
+    .collection("sourceImages");
+  const sourceImageRef = sourceImagesRef.doc();
+  const storagePath = `groups/${groupID}/shoppingLists/${shoppingListID}/sourceImages/${sourceImageRef.id}.jpeg`;
+  const file = admin.storage().bucket().file(storagePath);
+  await file.save(imageBytes, {
+    // クライアントは base64CompressImage で常に JPEG に圧縮して送るため固定。
+    metadata: { contentType: "image/jpeg" },
+  });
+  // Admin SDK の file.save() は firebaseStorageDownloadTokens を生成しないため、
+  // getDownloadURL を呼んでダウンロードトークンを生成しておく（uploadReceiptImage と
+  // 同じ仕組み。これを省くとクライアントの getDownloadURL がトークン無し URL を返し
+  // 画像が表示できない）。戻り値の URL は Firestore に保存せず、表示時にクライアントが
+  // storagePath から都度取得する設計のため破棄する。
+  // Storage Emulator では Admin SDK の getDownloadURL が
+  // "Permission denied. No READ permission." で失敗する既知の制約があるためスキップする。
+  // Emulator ではクライアント側の getDownloadURL がトークンを生成するため表示に支障はない。
+  if (process.env.FUNCTIONS_EMULATOR !== "true") {
+    await getDownloadURL(file);
+  }
+  await sourceImageRef.set({
+    id: sourceImageRef.id,
+    groupID,
+    shoppingListID,
+    userID: uid,
+    storagePath,
+    createdDateTime: FieldValue.serverTimestamp(),
+    updatedDateTime: FieldValue.serverTimestamp(),
+    serverCreatedDateTime: FieldValue.serverTimestamp(),
+    serverUpdatedDateTime: FieldValue.serverTimestamp(),
+  });
+
+  // 上限を超えた古い元画像を削除する。Storage → Firestore の順で消し、
+  // Storage 削除に失敗した場合はドキュメントを残して次回の保存時に再削除できるようにする。
+  const snapshot = await sourceImagesRef
+    .orderBy("createdDateTime", "desc")
+    .get();
+  for (const excessDoc of snapshot.docs.slice(maxSourceImagesPerShoppingList)) {
+    const excessStoragePath = (excessDoc.data() as { storagePath?: string })
+      .storagePath;
+    if (excessStoragePath != null) {
+      await admin
+        .storage()
+        .bucket()
+        .file(excessStoragePath)
+        .delete({ ignoreNotFound: true });
+    }
+    await excessDoc.ref.delete();
+  }
+}
 
 async function uploadBase64ImageToGemini(
   fileManager: GoogleAIFileManager,

@@ -9,6 +9,15 @@ const mockFirestoreInstance = {
 const mockServerTimestamp = jest.fn(() => "SERVER_TIMESTAMP");
 const mockIncrement = jest.fn((n: number) => `INCREMENT_${n}`);
 
+// Storage のモック（元画像保存の検証用）。file(path) の呼び出しパスと
+// save / delete の呼び出しを検証できるように共有モックにする。
+const mockFileSave = jest.fn();
+const mockFileDelete = jest.fn();
+const mockStorageFile = jest.fn(() => ({
+  save: mockFileSave,
+  delete: mockFileDelete,
+}));
+
 jest.mock("firebase-admin", () => ({
   __esModule: true,
   default: {
@@ -16,10 +25,15 @@ jest.mock("firebase-admin", () => ({
     initializeApp: jest.fn(),
     storage: jest.fn(() => ({
       bucket: jest.fn(() => ({
-        file: jest.fn(() => ({ delete: jest.fn() })),
+        file: mockStorageFile,
       })),
     })),
   },
+}));
+
+const mockGetDownloadURL = jest.fn();
+jest.mock("firebase-admin/storage", () => ({
+  getDownloadURL: (...args: unknown[]) => mockGetDownloadURL(...args),
 }));
 
 // このファイルは Timestamp クラス(zTimestamp等)を使用しないため、
@@ -67,8 +81,9 @@ jest.mock("../utils/authPolicy", () => ({
 }));
 
 const mockLoggerWarn = jest.fn();
+const mockLoggerError = jest.fn();
 jest.mock("firebase-functions", () => ({
-  logger: { info: jest.fn(), warn: mockLoggerWarn, error: jest.fn() },
+  logger: { info: jest.fn(), warn: mockLoggerWarn, error: mockLoggerError },
 }));
 
 jest.mock("firebase-functions/params", () => ({
@@ -117,8 +132,9 @@ jest.mock("fs", () => ({
 
 require("./function");
 
-/** aiUsageRefのモックを構築するヘルパー。 */
-function setupFirestoreMocks(aiUsageRef: any) {
+/** aiUsageRefのモックを構築するヘルパー。
+ * groupDoc を渡すと groups コレクションのモックも構築する（元画像保存の検証用）。 */
+function setupFirestoreMocks(aiUsageRef: any, groupDoc?: any) {
   mockCollection.mockImplementation((path: string) => {
     if (path === "users") {
       return {
@@ -129,8 +145,52 @@ function setupFirestoreMocks(aiUsageRef: any) {
         })),
       };
     }
+    if (path === "groups" && groupDoc) {
+      return { doc: jest.fn(() => groupDoc) };
+    }
     return {};
   });
+}
+
+/** groups/{groupID} 配下（shoppingLists / sourceImages）のモックを構築するヘルパー。 */
+function buildGroupDocMock({
+  groupData,
+  listExists = true,
+  sourceImageRef = { id: "source-image-1", set: jest.fn() },
+  existingSourceImageDocs = [] as any[],
+}: {
+  groupData: { memberUserIDs: string[] } | undefined;
+  listExists?: boolean;
+  sourceImageRef?: { id: string; set: jest.Mock };
+  existingSourceImageDocs?: any[];
+}) {
+  const sourceImagesCollection = {
+    doc: jest.fn(() => sourceImageRef),
+    orderBy: jest.fn(() => ({
+      get: jest.fn().mockResolvedValue({ docs: existingSourceImageDocs }),
+    })),
+  };
+  const shoppingListDoc = {
+    get: jest.fn().mockResolvedValue({ exists: listExists }),
+    collection: jest.fn((name: string) =>
+      name === "sourceImages" ? sourceImagesCollection : {}
+    ),
+  };
+  return {
+    get: jest.fn().mockResolvedValue({ data: () => groupData }),
+    collection: jest.fn(() => ({ doc: jest.fn(() => shoppingListDoc) })),
+  };
+}
+
+/** 利用回数チェックを通過させる transaction モックを設定するヘルパー。 */
+function setupUsageTransaction() {
+  const txGet = jest.fn().mockResolvedValue({
+    exists: true,
+    data: () => ({ imageRecognitionCount: 0 }),
+  });
+  mockRunTransaction.mockImplementation(async (handler: any) =>
+    handler({ get: txGet, update: jest.fn(), set: jest.fn() })
+  );
 }
 
 describe("generateShoppingListItemsFromImage", () => {
@@ -374,5 +434,195 @@ describe("generateShoppingListItemsFromImage", () => {
       "画像読み取りの月間利用回数（50回）に達しました"
     );
     expect(mockStartChat).not.toHaveBeenCalled();
+  });
+
+  describe("元画像の保存（Issue #530）", () => {
+    test("正常系: groupID/shoppingListID 指定で元画像が Storage と Firestore に保存される", async () => {
+      mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
+      setupUsageTransaction();
+
+      const sourceImageRef = { id: "source-image-1", set: jest.fn() };
+      setupFirestoreMocks(
+        { id: "aiUsageRef" },
+        buildGroupDocMock({
+          groupData: { memberUserIDs: ["user-1"] },
+          sourceImageRef,
+        })
+      );
+
+      const result = await capturedFlowFn({
+        mimeType: "image/jpeg",
+        base64Image: "dGVzdA==",
+        groupID: "g-1",
+        shoppingListID: "sl-1",
+      });
+
+      expect(result.result).toBe("OK");
+      expect(result.data.shoppingListItems).toEqual(["牛乳", "卵"]);
+      const expectedStoragePath =
+        "groups/g-1/shoppingLists/sl-1/sourceImages/source-image-1.jpeg";
+      expect(mockStorageFile).toHaveBeenCalledWith(expectedStoragePath);
+      expect(mockFileSave).toHaveBeenCalledWith(
+        Buffer.from("dGVzdA==", "base64"),
+        { metadata: { contentType: "image/jpeg" } }
+      );
+      // ダウンロードトークン生成のため getDownloadURL が呼ばれること
+      expect(mockGetDownloadURL).toHaveBeenCalled();
+      expect(sourceImageRef.set).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: "source-image-1",
+          groupID: "g-1",
+          shoppingListID: "sl-1",
+          userID: "user-1",
+          storagePath: expectedStoragePath,
+          serverCreatedDateTime: "SERVER_TIMESTAMP",
+          serverUpdatedDateTime: "SERVER_TIMESTAMP",
+        })
+      );
+    });
+
+    test("正常系: 上限5枚を超えた古い元画像がドキュメント・Storage ともに削除される", async () => {
+      mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
+      setupUsageTransaction();
+
+      // createdDateTime 降順で6件返る（6件目 = 最古が超過分）
+      const excessDocDelete = jest.fn();
+      const existingSourceImageDocs = Array.from({ length: 6 }, (_, i) => ({
+        data: () => ({
+          storagePath: `groups/g-1/shoppingLists/sl-1/sourceImages/img-${i}.jpeg`,
+        }),
+        ref: { delete: i === 5 ? excessDocDelete : jest.fn() },
+      }));
+      setupFirestoreMocks(
+        { id: "aiUsageRef" },
+        buildGroupDocMock({
+          groupData: { memberUserIDs: ["user-1"] },
+          existingSourceImageDocs,
+        })
+      );
+
+      const result = await capturedFlowFn({
+        mimeType: "image/jpeg",
+        base64Image: "dGVzdA==",
+        groupID: "g-1",
+        shoppingListID: "sl-1",
+      });
+
+      expect(result.result).toBe("OK");
+      // 最古の1件だけが削除される
+      expect(excessDocDelete).toHaveBeenCalled();
+      for (let i = 0; i < 5; i++) {
+        expect(existingSourceImageDocs[i].ref.delete).not.toHaveBeenCalled();
+      }
+      expect(mockStorageFile).toHaveBeenCalledWith(
+        "groups/g-1/shoppingLists/sl-1/sourceImages/img-5.jpeg"
+      );
+      expect(mockFileDelete).toHaveBeenCalledWith({ ignoreNotFound: true });
+    });
+
+    test("正常系: 元画像の保存に失敗しても抽出結果は OK で返る", async () => {
+      mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
+      setupUsageTransaction();
+
+      const sourceImageRef = { id: "source-image-1", set: jest.fn() };
+      setupFirestoreMocks(
+        { id: "aiUsageRef" },
+        buildGroupDocMock({
+          groupData: { memberUserIDs: ["user-1"] },
+          sourceImageRef,
+        })
+      );
+      mockFileSave.mockRejectedValueOnce(new Error("storage write failed"));
+
+      const result = await capturedFlowFn({
+        mimeType: "image/jpeg",
+        base64Image: "dGVzdA==",
+        groupID: "g-1",
+        shoppingListID: "sl-1",
+      });
+
+      expect(result.result).toBe("OK");
+      expect(result.data.shoppingListItems).toEqual(["牛乳", "卵"]);
+      expect(sourceImageRef.set).not.toHaveBeenCalled();
+      expect(mockLoggerError).toHaveBeenCalledWith(
+        "generateShoppingListItemsFromImage: saveSourceImage failed",
+        expect.objectContaining({ uid: "user-1", groupID: "g-1" })
+      );
+    });
+
+    test("異常系: 非メンバーは利用回数を消費せずエラーになる", async () => {
+      mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
+
+      setupFirestoreMocks(
+        { id: "aiUsageRef" },
+        buildGroupDocMock({ groupData: { memberUserIDs: ["other-user"] } })
+      );
+
+      const result = await capturedFlowFn({
+        mimeType: "image/jpeg",
+        base64Image: "dGVzdA==",
+        groupID: "g-1",
+        shoppingListID: "sl-1",
+      });
+
+      expect(result.result).toBe("NG");
+      expect(result.error.message).toBe("グループのメンバーではありません");
+      expect(mockRunTransaction).not.toHaveBeenCalled();
+      expect(mockStartChat).not.toHaveBeenCalled();
+    });
+
+    test("異常系: 対象リストが存在しないと利用回数を消費せずエラーになる", async () => {
+      mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
+
+      setupFirestoreMocks(
+        { id: "aiUsageRef" },
+        buildGroupDocMock({
+          groupData: { memberUserIDs: ["user-1"] },
+          listExists: false,
+        })
+      );
+
+      const result = await capturedFlowFn({
+        mimeType: "image/jpeg",
+        base64Image: "dGVzdA==",
+        groupID: "g-1",
+        shoppingListID: "sl-1",
+      });
+
+      expect(result.result).toBe("NG");
+      expect(result.error.message).toBe("対象の買い物リストが存在しません");
+      expect(mockRunTransaction).not.toHaveBeenCalled();
+    });
+
+    test("異常系: groupID のみ指定はエラーになる", async () => {
+      mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
+      setupFirestoreMocks({ id: "aiUsageRef" });
+
+      const result = await capturedFlowFn({
+        mimeType: "image/jpeg",
+        base64Image: "dGVzdA==",
+        groupID: "g-1",
+      });
+
+      expect(result.result).toBe("NG");
+      expect(result.error.message).toBe(
+        "groupID と shoppingListID は両方指定してください"
+      );
+      expect(mockRunTransaction).not.toHaveBeenCalled();
+    });
+
+    test("正常系: groupID/shoppingListID 未指定なら元画像を保存しない（後方互換）", async () => {
+      mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
+      setupUsageTransaction();
+      setupFirestoreMocks({ id: "aiUsageRef" });
+
+      const result = await capturedFlowFn({
+        mimeType: "image/jpeg",
+        base64Image: "dGVzdA==",
+      });
+
+      expect(result.result).toBe("OK");
+      expect(mockFileSave).not.toHaveBeenCalled();
+    });
   });
 });
