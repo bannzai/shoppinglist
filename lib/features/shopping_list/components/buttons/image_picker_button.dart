@@ -144,6 +144,8 @@ class ImagePickerButton extends ConsumerWidget {
     final rawItems = await functions.generateShoppingListItemsFromImage(
       mimeType: mimeType(file),
       base64Image: base64Image,
+      groupID: groupID,
+      shoppingListID: shoppingListID,
     );
     debugPrint('rawItems: $rawItems');
 
