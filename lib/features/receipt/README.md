@@ -27,7 +27,7 @@
   - `amount`（int? 円）、`memo`（String?）、`storagePath`（String? Storage パス）、親IDの `groupID` / `shoppingListID`。
 - Storage: `groups/{groupID}/shoppingLists/{shoppingListID}/receipts/{receiptID}.jpeg`（receiptID から決定的に決まるパス）。
   - 書き込みは `uploadReceiptImage` Function（Admin SDK）経由のみ（`storage.rules` で write 禁止）。Admin SDK の `file.save()` はダウンロードトークンを生成しないため、`uploadReceiptImage` は保存後に `getDownloadURL(file)` を呼んで `firebaseStorageDownloadTokens` を生成する（これを省くとクライアントの `getDownloadURL` がトークン無し URL を返し画像が表示できない）。
-  - 読み取りは `storage.rules` で認証済みユーザーに許可。クライアントは `storagePath` から `getDownloadURL`（`ReceiptImage` widget）で取得し表示する。download URL は Firestore に保存しない。グループメンバー判定（`firestore.get` クロスサービス参照）は permission-denied 切り分けを難しくするため行わない（`.claude/rules/firestore-rules-simplicity.md`）。
+  - 読み取りは `storage.rules` で認証済みユーザーに許可。クライアントは `storagePath` から `getDownloadURL`（`StorageImage` widget）で取得し表示する。download URL は Firestore に保存しない。グループメンバー判定（`firestore.get` クロスサービス参照）は permission-denied 切り分けを難しくするため行わない（`.claude/rules/firestore-rules-simplicity.md`）。
 
 ## 制約
 - プレミアムユーザーのみ登録可能（UI ゲート + `uploadReceiptImage` のサーバーゲート `hasPremiumEntitlement`）。非プレミアムには「レシートを編集」を出さず常に「レシートを追加」（→ Paywall）にする。
@@ -37,7 +37,7 @@
 ## 関連ファイル
 - `lib/features/receipt/receipt_section.dart` — 上部の追加/編集ボタン（`ReceiptAddButton`、ラベルをレシート有無で出し分け）
 - `lib/features/receipt/receipt_edit_sheet.dart` — 登録/編集シート
-- `lib/features/receipt/receipt_image.dart` — storagePath から getDownloadURL で画像を表示する widget
+- `lib/components/image/storage_image.dart` — storagePath から getDownloadURL で画像を表示する共通 widget（`StorageImage`）
 - `lib/entity/group_shopping_list_receipt.dart` — Entity
 - `lib/provider/receipt.dart` — 一覧 Stream / `AddReceipt` / `UpdateReceipt`
 - `lib/utils/functions/firebase_function.dart` — `uploadReceiptImage` の呼び出し
