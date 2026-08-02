@@ -128,6 +128,11 @@ class _ToastOverlayState extends ConsumerState<ToastOverlay> {
       _entry = entry;
       overlay.insert(entry);
     });
+    // addPostFrameCallback は自らフレームを生成しない。FCM のフォアグラウンド受信など
+    // UI イベント外からの show では画面がアイドルで次フレームが予定されておらず、
+    // 上のコールバックが永遠に発火せずトーストが表示されない(#528)。
+    // scheduleFrame はフレーム予定済みなら no-op のため常に呼んでよい。
+    WidgetsBinding.instance.scheduleFrame();
   }
 
   void _removeEntry() {
