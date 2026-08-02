@@ -12,6 +12,7 @@ import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/entity/group_shopping_list_receipt.dart';
+import 'package:shoppinglist/entity/group_shopping_list_source_image.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
@@ -34,6 +35,10 @@ abstract class _CollectionPath {
     required String groupID,
     required String shoppingListID,
   }) => '/groups/$groupID/shoppingLists/$shoppingListID/receipts';
+  static String sourceImages({
+    required String groupID,
+    required String shoppingListID,
+  }) => '/groups/$groupID/shoppingLists/$shoppingListID/sourceImages';
   static String shoppingLocations({required String groupID}) =>
       '/groups/$groupID/shoppingLocations';
   static String userCategoryAxes({required String groupID}) =>
@@ -251,6 +256,22 @@ class GroupDatabase {
       .withConverter(
         fromFirestore: GroupShoppingListReceipt.fromFirestore,
         toFirestore: GroupShoppingListReceipt.toFirestore,
+      );
+
+  /// 買い物リストに紐づく「写真から追加」の元画像のコレクション参照。
+  /// ドキュメントの作成・削除は Functions（Admin SDK）が行うため、読み取り専用。
+  CollectionReference<GroupShoppingListSourceImage> sourceImagesReference({
+    required String shoppingListID,
+  }) => firestore
+      .collection(
+        _CollectionPath.sourceImages(
+          groupID: groupID,
+          shoppingListID: shoppingListID,
+        ),
+      )
+      .withConverter(
+        fromFirestore: GroupShoppingListSourceImage.fromFirestore,
+        toFirestore: GroupShoppingListSourceImage.toFirestore,
       );
 
   CollectionReference<GroupShoppingLocation> shoppingLocationsReference() =>
