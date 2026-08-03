@@ -7,7 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/entity/group_shopping_list_receipt.dart';
-import 'package:shoppinglist/features/receipt/receipt_image.dart';
+import 'package:shoppinglist/components/image/storage_image.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/receipt.dart';
@@ -267,7 +267,7 @@ class _ReceiptImageField extends StatelessWidget {
     if (storagePath != null) {
       return _preview(
         context,
-        ReceiptImage(
+        StorageImage(
           storagePath: storagePath,
           width: double.infinity,
           height: 220,

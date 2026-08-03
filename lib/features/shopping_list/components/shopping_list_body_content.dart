@@ -4,6 +4,7 @@ import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/receipt/receipt_section.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/empty_text_shopping_list_item.dart';
+import 'package:shoppinglist/features/shopping_list/components/source_image_strip.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_items.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -35,10 +36,19 @@ class ShoppingListBodyContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.appTheme;
     if (shoppingListItems.isEmpty) {
-      return EmptyTextShoppingListItems(
-        groupID: groupID,
-        shoppingListID: shoppingListID,
-        shoppingListItems: shoppingListItems,
+      // アイテムが空でも「写真から追加」の元画像は残っている場合がある
+      // （review sheet で全件除外した場合等）ため、サムネイルは表示する。
+      return Column(
+        children: [
+          SourceImageStrip(groupID: groupID, shoppingListID: shoppingListID),
+          Expanded(
+            child: EmptyTextShoppingListItems(
+              groupID: groupID,
+              shoppingListID: shoppingListID,
+              shoppingListItems: shoppingListItems,
+            ),
+          ),
+        ],
       );
     }
     // 買い物が始まった/終わった後（チェック済みが1件以上）にのみレシートの導線を出す。
@@ -84,6 +94,8 @@ class ShoppingListBodyContent extends StatelessWidget {
           ),
           const SizedBox(height: 6),
         ],
+        // 「写真から追加」の元画像サムネイル。保存済みのときのみ表示される。
+        SourceImageStrip(groupID: groupID, shoppingListID: shoppingListID),
         // レシートの導線は、長いリストでも気づけるよう上部（AIカテゴリ分けボタンの
         // 直上）に控えめな pill で出す。レシートの有無はこのボタンのラベル
         // （追加 / 編集）で表現し、最下部のサムネ一覧は廃止した。

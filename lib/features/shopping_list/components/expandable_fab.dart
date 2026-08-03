@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/entity/ai_usage.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/entity/group_shopping_list_source_image.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list/components/ai_review_sheet.dart';
 import 'package:shoppinglist/features/shopping_list/components/fab_action_menu.dart';
@@ -334,9 +335,9 @@ class ExpandableFab extends HookConsumerWidget {
                     Navigator.of(dialogContext).pop();
                   }
                   if (context.mounted) {
-                    await _addShoppingListItemsFromImage(
+                    await _addShoppingListItemsFromImages(
                       context,
-                      photo: photo,
+                      photos: [photo],
                       aiProcessingNotifier: aiProcessingNotifier,
                       addShoppingListItem: addShoppingListItem,
                       currentUserID: currentUserID,
@@ -355,10 +356,12 @@ class ExpandableFab extends HookConsumerWidget {
                       'shoppingListID': shoppingListID,
                     },
                   );
-                  final XFile? photo = await imagePicker.pickImage(
-                    source: ImageSource.gallery,
+                  // 手書きメモが複数枚に分かれているケースに対応するため複数選択を
+                  // 許可する。上限は元画像の保存上限（5枚）に合わせる（Issue #530）。
+                  final List<XFile> photos = await imagePicker.pickMultiImage(
+                    limit: maxShoppingListSourceImageCount,
                   );
-                  if (photo == null) {
+                  if (photos.isEmpty) {
                     return;
                   }
                   // 写真選択直後に画像選択ダイアログを閉じる。
@@ -367,9 +370,9 @@ class ExpandableFab extends HookConsumerWidget {
                     Navigator.of(dialogContext).pop();
                   }
                   if (context.mounted) {
-                    await _addShoppingListItemsFromImage(
+                    await _addShoppingListItemsFromImages(
                       context,
-                      photo: photo,
+                      photos: photos,
                       aiProcessingNotifier: aiProcessingNotifier,
                       addShoppingListItem: addShoppingListItem,
                       currentUserID: currentUserID,
@@ -399,32 +402,53 @@ class ExpandableFab extends HookConsumerWidget {
     );
   }
 
-  Future<void> _addShoppingListItemsFromImage(
+  Future<void> _addShoppingListItemsFromImages(
     BuildContext context, {
-    required XFile photo,
+    required List<XFile> photos,
     required AIProcessing aiProcessingNotifier,
     required AddShoppingListItem addShoppingListItem,
     required String? currentUserID,
   }) async {
     aiProcessingNotifier.start(AIProcessingType.image);
-    List<String> rawItems;
+    final rawItems = <String>[];
+    Object? generationError;
+    StackTrace? generationStackTrace;
     try {
-      final file = File(photo.path);
-      final base64Image = await base64CompressImage(file);
-      rawItems = await functions.generateShoppingListItemsFromImage(
-        mimeType: mimeType(file),
-        base64Image: base64Image,
-      );
-    } catch (e, st) {
-      if (context.mounted) {
-        showErrorSnackBar(context, e, st);
+      // pickMultiImage(limit:) はプラットフォームによって上限が効かないことが
+      // あるため、元画像の保存上限（5枚）にクライアント側でも絞る。
+      for (final photo in photos.take(maxShoppingListSourceImageCount)) {
+        try {
+          final file = File(photo.path);
+          final base64Image = await base64CompressImage(file);
+          // 生成に使った元画像はサーバー側で買い物リストに保存される（Issue #530）。
+          rawItems.addAll(
+            await functions.generateShoppingListItemsFromImage(
+              mimeType: mimeType(file),
+              base64Image: base64Image,
+              groupID: groupID,
+              shoppingListID: shoppingListID,
+            ),
+          );
+        } catch (e, st) {
+          // 月次利用回数の上限など、1枚目の失敗理由は残りの枚数でも解消しない
+          // ことが多いため、以降の生成は打ち切って利用回数の消費を止める。
+          generationError = e;
+          generationStackTrace = st;
+          break;
+        }
       }
-      return;
     } finally {
       aiProcessingNotifier.end();
     }
     if (!context.mounted) {
       return;
+    }
+    if (generationError != null) {
+      showErrorSnackBar(context, generationError, generationStackTrace);
+      // 失敗前の画像から抽出済みの候補が1件もなければ review sheet は開かない。
+      if (rawItems.isEmpty) {
+        return;
+      }
     }
     // 既存アイテムに存在しない候補だけ review sheet にかける。
     // 候補が空（画像から読み取れなかった／すべて既存）でも review sheet を開き、

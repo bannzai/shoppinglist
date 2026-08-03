@@ -62,13 +62,22 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
 
   /// base64エンコードした画像をAIで解析し、買い物リストアイテムを生成する。
   /// 戻り値は生成されたアイテム名のリスト。
+  /// 生成に使った元画像はサーバー側で [groupID] / [shoppingListID] の買い物リストに
+  /// 保存される（最大5枚。超過分は古い順に削除。Issue #530）。
   Future<List<String>> generateShoppingListItemsFromImage({
     required String mimeType,
     required String base64Image,
+    required String groupID,
+    required String shoppingListID,
   }) async {
     final result = await httpsCallable(
       'generateShoppingListItemsFromImage',
-    ).call({'mimeType': mimeType, 'base64Image': base64Image});
+    ).call({
+      'mimeType': mimeType,
+      'base64Image': base64Image,
+      'groupID': groupID,
+      'shoppingListID': shoppingListID,
+    });
     debugPrint('generateShoppingListItemsFromImage.result: ${result.data}');
     final response = mapToJSON(result.data);
     _throwIfNotOK(response);

@@ -65,6 +65,22 @@
   SnackBar（アップグレード導線付き）を表示する。複製は `ShoppingListDuplicate` に委譲し、
   完了後は複製先リストへ表示を切り替える。
 
+## 写真から追加の元画像保存（Issue #530）
+「写真から追加」で AI 画像認識に使った元画像を買い物リストに保存し、リスト上部に
+サムネイル（`source_image_strip.dart`。タップでピンチズーム可能な拡大表示）を出す。
+元画像が1枚もないリストでは何も表示しない。
+
+- フォトライブラリからは最大5枚まで複数選択できる（`pickMultiImage`）。1枚ずつ順に
+  AI 認識し、1枚ごとに画像認識の利用回数を1回消費する。途中の1枚で失敗した場合は
+  以降の生成を打ち切り、エラー表示のうえ抽出済み候補のみ review sheet にかける。
+  カメラ撮影は従来どおり1枚ずつ。
+- 保存はサーバー側（`generateShoppingListItemsFromImage` Function）が生成成功時に行う。
+  画像本体: Storage `groups/{groupID}/shoppingLists/{shoppingListID}/sourceImages/{sourceImageID}.jpeg`、
+  メタデータ: Firestore の `sourceImages` サブコレクション（`GroupShoppingListSourceImage`）。
+- 1リストに保存できるのは最大5枚（`maxShoppingListSourceImageCount`）。超過分は
+  サーバー側で古い順に削除される。クライアントからは読み取りのみ（作成・削除不可）。
+  リスト削除時は `deleteShoppingList` Function の prefix 一括削除で画像・メタデータとも消える。
+
 ## リスト追加スポットライト（Issue #494, #508）
 `ListTopBar` 右の「リストを追加」ボタン（`CreateListMenuButton`）にユーザーが気づけるよう、
 背景をディム（黒半透明）で覆いボタン部分だけを切り抜いて強調し、説明バブルを出すスポットライト
