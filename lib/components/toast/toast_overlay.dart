@@ -128,6 +128,19 @@ class _ToastOverlayState extends ConsumerState<ToastOverlay> {
       _entry = entry;
       overlay.insert(entry);
     });
+    // addPostFrameCallback は「次のフレーム末尾に実行する」ようキューへ積むだけで、
+    // フレーム自体は要求しない。Flutter は必要な時しか描画しないため、FCM の
+    // フォアグラウンド受信など UI イベント外からの show では画面がアイドルで
+    // vsync が止まっており、誰もフレームを要求しないと上のコールバックが永遠に
+    // 発火せずトーストが表示されない(#528)。
+    //
+    // scheduleFrame はエンジンへ「次の vsync でフレームを1回描く」と依頼する
+    // ワンショットの要求。これでほぼ空のフレームが1回走り、そのフレーム末尾で
+    // 上のコールバックが OverlayEntry を insert する(insert が Overlay を dirty に
+    // するので、続くフレームでトーストが実際に描画される)。
+    // フレーム予定済みなら no-op のため、タップ起点などフレームが既に予定されて
+    // いる経路から呼ばれても二重要求にはならず、常に呼んでよい。
+    WidgetsBinding.instance.scheduleFrame();
   }
 
   void _removeEntry() {

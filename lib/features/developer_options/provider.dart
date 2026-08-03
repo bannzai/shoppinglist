@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shoppinglist/entity/app_user.dart';
+import 'package:shoppinglist/entity/app_user_private.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 
@@ -45,8 +47,34 @@ class DebugUserAddToGroup {
   }
 }
 
+/// この端末の FCM トークンをデバッグユーザーの privates ドキュメントに登録する。
+///
+/// グループ通知 (sendShoppingListUpdateNotification) は送信者以外のメンバーの
+/// fcmTokens へ送るため、デバッグユーザーにこの端末のトークンを持たせることで、
+/// 1台の端末だけでプッシュ通知の実受信 (Functions → FCM → APNs → 端末) を検証できる。
+class DebugUserRegisterFcmToken {
+  Future<void> call({required String debugUID}) async {
+    final token = await FirebaseMessaging.instance.getToken();
+    if (token == null) {
+      throw StateError('FCMトークンを取得できませんでした');
+    }
+    // fcmTokens はこの端末のトークン1件で上書きする。デバッグ用途では過去トークンの
+    // 蓄積が不要で、同じトークンなら結果が変わらないため冪等。
+    await UserDatabase(userID: debugUID).privateReference().set(
+      AppUserPrivate(
+        id: AppUserPrivate.documentID(userID: debugUID),
+        userID: debugUID,
+        email: null,
+        fcmTokens: [token],
+      ),
+      SetOptions(merge: true),
+    );
+    debugPrint('[DebugUserRegisterFcmToken] トークン登録完了: $debugUID');
+  }
+}
+
 /// デバッグユーザー関連データをクリーンアップする。
-/// memberUserIDs から除去、プロフィール削除、ユーザードキュメント削除。
+/// memberUserIDs から除去、プロフィール削除、privates 削除、ユーザードキュメント削除。
 class DebugUserCleanup {
   Future<void> call({required String debugUID, required String groupID}) async {
     final groupDB = GroupDatabase(groupID: groupID);
@@ -61,6 +89,7 @@ class DebugUserCleanup {
 
     // ユーザードキュメント削除
     final userDB = UserDatabase(userID: debugUID);
+    await userDB.privateReference().delete();
     await userDB.userReference().delete();
     debugPrint('[DebugUserCleanup] クリーンアップ完了: $debugUID');
   }

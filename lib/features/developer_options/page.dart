@@ -311,6 +311,22 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
                   ),
         ),
 
+        // デバッグユーザーにこの端末のFCMトークンを登録
+        _ActionTile(
+          title: 'デバッグユーザーにFCMトークン登録',
+          subtitle: 'この端末のトークンを登録し、グループ通知のプッシュを自端末で受信検証できるようにする',
+          icon: Icons.notifications_active,
+          isProcessing: isProcessing.value,
+          onTap:
+              () => _execute(
+                isProcessing: isProcessing,
+                resultMessage: resultMessage,
+                action:
+                    () => DebugUserRegisterFcmToken().call(debugUID: debugUID!),
+                actionName: 'FCMトークン登録',
+              ),
+        ),
+
         const Divider(height: 24),
 
         // アイテムメッセージ入力
