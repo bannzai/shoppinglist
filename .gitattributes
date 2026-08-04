@@ -1,0 +1,18 @@
+# linguist-generated begin
+# configure-linguist-generated skill が管理する区間です。
+# profiles: flutter, swift, kotlin, web
+**/*.g.dart linguist-generated
+**/*.freezed.dart linguist-generated
+**/*.gr.dart linguist-generated
+**/*.mocks.dart linguist-generated
+**/*.gen.dart linguist-generated
+**/generated_plugin_registrant.dart linguist-generated
+**/*.generated.swift linguist-generated
+**/Generated/** linguist-generated
+**/*.generated.kt linguist-generated
+**/__generated__/** linguist-generated
+**/*.generated.js linguist-generated
+**/*.generated.jsx linguist-generated
+**/*.generated.ts linguist-generated
+**/*.generated.tsx linguist-generated
+# linguist-generated end
