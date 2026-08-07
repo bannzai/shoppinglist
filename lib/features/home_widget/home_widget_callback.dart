@@ -11,6 +11,7 @@ import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/home_widget/home_widget_data_sync.dart';
 import 'package:shoppinglist/utils/config/app_identity.dart' as app_identity;
 import 'package:shoppinglist/utils/development/debug.dart';
+import 'package:shoppinglist/utils/firebase_app_check/firebase_app_check.dart';
 import 'package:shoppinglist/utils/firebase_emulator/firebase_emulator.dart';
 
 @pragma('vm:entry-point')
@@ -26,7 +27,8 @@ FutureOr<void> homeWidgetBackgroundCallback(Uri? uri) async {
 
     await Firebase.initializeApp();
     // この callback は main() と別 entry-point の isolate で動くため、
-    // Emulator 接続 (isolate ごとの設定) をここでも行う。
+    // App Check の有効化と Emulator 接続 (isolate ごとの設定) をここでも行う。
+    await activateAppCheck();
     await connectFirebaseEmulatorIfEnabled();
     await FirebaseAuth.instance.setSettings(
       userAccessGroup: app_identity.keychainAccessGroup,

@@ -19,6 +19,7 @@ import 'package:shoppinglist/features/home_widget/home_widget_data_sync.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shoppinglist/utils/development/debug.dart';
+import 'package:shoppinglist/utils/firebase_app_check/firebase_app_check.dart';
 import 'package:shoppinglist/utils/firebase_emulator/firebase_emulator.dart';
 import 'package:shoppinglist/utils/local_notification/local_notification.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
@@ -37,6 +38,7 @@ void main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp();
+    await activateAppCheck();
 
     await connectFirebaseEmulatorIfEnabled();
 
