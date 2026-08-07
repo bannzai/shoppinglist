@@ -231,7 +231,7 @@
 
 - [x] **テーマカラー連動の同期コード**: コードレビューで確認（home_widget_sync.dart）
 - [x] **プレミアム状態同期**: コードレビューで確認（home_widget_sync.dart）
-- [ ] **ウィジェット操作テスト**: write-test-mobile-mcp-home-widget skill で検証（別途実行）
+- [ ] **ウィジェット操作テスト**: ios-write-test-home-widget skill（グローバル版）で検証（別途実行）
 
 #### 動作確認
 <details>
