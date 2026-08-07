@@ -398,6 +398,9 @@ class UserDatabaseResolver extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(firebaseUserChangesProvider).asData?.value;
 
+    // サインアウトで user が null になった時に userDatabaseProvider を破棄し、
+    // 前ユーザーの userID を保持した UserDatabase が残らないようにする。
+    // 依存配列は [user] — 認証状態が変わった時だけ評価すれば十分で、毎 build の invalidate を避ける。
     useEffect(() {
       if (user == null) {
         ref.invalidate(userDatabaseProvider);

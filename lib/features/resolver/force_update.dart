@@ -17,6 +17,9 @@ class ForceUpdateResolver extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final checkForceUpdate = ref.watch(checkForceUpdateProvider);
     final shouldForceUpdate = useState(false);
+    // 起動時に強制アップデートの要否を Remote Config ベースで確認する。
+    // 依存配列は [checkForceUpdate] — Remote Config の更新で CheckForceUpdate が
+    // 作り直された時だけ再チェックし、それ以外の rebuild では再実行しない(実質起動時1回)。
     useEffect(() {
       void f() async {
         try {

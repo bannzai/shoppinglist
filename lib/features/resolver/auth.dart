@@ -37,6 +37,10 @@ class AuthResolver extends HookConsumerWidget {
       boolSharedPreferencesProvider(key: BoolKey.hasSeenOnboarding),
     );
 
+    // サインイン済みの uid を SharedPreferences(最終サインインユーザーの記録)・
+    // RevenueCat・Crashlytics・Analytics の各サービスへ伝搬する。
+    // 依存配列は AsyncValue 全体ではなく uid のみ — token refresh 等で userChanges が
+    // 再発火しても uid が変わらない限り再実行せず、Purchases.logIn 等の重複呼び出しを防ぐ。
     useEffect(() {
       final userID = firebaseUserChanges.asData?.valueOrNull?.uid;
       if (userID != null) {
