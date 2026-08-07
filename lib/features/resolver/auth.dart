@@ -61,8 +61,6 @@ class AuthResolver extends HookConsumerWidget {
       child: () {
         return firebaseUserChanges.when(
           data: (user) {
-            debugPrint('user.uid: ${user?.uid}');
-
             // kDebugMode時は匿名ユーザーでも認証済みとして通過させる（自動テスト用）
             if (user == null || (!kDebugMode && user.isAnonymous)) {
               if (!hasSeenOnboarding) {

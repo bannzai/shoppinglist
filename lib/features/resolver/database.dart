@@ -60,7 +60,6 @@ UserDatabase userDatabase(Ref ref) {
   final uid =
       firebaseUserChanges.asData?.value?.uid ??
       FirebaseAuth.instance.currentUser?.uid;
-  debugPrint('[DEBUG] database uid is $uid');
   if (uid == null) {
     throw Exception('userID is null');
   }
