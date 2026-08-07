@@ -18,8 +18,8 @@ GID_CLIENT_ID = 323773689605-k2hfptltunveoigmrqfcsln2l0p630m0.apps.googleusercon
 GID_REVERSED_CLIENT_ID = com.googleusercontent.apps.323773689605-k2hfptltunveoigmrqfcsln2l0p630m0
 
 // AdMob App ID (Issue #77)。Info.plist の GADApplicationIdentifier=$(ADMOB_APP_ID) が参照。
-// 未設定だと Google Mobile Ads SDK の初期化でクラッシュするため必須。
+// AdMob 自体は Issue #540 で撤去済み(SDK なしでは Info.plist の値は読まれない)が、
+// 再導入に備えて App ID の Env は意図的に残している。
 // クライアント埋め込み前提の公開情報のため直書き。
-// https://developers.google.com/admob/ios/quick-start#update_your_infoplist
 ADMOB_APP_ID = ca-app-pub-9127772965271297~9433558962
 
