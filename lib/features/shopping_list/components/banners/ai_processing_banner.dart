@@ -37,7 +37,9 @@ class _AIProcessingBannerState extends State<AIProcessingBanner>
       AIProcessingType.categorize => 'カテゴリ分けを実行中...',
     };
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+      // デザイン JSX では上に ProgressBlock があるため top 0 だが、アプリでは
+      // このバナーが TopBar 直下の先頭要素になり得るため top にも余白を持たせる。
+      margin: const EdgeInsets.fromLTRB(16, 10, 16, 10),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: tokens.accentSoft,
