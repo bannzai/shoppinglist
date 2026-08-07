@@ -92,11 +92,12 @@ post_install do |installer|
   if runner_agg && widget_agg
     deps_path = File.expand_path(File.join('..', '.flutter-plugins-dependencies'), File.dirname(File.realpath(__FILE__)))
     flutter_plugins = File.exist?(deps_path) ? ((JSON.parse(File.read(deps_path)).dig('plugins', 'ios') || []).map { |p| p['name'] }) : []
-    # 広告 SDK (google_mobile_ads の transitive native framework) は Widget Extension で
-    # 一切使わず、extension 非対応 API を含むため archive の extension-safe 検証に失敗し得る。
-    # プラグイン名の除外だけでは Runner の OTHER_LDFLAGS に残るため明示的に除外する
-    # (PR #520 レビュー指摘)。名前は Pods-Runner の OTHER_LDFLAGS に現れる実フレームワーク名
-    # (例: Google-Mobile-Ads-SDK pod は "Google_Mobile_Ads_SDK")に合わせること。
+    # 広告系 SDK は Widget Extension で一切使わず、extension 非対応 API を含むため
+    # archive の extension-safe 検証に失敗し得る。プラグイン名の除外だけでは Runner の
+    # OTHER_LDFLAGS に残るため明示的に除外する (PR #520 レビュー指摘)。
+    # google_mobile_ads は Issue #540 で撤去済みだが、GoogleAdsOnDeviceConversion は
+    # firebase_analytics (GoogleAppMeasurement) の依存として今も Pods に残るため本リストは必要。
+    # 名前は Pods-Runner の OTHER_LDFLAGS に現れる実フレームワーク名に合わせること。
     ad_sdk_frameworks = [
       'GoogleMobileAds',
       'Google_Mobile_Ads_SDK',
