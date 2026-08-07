@@ -40,7 +40,7 @@ flutter run --debug -d <UDID> \
 
 - シミュレータ管理: /sim-manager（iOS 18.x を使う。iOS 26.x beta は WebDriverAgent が不安定）
 - インタラクティブ UI 検証: /verify-ui-mobile-mcp
-- E2E: /maestro-flutter（フロー新規作成は /maestro-flow-writer）。既存フローは `maestro/flows/` 配下
+- E2E: /flutter-maestro（フロー新規作成は /maestro-flow-writer）。既存フローは `maestro/flows/` 配下
 - UI の条件分岐検証は mobile-mcp / maestro より先に widget test（`flutter test`）で書けないか検討する
 
 ### 再現が難しい操作の手順

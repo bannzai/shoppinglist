@@ -8,7 +8,7 @@
 - Maestro CLI: https://docs.maestro.dev/
 - iOS: Xcode 15+ / iOS 18.x シミュレータ（iPhone 16 Plus 推奨）
   - **iOS 26.x beta は WebDriverAgent が不安定。iOS 18.x を使うこと**
-  - 詳細: `~/.claude/skills/maestro-flutter/SKILL.md`
+  - 詳細: `~/.claude/skills/flutter-maestro/SKILL.md`
 - Android: Android Studio + API 35 emulator（`test_device_api35` 推奨）
 
 ### RC Test Store API Key（IAP E2E 実行時のみ必須）
@@ -36,7 +36,7 @@
 
 ```bash
 # iPhone 16 Plus (iOS 18.5) の Simulator を boot（存在すれば再利用）
-bash ~/.claude/skills/sim-manager/scripts/create-and-boot-sim.sh "E2E-iPhone16Plus" "iPhone 16 Plus"
+sim-boot "E2E-iPhone16Plus" "iPhone 16 Plus"
 
 # 直近 booted な Simulator の UDID を取得
 DEVICE_UDID=$(xcrun simctl list devices booted -j | jq -r '.devices|to_entries[0].value[0].udid')
@@ -52,7 +52,7 @@ xcrun simctl install $DEVICE_UDID build/ios/iphonesimulator/Runner.app
 # APP_ID で対象アプリを指定（prod 例。dev は com.bannzai.shoppinglist.dev）
 export APP_ID=com.bannzai.shoppinglist
 for pkg in monthly annual lifetime; do
-  bash ~/.claude/skills/maestro-flutter/scripts/run-maestro-flow.sh \
+  bash ~/.claude/skills/flutter-maestro/scripts/run-maestro-flow.sh \
     maestro/flows/iap_purchase_${pkg}.yaml $DEVICE_UDID
 done
 ```
@@ -62,10 +62,10 @@ done
 ```bash
 export APP_ID=com.bannzai.shoppinglist   # dev は com.bannzai.shoppinglist.dev
 for f in maestro/flows/premium_*.yaml; do
-  bash ~/.claude/skills/maestro-flutter/scripts/run-maestro-flow.sh "$f" $DEVICE_UDID
+  bash ~/.claude/skills/flutter-maestro/scripts/run-maestro-flow.sh "$f" $DEVICE_UDID
 done
 
-bash ~/.claude/skills/maestro-flutter/scripts/collect-results.sh
+bash ~/.claude/skills/flutter-maestro/scripts/collect-results.sh
 ```
 
 ## Android 実行
