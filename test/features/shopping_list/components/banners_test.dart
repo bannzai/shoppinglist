@@ -33,6 +33,25 @@ void main() {
     expect(find.text('URL から候補を抽出中...'), findsOneWidget);
   });
 
+  testWidgets('AIProcessingBanner: TopBar 直下で詰まらないよう上にも余白がある', (tester) async {
+    await tester.pumpWidget(
+      _wrap(const AIProcessingBanner(type: AIProcessingType.image)),
+    );
+    expect(
+      tester
+          .widget<Container>(
+            find
+                .descendant(
+                  of: find.byType(AIProcessingBanner),
+                  matching: find.byType(Container),
+                )
+                .first,
+          )
+          .margin,
+      const EdgeInsets.fromLTRB(16, 10, 16, 10),
+    );
+  });
+
   testWidgets('ListErrorCard: 例外メッセージと「再試行」が表示される', (tester) async {
     var retried = 0;
     await tester.pumpWidget(
