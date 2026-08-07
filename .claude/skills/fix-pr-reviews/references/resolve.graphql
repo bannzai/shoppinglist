@@ -1,5 +1,0 @@
-mutation($thread: ID!) {
-  resolveReviewThread(input: {threadId: $thread}) {
-    thread { id isResolved }
-  }
-}
