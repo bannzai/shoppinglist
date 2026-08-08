@@ -4,6 +4,7 @@ import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
+import 'package:shoppinglist/entity/group_category_keyword.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 
@@ -140,7 +141,26 @@ List<GroupCategory> mockCategories() => [
     name: '食品',
     order: 0,
     locationOrders: {},
-    keywords: [],
+    // mockShoppingListItems() の品名と一致させ、カテゴリ分けされた状態を再現する。
+    // 空のままだと全アイテムが「未分類」の 1 セクションに落ちる。
+    keywords: [
+      GroupCategoryKeyword(
+        keyword: '牛乳',
+        matchingType: GroupCategoryKeywordMatchingType.exact,
+      ),
+      GroupCategoryKeyword(
+        keyword: '卵',
+        matchingType: GroupCategoryKeywordMatchingType.exact,
+      ),
+      GroupCategoryKeyword(
+        keyword: '食パン',
+        matchingType: GroupCategoryKeywordMatchingType.exact,
+      ),
+      GroupCategoryKeyword(
+        keyword: 'バナナ',
+        matchingType: GroupCategoryKeywordMatchingType.exact,
+      ),
+    ],
     color: null,
     iconName: null,
   ),
@@ -152,7 +172,12 @@ List<GroupCategory> mockCategories() => [
     name: '日用品',
     order: 1,
     locationOrders: {},
-    keywords: [],
+    keywords: [
+      GroupCategoryKeyword(
+        keyword: 'トイレットペーパー',
+        matchingType: GroupCategoryKeywordMatchingType.exact,
+      ),
+    ],
     color: null,
     iconName: null,
   ),

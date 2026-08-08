@@ -70,3 +70,6 @@ tmp/
 
 # run-qa の作業ファイル
 tmp/qa/
+
+# スクリーンショット生成の中間出力。提出物は ios/fastlane/screenshots/ に置く
+artifacts/
