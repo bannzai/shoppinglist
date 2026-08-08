@@ -36,10 +36,7 @@ const screenshotCopies = <String, List<ScreenshotCopy>>{
       headline: 'AI が売り場まで\n振り分ける',
       subheadline: '追加したその場で、いつもの並び順に',
     ),
-    ScreenshotCopy(
-      headline: 'リストごとに\n細かく調整',
-      subheadline: '保存期間・招待・複製をこの画面から',
-    ),
+    ScreenshotCopy(headline: 'リストごとに\n細かく調整', subheadline: '保存期間・招待・複製をこの画面から'),
   ],
   'en-US': [
     ScreenshotCopy(
