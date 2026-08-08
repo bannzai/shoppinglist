@@ -110,25 +110,28 @@ add_submission_item() {
 add_submission_item appStoreVersion appStoreVersions "$VERSION_ID"
 
 # 初回のサブスクリプションはバイナリと同時提出が必要なため、同じ submission に入れる。
-while IFS= read -r group_id; do
-  while IFS= read -r subscription; do
-    subscription_id="${subscription%%:*}"
-    subscription_state="${subscription##*:}"
-    [ "$subscription_state" = "APPROVED" ] && continue
-    add_submission_item subscription subscriptions "$subscription_id"
-  done < <(bash "$API_SCRIPT" GET \
+# ループ内で API を叩くと標準入力を奪い合うため、対象 ID を先にまとめて集める。
+subscription_ids=()
+for group_id in $(bash "$API_SCRIPT" GET "/v1/apps/$APP_ID/subscriptionGroups" 2>/dev/null | jq -r '.data[].id'); do
+  for subscription_id in $(bash "$API_SCRIPT" GET \
     "/v1/subscriptionGroups/$group_id/subscriptions?fields[subscriptions]=state" 2>/dev/null \
-    | jq -r '.data[] | "\(.id):\(.attributes.state)"')
-done < <(bash "$API_SCRIPT" GET "/v1/apps/$APP_ID/subscriptionGroups" 2>/dev/null | jq -r '.data[].id')
+    | jq -r '.data[] | select(.attributes.state != "APPROVED") | .id'); do
+    subscription_ids+=("$subscription_id")
+  done
+done
+for subscription_id in "${subscription_ids[@]}"; do
+  add_submission_item subscription subscriptions "$subscription_id"
+done
 
-while IFS= read -r purchase; do
-  purchase_id="${purchase%%:*}"
-  purchase_state="${purchase##*:}"
-  [ "$purchase_state" = "APPROVED" ] && continue
-  add_submission_item inAppPurchaseV2 inAppPurchases "$purchase_id"
-done < <(bash "$API_SCRIPT" GET \
+purchase_ids=()
+for purchase_id in $(bash "$API_SCRIPT" GET \
   "/v1/apps/$APP_ID/inAppPurchasesV2?fields[inAppPurchases]=state" 2>/dev/null \
-  | jq -r '.data[] | "\(.id):\(.attributes.state)"')
+  | jq -r '.data[] | select(.attributes.state != "APPROVED") | .id'); do
+  purchase_ids+=("$purchase_id")
+done
+for purchase_id in "${purchase_ids[@]}"; do
+  add_submission_item inAppPurchaseV2 inAppPurchases "$purchase_id"
+done
 
 # 3. 提出する。
 submitted="$(bash "$API_SCRIPT" PATCH "/v1/reviewSubmissions/$submission_id" "$(jq -n \
