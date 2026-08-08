@@ -32,3 +32,6 @@ PERFECT FOR
 - Those tired of texting "do we need anything?"
 
 Whether shopping solo or as a group, Shopping List has you covered.
+
+Terms of Use: https://bannzai.github.io/shoppinglist/Terms
+Privacy Policy: https://bannzai.github.io/shoppinglist/PrivacyPolicy

@@ -32,3 +32,7 @@
 - LINEで「何か買うものある？」と聞くのが面倒な方
 
 個人でもグループでも、あなたの買い物をサポートします。
+
+【利用規約・プライバシーポリシー】
+利用規約: https://bannzai.github.io/shoppinglist/Terms
+プライバシーポリシー: https://bannzai.github.io/shoppinglist/PrivacyPolicy
