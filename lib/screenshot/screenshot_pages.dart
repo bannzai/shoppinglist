@@ -8,10 +8,11 @@ library;
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
-import 'package:shoppinglist/features/previews/screens/ai_categorize_preview_sheet_preview.dart';
-import 'package:shoppinglist/features/previews/screens/ai_review_sheet_preview.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_preview.dart';
 import 'package:shoppinglist/features/previews/screens/shopping_list_setting_preview.dart';
+import 'package:shoppinglist/features/shopping_list/components/ai_categorize_preview_sheet.dart';
+import 'package:shoppinglist/features/shopping_list/components/ai_review_sheet.dart';
+import 'package:shoppinglist/screenshot/screenshot_sheet_host.dart';
 
 /// 撮影する 1 ページ。`screenshotCopies` の同じ添字のキャッチコピーと組み合わせる。
 class ScreenshotPage {
@@ -39,11 +40,30 @@ final screenshotPages = <ScreenshotPage>[
   ),
   ScreenshotPage(
     name: 'ai_review',
-    appScreen: () => const AIReviewSheetPreview(),
+    appScreen: () => ScreenshotSheetHost(
+      background: const ShoppingListPreview(),
+      openSheet: ({required context}) => showAIReviewSheet(
+        context: context,
+        rawNames: const ['牛乳', 'パン', '卵', 'にんじん', '玉ねぎ'],
+        source: 'screenshot',
+      ),
+    ),
   ),
   ScreenshotPage(
     name: 'ai_categorize',
-    appScreen: () => const AICategorizePreviewSheetPreview(),
+    appScreen: () => ScreenshotSheetHost(
+      background: const ShoppingListPreview(),
+      openSheet: ({required context}) => showAICategorizePreviewSheet(
+        context: context,
+        categorized: const [
+          (name: 'にんじん', categoryName: '野菜'),
+          (name: '玉ねぎ', categoryName: '野菜'),
+          (name: '鶏もも肉', categoryName: '肉'),
+          (name: '牛乳', categoryName: '乳製品'),
+        ],
+        existingCategoryNames: const ['野菜', '肉', '乳製品'],
+      ),
+    ),
   ),
   ScreenshotPage(
     name: 'shopping_list_setting',
