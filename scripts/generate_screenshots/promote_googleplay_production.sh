@@ -26,8 +26,10 @@ cd "$REPOSITORY_ROOT"
 readonly PACKAGE_NAME="com.bannzai.shoppinglist"
 readonly API_HOST="https://androidpublisher.googleapis.com"
 
-# 初回公開は段階的公開にせず全ユーザーへ出す。
-readonly RELEASE_STATUS="completed"
+# まだ一度も公開していないアプリ (draft app) は draft の release しか作れず、
+# completed で作ると "Only releases with status draft may be created on draft app." になる。
+# 初回は draft で作り、2 回目以降は段階的公開にせず全ユーザーへ出す。
+DEFAULT_RELEASE_STATUS="completed"
 
 VERSION_CODE=""
 RELEASE_NAME=""
@@ -75,22 +77,35 @@ fi
 
 echo "--- production へ昇格: versionCode=$VERSION_CODE name=$RELEASE_NAME"
 
-update_response="$(curl -s -X PUT -H "Authorization: Bearer $access_token" \
-  -H 'Content-Type: application/json' \
-  "$API_HOST/androidpublisher/v3/applications/$PACKAGE_NAME/edits/$edit_id/tracks/production" \
-  --data-binary "$(jq -n \
-    --arg name "$RELEASE_NAME" \
-    --arg status "$RELEASE_STATUS" \
-    --argjson versionCode "$VERSION_CODE" \
-    '{track: "production", releases: [{name: $name, versionCodes: [$versionCode|tostring], status: $status}]}')")"
-if ! echo "$update_response" | jq -e '.track' > /dev/null 2>&1; then
-  echo "[NG] production トラックの更新に失敗: $(echo "$update_response" | jq -c '.error.message // .')" >&2
-  exit 1
+# 指定 status で production トラックを更新して commit する。
+promote_with_status() {
+  local release_status="$1"
+
+  curl -s -X PUT -H "Authorization: Bearer $access_token" \
+    -H 'Content-Type: application/json' \
+    "$API_HOST/androidpublisher/v3/applications/$PACKAGE_NAME/edits/$edit_id/tracks/production" \
+    --data-binary "$(jq -n \
+      --arg name "$RELEASE_NAME" \
+      --arg status "$release_status" \
+      --argjson versionCode "$VERSION_CODE" \
+      '{track: "production", releases: [{name: $name, versionCodes: [$versionCode|tostring], status: $status}]}')" \
+    > /dev/null
+
+  curl -s -X POST -H "Authorization: Bearer $access_token" \
+    -H 'Content-Type: application/json' \
+    "$API_HOST/androidpublisher/v3/applications/$PACKAGE_NAME/edits/$edit_id:commit" -d '{}'
+}
+
+commit_response="$(promote_with_status "$DEFAULT_RELEASE_STATUS")"
+if echo "$commit_response" | grep -q 'Only releases with status draft'; then
+  echo "--- draft app のため status=draft で作り直す"
+  # commit に失敗した edit は使えないので新しい edit を開く。
+  edit_id="$(curl -s -X POST -H "Authorization: Bearer $access_token" \
+    -H 'Content-Type: application/json' \
+    "$API_HOST/androidpublisher/v3/applications/$PACKAGE_NAME/edits" -d '{}' | jq -r '.id')"
+  commit_response="$(promote_with_status draft)"
 fi
 
-commit_response="$(curl -s -X POST -H "Authorization: Bearer $access_token" \
-  -H 'Content-Type: application/json' \
-  "$API_HOST/androidpublisher/v3/applications/$PACKAGE_NAME/edits/$edit_id:commit" -d '{}')"
 if ! echo "$commit_response" | jq -e '.id' > /dev/null 2>&1; then
   echo "[NG] edit の commit に失敗: $(echo "$commit_response" | jq -c '.error.message // .')" >&2
   exit 1
