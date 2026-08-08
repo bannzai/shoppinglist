@@ -2,10 +2,9 @@
 # =============================================================================
 # スクリプト名: submit_appstore_review.sh
 # 用途:
-#   App Store Connect でアプリバージョンとサブスクリプション商品を 1 つの
-#   review submission にまとめて審査提出する。
-#   初回のサブスクリプションはバイナリと同時提出が必須のため、両方を同じ
-#   submission の item として追加する。
+#   App Store Connect でアプリバージョンを審査提出する。
+#   ビルドの紐付け → review submission の作成 → item 追加 → 提出までを行う。
+#   審査待ちのサブスクリプション・買い切り商品はバージョンの提出に含めてレビューされる。
 # 使い方:
 #   bash scripts/generate_screenshots/submit_appstore_review.sh -a APP_ID -v VERSION_ID [-b BUILD_VERSION]
 # 引数:
@@ -94,49 +93,30 @@ add_submission_item() {
   local relationship_id="$3"
 
   local response
+  # iap_api.sh は 4xx で非ゼロ終了する。set -e で関数ごと打ち切られないよう握る。
   response="$(bash "$API_SCRIPT" POST "/v1/reviewSubmissionItems" "$(jq -n \
     --arg submissionId "$submission_id" --arg name "$relationship_name" \
     --arg type "$relationship_type" --arg id "$relationship_id" \
     '{data: {type: "reviewSubmissionItems",
       relationships: ({reviewSubmission: {data: {type: "reviewSubmissions", id: $submissionId}}}
-        + {($name): {data: {type: $type, id: $id}}})}}')" 2>&1)"
+        + {($name): {data: {type: $type, id: $id}}})}}')" 2>&1 || true)"
   if echo "$response" | jq -e '.data.id' > /dev/null 2>&1; then
     echo "--- item 追加: $relationship_name $relationship_id"
   else
-    echo "--- item 追加をスキップ: $relationship_name $relationship_id ($(echo "$response" | jq -r '.errors[0].code // "既存"' 2>/dev/null))"
+    echo "--- item 追加をスキップ: $relationship_name $relationship_id ($(echo "$response" | jq -r '[.. | objects | select(has("code")) | .code] | first // "既存"' 2>/dev/null))"
   fi
 }
 
 add_submission_item appStoreVersion appStoreVersions "$VERSION_ID"
 
-# 初回のサブスクリプションはバイナリと同時提出が必要なため、同じ submission に入れる。
-# ループ内で API を叩くと標準入力を奪い合うため、対象 ID を先にまとめて集める。
-subscription_ids=()
-for group_id in $(bash "$API_SCRIPT" GET "/v1/apps/$APP_ID/subscriptionGroups" 2>/dev/null | jq -r '.data[].id'); do
-  for subscription_id in $(bash "$API_SCRIPT" GET \
-    "/v1/subscriptionGroups/$group_id/subscriptions?fields[subscriptions]=state" 2>/dev/null \
-    | jq -r '.data[] | select(.attributes.state != "APPROVED") | .id'); do
-    subscription_ids+=("$subscription_id")
-  done
-done
-for subscription_id in "${subscription_ids[@]}"; do
-  add_submission_item subscription subscriptions "$subscription_id"
-done
-
-purchase_ids=()
-for purchase_id in $(bash "$API_SCRIPT" GET \
-  "/v1/apps/$APP_ID/inAppPurchasesV2?fields[inAppPurchases]=state" 2>/dev/null \
-  | jq -r '.data[] | select(.attributes.state != "APPROVED") | .id'); do
-  purchase_ids+=("$purchase_id")
-done
-for purchase_id in "${purchase_ids[@]}"; do
-  add_submission_item inAppPurchaseV2 inAppPurchases "$purchase_id"
-done
+# サブスクリプション・買い切り商品は reviewSubmissionItems の relationship に無く
+# ('subscription' is not a relationship on the resource 'reviewSubmissionItems')、
+# アプリバージョンの提出に含めてレビューされる。ここで個別に追加しない。
 
 # 3. 提出する。
 submitted="$(bash "$API_SCRIPT" PATCH "/v1/reviewSubmissions/$submission_id" "$(jq -n \
   --arg id "$submission_id" \
-  '{data: {type: "reviewSubmissions", id: $id, attributes: {submitted: true}}}')" 2>&1)"
+  '{data: {type: "reviewSubmissions", id: $id, attributes: {submitted: true}}}')" 2>&1 || true)"
 if echo "$submitted" | jq -e '.data.attributes.state' > /dev/null 2>&1; then
   echo "--- 提出完了: state=$(echo "$submitted" | jq -r '.data.attributes.state')"
 else
