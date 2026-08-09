@@ -16,6 +16,8 @@ import 'package:shoppinglist/features/group_invitation/page.dart';
 import 'package:shoppinglist/features/group_list/page.dart';
 import 'package:shoppinglist/features/inquiry/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/features/settings/components/account_link_section.dart';
 import 'package:shoppinglist/features/settings/components/location_reminder_toggle.dart';
 import 'package:shoppinglist/features/settings/components/theme_color_tile.dart';
 import 'package:shoppinglist/provider/app_user.dart';
@@ -160,6 +162,7 @@ class SettingPage extends HookConsumerWidget {
                   ),
                 ],
               ),
+              const AccountLinkSection(),
               AppSettingSection(
                 title: 'グループ',
                 children: [
@@ -485,6 +488,12 @@ class _SignOutButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.appTheme;
+    // ゲスト（匿名）はサインアウトすると同じアカウントへ再サインインする手段が
+    // 無いため、確認ダイアログの本文を恒久的なデータ喪失の警告に切り替える。
+    // 読込中や未認証（通常この画面には到達しない）は通常の警告文で扱う。
+    final isAnonymous =
+        ref.watch(firebaseUserChangesProvider).valueOrNull?.isAnonymous ??
+        false;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: SizedBox(
@@ -521,7 +530,9 @@ class _SignOutButton extends ConsumerWidget {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        '再度サインインするまで端末からはリストにアクセスできなくなります。',
+                        isAnonymous
+                            ? 'ゲスト利用中のため、サインアウトすると同じアカウントに再サインインできず、今のリストとグループには二度とアクセスできなくなります。'
+                            : '再度サインインするまで端末からはリストにアクセスできなくなります。',
                         style: Theme.of(dialogContext).textTheme.bodyMedium
                             ?.copyWith(color: tokens.neutral.ink2),
                       ),

@@ -1,0 +1,28 @@
+appId: ${APP_ID}
+---
+# 設定画面のアカウントセクション (issue #548) を検証する。
+# ゲスト（匿名）サインイン直後は「ゲストとして利用中」の説明行と
+# Apple / Google のリンク導線が表示されることを確認する。
+# 実際のリンク（ネイティブの Apple / Google シート）はシミュレータの
+# アカウント設定に依存するため、このフローでは表示までを検証する。
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 設定画面へ遷移する。設定はテキストタブではなく list_top_bar の設定アイコン
+# (tooltip '設定') からの push ルート。auth_sign_out.yaml と同じ実績パターンで掴む。
+- tapOn:
+    text: "設定.*"
+    index: 0
+- assertVisible: "設定.*"
+- waitForAnimationToEnd
+
+# アカウントセクション（プロフィールの直下）を表示する
+- scrollUntilVisible:
+    element:
+      text: "Apple でアカウントをリンク"
+    direction: DOWN
+    timeout: 15000
+- assertVisible: "(?s).*ゲストとして利用中です.*"
+- assertVisible: "Apple でアカウントをリンク"
+- assertVisible: "Google でアカウントをリンク"
+- takeScreenshot: maestro/test-results/settings_account_link_section

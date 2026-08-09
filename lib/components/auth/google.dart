@@ -7,7 +7,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
-Future<UserCredential> signInWithGoogle() async {
+/// Google Sign-Inのネイティブフローを実行し、Firebase認証用のcredentialを返す。
+/// サインイン（signInWithGoogle）とリンク（linkWithGoogle）で共用する。
+Future<OAuthCredential> requestGoogleAuthCredential() async {
   final googleSignIn = GoogleSignIn.instance;
 
   // Trigger the authentication flow
@@ -21,14 +23,23 @@ Future<UserCredential> signInWithGoogle() async {
       .authorizationForScopes(['email', 'profile']);
   final String? accessToken = authorization?.accessToken;
 
-  // Create a new credential
-  final credential = GoogleAuthProvider.credential(
+  return GoogleAuthProvider.credential(
     accessToken: accessToken,
     idToken: idToken,
   );
+}
 
-  // Once signed in, return the UserCredential
-  return await FirebaseAuth.instance.signInWithCredential(credential);
+/// Google Sign-Inで認証し、Firebase UserCredentialを返す。
+Future<UserCredential> signInWithGoogle() async {
+  return await FirebaseAuth.instance.signInWithCredential(
+    await requestGoogleAuthCredential(),
+  );
+}
+
+/// 現在のユーザー（主にゲスト=匿名ユーザー）へGoogleアカウントをリンクする。
+/// UIDが維持されるため、それまでに作ったリスト・グループは引き継がれる（issue #548）。
+Future<UserCredential> linkWithGoogle({required User user}) async {
+  return await user.linkWithCredential(await requestGoogleAuthCredential());
 }
 
 class AppSignInWithGoogleButton extends HookConsumerWidget {

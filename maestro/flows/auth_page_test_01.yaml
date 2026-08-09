@@ -17,6 +17,6 @@ appId: ${APP_ID}
 - tapOn: "スキップ"
 - waitForAnimationToEnd
 - extendedWaitUntil:
-    visible: "匿名サインイン（デバッグ用）"
+    visible: "サインインせずにはじめる"
     timeout: 30000
 - takeScreenshot: maestro/test-results/auth_page_01_signin

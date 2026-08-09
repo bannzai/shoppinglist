@@ -24,9 +24,9 @@ appId: ${APP_ID}
 - tapOn: "スキップ"
 - waitForAnimationToEnd
 - extendedWaitUntil:
-    visible: "匿名サインイン（デバッグ用）"
+    visible: "サインインせずにはじめる"
     timeout: 90000
-- tapOn: "匿名サインイン（デバッグ用）"
+- tapOn: "サインインせずにはじめる"
 # サインイン処理の完了を待機（Retryか成功画面が出るまで待つ）
 - waitForAnimationToEnd
 # permission-deniedエラーでRetryボタンが表示される場合がある

@@ -8,9 +8,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-/// Apple Sign-Inで認証し、Firebase UserCredentialを返す。
+/// Apple Sign-Inのネイティブフローを実行し、Firebase認証用のcredentialを返す。
+/// サインイン（signInWithApple）とリンク（linkWithApple）で共用する。
 /// nonce: rawNonceをSHA-256ハッシュしてAppleに渡し、rawNonceをFirebaseに渡すことでリプレイ攻撃を防ぐ。
-Future<UserCredential> signInWithApple() async {
+Future<OAuthCredential> requestAppleAuthCredential() async {
   final rawNonce = generateNonce();
   final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
 
@@ -27,16 +28,27 @@ Future<UserCredential> signInWithApple() async {
     throw Exception('No identity token');
   }
 
-  return await FirebaseAuth.instance.signInWithCredential(
-    AppleAuthProvider.credentialWithIDToken(
-      idToken,
-      rawNonce,
-      AppleFullPersonName(
-        givenName: appleCredential.givenName,
-        familyName: appleCredential.familyName,
-      ),
+  return AppleAuthProvider.credentialWithIDToken(
+    idToken,
+    rawNonce,
+    AppleFullPersonName(
+      givenName: appleCredential.givenName,
+      familyName: appleCredential.familyName,
     ),
   );
+}
+
+/// Apple Sign-Inで認証し、Firebase UserCredentialを返す。
+Future<UserCredential> signInWithApple() async {
+  return await FirebaseAuth.instance.signInWithCredential(
+    await requestAppleAuthCredential(),
+  );
+}
+
+/// 現在のユーザー（主にゲスト=匿名ユーザー）へAppleアカウントをリンクする。
+/// UIDが維持されるため、それまでに作ったリスト・グループは引き継がれる（issue #548）。
+Future<UserCredential> linkWithApple({required User user}) async {
+  return await user.linkWithCredential(await requestAppleAuthCredential());
 }
 
 class AppSignInWithAppleButton extends HookConsumerWidget {

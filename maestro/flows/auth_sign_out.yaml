@@ -4,7 +4,7 @@ appId: ${APP_ID}
 # release/profile では signOut() 後に終了アラート(「サインアウトしました」/「終了する」)を出し
 # exit(0) する。debug では Hot Restart の手間を避けるため終了アラートも exit も行わない。
 #
-# Maestro は debug ビルド(匿名サインインが kDebugMode 限定のため)で動くので、ここでは
+# Maestro は debug ビルドで動くので、ここでは
 # 「debug ではサインアウト確定後に終了アラートが出ない」ことを確認する（kDebugMode ガードの回帰防止）。
 
 - runFlow: shared/anonymous_sign_in.yaml
