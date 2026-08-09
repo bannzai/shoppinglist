@@ -54,6 +54,8 @@ ios/Flutter/Secret.xcconfig
 maestro/screenshots/
 maestro/test-results/
 screenshots/
+# ストア提出用スクリーンショットは成果物として管理する (fastlane deliver の入力)
+!ios/fastlane/screenshots/
 
 # UI research artifacts
 .local/
@@ -70,3 +72,6 @@ tmp/
 
 # run-qa の作業ファイル
 tmp/qa/
+
+# スクリーンショット生成の中間出力。提出物は ios/fastlane/screenshots/ に置く
+artifacts/

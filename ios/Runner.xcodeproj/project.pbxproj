@@ -633,7 +633,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Profile;
@@ -765,7 +765,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -818,7 +818,7 @@
 				SUPPORTED_PLATFORMS = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -939,6 +939,8 @@
 					"-framework",
 					"\"FirebaseAnalytics\"",
 					"-framework",
+					"\"FirebaseAppCheck\"",
+					"-framework",
 					"\"FirebaseAppCheckInterop\"",
 					"-framework",
 					"\"FirebaseAuth\"",
@@ -1056,7 +1058,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -1119,6 +1121,8 @@
 					"\"FirebaseABTesting\"",
 					"-framework",
 					"\"FirebaseAnalytics\"",
+					"-framework",
+					"\"FirebaseAppCheck\"",
 					"-framework",
 					"\"FirebaseAppCheckInterop\"",
 					"-framework",
@@ -1238,7 +1242,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = WIDGET_EXTENSION;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -1299,6 +1303,8 @@
 					"\"FirebaseABTesting\"",
 					"-framework",
 					"\"FirebaseAnalytics\"",
+					"-framework",
+					"\"FirebaseAppCheck\"",
 					"-framework",
 					"\"FirebaseAppCheckInterop\"",
 					"-framework",
@@ -1416,7 +1422,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = WIDGET_EXTENSION;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Profile;
 		};

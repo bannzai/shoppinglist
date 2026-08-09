@@ -81,9 +81,18 @@ dependencies:
   google_maps_flutter: ^2.17.0
   flutter_local_notifications: ^21.0.0
   geocoding: ^4.0.0
+  firebase_app_check: 0.4.1+4
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+
+  # App Store スクリーンショットをシミュレータの実描画で撮影するために使う
+  # (scripts/generate_screenshots/)。widget test のオフスクリーン描画では
+  # 日本語フォントが読み込まれず豆腐になるため、実機描画で撮る。
+  integration_test:
+    sdk: flutter
+  flutter_driver:
     sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to
