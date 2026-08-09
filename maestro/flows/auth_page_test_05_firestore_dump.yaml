@@ -17,10 +17,10 @@ appId: ${APP_ID}
 - tapOn: "スキップ"
 - waitForAnimationToEnd
 - extendedWaitUntil:
-    visible: "匿名サインイン（デバッグ用）"
+    visible: "サインインせずにはじめる"
     timeout: 30000
 # 匿名サインイン
-- tapOn: "匿名サインイン（デバッグ用）"
+- tapOn: "サインインせずにはじめる"
 - waitForAnimationToEnd
 - runFlow:
     when:

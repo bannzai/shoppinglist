@@ -17,12 +17,12 @@ appId: ${APP_ID}
 - tapOn: "スキップ"
 - waitForAnimationToEnd
 - extendedWaitUntil:
-    visible: "匿名サインイン（デバッグ用）"
+    visible: "サインインせずにはじめる"
     timeout: 30000
 # プライバシーポリシーリンクをタップ（画面下部の小さいテキスト）
 - tapOn: "プライバシーポリシー"
 - waitForAnimationToEnd
 - extendedWaitUntil:
-    notVisible: "匿名サインイン（デバッグ用）"
+    notVisible: "サインインせずにはじめる"
     timeout: 10000
 - takeScreenshot: maestro/test-results/auth_page_02_privacy_policy

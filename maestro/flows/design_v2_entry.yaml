@@ -3,7 +3,7 @@ appId: ${APP_ID}
 # Onboarding 3 スライド + Auth 文言 SSOT 化 (PR-2) の検証。
 # - Onboarding body は screens-onboarding.jsx exact 文に差し替え済み
 # - Auth title / body / 規約注記 は screens-onboarding.jsx#AuthPage 準拠
-# - Auth ゲストリンクは UI に出さない (debug 匿名ボタンのみ)
+# - Auth ゲスト開始ボタン「サインインせずにはじめる」は release でも常時表示 (issue #548)
 #
 # 注意: スライドのタイトル/本文は複数行が 1 つの Text(semantics) に結合されることがあり、
 # maestro の text は全文アンカーマッチのため (?s) 部分一致で指定する。
@@ -32,19 +32,14 @@ appId: ${APP_ID}
 - swipe:
     direction: LEFT
 
-# Slide 2
+# Slide 2（最終スライド）
+# Slide 3 (店舗近接通知の訴求) は位置情報リマインダー非表示中 (issue #465) のため
+# 表示されない (lib/features/onboarding/page.dart の shoppingLocationFeatureEnabled 分岐)。
 - assertVisible: "(?s).*同じリストを.*"
 - assertVisible: "(?s).*同時に編集.*"
 - assertVisible: "(?s).*招待コードで招くと.*"
-- swipe:
-    direction: LEFT
 
-# Slide 3
-- assertVisible: "(?s).*お店の近くで.*"
-- assertVisible: "(?s).*そっと思い出す.*"
-- assertVisible: "(?s).*やさしくお知らせ.*"
-
-# 完走で AuthPage に遷移
+# 最終スライドの「はじめる」で完走し AuthPage に遷移
 - tapOn: "はじめる"
 
 # Auth title / body
@@ -52,8 +47,9 @@ appId: ${APP_ID}
 - assertVisible: "(?s).*ひとつのリストへ.*"
 - assertVisible: "(?s).*広告もメールマガジンもありません.*"
 
-# Auth ゲスト導線は本番 UI に出さない
-- assertNotVisible: "ゲストとして使う"
+# Auth ゲスト開始ボタンは常時表示 (issue #548: ストア審査がサインインなしで本体へ入るため)
+- assertVisible: "サインインせずにはじめる"
+- assertVisible: "(?s).*あとから設定画面でアカウントをリンクできます.*"
 
 # サインインボタンは存在。Apple は native SignInWithAppleButton で文言が OS ロケール依存の
 # ため maestro の text 一致に向かない。カスタムボタンの「Google でサインイン」存在で

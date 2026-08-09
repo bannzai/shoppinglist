@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -66,24 +65,10 @@ class AuthPage extends HookConsumerWidget {
                   AppSignInWithGoogleButton(
                     onLoadingChanged: (value) => isSigningIn.value = value,
                   ),
-                  if (kDebugMode) ...[
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          isSigningIn.value = true;
-                          try {
-                            await FirebaseAuth.instance.signInAnonymously();
-                          } catch (_) {
-                            isSigningIn.value = false;
-                            rethrow;
-                          }
-                        },
-                        child: const Text('匿名サインイン（デバッグ用）'),
-                      ),
-                    ),
-                  ],
+                  const SizedBox(height: 10),
+                  GuestStartButton(
+                    onLoadingChanged: (value) => isSigningIn.value = value,
+                  ),
                   const SizedBox(height: 16),
                   const _Note(),
                 ],
@@ -91,6 +76,82 @@ class AuthPage extends HookConsumerWidget {
             ),
           ),
           if (isSigningIn.value) Positioned.fill(child: LaunchLoading.shared()),
+        ],
+      ),
+    );
+  }
+}
+
+/// サインインせずゲスト（匿名ユーザー）としてアプリを使い始めるボタン。
+/// ストア審査はデモアカウントなしでアプリ本体へ入れる必要があるため、
+/// release ビルドでも常時表示する（issue #548）。
+/// アカウントは後から設定画面のアカウントセクションでリンクできる。
+class GuestStartButton extends HookConsumerWidget {
+  /// サインイン処理の開始/終了を呼び出し元へ通知する。
+  /// 処理中は呼び出し元（AuthPage）が画面全体を LaunchLoading に切り替えるため、
+  /// ボタン自身は処理中インジケータを描画しない。
+  final void Function(bool isLoading) onLoadingChanged;
+
+  const GuestStartButton({super.key, required this.onLoadingChanged});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoading = useState(false);
+    final tokens = context.appTheme;
+    final neutral = tokens.neutral;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: neutral.ink,
+                side: BorderSide(color: neutral.divider, width: 1),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+              ),
+              onPressed: () async {
+                if (isLoading.value) {
+                  return;
+                }
+                analytics.logEvent(
+                  name: 'tap_start_as_guest',
+                  parameters: null,
+                );
+                isLoading.value = true;
+                onLoadingChanged(true);
+                try {
+                  await FirebaseAuth.instance.signInAnonymously();
+                  // 成功時はローディングを解除しない（google.dart と同じ理由）。
+                } catch (_) {
+                  isLoading.value = false;
+                  onLoadingChanged(false);
+                  rethrow;
+                }
+              },
+              child: Text(
+                'サインインせずにはじめる',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: neutral.ink,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'あとから設定画面でアカウントをリンクできます',
+            textAlign: TextAlign.center,
+            style: Theme.of(
+              context,
+            ).textTheme.labelSmall?.copyWith(color: neutral.ink3),
+          ),
         ],
       ),
     );

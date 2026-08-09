@@ -7,14 +7,13 @@ last_verified_at: 2026-07-14
 
 # auth QA
 
-認証画面（`lib/features/auth/page.dart`）はオンボーディング完了後の未認証ユーザーに表示される（`lib/features/resolver/auth.dart`）。kDebugMode 時は匿名ユーザーも認証済みとして通過するため、Maestro / デバッグビルドでは「匿名サインイン（デバッグ用）」ボタンが利用できる。再表示（サインアウト後・未認証への復帰）には `clearState` + `clearKeychain`、または新規シミュレータで未認証状態を作る必要がある。
+認証画面（`lib/features/auth/page.dart`）はオンボーディング完了後の未認証ユーザーに表示される（`lib/features/resolver/auth.dart`）。匿名（ゲスト）ユーザーはビルドを問わず認証済みとして本体を利用でき（issue #548: ストア審査対応）、「サインインせずにはじめる」ボタンが release を含む全ビルドで表示される。アカウントは後から設定画面のアカウントセクションでリンクする。再表示（サインアウト後・未認証への復帰）には `clearState` + `clearKeychain`、または新規シミュレータで未認証状態を作る必要がある。
 
 ## 1. 認証画面の表示
 
 - [x] **タイトルと説明文が表示される**: 「家族の買い物を、ひとつのリストへ」の見出しと、「サインインすると端末をまたいでリストが同期します。広告もメールマガジンもありません。」の説明文が表示される（既存 E2E: maestro/flows/design_v2_entry.yaml, maestro/flows/auth_page_test_01.yaml）
 - [x] **アート画像とサインインボタンが表示される**: 上部に `images/auth/auth_art.png`、下部に Apple サインインボタンと「Google でサインイン」ボタンが表示される
-- [x] **匿名サインインは debug ビルドのみ表示**: 「匿名サインイン（デバッグ用）」ボタンは kDebugMode でのみ表示され、release/profile ビルドでは表示されない
-- [x] **ゲスト導線を UI に出さない**: 「ゲストとして使う」等のゲストリンクは本番 UI に表示されない（既存 E2E: maestro/flows/design_v2_entry.yaml）
+- [ ] **ゲスト開始ボタンが常時表示される**: 「サインインせずにはじめる」ボタンと「あとから設定画面でアカウントをリンクできます」の注記が release を含む全ビルドで表示される（issue #548 で「匿名サインイン（デバッグ用）」の kDebugMode ガードを撤廃。E2E: maestro/flows/design_v2_entry.yaml、widget test: test/features/auth/page_test.dart）
 - [x] **規約同意文が表示される**: 「続けることで 利用規約 と プライバシーポリシー に同意したものとみなされます。」が表示され、利用規約・プライバシーポリシーがリンク（accent 色・下線）になっている（既存 E2E: maestro/flows/design_v2_entry.yaml）
 
 #### 動作確認
@@ -39,25 +38,7 @@ last_verified_at: 2026-07-14
 
 </details>
 
-### **匿名サインインは debug ビルドのみ表示**: 「匿名サインイン（デバッグ用）」ボタンは kDebugMode でのみ表示され、release/profile ビルドでは表示されない
-
-<details><summary>動作確認スクショ</summary>
-
-**確認日: 2026-07-14**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260714/13eb0da3-4c65-480e-98ac-355dffba53cc.png" width="320">
-
-debug ビルド（Maestro 実行環境）で表示されることをスクショで確認。release/profile 非表示は `lib/features/auth/page.dart:69` の `if (kDebugMode)` ガードをコードレビューで確認（release ビルドは今回作成していないため実機検証はコードレビューで代替）。
-
-</details>
-
-### **ゲスト導線を UI に出さない**: 「ゲストとして使う」等のゲストリンクは本番 UI に表示されない（既存 E2E: maestro/flows/design_v2_entry.yaml）
-
-<details><summary>動作確認スクショ</summary>
-
-**確認日: 2026-07-14**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260714/13eb0da3-4c65-480e-98ac-355dffba53cc.png" width="320">
-
-</details>
+### **ゲスト開始ボタンが常時表示される**: 旧仕様（「匿名サインインは debug ビルドのみ表示」「ゲスト導線を UI に出さない」）は issue #548 で撤廃し、release でもゲスト開始ボタンを表示する仕様に変更した。旧仕様のエビデンス（2026-07-14）は無効。要再検証。
 
 ### **規約同意文が表示される**: 「続けることで 利用規約 と プライバシーポリシー に同意したものとみなされます。」が表示され、利用規約・プライバシーポリシーがリンク（accent 色・下線）になっている（既存 E2E: maestro/flows/design_v2_entry.yaml）
 
@@ -74,7 +55,7 @@ debug ビルド（Maestro 実行環境）で表示されることをスクショ
 
 ## 2. サインイン操作
 
-- [x] **匿名サインインでホームへ到達する**: debug ビルドで「匿名サインイン（デバッグ用）」をタップすると `FirebaseAuth.instance.signInAnonymously()` が実行され、以降のリゾルバ連鎖を経てホーム（買い物リスト）に到達する（既存 E2E: maestro/flows/auth_page_test_04_anon_signin.yaml）
+- [x] **ゲストで開始してホームへ到達する**: 「サインインせずにはじめる」をタップすると `FirebaseAuth.instance.signInAnonymously()` が実行され、以降のリゾルバ連鎖を経てホーム（買い物リスト）に到達する（issue #548 でボタン名を変更。既存 E2E: maestro/flows/auth_page_test_04_anon_signin.yaml）
 - [ ] **Apple サインインが実行できる**: Apple ボタンで `signInWithApple()`（nonce 付き）が実行され、成功すると認証済みとしてホームへ遷移する
   - ⏭️ スキップ: 実 Apple アカウントでの成功サインインが必要なため手動確認のみ（root QA.md 記載方針）。シミュレータに Apple ID 未設定のため「Apple Accountにサインインしてください」システムダイアログが出るところまでは確認した（→キャンセル項目のエビデンスとして使用）
 - [ ] **Google サインインが実行できる**: 「Google でサインイン」ボタンで `signInWithGoogle()` が実行され、成功するとホームへ遷移する
@@ -85,7 +66,7 @@ debug ビルド（Maestro 実行環境）で表示されることをスクショ
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **匿名サインインでホームへ到達する**: debug ビルドで「匿名サインイン（デバッグ用）」をタップすると `FirebaseAuth.instance.signInAnonymously()` が実行され、以降のリゾルバ連鎖を経てホーム（買い物リスト）に到達する（既存 E2E: maestro/flows/auth_page_test_04_anon_signin.yaml）
+### **ゲストで開始してホームへ到達する**: 「サインインせずにはじめる」をタップすると `FirebaseAuth.instance.signInAnonymously()` が実行され、以降のリゾルバ連鎖を経てホーム（買い物リスト）に到達する（issue #548 でボタン名を変更。既存 E2E: maestro/flows/auth_page_test_04_anon_signin.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
