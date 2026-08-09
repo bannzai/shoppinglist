@@ -182,6 +182,7 @@ last_verified_at: 2026-07-15
 - [x] **確認ダイアログを経てサインアウトする**: 「サインアウト」タップで「サインアウトしますか?」ダイアログ（danger 色の確定ボタン）が開く。確定で `FirebaseAuth.instance.signOut()` が実行される（既存 E2E: maestro/flows/auth_sign_out.yaml）
 - [x] **キャンセルで設定画面に留まる**: ダイアログの「キャンセル」でサインアウトせず設定画面に留まる（既存 E2E: maestro/flows/design_v2_settings_paywall.yaml）
 - [x] **debug ビルドでは終了アラートを出さない**: debug ビルドではサインアウト確定後に終了アラート（「終了する」）を表示せず exit もしない。release/profile では「サインアウトしました」アラート→「終了する」で `exit(0)` する（既存 E2E: maestro/flows/auth_sign_out.yaml）
+- [ ] **ゲスト利用中は恒久的なデータ喪失を警告する**: ゲスト（匿名）利用中はサインアウト確認ダイアログの本文が「…今のリストとグループには二度とアクセスできなくなります。」の警告文になる（issue #548）
 
 #### 動作確認
 <details>
@@ -287,3 +288,16 @@ debug ビルドで「デバッグ」セクション・「開発者オプショ�
 </details>
 
 </details>
+
+---
+
+## 9. アカウント（リンク）
+
+issue #548 で追加。ゲスト（匿名）のまま使い始めたユーザーが、設定画面から Apple / Google アカウントをリンクする（`lib/features/settings/components/account_link_section.dart`）。
+
+- [ ] **ゲスト利用中はリンク導線が表示される**: プロフィール直下の「アカウント」セクションに「ゲストとして利用中です。…」の説明行と「Apple でアカウントをリンク」「Google でアカウントをリンク」の Cell が表示される（E2E: maestro/flows/settings_account_link.yaml、widget test: test/features/settings/account_link_section_test.dart）
+- [ ] **リンク済み provider はサインイン済み表示になる**: Apple / Google をリンク済みのユーザーには「Apple でサインイン済み」等のタップ不可 Cell が表示され、未リンクの provider のリンク導線は残る（widget test: test/features/settings/account_link_section_test.dart）
+- [ ] **リンク成功で UID とデータが引き継がれる**: リンク成功で「アカウントをリンクしました」SnackBar が表示され、UID が維持されたままリスト・グループを引き続き使える（`User.linkWithCredential`）。確認には実機の Apple / Google アカウントが必要
+- [ ] **リンク失敗時に状況の分かるメッセージが出る**: `provider-already-linked` / `email-already-in-use` は SnackBar にタイトル付きで表示される（unit test: test/utils/error/error_display_test.dart）
+- [ ] **credential-already-in-use でサインインし直し導線が出る**: 別ユーザーで使用済みのアカウントをリンクしようとすると「このアカウントは別のユーザーで使用されています」ダイアログが開き、「サインインし直す」で既存アカウントへ切り替わり（ゲストデータは引き継がれない）、キャンセルでゲストのまま残る。確認には実機の Apple / Google アカウントが必要
+- [ ] **キャンセルで何も起きない**: Apple / Google のネイティブシートをキャンセルするとエラー表示なくアカウントセクションに留まる
