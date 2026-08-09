@@ -1,7 +1,16 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
   <!-- https://qiita.com/kirinukkii/items/5c6bd1da2b38138ad821#android%E3%81%A8ios%E3%81%AE%E8%A8%AD%E5%AE%9A -->
   <uses-permission android:name="android.permission.CAMERA"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+  <!-- 広告 ID の権限は Firebase Analytics (play-services-measurement-api) のライブラリマニフェストから
+       マージされるが、広告を配信していないため除去する (Issue #546)。
+       Play Console の「広告 ID を使用していますか?」に「いいえ」で申告するのに必要。
+       Analytics は広告 ID の代わりに app-set ID を使う。 -->
+  <uses-permission android:name="com.google.android.gms.permission.AD_ID"
+      tools:node="remove"/>
+  <uses-permission android:name="android.permission.ACCESS_ADSERVICES_AD_ID"
+      tools:node="remove"/>
   <!-- 位置情報機能はファーストリリースでは非表示のため位置情報系 permission は宣言しない (issue #465)。
        特に ACCESS_BACKGROUND_LOCATION は Play Console の審査フォーム必須。
        機能復活時に ACCESS_FINE_LOCATION / ACCESS_COARSE_LOCATION /
