@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -61,8 +60,10 @@ class AuthResolver extends HookConsumerWidget {
       child: () {
         return firebaseUserChanges.when(
           data: (user) {
-            // kDebugMode時は匿名ユーザーでも認証済みとして通過させる（自動テスト用）
-            if (user == null || (!kDebugMode && user.isAnonymous)) {
+            // 匿名（ゲスト）ユーザーはサインインなしでそのまま利用できる（issue #548:
+            // ストア審査がログイン必須で却下されたため）。アカウントのリンクは
+            // 設定画面のアカウントセクション（AccountLinkSection）から後で行う。
+            if (user == null) {
               if (!hasSeenOnboarding) {
                 return const OnboardingPage();
               }
