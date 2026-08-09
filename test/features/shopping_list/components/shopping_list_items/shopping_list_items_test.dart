@@ -469,9 +469,12 @@ void main() {
   });
 
   group('ShoppingListItems: 自動カテゴリ分けボタン', () {
-    // mockCategories はキーワードが空なので、全アイテムが「未分類」になる。
+    // mockCategories のキーワードに一致しない品名を渡し「未分類」を作る。
     testWidgets('カテゴリ軸ありで未分類アイテムがあればボタンが出る', (tester) async {
-      await _pump(tester);
+      await _pumpWithItems(
+        tester,
+        items: [_item(id: 'uncategorized-001', message: 'ガムテープ', order: 0)],
+      );
       expect(find.byType(AICategorizeButton), findsOneWidget);
     });
 
@@ -492,7 +495,8 @@ void main() {
       await _pumpWithItems(
         tester,
         items: [
-          _item(id: 'confirmed-001', message: '牛乳', order: 0),
+          // mockCategories のキーワードに一致しない品名にして未分類のまま数える。
+          _item(id: 'confirmed-001', message: 'ガムテープ', order: 0),
           _item(id: 'input-row-001', message: '', order: 1),
           _item(id: 'whitespace-001', message: '   ', order: 2),
         ],

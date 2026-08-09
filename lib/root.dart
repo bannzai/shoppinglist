@@ -15,19 +15,13 @@ class RootPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return AppResolvers(
       builder: (context, user) {
-        debugPrint('Resolved AppResolvers user: ${user.uid}');
         return AppUserCreateResolver(
           firebaseUser: user,
           builder: (context) {
-            debugPrint('Resolved AppUserCreateResolver user: ${user.uid}');
             return ForceUpdateResolver(
               builder: (context) {
-                debugPrint('Resolved ForceUpdateResolver user: ${user.uid}');
                 return AppEntityPrepareResolver(
                   builder: (context) {
-                    debugPrint(
-                      'Resolved AppEntityPrepareResolver user: ${user.uid}',
-                    );
                     // currentGroupID を確定 → ホームウィジェット同期(provider 内部 watch) →
                     // 表示。HomeWidgetSync を chain に置くことで、表示ツリーの深さに依存せず
                     // 現在グループ/リストの変更をウィジェットストレージへ同期する。

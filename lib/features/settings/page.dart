@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shoppinglist/components/button/user_delete.dart';
 import 'package:shoppinglist/components/primitives/app_cell.dart';
@@ -19,7 +18,6 @@ import 'package:shoppinglist/features/inquiry/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/settings/components/location_reminder_toggle.dart';
 import 'package:shoppinglist/features/settings/components/theme_color_tile.dart';
-import 'package:shoppinglist/provider/ad_consent.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
@@ -40,9 +38,6 @@ class SettingPage extends HookConsumerWidget {
     final appUser = appUserAsync.asData?.value;
     final groupID = appUser?.defaultGroupID;
     final currentUserID = ref.watch(currentUserIDProvider);
-    // 未解決(判定不能)の間は導線を出さない側に倒す。
-    final adPrivacyOptionsRequired =
-        ref.watch(adPrivacyOptionsRequiredProvider).asData?.value ?? false;
 
     final displayNameController = useTextEditingController();
 
@@ -290,32 +285,6 @@ class SettingPage extends HookConsumerWidget {
                     subtitle: null,
                     switchValue: null,
                   ),
-                  // EEA 等の規制地域のみ表示される、広告同意(UMP)の変更・撤回導線。
-                  // 初回同意後もいつでも変更できる入口の用意が UMP の要件。
-                  if (adPrivacyOptionsRequired) ...[
-                    const _Divider(),
-                    AppCell(
-                      icon: Icons.privacy_tip_outlined,
-                      title: '広告のプライバシー設定',
-                      onTap: () {
-                        analytics.logEvent(
-                          name: 'did_select_ad_privacy_options',
-                          parameters: {},
-                        );
-                        ConsentForm.showPrivacyOptionsForm((formError) {
-                          if (formError != null) {
-                            debugPrint(
-                              'showPrivacyOptionsForm error: ${formError.message}',
-                            );
-                          }
-                        });
-                      },
-                      detail: null,
-                      onSwitch: null,
-                      subtitle: null,
-                      switchValue: null,
-                    ),
-                  ],
                   const _Divider(),
                   AppCell(
                     icon: Icons.mail_outline,

@@ -6,8 +6,14 @@ import 'package:flutter/foundation.dart';
 ///
 /// プロバイダはビルド種別で分離する:
 /// - debug ビルド: debug プロバイダ (Firebase Console に登録したデバッグトークンで検証)
-/// - release ビルド: iOS は App Attest (非対応 OS は DeviceCheck へフォールバック)、
-///   Android は Play Integrity
+/// - release ビルド: iOS は DeviceCheck、Android は Play Integrity
+///
+/// iOS で App Attest を使うには App ID に App Attest capability を有効化して
+/// provisioning profile を再生成する必要があり、この操作は Apple Developer Portal
+/// でしか行えない (App Store Connect API の capabilityType に App Attest は無い)。
+/// 未対応のまま App Attest を指定すると、`com.apple.developer.devicecheck.appattest-environment`
+/// entitlement が profile に含まれず archive が失敗する。
+/// 1.0 は DeviceCheck で出し、profile を整備してから App Attest へ切り替える。
 ///
 /// App Check のトークン添付は isolate ごとの設定のため、main() だけでなく
 /// home_widget のバックグラウンド callback など別 entry-point の isolate でも
@@ -21,6 +27,6 @@ Future<void> activateAppCheck() async {
     providerApple:
         kDebugMode
             ? const AppleDebugProvider()
-            : const AppleAppAttestWithDeviceCheckFallbackProvider(),
+            : const AppleDeviceCheckProvider(),
   );
 }
