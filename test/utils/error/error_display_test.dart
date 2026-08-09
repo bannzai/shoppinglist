@@ -66,5 +66,40 @@ void main() {
       expect(result.message, 'Exception: boom');
       expect(result.stackTrace, stack);
     });
+
+    // アカウントリンク（issue #548）で起きる firebase_auth の 3 コードは、
+    // 状況の分かるタイトルを付ける（本文はそのまま）。
+    test('アカウントリンク時の firebase_auth コードにタイトルを付ける', () {
+      expect(
+        describeError(
+          FirebaseException(
+            plugin: 'firebase_auth',
+            code: 'provider-already-linked',
+            message: 'x',
+          ),
+        ).title,
+        'このサインイン方法はすでにリンクされています',
+      );
+      expect(
+        describeError(
+          FirebaseException(
+            plugin: 'firebase_auth',
+            code: 'credential-already-in-use',
+            message: 'x',
+          ),
+        ).title,
+        'このアカウントは別のユーザーで使用されています',
+      );
+      expect(
+        describeError(
+          FirebaseException(
+            plugin: 'firebase_auth',
+            code: 'email-already-in-use',
+            message: 'x',
+          ),
+        ).title,
+        'このメールアドレスは別のユーザーで使用されています',
+      );
+    });
   });
 }

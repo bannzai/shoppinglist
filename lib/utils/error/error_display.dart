@@ -35,6 +35,13 @@ String? _specialTitle(FirebaseException error) {
       return 'ログインが必要です';
     case 'firebase_functions/permission-denied':
       return '操作する権限がありません';
+    // 以下 3 つはアカウントリンク（AccountLinkSection, issue #548）で起きる。
+    case 'firebase_auth/provider-already-linked':
+      return 'このサインイン方法はすでにリンクされています';
+    case 'firebase_auth/credential-already-in-use':
+      return 'このアカウントは別のユーザーで使用されています';
+    case 'firebase_auth/email-already-in-use':
+      return 'このメールアドレスは別のユーザーで使用されています';
     default:
       return null;
   }
