@@ -19,6 +19,7 @@ import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/resolver/auth.dart';
 import 'package:shoppinglist/features/settings/components/account_link_section.dart';
 import 'package:shoppinglist/features/settings/components/location_reminder_toggle.dart';
+import 'package:shoppinglist/features/settings/components/oss_license_cell.dart';
 import 'package:shoppinglist/features/settings/components/theme_color_tile.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
@@ -288,6 +289,8 @@ class SettingPage extends HookConsumerWidget {
                     subtitle: null,
                     switchValue: null,
                   ),
+                  const _Divider(),
+                  const OssLicenseCell(),
                   const _Divider(),
                   AppCell(
                     icon: Icons.mail_outline,
