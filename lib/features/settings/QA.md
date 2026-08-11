@@ -148,7 +148,7 @@ last_verified_at: 2026-07-15
 
 - [x] **利用規約・プライバシーポリシー・特商法が外部ページで開く**: 各セルタップで `https://bannzai.github.io/shoppinglist/` 配下の該当ページ（Terms / PrivacyPolicy / SpecifiedCommercialTransactionAct-ja）を外部ブラウザで開く
 - [x] **「お問い合わせ」でお問い合わせ画面へ遷移する**: 「お問い合わせ」タップで InquiryPage が push 遷移する
-- [ ] **「OSSライセンス」でライセンス一覧へ遷移し本文が読める**: 「OSSライセンス」タップで Flutter 標準の `showLicensePage` が開き、依存パッケージが 0 件の空画面にならずに一覧が表示され、パッケージを選ぶとライセンス本文が読める（E2E: maestro/flows/settings_oss_licenses.yaml、widget test: test/features/settings/oss_license_cell_test.dart）
+- [x] **「OSSライセンス」でライセンス一覧へ遷移し本文が読める**: 「OSSライセンス」タップで Flutter 標準の `showLicensePage` が開き、依存パッケージが 0 件の空画面にならずに一覧が表示され、パッケージを選ぶとライセンス本文が読める（E2E: maestro/flows/settings_oss_licenses.yaml、widget test: test/features/settings/oss_license_cell_test.dart）
 
 #### 動作確認
 <details>
@@ -171,6 +171,23 @@ last_verified_at: 2026-07-15
 
 **確認日: 2026-07-15**
 <img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/d84d1f7d-bbfe-4be6-996a-0cce94f61bd9.png" width="320">
+
+</details>
+
+### **「OSSライセンス」でライセンス一覧へ遷移し本文が読める**: 「OSSライセンス」タップで Flutter 標準の `showLicensePage` が開き、依存パッケージが 0 件の空画面にならずに一覧が表示され、パッケージを選ぶとライセンス本文が読める
+
+<details><summary>動作確認スクショ</summary>
+
+**確認日: 2026-08-11**
+
+「アプリについて」セクションに「OSSライセンス」が表示される。
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260811/81076600-616b-421f-8412-d1e307c417c5.png" width="320" />
+
+タップすると `showLicensePage` が開き、アプリ名「買い物リスト」と依存パッケージ一覧（`_fe_analyzer_shared` / `abseil-cpp` / `angle` 等）が表示された。0 件の空画面にはならない。
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260811/ddfb300d-f790-48be-8634-54c9b0169563.png" width="320" />
+
+パッケージ（`abseil-cpp`）をタップするとライセンス本文（Copyright 表記・再頒布条件・免責）が全文表示された。
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260811/567af33c-77e9-4295-8528-8ec98abe497d.png" width="320" />
 
 </details>
 
