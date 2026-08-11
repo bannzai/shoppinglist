@@ -148,6 +148,7 @@ last_verified_at: 2026-07-15
 
 - [x] **利用規約・プライバシーポリシー・特商法が外部ページで開く**: 各セルタップで `https://bannzai.github.io/shoppinglist/` 配下の該当ページ（Terms / PrivacyPolicy / SpecifiedCommercialTransactionAct-ja）を外部ブラウザで開く
 - [x] **「お問い合わせ」でお問い合わせ画面へ遷移する**: 「お問い合わせ」タップで InquiryPage が push 遷移する
+- [ ] **「OSSライセンス」でライセンス一覧へ遷移し本文が読める**: 「OSSライセンス」タップで Flutter 標準の `showLicensePage` が開き、依存パッケージが 0 件の空画面にならずに一覧が表示され、パッケージを選ぶとライセンス本文が読める（E2E: maestro/flows/settings_oss_licenses.yaml、widget test: test/features/settings/oss_license_cell_test.dart）
 
 #### 動作確認
 <details>
