@@ -1,0 +1,37 @@
+appId: ${APP_ID}
+---
+# OSS ライセンス一覧の検証:
+# - 設定 →「アプリについて」の「OSSライセンス」から Flutter 標準の LicensePage へ遷移する
+# - 依存パッケージが 0 件の空画面にならない（一覧にパッケージ行が並ぶ）
+# - パッケージを開くとライセンス本文が読める
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# 設定画面へ（top-bar 設定アイコン tooltip "設定"。design_v2_settings_paywall と同経路）
+- tapOn: "設定"
+- extendedWaitUntil:
+    visible: "プロフィール"
+    timeout: 10000
+
+# 「アプリについて」セクションの「OSSライセンス」までスクロールして開く
+- scrollUntilVisible:
+    element:
+      text: "OSSライセンス"
+    direction: DOWN
+    timeout: 20000
+- tapOn: "OSSライセンス"
+# LicensePage はライセンス収集（LicenseRegistry）の完了までローディングを出すため待つ
+- extendedWaitUntil:
+    visible: "買い物リスト"
+    timeout: 30000
+- takeScreenshot: screenshots/oss_licenses_01_list
+
+# 依存関係が 0 件の空画面ではないこと。Flutter 本体のライセンスは
+# `flutter` パッケージとして必ず一覧に含まれる。
+- assertVisible: "flutter"
+
+# パッケージを開いてライセンス本文が読めること
+- tapOn: "flutter"
+- waitForAnimationToEnd
+- assertVisible: ".*Copyright.*"
+- takeScreenshot: screenshots/oss_licenses_02_license_text
