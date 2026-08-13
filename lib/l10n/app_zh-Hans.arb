@@ -168,5 +168,6 @@
   "listSettingGroupSetting": "群组设置",
   "listSettingGroupNameRequired": "请先设置群组名称，再邀请他人",
   "listSettingListActionsSection": "列表操作",
-  "listSettingDeleteList": "删除此清单"
+  "listSettingDeleteList": "删除此清单",
+  "listSettingDeleteConfirmBarrierLabel": "购物清单删除确认"
 }

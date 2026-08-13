@@ -168,5 +168,6 @@
   "listSettingGroupSetting": "群組設定",
   "listSettingGroupNameRequired": "請先設定群組名稱，再邀請他人",
   "listSettingListActionsSection": "清單操作",
-  "listSettingDeleteList": "刪除此清單"
+  "listSettingDeleteList": "刪除此清單",
+  "listSettingDeleteConfirmBarrierLabel": "購物清單刪除確認"
 }

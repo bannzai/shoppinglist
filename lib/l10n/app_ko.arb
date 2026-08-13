@@ -168,5 +168,6 @@
   "listSettingGroupSetting": "그룹 설정",
   "listSettingGroupNameRequired": "누군가를 초대하기 전에 그룹 이름을 설정하세요",
   "listSettingListActionsSection": "목록 작업",
-  "listSettingDeleteList": "이 목록 삭제"
+  "listSettingDeleteList": "이 목록 삭제",
+  "listSettingDeleteConfirmBarrierLabel": "장바구니 목록 삭제 확인"
 }
