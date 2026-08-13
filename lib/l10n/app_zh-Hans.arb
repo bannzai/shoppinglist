@@ -261,5 +261,6 @@
   "inquiryContentRequired": "请输入您的留言",
   "inquiryContentHint": "告诉我们您遇到了什么问题，或者希望看到什么功能",
   "inquirySubmitting": "发送中…",
-  "inquirySubmit": "发送"
+  "inquirySubmit": "发送",
+  "inquirySubmitted": "您的咨询已发送"
 }
