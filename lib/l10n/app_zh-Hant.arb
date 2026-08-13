@@ -290,5 +290,6 @@
   "paywallRestore": "恢復購買",
   "paywallRestored": "已恢復你的購買項目",
   "paywallNoPlans": "目前沒有可用的方案",
-  "paywallRecommendedBadge": "推薦"
+  "paywallRecommendedBadge": "推薦",
+  "paywallPurchaseCompleted": "感謝您的購買"
 }
