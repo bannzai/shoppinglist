@@ -230,5 +230,6 @@
   "groupJoinCreateSolo": "建立自己的清單",
   "groupListEmpty": "你尚未加入任何群組",
   "groupListMemberCount": "{count} 位成員",
-  "groupListFreeLimitBanner": "免費方案可額外新增一個群組"
+  "groupListFreeLimitBanner": "免費方案可額外新增一個群組",
+  "groupListFreeLimitAction": "解鎖"
 }
