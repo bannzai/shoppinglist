@@ -172,5 +172,6 @@
   "listSettingDeleteConfirmBarrierLabel": "購物清單刪除確認",
   "listSettingDeleteConfirmTitle": "要刪除這份清單嗎？",
   "listSettingDeleteConfirmMessage": "「{name}」和其中的 {count} 個商品將被刪除。此操作無法復原。",
-  "listSettingInvitationCodeTitle": "邀請碼"
+  "listSettingInvitationCodeTitle": "邀請碼",
+  "listSettingInvitationExpired": "已過期"
 }
