@@ -278,5 +278,6 @@
   "onboardingStart": "開始使用",
   "onboardingNext": "下一步",
   "paywallHeroTitle": "升級到進階版",
-  "paywallHeroDescription": "解鎖所有功能，和全家人一起盡情使用這個 App。"
+  "paywallHeroDescription": "解鎖所有功能，和全家人一起盡情使用這個 App。",
+  "paywallFeatureLocationOrder": "每個商店的分類順序"
 }

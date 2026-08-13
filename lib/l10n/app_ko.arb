@@ -278,5 +278,6 @@
   "onboardingStart": "시작하기",
   "onboardingNext": "다음",
   "paywallHeroTitle": "프리미엄으로 업그레이드",
-  "paywallHeroDescription": "모든 기능을 잠금 해제하고 온 가족과 함께 앱을 즐겨보세요."
+  "paywallHeroDescription": "모든 기능을 잠금 해제하고 온 가족과 함께 앱을 즐겨보세요.",
+  "paywallFeatureLocationOrder": "매장별 카테고리 순서"
 }
