@@ -77,5 +77,6 @@
   "shoppingListFabPasteText": "貼上文字",
   "shoppingListImageRecognitionLimitReached": "已達到照片辨識的每月上限（{limit}次）",
   "shoppingListUrlRecognitionLimitReached": "URL 辨識的每月次數已達上限（{limit} 次）",
-  "shoppingListUrlDialogTitle": "從網址產生購物清單"
+  "shoppingListUrlDialogTitle": "從網址產生購物清單",
+  "shoppingListUrlDialogGenerate": "產生"
 }

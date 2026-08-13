@@ -77,5 +77,6 @@
   "shoppingListFabPasteText": "텍스트 붙여넣기",
   "shoppingListImageRecognitionLimitReached": "사진 인식의 월간 한도({limit}회)에 도달했습니다",
   "shoppingListUrlRecognitionLimitReached": "URL 인식의 월간 이용 횟수({limit}회)를 초과했습니다",
-  "shoppingListUrlDialogTitle": "URL에서 쇼핑 목록 만들기"
+  "shoppingListUrlDialogTitle": "URL에서 쇼핑 목록 만들기",
+  "shoppingListUrlDialogGenerate": "생성"
 }
