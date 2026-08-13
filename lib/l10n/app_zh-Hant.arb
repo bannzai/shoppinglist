@@ -223,5 +223,6 @@
   "groupInvitationDescription": "輸入群組成員分享給您的 8 位驗證碼",
   "groupInvitationJoining": "加入中…",
   "groupInvitationJoin": "加入",
-  "groupInvitationVerifyingTitle": "正在檢查邀請碼"
+  "groupInvitationVerifyingTitle": "正在檢查邀請碼",
+  "groupInvitationVerifyingMessage": "伺服器正在處理你加入群組的請求。"
 }
