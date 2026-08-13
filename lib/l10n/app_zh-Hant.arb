@@ -60,5 +60,6 @@
   "shoppingListAiCategorizeButton": "自動分類（{count} 項）",
   "shoppingListAiCategorizeLimitReached": "已達到自動分類的每月上限（{limit}次）",
   "shoppingListAiCategorizeRegistered": "已將 {count} 個項目分類",
-  "shoppingListAiCategorizeSheetTitle": "自動分類"
+  "shoppingListAiCategorizeSheetTitle": "自動分類",
+  "shoppingListAiCategorizeSheetSubtitle": "在儲存前查看並調整分類"
 }

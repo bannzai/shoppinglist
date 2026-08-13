@@ -60,5 +60,6 @@
   "shoppingListAiCategorizeButton": "자동 분류 ({count}개 항목)",
   "shoppingListAiCategorizeLimitReached": "자동 분류의 월간 한도({limit}회)에 도달했습니다",
   "shoppingListAiCategorizeRegistered": "{count}개 항목을 카테고리로 등록했습니다",
-  "shoppingListAiCategorizeSheetTitle": "자동 분류"
+  "shoppingListAiCategorizeSheetTitle": "자동 분류",
+  "shoppingListAiCategorizeSheetSubtitle": "등록하기 전에 카테고리를 확인하고 조정하세요"
 }
