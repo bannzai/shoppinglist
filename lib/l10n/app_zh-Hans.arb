@@ -75,5 +75,6 @@
   "shoppingListFabAddFromPhoto": "从照片添加",
   "shoppingListFabAddFromUrl": "从网址添加",
   "shoppingListFabPasteText": "粘贴文本",
-  "shoppingListImageRecognitionLimitReached": "已达到照片识别的每月上限（{limit}次）"
+  "shoppingListImageRecognitionLimitReached": "已达到照片识别的每月上限（{limit}次）",
+  "shoppingListUrlRecognitionLimitReached": "URL 识别的每月次数已达上限（{limit} 次）"
 }
