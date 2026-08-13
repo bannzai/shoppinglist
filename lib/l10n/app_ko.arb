@@ -181,5 +181,6 @@
   "listSettingLocationNone": "없음",
   "listSettingLocationSelected": "선택됨",
   "commonDefault": "기본",
-  "commonUnnamed": "이름 없음"
+  "commonUnnamed": "이름 없음",
+  "commonCreating": "만드는 중…"
 }

@@ -181,5 +181,6 @@
   "listSettingLocationNone": "無",
   "listSettingLocationSelected": "已選取",
   "commonDefault": "預設",
-  "commonUnnamed": "未命名"
+  "commonUnnamed": "未命名",
+  "commonCreating": "建立中…"
 }
