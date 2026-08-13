@@ -270,5 +270,6 @@
   "notificationPermissionAllow": "允许通知",
   "onboardingSlide1Title": "全家一起创建的\n购物清单",
   "onboardingSlide1Body": "有人把在家想到的东西加进来，另一个人在商店把它勾掉。把所有“你能顺手带一下吗？”都放到这张清单上。",
-  "onboardingSlide2Title": "同时编辑同一个清单"
+  "onboardingSlide2Title": "同时编辑同一个清单",
+  "onboardingSlide2Body": "使用邀请码邀请你的家人、伴侣或室友，大家都能编辑同一份清单。重要的不是谁添加的，而是不要漏掉任何东西。"
 }

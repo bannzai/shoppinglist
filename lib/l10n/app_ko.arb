@@ -270,5 +270,6 @@
   "notificationPermissionAllow": "알림 허용",
   "onboardingSlide1Title": "가족과 함께 만드는\n장보기 목록",
   "onboardingSlide1Body": "누군가 집에서 떠올린 물건을 추가하고, 다른 누군가는 매장에서 체크해요. \"이거 좀 사다 줄래?\" 하는 걸 모두 이 한 장에 모아보세요.",
-  "onboardingSlide2Title": "같은 목록을 동시에 수정"
+  "onboardingSlide2Title": "같은 목록을 동시에 수정",
+  "onboardingSlide2Body": "초대 코드로 가족, 파트너 또는 룸메이트를 초대하면 모두가 같은 목록을 수정할 수 있어요. 중요한 건 누가 추가했는지가 아니라, 빠뜨리는 것이 없다는 점이에요."
 }

@@ -270,5 +270,6 @@
   "notificationPermissionAllow": "允許通知",
   "onboardingSlide1Title": "全家一起建立的\n購物清單",
   "onboardingSlide1Body": "有人把在家想到的東西加進來，另一個人在商店把它勾掉。把所有「你能順手帶一下嗎？」都放到這張清單上。",
-  "onboardingSlide2Title": "同時編輯同一個清單"
+  "onboardingSlide2Title": "同時編輯同一個清單",
+  "onboardingSlide2Body": "使用邀請碼邀請你的家人、伴侶或室友，大家都能編輯同一份清單。重要的不是誰加的，而是不要漏掉任何東西。"
 }
