@@ -110,5 +110,6 @@
   "settingsDisplayNameHint": "표시 이름을 입력하세요",
   "settingsDisplayNameUpdated": "표시 이름이 업데이트되었습니다",
   "settingsGroupManagement": "그룹 관리",
-  "settingsJoinGroupWithInvitationCode": "초대 코드로 그룹에 참여"
+  "settingsJoinGroupWithInvitationCode": "초대 코드로 그룹에 참여",
+  "settingsAppearanceSection": "모양"
 }
