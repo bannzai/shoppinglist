@@ -62,5 +62,6 @@
   "shoppingListAiCategorizeRegistered": "已將 {count} 個項目分類",
   "shoppingListAiCategorizeSheetTitle": "自動分類",
   "shoppingListAiCategorizeSheetSubtitle": "在儲存前查看並調整分類",
-  "shoppingListAiCategorizeSheetEmpty": "沒有可分類的項目"
+  "shoppingListAiCategorizeSheetEmpty": "沒有可分類的項目",
+  "shoppingListAiCategorizeSheetConfirm": "註冊 {count} 項"
 }
