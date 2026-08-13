@@ -239,5 +239,6 @@
   "groupSettingShoppingLocationSubtitle": "添加并编辑商店",
   "groupSettingInvitationSection": "群组邀请",
   "groupSettingCreatingInvitation": "正在生成邀请码…",
-  "groupSettingCreateInvitation": "生成邀请码"
+  "groupSettingCreateInvitation": "生成邀请码",
+  "groupSettingRemoveMemberConfirmTitle": "要将{name}从群组中移除吗？"
 }

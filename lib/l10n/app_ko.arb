@@ -239,5 +239,6 @@
   "groupSettingShoppingLocationSubtitle": "매장 추가 및 수정",
   "groupSettingInvitationSection": "그룹 초대",
   "groupSettingCreatingInvitation": "초대 코드를 생성하는 중...",
-  "groupSettingCreateInvitation": "초대 코드 발급"
+  "groupSettingCreateInvitation": "초대 코드 발급",
+  "groupSettingRemoveMemberConfirmTitle": "{name}님을 그룹에서 हट?"
 }
