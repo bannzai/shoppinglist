@@ -178,5 +178,6 @@
   "listSettingInvitationCodeCopied": "已复制邀请码",
   "listSettingInvitationShareText": "购物清单邀请码：{code}",
   "listSettingSelectShoppingLocationTitle": "选择购物地点",
-  "listSettingLocationNone": "无"
+  "listSettingLocationNone": "无",
+  "listSettingLocationSelected": "已选择"
 }
