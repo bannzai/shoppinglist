@@ -186,5 +186,6 @@
   "groupNameLabel": "그룹 이름",
   "groupNameHint": "그룹 이름을 입력하세요",
   "groupCategoryLocationOrderLabel": "쇼핑 장소별로 정렬",
-  "groupCategoryLocationOrderPremiumOnly": "쇼핑 위치별 카테고리 재정렬은 프리미엄 기능입니다"
+  "groupCategoryLocationOrderPremiumOnly": "쇼핑 위치별 카테고리 재정렬은 프리미엄 기능입니다",
+  "groupCategoryKeywordCount": "키워드: {count}"
 }
