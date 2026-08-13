@@ -364,5 +364,6 @@
   "purchaseErrorOfflineConnection": "연결 상태가 좋지 않습니다. 네트워크 연결을 확인한 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 상세 정보: {details}",
   "purchaseErrorFeatureNotAvailable": "현재 설정에서는 이 기능을 사용할 수 없습니다. 문제가 계속되면 설정 > 문의하기에서 연락해 주세요. 코드: {code} 상세: {details}",
   "purchaseErrorSignatureVerification": "서명 확인에 실패했습니다. 잠시 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 코드: {code} 상세: {details}",
-  "purchaseErrorFeatureNotSupported": "이 기능은 현재 기기에서 지원되지 않습니다. 최신 버전으로 업데이트한 후 다시 시도해 주세요. 코드: {code} 세부정보: {details}"
+  "purchaseErrorFeatureNotSupported": "이 기능은 현재 기기에서 지원되지 않습니다. 최신 버전으로 업데이트한 후 다시 시도해 주세요. 코드: {code} 세부정보: {details}",
+  "purchaseErrorInvalidWebPurchaseToken": "구매 토큰이 유효하지 않습니다. 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 코드: {code} 상세: {details}"
 }

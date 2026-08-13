@@ -364,5 +364,6 @@
   "purchaseErrorOfflineConnection": "网络连接不稳定。请检查您的网络连接后重试。如果问题仍然存在，请在“设置”>“咨询”中联系我们。详情：{details}",
   "purchaseErrorFeatureNotAvailable": "当前配置下无法使用此功能。如果问题仍然存在，请在“设置”>“反馈”中联系我们。代码：{code} 详情：{details}",
   "purchaseErrorSignatureVerification": "签名验证失败。请稍等片刻后重试。如果问题仍然存在，请前往“设置”>“咨询”联系我们。代码：{code} 详情：{details}",
-  "purchaseErrorFeatureNotSupported": "此功能不支持您的设备。请更新到最新版本后再试。代码：{code} 详情：{details}"
+  "purchaseErrorFeatureNotSupported": "此功能不支持您的设备。请更新到最新版本后再试。代码：{code} 详情：{details}",
+  "purchaseErrorInvalidWebPurchaseToken": "购买令牌无效。请重试。如果问题仍然存在，请通过“设置”>“咨询”联系我们。代码：{code} 详情：{details}"
 }
