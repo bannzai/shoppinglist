@@ -218,5 +218,6 @@
   "groupCreateIconBag": "包",
   "groupCreateInvitationDialogTitle": "邀请成员",
   "groupCreateInvitationDialogMessage": "将邀请码分享给家人",
-  "groupInvitationTitle": "使用邀请码加入"
+  "groupInvitationTitle": "使用邀请码加入",
+  "groupInvitationHeading": "输入邀请码"
 }
