@@ -55,5 +55,6 @@
   "shoppingListSpotlightDismiss": "탭하여 닫기",
   "shoppingListAiProcessingImage": "사진에서 추천 항목을 가져오는 중...",
   "shoppingListAiProcessingUrl": "URL에서 추천을 추출하는 중…",
-  "shoppingListAiProcessingCategorize": "카테고리별로 정리하는 중..."
+  "shoppingListAiProcessingCategorize": "카테고리별로 정리하는 중...",
+  "shoppingListAiLimitUpsell": ". 프리미엄으로 업그레이드하면 한 달에 {limit}회까지 사용할 수 있습니다"
 }
