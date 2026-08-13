@@ -333,5 +333,6 @@
   "errorTitleSignInRequired": "로그인이 필요합니다",
   "errorTitlePermissionDenied": "이 작업을 수행할 권한이 없습니다",
   "errorTitleProviderAlreadyLinked": "이미 연결된 로그인 방식입니다",
-  "errorTitleCredentialAlreadyInUse": "이 계정은 이미 다른 사용자가 사용 중입니다"
+  "errorTitleCredentialAlreadyInUse": "이 계정은 이미 다른 사용자가 사용 중입니다",
+  "errorTitleEmailAlreadyInUse": "이 이메일 주소는 이미 다른 사용자가 사용 중입니다"
 }
