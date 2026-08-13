@@ -210,5 +210,6 @@
   "groupCreateTitle": "建立群組",
   "groupCreateIconLabel": "圖示",
   "groupCreateSubmit": "建立",
-  "groupCreateIconHome": "家"
+  "groupCreateIconHome": "家",
+  "groupCreateIconCart": "購物車"
 }

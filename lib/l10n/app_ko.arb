@@ -210,5 +210,6 @@
   "groupCreateTitle": "그룹 만들기",
   "groupCreateIconLabel": "아이콘",
   "groupCreateSubmit": "만들기",
-  "groupCreateIconHome": "집"
+  "groupCreateIconHome": "집",
+  "groupCreateIconCart": "장바구니"
 }

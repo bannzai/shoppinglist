@@ -210,5 +210,6 @@
   "groupCreateTitle": "创建群组",
   "groupCreateIconLabel": "图标",
   "groupCreateSubmit": "创建",
-  "groupCreateIconHome": "家"
+  "groupCreateIconHome": "家",
+  "groupCreateIconCart": "购物车"
 }
