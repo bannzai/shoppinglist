@@ -362,5 +362,6 @@
   "purchaseErrorBeginRefundRequest": "환불 절차가 시작되었습니다. 내용을 확인한 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 코드: {code} 상세: {details}",
   "purchaseErrorTimeout": "요청 시간이 초과되었습니다. 네트워크 연결을 확인한 뒤 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 자세한 내용: {details}",
   "purchaseErrorOfflineConnection": "연결 상태가 좋지 않습니다. 네트워크 연결을 확인한 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 상세 정보: {details}",
-  "purchaseErrorFeatureNotAvailable": "현재 설정에서는 이 기능을 사용할 수 없습니다. 문제가 계속되면 설정 > 문의하기에서 연락해 주세요. 코드: {code} 상세: {details}"
+  "purchaseErrorFeatureNotAvailable": "현재 설정에서는 이 기능을 사용할 수 없습니다. 문제가 계속되면 설정 > 문의하기에서 연락해 주세요. 코드: {code} 상세: {details}",
+  "purchaseErrorSignatureVerification": "서명 확인에 실패했습니다. 잠시 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 코드: {code} 상세: {details}"
 }

@@ -362,5 +362,6 @@
   "purchaseErrorBeginRefundRequest": "退款流程已開始。請先確認後再試一次。如果問題仍然存在，請從「設定」>「詢問」聯絡我們。代碼：{code} 詳細資訊：{details}",
   "purchaseErrorTimeout": "請求逾時。請檢查網路連線後再試一次。如果問題仍然存在，請從「設定」>「聯絡我們」與我們聯繫。詳細資料：{details}",
   "purchaseErrorOfflineConnection": "網路連線不佳。請檢查您的網路連線後再試一次。如果問題仍然存在，請從「設定」>「詢問」聯絡我們。詳細資訊：{details}",
-  "purchaseErrorFeatureNotAvailable": "目前設定下無法使用此功能。如果問題持續發生，請從「設定」>「聯絡我們」與我們聯絡。代碼：{code} 詳細資訊：{details}"
+  "purchaseErrorFeatureNotAvailable": "目前設定下無法使用此功能。如果問題持續發生，請從「設定」>「聯絡我們」與我們聯絡。代碼：{code} 詳細資訊：{details}",
+  "purchaseErrorSignatureVerification": "簽章驗證失敗。請稍等片刻後再試一次。如果問題仍然存在，請從「設定」>「詢問」與我們聯絡。代碼：{code} 詳情：{details}"
 }
