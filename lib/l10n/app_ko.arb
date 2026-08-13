@@ -180,5 +180,6 @@
   "listSettingSelectShoppingLocationTitle": "쇼핑할 위치 선택",
   "listSettingLocationNone": "없음",
   "listSettingLocationSelected": "선택됨",
-  "commonDefault": "기본"
+  "commonDefault": "기본",
+  "commonUnnamed": "이름 없음"
 }
