@@ -310,5 +310,6 @@
   "shoppingLocationAddTitle": "新增位置",
   "shoppingLocationEditTitle": "編輯位置",
   "shoppingLocationNameHint": "位置名稱",
-  "shoppingLocationNameHintWithExample": "地點名稱（例如：超市）"
+  "shoppingLocationNameHintWithExample": "地點名稱（例如：超市）",
+  "shoppingLocationPositionSet": "位置已設定"
 }
