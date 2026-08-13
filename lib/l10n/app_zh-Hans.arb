@@ -255,5 +255,6 @@
   "inquiryEmailLabel": "电子邮箱地址",
   "inquiryEmailRequired": "请输入您的电子邮箱地址",
   "inquiryEmailInvalid": "电子邮件地址格式不正确",
-  "inquiryCategoryLabel": "咨询类型"
+  "inquiryCategoryLabel": "咨询类型",
+  "inquiryCategoryRequired": "请选择您的咨询类型"
 }
