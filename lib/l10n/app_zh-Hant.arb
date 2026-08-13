@@ -227,5 +227,6 @@
   "groupInvitationVerifyingMessage": "伺服器正在處理你加入群組的請求。",
   "groupJoinHeading": "開始吧",
   "groupJoinDescription": "你有收到家人或伴侶提供的邀請碼嗎？\n使用邀請碼加入後，你們就能一起共用同一份購物清單。",
-  "groupJoinCreateSolo": "建立自己的清單"
+  "groupJoinCreateSolo": "建立自己的清單",
+  "groupListEmpty": "你尚未加入任何群組"
 }
