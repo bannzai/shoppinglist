@@ -4,5 +4,6 @@
   "commonCancel": "取消",
   "commonClose": "关闭",
   "commonDone": "完成",
-  "commonOk": "确定"
+  "commonOk": "确定",
+  "commonDelete": "删除"
 }

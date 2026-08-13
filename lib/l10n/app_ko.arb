@@ -4,5 +4,6 @@
   "commonCancel": "취소",
   "commonClose": "닫기",
   "commonDone": "완료",
-  "commonOk": "확인"
+  "commonOk": "확인",
+  "commonDelete": "삭제"
 }
