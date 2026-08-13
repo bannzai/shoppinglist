@@ -134,5 +134,6 @@
   "settingsSignOutCompletedTitle": "已登出",
   "settingsSignOutExitAppMessage": "應用程式將立即退出",
   "settingsThemeColorTitle": "主題顏色",
-  "settingsThemeColorDescription": "從五種傳統日式顏色中選擇，以變更應用程式中使用的強調色。"
+  "settingsThemeColorDescription": "從五種傳統日式顏色中選擇，以變更應用程式中使用的強調色。",
+  "settingsThemeColorChanged": "主題顏色已變更"
 }
