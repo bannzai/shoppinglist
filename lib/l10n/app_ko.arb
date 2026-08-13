@@ -240,5 +240,6 @@
   "groupSettingInvitationSection": "그룹 초대",
   "groupSettingCreatingInvitation": "초대 코드를 생성하는 중...",
   "groupSettingCreateInvitation": "초대 코드 발급",
-  "groupSettingRemoveMemberConfirmTitle": "{name}님을 그룹에서 हट?"
+  "groupSettingRemoveMemberConfirmTitle": "{name}님을 그룹에서 हट?",
+  "groupSettingRemoveMemberConfirmMessage": "삭제된 멤버는 더 이상 이 그룹에 액세스할 수 없습니다"
 }

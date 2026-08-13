@@ -240,5 +240,6 @@
   "groupSettingInvitationSection": "群组邀请",
   "groupSettingCreatingInvitation": "正在生成邀请码…",
   "groupSettingCreateInvitation": "生成邀请码",
-  "groupSettingRemoveMemberConfirmTitle": "要将{name}从群组中移除吗？"
+  "groupSettingRemoveMemberConfirmTitle": "要将{name}从群组中移除吗？",
+  "groupSettingRemoveMemberConfirmMessage": "被移除的成员将无法再访问此群组"
 }
