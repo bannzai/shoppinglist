@@ -251,5 +251,6 @@
   "authStartWithoutSignIn": "로그인 없이 시작",
   "authLinkAccountLaterNote": "설정 화면에서 나중에 계정을 연결할 수 있어요",
   "authAgreementNote": "계속하면 {terms} 및 {privacy}에 동의하는 것으로 간주됩니다.",
-  "inquiryDescription": "보내주신 내용은 모두 읽고 앱 개선에 사용합니다. 답변을 원하시면 이메일 주소를 함께 적어 주세요."
+  "inquiryDescription": "보내주신 내용은 모두 읽고 앱 개선에 사용합니다. 답변을 원하시면 이메일 주소를 함께 적어 주세요.",
+  "inquiryEmailLabel": "이메일 주소"
 }
