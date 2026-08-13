@@ -339,5 +339,6 @@
   "purchaseErrorStoreProblem": "{storeName} 发生了错误。请稍后再试。",
   "purchaseErrorNotAllowed": "此设备不允许购买。",
   "purchaseErrorInvalidPayment": "付款失败。请确认您的付款方式有效后重试。",
-  "purchaseErrorProductNotAvailable": "所选方案当前未在售。请重启应用后再试。"
+  "purchaseErrorProductNotAvailable": "所选方案当前未在售。请重启应用后再试。",
+  "purchaseErrorAlreadyPurchased": "您已经购买过方案。要在此设备上恢复购买，请点按“已购买？点此恢复”来恢复您的购买信息。"
 }
