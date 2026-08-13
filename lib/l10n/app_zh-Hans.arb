@@ -153,5 +153,6 @@
   "settingsAccountAlreadyInUseTitle": "此账号已被其他用户使用",
   "settingsAccountReSignInMessage": "要再次使用此账号登录吗？\n如果再次登录，当前访客数据（列表和群组）将不会被保留。",
   "settingsAccountReSignInButton": "重新登录",
-  "listSettingTitle": "购物清单设置"
+  "listSettingTitle": "购物清单设置",
+  "listSettingNameSection": "清单名称"
 }
