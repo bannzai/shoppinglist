@@ -302,5 +302,6 @@
   "receiptMemoLabel": "메모",
   "receiptMemoHint": "매장 이름이나 구매한 품목 같은 메모",
   "receiptCaptureOrSelect": "영수증 사진을 찍거나 선택하세요",
-  "forceUpdateTitle": "앱을 업데이트해 주세요"
+  "forceUpdateTitle": "앱을 업데이트해 주세요",
+  "forceUpdateMessage": "앱을 업데이트해 주세요. {storeName}에서 최신 버전으로 업데이트해 주세요."
 }
