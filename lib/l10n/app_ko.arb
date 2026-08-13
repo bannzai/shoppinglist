@@ -143,5 +143,6 @@
   "settingsLocationReminderNotificationPermissionRequired": "알림을 허용해야 사용할 수 있어요",
   "settingsLocationReminderAlwaysPermissionRequired": "이 기능을 사용하려면 백그라운드 위치 접근을 '항상 허용'으로 설정하세요",
   "settingsLocationReminderPremiumOnly": "위치 알림은 프리미엄 기능입니다",
-  "settingsAccountSection": "계정"
+  "settingsAccountSection": "계정",
+  "settingsAccountLinked": "계정이 연결되었습니다"
 }

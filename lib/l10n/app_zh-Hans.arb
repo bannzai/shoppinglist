@@ -143,5 +143,6 @@
   "settingsLocationReminderNotificationPermissionRequired": "允许通知后可使用此功能",
   "settingsLocationReminderAlwaysPermissionRequired": "将后台定位权限设置为“始终”以使用此功能",
   "settingsLocationReminderPremiumOnly": "位置提醒是高级版功能",
-  "settingsAccountSection": "账户"
+  "settingsAccountSection": "账户",
+  "settingsAccountLinked": "已关联你的账户"
 }
