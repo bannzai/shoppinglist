@@ -309,5 +309,6 @@
   "shoppingLocationGeoConfigured": "위치 설정됨",
   "shoppingLocationAddTitle": "위치 추가",
   "shoppingLocationEditTitle": "위치 수정",
-  "shoppingLocationNameHint": "장소 이름"
+  "shoppingLocationNameHint": "장소 이름",
+  "shoppingLocationNameHintWithExample": "위치 이름(예: 슈퍼마켓)"
 }

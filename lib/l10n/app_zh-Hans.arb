@@ -309,5 +309,6 @@
   "shoppingLocationGeoConfigured": "已设置位置",
   "shoppingLocationAddTitle": "添加位置",
   "shoppingLocationEditTitle": "编辑位置",
-  "shoppingLocationNameHint": "位置名称"
+  "shoppingLocationNameHint": "位置名称",
+  "shoppingLocationNameHintWithExample": "地点名称（例如：超市）"
 }
