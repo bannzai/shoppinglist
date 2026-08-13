@@ -66,5 +66,6 @@
   "shoppingListAiCategorizeSheetConfirm": "注册 {count} 项",
   "shoppingListCategorySelect": "选择分类",
   "shoppingListCategoryChange": "更改分类",
-  "shoppingListNewCategoryHint": "新分类名称"
+  "shoppingListNewCategoryHint": "新分类名称",
+  "shoppingListAddCategoryLabel": "添加类别"
 }
