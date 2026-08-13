@@ -123,5 +123,6 @@
   "settingsDeveloperOptions": "开发者选项",
   "settingsPremiumCardTitlePremium": "高级版会员",
   "settingsPremiumCardTitleFree": "升级到高级版",
-  "settingsPremiumCardSubtitlePremium": "您可使用全部功能"
+  "settingsPremiumCardSubtitlePremium": "您可使用全部功能",
+  "settingsPremiumCardSubtitleFree": "五种颜色主题，更多照片/网址扫描等功能"
 }
