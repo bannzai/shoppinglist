@@ -330,5 +330,6 @@
   "platformGoogleAccountName": "Google 계정",
   "purchaseNotActivated": "구매가 아직 활성화되지 않았습니다. 잠시 후 다시 확인해 주세요.",
   "errorTitleServerError": "서버 오류가 발생했어요",
-  "errorTitleSignInRequired": "로그인이 필요합니다"
+  "errorTitleSignInRequired": "로그인이 필요합니다",
+  "errorTitlePermissionDenied": "이 작업을 수행할 권한이 없습니다"
 }
