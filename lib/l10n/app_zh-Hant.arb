@@ -187,5 +187,6 @@
   "groupNameHint": "輸入群組名稱",
   "groupCategoryLocationOrderLabel": "依購物地點排序",
   "groupCategoryLocationOrderPremiumOnly": "依購物地點重新排序分類是進階版功能",
-  "groupCategoryKeywordCount": "關鍵字：{count}"
+  "groupCategoryKeywordCount": "關鍵字：{count}",
+  "groupCategoryDeleteConfirmTitle": "要刪除「{name}」嗎？"
 }
