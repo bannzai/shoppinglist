@@ -241,5 +241,6 @@
   "groupSettingCreatingInvitation": "正在生成邀请码…",
   "groupSettingCreateInvitation": "生成邀请码",
   "groupSettingRemoveMemberConfirmTitle": "要将{name}从群组中移除吗？",
-  "groupSettingRemoveMemberConfirmMessage": "被移除的成员将无法再访问此群组"
+  "groupSettingRemoveMemberConfirmMessage": "被移除的成员将无法再访问此群组",
+  "groupSettingMemberRemoved": "已移除{name}"
 }
