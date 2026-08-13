@@ -25,5 +25,6 @@
   "accountDeleteButton": "刪除帳號",
   "accountDeleteConfirmTitle": "刪除您的帳戶資訊",
   "accountDeleteConfirmMessage": "刪除你的帳號將移除所有使用者資訊。",
-  "accountDeleteConfirmButton": "刪除"
+  "accountDeleteConfirmButton": "刪除",
+  "accountDeleteReauthTitle": "請重新登入"
 }

@@ -25,5 +25,6 @@
   "accountDeleteButton": "删除账号",
   "accountDeleteConfirmTitle": "删除您的账户信息",
   "accountDeleteConfirmMessage": "删除你的账号将移除所有用户信息。",
-  "accountDeleteConfirmButton": "删除"
+  "accountDeleteConfirmButton": "删除",
+  "accountDeleteReauthTitle": "请重新登录"
 }
