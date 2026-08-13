@@ -80,5 +80,6 @@
   "shoppingListUrlDialogTitle": "從網址產生購物清單",
   "shoppingListUrlDialogGenerate": "產生",
   "shoppingListUrlRequired": "請輸入網址",
-  "shoppingListUrlInvalid": "請輸入有效的 HTTPS URL"
+  "shoppingListUrlInvalid": "請輸入有效的 HTTPS URL",
+  "shoppingListStarterRowLabel": "點一下開始輸入"
 }
