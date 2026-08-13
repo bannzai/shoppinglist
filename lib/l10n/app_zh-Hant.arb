@@ -120,5 +120,6 @@
   "settingsInquiry": "聯絡我們",
   "settingsOssLicense": "開源授權",
   "settingsDebugSection": "除錯",
-  "settingsDeveloperOptions": "開發者選項"
+  "settingsDeveloperOptions": "開發者選項",
+  "settingsPremiumCardTitlePremium": "進階版會員"
 }
