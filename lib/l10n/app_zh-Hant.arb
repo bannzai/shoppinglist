@@ -65,5 +65,6 @@
   "shoppingListAiCategorizeSheetEmpty": "沒有可分類的項目",
   "shoppingListAiCategorizeSheetConfirm": "註冊 {count} 項",
   "shoppingListCategorySelect": "選擇分類",
-  "shoppingListCategoryChange": "更改分類"
+  "shoppingListCategoryChange": "更改分類",
+  "shoppingListNewCategoryHint": "新分類名稱"
 }

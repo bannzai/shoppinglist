@@ -65,5 +65,6 @@
   "shoppingListAiCategorizeSheetEmpty": "没有可分类的项目",
   "shoppingListAiCategorizeSheetConfirm": "注册 {count} 项",
   "shoppingListCategorySelect": "选择分类",
-  "shoppingListCategoryChange": "更改分类"
+  "shoppingListCategoryChange": "更改分类",
+  "shoppingListNewCategoryHint": "新分类名称"
 }
