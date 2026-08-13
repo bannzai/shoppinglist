@@ -179,5 +179,6 @@
   "listSettingInvitationShareText": "購物清單邀請碼：{code}",
   "listSettingSelectShoppingLocationTitle": "選擇購物地點",
   "listSettingLocationNone": "無",
-  "listSettingLocationSelected": "已選取"
+  "listSettingLocationSelected": "已選取",
+  "commonDefault": "預設"
 }

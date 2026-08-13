@@ -179,5 +179,6 @@
   "listSettingInvitationShareText": "쇼핑 목록 초대 코드: {code}",
   "listSettingSelectShoppingLocationTitle": "쇼핑할 위치 선택",
   "listSettingLocationNone": "없음",
-  "listSettingLocationSelected": "선택됨"
+  "listSettingLocationSelected": "선택됨",
+  "commonDefault": "기본"
 }
