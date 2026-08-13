@@ -7,6 +7,7 @@ import 'package:shoppinglist/features/group_create/page.dart';
 import 'package:shoppinglist/features/previews/mock/mock_provider_overrides.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../helpers/localized_test_app.dart';
 
 Future<void> _pumpPage(WidgetTester tester) async {
   // GroupCreatePage は Column 直置きで、デフォルトの 800x600 テスト画面では
@@ -21,7 +22,7 @@ Future<void> _pumpPage(WidgetTester tester) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: previewProviderOverrides(sharedPreferences: sharedPreferences),
-      child: MaterialApp(
+      child: localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: const GroupCreatePage(),
       ),

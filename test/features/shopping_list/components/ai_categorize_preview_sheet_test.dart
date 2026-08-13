@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shoppinglist/features/shopping_list/components/ai_categorize_preview_sheet.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../../helpers/localized_test_app.dart';
 
 void main() {
   // showAICategorizePreviewSheet を開くためのテスト用ホストを pump する。
@@ -14,7 +15,7 @@ void main() {
   }) async {
     List<AICategorizeCandidate>? captured;
     await tester.pumpWidget(
-      MaterialApp(
+      localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: Builder(
@@ -80,7 +81,7 @@ void main() {
   testWidgets('「N 件を登録」で included な候補が返る', (tester) async {
     List<AICategorizeCandidate>? captured;
     await tester.pumpWidget(
-      MaterialApp(
+      localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: Builder(

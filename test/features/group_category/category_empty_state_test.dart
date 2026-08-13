@@ -3,8 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shoppinglist/features/group_category/category_empty_state.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../helpers/localized_test_app.dart';
 
-Widget _wrap(Widget child) => MaterialApp(
+Widget _wrap(Widget child) => localizedTestApp(
   theme: buildAppTheme(accent: AccentPreset.shu),
   home: Scaffold(body: child),
 );

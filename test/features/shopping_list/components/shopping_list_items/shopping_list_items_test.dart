@@ -20,6 +20,7 @@ import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../../../helpers/localized_test_app.dart';
 
 /// カテゴリ軸なしテスト用のグループID。previewProviderOverrides が override 済みの
 /// mockGroupID（軸あり）と重複 override しないよう専用IDにする。
@@ -36,7 +37,7 @@ Future<void> _pump(WidgetTester tester) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: previewProviderOverrides(sharedPreferences: sharedPreferences),
-      child: MaterialApp(
+      child: localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: ShoppingListItems(
@@ -68,7 +69,7 @@ Future<void> _pumpFlat(WidgetTester tester) async {
           shoppingListID: mockShoppingListID,
         ).overrideWith((ref) => Stream.value(mockShoppingListItems())),
       ],
-      child: MaterialApp(
+      child: localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: ShoppingListItems(
@@ -104,7 +105,7 @@ Future<void> _pumpFlatWithItems(
           shoppingListID: mockShoppingListID,
         ).overrideWith((ref) => Stream.value(items)),
       ],
-      child: MaterialApp(
+      child: localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: ShoppingListItems(
@@ -166,7 +167,7 @@ Future<void> _pumpWithItems(
           shoppingListID: _customShoppingListID,
         ).overrideWith((ref) => Stream.value(items)),
       ],
-      child: MaterialApp(
+      child: localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: ShoppingListItems(
@@ -338,7 +339,7 @@ _pumpSectionReorder(WidgetTester tester) async {
           groupID: _sectionReorderGroupID,
         ).overrideWith((ref) => itemUpdateRecorder),
       ],
-      child: MaterialApp(
+      child: localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: ShoppingListItems(
@@ -552,7 +553,7 @@ void main() {
               shoppingListID: mockShoppingListID,
             ).overrideWith((ref) => Stream.value(mockShoppingListItems())),
           ],
-          child: MaterialApp(
+          child: localizedTestApp(
             theme: buildAppTheme(accent: AccentPreset.shu),
             home: Scaffold(
               body: ShoppingListItems(

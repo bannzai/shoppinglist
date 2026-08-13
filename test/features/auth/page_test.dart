@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/auth/apple.dart';
@@ -6,6 +5,7 @@ import 'package:shoppinglist/components/auth/google.dart';
 import 'package:shoppinglist/features/auth/page.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../helpers/localized_test_app.dart';
 
 void main() {
   // issue #548: ストア審査がサインインなしで本体へ入れるよう、ゲスト開始
@@ -14,7 +14,7 @@ void main() {
   testWidgets('AuthPage にサインインボタンとゲスト開始ボタンが表示される', (tester) async {
     await tester.pumpWidget(
       ProviderScope(
-        child: MaterialApp(
+        child: localizedTestApp(
           theme: buildAppTheme(accent: AccentPreset.shu),
           home: const AuthPage(),
         ),

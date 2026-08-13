@@ -3,12 +3,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shoppinglist/features/shopping_list/components/ai_review_sheet.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../../helpers/localized_test_app.dart';
 
 void main() {
   // showAIReviewSheet を開くためのテスト用ホストを pump する。
   Future<void> pumpSheet(WidgetTester tester, List<String> rawNames) async {
     await tester.pumpWidget(
-      MaterialApp(
+      localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: Builder(
@@ -78,7 +79,7 @@ void main() {
     // 戻り値を捕捉するため、showAIReviewSheet の結果を保持するホストを pump する。
     List<AIShoppingListCandidate>? result;
     await tester.pumpWidget(
-      MaterialApp(
+      localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: Builder(

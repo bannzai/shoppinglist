@@ -6,12 +6,13 @@ import 'package:shoppinglist/entity/inquiry_category.dart';
 import 'package:shoppinglist/features/inquiry/page.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../helpers/localized_test_app.dart';
 
 /// InquiryPage を app テーマ + ProviderScope でラップして pump する。
 Future<void> _pumpInquiryPage(WidgetTester tester) async {
   await tester.pumpWidget(
     ProviderScope(
-      child: MaterialApp(
+      child: localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: const InquiryPage(),
       ),

@@ -16,6 +16,7 @@ import 'package:shoppinglist/provider/app_provider_container.dart';
 import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../helpers/localized_test_app.dart';
 
 Future<void> _pumpPage(
   WidgetTester tester, {
@@ -38,7 +39,7 @@ Future<void> _pumpPage(
   await tester.pumpWidget(
     UncontrolledProviderScope(
       container: container,
-      child: MaterialApp(
+      child: localizedTestApp(
         navigatorKey: appNavigatorKey,
         theme: buildAppTheme(accent: AccentPreset.shu),
         builder:

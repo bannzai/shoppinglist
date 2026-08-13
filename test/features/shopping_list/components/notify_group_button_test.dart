@@ -13,6 +13,7 @@ import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/shared_preferences.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../../helpers/localized_test_app.dart';
 
 /// 手動通知ボタン(Issue #449)の表示条件と初回説明ダイアログのゲートを検証する。
 /// 送信(Firebase Functions 呼び出し)は実機 + 開発者オプションのデバッグユーザーで確認する。
@@ -56,7 +57,7 @@ Future<void> _pump(
   await tester.pumpWidget(
     UncontrolledProviderScope(
       container: container,
-      child: MaterialApp(
+      child: localizedTestApp(
         navigatorKey: appNavigatorKey,
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: const Scaffold(

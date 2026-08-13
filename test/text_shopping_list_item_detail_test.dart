@@ -8,6 +8,7 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'helpers/localized_test_app.dart';
 
 const _testGroupID = 'test-group-001';
 const _testUserID = 'test-user-001';
@@ -52,7 +53,7 @@ Future<void> _pumpSheet(
           categoryAxisID: _testAxisID,
         ).overrideWith((ref) => Stream.value(const <GroupCategory>[])),
       ],
-      child: MaterialApp(
+      child: localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: TextShoppingListItemDetailBottomSheet(

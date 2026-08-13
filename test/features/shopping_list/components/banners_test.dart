@@ -6,8 +6,9 @@ import 'package:shoppinglist/features/shopping_list/components/banners/retention
 import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../../helpers/localized_test_app.dart';
 
-Widget _wrap(Widget child) => MaterialApp(
+Widget _wrap(Widget child) => localizedTestApp(
   theme: buildAppTheme(accent: AccentPreset.shu),
   home: Scaffold(body: child),
 );

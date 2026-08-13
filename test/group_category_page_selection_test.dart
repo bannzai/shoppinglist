@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -13,6 +12,7 @@ import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'helpers/localized_test_app.dart';
 
 const _testGroupID = 'test-group-001';
 const _testCategoryAxisID = 'test-axis-001';
@@ -121,7 +121,7 @@ void main() {
               groupID: _testGroupID,
             ).overrideWith((ref) => spy),
           ],
-          child: MaterialApp(
+          child: localizedTestApp(
             theme: buildAppTheme(accent: AccentPreset.shu),
             home: GroupCategoryPage(
               groupID: _testGroupID,
@@ -154,7 +154,7 @@ void main() {
               groupID: _testGroupID,
             ).overrideWith((ref) => spy),
           ],
-          child: MaterialApp(
+          child: localizedTestApp(
             theme: buildAppTheme(accent: AccentPreset.shu),
             home: const GroupCategoryPage(groupID: _testGroupID),
           ),

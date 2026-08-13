@@ -18,6 +18,7 @@ import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import '../../helpers/localized_test_app.dart';
 
 const _testGroupID = 'test-group-001';
 const _testCategoryAxisID = 'test-axis-001';
@@ -229,7 +230,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: _overrides(controller: controller, fake: fake),
-          child: MaterialApp(
+          child: localizedTestApp(
             theme: buildAppTheme(accent: AccentPreset.shu),
             home: _DetailHost(item: _item(message: 'juice')),
           ),
@@ -276,7 +277,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: _overrides(controller: controller, fake: fake),
-          child: MaterialApp(
+          child: localizedTestApp(
             theme: buildAppTheme(accent: AccentPreset.shu),
             home: _DetailHost(item: _item(message: 'オレンジジュース')),
           ),
@@ -318,7 +319,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: _overrides(controller: controller, fake: fake),
-          child: MaterialApp(
+          child: localizedTestApp(
             theme: buildAppTheme(accent: AccentPreset.shu),
             home: _DetailHost(item: _item(message: 'juice')),
           ),

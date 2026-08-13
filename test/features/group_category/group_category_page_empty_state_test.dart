@@ -11,6 +11,7 @@ import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import '../../helpers/localized_test_app.dart';
 
 const _testGroupID = 'test-group-001';
 const _testCategoryAxisID = 'test-axis-001';
@@ -18,7 +19,7 @@ const _testUserID = 'test-user-001';
 
 Widget _wrap(List<Override> overrides) => ProviderScope(
   overrides: overrides,
-  child: MaterialApp(
+  child: localizedTestApp(
     theme: buildAppTheme(accent: AccentPreset.shu),
     home: const GroupCategoryPage(groupID: _testGroupID),
   ),

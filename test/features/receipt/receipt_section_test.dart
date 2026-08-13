@@ -9,6 +9,7 @@ import 'package:shoppinglist/provider/receipt.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import '../../helpers/localized_test_app.dart';
 
 const _testGroupID = 'test-group-001';
 const _testListID = 'list-001';
@@ -74,7 +75,7 @@ Future<void> _pumpAddButton(
           shoppingListID: _testListID,
         ).overrideWith((ref) => Stream.value(receipts)),
       ],
-      child: MaterialApp(
+      child: localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: const Scaffold(
           body: ReceiptAddButton(

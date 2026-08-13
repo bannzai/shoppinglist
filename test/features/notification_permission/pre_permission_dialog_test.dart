@@ -4,11 +4,12 @@ import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/features/notification_permission/pre_permission_dialog.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../helpers/localized_test_app.dart';
 
 /// ダイアログの pop 結果を [results] に記録するテストハーネス。
 /// 本番の呼び出し元 (maybeRequestNotificationPermission) と同じ
 /// `showGeneralDialog<bool>` 経由で NotificationPrePermissionDialog を表示する。
-Widget _harness({required List<bool?> results}) => MaterialApp(
+Widget _harness({required List<bool?> results}) => localizedTestApp(
   theme: buildAppTheme(accent: AccentPreset.shu),
   home: Scaffold(
     body: Builder(
