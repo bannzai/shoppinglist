@@ -347,5 +347,6 @@
   "purchaseErrorNetwork": "네트워크 연결이 불안정합니다. 연결 상태를 확인한 후 다시 시도해 주세요.",
   "purchaseErrorPurchaseFailed": "구매에 실패했습니다. 잠시 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 상세 정보: {details}",
   "purchaseErrorUnavailable": "현재 구매할 수 없습니다. 잠시 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 상세 정보: {details}",
-  "purchaseErrorReceiptInUseByOther": "구매 정보가 다른 사용자가 사용 중입니다. 이 기기에서 로그인한 {accountName}을 확인하세요."
+  "purchaseErrorReceiptInUseByOther": "구매 정보가 다른 사용자가 사용 중입니다. 이 기기에서 로그인한 {accountName}을 확인하세요.",
+  "purchaseErrorInvalidAppUserId": "사용자를 확인할 수 없어요. 앱을 다시 시작한 뒤 다시 시도해 주세요. 자세한 내용: {details}"
 }
