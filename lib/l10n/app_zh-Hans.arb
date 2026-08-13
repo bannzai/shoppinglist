@@ -244,5 +244,6 @@
   "groupSettingRemoveMemberConfirmMessage": "被移除的成员将无法再访问此群组",
   "groupSettingMemberRemoved": "已移除{name}",
   "groupSettingInvitationCodeMessage": "分享下面的代码",
-  "groupSettingInvitationExpiry": "有效期 7 天"
+  "groupSettingInvitationExpiry": "有效期 7 天",
+  "commonSave": "保存"
 }

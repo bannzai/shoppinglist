@@ -244,5 +244,6 @@
   "groupSettingRemoveMemberConfirmMessage": "삭제된 멤버는 더 이상 이 그룹에 액세스할 수 없습니다",
   "groupSettingMemberRemoved": "{name}님을 삭제했습니다",
   "groupSettingInvitationCodeMessage": "아래 코드를 공유하세요",
-  "groupSettingInvitationExpiry": "7일 동안 유효"
+  "groupSettingInvitationExpiry": "7일 동안 유효",
+  "commonSave": "저장"
 }
