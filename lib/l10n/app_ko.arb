@@ -228,5 +228,6 @@
   "groupJoinHeading": "시작해 볼까요",
   "groupJoinDescription": "가족이나 파트너에게 초대 코드를 받으셨나요?\n코드로 참여하면 같은 쇼핑 목록을 함께 사용할 수 있어요.",
   "groupJoinCreateSolo": "내 목록 만들기",
-  "groupListEmpty": "아직 어떤 그룹에도 속해 있지 않습니다"
+  "groupListEmpty": "아직 어떤 그룹에도 속해 있지 않습니다",
+  "groupListMemberCount": "멤버 {count}명"
 }

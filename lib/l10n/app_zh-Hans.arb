@@ -228,5 +228,6 @@
   "groupJoinHeading": "开始吧",
   "groupJoinDescription": "你收到家人或伴侣发来的邀请码了吗？\n使用邀请码加入后，你们就可以一起使用同一份购物清单。",
   "groupJoinCreateSolo": "创建自己的清单",
-  "groupListEmpty": "你还不属于任何群组"
+  "groupListEmpty": "你还不属于任何群组",
+  "groupListMemberCount": "{count} 位成员"
 }
