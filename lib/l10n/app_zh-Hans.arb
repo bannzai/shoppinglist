@@ -232,5 +232,6 @@
   "groupListMemberCount": "{count} 位成员",
   "groupListFreeLimitBanner": "免费版可额外添加一个群组",
   "groupListFreeLimitAction": "解锁",
-  "groupSettingMembersSection": "成员"
+  "groupSettingMembersSection": "成员",
+  "groupSettingMemberOwner": "群主"
 }
