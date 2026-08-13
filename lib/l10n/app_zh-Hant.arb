@@ -150,5 +150,6 @@
   "settingsAccountLinkWithGoogle": "將帳號與 Google 連結",
   "settingsAccountSignedInWith": "已使用 {providerName} 登入",
   "settingsAccountReSignInBarrierLabel": "重新登入確認",
-  "settingsAccountAlreadyInUseTitle": "此帳號已被其他使用者使用"
+  "settingsAccountAlreadyInUseTitle": "此帳號已被其他使用者使用",
+  "settingsAccountReSignInMessage": "要再次使用此帳號登入嗎？\n如果再次登入，目前的訪客資料（清單和群組）將不會被保留。"
 }

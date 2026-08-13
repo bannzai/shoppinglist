@@ -150,5 +150,6 @@
   "settingsAccountLinkWithGoogle": "계정을 Google과 연결",
   "settingsAccountSignedInWith": "{providerName}로 로그인됨",
   "settingsAccountReSignInBarrierLabel": "다시 로그인 확인",
-  "settingsAccountAlreadyInUseTitle": "이 계정은 이미 다른 사용자가 사용 중입니다"
+  "settingsAccountAlreadyInUseTitle": "이 계정은 이미 다른 사용자가 사용 중입니다",
+  "settingsAccountReSignInMessage": "이 계정으로 다시 로그인하시겠어요?\n다시 로그인하면 현재 게스트 데이터(목록과 그룹)는 이어지지 않습니다."
 }
