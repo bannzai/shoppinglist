@@ -208,5 +208,6 @@
   "groupCategoryEditMatchingPartial": "부분 일치",
   "groupCategoryEditMatchingRegex": "정규식",
   "groupCreateTitle": "그룹 만들기",
-  "groupCreateIconLabel": "아이콘"
+  "groupCreateIconLabel": "아이콘",
+  "groupCreateSubmit": "만들기"
 }

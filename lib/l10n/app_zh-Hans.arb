@@ -208,5 +208,6 @@
   "groupCategoryEditMatchingPartial": "部分匹配",
   "groupCategoryEditMatchingRegex": "正则表达式",
   "groupCreateTitle": "创建群组",
-  "groupCreateIconLabel": "图标"
+  "groupCreateIconLabel": "图标",
+  "groupCreateSubmit": "创建"
 }
