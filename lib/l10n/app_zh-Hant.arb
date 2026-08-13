@@ -356,5 +356,6 @@
   "purchaseErrorUserInfoFailed": "取得使用者資訊失敗。請稍候再試。如果問題仍然存在，請從「設定」>「詢問」與我們聯絡。詳細資料：{details}",
   "purchaseErrorConfiguration": "取得購買資訊失敗。請稍候再試。如果問題仍然存在，請從「設定」>「聯絡我們」與我們聯絡。詳細資訊：{details}",
   "purchaseErrorUpdateRequired": "發生未知錯誤。請更新至最新版本後再試一次。如果問題仍然持續，請從「設定」>「詢問」與我們聯絡。代碼：{code} 詳情：{details}",
-  "purchaseErrorEmptySubscriberAttributes": "發生未知錯誤。無法提前取得購買資訊。詳情：{details}"
+  "purchaseErrorEmptySubscriberAttributes": "發生未知錯誤。無法提前取得購買資訊。詳情：{details}",
+  "purchaseErrorCustomerInfo": "取得客戶資訊失敗。請稍後再試。如果問題仍然存在，請從「設定」>「聯絡我們」與我們聯絡。詳細資訊：代碼：{code} {details}"
 }
