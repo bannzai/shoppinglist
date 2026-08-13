@@ -231,5 +231,6 @@
   "groupListEmpty": "아직 어떤 그룹에도 속해 있지 않습니다",
   "groupListMemberCount": "멤버 {count}명",
   "groupListFreeLimitBanner": "무료 플랜에서는 그룹을 1개 추가로 사용할 수 있어요",
-  "groupListFreeLimitAction": "잠금 해제"
+  "groupListFreeLimitAction": "잠금 해제",
+  "groupSettingMembersSection": "구성원"
 }

@@ -231,5 +231,6 @@
   "groupListEmpty": "你还不属于任何群组",
   "groupListMemberCount": "{count} 位成员",
   "groupListFreeLimitBanner": "免费版可额外添加一个群组",
-  "groupListFreeLimitAction": "解锁"
+  "groupListFreeLimitAction": "解锁",
+  "groupSettingMembersSection": "成员"
 }
