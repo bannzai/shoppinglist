@@ -332,5 +332,6 @@
   "errorTitleServerError": "发生服务器错误",
   "errorTitleSignInRequired": "需要登录",
   "errorTitlePermissionDenied": "你没有权限执行此操作",
-  "errorTitleProviderAlreadyLinked": "此登录方式已关联"
+  "errorTitleProviderAlreadyLinked": "此登录方式已关联",
+  "errorTitleCredentialAlreadyInUse": "此账号已被其他用户使用"
 }
