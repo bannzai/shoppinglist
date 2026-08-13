@@ -133,5 +133,6 @@
   "settingsSignOutConfirmMessageGuest": "您当前以访客身份使用此应用，因此如果退出登录，您将无法再次登录同一账户，并且会永久失去对当前列表和群组的访问权限。",
   "settingsSignOutCompletedTitle": "已退出登录",
   "settingsSignOutExitAppMessage": "应用将立即退出",
-  "settingsThemeColorTitle": "主题颜色"
+  "settingsThemeColorTitle": "主题颜色",
+  "settingsThemeColorDescription": "从五种传统日式颜色中选择，来更改应用中的强调色。"
 }
