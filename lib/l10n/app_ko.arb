@@ -314,5 +314,6 @@
   "shoppingLocationPositionSet": "위치 설정됨",
   "shoppingLocationSetOnMap": "지도에서 위치 설정",
   "shoppingLocationDeleteConfirmTitle": "\"{name}\"을(를) 삭제할까요?",
-  "shoppingLocationDeleteConfirmMessage": "이 위치를 삭제해도 이 위치가 설정된 쇼핑 목록에는 영향을 주지 않습니다"
+  "shoppingLocationDeleteConfirmMessage": "이 위치를 삭제해도 이 위치가 설정된 쇼핑 목록에는 영향을 주지 않습니다",
+  "shoppingLocationPickerTitle": "지도에서 위치를 선택하세요"
 }

@@ -314,5 +314,6 @@
   "shoppingLocationPositionSet": "位置已设置",
   "shoppingLocationSetOnMap": "在地图上设置位置",
   "shoppingLocationDeleteConfirmTitle": "删除“{name}”？",
-  "shoppingLocationDeleteConfirmMessage": "删除此位置不会影响已设置该位置的购物清单"
+  "shoppingLocationDeleteConfirmMessage": "删除此位置不会影响已设置该位置的购物清单",
+  "shoppingLocationPickerTitle": "在地图上选择位置"
 }
