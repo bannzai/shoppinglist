@@ -277,5 +277,6 @@
   "onboardingSkip": "跳过",
   "onboardingStart": "开始使用",
   "onboardingNext": "下一步",
-  "paywallHeroTitle": "升级到高级版"
+  "paywallHeroTitle": "升级到高级版",
+  "paywallHeroDescription": "解锁所有功能，与全家人一起畅享这款应用。"
 }
