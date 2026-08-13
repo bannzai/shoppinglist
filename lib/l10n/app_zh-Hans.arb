@@ -37,5 +37,6 @@
   "shoppingListEmptyTitle": "还没有购物清单",
   "shoppingListEmptyMessage": "创建新的购物清单",
   "shoppingListEmptyCreateButton": "创建购物清单",
-  "shoppingListLoadErrorTitle": "列表加载失败"
+  "shoppingListLoadErrorTitle": "列表加载失败",
+  "shoppingListPickerTitle": "切换清单"
 }
