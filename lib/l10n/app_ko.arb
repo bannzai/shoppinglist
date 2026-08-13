@@ -112,5 +112,6 @@
   "settingsGroupManagement": "그룹 관리",
   "settingsJoinGroupWithInvitationCode": "초대 코드로 그룹에 참여",
   "settingsAppearanceSection": "모양",
-  "settingsNotificationSection": "알림"
+  "settingsNotificationSection": "알림",
+  "settingsAboutSection": "이 앱에 대하여"
 }

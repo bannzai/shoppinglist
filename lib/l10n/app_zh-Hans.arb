@@ -112,5 +112,6 @@
   "settingsGroupManagement": "管理群组",
   "settingsJoinGroupWithInvitationCode": "使用邀请码加入群组",
   "settingsAppearanceSection": "外观",
-  "settingsNotificationSection": "通知"
+  "settingsNotificationSection": "通知",
+  "settingsAboutSection": "关于此应用"
 }
