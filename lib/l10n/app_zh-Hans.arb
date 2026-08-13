@@ -13,5 +13,6 @@
   "commonSettings": "设置",
   "commonCategory": "分类",
   "commonUncategorized": "未分类",
-  "commonGroup": "群组"
+  "commonGroup": "群组",
+  "commonCamera": "相机"
 }

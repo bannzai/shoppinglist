@@ -13,5 +13,6 @@
   "commonSettings": "설정",
   "commonCategory": "카테고리",
   "commonUncategorized": "분류 없음",
-  "commonGroup": "그룹"
+  "commonGroup": "그룹",
+  "commonCamera": "카메라"
 }
