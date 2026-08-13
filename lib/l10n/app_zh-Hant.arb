@@ -287,5 +287,6 @@
   "paywallFeatureReceipt": "將收據儲存到清單",
   "paywallSubscriptionNote": "可隨時取消・自動續訂可在續訂前 24 小時前取消",
   "paywallPrivacyLink": "隱私",
-  "paywallRestore": "恢復購買"
+  "paywallRestore": "恢復購買",
+  "paywallRestored": "已恢復你的購買項目"
 }
