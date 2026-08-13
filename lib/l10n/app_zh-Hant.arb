@@ -216,5 +216,6 @@
   "groupCreateIconCookie": "零食",
   "groupCreateIconPets": "寵物",
   "groupCreateIconBag": "包",
-  "groupCreateInvitationDialogTitle": "邀請成員"
+  "groupCreateInvitationDialogTitle": "邀請成員",
+  "groupCreateInvitationDialogMessage": "將邀請碼分享給家人"
 }

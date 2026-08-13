@@ -216,5 +216,6 @@
   "groupCreateIconCookie": "간식",
   "groupCreateIconPets": "반려동물",
   "groupCreateIconBag": "가방",
-  "groupCreateInvitationDialogTitle": "멤버 초대"
+  "groupCreateInvitationDialogTitle": "멤버 초대",
+  "groupCreateInvitationDialogMessage": "가족에게 초대 코드를 공유하세요"
 }
