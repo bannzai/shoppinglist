@@ -292,5 +292,6 @@
   "paywallNoPlans": "目前没有可用的套餐",
   "paywallRecommendedBadge": "推荐",
   "paywallPurchaseCompleted": "感谢您的购买",
-  "paywallPurchaseButton": "购买"
+  "paywallPurchaseButton": "购买",
+  "receiptAdd": "添加收据"
 }

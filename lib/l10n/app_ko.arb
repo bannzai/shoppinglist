@@ -292,5 +292,6 @@
   "paywallNoPlans": "현재 이용 가능한 요금제가 없습니다",
   "paywallRecommendedBadge": "추천",
   "paywallPurchaseCompleted": "구매해 주셔서 감사합니다",
-  "paywallPurchaseButton": "구매"
+  "paywallPurchaseButton": "구매",
+  "receiptAdd": "영수증 추가"
 }
