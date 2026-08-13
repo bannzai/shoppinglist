@@ -313,5 +313,6 @@
   "shoppingLocationNameHintWithExample": "地點名稱（例如：超市）",
   "shoppingLocationPositionSet": "位置已設定",
   "shoppingLocationSetOnMap": "在地圖上設定位置",
-  "shoppingLocationDeleteConfirmTitle": "刪除「{name}」？"
+  "shoppingLocationDeleteConfirmTitle": "刪除「{name}」？",
+  "shoppingLocationDeleteConfirmMessage": "刪除這個位置不會影響已設定此位置的購物清單"
 }
