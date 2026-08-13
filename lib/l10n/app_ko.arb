@@ -79,5 +79,6 @@
   "shoppingListUrlRecognitionLimitReached": "URL 인식의 월간 이용 횟수({limit}회)를 초과했습니다",
   "shoppingListUrlDialogTitle": "URL에서 쇼핑 목록 만들기",
   "shoppingListUrlDialogGenerate": "생성",
-  "shoppingListUrlRequired": "URL을 입력하세요"
+  "shoppingListUrlRequired": "URL을 입력하세요",
+  "shoppingListUrlInvalid": "유효한 HTTPS URL을 입력하세요"
 }
