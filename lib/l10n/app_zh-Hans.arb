@@ -197,5 +197,6 @@
   "groupCategoryEditNotFound": "未找到分类",
   "groupCategoryEditNameLabel": "分类名称",
   "groupCategoryEditNameHint": "输入类别名称",
-  "groupCategoryEditColorLabel": "分类颜色"
+  "groupCategoryEditColorLabel": "分类颜色",
+  "groupCategoryEditIconLabel": "分类图标"
 }

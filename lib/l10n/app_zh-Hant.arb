@@ -197,5 +197,6 @@
   "groupCategoryEditNotFound": "找不到分類",
   "groupCategoryEditNameLabel": "分類名稱",
   "groupCategoryEditNameHint": "輸入分類名稱",
-  "groupCategoryEditColorLabel": "分類顏色"
+  "groupCategoryEditColorLabel": "分類顏色",
+  "groupCategoryEditIconLabel": "分類圖示"
 }
