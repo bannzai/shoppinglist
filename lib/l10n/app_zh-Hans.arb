@@ -185,5 +185,6 @@
   "commonCreating": "创建中…",
   "groupNameLabel": "群组名称",
   "groupNameHint": "输入群组名称",
-  "groupCategoryLocationOrderLabel": "按购物地点排序"
+  "groupCategoryLocationOrderLabel": "按购物地点排序",
+  "groupCategoryLocationOrderPremiumOnly": "按购物地点重新排序类别是高级版功能"
 }

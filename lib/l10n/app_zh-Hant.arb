@@ -185,5 +185,6 @@
   "commonCreating": "建立中…",
   "groupNameLabel": "群組名稱",
   "groupNameHint": "輸入群組名稱",
-  "groupCategoryLocationOrderLabel": "依購物地點排序"
+  "groupCategoryLocationOrderLabel": "依購物地點排序",
+  "groupCategoryLocationOrderPremiumOnly": "依購物地點重新排序分類是進階版功能"
 }
