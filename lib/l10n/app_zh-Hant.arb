@@ -352,5 +352,6 @@
   "purchaseErrorOperationInProgress": "已有另一筆購買正在進行中。請稍等片刻後再試。",
   "purchaseErrorIneligible": "您的帳號購買失敗。請稍後再試。如果問題仍然存在，請從「設定」>「諮詢」與我們聯絡。詳細資訊：{details}",
   "purchaseErrorInsufficientPermissions": "你無法使用你的 {accountName} 訂閱方案。請檢查你的付款資訊後再試一次。",
-  "purchaseErrorPaymentPending": "付款已中斷。請使用目前登入的{accountName}確認{storeName}。"
+  "purchaseErrorPaymentPending": "付款已中斷。請使用目前登入的{accountName}確認{storeName}。",
+  "purchaseErrorUserInfoFailed": "取得使用者資訊失敗。請稍候再試。如果問題仍然存在，請從「設定」>「詢問」與我們聯絡。詳細資料：{details}"
 }
