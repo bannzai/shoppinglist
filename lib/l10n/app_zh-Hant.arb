@@ -285,5 +285,6 @@
   "paywallFeatureThemeColors": "五種主題顏色",
   "paywallFeatureUnlimitedRetention": "清單無限期保留",
   "paywallFeatureReceipt": "將收據儲存到清單",
-  "paywallSubscriptionNote": "可隨時取消・自動續訂可在續訂前 24 小時前取消"
+  "paywallSubscriptionNote": "可隨時取消・自動續訂可在續訂前 24 小時前取消",
+  "paywallPrivacyLink": "隱私"
 }
