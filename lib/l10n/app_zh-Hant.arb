@@ -21,5 +21,6 @@
   "errorUnexpectedTitle": "發生了未預期的錯誤",
   "errorFaqLink": "查看常見問題",
   "authGoogleSignIn": "使用 Google 登入",
-  "loadingPreparing": "正在準備…"
+  "loadingPreparing": "正在準備…",
+  "accountDeleteButton": "刪除帳號"
 }
