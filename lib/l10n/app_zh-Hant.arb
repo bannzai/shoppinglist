@@ -303,5 +303,6 @@
   "receiptMemoHint": "商店名稱或購買內容等備註",
   "receiptCaptureOrSelect": "拍攝或選擇收據照片",
   "forceUpdateTitle": "請更新應用程式",
-  "forceUpdateMessage": "我們希望您更新此應用程式。請從 {storeName} 更新至最新版本。"
+  "forceUpdateMessage": "我們希望您更新此應用程式。請從 {storeName} 更新至最新版本。",
+  "shoppingLocationTitle": "購物地點"
 }
