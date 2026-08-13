@@ -245,5 +245,6 @@
   "groupSettingMemberRemoved": "{name}님을 삭제했습니다",
   "groupSettingInvitationCodeMessage": "아래 코드를 공유하세요",
   "groupSettingInvitationExpiry": "7일 동안 유효",
-  "commonSave": "저장"
+  "commonSave": "저장",
+  "authHeroTitle": "가족의 쇼핑,\n한 리스트에"
 }

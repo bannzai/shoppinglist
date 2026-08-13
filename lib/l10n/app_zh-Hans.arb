@@ -245,5 +245,6 @@
   "groupSettingMemberRemoved": "已移除{name}",
   "groupSettingInvitationCodeMessage": "分享下面的代码",
   "groupSettingInvitationExpiry": "有效期 7 天",
-  "commonSave": "保存"
+  "commonSave": "保存",
+  "authHeroTitle": "家人的购物\n尽在一个清单"
 }
