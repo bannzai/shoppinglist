@@ -348,5 +348,6 @@
   "purchaseErrorPurchaseFailed": "購買失敗。請稍後再試。如果問題仍然存在，請前往「設定」>「詢問」聯絡我們。詳細資訊：{details}",
   "purchaseErrorUnavailable": "目前無法購買。請稍後再試。如果問題仍然存在，請從「設定」>「諮詢」聯絡我們。詳情：{details}",
   "purchaseErrorReceiptInUseByOther": "購買資訊已被其他使用者使用。請確認您在此裝置上登入的{accountName}。",
-  "purchaseErrorInvalidAppUserId": "我們無法驗證您的使用者身分。請重新啟動 App 後再試一次。詳細資訊：{details}"
+  "purchaseErrorInvalidAppUserId": "我們無法驗證您的使用者身分。請重新啟動 App 後再試一次。詳細資訊：{details}",
+  "purchaseErrorOperationInProgress": "已有另一筆購買正在進行中。請稍等片刻後再試。"
 }
