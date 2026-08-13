@@ -350,5 +350,6 @@
   "purchaseErrorReceiptInUseByOther": "구매 정보가 다른 사용자가 사용 중입니다. 이 기기에서 로그인한 {accountName}을 확인하세요.",
   "purchaseErrorInvalidAppUserId": "사용자를 확인할 수 없어요. 앱을 다시 시작한 뒤 다시 시도해 주세요. 자세한 내용: {details}",
   "purchaseErrorOperationInProgress": "다른 구매가 이미 진행 중입니다. 잠시 후 다시 확인해 주세요.",
-  "purchaseErrorIneligible": "사용자 계정으로 구매하지 못했습니다. 잠시 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 자세한 내용: {details}"
+  "purchaseErrorIneligible": "사용자 계정으로 구매하지 못했습니다. 잠시 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 자세한 내용: {details}",
+  "purchaseErrorInsufficientPermissions": "{accountName}으로는 요금제에 가입할 수 없습니다. 결제 정보를 확인한 후 다시 시도해 주세요."
 }
