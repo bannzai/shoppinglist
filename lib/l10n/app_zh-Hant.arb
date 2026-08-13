@@ -307,5 +307,6 @@
   "shoppingLocationTitle": "購物地點",
   "shoppingLocationEmpty": "還沒有購物地點",
   "shoppingLocationGeoConfigured": "已設定位置",
-  "shoppingLocationAddTitle": "新增位置"
+  "shoppingLocationAddTitle": "新增位置",
+  "shoppingLocationEditTitle": "編輯位置"
 }
