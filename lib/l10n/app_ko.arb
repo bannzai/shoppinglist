@@ -43,5 +43,6 @@
   "shoppingListCreateListTooltip": "목록 추가",
   "shoppingListCreateTodayList": "현재 날짜로 목록 추가",
   "shoppingListDuplicateCurrentList": "현재 목록 복제",
-  "shoppingListDuplicateUncheckedOnly": "체크 안 된 항목만 복제"
+  "shoppingListDuplicateUncheckedOnly": "체크 안 된 항목만 복제",
+  "shoppingListDuplicated": "목록을 복제했어요"
 }
