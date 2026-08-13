@@ -235,5 +235,6 @@
   "groupSettingMembersSection": "구성원",
   "groupSettingMemberOwner": "소유자",
   "groupSettingMemberSelf": "나",
-  "groupSettingMemberFallbackName": "멤버"
+  "groupSettingMemberFallbackName": "멤버",
+  "groupSettingShoppingLocationSubtitle": "매장 추가 및 수정"
 }
