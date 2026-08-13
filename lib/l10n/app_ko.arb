@@ -121,5 +121,6 @@
   "settingsOssLicense": "오픈소스 라이선스",
   "settingsDebugSection": "디버그",
   "settingsDeveloperOptions": "개발자 옵션",
-  "settingsPremiumCardTitlePremium": "프리미엄 회원"
+  "settingsPremiumCardTitlePremium": "프리미엄 회원",
+  "settingsPremiumCardTitleFree": "프리미엄으로 업그레이드"
 }

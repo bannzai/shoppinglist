@@ -121,5 +121,6 @@
   "settingsOssLicense": "开源许可证",
   "settingsDebugSection": "调试",
   "settingsDeveloperOptions": "开发者选项",
-  "settingsPremiumCardTitlePremium": "高级版会员"
+  "settingsPremiumCardTitlePremium": "高级版会员",
+  "settingsPremiumCardTitleFree": "升级到高级版"
 }
