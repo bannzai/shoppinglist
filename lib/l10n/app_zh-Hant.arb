@@ -329,5 +329,6 @@
   "shoppingListLimitExceeded": "免費方案下，每個群組最多可建立 {limit} 個清單。升級到進階版即可無限建立清單。",
   "platformGoogleAccountName": "Google 帳戶",
   "purchaseNotActivated": "您的購買尚未生效。請稍後再試。",
-  "errorTitleServerError": "發生伺服器錯誤"
+  "errorTitleServerError": "發生伺服器錯誤",
+  "errorTitleSignInRequired": "需要登入"
 }
