@@ -233,5 +233,6 @@
   "groupListFreeLimitBanner": "免費方案可額外新增一個群組",
   "groupListFreeLimitAction": "解鎖",
   "groupSettingMembersSection": "成員",
-  "groupSettingMemberOwner": "群組擁有者"
+  "groupSettingMemberOwner": "群組擁有者",
+  "groupSettingMemberSelf": "你"
 }
