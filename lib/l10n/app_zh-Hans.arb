@@ -293,5 +293,6 @@
   "paywallRecommendedBadge": "推荐",
   "paywallPurchaseCompleted": "感谢您的购买",
   "paywallPurchaseButton": "购买",
-  "receiptAdd": "添加收据"
+  "receiptAdd": "添加收据",
+  "receiptEdit": "编辑收据"
 }
