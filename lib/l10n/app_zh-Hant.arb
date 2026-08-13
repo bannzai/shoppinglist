@@ -199,5 +199,6 @@
   "groupCategoryEditNameHint": "輸入分類名稱",
   "groupCategoryEditColorLabel": "分類顏色",
   "groupCategoryEditIconLabel": "分類圖示",
-  "groupCategoryEditKeywordsLabel": "關鍵字"
+  "groupCategoryEditKeywordsLabel": "關鍵字",
+  "groupCategoryEditAddKeyword": "新增關鍵字"
 }

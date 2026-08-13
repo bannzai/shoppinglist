@@ -199,5 +199,6 @@
   "groupCategoryEditNameHint": "카테고리 이름을 입력하세요",
   "groupCategoryEditColorLabel": "카테고리 색상",
   "groupCategoryEditIconLabel": "카테고리 아이콘",
-  "groupCategoryEditKeywordsLabel": "키워드"
+  "groupCategoryEditKeywordsLabel": "키워드",
+  "groupCategoryEditAddKeyword": "키워드 추가"
 }

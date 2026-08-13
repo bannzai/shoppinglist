@@ -199,5 +199,6 @@
   "groupCategoryEditNameHint": "输入类别名称",
   "groupCategoryEditColorLabel": "分类颜色",
   "groupCategoryEditIconLabel": "分类图标",
-  "groupCategoryEditKeywordsLabel": "关键词"
+  "groupCategoryEditKeywordsLabel": "关键词",
+  "groupCategoryEditAddKeyword": "添加关键词"
 }
