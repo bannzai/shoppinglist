@@ -8,5 +8,6 @@
   "commonDelete": "删除",
   "commonAdd": "添加",
   "commonRetry": "重试",
-  "commonUndo": "撤销"
+  "commonUndo": "撤销",
+  "commonUpgrade": "升级"
 }

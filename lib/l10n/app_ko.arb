@@ -8,5 +8,6 @@
   "commonDelete": "삭제",
   "commonAdd": "추가",
   "commonRetry": "다시 시도",
-  "commonUndo": "실행 취소"
+  "commonUndo": "실행 취소",
+  "commonUpgrade": "업그레이드"
 }
