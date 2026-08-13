@@ -259,5 +259,6 @@
   "inquiryCategoryRequired": "請選擇您的詢問類型",
   "inquiryContentLabel": "您的訊息",
   "inquiryContentRequired": "請輸入您的訊息",
-  "inquiryContentHint": "告訴我們您遇到了什麼問題，或是希望看到什麼功能"
+  "inquiryContentHint": "告訴我們您遇到了什麼問題，或是希望看到什麼功能",
+  "inquirySubmitting": "傳送中…"
 }
