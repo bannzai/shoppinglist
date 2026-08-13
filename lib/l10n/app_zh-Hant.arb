@@ -109,5 +109,6 @@
   "settingsDisplayNameLabel": "您的顯示名稱",
   "settingsDisplayNameHint": "輸入顯示名稱",
   "settingsDisplayNameUpdated": "已更新您的顯示名稱",
-  "settingsGroupManagement": "管理群組"
+  "settingsGroupManagement": "管理群組",
+  "settingsJoinGroupWithInvitationCode": "使用邀請碼加入群組"
 }
