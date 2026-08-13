@@ -301,5 +301,6 @@
   "receiptAmountLabel": "金額",
   "receiptMemoLabel": "備註",
   "receiptMemoHint": "商店名稱或購買內容等備註",
-  "receiptCaptureOrSelect": "拍攝或選擇收據照片"
+  "receiptCaptureOrSelect": "拍攝或選擇收據照片",
+  "forceUpdateTitle": "請更新應用程式"
 }
