@@ -147,5 +147,6 @@
   "settingsAccountLinked": "已連結你的帳戶",
   "settingsAccountGuestDescription": "您目前以訪客身分使用此應用程式。若連結帳號，您在更換裝置或於其他裝置上也能使用相同的清單和群組。",
   "settingsAccountLinkWithApple": "使用 Apple 連結帳號",
-  "settingsAccountLinkWithGoogle": "將帳號與 Google 連結"
+  "settingsAccountLinkWithGoogle": "將帳號與 Google 連結",
+  "settingsAccountSignedInWith": "已使用 {providerName} 登入"
 }
