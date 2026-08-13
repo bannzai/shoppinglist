@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/alert/ok.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/force_update.dart';
 import 'package:shoppinglist/utils/logger/error.dart';
 import 'package:shoppinglist/utils/config/platform.dart';
@@ -47,9 +48,8 @@ class ForceUpdateResolver extends HookConsumerWidget {
         await showOKDialog(
           context,
           icon: Icons.error,
-          title: 'アプリをアップデートしてください',
-          message:
-              'お使いのアプリのバージョンのアップデートをお願いしております。$storeNameから最新バージョンにアップデートしてください',
+          title: context.l10n.forceUpdateTitle,
+          message: context.l10n.forceUpdateMessage(storeName),
           ok: () async {
             await launchUrl(
               Uri.parse(forceUpdateStoreURL),

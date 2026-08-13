@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/receipt/receipt_edit_sheet.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/receipt.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
@@ -54,7 +55,10 @@ class ReceiptAddButton extends ConsumerWidget {
       // AIカテゴリ分けボタンと同じ全幅 pill の形にそろえる。非プレミアムの王冠は
       // ボタン内（label の末尾）に収める。色は soft（accent 薄塗り）で控えめにする。
       child: AppPill(
-        label: existingReceipt == null ? 'レシートを追加' : 'レシートを編集',
+        label:
+            existingReceipt == null
+                ? context.l10n.receiptAdd
+                : context.l10n.receiptEdit,
         icon: Icons.receipt_long,
         trailingIcon: isPremium ? null : Icons.workspace_premium,
         variant: AppPillVariant.soft,

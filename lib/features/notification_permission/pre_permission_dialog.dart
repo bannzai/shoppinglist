@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
@@ -66,7 +67,7 @@ Future<void> maybeRequestNotificationPermission(
   );
   final accepted = await showGeneralDialog<bool>(
     context: context,
-    barrierLabel: 'プッシュ通知の許可',
+    barrierLabel: context.l10n.notificationPermissionBarrierLabel,
     barrierDismissible: true,
     barrierColor: Colors.transparent,
     transitionDuration: const Duration(milliseconds: 160),
@@ -126,7 +127,7 @@ class NotificationPrePermissionDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'プッシュ通知を受け取ろう',
+            context.l10n.notificationPermissionTitle,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: tokens.neutral.ink,
               fontWeight: FontWeight.w700,
@@ -134,9 +135,7 @@ class NotificationPrePermissionDialog extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'グループのメンバーが買い物リストを更新して知らせたときに、'
-            'プッシュ通知ですぐに気づけます。'
-            '次に表示される確認で通知を許可してください。',
+            context.l10n.notificationPermissionMessage,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: tokens.neutral.ink2,
               height: 1.4,
@@ -148,7 +147,7 @@ class NotificationPrePermissionDialog extends StatelessWidget {
               Expanded(
                 child: AppPill(
                   key: const ValueKey('notification_pre_permission_later'),
-                  label: 'あとで',
+                  label: context.l10n.notificationPermissionLater,
                   icon: null,
                   variant: AppPillVariant.neutral,
                   expanded: true,
@@ -159,7 +158,7 @@ class NotificationPrePermissionDialog extends StatelessWidget {
               Expanded(
                 child: AppPill(
                   key: const ValueKey('notification_pre_permission_allow'),
-                  label: '通知を許可',
+                  label: context.l10n.notificationPermissionAllow,
                   icon: Icons.notifications,
                   variant: AppPillVariant.accent,
                   expanded: true,

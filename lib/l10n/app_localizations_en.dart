@@ -825,4 +825,244 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get groupSettingInvitationExpiry => 'Valid for 7 days';
+
+  @override
+  String get commonSave => 'Save';
+
+  @override
+  String get authHeroTitle => 'Your family\'s shopping,\nin one list';
+
+  @override
+  String get authHeroDescription =>
+      'Sign in and your lists stay in sync across devices. No ads, no newsletters.';
+
+  @override
+  String get authStartWithoutSignIn => 'Start without signing in';
+
+  @override
+  String get authLinkAccountLaterNote =>
+      'You can link an account later from the settings screen';
+
+  @override
+  String authAgreementNote(String terms, String privacy) {
+    return 'By continuing, you agree to the $terms and the $privacy.';
+  }
+
+  @override
+  String get inquiryDescription =>
+      'We read everything you send and use it to improve the app. If you would like a reply, please include your email address.';
+
+  @override
+  String get inquiryEmailLabel => 'Email address';
+
+  @override
+  String get inquiryEmailRequired => 'Please enter your email address';
+
+  @override
+  String get inquiryEmailInvalid => 'The email address format is not correct';
+
+  @override
+  String get inquiryCategoryLabel => 'Type of inquiry';
+
+  @override
+  String get inquiryCategoryRequired =>
+      'Please choose the type of your inquiry';
+
+  @override
+  String get inquiryContentLabel => 'Your message';
+
+  @override
+  String get inquiryContentRequired => 'Please enter your message';
+
+  @override
+  String get inquiryContentHint =>
+      'Tell us what you are having trouble with or what you would like to see';
+
+  @override
+  String get inquirySubmitting => 'Sending...';
+
+  @override
+  String get inquirySubmit => 'Send';
+
+  @override
+  String get inquirySubmitted => 'Your inquiry has been sent';
+
+  @override
+  String get notificationPermissionBarrierLabel =>
+      'Push notification permission';
+
+  @override
+  String get notificationPermissionTitle => 'Turn on push notifications';
+
+  @override
+  String get notificationPermissionMessage =>
+      'When a member of your group updates the shopping list and lets you know, a push notification tells you right away. Please allow notifications in the confirmation that appears next.';
+
+  @override
+  String get notificationPermissionLater => 'Later';
+
+  @override
+  String get notificationPermissionAllow => 'Allow notifications';
+
+  @override
+  String get onboardingSlide1Title => 'A shopping list\nyou build as a family';
+
+  @override
+  String get onboardingSlide1Body =>
+      'Someone adds what they thought of at home, and someone else checks it off at the store. Put every \"can you pick this up?\" onto this one sheet.';
+
+  @override
+  String get onboardingSlide2Title => 'Edit the same list\nat the same time';
+
+  @override
+  String get onboardingSlide2Body =>
+      'Invite your family, your partner, or your housemates with an invitation code and everyone can edit the same list. What matters is not who added it, but that nothing is forgotten.';
+
+  @override
+  String get onboardingSlide3Title =>
+      'A gentle reminder\nwhen you are near the store';
+
+  @override
+  String get onboardingSlide3Body =>
+      'When you come near a store you registered, we gently show you your shopping list. Notifications only when you need them, never pushy.';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingStart => 'Get started';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get paywallHeroTitle => 'Upgrade to Premium';
+
+  @override
+  String get paywallHeroDescription =>
+      'Unlock every feature and enjoy the app with your whole family.';
+
+  @override
+  String get paywallFeatureLocationOrder => 'Category order for each store';
+
+  @override
+  String get paywallFeaturePhotoExtraction =>
+      'Extract items from photos (50 times a month)';
+
+  @override
+  String get paywallFeatureUrlExtraction =>
+      'Extract items from URLs (50 times a month)';
+
+  @override
+  String get paywallFeatureThemeColors => 'Five theme colors';
+
+  @override
+  String get paywallFeatureUnlimitedRetention => 'Unlimited list retention';
+
+  @override
+  String get paywallFeatureReceipt => 'Save receipts to your list';
+
+  @override
+  String get paywallSubscriptionNote =>
+      'Cancel anytime ・ auto-renewal can be canceled up to 24 hours before it renews';
+
+  @override
+  String get paywallPrivacyLink => 'Privacy';
+
+  @override
+  String get paywallRestore => 'Restore';
+
+  @override
+  String get paywallRestored => 'Restored your purchases';
+
+  @override
+  String get paywallNoPlans => 'There are no plans available right now';
+
+  @override
+  String get paywallRecommendedBadge => 'Recommended';
+
+  @override
+  String get paywallPurchaseCompleted => 'Thank you for your purchase';
+
+  @override
+  String get paywallPurchaseButton => 'Buy';
+
+  @override
+  String get receiptAdd => 'Add a receipt';
+
+  @override
+  String get receiptEdit => 'Edit the receipt';
+
+  @override
+  String get receiptSheetTitle => 'Receipt';
+
+  @override
+  String get receiptTakePhoto => 'Take a photo';
+
+  @override
+  String get receiptChooseFromLibrary => 'Choose from photo library';
+
+  @override
+  String get receiptAmountLabel => 'Amount';
+
+  @override
+  String get receiptMemoLabel => 'Note';
+
+  @override
+  String get receiptMemoHint =>
+      'Notes such as the store name or what you bought';
+
+  @override
+  String get receiptCaptureOrSelect => 'Take or choose a receipt photo';
+
+  @override
+  String get forceUpdateTitle => 'Please update the app';
+
+  @override
+  String forceUpdateMessage(String storeName) {
+    return 'We ask that you update your version of the app. Please update to the latest version from $storeName.';
+  }
+
+  @override
+  String get shoppingLocationTitle => 'Shopping locations';
+
+  @override
+  String get shoppingLocationEmpty => 'No shopping locations yet';
+
+  @override
+  String get shoppingLocationGeoConfigured => 'Location set';
+
+  @override
+  String get shoppingLocationAddTitle => 'Add a location';
+
+  @override
+  String get shoppingLocationEditTitle => 'Edit location';
+
+  @override
+  String get shoppingLocationNameHint => 'Location name';
+
+  @override
+  String get shoppingLocationNameHintWithExample =>
+      'Location name (e.g. Supermarket)';
+
+  @override
+  String get shoppingLocationPositionSet => 'Position set';
+
+  @override
+  String get shoppingLocationSetOnMap => 'Set the location on a map';
+
+  @override
+  String shoppingLocationDeleteConfirmTitle(String name) {
+    return 'Delete \"$name\"?';
+  }
+
+  @override
+  String get shoppingLocationDeleteConfirmMessage =>
+      'Deleting this location does not affect the shopping lists it is set on';
+
+  @override
+  String get shoppingLocationPickerTitle => 'Choose a location on the map';
+
+  @override
+  String get shoppingLocationPickerConfirm => 'Use this location';
 }

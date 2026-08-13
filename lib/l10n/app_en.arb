@@ -499,5 +499,128 @@
     }
   },
   "groupSettingInvitationCodeMessage": "Share the code below",
-  "groupSettingInvitationExpiry": "Valid for 7 days"
+  "groupSettingInvitationExpiry": "Valid for 7 days",
+
+  "commonSave": "Save",
+
+  "authHeroTitle": "Your family's shopping,\nin one list",
+  "authHeroDescription": "Sign in and your lists stay in sync across devices. No ads, no newsletters.",
+  "authStartWithoutSignIn": "Start without signing in",
+  "authLinkAccountLaterNote": "You can link an account later from the settings screen",
+  "authAgreementNote": "By continuing, you agree to the {terms} and the {privacy}.",
+  "@authAgreementNote": {
+    "description": "認証画面の同意文。terms / privacy はリンクの差し込み位置で、呼び出し側は '{terms}' '{privacy}' をそのまま渡してテンプレートを復元し、リンク span へ展開する",
+    "placeholders": {
+      "terms": {"type": "String"},
+      "privacy": {"type": "String"}
+    }
+  },
+
+  "inquiryDescription": "We read everything you send and use it to improve the app. If you would like a reply, please include your email address.",
+  "inquiryEmailLabel": "Email address",
+  "inquiryEmailRequired": "Please enter your email address",
+  "inquiryEmailInvalid": "The email address format is not correct",
+  "inquiryCategoryLabel": "Type of inquiry",
+  "inquiryCategoryRequired": "Please choose the type of your inquiry",
+  "inquiryContentLabel": "Your message",
+  "inquiryContentRequired": "Please enter your message",
+  "inquiryContentHint": "Tell us what you are having trouble with or what you would like to see",
+  "inquirySubmitting": "Sending...",
+  "inquirySubmit": "Send",
+  "inquirySubmitted": "Your inquiry has been sent",
+
+  "notificationPermissionBarrierLabel": "Push notification permission",
+  "@notificationPermissionBarrierLabel": {
+    "description": "プリパーミッションダイアログの barrierLabel (画面読み上げ用。画面には表示されない)"
+  },
+  "notificationPermissionTitle": "Turn on push notifications",
+  "notificationPermissionMessage": "When a member of your group updates the shopping list and lets you know, a push notification tells you right away. Please allow notifications in the confirmation that appears next.",
+  "notificationPermissionLater": "Later",
+  "notificationPermissionAllow": "Allow notifications",
+
+  "onboardingSlide1Title": "A shopping list\nyou build as a family",
+  "onboardingSlide1Body": "Someone adds what they thought of at home, and someone else checks it off at the store. Put every \"can you pick this up?\" onto this one sheet.",
+  "onboardingSlide2Title": "Edit the same list\nat the same time",
+  "onboardingSlide2Body": "Invite your family, your partner, or your housemates with an invitation code and everyone can edit the same list. What matters is not who added it, but that nothing is forgotten.",
+  "onboardingSlide3Title": "A gentle reminder\nwhen you are near the store",
+  "onboardingSlide3Body": "When you come near a store you registered, we gently show you your shopping list. Notifications only when you need them, never pushy.",
+  "onboardingSkip": "Skip",
+  "onboardingStart": "Get started",
+  "onboardingNext": "Next",
+
+  "paywallHeroTitle": "Upgrade to Premium",
+  "@paywallHeroTitle": {
+    "description": "ペイウォール画面のヒーロー見出し。設定画面のプレミアムカードの見出しは settingsPremiumCardTitleFree"
+  },
+  "paywallHeroDescription": "Unlock every feature and enjoy the app with your whole family.",
+  "paywallFeatureLocationOrder": "Category order for each store",
+  "paywallFeaturePhotoExtraction": "Extract items from photos (50 times a month)",
+  "paywallFeatureUrlExtraction": "Extract items from URLs (50 times a month)",
+  "paywallFeatureThemeColors": "Five theme colors",
+  "paywallFeatureUnlimitedRetention": "Unlimited list retention",
+  "paywallFeatureReceipt": "Save receipts to your list",
+  "paywallSubscriptionNote": "Cancel anytime ・ auto-renewal can be canceled up to 24 hours before it renews",
+  "@paywallSubscriptionNote": {
+    "description": "購入プランの下に出す注意書き。日本語の現行文言は「いつでもキャンセル可能・自動更新は購入後 24 時間前まで」"
+  },
+  "paywallPrivacyLink": "Privacy",
+  "@paywallPrivacyLink": {
+    "description": "ペイウォール下部の短いリンクラベル。設定画面の「プライバシーポリシー」は settingsPrivacyPolicy"
+  },
+  "paywallRestore": "Restore",
+  "paywallRestored": "Restored your purchases",
+  "paywallNoPlans": "There are no plans available right now",
+  "paywallRecommendedBadge": "Recommended",
+  "paywallPurchaseCompleted": "Thank you for your purchase",
+  "paywallPurchaseButton": "Buy",
+
+  "receiptAdd": "Add a receipt",
+  "receiptEdit": "Edit the receipt",
+  "receiptSheetTitle": "Receipt",
+  "@receiptSheetTitle": {
+    "description": "既存レシートを開いた編集シートの見出し。新規登録時は receiptAdd"
+  },
+  "receiptTakePhoto": "Take a photo",
+  "receiptChooseFromLibrary": "Choose from photo library",
+  "receiptAmountLabel": "Amount",
+  "receiptMemoLabel": "Note",
+  "receiptMemoHint": "Notes such as the store name or what you bought",
+  "receiptCaptureOrSelect": "Take or choose a receipt photo",
+
+  "forceUpdateTitle": "Please update the app",
+  "forceUpdateMessage": "We ask that you update your version of the app. Please update to the latest version from {storeName}.",
+  "@forceUpdateMessage": {
+    "description": "強制アップデートダイアログの本文。storeName は 'App Store' / 'Google Play'",
+    "placeholders": {
+      "storeName": {"type": "String"}
+    }
+  },
+
+  "shoppingLocationTitle": "Shopping locations",
+  "@shoppingLocationTitle": {
+    "description": "店舗一覧画面のタイトル。リスト設定の「買い物する場所」セクション見出しは listSettingShoppingLocationSection"
+  },
+  "shoppingLocationEmpty": "No shopping locations yet",
+  "shoppingLocationGeoConfigured": "Location set",
+  "@shoppingLocationGeoConfigured": {
+    "description": "店舗一覧の行に出す、座標が登録済みであることを示すラベル"
+  },
+  "shoppingLocationAddTitle": "Add a location",
+  "shoppingLocationEditTitle": "Edit location",
+  "shoppingLocationNameHint": "Location name",
+  "shoppingLocationNameHintWithExample": "Location name (e.g. Supermarket)",
+  "shoppingLocationPositionSet": "Position set",
+  "@shoppingLocationPositionSet": {
+    "description": "店舗追加ダイアログで、地図から座標を選び終えた行のラベル"
+  },
+  "shoppingLocationSetOnMap": "Set the location on a map",
+  "shoppingLocationDeleteConfirmTitle": "Delete \"{name}\"?",
+  "@shoppingLocationDeleteConfirmTitle": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "shoppingLocationDeleteConfirmMessage": "Deleting this location does not affect the shopping lists it is set on",
+  "shoppingLocationPickerTitle": "Choose a location on the map",
+  "shoppingLocationPickerConfirm": "Use this location"
 }

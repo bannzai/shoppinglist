@@ -1567,6 +1567,438 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Valid for 7 days'**
   String get groupSettingInvitationExpiry;
+
+  /// No description provided for @commonSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get commonSave;
+
+  /// No description provided for @authHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your family\'s shopping,\nin one list'**
+  String get authHeroTitle;
+
+  /// No description provided for @authHeroDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in and your lists stay in sync across devices. No ads, no newsletters.'**
+  String get authHeroDescription;
+
+  /// No description provided for @authStartWithoutSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Start without signing in'**
+  String get authStartWithoutSignIn;
+
+  /// No description provided for @authLinkAccountLaterNote.
+  ///
+  /// In en, this message translates to:
+  /// **'You can link an account later from the settings screen'**
+  String get authLinkAccountLaterNote;
+
+  /// 認証画面の同意文。terms / privacy はリンクの差し込み位置で、呼び出し側は '{terms}' '{privacy}' をそのまま渡してテンプレートを復元し、リンク span へ展開する
+  ///
+  /// In en, this message translates to:
+  /// **'By continuing, you agree to the {terms} and the {privacy}.'**
+  String authAgreementNote(String terms, String privacy);
+
+  /// No description provided for @inquiryDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'We read everything you send and use it to improve the app. If you would like a reply, please include your email address.'**
+  String get inquiryDescription;
+
+  /// No description provided for @inquiryEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email address'**
+  String get inquiryEmailLabel;
+
+  /// No description provided for @inquiryEmailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email address'**
+  String get inquiryEmailRequired;
+
+  /// No description provided for @inquiryEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'The email address format is not correct'**
+  String get inquiryEmailInvalid;
+
+  /// No description provided for @inquiryCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type of inquiry'**
+  String get inquiryCategoryLabel;
+
+  /// No description provided for @inquiryCategoryRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose the type of your inquiry'**
+  String get inquiryCategoryRequired;
+
+  /// No description provided for @inquiryContentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your message'**
+  String get inquiryContentLabel;
+
+  /// No description provided for @inquiryContentRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your message'**
+  String get inquiryContentRequired;
+
+  /// No description provided for @inquiryContentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what you are having trouble with or what you would like to see'**
+  String get inquiryContentHint;
+
+  /// No description provided for @inquirySubmitting.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending...'**
+  String get inquirySubmitting;
+
+  /// No description provided for @inquirySubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get inquirySubmit;
+
+  /// No description provided for @inquirySubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Your inquiry has been sent'**
+  String get inquirySubmitted;
+
+  /// プリパーミッションダイアログの barrierLabel (画面読み上げ用。画面には表示されない)
+  ///
+  /// In en, this message translates to:
+  /// **'Push notification permission'**
+  String get notificationPermissionBarrierLabel;
+
+  /// No description provided for @notificationPermissionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on push notifications'**
+  String get notificationPermissionTitle;
+
+  /// No description provided for @notificationPermissionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'When a member of your group updates the shopping list and lets you know, a push notification tells you right away. Please allow notifications in the confirmation that appears next.'**
+  String get notificationPermissionMessage;
+
+  /// No description provided for @notificationPermissionLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get notificationPermissionLater;
+
+  /// No description provided for @notificationPermissionAllow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications'**
+  String get notificationPermissionAllow;
+
+  /// No description provided for @onboardingSlide1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'A shopping list\nyou build as a family'**
+  String get onboardingSlide1Title;
+
+  /// No description provided for @onboardingSlide1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone adds what they thought of at home, and someone else checks it off at the store. Put every \"can you pick this up?\" onto this one sheet.'**
+  String get onboardingSlide1Body;
+
+  /// No description provided for @onboardingSlide2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit the same list\nat the same time'**
+  String get onboardingSlide2Title;
+
+  /// No description provided for @onboardingSlide2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite your family, your partner, or your housemates with an invitation code and everyone can edit the same list. What matters is not who added it, but that nothing is forgotten.'**
+  String get onboardingSlide2Body;
+
+  /// No description provided for @onboardingSlide3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'A gentle reminder\nwhen you are near the store'**
+  String get onboardingSlide3Title;
+
+  /// No description provided for @onboardingSlide3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'When you come near a store you registered, we gently show you your shopping list. Notifications only when you need them, never pushy.'**
+  String get onboardingSlide3Body;
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get onboardingStart;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// ペイウォール画面のヒーロー見出し。設定画面のプレミアムカードの見出しは settingsPremiumCardTitleFree
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Premium'**
+  String get paywallHeroTitle;
+
+  /// No description provided for @paywallHeroDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock every feature and enjoy the app with your whole family.'**
+  String get paywallHeroDescription;
+
+  /// No description provided for @paywallFeatureLocationOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Category order for each store'**
+  String get paywallFeatureLocationOrder;
+
+  /// No description provided for @paywallFeaturePhotoExtraction.
+  ///
+  /// In en, this message translates to:
+  /// **'Extract items from photos (50 times a month)'**
+  String get paywallFeaturePhotoExtraction;
+
+  /// No description provided for @paywallFeatureUrlExtraction.
+  ///
+  /// In en, this message translates to:
+  /// **'Extract items from URLs (50 times a month)'**
+  String get paywallFeatureUrlExtraction;
+
+  /// No description provided for @paywallFeatureThemeColors.
+  ///
+  /// In en, this message translates to:
+  /// **'Five theme colors'**
+  String get paywallFeatureThemeColors;
+
+  /// No description provided for @paywallFeatureUnlimitedRetention.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited list retention'**
+  String get paywallFeatureUnlimitedRetention;
+
+  /// No description provided for @paywallFeatureReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Save receipts to your list'**
+  String get paywallFeatureReceipt;
+
+  /// 購入プランの下に出す注意書き。日本語の現行文言は「いつでもキャンセル可能・自動更新は購入後 24 時間前まで」
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel anytime ・ auto-renewal can be canceled up to 24 hours before it renews'**
+  String get paywallSubscriptionNote;
+
+  /// ペイウォール下部の短いリンクラベル。設定画面の「プライバシーポリシー」は settingsPrivacyPolicy
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get paywallPrivacyLink;
+
+  /// No description provided for @paywallRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get paywallRestore;
+
+  /// No description provided for @paywallRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Restored your purchases'**
+  String get paywallRestored;
+
+  /// No description provided for @paywallNoPlans.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no plans available right now'**
+  String get paywallNoPlans;
+
+  /// No description provided for @paywallRecommendedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get paywallRecommendedBadge;
+
+  /// No description provided for @paywallPurchaseCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for your purchase'**
+  String get paywallPurchaseCompleted;
+
+  /// No description provided for @paywallPurchaseButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy'**
+  String get paywallPurchaseButton;
+
+  /// No description provided for @receiptAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a receipt'**
+  String get receiptAdd;
+
+  /// No description provided for @receiptEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit the receipt'**
+  String get receiptEdit;
+
+  /// 既存レシートを開いた編集シートの見出し。新規登録時は receiptAdd
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt'**
+  String get receiptSheetTitle;
+
+  /// No description provided for @receiptTakePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get receiptTakePhoto;
+
+  /// No description provided for @receiptChooseFromLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from photo library'**
+  String get receiptChooseFromLibrary;
+
+  /// No description provided for @receiptAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get receiptAmountLabel;
+
+  /// No description provided for @receiptMemoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get receiptMemoLabel;
+
+  /// No description provided for @receiptMemoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes such as the store name or what you bought'**
+  String get receiptMemoHint;
+
+  /// No description provided for @receiptCaptureOrSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Take or choose a receipt photo'**
+  String get receiptCaptureOrSelect;
+
+  /// No description provided for @forceUpdateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please update the app'**
+  String get forceUpdateTitle;
+
+  /// 強制アップデートダイアログの本文。storeName は 'App Store' / 'Google Play'
+  ///
+  /// In en, this message translates to:
+  /// **'We ask that you update your version of the app. Please update to the latest version from {storeName}.'**
+  String forceUpdateMessage(String storeName);
+
+  /// 店舗一覧画面のタイトル。リスト設定の「買い物する場所」セクション見出しは listSettingShoppingLocationSection
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping locations'**
+  String get shoppingLocationTitle;
+
+  /// No description provided for @shoppingLocationEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No shopping locations yet'**
+  String get shoppingLocationEmpty;
+
+  /// 店舗一覧の行に出す、座標が登録済みであることを示すラベル
+  ///
+  /// In en, this message translates to:
+  /// **'Location set'**
+  String get shoppingLocationGeoConfigured;
+
+  /// No description provided for @shoppingLocationAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a location'**
+  String get shoppingLocationAddTitle;
+
+  /// No description provided for @shoppingLocationEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit location'**
+  String get shoppingLocationEditTitle;
+
+  /// No description provided for @shoppingLocationNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Location name'**
+  String get shoppingLocationNameHint;
+
+  /// No description provided for @shoppingLocationNameHintWithExample.
+  ///
+  /// In en, this message translates to:
+  /// **'Location name (e.g. Supermarket)'**
+  String get shoppingLocationNameHintWithExample;
+
+  /// 店舗追加ダイアログで、地図から座標を選び終えた行のラベル
+  ///
+  /// In en, this message translates to:
+  /// **'Position set'**
+  String get shoppingLocationPositionSet;
+
+  /// No description provided for @shoppingLocationSetOnMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the location on a map'**
+  String get shoppingLocationSetOnMap;
+
+  /// No description provided for @shoppingLocationDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{name}\"?'**
+  String shoppingLocationDeleteConfirmTitle(String name);
+
+  /// No description provided for @shoppingLocationDeleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting this location does not affect the shopping lists it is set on'**
+  String get shoppingLocationDeleteConfirmMessage;
+
+  /// No description provided for @shoppingLocationPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a location on the map'**
+  String get shoppingLocationPickerTitle;
+
+  /// No description provided for @shoppingLocationPickerConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this location'**
+  String get shoppingLocationPickerConfirm;
 }
 
 class _AppLocalizationsDelegate

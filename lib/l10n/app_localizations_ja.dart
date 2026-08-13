@@ -793,4 +793,233 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get groupSettingInvitationExpiry => '有効期限: 7日間';
+
+  @override
+  String get commonSave => '保存';
+
+  @override
+  String get authHeroTitle => '家族の買い物を、\nひとつのリストへ';
+
+  @override
+  String get authHeroDescription =>
+      'サインインすると端末をまたいでリストが同期します。広告もメールマガジンもありません。';
+
+  @override
+  String get authStartWithoutSignIn => 'サインインせずにはじめる';
+
+  @override
+  String get authLinkAccountLaterNote => 'あとから設定画面でアカウントをリンクできます';
+
+  @override
+  String authAgreementNote(String terms, String privacy) {
+    return '続けることで $terms と $privacy に同意したものとみなされます。';
+  }
+
+  @override
+  String get inquiryDescription =>
+      'いただいた内容は開発の参考にさせていただきます。返信が必要な場合はご連絡先のメールアドレスをご記入ください。';
+
+  @override
+  String get inquiryEmailLabel => 'メールアドレス';
+
+  @override
+  String get inquiryEmailRequired => 'メールアドレスを入力してください';
+
+  @override
+  String get inquiryEmailInvalid => 'メールアドレスの形式が正しくありません';
+
+  @override
+  String get inquiryCategoryLabel => 'お問い合わせの種類';
+
+  @override
+  String get inquiryCategoryRequired => 'お問い合わせの種類を選択してください';
+
+  @override
+  String get inquiryContentLabel => 'お問い合わせ内容';
+
+  @override
+  String get inquiryContentRequired => 'お問い合わせ内容を入力してください';
+
+  @override
+  String get inquiryContentHint => 'お困りの内容やご要望をご記入ください';
+
+  @override
+  String get inquirySubmitting => '送信中...';
+
+  @override
+  String get inquirySubmit => '送信する';
+
+  @override
+  String get inquirySubmitted => 'お問い合わせを送信しました';
+
+  @override
+  String get notificationPermissionBarrierLabel => 'プッシュ通知の許可';
+
+  @override
+  String get notificationPermissionTitle => 'プッシュ通知を受け取ろう';
+
+  @override
+  String get notificationPermissionMessage =>
+      'グループのメンバーが買い物リストを更新して知らせたときに、プッシュ通知ですぐに気づけます。次に表示される確認で通知を許可してください。';
+
+  @override
+  String get notificationPermissionLater => 'あとで';
+
+  @override
+  String get notificationPermissionAllow => '通知を許可';
+
+  @override
+  String get onboardingSlide1Title => '家族と作る、\n買い物リスト';
+
+  @override
+  String get onboardingSlide1Body =>
+      '家で思いついたものを誰かが追加して、店頭で別の誰かがチェック。「買ってきて」のやり取りを、ぜんぶこの一枚に。';
+
+  @override
+  String get onboardingSlide2Title => '同じリストを\n同時に編集';
+
+  @override
+  String get onboardingSlide2Body =>
+      '家族・パートナー・同居人を招待コードで招くと、同じリストを編集できます。誰が追加したかではなく、何を買い忘れずに済むかを大切に。';
+
+  @override
+  String get onboardingSlide3Title => 'お店の近くで、\nそっと思い出す';
+
+  @override
+  String get onboardingSlide3Body =>
+      '登録した店舗の近くに来ると、買い物リストをやさしくお知らせ。通知は必要な時だけ、押し付けがましくなく。';
+
+  @override
+  String get onboardingSkip => 'スキップ';
+
+  @override
+  String get onboardingStart => 'はじめる';
+
+  @override
+  String get onboardingNext => '次へ';
+
+  @override
+  String get paywallHeroTitle => 'プレミアムにアップグレード';
+
+  @override
+  String get paywallHeroDescription => '全機能を解放して、家族みんなで気持ちよく使えます。';
+
+  @override
+  String get paywallFeatureLocationOrder => '店舗ごとの並び順';
+
+  @override
+  String get paywallFeaturePhotoExtraction => '写真からのアイテム抽出（月 50 回）';
+
+  @override
+  String get paywallFeatureUrlExtraction => 'URL からのアイテム抽出（月 50 回）';
+
+  @override
+  String get paywallFeatureThemeColors => '5 色のテーマカラー';
+
+  @override
+  String get paywallFeatureUnlimitedRetention => 'リスト保存期間が無制限';
+
+  @override
+  String get paywallFeatureReceipt => 'リストにレシートを保存';
+
+  @override
+  String get paywallSubscriptionNote => 'いつでもキャンセル可能・自動更新は購入後 24 時間前まで';
+
+  @override
+  String get paywallPrivacyLink => 'プライバシー';
+
+  @override
+  String get paywallRestore => '復元';
+
+  @override
+  String get paywallRestored => '購入を復元しました';
+
+  @override
+  String get paywallNoPlans => '現在ご利用いただけるプランがありません';
+
+  @override
+  String get paywallRecommendedBadge => 'おすすめ';
+
+  @override
+  String get paywallPurchaseCompleted => '購入ありがとうございました';
+
+  @override
+  String get paywallPurchaseButton => '購入';
+
+  @override
+  String get receiptAdd => 'レシートを追加';
+
+  @override
+  String get receiptEdit => 'レシートを編集';
+
+  @override
+  String get receiptSheetTitle => 'レシート';
+
+  @override
+  String get receiptTakePhoto => 'カメラで撮影';
+
+  @override
+  String get receiptChooseFromLibrary => 'フォトライブラリから選択';
+
+  @override
+  String get receiptAmountLabel => '金額';
+
+  @override
+  String get receiptMemoLabel => 'メモ';
+
+  @override
+  String get receiptMemoHint => '店名や購入品などのメモ';
+
+  @override
+  String get receiptCaptureOrSelect => 'レシートを撮影 / 選択';
+
+  @override
+  String get forceUpdateTitle => 'アプリをアップデートしてください';
+
+  @override
+  String forceUpdateMessage(String storeName) {
+    return 'お使いのアプリのバージョンのアップデートをお願いしております。$storeNameから最新バージョンにアップデートしてください';
+  }
+
+  @override
+  String get shoppingLocationTitle => '買い物する場所';
+
+  @override
+  String get shoppingLocationEmpty => '買い物する場所がまだありません';
+
+  @override
+  String get shoppingLocationGeoConfigured => '位置情報設定済み';
+
+  @override
+  String get shoppingLocationAddTitle => '場所を追加';
+
+  @override
+  String get shoppingLocationEditTitle => '場所を編集';
+
+  @override
+  String get shoppingLocationNameHint => '場所の名前';
+
+  @override
+  String get shoppingLocationNameHintWithExample => '場所の名前（例: スーパー）';
+
+  @override
+  String get shoppingLocationPositionSet => '位置設定済み';
+
+  @override
+  String get shoppingLocationSetOnMap => '地図で場所を設定';
+
+  @override
+  String shoppingLocationDeleteConfirmTitle(String name) {
+    return '「$name」を削除しますか？';
+  }
+
+  @override
+  String get shoppingLocationDeleteConfirmMessage =>
+      'この場所を削除しても、この場所が設定されている買い物リストには影響しません';
+
+  @override
+  String get shoppingLocationPickerTitle => '場所を地図で選択';
+
+  @override
+  String get shoppingLocationPickerConfirm => 'この場所を設定';
 }
