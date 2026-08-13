@@ -149,5 +149,6 @@
   "settingsAccountLinkWithApple": "使用 Apple 連結帳號",
   "settingsAccountLinkWithGoogle": "將帳號與 Google 連結",
   "settingsAccountSignedInWith": "已使用 {providerName} 登入",
-  "settingsAccountReSignInBarrierLabel": "重新登入確認"
+  "settingsAccountReSignInBarrierLabel": "重新登入確認",
+  "settingsAccountAlreadyInUseTitle": "此帳號已被其他使用者使用"
 }
