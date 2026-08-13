@@ -21,6 +21,7 @@ import 'package:shoppinglist/features/settings/components/account_link_section.d
 import 'package:shoppinglist/features/settings/components/location_reminder_toggle.dart';
 import 'package:shoppinglist/features/settings/components/oss_license_cell.dart';
 import 'package:shoppinglist/features/settings/components/theme_color_tile.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
@@ -91,9 +92,9 @@ class SettingPage extends HookConsumerWidget {
           displayName: displayName,
         );
         if (context.mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('表示名を更新しました')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(context.l10n.settingsDisplayNameUpdated)),
+          );
         }
       } catch (e, st) {
         if (context.mounted) {
@@ -107,7 +108,7 @@ class SettingPage extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
       appBar: AppBar(
-        title: const Text('設定'),
+        title: Text(context.l10n.commonSettings),
         backgroundColor: tokens.neutral.paper,
         leading: IconButton(
           icon: const Icon(Icons.close),
@@ -123,7 +124,7 @@ class SettingPage extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AppSettingSection(
-                title: 'プロフィール',
+                title: context.l10n.settingsProfileSection,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -135,7 +136,7 @@ class SettingPage extends HookConsumerWidget {
                     // 他の設定行(値が右側)とトンマナを揃える。
                     child: Row(
                       children: [
-                        const Text('自分の表示名'),
+                        Text(context.l10n.settingsDisplayNameLabel),
                         const SizedBox(width: 16),
                         Expanded(
                           // フォーカスが外れた時(hasFocus=false)に自動保存する。
@@ -152,8 +153,8 @@ class SettingPage extends HookConsumerWidget {
                             child: TextField(
                               controller: displayNameController,
                               textAlign: TextAlign.end,
-                              decoration: const InputDecoration(
-                                hintText: '表示名を入力',
+                              decoration: InputDecoration(
+                                hintText: context.l10n.settingsDisplayNameHint,
                               ),
                             ),
                           ),
@@ -165,11 +166,11 @@ class SettingPage extends HookConsumerWidget {
               ),
               const AccountLinkSection(),
               AppSettingSection(
-                title: 'グループ',
+                title: context.l10n.commonGroup,
                 children: [
                   AppCell(
                     icon: Icons.groups,
-                    title: 'グループ管理',
+                    title: context.l10n.settingsGroupManagement,
                     onTap: () {
                       analytics.logEvent(
                         name: 'tap_navigate_group_list',
@@ -189,7 +190,7 @@ class SettingPage extends HookConsumerWidget {
                   ),
                   AppCell(
                     icon: Icons.group_add,
-                    title: '招待コードでグループに参加',
+                    title: context.l10n.settingsJoinGroupWithInvitationCode,
                     onTap: () {
                       analytics.logEvent(
                         name: 'tap_navigate_invitation',
@@ -211,13 +212,13 @@ class SettingPage extends HookConsumerWidget {
                 ],
               ),
               AppSettingSection(
-                title: '外観',
+                title: context.l10n.settingsAppearanceSection,
                 children: [const ThemeColorTile()],
               ),
               // 位置情報リマインダーはファーストリリースでは非表示 (issue #465)。
               if (shoppingLocationFeatureEnabled)
                 AppSettingSection(
-                  title: '通知',
+                  title: context.l10n.settingsNotificationSection,
                   children: [const LocationReminderToggle()],
                 ),
               const Padding(
@@ -225,11 +226,11 @@ class SettingPage extends HookConsumerWidget {
                 child: _PremiumCard(),
               ),
               AppSettingSection(
-                title: 'アプリについて',
+                title: context.l10n.settingsAboutSection,
                 children: [
                   AppCell(
                     icon: Icons.description_outlined,
-                    title: '利用規約',
+                    title: context.l10n.settingsTermsOfService,
                     onTap: () {
                       analytics.logEvent(
                         name: 'did_select_terms_of_service',
@@ -250,7 +251,7 @@ class SettingPage extends HookConsumerWidget {
                   const _Divider(),
                   AppCell(
                     icon: Icons.shield_outlined,
-                    title: 'プライバシーポリシー',
+                    title: context.l10n.settingsPrivacyPolicy,
                     onTap: () {
                       analytics.logEvent(
                         name: 'did_select_privacy_policy',
@@ -271,7 +272,7 @@ class SettingPage extends HookConsumerWidget {
                   const _Divider(),
                   AppCell(
                     icon: Icons.gavel_outlined,
-                    title: '特定商法取引法に基づく表記',
+                    title: context.l10n.settingsCommercialTransactionAct,
                     onTap: () {
                       analytics.logEvent(
                         name: 'did_select_specified_commercial_transaction_act',
@@ -294,7 +295,7 @@ class SettingPage extends HookConsumerWidget {
                   const _Divider(),
                   AppCell(
                     icon: Icons.mail_outline,
-                    title: 'お問い合わせ',
+                    title: context.l10n.settingsInquiry,
                     onTap: () {
                       analytics.logEvent(
                         name: 'tap_open_inquiry',
@@ -317,11 +318,11 @@ class SettingPage extends HookConsumerWidget {
               // E2Eテストでシェイクが使えないSimulator向けの代替入口
               if (kDebugMode)
                 AppSettingSection(
-                  title: 'デバッグ',
+                  title: context.l10n.settingsDebugSection,
                   children: [
                     AppCell(
                       icon: Icons.developer_mode,
-                      title: '開発者オプション',
+                      title: context.l10n.settingsDeveloperOptions,
                       onTap: () {
                         navigateToDeveloperOptionsPage(context);
                       },
@@ -401,7 +402,9 @@ class _PremiumCard extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  isPremium ? 'プレミアム会員' : 'プレミアムにアップグレード',
+                  isPremium
+                      ? context.l10n.settingsPremiumCardTitlePremium
+                      : context.l10n.settingsPremiumCardTitleFree,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: isPremium ? Colors.white : neutral.ink,
@@ -409,7 +412,9 @@ class _PremiumCard extends ConsumerWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  isPremium ? 'すべての機能が利用できます' : '5 色テーマ・画像/URL読み取り回数アップなど',
+                  isPremium
+                      ? context.l10n.settingsPremiumCardSubtitlePremium
+                      : context.l10n.settingsPremiumCardSubtitleFree,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color:
                         isPremium
@@ -422,7 +427,7 @@ class _PremiumCard extends ConsumerWidget {
           ),
           if (!isPremium)
             AppPill(
-              label: 'はじめる',
+              label: context.l10n.settingsPremiumCardStartButton,
               variant: AppPillVariant.accent,
               onPressed: () {
                 analytics.logEvent(
@@ -504,7 +509,7 @@ class _SignOutButton extends ConsumerWidget {
         child: TextButton.icon(
           icon: Icon(Icons.logout, color: tokens.neutral.danger, size: 18),
           label: Text(
-            'サインアウト',
+            context.l10n.settingsSignOut,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: tokens.neutral.danger,
               fontWeight: FontWeight.w600,
@@ -516,7 +521,7 @@ class _SignOutButton extends ConsumerWidget {
             // の DialogShell 準拠 (overlay + blur + 上から 32% に paper card)。
             final confirmed = await showGeneralDialog<bool>(
               context: context,
-              barrierLabel: 'サインアウト確認',
+              barrierLabel: context.l10n.settingsSignOutConfirmBarrierLabel,
               barrierDismissible: true,
               barrierColor: Colors.transparent,
               transitionDuration: const Duration(milliseconds: 160),
@@ -528,14 +533,16 @@ class _SignOutButton extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'サインアウトしますか?',
+                        dialogContext.l10n.settingsSignOutConfirmTitle,
                         style: Theme.of(dialogContext).textTheme.titleLarge,
                       ),
                       const SizedBox(height: 12),
                       Text(
                         isAnonymous
-                            ? 'ゲスト利用中のため、サインアウトすると同じアカウントに再サインインできず、今のリストとグループには二度とアクセスできなくなります。'
-                            : '再度サインインするまで端末からはリストにアクセスできなくなります。',
+                            ? dialogContext
+                                .l10n
+                                .settingsSignOutConfirmMessageGuest
+                            : dialogContext.l10n.settingsSignOutConfirmMessage,
                         style: Theme.of(dialogContext).textTheme.bodyMedium
                             ?.copyWith(color: tokens.neutral.ink2),
                       ),
@@ -544,7 +551,7 @@ class _SignOutButton extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: AppPill(
-                              label: 'キャンセル',
+                              label: dialogContext.l10n.commonCancel,
                               variant: AppPillVariant.ghost,
                               expanded: true,
                               onPressed:
@@ -555,7 +562,7 @@ class _SignOutButton extends ConsumerWidget {
                           const SizedBox(width: 12),
                           Expanded(
                             child: AppPill(
-                              label: 'サインアウト',
+                              label: dialogContext.l10n.settingsSignOut,
                               variant: AppPillVariant.danger,
                               expanded: true,
                               onPressed:
@@ -615,7 +622,7 @@ class _SignOutCompletedDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'サインアウトしました',
+            context.l10n.settingsSignOutCompletedTitle,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w700,
@@ -624,7 +631,7 @@ class _SignOutCompletedDialog extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            'アプリを終了します',
+            context.l10n.settingsSignOutExitAppMessage,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Theme.of(context).colorScheme.onSurface,
             ),
@@ -642,7 +649,7 @@ class _SignOutCompletedDialog extends StatelessWidget {
                 exit(0);
               },
               child: Text(
-                '終了する',
+                context.l10n.accountDeleteExitAppButton,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,

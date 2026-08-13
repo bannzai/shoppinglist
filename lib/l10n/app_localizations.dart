@@ -176,7 +176,7 @@ abstract class AppLocalizations {
   /// **'Uncategorized'**
   String get commonUncategorized;
 
-  /// グループ名が未設定のときのフォールバック表示
+  /// グループ名が未設定のときのフォールバック表示と、設定画面の「グループ」セクション見出し
   ///
   /// In en, this message translates to:
   /// **'Group'**
@@ -715,6 +715,468 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Send notification'**
   String get shoppingListNotifyGroupSend;
+
+  /// No description provided for @commonCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get commonCopy;
+
+  /// 共有アクションのボタンラベル (動詞)。セクション見出しの「共有」は listSettingShareSection
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get commonShare;
+
+  /// No description provided for @settingsProfileSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get settingsProfileSection;
+
+  /// No description provided for @settingsDisplayNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your display name'**
+  String get settingsDisplayNameLabel;
+
+  /// No description provided for @settingsDisplayNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a display name'**
+  String get settingsDisplayNameHint;
+
+  /// No description provided for @settingsDisplayNameUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated your display name'**
+  String get settingsDisplayNameUpdated;
+
+  /// No description provided for @settingsGroupManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage groups'**
+  String get settingsGroupManagement;
+
+  /// No description provided for @settingsJoinGroupWithInvitationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Join a group with an invitation code'**
+  String get settingsJoinGroupWithInvitationCode;
+
+  /// No description provided for @settingsAppearanceSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsAppearanceSection;
+
+  /// No description provided for @settingsNotificationSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get settingsNotificationSection;
+
+  /// No description provided for @settingsAboutSection.
+  ///
+  /// In en, this message translates to:
+  /// **'About this app'**
+  String get settingsAboutSection;
+
+  /// No description provided for @settingsTermsOfService.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get settingsTermsOfService;
+
+  /// No description provided for @settingsPrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get settingsPrivacyPolicy;
+
+  /// 特定商取引法に基づく表記ページへの導線。日本語の現行文言は「特定商法取引法」という表記のまま (既存 UI を変えないため)
+  ///
+  /// In en, this message translates to:
+  /// **'Notation based on the Specified Commercial Transaction Act'**
+  String get settingsCommercialTransactionAct;
+
+  /// No description provided for @settingsInquiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact us'**
+  String get settingsInquiry;
+
+  /// No description provided for @settingsOssLicense.
+  ///
+  /// In en, this message translates to:
+  /// **'Open source licenses'**
+  String get settingsOssLicense;
+
+  /// debug ビルドでのみ表示する設定セクション
+  ///
+  /// In en, this message translates to:
+  /// **'Debug'**
+  String get settingsDebugSection;
+
+  /// No description provided for @settingsDeveloperOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer options'**
+  String get settingsDeveloperOptions;
+
+  /// No description provided for @settingsPremiumCardTitlePremium.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium member'**
+  String get settingsPremiumCardTitlePremium;
+
+  /// No description provided for @settingsPremiumCardTitleFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Premium'**
+  String get settingsPremiumCardTitleFree;
+
+  /// No description provided for @settingsPremiumCardSubtitlePremium.
+  ///
+  /// In en, this message translates to:
+  /// **'You can use all features'**
+  String get settingsPremiumCardSubtitlePremium;
+
+  /// No description provided for @settingsPremiumCardSubtitleFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Five color themes, more photo/URL scans, and more'**
+  String get settingsPremiumCardSubtitleFree;
+
+  /// No description provided for @settingsPremiumCardStartButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get settingsPremiumCardStartButton;
+
+  /// サインアウトボタンのラベルと、確認ダイアログの実行ボタン
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get settingsSignOut;
+
+  /// サインアウト確認ダイアログの barrierLabel (画面読み上げ用。画面には表示されない)
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-out confirmation'**
+  String get settingsSignOutConfirmBarrierLabel;
+
+  /// No description provided for @settingsSignOutConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out?'**
+  String get settingsSignOutConfirmTitle;
+
+  /// No description provided for @settingsSignOutConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You will not be able to access your lists from this device until you sign in again.'**
+  String get settingsSignOutConfirmMessage;
+
+  /// No description provided for @settingsSignOutConfirmMessageGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'You are using the app as a guest, so if you sign out you cannot sign in to the same account again and you will permanently lose access to your current lists and groups.'**
+  String get settingsSignOutConfirmMessageGuest;
+
+  /// No description provided for @settingsSignOutCompletedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed out'**
+  String get settingsSignOutCompletedTitle;
+
+  /// No description provided for @settingsSignOutExitAppMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The app will now quit'**
+  String get settingsSignOutExitAppMessage;
+
+  /// No description provided for @settingsThemeColorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme color'**
+  String get settingsThemeColorTitle;
+
+  /// No description provided for @settingsThemeColorDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from five traditional Japanese colors to change the accent color used across the app.'**
+  String get settingsThemeColorDescription;
+
+  /// No description provided for @settingsThemeColorChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed the theme color'**
+  String get settingsThemeColorChanged;
+
+  /// テーマカラーの色見本の読み上げラベル。label はプリセットの色名 (lib/style/tokens.dart の AccentPreset.label)
+  ///
+  /// In en, this message translates to:
+  /// **'{label} theme color'**
+  String settingsThemeColorSwatchLabel(String label);
+
+  /// No description provided for @settingsThemeColorPremiumOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing the theme color is a Premium feature'**
+  String get settingsThemeColorPremiumOnly;
+
+  /// No description provided for @settingsLocationReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Location reminder'**
+  String get settingsLocationReminderTitle;
+
+  /// No description provided for @settingsLocationReminderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notify me of my shopping list when I am near a store'**
+  String get settingsLocationReminderSubtitle;
+
+  /// No description provided for @settingsLocationReminderNotificationPermissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications to use this feature'**
+  String get settingsLocationReminderNotificationPermissionRequired;
+
+  /// No description provided for @settingsLocationReminderAlwaysPermissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Set background location access to \"Always\" to use this feature'**
+  String get settingsLocationReminderAlwaysPermissionRequired;
+
+  /// No description provided for @settingsLocationReminderPremiumOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'The location reminder is a Premium feature'**
+  String get settingsLocationReminderPremiumOnly;
+
+  /// No description provided for @settingsAccountSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get settingsAccountSection;
+
+  /// No description provided for @settingsAccountLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked your account'**
+  String get settingsAccountLinked;
+
+  /// No description provided for @settingsAccountGuestDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You are using the app as a guest. If you link an account, you can use the same lists and groups after changing devices or on another device.'**
+  String get settingsAccountGuestDescription;
+
+  /// No description provided for @settingsAccountLinkWithApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Link your account with Apple'**
+  String get settingsAccountLinkWithApple;
+
+  /// No description provided for @settingsAccountLinkWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Link your account with Google'**
+  String get settingsAccountLinkWithGoogle;
+
+  /// リンク済みの認証プロバイダを表示する行。providerName は 'Apple' / 'Google'
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in with {providerName}'**
+  String settingsAccountSignedInWith(String providerName);
+
+  /// サインインし直し確認ダイアログの barrierLabel (画面読み上げ用。画面には表示されない)
+  ///
+  /// In en, this message translates to:
+  /// **'Re-sign-in confirmation'**
+  String get settingsAccountReSignInBarrierLabel;
+
+  /// No description provided for @settingsAccountAlreadyInUseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This account is already used by another user'**
+  String get settingsAccountAlreadyInUseTitle;
+
+  /// No description provided for @settingsAccountReSignInMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to sign in again with this account?\nIf you sign in again, your current guest data (lists and groups) will not be carried over.'**
+  String get settingsAccountReSignInMessage;
+
+  /// No description provided for @settingsAccountReSignInButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in again'**
+  String get settingsAccountReSignInButton;
+
+  /// No description provided for @listSettingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping list settings'**
+  String get listSettingTitle;
+
+  /// No description provided for @listSettingNameSection.
+  ///
+  /// In en, this message translates to:
+  /// **'List name'**
+  String get listSettingNameSection;
+
+  /// No description provided for @listSettingShoppingLocationSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping location'**
+  String get listSettingShoppingLocationSection;
+
+  /// No description provided for @listSettingLocationUnset.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get listSettingLocationUnset;
+
+  /// No description provided for @listSettingLocationChangeDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get listSettingLocationChangeDetail;
+
+  /// No description provided for @listSettingCategorySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage keywords for auto-categorization'**
+  String get listSettingCategorySubtitle;
+
+  /// No description provided for @listSettingStoragePeriodSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Retention period'**
+  String get listSettingStoragePeriodSection;
+
+  /// No description provided for @listSettingStoragePeriodPremium.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium: unlimited'**
+  String get listSettingStoragePeriodPremium;
+
+  /// No description provided for @listSettingStoragePeriodFree.
+  ///
+  /// In en, this message translates to:
+  /// **'30 days from creation'**
+  String get listSettingStoragePeriodFree;
+
+  /// No description provided for @listSettingStoragePeriodUpsell.
+  ///
+  /// In en, this message translates to:
+  /// **'With Premium you can keep lists with no time limit'**
+  String get listSettingStoragePeriodUpsell;
+
+  /// 共有関連の設定をまとめるセクション見出し (名詞)。共有ボタンのラベルは commonShare
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing'**
+  String get listSettingShareSection;
+
+  /// No description provided for @listSettingSendInvitationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send an invitation code to your group'**
+  String get listSettingSendInvitationCode;
+
+  /// No description provided for @listSettingGroupSetting.
+  ///
+  /// In en, this message translates to:
+  /// **'Group settings'**
+  String get listSettingGroupSetting;
+
+  /// No description provided for @listSettingGroupNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a group name before inviting someone'**
+  String get listSettingGroupNameRequired;
+
+  /// No description provided for @listSettingListActionsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'List actions'**
+  String get listSettingListActionsSection;
+
+  /// No description provided for @listSettingDeleteList.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this list'**
+  String get listSettingDeleteList;
+
+  /// リスト削除確認ダイアログの barrierLabel (画面読み上げ用。画面には表示されない)
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping list deletion confirmation'**
+  String get listSettingDeleteConfirmBarrierLabel;
+
+  /// No description provided for @listSettingDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this list?'**
+  String get listSettingDeleteConfirmTitle;
+
+  /// No description provided for @listSettingDeleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{name}\" and the {count} items in it will be deleted. This cannot be undone.'**
+  String listSettingDeleteConfirmMessage(String name, int count);
+
+  /// 招待コードダイアログのタイトルと、そのダイアログの barrierLabel
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation code'**
+  String get listSettingInvitationCodeTitle;
+
+  /// No description provided for @listSettingInvitationExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get listSettingInvitationExpired;
+
+  /// 招待コードの残り有効時間。days は残り日数、hours は日数を除いた残り時間
+  ///
+  /// In en, this message translates to:
+  /// **'Valid for 7 days ・ {days}d {hours}h left'**
+  String listSettingInvitationRemaining(int days, int hours);
+
+  /// No description provided for @listSettingInvitationCodeCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied the invitation code'**
+  String get listSettingInvitationCodeCopied;
+
+  /// 招待コードを他アプリへ共有するときの本文
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping list invitation code: {code}'**
+  String listSettingInvitationShareText(String code);
+
+  /// No description provided for @listSettingSelectShoppingLocationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a shopping location'**
+  String get listSettingSelectShoppingLocationTitle;
+
+  /// No description provided for @listSettingLocationNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get listSettingLocationNone;
+
+  /// No description provided for @listSettingLocationSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get listSettingLocationSelected;
 }
 
 class _AppLocalizationsDelegate

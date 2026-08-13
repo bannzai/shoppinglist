@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -23,7 +24,7 @@ class ThemeColorSelectionPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: neutral.paper,
       appBar: AppBar(
-        title: const Text('テーマカラー'),
+        title: Text(context.l10n.settingsThemeColorTitle),
         backgroundColor: neutral.paper,
       ),
       body: SafeArea(
@@ -35,7 +36,7 @@ class ThemeColorSelectionPage extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
                 child: Text(
-                  '和の伝統色 5 色から選んで、アプリ全体の差し色を切り替えます。',
+                  context.l10n.settingsThemeColorDescription,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: neutral.ink2,
                     height: 1.6,
@@ -66,8 +67,10 @@ class ThemeColorSelectionPage extends ConsumerWidget {
                                 );
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('テーマカラーを変更しました'),
+                                    SnackBar(
+                                      content: Text(
+                                        context.l10n.settingsThemeColorChanged,
+                                      ),
                                     ),
                                   );
                                 }
@@ -107,7 +110,7 @@ class _ColorSwatch extends StatelessWidget {
     return Semantics(
       button: true,
       selected: selected,
-      label: '${preset.label}のテーマカラー',
+      label: context.l10n.settingsThemeColorSwatchLabel(preset.label),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(36),

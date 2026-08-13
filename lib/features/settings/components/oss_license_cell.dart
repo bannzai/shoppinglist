@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/components/primitives/app_cell.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 /// 「アプリについて」セクションに置く OSS ライセンス一覧への導線。
@@ -14,7 +15,7 @@ class OssLicenseCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCell(
       icon: Icons.copyright_outlined,
-      title: 'OSSライセンス',
+      title: context.l10n.settingsOssLicense,
       onTap: () {
         analytics.logEvent(name: 'did_select_oss_licenses', parameters: {});
         // applicationName は指定しない。未指定時は MaterialApp の title

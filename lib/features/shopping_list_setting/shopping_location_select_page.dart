@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/error_view.dart';
 import 'package:shoppinglist/components/primitives/app_cell.dart';
 import 'package:shoppinglist/components/primitives/app_setting_section.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -30,7 +31,7 @@ class ShoppingLocationSelectPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: neutral.paper,
       appBar: AppBar(
-        title: const Text('買い物する場所を選ぶ'),
+        title: Text(context.l10n.listSettingSelectShoppingLocationTitle),
         backgroundColor: neutral.paper,
         leading: IconButton(
           icon: const Icon(Icons.close),
@@ -45,8 +46,11 @@ class ShoppingLocationSelectPage extends ConsumerWidget {
                 children: [
                   AppCell(
                     icon: Icons.block,
-                    title: 'なし',
-                    detail: currentLocationID == null ? '選択中' : null,
+                    title: context.l10n.listSettingLocationNone,
+                    detail:
+                        currentLocationID == null
+                            ? context.l10n.listSettingLocationSelected
+                            : null,
                     onTap: () {
                       analytics.logEvent(
                         name: 'select_list_location',
@@ -65,7 +69,10 @@ class ShoppingLocationSelectPage extends ConsumerWidget {
                     AppCell(
                       icon: Icons.place_outlined,
                       title: location.name,
-                      detail: currentLocationID == location.id ? '選択中' : null,
+                      detail:
+                          currentLocationID == location.id
+                              ? context.l10n.listSettingLocationSelected
+                              : null,
                       onTap: () {
                         analytics.logEvent(
                           name: 'select_list_location',

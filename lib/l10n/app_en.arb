@@ -25,7 +25,7 @@
   },
   "commonGroup": "Group",
   "@commonGroup": {
-    "description": "グループ名が未設定のときのフォールバック表示"
+    "description": "グループ名が未設定のときのフォールバック表示と、設定画面の「グループ」セクション見出し"
   },
   "commonCamera": "Camera",
   "commonPhotoLibrary": "Photo Library",
@@ -210,5 +210,143 @@
   "shoppingListNotifyGroupSent": "Notified the group",
   "shoppingListNotifyGroupGuideLabel": "About group notifications",
   "shoppingListNotifyGroupGuideMessage": "Tapping this button sends a push notification to the other members of your group to let them know you updated the shopping list.",
-  "shoppingListNotifyGroupSend": "Send notification"
+  "shoppingListNotifyGroupSend": "Send notification",
+
+  "commonCopy": "Copy",
+  "commonShare": "Share",
+  "@commonShare": {
+    "description": "共有アクションのボタンラベル (動詞)。セクション見出しの「共有」は listSettingShareSection"
+  },
+
+  "settingsProfileSection": "Profile",
+  "settingsDisplayNameLabel": "Your display name",
+  "settingsDisplayNameHint": "Enter a display name",
+  "settingsDisplayNameUpdated": "Updated your display name",
+  "settingsGroupManagement": "Manage groups",
+  "settingsJoinGroupWithInvitationCode": "Join a group with an invitation code",
+  "settingsAppearanceSection": "Appearance",
+  "settingsNotificationSection": "Notifications",
+  "settingsAboutSection": "About this app",
+  "settingsTermsOfService": "Terms of Service",
+  "settingsPrivacyPolicy": "Privacy Policy",
+  "settingsCommercialTransactionAct": "Notation based on the Specified Commercial Transaction Act",
+  "@settingsCommercialTransactionAct": {
+    "description": "特定商取引法に基づく表記ページへの導線。日本語の現行文言は「特定商法取引法」という表記のまま (既存 UI を変えないため)"
+  },
+  "settingsInquiry": "Contact us",
+  "settingsOssLicense": "Open source licenses",
+  "settingsDebugSection": "Debug",
+  "@settingsDebugSection": {
+    "description": "debug ビルドでのみ表示する設定セクション"
+  },
+  "settingsDeveloperOptions": "Developer options",
+  "settingsPremiumCardTitlePremium": "Premium member",
+  "settingsPremiumCardTitleFree": "Upgrade to Premium",
+  "settingsPremiumCardSubtitlePremium": "You can use all features",
+  "settingsPremiumCardSubtitleFree": "Five color themes, more photo/URL scans, and more",
+  "settingsPremiumCardStartButton": "Get started",
+  "settingsSignOut": "Sign out",
+  "@settingsSignOut": {
+    "description": "サインアウトボタンのラベルと、確認ダイアログの実行ボタン"
+  },
+  "settingsSignOutConfirmBarrierLabel": "Sign-out confirmation",
+  "@settingsSignOutConfirmBarrierLabel": {
+    "description": "サインアウト確認ダイアログの barrierLabel (画面読み上げ用。画面には表示されない)"
+  },
+  "settingsSignOutConfirmTitle": "Sign out?",
+  "settingsSignOutConfirmMessage": "You will not be able to access your lists from this device until you sign in again.",
+  "settingsSignOutConfirmMessageGuest": "You are using the app as a guest, so if you sign out you cannot sign in to the same account again and you will permanently lose access to your current lists and groups.",
+  "settingsSignOutCompletedTitle": "Signed out",
+  "settingsSignOutExitAppMessage": "The app will now quit",
+  "settingsThemeColorTitle": "Theme color",
+  "settingsThemeColorDescription": "Choose from five traditional Japanese colors to change the accent color used across the app.",
+  "settingsThemeColorChanged": "Changed the theme color",
+  "settingsThemeColorSwatchLabel": "{label} theme color",
+  "@settingsThemeColorSwatchLabel": {
+    "description": "テーマカラーの色見本の読み上げラベル。label はプリセットの色名 (lib/style/tokens.dart の AccentPreset.label)",
+    "placeholders": {
+      "label": {"type": "String"}
+    }
+  },
+  "settingsThemeColorPremiumOnly": "Changing the theme color is a Premium feature",
+  "settingsLocationReminderTitle": "Location reminder",
+  "settingsLocationReminderSubtitle": "Notify me of my shopping list when I am near a store",
+  "settingsLocationReminderNotificationPermissionRequired": "Allow notifications to use this feature",
+  "settingsLocationReminderAlwaysPermissionRequired": "Set background location access to \"Always\" to use this feature",
+  "settingsLocationReminderPremiumOnly": "The location reminder is a Premium feature",
+  "settingsAccountSection": "Account",
+  "settingsAccountLinked": "Linked your account",
+  "settingsAccountGuestDescription": "You are using the app as a guest. If you link an account, you can use the same lists and groups after changing devices or on another device.",
+  "settingsAccountLinkWithApple": "Link your account with Apple",
+  "settingsAccountLinkWithGoogle": "Link your account with Google",
+  "settingsAccountSignedInWith": "Signed in with {providerName}",
+  "@settingsAccountSignedInWith": {
+    "description": "リンク済みの認証プロバイダを表示する行。providerName は 'Apple' / 'Google'",
+    "placeholders": {
+      "providerName": {"type": "String"}
+    }
+  },
+  "settingsAccountReSignInBarrierLabel": "Re-sign-in confirmation",
+  "@settingsAccountReSignInBarrierLabel": {
+    "description": "サインインし直し確認ダイアログの barrierLabel (画面読み上げ用。画面には表示されない)"
+  },
+  "settingsAccountAlreadyInUseTitle": "This account is already used by another user",
+  "settingsAccountReSignInMessage": "Do you want to sign in again with this account?\nIf you sign in again, your current guest data (lists and groups) will not be carried over.",
+  "settingsAccountReSignInButton": "Sign in again",
+
+  "listSettingTitle": "Shopping list settings",
+  "listSettingNameSection": "List name",
+  "listSettingShoppingLocationSection": "Shopping location",
+  "listSettingLocationUnset": "Not set",
+  "listSettingLocationChangeDetail": "Change",
+  "listSettingCategorySubtitle": "Manage keywords for auto-categorization",
+  "listSettingStoragePeriodSection": "Retention period",
+  "listSettingStoragePeriodPremium": "Premium: unlimited",
+  "listSettingStoragePeriodFree": "30 days from creation",
+  "listSettingStoragePeriodUpsell": "With Premium you can keep lists with no time limit",
+  "listSettingShareSection": "Sharing",
+  "@listSettingShareSection": {
+    "description": "共有関連の設定をまとめるセクション見出し (名詞)。共有ボタンのラベルは commonShare"
+  },
+  "listSettingSendInvitationCode": "Send an invitation code to your group",
+  "listSettingGroupSetting": "Group settings",
+  "listSettingGroupNameRequired": "Set a group name before inviting someone",
+  "listSettingListActionsSection": "List actions",
+  "listSettingDeleteList": "Delete this list",
+  "listSettingDeleteConfirmBarrierLabel": "Shopping list deletion confirmation",
+  "@listSettingDeleteConfirmBarrierLabel": {
+    "description": "リスト削除確認ダイアログの barrierLabel (画面読み上げ用。画面には表示されない)"
+  },
+  "listSettingDeleteConfirmTitle": "Delete this list?",
+  "listSettingDeleteConfirmMessage": "\"{name}\" and the {count} items in it will be deleted. This cannot be undone.",
+  "@listSettingDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "listSettingInvitationCodeTitle": "Invitation code",
+  "@listSettingInvitationCodeTitle": {
+    "description": "招待コードダイアログのタイトルと、そのダイアログの barrierLabel"
+  },
+  "listSettingInvitationExpired": "Expired",
+  "listSettingInvitationRemaining": "Valid for 7 days ・ {days}d {hours}h left",
+  "@listSettingInvitationRemaining": {
+    "description": "招待コードの残り有効時間。days は残り日数、hours は日数を除いた残り時間",
+    "placeholders": {
+      "days": {"type": "int"},
+      "hours": {"type": "int"}
+    }
+  },
+  "listSettingInvitationCodeCopied": "Copied the invitation code",
+  "listSettingInvitationShareText": "Shopping list invitation code: {code}",
+  "@listSettingInvitationShareText": {
+    "description": "招待コードを他アプリへ共有するときの本文",
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "listSettingSelectShoppingLocationTitle": "Choose a shopping location",
+  "listSettingLocationNone": "None",
+  "listSettingLocationSelected": "Selected"
 }

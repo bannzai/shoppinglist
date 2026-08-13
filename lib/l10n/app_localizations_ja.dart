@@ -335,4 +335,252 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get shoppingListNotifyGroupSend => '通知を送る';
+
+  @override
+  String get commonCopy => 'コピー';
+
+  @override
+  String get commonShare => '共有';
+
+  @override
+  String get settingsProfileSection => 'プロフィール';
+
+  @override
+  String get settingsDisplayNameLabel => '自分の表示名';
+
+  @override
+  String get settingsDisplayNameHint => '表示名を入力';
+
+  @override
+  String get settingsDisplayNameUpdated => '表示名を更新しました';
+
+  @override
+  String get settingsGroupManagement => 'グループ管理';
+
+  @override
+  String get settingsJoinGroupWithInvitationCode => '招待コードでグループに参加';
+
+  @override
+  String get settingsAppearanceSection => '外観';
+
+  @override
+  String get settingsNotificationSection => '通知';
+
+  @override
+  String get settingsAboutSection => 'アプリについて';
+
+  @override
+  String get settingsTermsOfService => '利用規約';
+
+  @override
+  String get settingsPrivacyPolicy => 'プライバシーポリシー';
+
+  @override
+  String get settingsCommercialTransactionAct => '特定商法取引法に基づく表記';
+
+  @override
+  String get settingsInquiry => 'お問い合わせ';
+
+  @override
+  String get settingsOssLicense => 'OSSライセンス';
+
+  @override
+  String get settingsDebugSection => 'デバッグ';
+
+  @override
+  String get settingsDeveloperOptions => '開発者オプション';
+
+  @override
+  String get settingsPremiumCardTitlePremium => 'プレミアム会員';
+
+  @override
+  String get settingsPremiumCardTitleFree => 'プレミアムにアップグレード';
+
+  @override
+  String get settingsPremiumCardSubtitlePremium => 'すべての機能が利用できます';
+
+  @override
+  String get settingsPremiumCardSubtitleFree => '5 色テーマ・画像/URL読み取り回数アップなど';
+
+  @override
+  String get settingsPremiumCardStartButton => 'はじめる';
+
+  @override
+  String get settingsSignOut => 'サインアウト';
+
+  @override
+  String get settingsSignOutConfirmBarrierLabel => 'サインアウト確認';
+
+  @override
+  String get settingsSignOutConfirmTitle => 'サインアウトしますか?';
+
+  @override
+  String get settingsSignOutConfirmMessage =>
+      '再度サインインするまで端末からはリストにアクセスできなくなります。';
+
+  @override
+  String get settingsSignOutConfirmMessageGuest =>
+      'ゲスト利用中のため、サインアウトすると同じアカウントに再サインインできず、今のリストとグループには二度とアクセスできなくなります。';
+
+  @override
+  String get settingsSignOutCompletedTitle => 'サインアウトしました';
+
+  @override
+  String get settingsSignOutExitAppMessage => 'アプリを終了します';
+
+  @override
+  String get settingsThemeColorTitle => 'テーマカラー';
+
+  @override
+  String get settingsThemeColorDescription =>
+      '和の伝統色 5 色から選んで、アプリ全体の差し色を切り替えます。';
+
+  @override
+  String get settingsThemeColorChanged => 'テーマカラーを変更しました';
+
+  @override
+  String settingsThemeColorSwatchLabel(String label) {
+    return '$labelのテーマカラー';
+  }
+
+  @override
+  String get settingsThemeColorPremiumOnly => 'テーマカラーの変更はプレミアム機能です';
+
+  @override
+  String get settingsLocationReminderTitle => '位置情報リマインダー';
+
+  @override
+  String get settingsLocationReminderSubtitle => '店舗の近くに来たら買い物リストを通知';
+
+  @override
+  String get settingsLocationReminderNotificationPermissionRequired =>
+      '通知権限を許可すると利用できます';
+
+  @override
+  String get settingsLocationReminderAlwaysPermissionRequired =>
+      'バックグラウンドの位置情報を「常に許可」にすると利用できます';
+
+  @override
+  String get settingsLocationReminderPremiumOnly => '位置情報リマインダーはプレミアム機能です';
+
+  @override
+  String get settingsAccountSection => 'アカウント';
+
+  @override
+  String get settingsAccountLinked => 'アカウントをリンクしました';
+
+  @override
+  String get settingsAccountGuestDescription =>
+      'ゲストとして利用中です。アカウントをリンクすると、機種変更後や他の端末でも同じリストとグループを使えます。';
+
+  @override
+  String get settingsAccountLinkWithApple => 'Apple でアカウントをリンク';
+
+  @override
+  String get settingsAccountLinkWithGoogle => 'Google でアカウントをリンク';
+
+  @override
+  String settingsAccountSignedInWith(String providerName) {
+    return '$providerName でサインイン済み';
+  }
+
+  @override
+  String get settingsAccountReSignInBarrierLabel => 'サインインし直し確認';
+
+  @override
+  String get settingsAccountAlreadyInUseTitle => 'このアカウントは別のユーザーで使用されています';
+
+  @override
+  String get settingsAccountReSignInMessage =>
+      'このアカウントでサインインし直しますか?\nサインインし直すと、今のゲストデータ（リスト・グループ）は引き継がれません。';
+
+  @override
+  String get settingsAccountReSignInButton => 'サインインし直す';
+
+  @override
+  String get listSettingTitle => '買い物リスト設定';
+
+  @override
+  String get listSettingNameSection => 'リスト名';
+
+  @override
+  String get listSettingShoppingLocationSection => '買い物する場所';
+
+  @override
+  String get listSettingLocationUnset => '未設定';
+
+  @override
+  String get listSettingLocationChangeDetail => '変更';
+
+  @override
+  String get listSettingCategorySubtitle => '自動分類のキーワード管理';
+
+  @override
+  String get listSettingStoragePeriodSection => '保存期間';
+
+  @override
+  String get listSettingStoragePeriodPremium => 'プレミアム: 無制限';
+
+  @override
+  String get listSettingStoragePeriodFree => '作成から30日間';
+
+  @override
+  String get listSettingStoragePeriodUpsell => 'プレミアムなら期限なしで残せます';
+
+  @override
+  String get listSettingShareSection => '共有';
+
+  @override
+  String get listSettingSendInvitationCode => 'グループに招待コードを送る';
+
+  @override
+  String get listSettingGroupSetting => 'グループ設定';
+
+  @override
+  String get listSettingGroupNameRequired => '招待する前にグループ名を設定してください';
+
+  @override
+  String get listSettingListActionsSection => 'リストの操作';
+
+  @override
+  String get listSettingDeleteList => 'このリストを削除';
+
+  @override
+  String get listSettingDeleteConfirmBarrierLabel => '買い物リスト削除確認';
+
+  @override
+  String get listSettingDeleteConfirmTitle => 'このリストを削除しますか?';
+
+  @override
+  String listSettingDeleteConfirmMessage(String name, int count) {
+    return '「$name」とその中の $count件 のアイテムが削除されます。元に戻せません。';
+  }
+
+  @override
+  String get listSettingInvitationCodeTitle => '招待コード';
+
+  @override
+  String get listSettingInvitationExpired => '有効期限切れ';
+
+  @override
+  String listSettingInvitationRemaining(int days, int hours) {
+    return '有効期限: 7日間 ・ 残り $days日$hours時間';
+  }
+
+  @override
+  String get listSettingInvitationCodeCopied => '招待コードをコピーしました';
+
+  @override
+  String listSettingInvitationShareText(String code) {
+    return '買い物リストの招待コード: $code';
+  }
+
+  @override
+  String get listSettingSelectShoppingLocationTitle => '買い物する場所を選ぶ';
+
+  @override
+  String get listSettingLocationNone => 'なし';
+
+  @override
+  String get listSettingLocationSelected => '選択中';
 }

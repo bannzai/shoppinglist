@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/settings/theme_color_selection_page.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -17,7 +18,7 @@ class ThemeColorTile extends ConsumerWidget {
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
 
     return ListTile(
-      title: const Text('テーマカラー'),
+      title: Text(context.l10n.settingsThemeColorTitle),
       leading: const Icon(Icons.palette),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -58,9 +59,9 @@ class ThemeColorTile extends ConsumerWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               persist: false,
-              content: const Text('テーマカラーの変更はプレミアム機能です'),
+              content: Text(context.l10n.settingsThemeColorPremiumOnly),
               action: SnackBarAction(
-                label: 'アップグレード',
+                label: context.l10n.commonUpgrade,
                 onPressed: () => showPaywall(context: context),
               ),
             ),

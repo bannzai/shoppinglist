@@ -349,4 +349,265 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shoppingListNotifyGroupSend => 'Send notification';
+
+  @override
+  String get commonCopy => 'Copy';
+
+  @override
+  String get commonShare => 'Share';
+
+  @override
+  String get settingsProfileSection => 'Profile';
+
+  @override
+  String get settingsDisplayNameLabel => 'Your display name';
+
+  @override
+  String get settingsDisplayNameHint => 'Enter a display name';
+
+  @override
+  String get settingsDisplayNameUpdated => 'Updated your display name';
+
+  @override
+  String get settingsGroupManagement => 'Manage groups';
+
+  @override
+  String get settingsJoinGroupWithInvitationCode =>
+      'Join a group with an invitation code';
+
+  @override
+  String get settingsAppearanceSection => 'Appearance';
+
+  @override
+  String get settingsNotificationSection => 'Notifications';
+
+  @override
+  String get settingsAboutSection => 'About this app';
+
+  @override
+  String get settingsTermsOfService => 'Terms of Service';
+
+  @override
+  String get settingsPrivacyPolicy => 'Privacy Policy';
+
+  @override
+  String get settingsCommercialTransactionAct =>
+      'Notation based on the Specified Commercial Transaction Act';
+
+  @override
+  String get settingsInquiry => 'Contact us';
+
+  @override
+  String get settingsOssLicense => 'Open source licenses';
+
+  @override
+  String get settingsDebugSection => 'Debug';
+
+  @override
+  String get settingsDeveloperOptions => 'Developer options';
+
+  @override
+  String get settingsPremiumCardTitlePremium => 'Premium member';
+
+  @override
+  String get settingsPremiumCardTitleFree => 'Upgrade to Premium';
+
+  @override
+  String get settingsPremiumCardSubtitlePremium => 'You can use all features';
+
+  @override
+  String get settingsPremiumCardSubtitleFree =>
+      'Five color themes, more photo/URL scans, and more';
+
+  @override
+  String get settingsPremiumCardStartButton => 'Get started';
+
+  @override
+  String get settingsSignOut => 'Sign out';
+
+  @override
+  String get settingsSignOutConfirmBarrierLabel => 'Sign-out confirmation';
+
+  @override
+  String get settingsSignOutConfirmTitle => 'Sign out?';
+
+  @override
+  String get settingsSignOutConfirmMessage =>
+      'You will not be able to access your lists from this device until you sign in again.';
+
+  @override
+  String get settingsSignOutConfirmMessageGuest =>
+      'You are using the app as a guest, so if you sign out you cannot sign in to the same account again and you will permanently lose access to your current lists and groups.';
+
+  @override
+  String get settingsSignOutCompletedTitle => 'Signed out';
+
+  @override
+  String get settingsSignOutExitAppMessage => 'The app will now quit';
+
+  @override
+  String get settingsThemeColorTitle => 'Theme color';
+
+  @override
+  String get settingsThemeColorDescription =>
+      'Choose from five traditional Japanese colors to change the accent color used across the app.';
+
+  @override
+  String get settingsThemeColorChanged => 'Changed the theme color';
+
+  @override
+  String settingsThemeColorSwatchLabel(String label) {
+    return '$label theme color';
+  }
+
+  @override
+  String get settingsThemeColorPremiumOnly =>
+      'Changing the theme color is a Premium feature';
+
+  @override
+  String get settingsLocationReminderTitle => 'Location reminder';
+
+  @override
+  String get settingsLocationReminderSubtitle =>
+      'Notify me of my shopping list when I am near a store';
+
+  @override
+  String get settingsLocationReminderNotificationPermissionRequired =>
+      'Allow notifications to use this feature';
+
+  @override
+  String get settingsLocationReminderAlwaysPermissionRequired =>
+      'Set background location access to \"Always\" to use this feature';
+
+  @override
+  String get settingsLocationReminderPremiumOnly =>
+      'The location reminder is a Premium feature';
+
+  @override
+  String get settingsAccountSection => 'Account';
+
+  @override
+  String get settingsAccountLinked => 'Linked your account';
+
+  @override
+  String get settingsAccountGuestDescription =>
+      'You are using the app as a guest. If you link an account, you can use the same lists and groups after changing devices or on another device.';
+
+  @override
+  String get settingsAccountLinkWithApple => 'Link your account with Apple';
+
+  @override
+  String get settingsAccountLinkWithGoogle => 'Link your account with Google';
+
+  @override
+  String settingsAccountSignedInWith(String providerName) {
+    return 'Signed in with $providerName';
+  }
+
+  @override
+  String get settingsAccountReSignInBarrierLabel => 'Re-sign-in confirmation';
+
+  @override
+  String get settingsAccountAlreadyInUseTitle =>
+      'This account is already used by another user';
+
+  @override
+  String get settingsAccountReSignInMessage =>
+      'Do you want to sign in again with this account?\nIf you sign in again, your current guest data (lists and groups) will not be carried over.';
+
+  @override
+  String get settingsAccountReSignInButton => 'Sign in again';
+
+  @override
+  String get listSettingTitle => 'Shopping list settings';
+
+  @override
+  String get listSettingNameSection => 'List name';
+
+  @override
+  String get listSettingShoppingLocationSection => 'Shopping location';
+
+  @override
+  String get listSettingLocationUnset => 'Not set';
+
+  @override
+  String get listSettingLocationChangeDetail => 'Change';
+
+  @override
+  String get listSettingCategorySubtitle =>
+      'Manage keywords for auto-categorization';
+
+  @override
+  String get listSettingStoragePeriodSection => 'Retention period';
+
+  @override
+  String get listSettingStoragePeriodPremium => 'Premium: unlimited';
+
+  @override
+  String get listSettingStoragePeriodFree => '30 days from creation';
+
+  @override
+  String get listSettingStoragePeriodUpsell =>
+      'With Premium you can keep lists with no time limit';
+
+  @override
+  String get listSettingShareSection => 'Sharing';
+
+  @override
+  String get listSettingSendInvitationCode =>
+      'Send an invitation code to your group';
+
+  @override
+  String get listSettingGroupSetting => 'Group settings';
+
+  @override
+  String get listSettingGroupNameRequired =>
+      'Set a group name before inviting someone';
+
+  @override
+  String get listSettingListActionsSection => 'List actions';
+
+  @override
+  String get listSettingDeleteList => 'Delete this list';
+
+  @override
+  String get listSettingDeleteConfirmBarrierLabel =>
+      'Shopping list deletion confirmation';
+
+  @override
+  String get listSettingDeleteConfirmTitle => 'Delete this list?';
+
+  @override
+  String listSettingDeleteConfirmMessage(String name, int count) {
+    return '\"$name\" and the $count items in it will be deleted. This cannot be undone.';
+  }
+
+  @override
+  String get listSettingInvitationCodeTitle => 'Invitation code';
+
+  @override
+  String get listSettingInvitationExpired => 'Expired';
+
+  @override
+  String listSettingInvitationRemaining(int days, int hours) {
+    return 'Valid for 7 days ・ ${days}d ${hours}h left';
+  }
+
+  @override
+  String get listSettingInvitationCodeCopied => 'Copied the invitation code';
+
+  @override
+  String listSettingInvitationShareText(String code) {
+    return 'Shopping list invitation code: $code';
+  }
+
+  @override
+  String get listSettingSelectShoppingLocationTitle =>
+      'Choose a shopping location';
+
+  @override
+  String get listSettingLocationNone => 'None';
+
+  @override
+  String get listSettingLocationSelected => 'Selected';
 }

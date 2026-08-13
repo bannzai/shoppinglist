@@ -8,6 +8,7 @@ import 'package:shoppinglist/components/dashed_border_box.dart';
 import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -45,8 +46,11 @@ class InvitationCodeDialog extends HookWidget {
     final isExpired = remaining.isNegative;
     final remainingText =
         isExpired
-            ? '有効期限切れ'
-            : '有効期限: 7日間 ・ 残り ${remaining.inDays}日${remaining.inHours.remainder(24)}時間';
+            ? context.l10n.listSettingInvitationExpired
+            : context.l10n.listSettingInvitationRemaining(
+              remaining.inDays,
+              remaining.inHours.remainder(24),
+            );
 
     return AppDialogShell(
       barrierDismissible: true,
@@ -57,7 +61,7 @@ class InvitationCodeDialog extends HookWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '招待コード',
+                context.l10n.listSettingInvitationCodeTitle,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: neutral.ink2,
                   fontWeight: FontWeight.w600,
@@ -110,7 +114,7 @@ class InvitationCodeDialog extends HookWidget {
             children: [
               Expanded(
                 child: AppPill(
-                  label: 'コピー',
+                  label: context.l10n.commonCopy,
                   icon: Icons.copy_outlined,
                   variant: AppPillVariant.ghost,
                   large: true,
@@ -120,19 +124,21 @@ class InvitationCodeDialog extends HookWidget {
                       name: 'tap_copy_list_invite_code',
                       parameters: null,
                     );
+                    final copiedMessage =
+                        context.l10n.listSettingInvitationCodeCopied;
                     await Clipboard.setData(
                       ClipboardData(text: invitationCode),
                     );
                     // ダイアログ上の SnackBar は背後の Scaffold に描画されて
                     // 見えないため、前面に出るグローバルトーストで通知する。
-                    showGlobalToast('招待コードをコピーしました', title: null);
+                    showGlobalToast(copiedMessage, title: null);
                   },
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: AppPill(
-                  label: '共有',
+                  label: context.l10n.commonShare,
                   icon: Icons.ios_share_outlined,
                   variant: AppPillVariant.accent,
                   large: true,
@@ -142,10 +148,12 @@ class InvitationCodeDialog extends HookWidget {
                       name: 'tap_share_list_invite_code',
                       parameters: null,
                     );
+                    final shareText = context.l10n
+                        .listSettingInvitationShareText(invitationCode);
                     final box = context.findRenderObject() as RenderBox?;
                     await SharePlus.instance.share(
                       ShareParams(
-                        text: '買い物リストの招待コード: $invitationCode',
+                        text: shareText,
                         sharePositionOrigin:
                             box == null
                                 ? null
