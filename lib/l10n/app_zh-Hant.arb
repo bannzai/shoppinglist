@@ -47,5 +47,6 @@
   "shoppingListDuplicated": "已複製清單",
   "shoppingListDuplicatedFrom": "複製自 {name}",
   "shoppingListDeletedListName": "已刪除的清單",
-  "shoppingListDuplicateSourceDeleted": "原始購物清單已刪除"
+  "shoppingListDuplicateSourceDeleted": "原始購物清單已刪除",
+  "shoppingListRetentionBannerMessage": "在免費方案中，清單會在建立 30 天後自動清理"
 }
