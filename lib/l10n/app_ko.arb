@@ -87,5 +87,6 @@
   "shoppingListHintExample3": "예: 빵",
   "shoppingListHintExample4": "예: 양파 x2",
   "shoppingListHintExample5": "예: 토마토",
-  "shoppingListHintCardTitle": "사용 방법"
+  "shoppingListHintCardTitle": "사용 방법",
+  "shoppingListHintTap": "・행을 탭하고 바로 입력하세요"
 }
