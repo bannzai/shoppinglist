@@ -173,5 +173,6 @@
   "listSettingDeleteConfirmTitle": "要删除此清单吗？",
   "listSettingDeleteConfirmMessage": "“{name}”及其中的 {count} 个商品将被删除。此操作无法撤销。",
   "listSettingInvitationCodeTitle": "邀请码",
-  "listSettingInvitationExpired": "已过期"
+  "listSettingInvitationExpired": "已过期",
+  "listSettingInvitationRemaining": "有效期 7 天 ・ 还剩 {days} 天 {hours} 小时"
 }

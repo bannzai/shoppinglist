@@ -173,5 +173,6 @@
   "listSettingDeleteConfirmTitle": "이 목록을 삭제할까요?",
   "listSettingDeleteConfirmMessage": "\"{name}\"과(와) 그 안의 {count}개 항목이 삭제됩니다. 이 작업은 되돌릴 수 없습니다.",
   "listSettingInvitationCodeTitle": "초대 코드",
-  "listSettingInvitationExpired": "만료됨"
+  "listSettingInvitationExpired": "만료됨",
+  "listSettingInvitationRemaining": "7일 동안 유효 ・ {days}일 {hours}시간 남음"
 }
