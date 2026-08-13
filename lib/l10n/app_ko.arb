@@ -341,5 +341,6 @@
   "purchaseErrorInvalidPayment": "결제에 실패했습니다. 결제 수단이 유효한지 확인한 후 다시 시도해 주세요.",
   "purchaseErrorProductNotAvailable": "선택한 요금제는 현재 판매 중이 아닙니다. 앱을 다시 시작한 뒤 다시 시도해 주세요.",
   "purchaseErrorAlreadyPurchased": "이미 플랜을 구매하셨습니다. 이 기기에서 구매를 복원하려면 \"이미 구매하셨나요? 여기를 탭하세요\"를 사용해 구매 정보를 복원하세요.",
-  "purchaseErrorReceiptAlreadyInUse": "이미 구매했거나 구매 정보가 다른 사용자에게 사용 중입니다. {accountName}을 확인해 주세요."
+  "purchaseErrorReceiptAlreadyInUse": "이미 구매했거나 구매 정보가 다른 사용자에게 사용 중입니다. {accountName}을 확인해 주세요.",
+  "purchaseErrorInvalidReceipt": "구매 정보가 올바르지 않습니다. 구매 정보를 확인해 주세요."
 }
