@@ -128,5 +128,6 @@
   "settingsPremiumCardStartButton": "开始使用",
   "settingsSignOut": "退出登录",
   "settingsSignOutConfirmBarrierLabel": "退出登录确认",
-  "settingsSignOutConfirmTitle": "要退出登录吗？"
+  "settingsSignOutConfirmTitle": "要退出登录吗？",
+  "settingsSignOutConfirmMessage": "在您再次登录之前，您将无法从此设备访问您的清单。"
 }

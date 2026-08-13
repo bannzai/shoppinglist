@@ -128,5 +128,6 @@
   "settingsPremiumCardStartButton": "開始使用",
   "settingsSignOut": "登出",
   "settingsSignOutConfirmBarrierLabel": "登出確認",
-  "settingsSignOutConfirmTitle": "要登出嗎？"
+  "settingsSignOutConfirmTitle": "要登出嗎？",
+  "settingsSignOutConfirmMessage": "在您再次登入之前，您將無法從此裝置存取您的清單。"
 }
