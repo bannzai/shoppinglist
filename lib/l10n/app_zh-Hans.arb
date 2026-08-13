@@ -14,5 +14,6 @@
   "commonCategory": "分类",
   "commonUncategorized": "未分类",
   "commonGroup": "群组",
-  "commonCamera": "相机"
+  "commonCamera": "相机",
+  "commonPhotoLibrary": "照片图库"
 }
