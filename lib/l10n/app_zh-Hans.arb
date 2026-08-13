@@ -89,5 +89,6 @@
   "shoppingListHintExample5": "例如：番茄",
   "shoppingListHintCardTitle": "使用方法",
   "shoppingListHintTap": "・点按一行即可直接输入",
-  "shoppingListHintReturn": "・按回车换到下一行"
+  "shoppingListHintReturn": "・按回车换到下一行",
+  "shoppingListHintDelete": "・在空行上按删除键即可移除"
 }
