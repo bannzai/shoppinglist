@@ -344,5 +344,6 @@
   "purchaseErrorReceiptAlreadyInUse": "이미 구매했거나 구매 정보가 다른 사용자에게 사용 중입니다. {accountName}을 확인해 주세요.",
   "purchaseErrorInvalidReceipt": "구매 정보가 올바르지 않습니다. 구매 정보를 확인해 주세요.",
   "purchaseErrorMissingReceipt": "구매자 정보가 없습니다. {accountName}로 기기에 로그인한 후 다시 시도하세요.",
-  "purchaseErrorNetwork": "네트워크 연결이 불안정합니다. 연결 상태를 확인한 후 다시 시도해 주세요."
+  "purchaseErrorNetwork": "네트워크 연결이 불안정합니다. 연결 상태를 확인한 후 다시 시도해 주세요.",
+  "purchaseErrorPurchaseFailed": "구매에 실패했습니다. 잠시 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 상세 정보: {details}"
 }
