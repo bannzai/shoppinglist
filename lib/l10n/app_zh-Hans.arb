@@ -226,5 +226,6 @@
   "groupInvitationVerifyingTitle": "正在检查邀请码",
   "groupInvitationVerifyingMessage": "服务器正在处理你加入群组的请求。",
   "groupJoinHeading": "开始吧",
-  "groupJoinDescription": "你收到家人或伴侣发来的邀请码了吗？\n使用邀请码加入后，你们就可以一起使用同一份购物清单。"
+  "groupJoinDescription": "你收到家人或伴侣发来的邀请码了吗？\n使用邀请码加入后，你们就可以一起使用同一份购物清单。",
+  "groupJoinCreateSolo": "创建自己的清单"
 }
