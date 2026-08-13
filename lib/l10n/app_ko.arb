@@ -353,5 +353,6 @@
   "purchaseErrorIneligible": "사용자 계정으로 구매하지 못했습니다. 잠시 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 자세한 내용: {details}",
   "purchaseErrorInsufficientPermissions": "{accountName}으로는 요금제에 가입할 수 없습니다. 결제 정보를 확인한 후 다시 시도해 주세요.",
   "purchaseErrorPaymentPending": "결제가 중단되었습니다. 현재 로그인한 {accountName}으로 {storeName}을(를) 확인해 주세요.",
-  "purchaseErrorUserInfoFailed": "사용자 정보를 가져오지 못했습니다. 잠시 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 자세한 내용: {details}"
+  "purchaseErrorUserInfoFailed": "사용자 정보를 가져오지 못했습니다. 잠시 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 자세한 내용: {details}",
+  "purchaseErrorConfiguration": "구매 정보를 가져오지 못했습니다. 잠시 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 자세한 내용: {details}"
 }
