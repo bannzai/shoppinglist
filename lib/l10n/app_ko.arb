@@ -6,5 +6,6 @@
   "commonDone": "완료",
   "commonOk": "확인",
   "commonDelete": "삭제",
-  "commonAdd": "추가"
+  "commonAdd": "추가",
+  "commonRetry": "다시 시도"
 }

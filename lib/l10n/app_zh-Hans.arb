@@ -6,5 +6,6 @@
   "commonDone": "完成",
   "commonOk": "确定",
   "commonDelete": "删除",
-  "commonAdd": "添加"
+  "commonAdd": "添加",
+  "commonRetry": "重试"
 }
