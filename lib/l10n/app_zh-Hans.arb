@@ -276,5 +276,6 @@
   "onboardingSlide3Body": "当您靠近已登记的商店时，我们会轻轻提醒您查看购物清单。只在您需要时发送通知，绝不打扰。",
   "onboardingSkip": "跳过",
   "onboardingStart": "开始使用",
-  "onboardingNext": "下一步"
+  "onboardingNext": "下一步",
+  "paywallHeroTitle": "升级到高级版"
 }
