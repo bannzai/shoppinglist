@@ -340,5 +340,6 @@
   "purchaseErrorNotAllowed": "此裝置不允許購買。",
   "purchaseErrorInvalidPayment": "付款失敗。請確認您的付款方式有效後再試一次。",
   "purchaseErrorProductNotAvailable": "所選方案目前未在販售。請重新啟動應用程式後再試一次。",
-  "purchaseErrorAlreadyPurchased": "您已經購買過方案。要在此裝置上還原購買，請點選「已購買？點這裡」來還原您的購買資訊。"
+  "purchaseErrorAlreadyPurchased": "您已經購買過方案。要在此裝置上還原購買，請點選「已購買？點這裡」來還原您的購買資訊。",
+  "purchaseErrorReceiptAlreadyInUse": "已購買，或購買資訊已被其他使用者使用。請檢查你的{accountName}。"
 }
