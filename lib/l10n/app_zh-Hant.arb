@@ -1,4 +1,5 @@
 {
   "@@locale": "zh-Hant",
-  "appTitle": "買物清單"
+  "appTitle": "買物清單",
+  "commonCancel": "取消"
 }

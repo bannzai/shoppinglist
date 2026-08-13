@@ -1,4 +1,5 @@
 {
   "@@locale": "ko",
-  "appTitle": "쇼핑 목록"
+  "appTitle": "쇼핑 목록",
+  "commonCancel": "취소"
 }
