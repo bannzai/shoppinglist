@@ -57,5 +57,6 @@
   "shoppingListAiProcessingUrl": "URL에서 추천을 추출하는 중…",
   "shoppingListAiProcessingCategorize": "카테고리별로 정리하는 중...",
   "shoppingListAiLimitUpsell": ". 프리미엄으로 업그레이드하면 한 달에 {limit}회까지 사용할 수 있습니다",
-  "shoppingListAiCategorizeButton": "자동 분류 ({count}개 항목)"
+  "shoppingListAiCategorizeButton": "자동 분류 ({count}개 항목)",
+  "shoppingListAiCategorizeLimitReached": "자동 분류의 월간 한도({limit}회)에 도달했습니다"
 }

@@ -57,5 +57,6 @@
   "shoppingListAiProcessingUrl": "正在从网址提取建议…",
   "shoppingListAiProcessingCategorize": "正在按类别整理……",
   "shoppingListAiLimitUpsell": "。升级到高级版后，每月可使用 {limit} 次",
-  "shoppingListAiCategorizeButton": "自动分类（{count} 项）"
+  "shoppingListAiCategorizeButton": "自动分类（{count} 项）",
+  "shoppingListAiCategorizeLimitReached": "已达到自动分类的月度上限（{limit}次）"
 }
