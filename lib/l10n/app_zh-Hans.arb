@@ -336,5 +336,6 @@
   "errorTitleCredentialAlreadyInUse": "此账号已被其他用户使用",
   "errorTitleEmailAlreadyInUse": "此电子邮件地址已被其他用户使用",
   "purchaseErrorUnknown": "发生未知错误。请稍后再试。如果问题仍然存在，请通过“设置”>“反馈”联系我们。详情：{details}",
-  "purchaseErrorStoreProblem": "{storeName} 发生了错误。请稍后再试。"
+  "purchaseErrorStoreProblem": "{storeName} 发生了错误。请稍后再试。",
+  "purchaseErrorNotAllowed": "此设备不允许购买。"
 }
