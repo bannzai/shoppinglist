@@ -102,5 +102,6 @@
   "shoppingListNotifyGroupSent": "已通知群组",
   "shoppingListNotifyGroupGuideLabel": "关于群组通知",
   "shoppingListNotifyGroupGuideMessage": "点按此按钮会向群组中的其他成员发送推送通知，告知他们您已更新购物清单。",
-  "shoppingListNotifyGroupSend": "发送通知"
+  "shoppingListNotifyGroupSend": "发送通知",
+  "commonCopy": "复制"
 }
