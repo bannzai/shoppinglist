@@ -343,5 +343,6 @@
   "purchaseErrorAlreadyPurchased": "이미 플랜을 구매하셨습니다. 이 기기에서 구매를 복원하려면 \"이미 구매하셨나요? 여기를 탭하세요\"를 사용해 구매 정보를 복원하세요.",
   "purchaseErrorReceiptAlreadyInUse": "이미 구매했거나 구매 정보가 다른 사용자에게 사용 중입니다. {accountName}을 확인해 주세요.",
   "purchaseErrorInvalidReceipt": "구매 정보가 올바르지 않습니다. 구매 정보를 확인해 주세요.",
-  "purchaseErrorMissingReceipt": "구매자 정보가 없습니다. {accountName}로 기기에 로그인한 후 다시 시도하세요."
+  "purchaseErrorMissingReceipt": "구매자 정보가 없습니다. {accountName}로 기기에 로그인한 후 다시 시도하세요.",
+  "purchaseErrorNetwork": "네트워크 연결이 불안정합니다. 연결 상태를 확인한 후 다시 시도해 주세요."
 }

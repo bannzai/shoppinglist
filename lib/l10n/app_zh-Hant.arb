@@ -343,5 +343,6 @@
   "purchaseErrorAlreadyPurchased": "您已經購買過方案。要在此裝置上還原購買，請點選「已購買？點這裡」來還原您的購買資訊。",
   "purchaseErrorReceiptAlreadyInUse": "已購買，或購買資訊已被其他使用者使用。請檢查你的{accountName}。",
   "purchaseErrorInvalidReceipt": "購買資訊無效。請檢查您的購買資訊。",
-  "purchaseErrorMissingReceipt": "沒有購買者資訊。請使用 {accountName} 登入您的裝置後再試一次。"
+  "purchaseErrorMissingReceipt": "沒有購買者資訊。請使用 {accountName} 登入您的裝置後再試一次。",
+  "purchaseErrorNetwork": "網路連線不穩定。請檢查連線後再試一次。"
 }
