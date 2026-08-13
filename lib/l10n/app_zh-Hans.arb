@@ -170,5 +170,6 @@
   "listSettingListActionsSection": "列表操作",
   "listSettingDeleteList": "删除此清单",
   "listSettingDeleteConfirmBarrierLabel": "购物清单删除确认",
-  "listSettingDeleteConfirmTitle": "要删除此清单吗？"
+  "listSettingDeleteConfirmTitle": "要删除此清单吗？",
+  "listSettingDeleteConfirmMessage": "“{name}”及其中的 {count} 个商品将被删除。此操作无法撤销。"
 }

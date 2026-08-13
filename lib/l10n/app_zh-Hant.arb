@@ -170,5 +170,6 @@
   "listSettingListActionsSection": "清單操作",
   "listSettingDeleteList": "刪除此清單",
   "listSettingDeleteConfirmBarrierLabel": "購物清單刪除確認",
-  "listSettingDeleteConfirmTitle": "要刪除這份清單嗎？"
+  "listSettingDeleteConfirmTitle": "要刪除這份清單嗎？",
+  "listSettingDeleteConfirmMessage": "「{name}」和其中的 {count} 個商品將被刪除。此操作無法復原。"
 }

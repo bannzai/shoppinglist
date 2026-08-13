@@ -170,5 +170,6 @@
   "listSettingListActionsSection": "목록 작업",
   "listSettingDeleteList": "이 목록 삭제",
   "listSettingDeleteConfirmBarrierLabel": "장바구니 목록 삭제 확인",
-  "listSettingDeleteConfirmTitle": "이 목록을 삭제할까요?"
+  "listSettingDeleteConfirmTitle": "이 목록을 삭제할까요?",
+  "listSettingDeleteConfirmMessage": "\"{name}\"과(와) 그 안의 {count}개 항목이 삭제됩니다. 이 작업은 되돌릴 수 없습니다."
 }
