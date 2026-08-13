@@ -15,5 +15,6 @@
   "commonUncategorized": "未分類",
   "commonGroup": "群組",
   "commonCamera": "相機",
-  "commonPhotoLibrary": "照片圖庫"
+  "commonPhotoLibrary": "照片圖庫",
+  "commonErrorOccurred": "發生錯誤"
 }

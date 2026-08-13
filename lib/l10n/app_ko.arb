@@ -15,5 +15,6 @@
   "commonUncategorized": "분류 없음",
   "commonGroup": "그룹",
   "commonCamera": "카메라",
-  "commonPhotoLibrary": "사진 라이브러리"
+  "commonPhotoLibrary": "사진 라이브러리",
+  "commonErrorOccurred": "오류가 발생했습니다"
 }
