@@ -32,5 +32,6 @@
   "accountDeleteCompletedTitle": "您的账户已被删除",
   "accountDeleteExitAppQuestion": "要退出应用吗？",
   "accountDeleteExitAppButton": "退出",
-  "shoppingListDefaultName": "购物清单"
+  "shoppingListDefaultName": "购物清单",
+  "shoppingListSettingTooltip": "清单设置"
 }

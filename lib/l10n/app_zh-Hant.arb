@@ -32,5 +32,6 @@
   "accountDeleteCompletedTitle": "您的帳戶已刪除",
   "accountDeleteExitAppQuestion": "要結束應用程式嗎？",
   "accountDeleteExitAppButton": "退出",
-  "shoppingListDefaultName": "購物清單"
+  "shoppingListDefaultName": "購物清單",
+  "shoppingListSettingTooltip": "清單設定"
 }

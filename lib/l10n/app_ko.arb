@@ -32,5 +32,6 @@
   "accountDeleteCompletedTitle": "계정이 삭제되었습니다",
   "accountDeleteExitAppQuestion": "앱을 종료할까요?",
   "accountDeleteExitAppButton": "종료",
-  "shoppingListDefaultName": "쇼핑 목록"
+  "shoppingListDefaultName": "쇼핑 목록",
+  "shoppingListSettingTooltip": "목록 설정"
 }
