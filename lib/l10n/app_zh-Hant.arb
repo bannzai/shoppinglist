@@ -29,5 +29,6 @@
   "accountDeleteReauthTitle": "請重新登入",
   "accountDeleteReauthMessage": "要刪除您的帳戶，請重新登入。",
   "accountDeleteReauthButton": "請重新登入",
-  "accountDeleteCompletedTitle": "您的帳戶已刪除"
+  "accountDeleteCompletedTitle": "您的帳戶已刪除",
+  "accountDeleteExitAppQuestion": "要結束應用程式嗎？"
 }

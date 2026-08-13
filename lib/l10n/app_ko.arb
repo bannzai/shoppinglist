@@ -29,5 +29,6 @@
   "accountDeleteReauthTitle": "다시 로그인해 주세요",
   "accountDeleteReauthMessage": "계정을 삭제하려면 다시 로그인해 주세요.",
   "accountDeleteReauthButton": "다시 로그인",
-  "accountDeleteCompletedTitle": "계정이 삭제되었습니다"
+  "accountDeleteCompletedTitle": "계정이 삭제되었습니다",
+  "accountDeleteExitAppQuestion": "앱을 종료할까요?"
 }
