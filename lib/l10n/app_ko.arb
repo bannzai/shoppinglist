@@ -108,5 +108,6 @@
   "settingsProfileSection": "프로필",
   "settingsDisplayNameLabel": "표시 이름",
   "settingsDisplayNameHint": "표시 이름을 입력하세요",
-  "settingsDisplayNameUpdated": "표시 이름이 업데이트되었습니다"
+  "settingsDisplayNameUpdated": "표시 이름이 업데이트되었습니다",
+  "settingsGroupManagement": "그룹 관리"
 }
