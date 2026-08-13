@@ -204,5 +204,6 @@
   "groupCategoryEditKeywordsEmpty": "還沒有關鍵字",
   "groupCategoryEditKeywordHint": "輸入關鍵字",
   "groupCategoryEditMatchingLabel": "比對方式",
-  "groupCategoryEditMatchingExact": "完全符合"
+  "groupCategoryEditMatchingExact": "完全符合",
+  "groupCategoryEditMatchingPartial": "部分符合"
 }

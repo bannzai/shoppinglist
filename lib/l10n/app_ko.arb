@@ -204,5 +204,6 @@
   "groupCategoryEditKeywordsEmpty": "아직 키워드가 없어요",
   "groupCategoryEditKeywordHint": "키워드를 입력하세요",
   "groupCategoryEditMatchingLabel": "일치 방식",
-  "groupCategoryEditMatchingExact": "정확히 일치"
+  "groupCategoryEditMatchingExact": "정확히 일치",
+  "groupCategoryEditMatchingPartial": "부분 일치"
 }
