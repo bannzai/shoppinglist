@@ -284,5 +284,6 @@
   "paywallFeatureUrlExtraction": "从网址中提取项目（每月 50 次）",
   "paywallFeatureThemeColors": "五种主题颜色",
   "paywallFeatureUnlimitedRetention": "无限期保留清单",
-  "paywallFeatureReceipt": "将收据保存到清单"
+  "paywallFeatureReceipt": "将收据保存到清单",
+  "paywallSubscriptionNote": "可随时取消 ・ 自动续订可在续订前 24 小时内取消"
 }
