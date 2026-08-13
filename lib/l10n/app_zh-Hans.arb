@@ -30,5 +30,6 @@
   "accountDeleteReauthMessage": "要删除您的账户，请重新登录。",
   "accountDeleteReauthButton": "请重新登录",
   "accountDeleteCompletedTitle": "您的账户已被删除",
-  "accountDeleteExitAppQuestion": "要退出应用吗？"
+  "accountDeleteExitAppQuestion": "要退出应用吗？",
+  "accountDeleteExitAppButton": "退出"
 }
