@@ -114,5 +114,6 @@
   "settingsAppearanceSection": "外观",
   "settingsNotificationSection": "通知",
   "settingsAboutSection": "关于此应用",
-  "settingsTermsOfService": "服务条款"
+  "settingsTermsOfService": "服务条款",
+  "settingsPrivacyPolicy": "隐私政策"
 }

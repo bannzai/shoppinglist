@@ -114,5 +114,6 @@
   "settingsAppearanceSection": "모양",
   "settingsNotificationSection": "알림",
   "settingsAboutSection": "이 앱에 대하여",
-  "settingsTermsOfService": "이용약관"
+  "settingsTermsOfService": "이용약관",
+  "settingsPrivacyPolicy": "개인정보처리방침"
 }

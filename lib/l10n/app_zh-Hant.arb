@@ -114,5 +114,6 @@
   "settingsAppearanceSection": "外觀",
   "settingsNotificationSection": "通知",
   "settingsAboutSection": "關於此應用程式",
-  "settingsTermsOfService": "服務條款"
+  "settingsTermsOfService": "服務條款",
+  "settingsPrivacyPolicy": "隱私政策"
 }
