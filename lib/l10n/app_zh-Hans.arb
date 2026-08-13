@@ -308,5 +308,6 @@
   "shoppingLocationEmpty": "还没有购物地点",
   "shoppingLocationGeoConfigured": "已设置位置",
   "shoppingLocationAddTitle": "添加位置",
-  "shoppingLocationEditTitle": "编辑位置"
+  "shoppingLocationEditTitle": "编辑位置",
+  "shoppingLocationNameHint": "位置名称"
 }
