@@ -250,5 +250,6 @@
   "authHeroDescription": "登入後，你的清單會在各裝置間保持同步。無廣告，無電子報。",
   "authStartWithoutSignIn": "無需登入即可開始",
   "authLinkAccountLaterNote": "你可以稍後在設定畫面連結帳號",
-  "authAgreementNote": "繼續使用即表示你同意{terms}和{privacy}。"
+  "authAgreementNote": "繼續使用即表示你同意{terms}和{privacy}。",
+  "inquiryDescription": "我們會閱讀您傳送的所有內容，並用來改善應用程式。如果您希望收到回覆，請附上您的電子郵件地址。"
 }
