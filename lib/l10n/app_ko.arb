@@ -166,5 +166,6 @@
   "listSettingShareSection": "공유",
   "listSettingSendInvitationCode": "그룹에 초대 코드를 보내기",
   "listSettingGroupSetting": "그룹 설정",
-  "listSettingGroupNameRequired": "누군가를 초대하기 전에 그룹 이름을 설정하세요"
+  "listSettingGroupNameRequired": "누군가를 초대하기 전에 그룹 이름을 설정하세요",
+  "listSettingListActionsSection": "목록 작업"
 }

@@ -166,5 +166,6 @@
   "listSettingShareSection": "共享",
   "listSettingSendInvitationCode": "向群組傳送邀請碼",
   "listSettingGroupSetting": "群組設定",
-  "listSettingGroupNameRequired": "請先設定群組名稱，再邀請他人"
+  "listSettingGroupNameRequired": "請先設定群組名稱，再邀請他人",
+  "listSettingListActionsSection": "清單操作"
 }
