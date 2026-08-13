@@ -267,5 +267,6 @@
   "notificationPermissionTitle": "開啟推播通知",
   "notificationPermissionMessage": "當群組中的成員更新購物清單並通知你時，你會立即收到推播通知。請在接下來出現的確認畫面中允許通知。",
   "notificationPermissionLater": "稍後",
-  "notificationPermissionAllow": "允許通知"
+  "notificationPermissionAllow": "允許通知",
+  "onboardingSlide1Title": "全家一起建立的\n購物清單"
 }
