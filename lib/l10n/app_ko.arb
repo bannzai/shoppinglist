@@ -117,5 +117,6 @@
   "settingsTermsOfService": "이용약관",
   "settingsPrivacyPolicy": "개인정보처리방침",
   "settingsCommercialTransactionAct": "특정 상거래법에 따른 표기",
-  "settingsInquiry": "문의하기"
+  "settingsInquiry": "문의하기",
+  "settingsOssLicense": "오픈소스 라이선스"
 }
