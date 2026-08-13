@@ -257,5 +257,6 @@
   "inquiryEmailInvalid": "电子邮件地址格式不正确",
   "inquiryCategoryLabel": "咨询类型",
   "inquiryCategoryRequired": "请选择您的咨询类型",
-  "inquiryContentLabel": "您的留言"
+  "inquiryContentLabel": "您的留言",
+  "inquiryContentRequired": "请输入您的留言"
 }

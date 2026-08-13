@@ -257,5 +257,6 @@
   "inquiryEmailInvalid": "이메일 주소 형식이 올바르지 않습니다",
   "inquiryCategoryLabel": "문의 유형",
   "inquiryCategoryRequired": "문의 유형을 선택해 주세요",
-  "inquiryContentLabel": "문의 내용"
+  "inquiryContentLabel": "문의 내용",
+  "inquiryContentRequired": "메시지를 입력해 주세요"
 }

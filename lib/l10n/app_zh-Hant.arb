@@ -257,5 +257,6 @@
   "inquiryEmailInvalid": "電子郵件地址格式不正確",
   "inquiryCategoryLabel": "詢問類型",
   "inquiryCategoryRequired": "請選擇您的詢問類型",
-  "inquiryContentLabel": "您的訊息"
+  "inquiryContentLabel": "您的訊息",
+  "inquiryContentRequired": "請輸入您的訊息"
 }
