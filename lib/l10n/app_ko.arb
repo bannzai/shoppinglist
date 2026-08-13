@@ -211,5 +211,6 @@
   "groupCreateIconLabel": "아이콘",
   "groupCreateSubmit": "만들기",
   "groupCreateIconHome": "집",
-  "groupCreateIconCart": "장바구니"
+  "groupCreateIconCart": "장바구니",
+  "groupCreateIconFork": "음식"
 }

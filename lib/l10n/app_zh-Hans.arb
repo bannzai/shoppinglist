@@ -211,5 +211,6 @@
   "groupCreateIconLabel": "图标",
   "groupCreateSubmit": "创建",
   "groupCreateIconHome": "家",
-  "groupCreateIconCart": "购物车"
+  "groupCreateIconCart": "购物车",
+  "groupCreateIconFork": "食物"
 }

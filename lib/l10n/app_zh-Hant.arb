@@ -211,5 +211,6 @@
   "groupCreateIconLabel": "圖示",
   "groupCreateSubmit": "建立",
   "groupCreateIconHome": "家",
-  "groupCreateIconCart": "購物車"
+  "groupCreateIconCart": "購物車",
+  "groupCreateIconFork": "食物"
 }
