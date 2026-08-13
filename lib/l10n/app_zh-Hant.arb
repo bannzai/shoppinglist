@@ -74,5 +74,6 @@
   "shoppingListAiReviewConfirm": "新增 {count} 個項目",
   "shoppingListFabAddFromPhoto": "從照片新增",
   "shoppingListFabAddFromUrl": "從網址加入",
-  "shoppingListFabPasteText": "貼上文字"
+  "shoppingListFabPasteText": "貼上文字",
+  "shoppingListImageRecognitionLimitReached": "已達到照片辨識的每月上限（{limit}次）"
 }

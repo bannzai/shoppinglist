@@ -74,5 +74,6 @@
   "shoppingListAiReviewConfirm": "{count}개 항목 추가",
   "shoppingListFabAddFromPhoto": "사진에서 추가",
   "shoppingListFabAddFromUrl": "URL에서 추가",
-  "shoppingListFabPasteText": "텍스트 붙여넣기"
+  "shoppingListFabPasteText": "텍스트 붙여넣기",
+  "shoppingListImageRecognitionLimitReached": "사진 인식의 월간 한도({limit}회)에 도달했습니다"
 }
