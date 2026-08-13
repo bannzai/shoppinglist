@@ -20,5 +20,6 @@
   "errorUnknownTitle": "发生了未知错误",
   "errorUnexpectedTitle": "发生了意外错误",
   "errorFaqLink": "查看常见问题",
-  "authGoogleSignIn": "使用 Google 登录"
+  "authGoogleSignIn": "使用 Google 登录",
+  "loadingPreparing": "正在准备…"
 }
