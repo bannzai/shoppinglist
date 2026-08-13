@@ -11,5 +11,6 @@
   "commonUndo": "撤销",
   "commonUpgrade": "升级",
   "commonSettings": "设置",
-  "commonCategory": "分类"
+  "commonCategory": "分类",
+  "commonUncategorized": "未分类"
 }

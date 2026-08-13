@@ -11,5 +11,6 @@
   "commonUndo": "실행 취소",
   "commonUpgrade": "업그레이드",
   "commonSettings": "설정",
-  "commonCategory": "카테고리"
+  "commonCategory": "카테고리",
+  "commonUncategorized": "분류 없음"
 }

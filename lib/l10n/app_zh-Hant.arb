@@ -11,5 +11,6 @@
   "commonUndo": "復原",
   "commonUpgrade": "升級",
   "commonSettings": "設定",
-  "commonCategory": "分類"
+  "commonCategory": "分類",
+  "commonUncategorized": "未分類"
 }
