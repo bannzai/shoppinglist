@@ -93,5 +93,6 @@
   "shoppingListHintDelete": "・빈 줄에서 삭제를 누르면 제거할 수 있어요",
   "shoppingListHintFabPrefix": "오른쪽 아래의 ",
   "shoppingListHintFabSuffix": "오른쪽 아래에서 사진이나 URL로 추가",
-  "shoppingListItemDetailTooltip": "항목 상세"
+  "shoppingListItemDetailTooltip": "항목 상세",
+  "shoppingListItemDeleteTooltip": "항목 삭제"
 }

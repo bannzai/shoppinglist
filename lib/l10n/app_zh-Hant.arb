@@ -93,5 +93,6 @@
   "shoppingListHintDelete": "・在空白行按刪除鍵即可移除",
   "shoppingListHintFabPrefix": "長按右下角的 ",
   "shoppingListHintFabSuffix": "右下角可從照片或網址新增",
-  "shoppingListItemDetailTooltip": "項目詳情"
+  "shoppingListItemDetailTooltip": "項目詳情",
+  "shoppingListItemDeleteTooltip": "刪除項目"
 }
