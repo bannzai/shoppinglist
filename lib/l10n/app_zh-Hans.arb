@@ -73,5 +73,6 @@
   "shoppingListAiReviewEmpty": "未找到任何建议",
   "shoppingListAiReviewConfirm": "添加 {count} 个项目",
   "shoppingListFabAddFromPhoto": "从照片添加",
-  "shoppingListFabAddFromUrl": "从网址添加"
+  "shoppingListFabAddFromUrl": "从网址添加",
+  "shoppingListFabPasteText": "粘贴文本"
 }
