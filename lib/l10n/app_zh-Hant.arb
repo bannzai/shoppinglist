@@ -201,5 +201,6 @@
   "groupCategoryEditIconLabel": "分類圖示",
   "groupCategoryEditKeywordsLabel": "關鍵字",
   "groupCategoryEditAddKeyword": "新增關鍵字",
-  "groupCategoryEditKeywordsEmpty": "還沒有關鍵字"
+  "groupCategoryEditKeywordsEmpty": "還沒有關鍵字",
+  "groupCategoryEditKeywordHint": "輸入關鍵字"
 }
