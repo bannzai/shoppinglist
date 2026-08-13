@@ -200,5 +200,6 @@
   "groupCategoryEditColorLabel": "分类颜色",
   "groupCategoryEditIconLabel": "分类图标",
   "groupCategoryEditKeywordsLabel": "关键词",
-  "groupCategoryEditAddKeyword": "添加关键词"
+  "groupCategoryEditAddKeyword": "添加关键词",
+  "groupCategoryEditKeywordsEmpty": "还没有关键词"
 }

@@ -200,5 +200,6 @@
   "groupCategoryEditColorLabel": "카테고리 색상",
   "groupCategoryEditIconLabel": "카테고리 아이콘",
   "groupCategoryEditKeywordsLabel": "키워드",
-  "groupCategoryEditAddKeyword": "키워드 추가"
+  "groupCategoryEditAddKeyword": "키워드 추가",
+  "groupCategoryEditKeywordsEmpty": "아직 키워드가 없어요"
 }
