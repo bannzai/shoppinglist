@@ -54,5 +54,6 @@
   "shoppingListSpotlightMessage": "為每個日期建立一份清單，或複製你現在使用的清單。",
   "shoppingListSpotlightDismiss": "輕觸關閉",
   "shoppingListAiProcessingImage": "正在從照片中提取建議…",
-  "shoppingListAiProcessingUrl": "正在從網址擷取建議…"
+  "shoppingListAiProcessingUrl": "正在從網址擷取建議…",
+  "shoppingListAiProcessingCategorize": "正在依類別整理……"
 }

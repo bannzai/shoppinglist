@@ -54,5 +54,6 @@
   "shoppingListSpotlightMessage": "각 날짜별로 목록을 만들거나, 지금 사용 중인 목록을 복제하세요.",
   "shoppingListSpotlightDismiss": "탭하여 닫기",
   "shoppingListAiProcessingImage": "사진에서 추천 항목을 가져오는 중...",
-  "shoppingListAiProcessingUrl": "URL에서 추천을 추출하는 중…"
+  "shoppingListAiProcessingUrl": "URL에서 추천을 추출하는 중…",
+  "shoppingListAiProcessingCategorize": "카테고리별로 정리하는 중..."
 }
