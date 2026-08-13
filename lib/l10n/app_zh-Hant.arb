@@ -237,5 +237,6 @@
   "groupSettingMemberSelf": "你",
   "groupSettingMemberFallbackName": "成員",
   "groupSettingShoppingLocationSubtitle": "新增和編輯商店",
-  "groupSettingInvitationSection": "群組邀請"
+  "groupSettingInvitationSection": "群組邀請",
+  "groupSettingCreatingInvitation": "正在產生邀請碼…"
 }
