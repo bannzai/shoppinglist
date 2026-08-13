@@ -141,5 +141,6 @@
   "settingsLocationReminderTitle": "位置提醒",
   "settingsLocationReminderSubtitle": "当我靠近商店时提醒我购物清单",
   "settingsLocationReminderNotificationPermissionRequired": "允许通知后可使用此功能",
-  "settingsLocationReminderAlwaysPermissionRequired": "将后台定位权限设置为“始终”以使用此功能"
+  "settingsLocationReminderAlwaysPermissionRequired": "将后台定位权限设置为“始终”以使用此功能",
+  "settingsLocationReminderPremiumOnly": "位置提醒是高级版功能"
 }

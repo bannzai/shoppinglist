@@ -141,5 +141,6 @@
   "settingsLocationReminderTitle": "位置提醒",
   "settingsLocationReminderSubtitle": "當我靠近商店時提醒我購物清單",
   "settingsLocationReminderNotificationPermissionRequired": "允許通知後可使用此功能",
-  "settingsLocationReminderAlwaysPermissionRequired": "將背景位置存取設為「永遠」以使用此功能"
+  "settingsLocationReminderAlwaysPermissionRequired": "將背景位置存取設為「永遠」以使用此功能",
+  "settingsLocationReminderPremiumOnly": "位置提醒是進階版功能"
 }
