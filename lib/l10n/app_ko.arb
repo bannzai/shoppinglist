@@ -158,5 +158,6 @@
   "listSettingShoppingLocationSection": "쇼핑 장소",
   "listSettingLocationUnset": "미설정",
   "listSettingLocationChangeDetail": "변경",
-  "listSettingCategorySubtitle": "자동 분류 키워드 관리"
+  "listSettingCategorySubtitle": "자동 분류 키워드 관리",
+  "listSettingStoragePeriodSection": "보관 기간"
 }

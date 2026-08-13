@@ -158,5 +158,6 @@
   "listSettingShoppingLocationSection": "購物地點",
   "listSettingLocationUnset": "未設定",
   "listSettingLocationChangeDetail": "變更",
-  "listSettingCategorySubtitle": "管理自動分類關鍵字"
+  "listSettingCategorySubtitle": "管理自動分類關鍵字",
+  "listSettingStoragePeriodSection": "保留期限"
 }

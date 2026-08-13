@@ -158,5 +158,6 @@
   "listSettingShoppingLocationSection": "购物地点",
   "listSettingLocationUnset": "未设置",
   "listSettingLocationChangeDetail": "更改",
-  "listSettingCategorySubtitle": "管理自动分类关键词"
+  "listSettingCategorySubtitle": "管理自动分类关键词",
+  "listSettingStoragePeriodSection": "保留期限"
 }
