@@ -358,5 +358,6 @@
   "purchaseErrorUpdateRequired": "发生未知错误。请更新到最新版本后重试。如果问题仍然存在，请通过“设置”>“联系我们”与我们联系。代码：{code} 详情：{details}",
   "purchaseErrorEmptySubscriberAttributes": "发生未知错误。无法提前获取购买信息。详情：{details}",
   "purchaseErrorCustomerInfo": "获取客户信息失败。请稍后再试。如果问题仍然存在，请在“设置”>“咨询”中联系我们。详情：代码：{code} {details}",
-  "purchaseErrorSystemInfo": "您的设备设置有问题。请检查后重试。如果问题仍然存在，请通过“设置”>“咨询”联系我们。代码：{code} 详细信息：{details}"
+  "purchaseErrorSystemInfo": "您的设备设置有问题。请检查后重试。如果问题仍然存在，请通过“设置”>“咨询”联系我们。代码：{code} 详细信息：{details}",
+  "purchaseErrorBeginRefundRequest": "退款流程已开始。请先确认后重试。如果问题仍然存在，请前往“设置”>“咨询”联系我们。代码：{code} 详情：{details}"
 }
