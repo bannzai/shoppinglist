@@ -139,5 +139,6 @@
   "settingsThemeColorSwatchLabel": "{label} 主题颜色",
   "settingsThemeColorPremiumOnly": "更改主题颜色是高级版功能",
   "settingsLocationReminderTitle": "位置提醒",
-  "settingsLocationReminderSubtitle": "当我靠近商店时提醒我购物清单"
+  "settingsLocationReminderSubtitle": "当我靠近商店时提醒我购物清单",
+  "settingsLocationReminderNotificationPermissionRequired": "允许通知后可使用此功能"
 }

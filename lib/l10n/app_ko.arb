@@ -139,5 +139,6 @@
   "settingsThemeColorSwatchLabel": "{label} 테마 색상",
   "settingsThemeColorPremiumOnly": "테마 색상 변경은 프리미엄 기능입니다",
   "settingsLocationReminderTitle": "위치 알림",
-  "settingsLocationReminderSubtitle": "매장 근처에 있을 때 쇼핑 목록을 알려주세요"
+  "settingsLocationReminderSubtitle": "매장 근처에 있을 때 쇼핑 목록을 알려주세요",
+  "settingsLocationReminderNotificationPermissionRequired": "알림을 허용해야 사용할 수 있어요"
 }
