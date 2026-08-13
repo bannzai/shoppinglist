@@ -177,5 +177,6 @@
   "listSettingInvitationRemaining": "有效期 7 天 ・ 剩餘 {days} 天 {hours} 小時",
   "listSettingInvitationCodeCopied": "已複製邀請碼",
   "listSettingInvitationShareText": "購物清單邀請碼：{code}",
-  "listSettingSelectShoppingLocationTitle": "選擇購物地點"
+  "listSettingSelectShoppingLocationTitle": "選擇購物地點",
+  "listSettingLocationNone": "無"
 }

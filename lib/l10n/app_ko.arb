@@ -177,5 +177,6 @@
   "listSettingInvitationRemaining": "7일 동안 유효 ・ {days}일 {hours}시간 남음",
   "listSettingInvitationCodeCopied": "초대 코드를 복사했습니다",
   "listSettingInvitationShareText": "쇼핑 목록 초대 코드: {code}",
-  "listSettingSelectShoppingLocationTitle": "쇼핑할 위치 선택"
+  "listSettingSelectShoppingLocationTitle": "쇼핑할 위치 선택",
+  "listSettingLocationNone": "없음"
 }
