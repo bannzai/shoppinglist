@@ -318,5 +318,6 @@
   "shoppingLocationPickerTitle": "在地图上选择位置",
   "shoppingLocationPickerConfirm": "使用此位置",
   "settingsThemeColorShu": "朱红",
-  "settingsThemeColorMatcha": "抹茶"
+  "settingsThemeColorMatcha": "抹茶",
+  "settingsThemeColorAi": "靛蓝"
 }
