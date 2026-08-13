@@ -321,5 +321,6 @@
   "settingsThemeColorMatcha": "抹茶",
   "settingsThemeColorAi": "靛蓝",
   "settingsThemeColorSumi": "墨色",
-  "settingsThemeColorKuchiba": "朽叶"
+  "settingsThemeColorKuchiba": "朽叶",
+  "inquiryCategoryBugReport": "问题反馈"
 }

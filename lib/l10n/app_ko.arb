@@ -321,5 +321,6 @@
   "settingsThemeColorMatcha": "말차",
   "settingsThemeColorAi": "인디고",
   "settingsThemeColorSumi": "먹물색",
-  "settingsThemeColorKuchiba": "쿠치바"
+  "settingsThemeColorKuchiba": "쿠치바",
+  "inquiryCategoryBugReport": "버그 신고"
 }
