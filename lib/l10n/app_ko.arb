@@ -129,5 +129,6 @@
   "settingsSignOut": "로그아웃",
   "settingsSignOutConfirmBarrierLabel": "로그아웃 확인",
   "settingsSignOutConfirmTitle": "로그아웃할까요?",
-  "settingsSignOutConfirmMessage": "다시 로그인할 때까지 이 기기에서는 목록에 접근할 수 없습니다."
+  "settingsSignOutConfirmMessage": "다시 로그인할 때까지 이 기기에서는 목록에 접근할 수 없습니다.",
+  "settingsSignOutConfirmMessageGuest": "현재 게스트로 앱을 사용 중이므로, 로그아웃하면 같은 계정으로 다시 로그인할 수 없고 현재 목록과 그룹에 대한 접근 권한도 영구적으로 잃게 됩니다."
 }

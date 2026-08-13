@@ -129,5 +129,6 @@
   "settingsSignOut": "登出",
   "settingsSignOutConfirmBarrierLabel": "登出確認",
   "settingsSignOutConfirmTitle": "要登出嗎？",
-  "settingsSignOutConfirmMessage": "在您再次登入之前，您將無法從此裝置存取您的清單。"
+  "settingsSignOutConfirmMessage": "在您再次登入之前，您將無法從此裝置存取您的清單。",
+  "settingsSignOutConfirmMessageGuest": "您目前以訪客身分使用此應用，因此如果登出，將無法再次登入同一帳號，且會永久失去對目前清單和群組的存取權限。"
 }
