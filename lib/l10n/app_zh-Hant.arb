@@ -17,5 +17,6 @@
   "commonCamera": "相機",
   "commonPhotoLibrary": "照片圖庫",
   "commonErrorOccurred": "發生錯誤",
-  "errorUnknownTitle": "發生未知錯誤"
+  "errorUnknownTitle": "發生未知錯誤",
+  "errorUnexpectedTitle": "發生了未預期的錯誤"
 }
