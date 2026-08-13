@@ -161,5 +161,6 @@
   "listSettingCategorySubtitle": "管理自動分類關鍵字",
   "listSettingStoragePeriodSection": "保留期限",
   "listSettingStoragePeriodPremium": "進階版：無限制",
-  "listSettingStoragePeriodFree": "建立後 30 天"
+  "listSettingStoragePeriodFree": "建立後 30 天",
+  "listSettingStoragePeriodUpsell": "使用進階版，您可以無限期保存清單"
 }
