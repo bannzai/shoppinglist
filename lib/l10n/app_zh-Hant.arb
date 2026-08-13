@@ -116,5 +116,6 @@
   "settingsAboutSection": "關於此應用程式",
   "settingsTermsOfService": "服務條款",
   "settingsPrivacyPolicy": "隱私政策",
-  "settingsCommercialTransactionAct": "根據《特定商業交易法》的說明"
+  "settingsCommercialTransactionAct": "根據《特定商業交易法》的說明",
+  "settingsInquiry": "聯絡我們"
 }
