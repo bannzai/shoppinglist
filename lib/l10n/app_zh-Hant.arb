@@ -224,5 +224,6 @@
   "groupInvitationJoining": "加入中…",
   "groupInvitationJoin": "加入",
   "groupInvitationVerifyingTitle": "正在檢查邀請碼",
-  "groupInvitationVerifyingMessage": "伺服器正在處理你加入群組的請求。"
+  "groupInvitationVerifyingMessage": "伺服器正在處理你加入群組的請求。",
+  "groupJoinHeading": "開始吧"
 }
