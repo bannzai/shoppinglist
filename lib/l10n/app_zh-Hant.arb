@@ -113,5 +113,6 @@
   "settingsJoinGroupWithInvitationCode": "使用邀請碼加入群組",
   "settingsAppearanceSection": "外觀",
   "settingsNotificationSection": "通知",
-  "settingsAboutSection": "關於此應用程式"
+  "settingsAboutSection": "關於此應用程式",
+  "settingsTermsOfService": "服務條款"
 }
