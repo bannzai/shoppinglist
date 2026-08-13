@@ -41,5 +41,6 @@
   "shoppingListPickerTitle": "切換清單",
   "shoppingListPickerAddList": "新增清單",
   "shoppingListCreateListTooltip": "新增清單",
-  "shoppingListCreateTodayList": "新增含目前日期的清單"
+  "shoppingListCreateTodayList": "新增含目前日期的清單",
+  "shoppingListDuplicateCurrentList": "複製目前清單"
 }
