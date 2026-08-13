@@ -83,5 +83,6 @@
   "shoppingListUrlInvalid": "請輸入有效的 HTTPS URL",
   "shoppingListStarterRowLabel": "點一下開始輸入",
   "shoppingListHintExample1": "例如：牛奶 1公升",
-  "shoppingListHintExample2": "例如：雞蛋，1包"
+  "shoppingListHintExample2": "例如：雞蛋，1包",
+  "shoppingListHintExample3": "例如：麵包"
 }
