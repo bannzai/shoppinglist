@@ -214,5 +214,6 @@
   "groupCreateIconCart": "장바구니",
   "groupCreateIconFork": "음식",
   "groupCreateIconCookie": "간식",
-  "groupCreateIconPets": "반려동물"
+  "groupCreateIconPets": "반려동물",
+  "groupCreateIconBag": "가방"
 }

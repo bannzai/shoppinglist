@@ -214,5 +214,6 @@
   "groupCreateIconCart": "购物车",
   "groupCreateIconFork": "食物",
   "groupCreateIconCookie": "零食",
-  "groupCreateIconPets": "宠物"
+  "groupCreateIconPets": "宠物",
+  "groupCreateIconBag": "包"
 }
