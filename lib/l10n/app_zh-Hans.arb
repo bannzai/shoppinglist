@@ -23,5 +23,6 @@
   "authGoogleSignIn": "使用 Google 登录",
   "loadingPreparing": "正在准备…",
   "accountDeleteButton": "删除账号",
-  "accountDeleteConfirmTitle": "删除您的账户信息"
+  "accountDeleteConfirmTitle": "删除您的账户信息",
+  "accountDeleteConfirmMessage": "删除你的账号将移除所有用户信息。"
 }
