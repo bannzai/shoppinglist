@@ -220,5 +220,6 @@
   "groupCreateInvitationDialogMessage": "가족에게 초대 코드를 공유하세요",
   "groupInvitationTitle": "초대 코드로 참여",
   "groupInvitationHeading": "초대 코드를 입력하세요",
-  "groupInvitationDescription": "그룹 구성원이 공유한 8자리 코드를 입력하세요"
+  "groupInvitationDescription": "그룹 구성원이 공유한 8자리 코드를 입력하세요",
+  "groupInvitationJoining": "참여 중..."
 }
