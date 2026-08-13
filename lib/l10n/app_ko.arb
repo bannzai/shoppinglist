@@ -360,5 +360,6 @@
   "purchaseErrorCustomerInfo": "고객 정보를 가져오지 못했습니다. 잠시 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 자세한 내용: 코드: {code} {details}",
   "purchaseErrorSystemInfo": "기기 설정에 문제가 있습니다. 설정을 확인한 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 코드: {code} 세부 정보: {details}",
   "purchaseErrorBeginRefundRequest": "환불 절차가 시작되었습니다. 내용을 확인한 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 코드: {code} 상세: {details}",
-  "purchaseErrorTimeout": "요청 시간이 초과되었습니다. 네트워크 연결을 확인한 뒤 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 자세한 내용: {details}"
+  "purchaseErrorTimeout": "요청 시간이 초과되었습니다. 네트워크 연결을 확인한 뒤 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 자세한 내용: {details}",
+  "purchaseErrorOfflineConnection": "연결 상태가 좋지 않습니다. 네트워크 연결을 확인한 후 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 상세 정보: {details}"
 }
