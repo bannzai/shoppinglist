@@ -16,5 +16,6 @@
   "commonGroup": "群组",
   "commonCamera": "相机",
   "commonPhotoLibrary": "照片图库",
-  "commonErrorOccurred": "发生错误"
+  "commonErrorOccurred": "发生错误",
+  "errorUnknownTitle": "发生了未知错误"
 }
