@@ -304,5 +304,6 @@
   "receiptCaptureOrSelect": "拍攝或選擇收據照片",
   "forceUpdateTitle": "請更新應用程式",
   "forceUpdateMessage": "我們希望您更新此應用程式。請從 {storeName} 更新至最新版本。",
-  "shoppingLocationTitle": "購物地點"
+  "shoppingLocationTitle": "購物地點",
+  "shoppingLocationEmpty": "還沒有購物地點"
 }
