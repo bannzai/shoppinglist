@@ -34,5 +34,6 @@
   "accountDeleteExitAppButton": "종료",
   "shoppingListDefaultName": "쇼핑 목록",
   "shoppingListSettingTooltip": "목록 설정",
-  "shoppingListEmptyTitle": "아직 쇼핑 목록이 없어요"
+  "shoppingListEmptyTitle": "아직 쇼핑 목록이 없어요",
+  "shoppingListEmptyMessage": "새 쇼핑 목록 만들기"
 }
