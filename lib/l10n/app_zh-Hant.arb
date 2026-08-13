@@ -298,5 +298,6 @@
   "receiptSheetTitle": "收據",
   "receiptTakePhoto": "拍照",
   "receiptChooseFromLibrary": "從照片圖庫選擇",
-  "receiptAmountLabel": "金額"
+  "receiptAmountLabel": "金額",
+  "receiptMemoLabel": "備註"
 }

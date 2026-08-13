@@ -298,5 +298,6 @@
   "receiptSheetTitle": "영수증",
   "receiptTakePhoto": "사진 찍기",
   "receiptChooseFromLibrary": "사진 보관함에서 선택",
-  "receiptAmountLabel": "금액"
+  "receiptAmountLabel": "금액",
+  "receiptMemoLabel": "메모"
 }
