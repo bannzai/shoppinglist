@@ -49,5 +49,6 @@
   "shoppingListDeletedListName": "已删除的清单",
   "shoppingListDuplicateSourceDeleted": "原始购物清单已删除",
   "shoppingListRetentionBannerMessage": "在免费方案中，清单会在创建 30 天后自动清理",
-  "shoppingListRetentionBannerDetail": "详情"
+  "shoppingListRetentionBannerDetail": "详情",
+  "shoppingListSpotlightTitle": "你可以在这里添加新的购物清单"
 }

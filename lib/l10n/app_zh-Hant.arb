@@ -49,5 +49,6 @@
   "shoppingListDeletedListName": "已刪除的清單",
   "shoppingListDuplicateSourceDeleted": "原始購物清單已刪除",
   "shoppingListRetentionBannerMessage": "在免費方案中，清單會在建立 30 天後自動清理",
-  "shoppingListRetentionBannerDetail": "詳細資料"
+  "shoppingListRetentionBannerDetail": "詳細資料",
+  "shoppingListSpotlightTitle": "你可以在這裡新增購物清單"
 }
