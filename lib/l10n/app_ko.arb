@@ -38,5 +38,6 @@
   "shoppingListEmptyMessage": "새 쇼핑 목록 만들기",
   "shoppingListEmptyCreateButton": "쇼핑 목록 만들기",
   "shoppingListLoadErrorTitle": "목록을 불러오지 못했습니다",
-  "shoppingListPickerTitle": "목록 전환"
+  "shoppingListPickerTitle": "목록 전환",
+  "shoppingListPickerAddList": "새 목록 추가"
 }
