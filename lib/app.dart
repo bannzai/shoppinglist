@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/features/developer_options/page.dart';
 import 'package:shoppinglist/features/developer_options/shake_detector.dart';
 import 'package:shoppinglist/provider/app_navigator_key.dart';
@@ -59,7 +60,9 @@ class _AppState extends ConsumerState<App> {
 
     return MaterialApp(
       navigatorKey: appNavigatorKey,
-      title: '買い物リスト',
+      onGenerateTitle: (context) => context.l10n.appTitle,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       // アプリはライトモード固定。darkTheme は提供しない（OS がダークでも常にライト表示）。
       theme: buildAppTheme(accent: accent),
       builder: (context, child) {

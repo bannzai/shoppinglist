@@ -30,7 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  collection: 
+  flutter_localizations:
+    sdk: flutter
+  collection:
     
   firebase_core: ^4.4.0
   firebase_analytics: 
@@ -121,6 +123,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # gen-l10n: l10n.yaml の設定で lib/l10n の arb からローカライズクラスを生成する
+  generate: true
 
   # To add assets to your application, add an assets section, like this:
   assets:

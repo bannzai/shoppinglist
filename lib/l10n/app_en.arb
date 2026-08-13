@@ -1,0 +1,7 @@
+{
+  "@@locale": "en",
+  "appTitle": "Shopping List",
+  "@appTitle": {
+    "description": "アプリ名。MaterialApp の title (タスクスイッチャー等 OS 表示用)"
+  }
+}
