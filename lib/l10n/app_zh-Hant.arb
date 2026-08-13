@@ -242,5 +242,6 @@
   "groupSettingCreateInvitation": "產生邀請碼",
   "groupSettingRemoveMemberConfirmTitle": "要將{name}從群組中移除嗎？",
   "groupSettingRemoveMemberConfirmMessage": "被移除的成員將無法再存取這個群組",
-  "groupSettingMemberRemoved": "已移除{name}"
+  "groupSettingMemberRemoved": "已移除{name}",
+  "groupSettingInvitationCodeMessage": "分享下面的代碼"
 }
