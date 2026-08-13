@@ -12,5 +12,6 @@
   "commonUpgrade": "升级",
   "commonSettings": "设置",
   "commonCategory": "分类",
-  "commonUncategorized": "未分类"
+  "commonUncategorized": "未分类",
+  "commonGroup": "群组"
 }

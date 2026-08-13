@@ -12,5 +12,6 @@
   "commonUpgrade": "업그레이드",
   "commonSettings": "설정",
   "commonCategory": "카테고리",
-  "commonUncategorized": "분류 없음"
+  "commonUncategorized": "분류 없음",
+  "commonGroup": "그룹"
 }

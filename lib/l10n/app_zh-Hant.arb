@@ -12,5 +12,6 @@
   "commonUpgrade": "升級",
   "commonSettings": "設定",
   "commonCategory": "分類",
-  "commonUncategorized": "未分類"
+  "commonUncategorized": "未分類",
+  "commonGroup": "群組"
 }
