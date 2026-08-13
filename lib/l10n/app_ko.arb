@@ -105,5 +105,6 @@
   "shoppingListNotifyGroupSend": "알림 보내기",
   "commonCopy": "복사",
   "commonShare": "공유",
-  "settingsProfileSection": "프로필"
+  "settingsProfileSection": "프로필",
+  "settingsDisplayNameLabel": "표시 이름"
 }

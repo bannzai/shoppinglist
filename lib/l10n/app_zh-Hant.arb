@@ -105,5 +105,6 @@
   "shoppingListNotifyGroupSend": "傳送通知",
   "commonCopy": "複製",
   "commonShare": "分享",
-  "settingsProfileSection": "個人資料"
+  "settingsProfileSection": "個人資料",
+  "settingsDisplayNameLabel": "您的顯示名稱"
 }
