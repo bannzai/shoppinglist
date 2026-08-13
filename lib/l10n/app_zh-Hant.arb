@@ -317,5 +317,6 @@
   "shoppingLocationDeleteConfirmMessage": "刪除這個位置不會影響已設定此位置的購物清單",
   "shoppingLocationPickerTitle": "在地圖上選擇位置",
   "shoppingLocationPickerConfirm": "使用此位置",
-  "settingsThemeColorShu": "朱紅"
+  "settingsThemeColorShu": "朱紅",
+  "settingsThemeColorMatcha": "抹茶"
 }
