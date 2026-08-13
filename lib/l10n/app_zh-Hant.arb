@@ -335,5 +335,6 @@
   "errorTitleProviderAlreadyLinked": "此登入方式已連結",
   "errorTitleCredentialAlreadyInUse": "此帳號已被其他使用者使用",
   "errorTitleEmailAlreadyInUse": "此電子郵件地址已被其他使用者使用",
-  "purchaseErrorUnknown": "發生未知錯誤。請稍後再試。如果問題仍然存在，請從「設定」>「詢問」聯絡我們。詳細資料：{details}"
+  "purchaseErrorUnknown": "發生未知錯誤。請稍後再試。如果問題仍然存在，請從「設定」>「詢問」聯絡我們。詳細資料：{details}",
+  "purchaseErrorStoreProblem": "{storeName} 發生錯誤。請稍後再試。"
 }
