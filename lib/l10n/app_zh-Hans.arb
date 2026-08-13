@@ -280,5 +280,6 @@
   "paywallHeroTitle": "升级到高级版",
   "paywallHeroDescription": "解锁所有功能，与全家人一起畅享这款应用。",
   "paywallFeatureLocationOrder": "每个商店的分类顺序",
-  "paywallFeaturePhotoExtraction": "从照片中提取物品（每月 50 次）"
+  "paywallFeaturePhotoExtraction": "从照片中提取物品（每月 50 次）",
+  "paywallFeatureUrlExtraction": "从网址中提取项目（每月 50 次）"
 }
