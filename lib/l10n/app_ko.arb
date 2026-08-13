@@ -28,5 +28,6 @@
   "accountDeleteConfirmButton": "삭제",
   "accountDeleteReauthTitle": "다시 로그인해 주세요",
   "accountDeleteReauthMessage": "계정을 삭제하려면 다시 로그인해 주세요.",
-  "accountDeleteReauthButton": "다시 로그인"
+  "accountDeleteReauthButton": "다시 로그인",
+  "accountDeleteCompletedTitle": "계정이 삭제되었습니다"
 }
