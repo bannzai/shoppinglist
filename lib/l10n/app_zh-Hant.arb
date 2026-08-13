@@ -253,5 +253,6 @@
   "authAgreementNote": "繼續使用即表示你同意{terms}和{privacy}。",
   "inquiryDescription": "我們會閱讀您傳送的所有內容，並用來改善應用程式。如果您希望收到回覆，請附上您的電子郵件地址。",
   "inquiryEmailLabel": "電子郵件地址",
-  "inquiryEmailRequired": "請輸入您的電子郵件地址"
+  "inquiryEmailRequired": "請輸入您的電子郵件地址",
+  "inquiryEmailInvalid": "電子郵件地址格式不正確"
 }
