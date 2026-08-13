@@ -263,5 +263,6 @@
   "inquirySubmitting": "전송 중...",
   "inquirySubmit": "보내기",
   "inquirySubmitted": "문의가 전송되었습니다",
-  "notificationPermissionBarrierLabel": "푸시 알림 권한"
+  "notificationPermissionBarrierLabel": "푸시 알림 권한",
+  "notificationPermissionTitle": "푸시 알림을 켜세요"
 }

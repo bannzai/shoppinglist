@@ -263,5 +263,6 @@
   "inquirySubmitting": "傳送中…",
   "inquirySubmit": "送出",
   "inquirySubmitted": "您的詢問已送出",
-  "notificationPermissionBarrierLabel": "推播通知權限"
+  "notificationPermissionBarrierLabel": "推播通知權限",
+  "notificationPermissionTitle": "開啟推播通知"
 }
