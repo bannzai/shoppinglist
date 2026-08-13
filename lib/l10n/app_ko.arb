@@ -260,5 +260,6 @@
   "inquiryContentLabel": "문의 내용",
   "inquiryContentRequired": "메시지를 입력해 주세요",
   "inquiryContentHint": "불편한 점이나 원하시는 기능을 알려 주세요",
-  "inquirySubmitting": "전송 중..."
+  "inquirySubmitting": "전송 중...",
+  "inquirySubmit": "보내기"
 }
