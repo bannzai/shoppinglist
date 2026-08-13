@@ -111,5 +111,6 @@
   "settingsDisplayNameUpdated": "已更新你的显示名称",
   "settingsGroupManagement": "管理群组",
   "settingsJoinGroupWithInvitationCode": "使用邀请码加入群组",
-  "settingsAppearanceSection": "外观"
+  "settingsAppearanceSection": "外观",
+  "settingsNotificationSection": "通知"
 }
