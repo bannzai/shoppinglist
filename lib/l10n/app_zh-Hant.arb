@@ -217,5 +217,6 @@
   "groupCreateIconPets": "寵物",
   "groupCreateIconBag": "包",
   "groupCreateInvitationDialogTitle": "邀請成員",
-  "groupCreateInvitationDialogMessage": "將邀請碼分享給家人"
+  "groupCreateInvitationDialogMessage": "將邀請碼分享給家人",
+  "groupInvitationTitle": "使用邀請碼加入"
 }

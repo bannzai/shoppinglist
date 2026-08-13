@@ -217,5 +217,6 @@
   "groupCreateIconPets": "반려동물",
   "groupCreateIconBag": "가방",
   "groupCreateInvitationDialogTitle": "멤버 초대",
-  "groupCreateInvitationDialogMessage": "가족에게 초대 코드를 공유하세요"
+  "groupCreateInvitationDialogMessage": "가족에게 초대 코드를 공유하세요",
+  "groupInvitationTitle": "초대 코드로 참여"
 }
