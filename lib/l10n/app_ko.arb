@@ -323,5 +323,6 @@
   "settingsThemeColorSumi": "먹물색",
   "settingsThemeColorKuchiba": "쿠치바",
   "inquiryCategoryBugReport": "버그 신고",
-  "inquiryCategoryHowToUse": "사용 방법"
+  "inquiryCategoryHowToUse": "사용 방법",
+  "inquiryCategoryRequest": "기능 제안"
 }
