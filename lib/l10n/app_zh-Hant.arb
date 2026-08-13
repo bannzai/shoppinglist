@@ -205,5 +205,6 @@
   "groupCategoryEditKeywordHint": "輸入關鍵字",
   "groupCategoryEditMatchingLabel": "比對方式",
   "groupCategoryEditMatchingExact": "完全符合",
-  "groupCategoryEditMatchingPartial": "部分符合"
+  "groupCategoryEditMatchingPartial": "部分符合",
+  "groupCategoryEditMatchingRegex": "正則表達式"
 }

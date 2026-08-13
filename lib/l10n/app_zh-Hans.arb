@@ -205,5 +205,6 @@
   "groupCategoryEditKeywordHint": "输入关键字",
   "groupCategoryEditMatchingLabel": "匹配方式",
   "groupCategoryEditMatchingExact": "完全匹配",
-  "groupCategoryEditMatchingPartial": "部分匹配"
+  "groupCategoryEditMatchingPartial": "部分匹配",
+  "groupCategoryEditMatchingRegex": "正则表达式"
 }
