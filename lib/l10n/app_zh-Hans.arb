@@ -167,5 +167,6 @@
   "listSettingSendInvitationCode": "向群组发送邀请码",
   "listSettingGroupSetting": "群组设置",
   "listSettingGroupNameRequired": "请先设置群组名称，再邀请他人",
-  "listSettingListActionsSection": "列表操作"
+  "listSettingListActionsSection": "列表操作",
+  "listSettingDeleteList": "删除此清单"
 }
