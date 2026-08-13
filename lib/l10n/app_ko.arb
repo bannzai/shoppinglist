@@ -46,5 +46,6 @@
   "shoppingListDuplicateUncheckedOnly": "체크 안 된 항목만 복제",
   "shoppingListDuplicated": "목록을 복제했어요",
   "shoppingListDuplicatedFrom": "{name}에서 복제됨",
-  "shoppingListDeletedListName": "삭제된 목록"
+  "shoppingListDeletedListName": "삭제된 목록",
+  "shoppingListDuplicateSourceDeleted": "원본 쇼핑 목록이 삭제되었습니다"
 }

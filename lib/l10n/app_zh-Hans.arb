@@ -46,5 +46,6 @@
   "shoppingListDuplicateUncheckedOnly": "仅复制未勾选的项目",
   "shoppingListDuplicated": "已复制清单",
   "shoppingListDuplicatedFrom": "复制自 {name}",
-  "shoppingListDeletedListName": "已删除的清单"
+  "shoppingListDeletedListName": "已删除的清单",
+  "shoppingListDuplicateSourceDeleted": "原始购物清单已删除"
 }
