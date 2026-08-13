@@ -297,5 +297,6 @@
   "receiptEdit": "编辑收据",
   "receiptSheetTitle": "收据",
   "receiptTakePhoto": "拍照",
-  "receiptChooseFromLibrary": "从照片图库中选择"
+  "receiptChooseFromLibrary": "从照片图库中选择",
+  "receiptAmountLabel": "金额"
 }
