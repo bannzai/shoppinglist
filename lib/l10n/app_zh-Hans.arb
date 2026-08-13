@@ -42,5 +42,6 @@
   "shoppingListPickerAddList": "添加新清单",
   "shoppingListCreateListTooltip": "添加列表",
   "shoppingListCreateTodayList": "添加一个带有当前日期的清单",
-  "shoppingListDuplicateCurrentList": "复制当前清单"
+  "shoppingListDuplicateCurrentList": "复制当前清单",
+  "shoppingListDuplicateUncheckedOnly": "仅复制未勾选的项目"
 }
