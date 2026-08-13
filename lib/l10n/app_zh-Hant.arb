@@ -138,5 +138,6 @@
   "settingsThemeColorChanged": "主題顏色已變更",
   "settingsThemeColorSwatchLabel": "{label} 主題顏色",
   "settingsThemeColorPremiumOnly": "變更主題顏色是進階版功能",
-  "settingsLocationReminderTitle": "位置提醒"
+  "settingsLocationReminderTitle": "位置提醒",
+  "settingsLocationReminderSubtitle": "當我靠近商店時提醒我購物清單"
 }
