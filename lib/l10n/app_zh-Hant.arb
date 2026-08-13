@@ -9,5 +9,6 @@
   "commonAdd": "新增",
   "commonRetry": "重試",
   "commonUndo": "復原",
-  "commonUpgrade": "升級"
+  "commonUpgrade": "升級",
+  "commonSettings": "設定"
 }
