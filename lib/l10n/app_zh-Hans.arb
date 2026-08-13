@@ -238,5 +238,6 @@
   "groupSettingMemberFallbackName": "成员",
   "groupSettingShoppingLocationSubtitle": "添加并编辑商店",
   "groupSettingInvitationSection": "群组邀请",
-  "groupSettingCreatingInvitation": "正在生成邀请码…"
+  "groupSettingCreatingInvitation": "正在生成邀请码…",
+  "groupSettingCreateInvitation": "生成邀请码"
 }

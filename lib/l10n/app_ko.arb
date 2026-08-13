@@ -238,5 +238,6 @@
   "groupSettingMemberFallbackName": "멤버",
   "groupSettingShoppingLocationSubtitle": "매장 추가 및 수정",
   "groupSettingInvitationSection": "그룹 초대",
-  "groupSettingCreatingInvitation": "초대 코드를 생성하는 중..."
+  "groupSettingCreatingInvitation": "초대 코드를 생성하는 중...",
+  "groupSettingCreateInvitation": "초대 코드 발급"
 }
