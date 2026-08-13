@@ -262,5 +262,6 @@
   "inquiryContentHint": "불편한 점이나 원하시는 기능을 알려 주세요",
   "inquirySubmitting": "전송 중...",
   "inquirySubmit": "보내기",
-  "inquirySubmitted": "문의가 전송되었습니다"
+  "inquirySubmitted": "문의가 전송되었습니다",
+  "notificationPermissionBarrierLabel": "푸시 알림 권한"
 }
