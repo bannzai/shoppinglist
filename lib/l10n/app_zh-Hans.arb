@@ -136,5 +136,6 @@
   "settingsThemeColorTitle": "主题颜色",
   "settingsThemeColorDescription": "从五种传统日式颜色中选择，来更改应用中的强调色。",
   "settingsThemeColorChanged": "主题颜色已更改",
-  "settingsThemeColorSwatchLabel": "{label} 主题颜色"
+  "settingsThemeColorSwatchLabel": "{label} 主题颜色",
+  "settingsThemeColorPremiumOnly": "更改主题颜色是高级版功能"
 }

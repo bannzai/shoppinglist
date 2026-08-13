@@ -136,5 +136,6 @@
   "settingsThemeColorTitle": "테마 색상",
   "settingsThemeColorDescription": "앱 전반에 사용되는 강조 색상을 바꾸려면 다섯 가지 전통 일본 색상 중에서 선택하세요.",
   "settingsThemeColorChanged": "테마 색상이 변경되었습니다",
-  "settingsThemeColorSwatchLabel": "{label} 테마 색상"
+  "settingsThemeColorSwatchLabel": "{label} 테마 색상",
+  "settingsThemeColorPremiumOnly": "테마 색상 변경은 프리미엄 기능입니다"
 }
