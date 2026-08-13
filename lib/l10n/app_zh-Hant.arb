@@ -331,5 +331,6 @@
   "purchaseNotActivated": "您的購買尚未生效。請稍後再試。",
   "errorTitleServerError": "發生伺服器錯誤",
   "errorTitleSignInRequired": "需要登入",
-  "errorTitlePermissionDenied": "你沒有權限執行此操作"
+  "errorTitlePermissionDenied": "你沒有權限執行此操作",
+  "errorTitleProviderAlreadyLinked": "此登入方式已連結"
 }
