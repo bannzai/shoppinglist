@@ -154,5 +154,6 @@
   "settingsAccountReSignInMessage": "要再次使用此帳號登入嗎？\n如果再次登入，目前的訪客資料（清單和群組）將不會被保留。",
   "settingsAccountReSignInButton": "重新登入",
   "listSettingTitle": "購物清單設定",
-  "listSettingNameSection": "清單名稱"
+  "listSettingNameSection": "清單名稱",
+  "listSettingShoppingLocationSection": "購物地點"
 }

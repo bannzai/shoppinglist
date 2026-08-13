@@ -154,5 +154,6 @@
   "settingsAccountReSignInMessage": "이 계정으로 다시 로그인하시겠어요?\n다시 로그인하면 현재 게스트 데이터(목록과 그룹)는 이어지지 않습니다.",
   "settingsAccountReSignInButton": "다시 로그인",
   "listSettingTitle": "쇼핑 목록 설정",
-  "listSettingNameSection": "목록 이름"
+  "listSettingNameSection": "목록 이름",
+  "listSettingShoppingLocationSection": "쇼핑 장소"
 }
