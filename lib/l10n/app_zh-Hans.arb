@@ -338,5 +338,6 @@
   "purchaseErrorUnknown": "发生未知错误。请稍后再试。如果问题仍然存在，请通过“设置”>“反馈”联系我们。详情：{details}",
   "purchaseErrorStoreProblem": "{storeName} 发生了错误。请稍后再试。",
   "purchaseErrorNotAllowed": "此设备不允许购买。",
-  "purchaseErrorInvalidPayment": "付款失败。请确认您的付款方式有效后重试。"
+  "purchaseErrorInvalidPayment": "付款失败。请确认您的付款方式有效后重试。",
+  "purchaseErrorProductNotAvailable": "所选方案当前未在售。请重启应用后再试。"
 }
