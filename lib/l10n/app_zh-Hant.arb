@@ -190,5 +190,6 @@
   "groupCategoryKeywordCount": "關鍵字：{count}",
   "groupCategoryDeleteConfirmTitle": "要刪除「{name}」嗎？",
   "groupCategoryDeleteConfirmMessage": "為此分類設定的關鍵字也會被刪除",
-  "groupCategoryEmptyTitle": "自動整理你的購物分類"
+  "groupCategoryEmptyTitle": "自動整理你的購物分類",
+  "groupCategoryEmptyUseCaseAutoGroup": "將番茄和洋蔥歸入「蔬菜」後，它們會自動分組到清單的蔬菜區"
 }

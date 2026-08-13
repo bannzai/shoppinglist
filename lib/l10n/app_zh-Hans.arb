@@ -190,5 +190,6 @@
   "groupCategoryKeywordCount": "关键词：{count}",
   "groupCategoryDeleteConfirmTitle": "要删除“{name}”吗？",
   "groupCategoryDeleteConfirmMessage": "为此分类设置的关键词也会被删除",
-  "groupCategoryEmptyTitle": "自动整理你的购物分类"
+  "groupCategoryEmptyTitle": "自动整理你的购物分类",
+  "groupCategoryEmptyUseCaseAutoGroup": "将番茄和洋葱归入“蔬菜”后，它们会自动分组到清单的蔬菜区"
 }
