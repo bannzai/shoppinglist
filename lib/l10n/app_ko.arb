@@ -183,5 +183,6 @@
   "commonDefault": "기본",
   "commonUnnamed": "이름 없음",
   "commonCreating": "만드는 중…",
-  "groupNameLabel": "그룹 이름"
+  "groupNameLabel": "그룹 이름",
+  "groupNameHint": "그룹 이름을 입력하세요"
 }

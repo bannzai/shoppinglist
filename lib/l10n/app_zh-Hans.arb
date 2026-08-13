@@ -183,5 +183,6 @@
   "commonDefault": "默认",
   "commonUnnamed": "未命名",
   "commonCreating": "创建中…",
-  "groupNameLabel": "群组名称"
+  "groupNameLabel": "群组名称",
+  "groupNameHint": "输入群组名称"
 }
