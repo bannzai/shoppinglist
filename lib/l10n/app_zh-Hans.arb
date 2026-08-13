@@ -91,5 +91,6 @@
   "shoppingListHintTap": "・点按一行即可直接输入",
   "shoppingListHintReturn": "・按回车换到下一行",
   "shoppingListHintDelete": "・在空行上按删除键即可移除",
-  "shoppingListHintFabPrefix": "长按右下角的 "
+  "shoppingListHintFabPrefix": "长按右下角的 ",
+  "shoppingListHintFabSuffix": "右下角可从照片或网址添加"
 }
