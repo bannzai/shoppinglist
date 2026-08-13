@@ -59,5 +59,6 @@
   "shoppingListAiLimitUpsell": "。升級到進階版後，每月可使用 {limit} 次",
   "shoppingListAiCategorizeButton": "自動分類（{count} 項）",
   "shoppingListAiCategorizeLimitReached": "已達到自動分類的每月上限（{limit}次）",
-  "shoppingListAiCategorizeRegistered": "已將 {count} 個項目分類"
+  "shoppingListAiCategorizeRegistered": "已將 {count} 個項目分類",
+  "shoppingListAiCategorizeSheetTitle": "自動分類"
 }
