@@ -236,5 +236,6 @@
   "groupSettingMemberOwner": "群主",
   "groupSettingMemberSelf": "你",
   "groupSettingMemberFallbackName": "成员",
-  "groupSettingShoppingLocationSubtitle": "添加并编辑商店"
+  "groupSettingShoppingLocationSubtitle": "添加并编辑商店",
+  "groupSettingInvitationSection": "群组邀请"
 }
