@@ -99,5 +99,6 @@
   "shoppingListItemDeleted": "已刪除該項目",
   "shoppingListItemMemoHint": "寫個備註……",
   "shoppingListNotifyGroup": "通知群組",
-  "shoppingListNotifyGroupSent": "已通知群組"
+  "shoppingListNotifyGroupSent": "已通知群組",
+  "shoppingListNotifyGroupGuideLabel": "關於群組通知"
 }

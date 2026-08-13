@@ -99,5 +99,6 @@
   "shoppingListItemDeleted": "항목을 삭제했어요",
   "shoppingListItemMemoHint": "메모를 작성하세요...",
   "shoppingListNotifyGroup": "그룹에 알리기",
-  "shoppingListNotifyGroupSent": "그룹에 알림 전송됨"
+  "shoppingListNotifyGroupSent": "그룹에 알림 전송됨",
+  "shoppingListNotifyGroupGuideLabel": "그룹 알림 정보"
 }
