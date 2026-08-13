@@ -156,5 +156,6 @@
   "listSettingTitle": "購物清單設定",
   "listSettingNameSection": "清單名稱",
   "listSettingShoppingLocationSection": "購物地點",
-  "listSettingLocationUnset": "未設定"
+  "listSettingLocationUnset": "未設定",
+  "listSettingLocationChangeDetail": "變更"
 }
