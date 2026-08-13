@@ -194,5 +194,6 @@
   "groupCategoryEmptyUseCaseAutoGroup": "将番茄和洋葱归入“蔬菜”后，它们会自动分组到清单的蔬菜区",
   "groupCategoryEmptyUseCaseLocationOrder": "您可以为每个商店调整分类顺序，这样就能按货架顺序购物。",
   "groupCategoryEditTitle": "编辑分类",
-  "groupCategoryEditNotFound": "未找到分类"
+  "groupCategoryEditNotFound": "未找到分类",
+  "groupCategoryEditNameLabel": "分类名称"
 }

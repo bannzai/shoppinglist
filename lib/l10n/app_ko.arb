@@ -194,5 +194,6 @@
   "groupCategoryEmptyUseCaseAutoGroup": "토마토와 양파를 \"채소\"로 등록하면 목록의 채소 섹션에 자동으로 그룹화됩니다",
   "groupCategoryEmptyUseCaseLocationOrder": "각 매장마다 카테고리 순서를 바꿀 수 있어, 진열대 순서대로 쇼핑할 수 있어요.",
   "groupCategoryEditTitle": "카테고리 편집",
-  "groupCategoryEditNotFound": "카테고리를 찾을 수 없습니다"
+  "groupCategoryEditNotFound": "카테고리를 찾을 수 없습니다",
+  "groupCategoryEditNameLabel": "카테고리 이름"
 }
