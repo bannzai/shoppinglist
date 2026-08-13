@@ -295,5 +295,6 @@
   "paywallPurchaseButton": "구매",
   "receiptAdd": "영수증 추가",
   "receiptEdit": "영수증 수정",
-  "receiptSheetTitle": "영수증"
+  "receiptSheetTitle": "영수증",
+  "receiptTakePhoto": "사진 찍기"
 }

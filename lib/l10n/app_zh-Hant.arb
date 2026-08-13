@@ -295,5 +295,6 @@
   "paywallPurchaseButton": "購買",
   "receiptAdd": "新增收據",
   "receiptEdit": "編輯收據",
-  "receiptSheetTitle": "收據"
+  "receiptSheetTitle": "收據",
+  "receiptTakePhoto": "拍照"
 }
