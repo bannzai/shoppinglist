@@ -294,5 +294,6 @@
   "paywallPurchaseCompleted": "구매해 주셔서 감사합니다",
   "paywallPurchaseButton": "구매",
   "receiptAdd": "영수증 추가",
-  "receiptEdit": "영수증 수정"
+  "receiptEdit": "영수증 수정",
+  "receiptSheetTitle": "영수증"
 }
