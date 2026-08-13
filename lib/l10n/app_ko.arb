@@ -160,5 +160,6 @@
   "listSettingLocationChangeDetail": "변경",
   "listSettingCategorySubtitle": "자동 분류 키워드 관리",
   "listSettingStoragePeriodSection": "보관 기간",
-  "listSettingStoragePeriodPremium": "프리미엄: 무제한"
+  "listSettingStoragePeriodPremium": "프리미엄: 무제한",
+  "listSettingStoragePeriodFree": "생성 후 30일"
 }
