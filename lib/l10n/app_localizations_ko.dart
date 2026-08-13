@@ -9,7 +9,7 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
-  String get appTitle => '쇼핑 목록';
+  String get appTitle => '쇼핑 리스트';
 
   @override
   String get commonCancel => '취소';
@@ -36,7 +36,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get commonUndo => '실행 취소';
 
   @override
-  String get commonUpgrade => '업그레이드';
+  String get commonUpgrade => '프리미엄';
 
   @override
   String get commonSettings => '설정';
@@ -69,7 +69,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get errorFaqLink => 'FAQ 보기';
 
   @override
-  String get authGoogleSignIn => 'Google로 로그인';
+  String get authGoogleSignIn => 'Google로 계속하기';
 
   @override
   String get loadingPreparing => '준비 중...';
@@ -78,7 +78,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get accountDeleteButton => '계정 삭제';
 
   @override
-  String get accountDeleteConfirmTitle => '계정 정보를 삭제';
+  String get accountDeleteConfirmTitle => '계정 정보를 삭제하시겠어요?';
 
   @override
   String get accountDeleteConfirmMessage => '계정을 삭제하면 모든 사용자 정보가 제거됩니다.';
@@ -205,10 +205,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get shoppingListAiCategorizeSheetSubtitle =>
-      '등록하기 전에 카테고리를 확인하고 조정하세요';
+      '저장하기 전에 카테고리를 확인하고 조정하세요';
 
   @override
-  String get shoppingListAiCategorizeSheetEmpty => '분류할 항목이 없습니다';
+  String get shoppingListAiCategorizeSheetEmpty => '분류할 수 있는 항목이 없습니다';
 
   @override
   String shoppingListAiCategorizeSheetConfirm(int count) {
@@ -228,7 +228,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get shoppingListAddCategoryLabel => '카테고리 추가';
 
   @override
-  String get shoppingListAiReviewTitle => '추출된 제안';
+  String get shoppingListAiReviewTitle => '추출된 सुझाव';
 
   @override
   String get shoppingListAiReviewSubtitle => '추가할 항목을 선택하세요';
@@ -306,7 +306,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get shoppingListHintFabPrefix => '오른쪽 아래의 ';
 
   @override
-  String get shoppingListHintFabSuffix => '오른쪽 아래에서 사진이나 URL로 추가';
+  String get shoppingListHintFabSuffix => ' 사진이나 URL에서 추가하려면';
 
   @override
   String get shoppingListItemDetailTooltip => '항목 상세';
@@ -330,7 +330,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get shoppingListNotifyGroupSent => '그룹에 알림 전송됨';
 
   @override
-  String get shoppingListNotifyGroupGuideLabel => '그룹 알림 정보';
+  String get shoppingListNotifyGroupGuideLabel => '그룹 알림에 대하여';
 
   @override
   String get shoppingListNotifyGroupGuideMessage =>
@@ -412,7 +412,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsSignOut => '로그아웃';
 
   @override
-  String get settingsSignOutConfirmBarrierLabel => '로그아웃 확인';
+  String get settingsSignOutConfirmBarrierLabel => '로그아웃 확인 대화상자';
 
   @override
   String get settingsSignOutConfirmTitle => '로그아웃할까요?';
@@ -426,10 +426,10 @@ class AppLocalizationsKo extends AppLocalizations {
       '현재 게스트로 앱을 사용 중이므로, 로그아웃하면 같은 계정으로 다시 로그인할 수 없고 현재 목록과 그룹에 대한 접근 권한도 영구적으로 잃게 됩니다.';
 
   @override
-  String get settingsSignOutCompletedTitle => '로그아웃됨';
+  String get settingsSignOutCompletedTitle => '로그아웃되었습니다';
 
   @override
-  String get settingsSignOutExitAppMessage => '앱이 지금 종료됩니다';
+  String get settingsSignOutExitAppMessage => '이제 앱이 종료됩니다';
 
   @override
   String get settingsThemeColorTitle => '테마 색상';
@@ -535,7 +535,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get listSettingShareSection => '공유';
 
   @override
-  String get listSettingSendInvitationCode => '그룹에 초대 코드를 보내기';
+  String get listSettingSendInvitationCode => 'グループに招待コードを送信';
 
   @override
   String get listSettingGroupSetting => '그룹 설정';
@@ -550,7 +550,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get listSettingDeleteList => '이 목록 삭제';
 
   @override
-  String get listSettingDeleteConfirmBarrierLabel => '장바구니 목록 삭제 확인';
+  String get listSettingDeleteConfirmBarrierLabel => '쇼핑 리스트 삭제 확인';
 
   @override
   String get listSettingDeleteConfirmTitle => '이 목록을 삭제할까요?';
@@ -576,7 +576,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String listSettingInvitationShareText(String code) {
-    return '쇼핑 목록 초대 코드: $code';
+    return '쇼핑 리스트 초대 코드: $code';
   }
 
   @override
@@ -632,7 +632,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get groupCategoryEmptyUseCaseLocationOrder =>
-      '각 매장마다 카테고리 순서를 바꿀 수 있어, 진열대 순서대로 쇼핑할 수 있어요.';
+      '각 매장마다 카테고리 순서를 바꿀 수 있어, 통로 순서대로 쇼핑할 수 있어요.';
 
   @override
   String get groupCategoryEditTitle => '카테고리 편집';
@@ -710,7 +710,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get groupCreateInvitationDialogMessage => '가족에게 초대 코드를 공유하세요';
 
   @override
-  String get groupInvitationTitle => '초대 코드로 참여';
+  String get groupInvitationTitle => '초대 코드로 참여하기';
 
   @override
   String get groupInvitationHeading => '초대 코드를 입력하세요';
@@ -722,7 +722,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get groupInvitationJoining => '참여 중...';
 
   @override
-  String get groupInvitationJoin => '참여';
+  String get groupInvitationJoin => '가입';
 
   @override
   String get groupInvitationVerifyingTitle => '초대 코드를 확인하는 중';
@@ -761,7 +761,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get groupSettingMemberOwner => '소유자';
 
   @override
-  String get groupSettingMemberSelf => '나';
+  String get groupSettingMemberSelf => '내';
 
   @override
   String get groupSettingMemberFallbackName => '멤버';
@@ -780,7 +780,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String groupSettingRemoveMemberConfirmTitle(String name) {
-    return '$name님을 그룹에서 हट?';
+    return '$name님을 그룹에서 제거할까요?';
   }
 
   @override
@@ -789,7 +789,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String groupSettingMemberRemoved(String name) {
-    return '$name님을 삭제했습니다';
+    return '$name님을 그룹에서 제거했습니다';
   }
 
   @override
@@ -839,7 +839,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get inquiryCategoryRequired => '문의 유형을 선택해 주세요';
 
   @override
-  String get inquiryContentLabel => '문의 내용';
+  String get inquiryContentLabel => '메시지';
 
   @override
   String get inquiryContentRequired => '메시지를 입력해 주세요';
@@ -909,7 +909,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get paywallHeroDescription => '모든 기능을 잠금 해제하고 온 가족과 함께 앱을 즐겨보세요.';
 
   @override
-  String get paywallFeatureLocationOrder => '매장별 카테고리 순서';
+  String get paywallFeatureLocationOrder => '매장별 카테고리 정렬 순서';
 
   @override
   String get paywallFeaturePhotoExtraction => '사진에서 항목 추출(월 50회)';
@@ -931,7 +931,7 @@ class AppLocalizationsKo extends AppLocalizations {
       '언제든지 취소 가능 ・ 자동 갱신은 갱신 24시간 전까지 취소할 수 있습니다';
 
   @override
-  String get paywallPrivacyLink => '개인정보';
+  String get paywallPrivacyLink => '개인정보 보호';
 
   @override
   String get paywallRestore => '구매 복원';
@@ -973,7 +973,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get receiptMemoLabel => '메모';
 
   @override
-  String get receiptMemoHint => '매장 이름이나 구매한 품목 같은 메모';
+  String get receiptMemoHint => '매장 이름이나 구매한 품목 같은 메모를 적어 주세요';
 
   @override
   String get receiptCaptureOrSelect => '영수증 사진을 찍거나 선택하세요';
@@ -987,31 +987,31 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get shoppingLocationTitle => '쇼핑 장소';
+  String get shoppingLocationTitle => '쇼핑 위치';
 
   @override
-  String get shoppingLocationEmpty => '아직 쇼핑 장소가 없어요';
+  String get shoppingLocationEmpty => '아직 등록된 쇼핑 위치가 없어요';
 
   @override
-  String get shoppingLocationGeoConfigured => '위치 설정됨';
+  String get shoppingLocationGeoConfigured => '위치가 설정됨';
 
   @override
-  String get shoppingLocationAddTitle => '위치 추가';
+  String get shoppingLocationAddTitle => '위치 추가하기';
 
   @override
-  String get shoppingLocationEditTitle => '위치 수정';
+  String get shoppingLocationEditTitle => '위치 편집';
 
   @override
-  String get shoppingLocationNameHint => '장소 이름';
+  String get shoppingLocationNameHint => '위치 이름';
 
   @override
   String get shoppingLocationNameHintWithExample => '위치 이름(예: 슈퍼마켓)';
 
   @override
-  String get shoppingLocationPositionSet => '위치 설정됨';
+  String get shoppingLocationPositionSet => '좌표 설정됨';
 
   @override
-  String get shoppingLocationSetOnMap => '지도에서 위치 설정';
+  String get shoppingLocationSetOnMap => '지도에서 위치를 설정하세요';
 
   @override
   String shoppingLocationDeleteConfirmTitle(String name) {
@@ -1023,10 +1023,10 @@ class AppLocalizationsKo extends AppLocalizations {
       '이 위치를 삭제해도 이 위치가 설정된 쇼핑 목록에는 영향을 주지 않습니다';
 
   @override
-  String get shoppingLocationPickerTitle => '지도에서 위치를 선택하세요';
+  String get shoppingLocationPickerTitle => '지도에서 위치를 선택하기';
 
   @override
-  String get shoppingLocationPickerConfirm => '이 위치 사용';
+  String get shoppingLocationPickerConfirm => '이 위치 사용하기';
 
   @override
   String get settingsThemeColorShu => '주홍';
@@ -1038,10 +1038,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsThemeColorAi => '인디고';
 
   @override
-  String get settingsThemeColorSumi => '먹물색';
+  String get settingsThemeColorSumi => '먹색';
 
   @override
-  String get settingsThemeColorKuchiba => '쿠치바';
+  String get settingsThemeColorKuchiba => '고목색';
 
   @override
   String get inquiryCategoryBugReport => '버그 신고';
@@ -1103,11 +1103,11 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get purchaseErrorProductNotAvailable =>
-      '선택한 요금제는 현재 판매 중이 아닙니다. 앱을 다시 시작한 뒤 다시 시도해 주세요.';
+      '선택한 요금제는 현재 구매할 수 없습니다. 앱을 다시 시작한 뒤 다시 시도해 주세요.';
 
   @override
   String get purchaseErrorAlreadyPurchased =>
-      '이미 플랜을 구매하셨습니다. 이 기기에서 구매를 복원하려면 \"이미 구매하셨나요? 여기를 탭하세요\"를 사용해 구매 정보를 복원하세요.';
+      '이미 플랜을 구매하셨습니다. 이 기기에서 구매를 복원하려면 \"이미 구매하셨나요? 탭하세요\"를 사용해 구매 정보를 복원하세요.';
 
   @override
   String purchaseErrorReceiptAlreadyInUse(String accountName) {
@@ -1162,7 +1162,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String purchaseErrorPaymentPending(String accountName, String storeName) {
-    return '결제가 중단되었습니다. 현재 로그인한 $accountName으로 $storeName을(를) 확인해 주세요.';
+    return '결제가 보류되었습니다. 현재 로그인한 $accountName으로 $storeName을(를) 확인해 주세요.';
   }
 
   @override
@@ -1177,7 +1177,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String purchaseErrorUpdateRequired(String code, String details) {
-    return '알 수 없는 오류가 발생했습니다. 최신 버전으로 업데이트한 뒤 다시 시도해 주세요. 문제가 계속되면 설정 > 문의하기에서 연락해 주세요. 코드: $code 세부정보: $details';
+    return '알 수 없는 오류가 발생했습니다. 최신 버전으로 업데이트한 뒤 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 코드: $code 세부정보: $details';
   }
 
   @override
@@ -1212,7 +1212,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String purchaseErrorFeatureNotAvailable(String code, String details) {
-    return '현재 설정에서는 이 기능을 사용할 수 없습니다. 문제가 계속되면 설정 > 문의하기에서 연락해 주세요. 코드: $code 상세: $details';
+    return '현재 설정에서는 이 기능을 사용할 수 없습니다. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 코드: $code 상세: $details';
   }
 
   @override
@@ -1232,7 +1232,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String purchaseErrorBelongsToOtherUser(String code, String details) {
-    return '이 구매는 다른 사용자에게 속해 있습니다. 계정을 확인해 주세요. 코드: $code 세부정보: $details';
+    return '이 구매는 다른 사용자 계정에 연결되어 있습니다. 계정을 확인해 주세요. 코드: $code 세부정보: $details';
   }
 
   @override

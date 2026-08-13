@@ -1296,7 +1296,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get errorFaqLink => '查看常见问题';
 
   @override
-  String get authGoogleSignIn => '使用 Google 登录';
+  String get authGoogleSignIn => '使用 Google 账号登录';
 
   @override
   String get loadingPreparing => '正在准备…';
@@ -1311,7 +1311,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get accountDeleteConfirmMessage => '删除你的账号将移除所有用户信息。';
 
   @override
-  String get accountDeleteConfirmButton => '删除';
+  String get accountDeleteConfirmButton => '删除账号';
 
   @override
   String get accountDeleteReauthTitle => '请重新登录';
@@ -1320,7 +1320,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get accountDeleteReauthMessage => '要删除您的账户，请重新登录。';
 
   @override
-  String get accountDeleteReauthButton => '请重新登录';
+  String get accountDeleteReauthButton => '重新登录';
 
   @override
   String get accountDeleteCompletedTitle => '您的账户已被删除';
@@ -1436,7 +1436,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String shoppingListAiCategorizeSheetConfirm(int count) {
-    return '注册 $count 项';
+    return '保存 $count 项';
   }
 
   @override
@@ -1452,7 +1452,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get shoppingListAddCategoryLabel => '添加类别';
 
   @override
-  String get shoppingListAiReviewTitle => '提取的建议';
+  String get shoppingListAiReviewTitle => '提取的项目';
 
   @override
   String get shoppingListAiReviewSubtitle => '选择要添加的商品';
@@ -1530,10 +1530,10 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get shoppingListHintFabPrefix => '长按右下角的 ';
 
   @override
-  String get shoppingListHintFabSuffix => '右下角可从照片或网址添加';
+  String get shoppingListHintFabSuffix => '在右下角可从照片或网址添加';
 
   @override
-  String get shoppingListItemDetailTooltip => '商品详情';
+  String get shoppingListItemDetailTooltip => '项目详情';
 
   @override
   String get shoppingListItemDeleteTooltip => '删除项目';
@@ -1554,7 +1554,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get shoppingListNotifyGroupSent => '已通知群组';
 
   @override
-  String get shoppingListNotifyGroupGuideLabel => '关于群组通知';
+  String get shoppingListNotifyGroupGuideLabel => '群组通知说明';
 
   @override
   String get shoppingListNotifyGroupGuideMessage =>
@@ -1603,7 +1603,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get settingsPrivacyPolicy => '隐私政策';
 
   @override
-  String get settingsCommercialTransactionAct => '基于《指定商业交易法》的说明';
+  String get settingsCommercialTransactionAct => '基于《特定商业交易法》的表记';
 
   @override
   String get settingsInquiry => '联系我们';
@@ -1649,7 +1649,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
       '您当前以访客身份使用此应用，因此如果退出登录，您将无法再次登录同一账户，并且会永久失去对当前列表和群组的访问权限。';
 
   @override
-  String get settingsSignOutCompletedTitle => '已退出登录';
+  String get settingsSignOutCompletedTitle => '已登出';
 
   @override
   String get settingsSignOutExitAppMessage => '应用将立即退出';
@@ -1675,7 +1675,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get settingsLocationReminderTitle => '位置提醒';
 
   @override
-  String get settingsLocationReminderSubtitle => '当我靠近商店时提醒我购物清单';
+  String get settingsLocationReminderSubtitle => '当我靠近商店时提醒我查看购物清单';
 
   @override
   String get settingsLocationReminderNotificationPermissionRequired =>
@@ -1822,7 +1822,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get groupNameLabel => '群组名称';
 
   @override
-  String get groupNameHint => '输入群组名称';
+  String get groupNameHint => '请输入群组名称';
 
   @override
   String get groupCategoryLocationOrderLabel => '按购物地点排序';
@@ -1844,7 +1844,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get groupCategoryDeleteConfirmMessage => '为此分类设置的关键词也会被删除';
 
   @override
-  String get groupCategoryEmptyTitle => '自动整理你的购物分类';
+  String get groupCategoryEmptyTitle => '自动整理你买的东西';
 
   @override
   String get groupCategoryEmptyUseCaseAutoGroup =>
@@ -1852,7 +1852,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get groupCategoryEmptyUseCaseLocationOrder =>
-      '您可以为每个商店调整分类顺序，这样就能按货架顺序购物。';
+      '您可以为每个商店调整分类顺序，这样就能按商店内的货架顺序购物。';
 
   @override
   String get groupCategoryEditTitle => '编辑分类';
@@ -1921,7 +1921,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get groupCreateIconPets => '宠物';
 
   @override
-  String get groupCreateIconBag => '包';
+  String get groupCreateIconBag => '袋子';
 
   @override
   String get groupCreateInvitationDialogTitle => '邀请成员';
@@ -1930,7 +1930,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get groupCreateInvitationDialogMessage => '将邀请码分享给家人';
 
   @override
-  String get groupInvitationTitle => '使用邀请码加入';
+  String get groupInvitationTitle => '使用邀请码加入群组';
 
   @override
   String get groupInvitationHeading => '输入邀请码';
@@ -1972,7 +1972,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get groupListFreeLimitBanner => '免费版可额外添加一个群组';
 
   @override
-  String get groupListFreeLimitAction => '解锁';
+  String get groupListFreeLimitAction => '解除';
 
   @override
   String get groupSettingMembersSection => '成员';
@@ -1987,7 +1987,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get groupSettingMemberFallbackName => '成员';
 
   @override
-  String get groupSettingShoppingLocationSubtitle => '添加并编辑商店';
+  String get groupSettingShoppingLocationSubtitle => '添加并编辑店铺';
 
   @override
   String get groupSettingInvitationSection => '群组邀请';
@@ -2015,7 +2015,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get groupSettingInvitationCodeMessage => '分享下面的代码';
 
   @override
-  String get groupSettingInvitationExpiry => '有效期 7 天';
+  String get groupSettingInvitationExpiry => '7 天内有效';
 
   @override
   String get commonSave => '保存';
@@ -2127,7 +2127,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get paywallHeroDescription => '解锁所有功能，与全家人一起畅享这款应用。';
 
   @override
-  String get paywallFeatureLocationOrder => '每个商店的分类顺序';
+  String get paywallFeatureLocationOrder => '各商店的类别顺序';
 
   @override
   String get paywallFeaturePhotoExtraction => '从照片中提取物品（每月 50 次）';
@@ -2145,13 +2145,13 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get paywallFeatureReceipt => '将收据保存到清单';
 
   @override
-  String get paywallSubscriptionNote => '可随时取消 ・ 自动续订可在续订前 24 小时内取消';
+  String get paywallSubscriptionNote => '可随时取消 ・ 自动续订可在续订前 24 小时前取消';
 
   @override
   String get paywallPrivacyLink => '隐私';
 
   @override
-  String get paywallRestore => '恢复购买';
+  String get paywallRestore => '恢复购买内容';
 
   @override
   String get paywallRestored => '已恢复你的购买项目';
@@ -2163,7 +2163,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get paywallRecommendedBadge => '推荐';
 
   @override
-  String get paywallPurchaseCompleted => '感谢您的购买';
+  String get paywallPurchaseCompleted => '感谢您的购买！';
 
   @override
   String get paywallPurchaseButton => '购买';
@@ -2200,14 +2200,14 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String forceUpdateMessage(String storeName) {
-    return '我们希望您更新此应用。请从 $storeName 更新到最新版本。';
+    return '我们请求您更新应用版本。请从 $storeName 更新到最新版本。';
   }
 
   @override
-  String get shoppingLocationTitle => '购物地点';
+  String get shoppingLocationTitle => '购物地点列表';
 
   @override
-  String get shoppingLocationEmpty => '还没有购物地点';
+  String get shoppingLocationEmpty => '还没有添加购物地点';
 
   @override
   String get shoppingLocationGeoConfigured => '已设置位置';
@@ -2219,7 +2219,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get shoppingLocationEditTitle => '编辑位置';
 
   @override
-  String get shoppingLocationNameHint => '位置名称';
+  String get shoppingLocationNameHint => '地点名称';
 
   @override
   String get shoppingLocationNameHintWithExample => '地点名称（例如：超市）';
@@ -2260,7 +2260,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get settingsThemeColorKuchiba => '朽叶';
 
   @override
-  String get inquiryCategoryBugReport => '问题反馈';
+  String get inquiryCategoryBugReport => '问题报告';
 
   @override
   String get inquiryCategoryHowToUse => '使用方法';
@@ -2307,7 +2307,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String purchaseErrorStoreProblem(String storeName) {
-    return '$storeName 发生了错误。请稍后再试。';
+    return '$storeName 出现了错误。请稍后再试。';
   }
 
   @override
@@ -2341,12 +2341,12 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String purchaseErrorPurchaseFailed(String details) {
-    return '购买失败。请稍后再试。如果问题仍然存在，请前往“设置”>“反馈”联系我们。详情：$details';
+    return '购买失败。请稍后再试。如果问题仍然存在，请前往“设置”>“咨询”联系我们。详情：$details';
   }
 
   @override
   String purchaseErrorUnavailable(String details) {
-    return '当前无法购买。请稍后再试。如果问题仍然存在，请前往“设置”>“咨询”联系我们。详情：$details';
+    return '当前购买服务不可用。请稍后再试。如果问题仍然存在，请前往“设置”>“咨询”联系我们。详情：$details';
   }
 
   @override
@@ -2399,17 +2399,17 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String purchaseErrorCustomerInfo(String code, String details) {
-    return '获取客户信息失败。请稍后再试。如果问题仍然存在，请在“设置”>“咨询”中联系我们。详情：代码：$code $details';
+    return '获取客户信息失败。请稍后再试。如果问题仍然存在，请在“设置”>“咨询”中联系我们。代码：$code 详情：$details';
   }
 
   @override
   String purchaseErrorSystemInfo(String code, String details) {
-    return '您的设备设置有问题。请检查后重试。如果问题仍然存在，请通过“设置”>“咨询”联系我们。代码：$code 详细信息：$details';
+    return '您的设备设置存在问题。请检查后重试。如果问题仍然存在，请通过“设置”>“咨询”联系我们。代码：$code 详情：$details';
   }
 
   @override
   String purchaseErrorBeginRefundRequest(String code, String details) {
-    return '退款流程已开始。请先确认后重试。如果问题仍然存在，请前往“设置”>“咨询”联系我们。代码：$code 详情：$details';
+    return '退款流程已开始。请先查看后重试。如果问题仍然存在，请前往“设置”>“咨询”联系我们。代码：$code 详情：$details';
   }
 
   @override
@@ -2424,12 +2424,12 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String purchaseErrorFeatureNotAvailable(String code, String details) {
-    return '当前配置下无法使用此功能。如果问题仍然存在，请在“设置”>“反馈”中联系我们。代码：$code 详情：$details';
+    return '当前配置下无法使用此功能。如果问题仍然存在，请在“设置”>“咨询”中联系我们。代码：$code 详情：$details';
   }
 
   @override
   String purchaseErrorSignatureVerification(String code, String details) {
-    return '签名验证失败。请稍等片刻后重试。如果问题仍然存在，请前往“设置”>“咨询”联系我们。代码：$code 详情：$details';
+    return '签名验证失败。请稍等片刻后重试。如果问题仍然存在，请在“设置”>“咨询”中联系我们。代码：$code 详情：$details';
   }
 
   @override
