@@ -296,5 +296,6 @@
   "receiptAdd": "新增收據",
   "receiptEdit": "編輯收據",
   "receiptSheetTitle": "收據",
-  "receiptTakePhoto": "拍照"
+  "receiptTakePhoto": "拍照",
+  "receiptChooseFromLibrary": "從照片圖庫選擇"
 }
