@@ -81,5 +81,6 @@
   "shoppingListUrlDialogGenerate": "생성",
   "shoppingListUrlRequired": "URL을 입력하세요",
   "shoppingListUrlInvalid": "유효한 HTTPS URL을 입력하세요",
-  "shoppingListStarterRowLabel": "탭하여 입력 시작"
+  "shoppingListStarterRowLabel": "탭하여 입력 시작",
+  "shoppingListHintExample1": "예: 우유 1L"
 }
