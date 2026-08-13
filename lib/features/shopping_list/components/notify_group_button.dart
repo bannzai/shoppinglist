@@ -121,7 +121,7 @@ class NotifyGroupButton extends HookConsumerWidget {
       );
       showGlobalToast(l10n.shoppingListNotifyGroupSent, title: null);
     } catch (e, st) {
-      showGlobalErrorToast(e, st);
+      showGlobalErrorToast(l10n, e, st);
     } finally {
       // ダイアログ表示中に Widget が破棄されると useState の ValueNotifier も破棄されるため、
       // 生存している時だけフラグを戻す(破棄後の代入による例外を避ける)。

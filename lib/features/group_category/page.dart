@@ -496,6 +496,9 @@ class _CategoryReorderableList extends ConsumerWidget {
               selectionForItem == null
                   ? null
                   : () {
+                    // pop 後 (= context が破棄された後) に届くエラーもトーストで
+                    // 表示するため、l10n は pop する前に取っておく。
+                    final l10n = context.l10n;
                     analytics.logEvent(
                       name: 'select_category_for_item',
                       parameters: {
@@ -521,7 +524,10 @@ class _CategoryReorderableList extends ConsumerWidget {
                           destinationCategoryID: category.id,
                           categories: categories,
                         )
-                        .catchError(showGlobalErrorToast);
+                        .catchError(
+                          (Object e, StackTrace st) =>
+                              showGlobalErrorToast(l10n, e, st),
+                        );
                     Navigator.pop(context);
                   },
           leading: Icon(

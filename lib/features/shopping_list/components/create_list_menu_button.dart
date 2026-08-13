@@ -318,7 +318,7 @@ class CreateListMenuButton extends HookConsumerWidget {
     } catch (e, st) {
       logError(e, st);
       messenger.showSnackBar(
-        SnackBar(content: Text(describeError(e, st).message)),
+        SnackBar(content: Text(describeError(l10n, e, st).message)),
       );
     } finally {
       // 破棄済みの ValueNotifier へ書き込まないようガードする。
@@ -384,7 +384,7 @@ class CreateListMenuButton extends HookConsumerWidget {
     } catch (e, st) {
       logError(e, st);
       messenger.showSnackBar(
-        SnackBar(content: Text(describeError(e, st).message)),
+        SnackBar(content: Text(describeError(l10n, e, st).message)),
       );
     } finally {
       // 破棄済みの ValueNotifier へ書き込まないようガードする。

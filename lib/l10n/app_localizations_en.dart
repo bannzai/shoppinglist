@@ -1097,4 +1097,196 @@ class AppLocalizationsEn extends AppLocalizations {
   String shoppingListLimitExceeded(int limit) {
     return 'On the free plan you can create up to $limit lists per group. Upgrade to premium for unlimited lists.';
   }
+
+  @override
+  String get platformGoogleAccountName => 'Google Account';
+
+  @override
+  String get purchaseNotActivated =>
+      'Your purchase has not been activated yet. Please check again after a while.';
+
+  @override
+  String get errorTitleServerError => 'A server error occurred';
+
+  @override
+  String get errorTitleSignInRequired => 'Sign-in required';
+
+  @override
+  String get errorTitlePermissionDenied =>
+      'You do not have permission for this operation';
+
+  @override
+  String get errorTitleProviderAlreadyLinked =>
+      'This sign-in method is already linked';
+
+  @override
+  String get errorTitleCredentialAlreadyInUse =>
+      'This account is already used by another user';
+
+  @override
+  String get errorTitleEmailAlreadyInUse =>
+      'This email address is already used by another user';
+
+  @override
+  String purchaseErrorUnknown(String details) {
+    return 'An unknown error occurred. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: $details';
+  }
+
+  @override
+  String purchaseErrorStoreProblem(String storeName) {
+    return 'An error is occurring on $storeName. Please wait a while and try again.';
+  }
+
+  @override
+  String get purchaseErrorNotAllowed =>
+      'Purchases are not allowed on this device.';
+
+  @override
+  String get purchaseErrorInvalidPayment =>
+      'Payment failed. Please make sure your payment method is valid and try again.';
+
+  @override
+  String get purchaseErrorProductNotAvailable =>
+      'The selected plan is not currently on sale. Please restart the app and try again.';
+
+  @override
+  String get purchaseErrorAlreadyPurchased =>
+      'You have already purchased a plan. To restore your purchase on this device, use \"Already purchased? Tap here\" to restore your purchase information.';
+
+  @override
+  String purchaseErrorReceiptAlreadyInUse(String accountName) {
+    return 'Already purchased, or the purchase information is used by another user. Please check your $accountName.';
+  }
+
+  @override
+  String get purchaseErrorInvalidReceipt =>
+      'The purchase information is invalid. Please check your purchase information.';
+
+  @override
+  String purchaseErrorMissingReceipt(String accountName) {
+    return 'No purchaser information exists. Please sign in to your device with $accountName and try again.';
+  }
+
+  @override
+  String get purchaseErrorNetwork =>
+      'Your network connection is unstable. Please check your connection and try again.';
+
+  @override
+  String purchaseErrorPurchaseFailed(String details) {
+    return 'The purchase failed. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: $details';
+  }
+
+  @override
+  String purchaseErrorUnavailable(String details) {
+    return 'Purchases are currently unavailable. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: $details';
+  }
+
+  @override
+  String purchaseErrorReceiptInUseByOther(String accountName) {
+    return 'The purchase information is used by another user. Please check the $accountName you are signed in with on this device.';
+  }
+
+  @override
+  String purchaseErrorInvalidAppUserId(String details) {
+    return 'We could not verify your user. Please restart the app and try again. Details: $details';
+  }
+
+  @override
+  String get purchaseErrorOperationInProgress =>
+      'Another purchase is already in progress. Please wait a while and check again.';
+
+  @override
+  String purchaseErrorIneligible(String details) {
+    return 'The purchase failed for your user. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: $details';
+  }
+
+  @override
+  String purchaseErrorInsufficientPermissions(String accountName) {
+    return 'You cannot subscribe to a plan with your $accountName. Please check your payment information and try again.';
+  }
+
+  @override
+  String purchaseErrorPaymentPending(String accountName, String storeName) {
+    return 'The payment has been interrupted. Please check $storeName with the $accountName you are signed in with.';
+  }
+
+  @override
+  String purchaseErrorUserInfoFailed(String details) {
+    return 'Failed to get your user information. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: $details';
+  }
+
+  @override
+  String purchaseErrorConfiguration(String details) {
+    return 'Failed to get purchase information. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: $details';
+  }
+
+  @override
+  String purchaseErrorUpdateRequired(String code, String details) {
+    return 'An unknown error occurred. Please update to the latest version and try again. If the problem persists, contact us from Settings > Inquiry. Code: $code Details: $details';
+  }
+
+  @override
+  String purchaseErrorEmptySubscriberAttributes(String details) {
+    return 'An unknown error occurred. Purchase information could not be retrieved in advance. Details: $details';
+  }
+
+  @override
+  String purchaseErrorCustomerInfo(String code, String details) {
+    return 'Failed to get customer information. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: Code: $code $details';
+  }
+
+  @override
+  String purchaseErrorSystemInfo(String code, String details) {
+    return 'There is a problem with your device settings. Please check them and try again. If the problem persists, contact us from Settings > Inquiry. Code: $code Details: $details';
+  }
+
+  @override
+  String purchaseErrorBeginRefundRequest(String code, String details) {
+    return 'A refund process has been started. Please check it and try again. If the problem persists, contact us from Settings > Inquiry. Code: $code Details: $details';
+  }
+
+  @override
+  String purchaseErrorTimeout(String details) {
+    return 'The request timed out. Please check your network connection and try again. If the problem persists, contact us from Settings > Inquiry. Details: $details';
+  }
+
+  @override
+  String purchaseErrorOfflineConnection(String details) {
+    return 'The connection is poor. Please check your network connection and try again. If the problem persists, contact us from Settings > Inquiry. Details: $details';
+  }
+
+  @override
+  String purchaseErrorFeatureNotAvailable(String code, String details) {
+    return 'This feature is not available with the current configuration. If the problem persists, contact us from Settings > Inquiry. Code: $code Details: $details';
+  }
+
+  @override
+  String purchaseErrorSignatureVerification(String code, String details) {
+    return 'Signature verification failed. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Code: $code Details: $details';
+  }
+
+  @override
+  String purchaseErrorFeatureNotSupported(String code, String details) {
+    return 'This feature is not supported on your device. Please update to the latest version and try again. Code: $code Details: $details';
+  }
+
+  @override
+  String purchaseErrorInvalidWebPurchaseToken(String code, String details) {
+    return 'The purchase token is invalid. Please try again. If the problem persists, contact us from Settings > Inquiry. Code: $code Details: $details';
+  }
+
+  @override
+  String purchaseErrorBelongsToOtherUser(String code, String details) {
+    return 'This purchase belongs to another user. Please check your account. Code: $code Details: $details';
+  }
+
+  @override
+  String purchaseErrorExpiredWebPurchaseToken(String code, String details) {
+    return 'The purchase token has expired. Please try again. Code: $code Details: $details';
+  }
+
+  @override
+  String purchaseErrorTestStoreSimulated(String code, String details) {
+    return 'An error occurred in the test purchase. Code: $code Details: $details';
+  }
 }

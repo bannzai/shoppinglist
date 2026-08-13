@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/utils/logger/error.dart';
 
 /// エラーを表示用に分解した結果。
@@ -14,10 +15,14 @@ typedef ErrorDisplay =
 /// 本文(message)は加工しない（規約: e.toString() のプレフィックス除去等はしない）。
 /// FirebaseException は toString() 末尾に `\n\n$stackTrace` を連結するため、
 /// 連結前の `[plugin/code] message` のみを本文とし、StackTrace は分離して返す。
-ErrorDisplay describeError(Object error, [StackTrace? stackTrace]) {
+ErrorDisplay describeError(
+  AppLocalizations l10n,
+  Object error, [
+  StackTrace? stackTrace,
+]) {
   if (error is FirebaseException) {
     return (
-      title: _specialTitle(error),
+      title: _specialTitle(l10n, error),
       message: '[${error.plugin}/${error.code}] ${error.message}',
       stackTrace: stackTrace ?? error.stackTrace,
     );
@@ -27,21 +32,21 @@ ErrorDisplay describeError(Object error, [StackTrace? stackTrace]) {
 
 /// 特定のエラーコードにだけ、ユーザーに意味が伝わるタイトルを付ける。
 /// 本文はそのまま表示し、タイトルだけを補う。該当しなければ null。
-String? _specialTitle(FirebaseException error) {
+String? _specialTitle(AppLocalizations l10n, FirebaseException error) {
   switch ('${error.plugin}/${error.code}') {
     case 'firebase_functions/internal':
-      return 'サーバーでエラーが発生しました';
+      return l10n.errorTitleServerError;
     case 'firebase_functions/unauthenticated':
-      return 'ログインが必要です';
+      return l10n.errorTitleSignInRequired;
     case 'firebase_functions/permission-denied':
-      return '操作する権限がありません';
+      return l10n.errorTitlePermissionDenied;
     // 以下 3 つはアカウントリンク（AccountLinkSection, issue #548）で起きる。
     case 'firebase_auth/provider-already-linked':
-      return 'このサインイン方法はすでにリンクされています';
+      return l10n.errorTitleProviderAlreadyLinked;
     case 'firebase_auth/credential-already-in-use':
-      return 'このアカウントは別のユーザーで使用されています';
+      return l10n.errorTitleCredentialAlreadyInUse;
     case 'firebase_auth/email-already-in-use':
-      return 'このメールアドレスは別のユーザーで使用されています';
+      return l10n.errorTitleEmailAlreadyInUse;
     default:
       return null;
   }
@@ -68,7 +73,7 @@ void showErrorSnackBar(
   StackTrace? stackTrace,
 ]) {
   logError(error, stackTrace);
-  final display = describeError(error, stackTrace);
+  final display = describeError(context.l10n, error, stackTrace);
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(

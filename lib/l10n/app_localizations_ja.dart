@@ -1054,4 +1054,188 @@ class AppLocalizationsJa extends AppLocalizations {
   String shoppingListLimitExceeded(int limit) {
     return '無料プランでは1グループあたり$limit個までリストを作成できます。プレミアムにアップグレードすると無制限に作成できます';
   }
+
+  @override
+  String get platformGoogleAccountName => 'Google アカウント';
+
+  @override
+  String get purchaseNotActivated => '課金の有効化が完了しておりません。しばらく時間をおいてからご確認ください';
+
+  @override
+  String get errorTitleServerError => 'サーバーでエラーが発生しました';
+
+  @override
+  String get errorTitleSignInRequired => 'ログインが必要です';
+
+  @override
+  String get errorTitlePermissionDenied => '操作する権限がありません';
+
+  @override
+  String get errorTitleProviderAlreadyLinked => 'このサインイン方法はすでにリンクされています';
+
+  @override
+  String get errorTitleCredentialAlreadyInUse => 'このアカウントは別のユーザーで使用されています';
+
+  @override
+  String get errorTitleEmailAlreadyInUse => 'このメールアドレスは別のユーザーで使用されています';
+
+  @override
+  String purchaseErrorUnknown(String details) {
+    return '原因不明のエラーが発生しました。時間をおいて再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。詳細: $details';
+  }
+
+  @override
+  String purchaseErrorStoreProblem(String storeName) {
+    return '$storeName でエラーが発生しています。しばらくお時間をおいて再度お試しください';
+  }
+
+  @override
+  String get purchaseErrorNotAllowed => 'このデバイスで購入が許可されていません';
+
+  @override
+  String get purchaseErrorInvalidPayment =>
+      '支払いに失敗しました。有効な支払い方法かどうかをご確認の上再度お試しください';
+
+  @override
+  String get purchaseErrorProductNotAvailable =>
+      '対象のプランは現在販売しておりません。お手数ですがアプリを再起動の上お試しください';
+
+  @override
+  String get purchaseErrorAlreadyPurchased =>
+      'すでにプランを購入済みです。この端末で購入情報を復元する場合は「以前購入した方はこちら」から購入情報を復元してくさい';
+
+  @override
+  String purchaseErrorReceiptAlreadyInUse(String accountName) {
+    return '既に購入済み。もくは購入情報は別のユーザーで使用されています。$accountNameを確認してください';
+  }
+
+  @override
+  String get purchaseErrorInvalidReceipt => '不正な購入情報です。購入情報を確かめてください';
+
+  @override
+  String purchaseErrorMissingReceipt(String accountName) {
+    return '購入者の情報が存在しません。$accountName で端末にサインインをした上でお試しください';
+  }
+
+  @override
+  String get purchaseErrorNetwork => 'ネットワーク状態が不安定です。接続状況を確認した上でお試しください。';
+
+  @override
+  String purchaseErrorPurchaseFailed(String details) {
+    return '購入に失敗しました。時間をおいて再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。詳細: $details';
+  }
+
+  @override
+  String purchaseErrorUnavailable(String details) {
+    return '現在購入ができません。時間をおいて再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。詳細: $details';
+  }
+
+  @override
+  String purchaseErrorReceiptInUseByOther(String accountName) {
+    return '購入情報は別のユーザーで使用されています。端末にログインしている$accountNameを確認してください';
+  }
+
+  @override
+  String purchaseErrorInvalidAppUserId(String details) {
+    return 'ユーザーが確認できませんでした。アプリを再起動の上再度お試しください。詳細: $details';
+  }
+
+  @override
+  String get purchaseErrorOperationInProgress =>
+      '購入処理が別途進んでおります。お時間をおいて再度ご確認ください';
+
+  @override
+  String purchaseErrorIneligible(String details) {
+    return 'お使いのユーザーでの購入に失敗しました。時間をおいて再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。詳細: $details';
+  }
+
+  @override
+  String purchaseErrorInsufficientPermissions(String accountName) {
+    return 'お使いの $accountName ではプランへの加入ができません。お支払い情報をご確認の上再度お試しください';
+  }
+
+  @override
+  String purchaseErrorPaymentPending(String accountName, String storeName) {
+    return '支払いが途中で止まっております。ログイン中の$accountNameで$storeNameをお確かめくだい';
+  }
+
+  @override
+  String purchaseErrorUserInfoFailed(String details) {
+    return 'ユーザー情報を取得失敗しました。時間をおいて再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。詳細: $details';
+  }
+
+  @override
+  String purchaseErrorConfiguration(String details) {
+    return '購入情報取得に失敗しました。時間をおいて再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。詳細: $details';
+  }
+
+  @override
+  String purchaseErrorUpdateRequired(String code, String details) {
+    return '原因不明のエラーです。最新版にアップデートして再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。コード: $code 詳細: $details';
+  }
+
+  @override
+  String purchaseErrorEmptySubscriberAttributes(String details) {
+    return '原因不明のエラーです。購入情報を事前に取得できませんでした。詳細: $details';
+  }
+
+  @override
+  String purchaseErrorCustomerInfo(String code, String details) {
+    return '顧客情報の取得に失敗しました。時間をおいて再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。詳細: コード: $code $details';
+  }
+
+  @override
+  String purchaseErrorSystemInfo(String code, String details) {
+    return '端末の設定に問題があります。確認して再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。コード: $code 詳細: $details';
+  }
+
+  @override
+  String purchaseErrorBeginRefundRequest(String code, String details) {
+    return '返金処理が開始されています。確認して再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。コード: $code 詳細: $details';
+  }
+
+  @override
+  String purchaseErrorTimeout(String details) {
+    return 'タイムアウトしました。通信環境をお確かめの上再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。詳細: $details';
+  }
+
+  @override
+  String purchaseErrorOfflineConnection(String details) {
+    return '通信不良です。通信環境をお確かめの上再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。詳細: $details';
+  }
+
+  @override
+  String purchaseErrorFeatureNotAvailable(String code, String details) {
+    return 'この機能は現在の設定ではご利用いただけません。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。コード: $code 詳細: $details';
+  }
+
+  @override
+  String purchaseErrorSignatureVerification(String code, String details) {
+    return '署名の検証に失敗しました。時間をおいて再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。コード: $code 詳細: $details';
+  }
+
+  @override
+  String purchaseErrorFeatureNotSupported(String code, String details) {
+    return 'この機能はお使いのデバイスではサポートされていません。最新版にアップデートして再度お試しください。コード: $code 詳細: $details';
+  }
+
+  @override
+  String purchaseErrorInvalidWebPurchaseToken(String code, String details) {
+    return '無効な購入トークンです。再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。コード: $code 詳細: $details';
+  }
+
+  @override
+  String purchaseErrorBelongsToOtherUser(String code, String details) {
+    return 'この購入は別のユーザーに紐づいています。アカウントを確認してください。コード: $code 詳細: $details';
+  }
+
+  @override
+  String purchaseErrorExpiredWebPurchaseToken(String code, String details) {
+    return '購入トークンの有効期限が切れています。再度お試しください。コード: $code 詳細: $details';
+  }
+
+  @override
+  String purchaseErrorTestStoreSimulated(String code, String details) {
+    return 'テスト購入でエラーが発生しました。コード: $code 詳細: $details';
+  }
 }

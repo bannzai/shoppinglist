@@ -331,6 +331,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
       );
       return;
     }
+    final l10n = context.l10n;
     isCreatingInvitation.value = true;
     try {
       final invitation = await functions.createGroupInvitation(
@@ -362,7 +363,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     } catch (e, st) {
       // このページはボトムシート上に表示されるため、SnackBar は背後の
       // Scaffold に描画されて見えない。前面に出るグローバルトーストで通知する。
-      showGlobalErrorToast(e, st);
+      showGlobalErrorToast(l10n, e, st);
     } finally {
       isCreatingInvitation.value = false;
     }
@@ -623,7 +624,7 @@ class _ListActionsCard extends ConsumerWidget {
         onAction: () => showPaywall(context: paywallContext),
       );
     } catch (e, st) {
-      showGlobalErrorToast(e, st);
+      showGlobalErrorToast(l10n, e, st);
     }
   }
 }

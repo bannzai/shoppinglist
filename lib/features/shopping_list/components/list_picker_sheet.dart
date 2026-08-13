@@ -151,7 +151,7 @@ class ListPickerSheet extends HookConsumerWidget {
                   logError(e, st);
                   popRouteSafely(navigator: navigator, route: sheetRoute);
                   messenger.showSnackBar(
-                    SnackBar(content: Text(describeError(e, st).message)),
+                    SnackBar(content: Text(describeError(l10n, e, st).message)),
                   );
                 } finally {
                   // シートが既に dispose 済み(手動クローズ等)の場合に

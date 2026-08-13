@@ -86,7 +86,7 @@ void showErrorAlert(
     faqLinkURL = null;
   } else {
     // FirebaseException 等は describeError で StackTrace を分離する。
-    final display = describeError(error);
+    final display = describeError(context.l10n, error);
     title = display.title ?? context.l10n.errorUnexpectedTitle;
     message = display.message;
     faqLinkURL = null;

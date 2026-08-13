@@ -183,6 +183,7 @@ class GroupCreatePage extends HookConsumerWidget {
                               name: 'tap_create_group',
                               parameters: null,
                             );
+                            final l10n = context.l10n;
                             isCreating.value = true;
                             errorMessage.value = null;
                             try {
@@ -233,7 +234,8 @@ class GroupCreatePage extends HookConsumerWidget {
                               }
                             } catch (e, st) {
                               logError(e, st);
-                              errorMessage.value = describeError(e, st).message;
+                              errorMessage.value =
+                                  describeError(l10n, e, st).message;
                             } finally {
                               isCreating.value = false;
                             }

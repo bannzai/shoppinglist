@@ -341,7 +341,7 @@ class _ErrorBody extends HookWidget {
             Text('📡', style: Theme.of(context).textTheme.displayMedium),
             const SizedBox(height: 8),
             Text(
-              describeError(exception, stackTrace).message,
+              describeError(context.l10n, exception, stackTrace).message,
               textAlign: TextAlign.center,
               style: Theme.of(
                 context,
@@ -487,7 +487,7 @@ class _PaywallPackageTile extends ConsumerWidget {
               final navigator = Navigator.of(context);
               final paywallRoute = ModalRoute.of(context);
               try {
-                final completed = await purchase.call(package);
+                final completed = await purchase.call(context.l10n, package);
                 if (!context.mounted) {
                   return;
                 }

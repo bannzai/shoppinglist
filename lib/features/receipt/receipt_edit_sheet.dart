@@ -119,6 +119,7 @@ class _ReceiptEditSheet extends HookConsumerWidget {
       // ルートに限定する（黒画面対策 #372 と同じ）。
       final navigator = Navigator.of(context);
       final sheetRoute = ModalRoute.of(context);
+      final l10n = context.l10n;
       isSaving.value = true;
       try {
         final amount = int.tryParse(amountController.text.trim());
@@ -171,7 +172,7 @@ class _ReceiptEditSheet extends HookConsumerWidget {
         popRouteSafely(navigator: navigator, route: sheetRoute);
       } catch (e, st) {
         // シート上の SnackBar は背後の Scaffold に隠れるため、前面トーストで通知する。
-        showGlobalErrorToast(e, st);
+        showGlobalErrorToast(l10n, e, st);
       } finally {
         if (context.mounted) {
           isSaving.value = false;

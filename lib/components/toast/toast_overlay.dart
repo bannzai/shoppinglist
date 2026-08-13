@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/app_navigator_key.dart';
 import 'package:shoppinglist/provider/app_provider_container.dart';
 import 'package:shoppinglist/provider/toast.dart';
@@ -16,9 +17,18 @@ void showGlobalToast(String message, {required String? title}) {
 
 /// エラーをグローバルトーストで通知する。本文・タイトルはそのまま、StackTrace は出さない。
 /// debugPrint/Crashlytics には生のエラーを記録する。
-void showGlobalErrorToast(Object error, [StackTrace? stackTrace]) {
+///
+/// 表示自体は BuildContext 不要だが、文言のローカライズに [AppLocalizations] が要る。
+/// 呼び出し側は await より前に `context.l10n` を取っておくこと
+/// (このトーストは Widget が破棄された後の通知に使うため、catch 節で
+/// `context.l10n` を読むと deactivated な context への参照になる)。
+void showGlobalErrorToast(
+  AppLocalizations l10n,
+  Object error, [
+  StackTrace? stackTrace,
+]) {
   logError(error, stackTrace);
-  final display = describeError(error, stackTrace);
+  final display = describeError(l10n, error, stackTrace);
   showGlobalToast(display.message, title: display.title);
 }
 

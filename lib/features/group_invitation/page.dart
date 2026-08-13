@@ -142,6 +142,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                                 name: 'tap_join_group',
                                 parameters: null,
                               );
+                              final l10n = context.l10n;
                               isAccepting.value = true;
                               errorMessage.value = null;
                               // i-invitation-verifying: AppDialogShell ベースで
@@ -179,7 +180,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                               } catch (e, st) {
                                 logError(e, st);
                                 errorMessage.value =
-                                    describeError(e, st).message;
+                                    describeError(l10n, e, st).message;
                                 if (context.mounted) {
                                   Navigator.of(
                                     context,

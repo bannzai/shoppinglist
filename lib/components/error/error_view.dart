@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 
 /// ページ全体に表示するエラービュー。
@@ -28,7 +29,7 @@ class ErrorView extends HookWidget {
       return null;
     }, [error]);
 
-    final display = describeError(error, stackTrace);
+    final display = describeError(context.l10n, error, stackTrace);
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.all(24),

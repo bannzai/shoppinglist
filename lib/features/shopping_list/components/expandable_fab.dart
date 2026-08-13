@@ -686,6 +686,7 @@ class _URLInputDialog extends HookConsumerWidget {
                     // ホームまで剥がして黒画面になるため、pop は自ルートに限定する (#372)。
                     final navigator = Navigator.of(context);
                     final dialogRoute = ModalRoute.of(context);
+                    final l10n = context.l10n;
                     isLoading.value = true;
                     aiProcessingNotifier.start(AIProcessingType.url);
                     List<String> rawItems;
@@ -693,7 +694,7 @@ class _URLInputDialog extends HookConsumerWidget {
                       rawItems = await functions
                           .generateShoppingListItemsFromURL(url: normalizedURL);
                     } catch (e, st) {
-                      showGlobalErrorToast(e, st);
+                      showGlobalErrorToast(l10n, e, st);
                       return;
                     } finally {
                       if (context.mounted) {

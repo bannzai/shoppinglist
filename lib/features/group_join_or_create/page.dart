@@ -122,6 +122,7 @@ class GroupJoinOrCreatePage extends HookConsumerWidget {
                               name: 'tap_create_solo_group',
                               parameters: null,
                             );
+                            final l10n = context.l10n;
                             isCreating.value = true;
                             errorMessage.value = null;
                             try {
@@ -136,7 +137,8 @@ class GroupJoinOrCreatePage extends HookConsumerWidget {
                               // 破棄済み hook への書き込みを避けるため isCreating は戻さない。
                             } catch (e, st) {
                               logError(e, st);
-                              errorMessage.value = describeError(e, st).message;
+                              errorMessage.value =
+                                  describeError(l10n, e, st).message;
                               isCreating.value = false;
                             }
                           },

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/utils/config/environment.dart';
 import 'package:shoppinglist/secret/secret.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -278,7 +279,7 @@ class Purchase {
   /// Return true indicates end of regularllly pattern.
   /// Return false indicates not regulally pattern.
   /// Return value is used to display the completion page
-  Future<bool> call(Package package) async {
+  Future<bool> call(AppLocalizations l10n, Package package) async {
     try {
       final purchaseResult = await Purchases.purchase(
         PurchaseParams.package(package),
@@ -292,7 +293,7 @@ class Purchase {
         throw AssertionError('unexpected premium entitlements is not exists');
       }
       if (!premiumEntitlement.isActive) {
-        throw const FormatException('課金の有効化が完了しておりません。しばらく時間をおいてからご確認ください');
+        throw FormatException(l10n.purchaseNotActivated);
       }
       return Future.value(true);
     } on PlatformException catch (exception, stack) {
@@ -304,7 +305,7 @@ class Purchase {
           'message': exception.message ?? 'empty message',
         },
       );
-      final newException = mapToDisplayedException(exception);
+      final newException = mapToDisplayedException(l10n, exception);
       if (newException == null) {
         return Future.value(false);
       }

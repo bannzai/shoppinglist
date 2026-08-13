@@ -62,7 +62,7 @@ class ListErrorCard extends HookWidget {
             const SizedBox(height: 6),
             if (error != null)
               Text(
-                describeError(error, stackTrace).message,
+                describeError(context.l10n, error, stackTrace).message,
                 textAlign: TextAlign.center,
                 style: Theme.of(
                   context,

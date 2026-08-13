@@ -2059,6 +2059,258 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'On the free plan you can create up to {limit} lists per group. Upgrade to premium for unlimited lists.'**
   String shoppingListLimitExceeded(int limit);
+
+  /// Android 端末のアカウント名称。購入エラー文言で '$accountName' として埋め込まれる (iOS は 'Apple ID' 固定)
+  ///
+  /// In en, this message translates to:
+  /// **'Google Account'**
+  String get platformGoogleAccountName;
+
+  /// 購入は成功したが Premium entitlement が未 active だった時のエラー本文
+  ///
+  /// In en, this message translates to:
+  /// **'Your purchase has not been activated yet. Please check again after a while.'**
+  String get purchaseNotActivated;
+
+  /// FirebaseException firebase_functions/internal に付けるエラータイトル
+  ///
+  /// In en, this message translates to:
+  /// **'A server error occurred'**
+  String get errorTitleServerError;
+
+  /// FirebaseException firebase_functions/unauthenticated に付けるエラータイトル
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-in required'**
+  String get errorTitleSignInRequired;
+
+  /// FirebaseException firebase_functions/permission-denied に付けるエラータイトル
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission for this operation'**
+  String get errorTitlePermissionDenied;
+
+  /// FirebaseException firebase_auth/provider-already-linked に付けるエラータイトル
+  ///
+  /// In en, this message translates to:
+  /// **'This sign-in method is already linked'**
+  String get errorTitleProviderAlreadyLinked;
+
+  /// FirebaseException firebase_auth/credential-already-in-use に付けるエラータイトル
+  ///
+  /// In en, this message translates to:
+  /// **'This account is already used by another user'**
+  String get errorTitleCredentialAlreadyInUse;
+
+  /// FirebaseException firebase_auth/email-already-in-use に付けるエラータイトル
+  ///
+  /// In en, this message translates to:
+  /// **'This email address is already used by another user'**
+  String get errorTitleEmailAlreadyInUse;
+
+  /// 購入エラー: PurchasesErrorCode.unknownError。details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'An unknown error occurred. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}'**
+  String purchaseErrorUnknown(String details);
+
+  /// 購入エラー: PurchasesErrorCode.storeProblemError。storeName は 'App Store' / 'Google Play'
+  ///
+  /// In en, this message translates to:
+  /// **'An error is occurring on {storeName}. Please wait a while and try again.'**
+  String purchaseErrorStoreProblem(String storeName);
+
+  /// 購入エラー: PurchasesErrorCode.purchaseNotAllowedError
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases are not allowed on this device.'**
+  String get purchaseErrorNotAllowed;
+
+  /// 購入エラー: PurchasesErrorCode.purchaseInvalidError
+  ///
+  /// In en, this message translates to:
+  /// **'Payment failed. Please make sure your payment method is valid and try again.'**
+  String get purchaseErrorInvalidPayment;
+
+  /// 購入エラー: PurchasesErrorCode.productNotAvailableForPurchaseError
+  ///
+  /// In en, this message translates to:
+  /// **'The selected plan is not currently on sale. Please restart the app and try again.'**
+  String get purchaseErrorProductNotAvailable;
+
+  /// 購入エラー: PurchasesErrorCode.productAlreadyPurchasedError
+  ///
+  /// In en, this message translates to:
+  /// **'You have already purchased a plan. To restore your purchase on this device, use \"Already purchased? Tap here\" to restore your purchase information.'**
+  String get purchaseErrorAlreadyPurchased;
+
+  /// 購入エラー: PurchasesErrorCode.receiptAlreadyInUseError。accountName は 'Apple ID' / 'Google アカウント'
+  ///
+  /// In en, this message translates to:
+  /// **'Already purchased, or the purchase information is used by another user. Please check your {accountName}.'**
+  String purchaseErrorReceiptAlreadyInUse(String accountName);
+
+  /// 購入エラー: PurchasesErrorCode.invalidReceiptError
+  ///
+  /// In en, this message translates to:
+  /// **'The purchase information is invalid. Please check your purchase information.'**
+  String get purchaseErrorInvalidReceipt;
+
+  /// 購入エラー: PurchasesErrorCode.missingReceiptFileError。accountName は 'Apple ID' / 'Google アカウント'
+  ///
+  /// In en, this message translates to:
+  /// **'No purchaser information exists. Please sign in to your device with {accountName} and try again.'**
+  String purchaseErrorMissingReceipt(String accountName);
+
+  /// 購入エラー: PurchasesErrorCode.networkError
+  ///
+  /// In en, this message translates to:
+  /// **'Your network connection is unstable. Please check your connection and try again.'**
+  String get purchaseErrorNetwork;
+
+  /// 購入エラー: invalidCredentialsError / invalidAppleSubscriptionKeyError / invalidSubscriberAttributesError 共通。details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'The purchase failed. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}'**
+  String purchaseErrorPurchaseFailed(String details);
+
+  /// 購入エラー: unexpectedBackendResponseError / unknownBackendError 共通。details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases are currently unavailable. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}'**
+  String purchaseErrorUnavailable(String details);
+
+  /// 購入エラー: PurchasesErrorCode.receiptInUseByOtherSubscriberError。accountName は 'Apple ID' / 'Google アカウント'
+  ///
+  /// In en, this message translates to:
+  /// **'The purchase information is used by another user. Please check the {accountName} you are signed in with on this device.'**
+  String purchaseErrorReceiptInUseByOther(String accountName);
+
+  /// 購入エラー: PurchasesErrorCode.invalidAppUserIdError。details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'We could not verify your user. Please restart the app and try again. Details: {details}'**
+  String purchaseErrorInvalidAppUserId(String details);
+
+  /// 購入エラー: PurchasesErrorCode.operationAlreadyInProgressError
+  ///
+  /// In en, this message translates to:
+  /// **'Another purchase is already in progress. Please wait a while and check again.'**
+  String get purchaseErrorOperationInProgress;
+
+  /// 購入エラー: PurchasesErrorCode.ineligibleError。details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'The purchase failed for your user. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}'**
+  String purchaseErrorIneligible(String details);
+
+  /// 購入エラー: PurchasesErrorCode.insufficientPermissionsError。accountName は 'Apple ID' / 'Google アカウント'
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot subscribe to a plan with your {accountName}. Please check your payment information and try again.'**
+  String purchaseErrorInsufficientPermissions(String accountName);
+
+  /// 購入エラー: PurchasesErrorCode.paymentPendingError。accountName は 'Apple ID' / 'Google アカウント'、storeName は 'App Store' / 'Google Play'
+  ///
+  /// In en, this message translates to:
+  /// **'The payment has been interrupted. Please check {storeName} with the {accountName} you are signed in with.'**
+  String purchaseErrorPaymentPending(String accountName, String storeName);
+
+  /// 購入エラー: PurchasesErrorCode.logOutWithAnonymousUserError。details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to get your user information. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}'**
+  String purchaseErrorUserInfoFailed(String details);
+
+  /// 購入エラー: PurchasesErrorCode.configurationError。details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to get purchase information. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}'**
+  String purchaseErrorConfiguration(String details);
+
+  /// 購入エラー: unsupportedError / productDiscountMissingIdentifierError / unknownNonNativeError / productDiscountMissingSubscriptionGroupIdentifierError / apiEndpointBlocked / invalidPromotionalOfferError 共通。code は PurchasesErrorCode、details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'An unknown error occurred. Please update to the latest version and try again. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}'**
+  String purchaseErrorUpdateRequired(String code, String details);
+
+  /// 購入エラー: PurchasesErrorCode.emptySubscriberAttributesError。details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'An unknown error occurred. Purchase information could not be retrieved in advance. Details: {details}'**
+  String purchaseErrorEmptySubscriberAttributes(String details);
+
+  /// 購入エラー: PurchasesErrorCode.customerInfoError。code は PurchasesErrorCode、details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to get customer information. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: Code: {code} {details}'**
+  String purchaseErrorCustomerInfo(String code, String details);
+
+  /// 購入エラー: PurchasesErrorCode.systemInfoError。code は PurchasesErrorCode、details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'There is a problem with your device settings. Please check them and try again. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}'**
+  String purchaseErrorSystemInfo(String code, String details);
+
+  /// 購入エラー: PurchasesErrorCode.beginRefundRequestError。code は PurchasesErrorCode、details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'A refund process has been started. Please check it and try again. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}'**
+  String purchaseErrorBeginRefundRequest(String code, String details);
+
+  /// 購入エラー: PurchasesErrorCode.productRequestTimeout。details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'The request timed out. Please check your network connection and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}'**
+  String purchaseErrorTimeout(String details);
+
+  /// 購入エラー: PurchasesErrorCode.offlineConnectionError。details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'The connection is poor. Please check your network connection and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}'**
+  String purchaseErrorOfflineConnection(String details);
+
+  /// 購入エラー: PurchasesErrorCode.featureNotAvailableInCustomEntitlementsComputationMode。code は PurchasesErrorCode、details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is not available with the current configuration. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}'**
+  String purchaseErrorFeatureNotAvailable(String code, String details);
+
+  /// 購入エラー: PurchasesErrorCode.signatureVerificationFailed。code は PurchasesErrorCode、details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'Signature verification failed. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}'**
+  String purchaseErrorSignatureVerification(String code, String details);
+
+  /// 購入エラー: PurchasesErrorCode.featureNotSupportedWithStoreKit1。code は PurchasesErrorCode、details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is not supported on your device. Please update to the latest version and try again. Code: {code} Details: {details}'**
+  String purchaseErrorFeatureNotSupported(String code, String details);
+
+  /// 購入エラー: PurchasesErrorCode.invalidWebPurchaseToken。code は PurchasesErrorCode、details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'The purchase token is invalid. Please try again. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}'**
+  String purchaseErrorInvalidWebPurchaseToken(String code, String details);
+
+  /// 購入エラー: PurchasesErrorCode.purchaseBelongsToOtherUser。code は PurchasesErrorCode、details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'This purchase belongs to another user. Please check your account. Code: {code} Details: {details}'**
+  String purchaseErrorBelongsToOtherUser(String code, String details);
+
+  /// 購入エラー: PurchasesErrorCode.expiredWebPurchaseToken。code は PurchasesErrorCode、details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'The purchase token has expired. Please try again. Code: {code} Details: {details}'**
+  String purchaseErrorExpiredWebPurchaseToken(String code, String details);
+
+  /// 購入エラー: PurchasesErrorCode.testStoreSimulatedPurchaseError。code は PurchasesErrorCode、details は 'message:details'
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred in the test purchase. Code: {code} Details: {details}'**
+  String purchaseErrorTestStoreSimulated(String code, String details);
 }
 
 class _AppLocalizationsDelegate

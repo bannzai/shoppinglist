@@ -668,5 +668,269 @@
     "placeholders": {
       "limit": {"type": "int"}
     }
+  },
+  "platformGoogleAccountName": "Google Account",
+  "@platformGoogleAccountName": {
+    "description": "Android 端末のアカウント名称。購入エラー文言で '$accountName' として埋め込まれる (iOS は 'Apple ID' 固定)"
+  },
+
+  "purchaseNotActivated": "Your purchase has not been activated yet. Please check again after a while.",
+  "@purchaseNotActivated": {
+    "description": "購入は成功したが Premium entitlement が未 active だった時のエラー本文"
+  },
+
+  "errorTitleServerError": "A server error occurred",
+  "@errorTitleServerError": {
+    "description": "FirebaseException firebase_functions/internal に付けるエラータイトル"
+  },
+  "errorTitleSignInRequired": "Sign-in required",
+  "@errorTitleSignInRequired": {
+    "description": "FirebaseException firebase_functions/unauthenticated に付けるエラータイトル"
+  },
+  "errorTitlePermissionDenied": "You do not have permission for this operation",
+  "@errorTitlePermissionDenied": {
+    "description": "FirebaseException firebase_functions/permission-denied に付けるエラータイトル"
+  },
+  "errorTitleProviderAlreadyLinked": "This sign-in method is already linked",
+  "@errorTitleProviderAlreadyLinked": {
+    "description": "FirebaseException firebase_auth/provider-already-linked に付けるエラータイトル"
+  },
+  "errorTitleCredentialAlreadyInUse": "This account is already used by another user",
+  "@errorTitleCredentialAlreadyInUse": {
+    "description": "FirebaseException firebase_auth/credential-already-in-use に付けるエラータイトル"
+  },
+  "errorTitleEmailAlreadyInUse": "This email address is already used by another user",
+  "@errorTitleEmailAlreadyInUse": {
+    "description": "FirebaseException firebase_auth/email-already-in-use に付けるエラータイトル"
+  },
+
+  "purchaseErrorUnknown": "An unknown error occurred. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}",
+  "@purchaseErrorUnknown": {
+    "description": "購入エラー: PurchasesErrorCode.unknownError。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorStoreProblem": "An error is occurring on {storeName}. Please wait a while and try again.",
+  "@purchaseErrorStoreProblem": {
+    "description": "購入エラー: PurchasesErrorCode.storeProblemError。storeName は 'App Store' / 'Google Play'",
+    "placeholders": {
+      "storeName": {"type": "String"}
+    }
+  },
+  "purchaseErrorNotAllowed": "Purchases are not allowed on this device.",
+  "@purchaseErrorNotAllowed": {
+    "description": "購入エラー: PurchasesErrorCode.purchaseNotAllowedError"
+  },
+  "purchaseErrorInvalidPayment": "Payment failed. Please make sure your payment method is valid and try again.",
+  "@purchaseErrorInvalidPayment": {
+    "description": "購入エラー: PurchasesErrorCode.purchaseInvalidError"
+  },
+  "purchaseErrorProductNotAvailable": "The selected plan is not currently on sale. Please restart the app and try again.",
+  "@purchaseErrorProductNotAvailable": {
+    "description": "購入エラー: PurchasesErrorCode.productNotAvailableForPurchaseError"
+  },
+  "purchaseErrorAlreadyPurchased": "You have already purchased a plan. To restore your purchase on this device, use \"Already purchased? Tap here\" to restore your purchase information.",
+  "@purchaseErrorAlreadyPurchased": {
+    "description": "購入エラー: PurchasesErrorCode.productAlreadyPurchasedError"
+  },
+  "purchaseErrorReceiptAlreadyInUse": "Already purchased, or the purchase information is used by another user. Please check your {accountName}.",
+  "@purchaseErrorReceiptAlreadyInUse": {
+    "description": "購入エラー: PurchasesErrorCode.receiptAlreadyInUseError。accountName は 'Apple ID' / 'Google アカウント'",
+    "placeholders": {
+      "accountName": {"type": "String"}
+    }
+  },
+  "purchaseErrorInvalidReceipt": "The purchase information is invalid. Please check your purchase information.",
+  "@purchaseErrorInvalidReceipt": {
+    "description": "購入エラー: PurchasesErrorCode.invalidReceiptError"
+  },
+  "purchaseErrorMissingReceipt": "No purchaser information exists. Please sign in to your device with {accountName} and try again.",
+  "@purchaseErrorMissingReceipt": {
+    "description": "購入エラー: PurchasesErrorCode.missingReceiptFileError。accountName は 'Apple ID' / 'Google アカウント'",
+    "placeholders": {
+      "accountName": {"type": "String"}
+    }
+  },
+  "purchaseErrorNetwork": "Your network connection is unstable. Please check your connection and try again.",
+  "@purchaseErrorNetwork": {
+    "description": "購入エラー: PurchasesErrorCode.networkError"
+  },
+  "purchaseErrorPurchaseFailed": "The purchase failed. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}",
+  "@purchaseErrorPurchaseFailed": {
+    "description": "購入エラー: invalidCredentialsError / invalidAppleSubscriptionKeyError / invalidSubscriberAttributesError 共通。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorUnavailable": "Purchases are currently unavailable. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}",
+  "@purchaseErrorUnavailable": {
+    "description": "購入エラー: unexpectedBackendResponseError / unknownBackendError 共通。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorReceiptInUseByOther": "The purchase information is used by another user. Please check the {accountName} you are signed in with on this device.",
+  "@purchaseErrorReceiptInUseByOther": {
+    "description": "購入エラー: PurchasesErrorCode.receiptInUseByOtherSubscriberError。accountName は 'Apple ID' / 'Google アカウント'",
+    "placeholders": {
+      "accountName": {"type": "String"}
+    }
+  },
+  "purchaseErrorInvalidAppUserId": "We could not verify your user. Please restart the app and try again. Details: {details}",
+  "@purchaseErrorInvalidAppUserId": {
+    "description": "購入エラー: PurchasesErrorCode.invalidAppUserIdError。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorOperationInProgress": "Another purchase is already in progress. Please wait a while and check again.",
+  "@purchaseErrorOperationInProgress": {
+    "description": "購入エラー: PurchasesErrorCode.operationAlreadyInProgressError"
+  },
+  "purchaseErrorIneligible": "The purchase failed for your user. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}",
+  "@purchaseErrorIneligible": {
+    "description": "購入エラー: PurchasesErrorCode.ineligibleError。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorInsufficientPermissions": "You cannot subscribe to a plan with your {accountName}. Please check your payment information and try again.",
+  "@purchaseErrorInsufficientPermissions": {
+    "description": "購入エラー: PurchasesErrorCode.insufficientPermissionsError。accountName は 'Apple ID' / 'Google アカウント'",
+    "placeholders": {
+      "accountName": {"type": "String"}
+    }
+  },
+  "purchaseErrorPaymentPending": "The payment has been interrupted. Please check {storeName} with the {accountName} you are signed in with.",
+  "@purchaseErrorPaymentPending": {
+    "description": "購入エラー: PurchasesErrorCode.paymentPendingError。accountName は 'Apple ID' / 'Google アカウント'、storeName は 'App Store' / 'Google Play'",
+    "placeholders": {
+      "accountName": {"type": "String"},
+      "storeName": {"type": "String"}
+    }
+  },
+  "purchaseErrorUserInfoFailed": "Failed to get your user information. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}",
+  "@purchaseErrorUserInfoFailed": {
+    "description": "購入エラー: PurchasesErrorCode.logOutWithAnonymousUserError。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorConfiguration": "Failed to get purchase information. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}",
+  "@purchaseErrorConfiguration": {
+    "description": "購入エラー: PurchasesErrorCode.configurationError。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorUpdateRequired": "An unknown error occurred. Please update to the latest version and try again. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}",
+  "@purchaseErrorUpdateRequired": {
+    "description": "購入エラー: unsupportedError / productDiscountMissingIdentifierError / unknownNonNativeError / productDiscountMissingSubscriptionGroupIdentifierError / apiEndpointBlocked / invalidPromotionalOfferError 共通。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorEmptySubscriberAttributes": "An unknown error occurred. Purchase information could not be retrieved in advance. Details: {details}",
+  "@purchaseErrorEmptySubscriberAttributes": {
+    "description": "購入エラー: PurchasesErrorCode.emptySubscriberAttributesError。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorCustomerInfo": "Failed to get customer information. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: Code: {code} {details}",
+  "@purchaseErrorCustomerInfo": {
+    "description": "購入エラー: PurchasesErrorCode.customerInfoError。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorSystemInfo": "There is a problem with your device settings. Please check them and try again. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}",
+  "@purchaseErrorSystemInfo": {
+    "description": "購入エラー: PurchasesErrorCode.systemInfoError。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorBeginRefundRequest": "A refund process has been started. Please check it and try again. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}",
+  "@purchaseErrorBeginRefundRequest": {
+    "description": "購入エラー: PurchasesErrorCode.beginRefundRequestError。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorTimeout": "The request timed out. Please check your network connection and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}",
+  "@purchaseErrorTimeout": {
+    "description": "購入エラー: PurchasesErrorCode.productRequestTimeout。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorOfflineConnection": "The connection is poor. Please check your network connection and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}",
+  "@purchaseErrorOfflineConnection": {
+    "description": "購入エラー: PurchasesErrorCode.offlineConnectionError。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorFeatureNotAvailable": "This feature is not available with the current configuration. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}",
+  "@purchaseErrorFeatureNotAvailable": {
+    "description": "購入エラー: PurchasesErrorCode.featureNotAvailableInCustomEntitlementsComputationMode。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorSignatureVerification": "Signature verification failed. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}",
+  "@purchaseErrorSignatureVerification": {
+    "description": "購入エラー: PurchasesErrorCode.signatureVerificationFailed。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorFeatureNotSupported": "This feature is not supported on your device. Please update to the latest version and try again. Code: {code} Details: {details}",
+  "@purchaseErrorFeatureNotSupported": {
+    "description": "購入エラー: PurchasesErrorCode.featureNotSupportedWithStoreKit1。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorInvalidWebPurchaseToken": "The purchase token is invalid. Please try again. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}",
+  "@purchaseErrorInvalidWebPurchaseToken": {
+    "description": "購入エラー: PurchasesErrorCode.invalidWebPurchaseToken。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorBelongsToOtherUser": "This purchase belongs to another user. Please check your account. Code: {code} Details: {details}",
+  "@purchaseErrorBelongsToOtherUser": {
+    "description": "購入エラー: PurchasesErrorCode.purchaseBelongsToOtherUser。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorExpiredWebPurchaseToken": "The purchase token has expired. Please try again. Code: {code} Details: {details}",
+  "@purchaseErrorExpiredWebPurchaseToken": {
+    "description": "購入エラー: PurchasesErrorCode.expiredWebPurchaseToken。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorTestStoreSimulated": "An error occurred in the test purchase. Code: {code} Details: {details}",
+  "@purchaseErrorTestStoreSimulated": {
+    "description": "購入エラー: PurchasesErrorCode.testStoreSimulatedPurchaseError。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
   }
 }
