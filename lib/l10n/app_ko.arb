@@ -195,5 +195,6 @@
   "groupCategoryEmptyUseCaseLocationOrder": "각 매장마다 카테고리 순서를 바꿀 수 있어, 진열대 순서대로 쇼핑할 수 있어요.",
   "groupCategoryEditTitle": "카테고리 편집",
   "groupCategoryEditNotFound": "카테고리를 찾을 수 없습니다",
-  "groupCategoryEditNameLabel": "카테고리 이름"
+  "groupCategoryEditNameLabel": "카테고리 이름",
+  "groupCategoryEditNameHint": "카테고리 이름을 입력하세요"
 }

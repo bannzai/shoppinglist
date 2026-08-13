@@ -195,5 +195,6 @@
   "groupCategoryEmptyUseCaseLocationOrder": "您可以为每个商店调整分类顺序，这样就能按货架顺序购物。",
   "groupCategoryEditTitle": "编辑分类",
   "groupCategoryEditNotFound": "未找到分类",
-  "groupCategoryEditNameLabel": "分类名称"
+  "groupCategoryEditNameLabel": "分类名称",
+  "groupCategoryEditNameHint": "输入类别名称"
 }

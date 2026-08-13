@@ -195,5 +195,6 @@
   "groupCategoryEmptyUseCaseLocationOrder": "您可以為每間商店調整分類順序，這樣就能依照走道順序購物。",
   "groupCategoryEditTitle": "編輯分類",
   "groupCategoryEditNotFound": "找不到分類",
-  "groupCategoryEditNameLabel": "分類名稱"
+  "groupCategoryEditNameLabel": "分類名稱",
+  "groupCategoryEditNameHint": "輸入分類名稱"
 }
