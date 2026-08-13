@@ -126,5 +126,6 @@
   "settingsPremiumCardSubtitlePremium": "您可使用所有功能",
   "settingsPremiumCardSubtitleFree": "五種顏色主題、更多照片／網址掃描等功能",
   "settingsPremiumCardStartButton": "開始使用",
-  "settingsSignOut": "登出"
+  "settingsSignOut": "登出",
+  "settingsSignOutConfirmBarrierLabel": "登出確認"
 }
