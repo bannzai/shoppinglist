@@ -10,5 +10,6 @@
   "commonRetry": "重试",
   "commonUndo": "撤销",
   "commonUpgrade": "升级",
-  "commonSettings": "设置"
+  "commonSettings": "设置",
+  "commonCategory": "分类"
 }

@@ -10,5 +10,6 @@
   "commonRetry": "重試",
   "commonUndo": "復原",
   "commonUpgrade": "升級",
-  "commonSettings": "設定"
+  "commonSettings": "設定",
+  "commonCategory": "分類"
 }
