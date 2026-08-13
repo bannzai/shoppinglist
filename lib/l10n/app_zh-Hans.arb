@@ -289,5 +289,6 @@
   "paywallPrivacyLink": "隐私",
   "paywallRestore": "恢复购买",
   "paywallRestored": "已恢复你的购买项目",
-  "paywallNoPlans": "目前没有可用的套餐"
+  "paywallNoPlans": "目前没有可用的套餐",
+  "paywallRecommendedBadge": "推荐"
 }
