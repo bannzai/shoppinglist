@@ -184,5 +184,6 @@
   "commonUnnamed": "未命名",
   "commonCreating": "建立中…",
   "groupNameLabel": "群組名稱",
-  "groupNameHint": "輸入群組名稱"
+  "groupNameHint": "輸入群組名稱",
+  "groupCategoryLocationOrderLabel": "依購物地點排序"
 }
