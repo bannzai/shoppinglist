@@ -361,5 +361,6 @@
   "purchaseErrorSystemInfo": "您的设备设置有问题。请检查后重试。如果问题仍然存在，请通过“设置”>“咨询”联系我们。代码：{code} 详细信息：{details}",
   "purchaseErrorBeginRefundRequest": "退款流程已开始。请先确认后重试。如果问题仍然存在，请前往“设置”>“咨询”联系我们。代码：{code} 详情：{details}",
   "purchaseErrorTimeout": "请求超时。请检查网络连接后重试。如果问题仍然存在，请通过“设置”>“咨询”联系我们。详情：{details}",
-  "purchaseErrorOfflineConnection": "网络连接不稳定。请检查您的网络连接后重试。如果问题仍然存在，请在“设置”>“咨询”中联系我们。详情：{details}"
+  "purchaseErrorOfflineConnection": "网络连接不稳定。请检查您的网络连接后重试。如果问题仍然存在，请在“设置”>“咨询”中联系我们。详情：{details}",
+  "purchaseErrorFeatureNotAvailable": "当前配置下无法使用此功能。如果问题仍然存在，请在“设置”>“反馈”中联系我们。代码：{code} 详情：{details}"
 }
