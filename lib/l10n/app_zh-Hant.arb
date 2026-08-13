@@ -122,5 +122,6 @@
   "settingsDebugSection": "除錯",
   "settingsDeveloperOptions": "開發者選項",
   "settingsPremiumCardTitlePremium": "進階版會員",
-  "settingsPremiumCardTitleFree": "升級到進階版"
+  "settingsPremiumCardTitleFree": "升級到進階版",
+  "settingsPremiumCardSubtitlePremium": "您可使用所有功能"
 }
