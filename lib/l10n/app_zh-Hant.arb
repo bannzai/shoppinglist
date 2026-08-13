@@ -96,5 +96,6 @@
   "shoppingListItemDetailTooltip": "項目詳情",
   "shoppingListItemDeleteTooltip": "刪除項目",
   "shoppingListItemDeleteConfirm": "刪除此項目？",
-  "shoppingListItemDeleted": "已刪除該項目"
+  "shoppingListItemDeleted": "已刪除該項目",
+  "shoppingListItemMemoHint": "寫個備註……"
 }

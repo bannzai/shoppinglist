@@ -96,5 +96,6 @@
   "shoppingListItemDetailTooltip": "商品详情",
   "shoppingListItemDeleteTooltip": "删除项目",
   "shoppingListItemDeleteConfirm": "删除此项目？",
-  "shoppingListItemDeleted": "已删除该商品"
+  "shoppingListItemDeleted": "已删除该商品",
+  "shoppingListItemMemoHint": "写个备注……"
 }
