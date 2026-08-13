@@ -100,5 +100,6 @@
   "shoppingListItemMemoHint": "写个备注……",
   "shoppingListNotifyGroup": "通知群组",
   "shoppingListNotifyGroupSent": "已通知群组",
-  "shoppingListNotifyGroupGuideLabel": "关于群组通知"
+  "shoppingListNotifyGroupGuideLabel": "关于群组通知",
+  "shoppingListNotifyGroupGuideMessage": "点按此按钮会向群组中的其他成员发送推送通知，告知他们您已更新购物清单。"
 }

@@ -100,5 +100,6 @@
   "shoppingListItemMemoHint": "메모를 작성하세요...",
   "shoppingListNotifyGroup": "그룹에 알리기",
   "shoppingListNotifyGroupSent": "그룹에 알림 전송됨",
-  "shoppingListNotifyGroupGuideLabel": "그룹 알림 정보"
+  "shoppingListNotifyGroupGuideLabel": "그룹 알림 정보",
+  "shoppingListNotifyGroupGuideMessage": "이 버튼을 탭하면 그룹의 다른 멤버에게 푸시 알림이 전송되어 쇼핑 목록을 업데이트했다는 사실을 알려줍니다."
 }
