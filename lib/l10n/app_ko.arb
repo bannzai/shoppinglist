@@ -299,5 +299,6 @@
   "receiptTakePhoto": "사진 찍기",
   "receiptChooseFromLibrary": "사진 보관함에서 선택",
   "receiptAmountLabel": "금액",
-  "receiptMemoLabel": "메모"
+  "receiptMemoLabel": "메모",
+  "receiptMemoHint": "매장 이름이나 구매한 품목 같은 메모"
 }

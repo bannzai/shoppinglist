@@ -299,5 +299,6 @@
   "receiptTakePhoto": "拍照",
   "receiptChooseFromLibrary": "从照片图库中选择",
   "receiptAmountLabel": "金额",
-  "receiptMemoLabel": "备注"
+  "receiptMemoLabel": "备注",
+  "receiptMemoHint": "商店名称或购买内容等备注"
 }
