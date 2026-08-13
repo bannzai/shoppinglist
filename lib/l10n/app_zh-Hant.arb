@@ -45,5 +45,6 @@
   "shoppingListDuplicateCurrentList": "複製目前清單",
   "shoppingListDuplicateUncheckedOnly": "僅複製未勾選的項目",
   "shoppingListDuplicated": "已複製清單",
-  "shoppingListDuplicatedFrom": "複製自 {name}"
+  "shoppingListDuplicatedFrom": "複製自 {name}",
+  "shoppingListDeletedListName": "已刪除的清單"
 }
