@@ -189,5 +189,6 @@
   "groupCategoryLocationOrderPremiumOnly": "쇼핑 위치별 카테고리 재정렬은 프리미엄 기능입니다",
   "groupCategoryKeywordCount": "키워드: {count}",
   "groupCategoryDeleteConfirmTitle": "\"{name}\"을(를) 삭제할까요?",
-  "groupCategoryDeleteConfirmMessage": "이 카테고리에 설정된 키워드도 삭제됩니다"
+  "groupCategoryDeleteConfirmMessage": "이 카테고리에 설정된 키워드도 삭제됩니다",
+  "groupCategoryEmptyTitle": "구매한 항목을 자동으로 분류해요"
 }
