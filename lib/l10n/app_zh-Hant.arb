@@ -63,5 +63,6 @@
   "shoppingListAiCategorizeSheetTitle": "自動分類",
   "shoppingListAiCategorizeSheetSubtitle": "在儲存前查看並調整分類",
   "shoppingListAiCategorizeSheetEmpty": "沒有可分類的項目",
-  "shoppingListAiCategorizeSheetConfirm": "註冊 {count} 項"
+  "shoppingListAiCategorizeSheetConfirm": "註冊 {count} 項",
+  "shoppingListCategorySelect": "選擇分類"
 }
