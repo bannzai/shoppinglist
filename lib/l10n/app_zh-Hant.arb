@@ -215,5 +215,6 @@
   "groupCreateIconFork": "食物",
   "groupCreateIconCookie": "零食",
   "groupCreateIconPets": "寵物",
-  "groupCreateIconBag": "包"
+  "groupCreateIconBag": "包",
+  "groupCreateInvitationDialogTitle": "邀請成員"
 }

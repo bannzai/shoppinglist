@@ -215,5 +215,6 @@
   "groupCreateIconFork": "음식",
   "groupCreateIconCookie": "간식",
   "groupCreateIconPets": "반려동물",
-  "groupCreateIconBag": "가방"
+  "groupCreateIconBag": "가방",
+  "groupCreateInvitationDialogTitle": "멤버 초대"
 }
