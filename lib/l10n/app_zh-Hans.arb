@@ -188,5 +188,6 @@
   "groupCategoryLocationOrderLabel": "按购物地点排序",
   "groupCategoryLocationOrderPremiumOnly": "按购物地点重新排序类别是高级版功能",
   "groupCategoryKeywordCount": "关键词：{count}",
-  "groupCategoryDeleteConfirmTitle": "要删除“{name}”吗？"
+  "groupCategoryDeleteConfirmTitle": "要删除“{name}”吗？",
+  "groupCategoryDeleteConfirmMessage": "为此分类设置的关键词也会被删除"
 }
