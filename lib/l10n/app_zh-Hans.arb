@@ -209,5 +209,6 @@
   "groupCategoryEditMatchingRegex": "正则表达式",
   "groupCreateTitle": "创建群组",
   "groupCreateIconLabel": "图标",
-  "groupCreateSubmit": "创建"
+  "groupCreateSubmit": "创建",
+  "groupCreateIconHome": "家"
 }

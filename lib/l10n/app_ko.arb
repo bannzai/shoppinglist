@@ -209,5 +209,6 @@
   "groupCategoryEditMatchingRegex": "정규식",
   "groupCreateTitle": "그룹 만들기",
   "groupCreateIconLabel": "아이콘",
-  "groupCreateSubmit": "만들기"
+  "groupCreateSubmit": "만들기",
+  "groupCreateIconHome": "집"
 }
