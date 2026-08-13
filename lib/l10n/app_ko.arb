@@ -155,5 +155,6 @@
   "settingsAccountReSignInButton": "다시 로그인",
   "listSettingTitle": "쇼핑 목록 설정",
   "listSettingNameSection": "목록 이름",
-  "listSettingShoppingLocationSection": "쇼핑 장소"
+  "listSettingShoppingLocationSection": "쇼핑 장소",
+  "listSettingLocationUnset": "미설정"
 }

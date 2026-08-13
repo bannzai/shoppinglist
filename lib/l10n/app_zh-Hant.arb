@@ -155,5 +155,6 @@
   "settingsAccountReSignInButton": "重新登入",
   "listSettingTitle": "購物清單設定",
   "listSettingNameSection": "清單名稱",
-  "listSettingShoppingLocationSection": "購物地點"
+  "listSettingShoppingLocationSection": "購物地點",
+  "listSettingLocationUnset": "未設定"
 }

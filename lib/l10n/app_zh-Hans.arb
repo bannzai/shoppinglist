@@ -155,5 +155,6 @@
   "settingsAccountReSignInButton": "重新登录",
   "listSettingTitle": "购物清单设置",
   "listSettingNameSection": "清单名称",
-  "listSettingShoppingLocationSection": "购物地点"
+  "listSettingShoppingLocationSection": "购物地点",
+  "listSettingLocationUnset": "未设置"
 }
