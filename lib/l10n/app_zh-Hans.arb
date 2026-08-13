@@ -33,5 +33,6 @@
   "accountDeleteExitAppQuestion": "要退出应用吗？",
   "accountDeleteExitAppButton": "退出",
   "shoppingListDefaultName": "购物清单",
-  "shoppingListSettingTooltip": "清单设置"
+  "shoppingListSettingTooltip": "清单设置",
+  "shoppingListEmptyTitle": "还没有购物清单"
 }
