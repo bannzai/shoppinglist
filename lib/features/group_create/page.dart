@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/features/notification_permission/pre_permission_dialog.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -35,7 +36,7 @@ class GroupCreatePage extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: neutral.paper,
       appBar: AppBar(
-        title: const Text('グループ作成'),
+        title: Text(context.l10n.groupCreateTitle),
         backgroundColor: neutral.paper,
       ),
       body: SafeArea(
@@ -45,7 +46,7 @@ class GroupCreatePage extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'グループ名',
+                context.l10n.groupNameLabel,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: neutral.ink2,
@@ -64,7 +65,7 @@ class GroupCreatePage extends HookConsumerWidget {
                   autofocus: true,
                   cursorColor: tokens.accent,
                   decoration: InputDecoration(
-                    hintText: 'グループ名を入力',
+                    hintText: context.l10n.groupNameHint,
                     border: InputBorder.none,
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: neutral.divider2, width: 1),
@@ -102,7 +103,7 @@ class GroupCreatePage extends HookConsumerWidget {
               // GroupCreatePage iconName 選択 (3x2 GridView)。AI アイコン生成タイルは
               // M-3 確定で表示しない (design_handoff v2 運用ルール 4 参照)。
               Text(
-                'アイコン',
+                context.l10n.groupCreateIconLabel,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: neutral.ink2,
@@ -149,7 +150,7 @@ class GroupCreatePage extends HookConsumerWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                preset.label,
+                                _iconPresetLabel(context, preset.name),
                                 style: Theme.of(
                                   context,
                                 ).textTheme.labelSmall?.copyWith(
@@ -167,7 +168,10 @@ class GroupCreatePage extends HookConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: AppPill(
-                  label: isCreating.value ? '作成中...' : '作成する',
+                  label:
+                      isCreating.value
+                          ? context.l10n.commonCreating
+                          : context.l10n.groupCreateSubmit,
                   variant: AppPillVariant.accent,
                   large: true,
                   expanded: true,
@@ -258,11 +262,11 @@ class _PostCreateInvitationDialog extends StatelessWidget {
     final neutral = tokens.neutral;
     return AlertDialog(
       backgroundColor: neutral.card,
-      title: const Text('メンバーを招待'),
+      title: Text(context.l10n.groupCreateInvitationDialogTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('招待コードを家族と共有してください'),
+          Text(context.l10n.groupCreateInvitationDialogMessage),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -289,12 +293,13 @@ class _PostCreateInvitationDialog extends StatelessWidget {
               name: 'tap_copy_invitation_code_post_create',
               parameters: null,
             );
+            final copiedMessage = context.l10n.listSettingInvitationCodeCopied;
             await Clipboard.setData(ClipboardData(text: invitationCode));
             // ダイアログ上の SnackBar は背後の Scaffold に描画されて
             // 見えないため、前面に出るグローバルトーストで通知する。
-            showGlobalToast('招待コードをコピーしました', title: null);
+            showGlobalToast(copiedMessage, title: null);
           },
-          child: const Text('コピー'),
+          child: Text(context.l10n.commonCopy),
         ),
         TextButton(
           onPressed: () async {
@@ -305,7 +310,9 @@ class _PostCreateInvitationDialog extends StatelessWidget {
             final box = context.findRenderObject() as RenderBox?;
             await SharePlus.instance.share(
               ShareParams(
-                text: '買い物リストの招待コード: $invitationCode',
+                text: context.l10n.listSettingInvitationShareText(
+                  invitationCode,
+                ),
                 sharePositionOrigin:
                     box == null
                         ? null
@@ -313,11 +320,11 @@ class _PostCreateInvitationDialog extends StatelessWidget {
               ),
             );
           },
-          child: const Text('共有'),
+          child: Text(context.l10n.commonShare),
         ),
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('閉じる'),
+          child: Text(context.l10n.commonClose),
         ),
       ],
     );
@@ -326,11 +333,22 @@ class _PostCreateInvitationDialog extends StatelessWidget {
 
 /// `design_handoff_shoppinglist/preview/screens-groups.jsx#GroupCreatePage` の
 /// iconName プリセット 6 種。`Group.iconName` で許容される値。
-const _iconPresets = <({String name, IconData icon, String label})>[
-  (name: 'home', icon: Icons.home_outlined, label: 'いえ'),
-  (name: 'cart', icon: Icons.shopping_cart_outlined, label: 'カート'),
-  (name: 'fork', icon: Icons.restaurant_outlined, label: 'たべる'),
-  (name: 'cookie', icon: Icons.cookie_outlined, label: 'おかし'),
-  (name: 'pets', icon: Icons.pets_outlined, label: 'ペット'),
-  (name: 'bag', icon: Icons.shopping_bag_outlined, label: 'バッグ'),
+const _iconPresets = <({String name, IconData icon})>[
+  (name: 'home', icon: Icons.home_outlined),
+  (name: 'cart', icon: Icons.shopping_cart_outlined),
+  (name: 'fork', icon: Icons.restaurant_outlined),
+  (name: 'cookie', icon: Icons.cookie_outlined),
+  (name: 'pets', icon: Icons.pets_outlined),
+  (name: 'bag', icon: Icons.shopping_bag_outlined),
 ];
+
+/// [_iconPresets] の iconName に対応する表示ラベル。
+String _iconPresetLabel(BuildContext context, String iconName) =>
+    switch (iconName) {
+      'cart' => context.l10n.groupCreateIconCart,
+      'fork' => context.l10n.groupCreateIconFork,
+      'cookie' => context.l10n.groupCreateIconCookie,
+      'pets' => context.l10n.groupCreateIconPets,
+      'bag' => context.l10n.groupCreateIconBag,
+      _ => context.l10n.groupCreateIconHome,
+    };

@@ -583,4 +583,214 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get listSettingLocationSelected => '選択中';
+
+  @override
+  String get commonDefault => 'デフォルト';
+
+  @override
+  String get commonUnnamed => '名前未設定';
+
+  @override
+  String get commonCreating => '作成中...';
+
+  @override
+  String get groupNameLabel => 'グループ名';
+
+  @override
+  String get groupNameHint => 'グループ名を入力';
+
+  @override
+  String get groupCategoryLocationOrderLabel => '買い物する場所の並び順';
+
+  @override
+  String get groupCategoryLocationOrderPremiumOnly =>
+      '買い物場所ごとのカテゴリ並び替えはプレミアム機能です';
+
+  @override
+  String groupCategoryKeywordCount(int count) {
+    return 'キーワード: $count件';
+  }
+
+  @override
+  String groupCategoryDeleteConfirmTitle(String name) {
+    return '「$name」を削除しますか？';
+  }
+
+  @override
+  String get groupCategoryDeleteConfirmMessage => 'このカテゴリに設定されたキーワードも削除されます';
+
+  @override
+  String get groupCategoryEmptyTitle => '買ったものを自動でグループ分け';
+
+  @override
+  String get groupCategoryEmptyUseCaseAutoGroup =>
+      '「野菜」に トマト・玉ねぎ を登録すると、リストで自動的に野菜セクションにまとまります';
+
+  @override
+  String get groupCategoryEmptyUseCaseLocationOrder =>
+      '店ごとにカテゴリの並び順を変えられるので、売り場の動線どおりに回れます';
+
+  @override
+  String get groupCategoryEditTitle => 'カテゴリ編集';
+
+  @override
+  String get groupCategoryEditNotFound => 'カテゴリが見つかりません';
+
+  @override
+  String get groupCategoryEditNameLabel => 'カテゴリ名';
+
+  @override
+  String get groupCategoryEditNameHint => 'カテゴリ名を入力';
+
+  @override
+  String get groupCategoryEditColorLabel => 'カテゴリカラー';
+
+  @override
+  String get groupCategoryEditIconLabel => 'カテゴリアイコン';
+
+  @override
+  String get groupCategoryEditKeywordsLabel => 'キーワード';
+
+  @override
+  String get groupCategoryEditAddKeyword => 'キーワードを追加';
+
+  @override
+  String get groupCategoryEditKeywordsEmpty => 'キーワードがまだありません';
+
+  @override
+  String get groupCategoryEditKeywordHint => 'キーワードを入力';
+
+  @override
+  String get groupCategoryEditMatchingLabel => 'マッチング';
+
+  @override
+  String get groupCategoryEditMatchingExact => '完全一致';
+
+  @override
+  String get groupCategoryEditMatchingPartial => '部分一致';
+
+  @override
+  String get groupCategoryEditMatchingRegex => '正規表現';
+
+  @override
+  String get groupCreateTitle => 'グループ作成';
+
+  @override
+  String get groupCreateIconLabel => 'アイコン';
+
+  @override
+  String get groupCreateSubmit => '作成する';
+
+  @override
+  String get groupCreateIconHome => 'いえ';
+
+  @override
+  String get groupCreateIconCart => 'カート';
+
+  @override
+  String get groupCreateIconFork => 'たべる';
+
+  @override
+  String get groupCreateIconCookie => 'おかし';
+
+  @override
+  String get groupCreateIconPets => 'ペット';
+
+  @override
+  String get groupCreateIconBag => 'バッグ';
+
+  @override
+  String get groupCreateInvitationDialogTitle => 'メンバーを招待';
+
+  @override
+  String get groupCreateInvitationDialogMessage => '招待コードを家族と共有してください';
+
+  @override
+  String get groupInvitationTitle => '招待コードで参加';
+
+  @override
+  String get groupInvitationHeading => '招待コードを入力してください';
+
+  @override
+  String get groupInvitationDescription => 'グループのメンバーから共有された8桁のコードを入力してください';
+
+  @override
+  String get groupInvitationJoining => '参加中...';
+
+  @override
+  String get groupInvitationJoin => '参加する';
+
+  @override
+  String get groupInvitationVerifyingTitle => '招待コードを確認中';
+
+  @override
+  String get groupInvitationVerifyingMessage => 'サーバー側でグループへの参加を処理しています。';
+
+  @override
+  String get groupJoinHeading => 'はじめましょう';
+
+  @override
+  String get groupJoinDescription =>
+      '家族やパートナーから招待コードを受け取っていますか？\nコードで参加すると同じ買い物リストを一緒に使えます。';
+
+  @override
+  String get groupJoinCreateSolo => '自分のリストを作る';
+
+  @override
+  String get groupListEmpty => '所属しているグループはありません';
+
+  @override
+  String groupListMemberCount(int count) {
+    return 'メンバー $count人';
+  }
+
+  @override
+  String get groupListFreeLimitBanner => '無料プランは追加 1 グループまで';
+
+  @override
+  String get groupListFreeLimitAction => '解除';
+
+  @override
+  String get groupSettingMembersSection => 'メンバー一覧';
+
+  @override
+  String get groupSettingMemberOwner => 'オーナー';
+
+  @override
+  String get groupSettingMemberSelf => '自分';
+
+  @override
+  String get groupSettingMemberFallbackName => 'メンバー';
+
+  @override
+  String get groupSettingShoppingLocationSubtitle => '店舗の登録・編集';
+
+  @override
+  String get groupSettingInvitationSection => 'グループ招待';
+
+  @override
+  String get groupSettingCreatingInvitation => '招待コードを発行中...';
+
+  @override
+  String get groupSettingCreateInvitation => '招待コードを発行';
+
+  @override
+  String groupSettingRemoveMemberConfirmTitle(String name) {
+    return '$nameをグループから削除しますか？';
+  }
+
+  @override
+  String get groupSettingRemoveMemberConfirmMessage =>
+      '削除されたメンバーはこのグループにアクセスできなくなります';
+
+  @override
+  String groupSettingMemberRemoved(String name) {
+    return '$nameを削除しました';
+  }
+
+  @override
+  String get groupSettingInvitationCodeMessage => '以下のコードを共有してください';
+
+  @override
+  String get groupSettingInvitationExpiry => '有効期限: 7日間';
 }

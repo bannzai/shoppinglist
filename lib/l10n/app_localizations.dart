@@ -1177,6 +1177,396 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Selected'**
   String get listSettingLocationSelected;
+
+  /// デフォルトグループを示すバッジと、カテゴリ並び順のドロップダウンで既定の並び順を指す選択肢
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get commonDefault;
+
+  /// グループ名・メンバーの表示名が未設定のときのフォールバック表示
+  ///
+  /// In en, this message translates to:
+  /// **'Unnamed'**
+  String get commonUnnamed;
+
+  /// グループ作成の実行中にボタンへ出すラベル
+  ///
+  /// In en, this message translates to:
+  /// **'Creating...'**
+  String get commonCreating;
+
+  /// グループ作成画面・グループ設定画面の、グループ名入力欄の見出し
+  ///
+  /// In en, this message translates to:
+  /// **'Group name'**
+  String get groupNameLabel;
+
+  /// No description provided for @groupNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a group name'**
+  String get groupNameHint;
+
+  /// カテゴリ一覧で、どの買い物する場所の並び順を表示するか選ぶドロップダウンのラベル
+  ///
+  /// In en, this message translates to:
+  /// **'Order by shopping location'**
+  String get groupCategoryLocationOrderLabel;
+
+  /// No description provided for @groupCategoryLocationOrderPremiumOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Reordering categories per shopping location is a Premium feature'**
+  String get groupCategoryLocationOrderPremiumOnly;
+
+  /// カテゴリ一覧の各行に出す、そのカテゴリに登録されたキーワード数
+  ///
+  /// In en, this message translates to:
+  /// **'Keywords: {count}'**
+  String groupCategoryKeywordCount(int count);
+
+  /// No description provided for @groupCategoryDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{name}\"?'**
+  String groupCategoryDeleteConfirmTitle(String name);
+
+  /// No description provided for @groupCategoryDeleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The keywords set for this category will also be deleted'**
+  String get groupCategoryDeleteConfirmMessage;
+
+  /// カテゴリが1件も無いときに出す価値訴求カードの見出し
+  ///
+  /// In en, this message translates to:
+  /// **'Group what you buy automatically'**
+  String get groupCategoryEmptyTitle;
+
+  /// No description provided for @groupCategoryEmptyUseCaseAutoGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Register tomatoes and onions under \"Vegetables\" and they are automatically grouped into the Vegetables section of your list'**
+  String get groupCategoryEmptyUseCaseAutoGroup;
+
+  /// No description provided for @groupCategoryEmptyUseCaseLocationOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change the category order for each store, so you can shop along the aisles in order'**
+  String get groupCategoryEmptyUseCaseLocationOrder;
+
+  /// No description provided for @groupCategoryEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit category'**
+  String get groupCategoryEditTitle;
+
+  /// No description provided for @groupCategoryEditNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Category not found'**
+  String get groupCategoryEditNotFound;
+
+  /// No description provided for @groupCategoryEditNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category name'**
+  String get groupCategoryEditNameLabel;
+
+  /// No description provided for @groupCategoryEditNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a category name'**
+  String get groupCategoryEditNameHint;
+
+  /// No description provided for @groupCategoryEditColorLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category color'**
+  String get groupCategoryEditColorLabel;
+
+  /// No description provided for @groupCategoryEditIconLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category icon'**
+  String get groupCategoryEditIconLabel;
+
+  /// No description provided for @groupCategoryEditKeywordsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Keywords'**
+  String get groupCategoryEditKeywordsLabel;
+
+  /// キーワード追加ボタンの tooltip と、追加ダイアログのタイトル
+  ///
+  /// In en, this message translates to:
+  /// **'Add keyword'**
+  String get groupCategoryEditAddKeyword;
+
+  /// No description provided for @groupCategoryEditKeywordsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No keywords yet'**
+  String get groupCategoryEditKeywordsEmpty;
+
+  /// No description provided for @groupCategoryEditKeywordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a keyword'**
+  String get groupCategoryEditKeywordHint;
+
+  /// キーワードの一致方法 (部分一致/完全一致/正規表現) を選ぶコントロールの見出し
+  ///
+  /// In en, this message translates to:
+  /// **'Matching'**
+  String get groupCategoryEditMatchingLabel;
+
+  /// No description provided for @groupCategoryEditMatchingExact.
+  ///
+  /// In en, this message translates to:
+  /// **'Exact match'**
+  String get groupCategoryEditMatchingExact;
+
+  /// No description provided for @groupCategoryEditMatchingPartial.
+  ///
+  /// In en, this message translates to:
+  /// **'Partial match'**
+  String get groupCategoryEditMatchingPartial;
+
+  /// No description provided for @groupCategoryEditMatchingRegex.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular expression'**
+  String get groupCategoryEditMatchingRegex;
+
+  /// グループ作成画面のタイトルと、グループ管理画面の作成 FAB の tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Create a group'**
+  String get groupCreateTitle;
+
+  /// No description provided for @groupCreateIconLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Icon'**
+  String get groupCreateIconLabel;
+
+  /// No description provided for @groupCreateSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get groupCreateSubmit;
+
+  /// グループアイコンのプリセット名 (家)。日本語はひらがなで統一している
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get groupCreateIconHome;
+
+  /// No description provided for @groupCreateIconCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Cart'**
+  String get groupCreateIconCart;
+
+  /// No description provided for @groupCreateIconFork.
+  ///
+  /// In en, this message translates to:
+  /// **'Food'**
+  String get groupCreateIconFork;
+
+  /// No description provided for @groupCreateIconCookie.
+  ///
+  /// In en, this message translates to:
+  /// **'Snacks'**
+  String get groupCreateIconCookie;
+
+  /// No description provided for @groupCreateIconPets.
+  ///
+  /// In en, this message translates to:
+  /// **'Pets'**
+  String get groupCreateIconPets;
+
+  /// No description provided for @groupCreateIconBag.
+  ///
+  /// In en, this message translates to:
+  /// **'Bag'**
+  String get groupCreateIconBag;
+
+  /// No description provided for @groupCreateInvitationDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite members'**
+  String get groupCreateInvitationDialogTitle;
+
+  /// No description provided for @groupCreateInvitationDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Share the invitation code with your family'**
+  String get groupCreateInvitationDialogMessage;
+
+  /// 招待コード入力画面のタイトルと、その画面を開くボタンのラベル
+  ///
+  /// In en, this message translates to:
+  /// **'Join with an invitation code'**
+  String get groupInvitationTitle;
+
+  /// No description provided for @groupInvitationHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your invitation code'**
+  String get groupInvitationHeading;
+
+  /// No description provided for @groupInvitationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 8-character code shared with you by a member of the group'**
+  String get groupInvitationDescription;
+
+  /// No description provided for @groupInvitationJoining.
+  ///
+  /// In en, this message translates to:
+  /// **'Joining...'**
+  String get groupInvitationJoining;
+
+  /// No description provided for @groupInvitationJoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get groupInvitationJoin;
+
+  /// 参加処理中オーバレイのタイトルと、そのダイアログの barrierLabel
+  ///
+  /// In en, this message translates to:
+  /// **'Checking the invitation code'**
+  String get groupInvitationVerifyingTitle;
+
+  /// No description provided for @groupInvitationVerifyingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The server is processing your request to join the group.'**
+  String get groupInvitationVerifyingMessage;
+
+  /// グループ未参加ユーザーに出す初期セットアップ画面の見出し
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s get started'**
+  String get groupJoinHeading;
+
+  /// No description provided for @groupJoinDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Did you get an invitation code from your family or partner?\nJoining with a code lets you use the same shopping list together.'**
+  String get groupJoinDescription;
+
+  /// No description provided for @groupJoinCreateSolo.
+  ///
+  /// In en, this message translates to:
+  /// **'Create my own list'**
+  String get groupJoinCreateSolo;
+
+  /// No description provided for @groupListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not belong to any group'**
+  String get groupListEmpty;
+
+  /// No description provided for @groupListMemberCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} members'**
+  String groupListMemberCount(int count);
+
+  /// No description provided for @groupListFreeLimitBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'The free plan allows one additional group'**
+  String get groupListFreeLimitBanner;
+
+  /// 無料プランの上限バナーから paywall を開くアクション (日本語は「解除」)
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get groupListFreeLimitAction;
+
+  /// No description provided for @groupSettingMembersSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get groupSettingMembersSection;
+
+  /// メンバー一覧で、グループのオーナーである行に出す役割表示
+  ///
+  /// In en, this message translates to:
+  /// **'Owner'**
+  String get groupSettingMemberOwner;
+
+  /// メンバー一覧で、自分自身の行に出す役割表示
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get groupSettingMemberSelf;
+
+  /// メンバー削除完了の SnackBar で、表示名が未設定のメンバーを指す語
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get groupSettingMemberFallbackName;
+
+  /// No description provided for @groupSettingShoppingLocationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Register and edit stores'**
+  String get groupSettingShoppingLocationSubtitle;
+
+  /// No description provided for @groupSettingInvitationSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Group invitation'**
+  String get groupSettingInvitationSection;
+
+  /// No description provided for @groupSettingCreatingInvitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Issuing an invitation code...'**
+  String get groupSettingCreatingInvitation;
+
+  /// No description provided for @groupSettingCreateInvitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue an invitation code'**
+  String get groupSettingCreateInvitation;
+
+  /// No description provided for @groupSettingRemoveMemberConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name} from the group?'**
+  String groupSettingRemoveMemberConfirmTitle(String name);
+
+  /// No description provided for @groupSettingRemoveMemberConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'A removed member will no longer be able to access this group'**
+  String get groupSettingRemoveMemberConfirmMessage;
+
+  /// No description provided for @groupSettingMemberRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed {name}'**
+  String groupSettingMemberRemoved(String name);
+
+  /// No description provided for @groupSettingInvitationCodeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Share the code below'**
+  String get groupSettingInvitationCodeMessage;
+
+  /// No description provided for @groupSettingInvitationExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid for 7 days'**
+  String get groupSettingInvitationExpiry;
 }
 
 class _AppLocalizationsDelegate

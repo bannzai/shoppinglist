@@ -610,4 +610,219 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get listSettingLocationSelected => 'Selected';
+
+  @override
+  String get commonDefault => 'Default';
+
+  @override
+  String get commonUnnamed => 'Unnamed';
+
+  @override
+  String get commonCreating => 'Creating...';
+
+  @override
+  String get groupNameLabel => 'Group name';
+
+  @override
+  String get groupNameHint => 'Enter a group name';
+
+  @override
+  String get groupCategoryLocationOrderLabel => 'Order by shopping location';
+
+  @override
+  String get groupCategoryLocationOrderPremiumOnly =>
+      'Reordering categories per shopping location is a Premium feature';
+
+  @override
+  String groupCategoryKeywordCount(int count) {
+    return 'Keywords: $count';
+  }
+
+  @override
+  String groupCategoryDeleteConfirmTitle(String name) {
+    return 'Delete \"$name\"?';
+  }
+
+  @override
+  String get groupCategoryDeleteConfirmMessage =>
+      'The keywords set for this category will also be deleted';
+
+  @override
+  String get groupCategoryEmptyTitle => 'Group what you buy automatically';
+
+  @override
+  String get groupCategoryEmptyUseCaseAutoGroup =>
+      'Register tomatoes and onions under \"Vegetables\" and they are automatically grouped into the Vegetables section of your list';
+
+  @override
+  String get groupCategoryEmptyUseCaseLocationOrder =>
+      'You can change the category order for each store, so you can shop along the aisles in order';
+
+  @override
+  String get groupCategoryEditTitle => 'Edit category';
+
+  @override
+  String get groupCategoryEditNotFound => 'Category not found';
+
+  @override
+  String get groupCategoryEditNameLabel => 'Category name';
+
+  @override
+  String get groupCategoryEditNameHint => 'Enter a category name';
+
+  @override
+  String get groupCategoryEditColorLabel => 'Category color';
+
+  @override
+  String get groupCategoryEditIconLabel => 'Category icon';
+
+  @override
+  String get groupCategoryEditKeywordsLabel => 'Keywords';
+
+  @override
+  String get groupCategoryEditAddKeyword => 'Add keyword';
+
+  @override
+  String get groupCategoryEditKeywordsEmpty => 'No keywords yet';
+
+  @override
+  String get groupCategoryEditKeywordHint => 'Enter a keyword';
+
+  @override
+  String get groupCategoryEditMatchingLabel => 'Matching';
+
+  @override
+  String get groupCategoryEditMatchingExact => 'Exact match';
+
+  @override
+  String get groupCategoryEditMatchingPartial => 'Partial match';
+
+  @override
+  String get groupCategoryEditMatchingRegex => 'Regular expression';
+
+  @override
+  String get groupCreateTitle => 'Create a group';
+
+  @override
+  String get groupCreateIconLabel => 'Icon';
+
+  @override
+  String get groupCreateSubmit => 'Create';
+
+  @override
+  String get groupCreateIconHome => 'Home';
+
+  @override
+  String get groupCreateIconCart => 'Cart';
+
+  @override
+  String get groupCreateIconFork => 'Food';
+
+  @override
+  String get groupCreateIconCookie => 'Snacks';
+
+  @override
+  String get groupCreateIconPets => 'Pets';
+
+  @override
+  String get groupCreateIconBag => 'Bag';
+
+  @override
+  String get groupCreateInvitationDialogTitle => 'Invite members';
+
+  @override
+  String get groupCreateInvitationDialogMessage =>
+      'Share the invitation code with your family';
+
+  @override
+  String get groupInvitationTitle => 'Join with an invitation code';
+
+  @override
+  String get groupInvitationHeading => 'Enter your invitation code';
+
+  @override
+  String get groupInvitationDescription =>
+      'Enter the 8-character code shared with you by a member of the group';
+
+  @override
+  String get groupInvitationJoining => 'Joining...';
+
+  @override
+  String get groupInvitationJoin => 'Join';
+
+  @override
+  String get groupInvitationVerifyingTitle => 'Checking the invitation code';
+
+  @override
+  String get groupInvitationVerifyingMessage =>
+      'The server is processing your request to join the group.';
+
+  @override
+  String get groupJoinHeading => 'Let\'s get started';
+
+  @override
+  String get groupJoinDescription =>
+      'Did you get an invitation code from your family or partner?\nJoining with a code lets you use the same shopping list together.';
+
+  @override
+  String get groupJoinCreateSolo => 'Create my own list';
+
+  @override
+  String get groupListEmpty => 'You do not belong to any group';
+
+  @override
+  String groupListMemberCount(int count) {
+    return '$count members';
+  }
+
+  @override
+  String get groupListFreeLimitBanner =>
+      'The free plan allows one additional group';
+
+  @override
+  String get groupListFreeLimitAction => 'Unlock';
+
+  @override
+  String get groupSettingMembersSection => 'Members';
+
+  @override
+  String get groupSettingMemberOwner => 'Owner';
+
+  @override
+  String get groupSettingMemberSelf => 'You';
+
+  @override
+  String get groupSettingMemberFallbackName => 'Member';
+
+  @override
+  String get groupSettingShoppingLocationSubtitle => 'Register and edit stores';
+
+  @override
+  String get groupSettingInvitationSection => 'Group invitation';
+
+  @override
+  String get groupSettingCreatingInvitation => 'Issuing an invitation code...';
+
+  @override
+  String get groupSettingCreateInvitation => 'Issue an invitation code';
+
+  @override
+  String groupSettingRemoveMemberConfirmTitle(String name) {
+    return 'Remove $name from the group?';
+  }
+
+  @override
+  String get groupSettingRemoveMemberConfirmMessage =>
+      'A removed member will no longer be able to access this group';
+
+  @override
+  String groupSettingMemberRemoved(String name) {
+    return 'Removed $name';
+  }
+
+  @override
+  String get groupSettingInvitationCodeMessage => 'Share the code below';
+
+  @override
+  String get groupSettingInvitationExpiry => 'Valid for 7 days';
 }

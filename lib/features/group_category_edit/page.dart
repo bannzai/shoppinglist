@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/error/error_view.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_keyword.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/style/category_presets.dart';
 import 'package:shoppinglist/style/color.dart';
@@ -39,7 +40,7 @@ class GroupCategoryEditPage extends ConsumerWidget {
             categories.where((c) => c.id == categoryID).firstOrNull;
         if (category == null) {
           return _EditScaffold(
-            child: const Center(child: Text('カテゴリが見つかりません')),
+            child: Center(child: Text(context.l10n.groupCategoryEditNotFound)),
           );
         }
         return _CategoryEditBody(
@@ -68,7 +69,7 @@ class _EditScaffold extends StatelessWidget {
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
       appBar: AppBar(
-        title: const Text('カテゴリ編集'),
+        title: Text(context.l10n.groupCategoryEditTitle),
         backgroundColor: tokens.neutral.paper,
       ),
       body: child,
@@ -121,7 +122,7 @@ class _CategoryEditBody extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
       appBar: AppBar(
-        title: const Text('カテゴリ編集'),
+        title: Text(context.l10n.groupCategoryEditTitle),
         backgroundColor: tokens.neutral.paper,
       ),
       body: SafeArea(
@@ -132,7 +133,7 @@ class _CategoryEditBody extends HookConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'カテゴリ名',
+                  context.l10n.groupCategoryEditNameLabel,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
@@ -141,11 +142,13 @@ class _CategoryEditBody extends HookConsumerWidget {
                 TextField(
                   controller: nameController,
                   textInputAction: TextInputAction.done,
-                  decoration: const InputDecoration(hintText: 'カテゴリ名を入力'),
+                  decoration: InputDecoration(
+                    hintText: context.l10n.groupCategoryEditNameHint,
+                  ),
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'カテゴリカラー',
+                  context.l10n.groupCategoryEditColorLabel,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
@@ -176,7 +179,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'カテゴリアイコン',
+                  context.l10n.groupCategoryEditIconLabel,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
@@ -211,13 +214,13 @@ class _CategoryEditBody extends HookConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'キーワード',
+                      context.l10n.groupCategoryEditKeywordsLabel,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     IconButton(
-                      tooltip: 'キーワードを追加',
+                      tooltip: context.l10n.groupCategoryEditAddKeyword,
                       onPressed: () {
                         analytics.logEvent(
                           name: 'tap_add_keyword',
@@ -249,7 +252,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                 ],
                 if (category.keywords.isEmpty)
                   Text(
-                    'キーワードがまだありません',
+                    context.l10n.groupCategoryEditKeywordsEmpty,
                     style: Theme.of(
                       context,
                     ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
@@ -262,9 +265,12 @@ class _CategoryEditBody extends HookConsumerWidget {
                       contentPadding: EdgeInsets.zero,
                       title: Text(keyword.keyword),
                       subtitle: Text(switch (keyword.matchingType) {
-                        GroupCategoryKeywordMatchingType.exact => '完全一致',
-                        GroupCategoryKeywordMatchingType.partial => '部分一致',
-                        GroupCategoryKeywordMatchingType.regex => '正規表現',
+                        GroupCategoryKeywordMatchingType.exact =>
+                          context.l10n.groupCategoryEditMatchingExact,
+                        GroupCategoryKeywordMatchingType.partial =>
+                          context.l10n.groupCategoryEditMatchingPartial,
+                        GroupCategoryKeywordMatchingType.regex =>
+                          context.l10n.groupCategoryEditMatchingRegex,
                       }, style: Theme.of(context).textTheme.bodySmall),
                       trailing: IconButton(
                         icon: Icon(
@@ -301,7 +307,7 @@ class _CategoryEditBody extends HookConsumerWidget {
           (dialogContext) => StatefulBuilder(
             builder:
                 (context, setState) => AlertDialog(
-                  title: const Text('キーワードを追加'),
+                  title: Text(context.l10n.groupCategoryEditAddKeyword),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,11 +315,13 @@ class _CategoryEditBody extends HookConsumerWidget {
                       TextField(
                         controller: keywordController,
                         autofocus: true,
-                        decoration: const InputDecoration(hintText: 'キーワードを入力'),
+                        decoration: InputDecoration(
+                          hintText: context.l10n.groupCategoryEditKeywordHint,
+                        ),
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        'マッチング',
+                        context.l10n.groupCategoryEditMatchingLabel,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const SizedBox(height: 8),
@@ -321,46 +329,52 @@ class _CategoryEditBody extends HookConsumerWidget {
                       // 1コントロールにまとめた SegmentedButton で均等配置する。
                       SizedBox(
                         width: double.infinity,
-                        child:
-                            SegmentedButton<GroupCategoryKeywordMatchingType>(
-                              segments: const [
-                                ButtonSegment(
-                                  value:
-                                      GroupCategoryKeywordMatchingType.partial,
-                                  label: Text('部分一致'),
-                                ),
-                                ButtonSegment(
-                                  value: GroupCategoryKeywordMatchingType.exact,
-                                  label: Text('完全一致'),
-                                ),
-                                ButtonSegment(
-                                  value: GroupCategoryKeywordMatchingType.regex,
-                                  label: Text('正規表現'),
-                                ),
-                              ],
-                              selected: {selectedMatchingType},
-                              showSelectedIcon: false,
-                              onSelectionChanged: (selected) {
-                                final matchingType = selected.first;
-                                analytics.logEvent(
-                                  name: switch (matchingType) {
-                                    GroupCategoryKeywordMatchingType.partial =>
-                                      'select_match_partial',
-                                    GroupCategoryKeywordMatchingType.exact =>
-                                      'select_match_exact',
-                                    GroupCategoryKeywordMatchingType.regex =>
-                                      'select_match_regex',
-                                  },
-                                  parameters: {
-                                    'groupID': groupID,
-                                    'categoryID': category.id,
-                                  },
-                                );
-                                setState(() {
-                                  selectedMatchingType = matchingType;
-                                });
-                              },
+                        child: SegmentedButton<
+                          GroupCategoryKeywordMatchingType
+                        >(
+                          segments: [
+                            ButtonSegment(
+                              value: GroupCategoryKeywordMatchingType.partial,
+                              label: Text(
+                                context.l10n.groupCategoryEditMatchingPartial,
+                              ),
                             ),
+                            ButtonSegment(
+                              value: GroupCategoryKeywordMatchingType.exact,
+                              label: Text(
+                                context.l10n.groupCategoryEditMatchingExact,
+                              ),
+                            ),
+                            ButtonSegment(
+                              value: GroupCategoryKeywordMatchingType.regex,
+                              label: Text(
+                                context.l10n.groupCategoryEditMatchingRegex,
+                              ),
+                            ),
+                          ],
+                          selected: {selectedMatchingType},
+                          showSelectedIcon: false,
+                          onSelectionChanged: (selected) {
+                            final matchingType = selected.first;
+                            analytics.logEvent(
+                              name: switch (matchingType) {
+                                GroupCategoryKeywordMatchingType.partial =>
+                                  'select_match_partial',
+                                GroupCategoryKeywordMatchingType.exact =>
+                                  'select_match_exact',
+                                GroupCategoryKeywordMatchingType.regex =>
+                                  'select_match_regex',
+                              },
+                              parameters: {
+                                'groupID': groupID,
+                                'categoryID': category.id,
+                              },
+                            );
+                            setState(() {
+                              selectedMatchingType = matchingType;
+                            });
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -400,7 +414,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                           }
                         }
                       },
-                      child: const Text('追加'),
+                      child: Text(context.l10n.commonAdd),
                     ),
                     TextButton(
                       onPressed: () {
@@ -413,7 +427,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                         );
                         Navigator.pop(dialogContext);
                       },
-                      child: const Text('キャンセル'),
+                      child: Text(context.l10n.commonCancel),
                     ),
                   ],
                 ),

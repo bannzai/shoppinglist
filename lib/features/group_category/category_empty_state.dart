@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/config/feature_flags.dart';
 
@@ -53,7 +54,7 @@ class CategoryEmptyState extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                '買ったものを自動でグループ分け',
+                context.l10n.groupCategoryEmptyTitle,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: neutral.ink,
@@ -61,20 +62,16 @@ class CategoryEmptyState extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              const _CategoryUseCaseRow(
+              _CategoryUseCaseRow(
                 icon: Icons.auto_awesome,
-                text:
-                    '「野菜」に トマト・玉ねぎ を登録すると、'
-                    'リストで自動的に野菜セクションにまとまります',
+                text: context.l10n.groupCategoryEmptyUseCaseAutoGroup,
               ),
               // 店舗ごとの並び順はファーストリリースでは非表示のため訴求も出さない (issue #465)。
               if (shoppingLocationFeatureEnabled) ...[
                 const SizedBox(height: 12),
-                const _CategoryUseCaseRow(
+                _CategoryUseCaseRow(
                   icon: Icons.storefront,
-                  text:
-                      '店ごとにカテゴリの並び順を変えられるので、'
-                      '売り場の動線どおりに回れます',
+                  text: context.l10n.groupCategoryEmptyUseCaseLocationOrder,
                 ),
               ],
               if (onAddCategory != null) ...[
@@ -82,7 +79,7 @@ class CategoryEmptyState extends StatelessWidget {
                 OutlinedButton.icon(
                   onPressed: onAddCategory,
                   icon: const Icon(Icons.add),
-                  label: const Text('カテゴリを追加'),
+                  label: Text(context.l10n.shoppingListAddCategoryLabel),
                 ),
               ],
             ],

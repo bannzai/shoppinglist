@@ -348,5 +348,156 @@
   },
   "listSettingSelectShoppingLocationTitle": "Choose a shopping location",
   "listSettingLocationNone": "None",
-  "listSettingLocationSelected": "Selected"
+  "listSettingLocationSelected": "Selected",
+
+  "commonDefault": "Default",
+  "@commonDefault": {
+    "description": "デフォルトグループを示すバッジと、カテゴリ並び順のドロップダウンで既定の並び順を指す選択肢"
+  },
+  "commonUnnamed": "Unnamed",
+  "@commonUnnamed": {
+    "description": "グループ名・メンバーの表示名が未設定のときのフォールバック表示"
+  },
+  "commonCreating": "Creating...",
+  "@commonCreating": {
+    "description": "グループ作成の実行中にボタンへ出すラベル"
+  },
+
+  "groupNameLabel": "Group name",
+  "@groupNameLabel": {
+    "description": "グループ作成画面・グループ設定画面の、グループ名入力欄の見出し"
+  },
+  "groupNameHint": "Enter a group name",
+
+  "groupCategoryLocationOrderLabel": "Order by shopping location",
+  "@groupCategoryLocationOrderLabel": {
+    "description": "カテゴリ一覧で、どの買い物する場所の並び順を表示するか選ぶドロップダウンのラベル"
+  },
+  "groupCategoryLocationOrderPremiumOnly": "Reordering categories per shopping location is a Premium feature",
+  "groupCategoryKeywordCount": "Keywords: {count}",
+  "@groupCategoryKeywordCount": {
+    "description": "カテゴリ一覧の各行に出す、そのカテゴリに登録されたキーワード数",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "groupCategoryDeleteConfirmTitle": "Delete \"{name}\"?",
+  "@groupCategoryDeleteConfirmTitle": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "groupCategoryDeleteConfirmMessage": "The keywords set for this category will also be deleted",
+  "groupCategoryEmptyTitle": "Group what you buy automatically",
+  "@groupCategoryEmptyTitle": {
+    "description": "カテゴリが1件も無いときに出す価値訴求カードの見出し"
+  },
+  "groupCategoryEmptyUseCaseAutoGroup": "Register tomatoes and onions under \"Vegetables\" and they are automatically grouped into the Vegetables section of your list",
+  "groupCategoryEmptyUseCaseLocationOrder": "You can change the category order for each store, so you can shop along the aisles in order",
+
+  "groupCategoryEditTitle": "Edit category",
+  "groupCategoryEditNotFound": "Category not found",
+  "groupCategoryEditNameLabel": "Category name",
+  "groupCategoryEditNameHint": "Enter a category name",
+  "groupCategoryEditColorLabel": "Category color",
+  "groupCategoryEditIconLabel": "Category icon",
+  "groupCategoryEditKeywordsLabel": "Keywords",
+  "groupCategoryEditAddKeyword": "Add keyword",
+  "@groupCategoryEditAddKeyword": {
+    "description": "キーワード追加ボタンの tooltip と、追加ダイアログのタイトル"
+  },
+  "groupCategoryEditKeywordsEmpty": "No keywords yet",
+  "groupCategoryEditKeywordHint": "Enter a keyword",
+  "groupCategoryEditMatchingLabel": "Matching",
+  "@groupCategoryEditMatchingLabel": {
+    "description": "キーワードの一致方法 (部分一致/完全一致/正規表現) を選ぶコントロールの見出し"
+  },
+  "groupCategoryEditMatchingExact": "Exact match",
+  "groupCategoryEditMatchingPartial": "Partial match",
+  "groupCategoryEditMatchingRegex": "Regular expression",
+
+  "groupCreateTitle": "Create a group",
+  "@groupCreateTitle": {
+    "description": "グループ作成画面のタイトルと、グループ管理画面の作成 FAB の tooltip"
+  },
+  "groupCreateIconLabel": "Icon",
+  "groupCreateSubmit": "Create",
+  "groupCreateIconHome": "Home",
+  "@groupCreateIconHome": {
+    "description": "グループアイコンのプリセット名 (家)。日本語はひらがなで統一している"
+  },
+  "groupCreateIconCart": "Cart",
+  "groupCreateIconFork": "Food",
+  "groupCreateIconCookie": "Snacks",
+  "groupCreateIconPets": "Pets",
+  "groupCreateIconBag": "Bag",
+  "groupCreateInvitationDialogTitle": "Invite members",
+  "groupCreateInvitationDialogMessage": "Share the invitation code with your family",
+
+  "groupInvitationTitle": "Join with an invitation code",
+  "@groupInvitationTitle": {
+    "description": "招待コード入力画面のタイトルと、その画面を開くボタンのラベル"
+  },
+  "groupInvitationHeading": "Enter your invitation code",
+  "groupInvitationDescription": "Enter the 8-character code shared with you by a member of the group",
+  "groupInvitationJoining": "Joining...",
+  "groupInvitationJoin": "Join",
+  "groupInvitationVerifyingTitle": "Checking the invitation code",
+  "@groupInvitationVerifyingTitle": {
+    "description": "参加処理中オーバレイのタイトルと、そのダイアログの barrierLabel"
+  },
+  "groupInvitationVerifyingMessage": "The server is processing your request to join the group.",
+
+  "groupJoinHeading": "Let's get started",
+  "@groupJoinHeading": {
+    "description": "グループ未参加ユーザーに出す初期セットアップ画面の見出し"
+  },
+  "groupJoinDescription": "Did you get an invitation code from your family or partner?\nJoining with a code lets you use the same shopping list together.",
+  "groupJoinCreateSolo": "Create my own list",
+
+  "groupListEmpty": "You do not belong to any group",
+  "groupListMemberCount": "{count} members",
+  "@groupListMemberCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "groupListFreeLimitBanner": "The free plan allows one additional group",
+  "groupListFreeLimitAction": "Unlock",
+  "@groupListFreeLimitAction": {
+    "description": "無料プランの上限バナーから paywall を開くアクション (日本語は「解除」)"
+  },
+
+  "groupSettingMembersSection": "Members",
+  "groupSettingMemberOwner": "Owner",
+  "@groupSettingMemberOwner": {
+    "description": "メンバー一覧で、グループのオーナーである行に出す役割表示"
+  },
+  "groupSettingMemberSelf": "You",
+  "@groupSettingMemberSelf": {
+    "description": "メンバー一覧で、自分自身の行に出す役割表示"
+  },
+  "groupSettingMemberFallbackName": "Member",
+  "@groupSettingMemberFallbackName": {
+    "description": "メンバー削除完了の SnackBar で、表示名が未設定のメンバーを指す語"
+  },
+  "groupSettingShoppingLocationSubtitle": "Register and edit stores",
+  "groupSettingInvitationSection": "Group invitation",
+  "groupSettingCreatingInvitation": "Issuing an invitation code...",
+  "groupSettingCreateInvitation": "Issue an invitation code",
+  "groupSettingRemoveMemberConfirmTitle": "Remove {name} from the group?",
+  "@groupSettingRemoveMemberConfirmTitle": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "groupSettingRemoveMemberConfirmMessage": "A removed member will no longer be able to access this group",
+  "groupSettingMemberRemoved": "Removed {name}",
+  "@groupSettingMemberRemoved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "groupSettingInvitationCodeMessage": "Share the code below",
+  "groupSettingInvitationExpiry": "Valid for 7 days"
 }

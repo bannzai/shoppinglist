@@ -7,6 +7,7 @@ import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/group_create/page.dart';
 import 'package:shoppinglist/features/group_setting/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
@@ -39,7 +40,7 @@ class GroupListPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: neutral.paper,
       appBar: AppBar(
-        title: const Text('グループ管理'),
+        title: Text(context.l10n.settingsGroupManagement),
         backgroundColor: neutral.paper,
       ),
       body: switch ((appUserAsync, groupsAsync)) {
@@ -47,7 +48,7 @@ class GroupListPage extends ConsumerWidget {
           groups.isEmpty
               ? Center(
                 child: Text(
-                  '所属しているグループはありません',
+                  context.l10n.groupListEmpty,
                   style: Theme.of(
                     context,
                   ).textTheme.bodyMedium?.copyWith(color: neutral.ink2),
@@ -95,7 +96,7 @@ class GroupListPage extends ConsumerWidget {
           isLimitReached
               ? null
               : FloatingActionButton(
-                tooltip: 'グループ作成',
+                tooltip: context.l10n.groupCreateTitle,
                 backgroundColor: tokens.accent,
                 foregroundColor: Colors.white,
                 onPressed: () {
@@ -214,7 +215,7 @@ class _GroupCard extends ConsumerWidget {
                         children: [
                           Flexible(
                             child: Text(
-                              group.name ?? '名前未設定',
+                              group.name ?? context.l10n.commonUnnamed,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context).textTheme.titleMedium
@@ -233,7 +234,7 @@ class _GroupCard extends ConsumerWidget {
                                 borderRadius: BorderRadius.circular(999),
                               ),
                               child: Text(
-                                'デフォルト',
+                                context.l10n.commonDefault,
                                 style: Theme.of(
                                   context,
                                 ).textTheme.labelSmall?.copyWith(
@@ -248,7 +249,9 @@ class _GroupCard extends ConsumerWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'メンバー ${group.memberUserIDs.length}人',
+                        context.l10n.groupListMemberCount(
+                          group.memberUserIDs.length,
+                        ),
                         style: Theme.of(
                           context,
                         ).textTheme.labelSmall?.copyWith(color: neutral.ink3),
@@ -286,7 +289,7 @@ class _FreeLimitBanner extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              '無料プランは追加 1 グループまで',
+              context.l10n.groupListFreeLimitBanner,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: tokens.accentInk,
                 fontWeight: FontWeight.w600,
@@ -298,7 +301,7 @@ class _FreeLimitBanner extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
               child: Text(
-                '解除',
+                context.l10n.groupListFreeLimitAction,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: tokens.accent,
