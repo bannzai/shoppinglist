@@ -219,5 +219,6 @@
   "groupCreateInvitationDialogTitle": "邀请成员",
   "groupCreateInvitationDialogMessage": "将邀请码分享给家人",
   "groupInvitationTitle": "使用邀请码加入",
-  "groupInvitationHeading": "输入邀请码"
+  "groupInvitationHeading": "输入邀请码",
+  "groupInvitationDescription": "输入群组成员分享给您的 8 位验证码"
 }
