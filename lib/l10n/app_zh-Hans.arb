@@ -162,5 +162,6 @@
   "listSettingStoragePeriodSection": "保留期限",
   "listSettingStoragePeriodPremium": "高级版：无限制",
   "listSettingStoragePeriodFree": "创建后30天",
-  "listSettingStoragePeriodUpsell": "使用高级版，您可以无限期保存清单"
+  "listSettingStoragePeriodUpsell": "使用高级版，您可以无限期保存清单",
+  "listSettingShareSection": "共享"
 }

@@ -162,5 +162,6 @@
   "listSettingStoragePeriodSection": "보관 기간",
   "listSettingStoragePeriodPremium": "프리미엄: 무제한",
   "listSettingStoragePeriodFree": "생성 후 30일",
-  "listSettingStoragePeriodUpsell": "프리미엄을 사용하면 목록을 기간 제한 없이 보관할 수 있어요"
+  "listSettingStoragePeriodUpsell": "프리미엄을 사용하면 목록을 기간 제한 없이 보관할 수 있어요",
+  "listSettingShareSection": "공유"
 }
