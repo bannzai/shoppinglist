@@ -36,5 +36,6 @@
   "shoppingListSettingTooltip": "清單設定",
   "shoppingListEmptyTitle": "還沒有購物清單",
   "shoppingListEmptyMessage": "建立新的購物清單",
-  "shoppingListEmptyCreateButton": "建立購物清單"
+  "shoppingListEmptyCreateButton": "建立購物清單",
+  "shoppingListLoadErrorTitle": "列表載入失敗"
 }
