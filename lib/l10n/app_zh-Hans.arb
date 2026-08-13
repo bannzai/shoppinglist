@@ -68,5 +68,6 @@
   "shoppingListCategoryChange": "更改分类",
   "shoppingListNewCategoryHint": "新分类名称",
   "shoppingListAddCategoryLabel": "添加类别",
-  "shoppingListAiReviewTitle": "提取的建议"
+  "shoppingListAiReviewTitle": "提取的建议",
+  "shoppingListAiReviewSubtitle": "选择要添加的商品"
 }

@@ -68,5 +68,6 @@
   "shoppingListCategoryChange": "更改分類",
   "shoppingListNewCategoryHint": "新分類名稱",
   "shoppingListAddCategoryLabel": "新增類別",
-  "shoppingListAiReviewTitle": "擷取的建議"
+  "shoppingListAiReviewTitle": "擷取的建議",
+  "shoppingListAiReviewSubtitle": "選擇要加入的商品"
 }
