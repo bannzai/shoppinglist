@@ -18,5 +18,6 @@
   "commonPhotoLibrary": "照片圖庫",
   "commonErrorOccurred": "發生錯誤",
   "errorUnknownTitle": "發生未知錯誤",
-  "errorUnexpectedTitle": "發生了未預期的錯誤"
+  "errorUnexpectedTitle": "發生了未預期的錯誤",
+  "errorFaqLink": "查看常見問題"
 }
