@@ -358,5 +358,18 @@
   "shoppingLocationDeleteConfirmTitle": "「{name}」を削除しますか？",
   "shoppingLocationDeleteConfirmMessage": "この場所を削除しても、この場所が設定されている買い物リストには影響しません",
   "shoppingLocationPickerTitle": "場所を地図で選択",
-  "shoppingLocationPickerConfirm": "この場所を設定"
+  "shoppingLocationPickerConfirm": "この場所を設定",
+
+  "settingsThemeColorShu": "朱",
+  "settingsThemeColorMatcha": "抹茶",
+  "settingsThemeColorAi": "藍",
+  "settingsThemeColorSumi": "墨",
+  "settingsThemeColorKuchiba": "朽葉",
+
+  "inquiryCategoryBugReport": "不具合報告",
+  "inquiryCategoryHowToUse": "操作方法について",
+  "inquiryCategoryRequest": "ご要望・改善要望",
+  "inquiryCategoryOther": "その他",
+
+  "shoppingListLimitExceeded": "無料プランでは1グループあたり{limit}個までリストを作成できます。プレミアムにアップグレードすると無制限に作成できます"
 }

@@ -1999,6 +1999,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use this location'**
   String get shoppingLocationPickerConfirm;
+
+  /// テーマカラー選択の色名。和の伝統色「朱」(デフォルト)
+  ///
+  /// In en, this message translates to:
+  /// **'Vermilion'**
+  String get settingsThemeColorShu;
+
+  /// テーマカラー選択の色名。和の伝統色「抹茶」
+  ///
+  /// In en, this message translates to:
+  /// **'Matcha'**
+  String get settingsThemeColorMatcha;
+
+  /// テーマカラー選択の色名。和の伝統色「藍」
+  ///
+  /// In en, this message translates to:
+  /// **'Indigo'**
+  String get settingsThemeColorAi;
+
+  /// テーマカラー選択の色名。和の伝統色「墨」
+  ///
+  /// In en, this message translates to:
+  /// **'Sumi ink'**
+  String get settingsThemeColorSumi;
+
+  /// テーマカラー選択の色名。和の伝統色「朽葉」(枯れ葉の茶色)
+  ///
+  /// In en, this message translates to:
+  /// **'Kuchiba'**
+  String get settingsThemeColorKuchiba;
+
+  /// お問い合わせ画面のカテゴリチップ。InquiryCategory.bugReport の表示名
+  ///
+  /// In en, this message translates to:
+  /// **'Bug report'**
+  String get inquiryCategoryBugReport;
+
+  /// お問い合わせ画面のカテゴリチップ。InquiryCategory.howToUse の表示名
+  ///
+  /// In en, this message translates to:
+  /// **'How to use'**
+  String get inquiryCategoryHowToUse;
+
+  /// お問い合わせ画面のカテゴリチップ。InquiryCategory.request の表示名
+  ///
+  /// In en, this message translates to:
+  /// **'Feature request'**
+  String get inquiryCategoryRequest;
+
+  /// お問い合わせ画面のカテゴリチップ。InquiryCategory.other の表示名
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get inquiryCategoryOther;
+
+  /// 無料プランのリスト作成数上限に達した時の SnackBar / トースト本文。limit は上限数
+  ///
+  /// In en, this message translates to:
+  /// **'On the free plan you can create up to {limit} lists per group. Upgrade to premium for unlimited lists.'**
+  String shoppingListLimitExceeded(int limit);
 }
 
 class _AppLocalizationsDelegate

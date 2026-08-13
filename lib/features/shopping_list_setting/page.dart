@@ -605,8 +605,9 @@ class _ListActionsCard extends ConsumerWidget {
     // シートが閉じられた後でもアクションからペイウォールを開けるよう、
     // 生存し続ける root Navigator の context を束ねておく。
     final paywallContext = Navigator.of(context, rootNavigator: true).context;
-    final duplicatedMessage = context.l10n.shoppingListDuplicated;
-    final upgradeLabel = context.l10n.commonUpgrade;
+    final l10n = context.l10n;
+    final duplicatedMessage = l10n.shoppingListDuplicated;
+    final upgradeLabel = l10n.commonUpgrade;
     try {
       await shoppingListDuplicate.call(
         createUserID: shoppingList.createUserID,
@@ -617,7 +618,7 @@ class _ListActionsCard extends ConsumerWidget {
       showGlobalToast(duplicatedMessage, title: null);
     } on ShoppingListLimitExceededException catch (e) {
       showGlobalActionToast(
-        message: e.toString(),
+        message: l10n.shoppingListLimitExceeded(e.limit),
         actionLabel: upgradeLabel,
         onAction: () => showPaywall(context: paywallContext),
       );

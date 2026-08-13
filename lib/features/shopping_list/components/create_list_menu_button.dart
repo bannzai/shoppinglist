@@ -302,7 +302,7 @@ class CreateListMenuButton extends HookConsumerWidget {
       messenger.showSnackBar(
         SnackBar(
           persist: false,
-          content: Text(e.toString()),
+          content: Text(l10n.shoppingListLimitExceeded(e.limit)),
           action: SnackBarAction(
             label: l10n.commonUpgrade,
             // SnackBar はこの widget の破棄後も ScaffoldMessenger 上に残るため、
@@ -362,16 +362,13 @@ class CreateListMenuButton extends HookConsumerWidget {
       );
       currentShoppingListIDNotifier.update(newShoppingList.id);
       messenger.showSnackBar(
-        SnackBar(
-          persist: false,
-          content: Text(l10n.shoppingListDuplicated),
-        ),
+        SnackBar(persist: false, content: Text(l10n.shoppingListDuplicated)),
       );
     } on ShoppingListLimitExceededException catch (e) {
       messenger.showSnackBar(
         SnackBar(
           persist: false,
-          content: Text(e.toString()),
+          content: Text(l10n.shoppingListLimitExceeded(e.limit)),
           action: SnackBarAction(
             label: l10n.commonUpgrade,
             // SnackBar はこの widget の破棄後も ScaffoldMessenger 上に残るため、

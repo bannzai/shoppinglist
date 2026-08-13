@@ -175,7 +175,7 @@ class InquiryPage extends HookConsumerWidget {
                             ),
                           ),
                           child: Text(
-                            category.label,
+                            category.label(context),
                             style: Theme.of(
                               context,
                             ).textTheme.bodyMedium?.copyWith(

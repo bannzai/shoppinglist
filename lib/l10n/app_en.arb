@@ -622,5 +622,51 @@
   },
   "shoppingLocationDeleteConfirmMessage": "Deleting this location does not affect the shopping lists it is set on",
   "shoppingLocationPickerTitle": "Choose a location on the map",
-  "shoppingLocationPickerConfirm": "Use this location"
+  "shoppingLocationPickerConfirm": "Use this location",
+
+  "settingsThemeColorShu": "Vermilion",
+  "@settingsThemeColorShu": {
+    "description": "テーマカラー選択の色名。和の伝統色「朱」(デフォルト)"
+  },
+  "settingsThemeColorMatcha": "Matcha",
+  "@settingsThemeColorMatcha": {
+    "description": "テーマカラー選択の色名。和の伝統色「抹茶」"
+  },
+  "settingsThemeColorAi": "Indigo",
+  "@settingsThemeColorAi": {
+    "description": "テーマカラー選択の色名。和の伝統色「藍」"
+  },
+  "settingsThemeColorSumi": "Sumi ink",
+  "@settingsThemeColorSumi": {
+    "description": "テーマカラー選択の色名。和の伝統色「墨」"
+  },
+  "settingsThemeColorKuchiba": "Kuchiba",
+  "@settingsThemeColorKuchiba": {
+    "description": "テーマカラー選択の色名。和の伝統色「朽葉」(枯れ葉の茶色)"
+  },
+
+  "inquiryCategoryBugReport": "Bug report",
+  "@inquiryCategoryBugReport": {
+    "description": "お問い合わせ画面のカテゴリチップ。InquiryCategory.bugReport の表示名"
+  },
+  "inquiryCategoryHowToUse": "How to use",
+  "@inquiryCategoryHowToUse": {
+    "description": "お問い合わせ画面のカテゴリチップ。InquiryCategory.howToUse の表示名"
+  },
+  "inquiryCategoryRequest": "Feature request",
+  "@inquiryCategoryRequest": {
+    "description": "お問い合わせ画面のカテゴリチップ。InquiryCategory.request の表示名"
+  },
+  "inquiryCategoryOther": "Other",
+  "@inquiryCategoryOther": {
+    "description": "お問い合わせ画面のカテゴリチップ。InquiryCategory.other の表示名"
+  },
+
+  "shoppingListLimitExceeded": "On the free plan you can create up to {limit} lists per group. Upgrade to premium for unlimited lists.",
+  "@shoppingListLimitExceeded": {
+    "description": "無料プランのリスト作成数上限に達した時の SnackBar / トースト本文。limit は上限数",
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  }
 }

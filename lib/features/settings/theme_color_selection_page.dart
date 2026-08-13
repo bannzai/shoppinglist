@@ -110,7 +110,7 @@ class _ColorSwatch extends StatelessWidget {
     return Semantics(
       button: true,
       selected: selected,
-      label: context.l10n.settingsThemeColorSwatchLabel(preset.label),
+      label: context.l10n.settingsThemeColorSwatchLabel(preset.label(context)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(36),
@@ -154,7 +154,7 @@ class _ColorSwatch extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              preset.label,
+              preset.label(context),
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: selected ? FontWeight.w700 : FontWeight.w600,

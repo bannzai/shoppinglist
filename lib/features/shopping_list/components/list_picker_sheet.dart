@@ -139,7 +139,7 @@ class ListPickerSheet extends HookConsumerWidget {
                   messenger.showSnackBar(
                     SnackBar(
                       persist: false,
-                      content: Text(e.toString()),
+                      content: Text(l10n.shoppingListLimitExceeded(e.limit)),
                       action: SnackBarAction(
                         label: l10n.commonUpgrade,
                         onPressed:

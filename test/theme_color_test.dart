@@ -66,11 +66,6 @@ void main() {
       expect(hexValues.length, themeColorPresets.length);
       expect(themeColorPresets.length, AccentPreset.values.length);
     });
-
-    test('和の伝統色名が表示用ラベルに含まれる', () {
-      final labels = themeColorPresets.map((p) => p.label).toList();
-      expect(labels, containsAll(['朱', '抹茶', '藍', '墨', '朽葉']));
-    });
   });
 
   group('AccentPreset.persistHex', () {

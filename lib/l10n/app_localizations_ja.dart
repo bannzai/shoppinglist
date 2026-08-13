@@ -1022,4 +1022,36 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get shoppingLocationPickerConfirm => 'この場所を設定';
+
+  @override
+  String get settingsThemeColorShu => '朱';
+
+  @override
+  String get settingsThemeColorMatcha => '抹茶';
+
+  @override
+  String get settingsThemeColorAi => '藍';
+
+  @override
+  String get settingsThemeColorSumi => '墨';
+
+  @override
+  String get settingsThemeColorKuchiba => '朽葉';
+
+  @override
+  String get inquiryCategoryBugReport => '不具合報告';
+
+  @override
+  String get inquiryCategoryHowToUse => '操作方法について';
+
+  @override
+  String get inquiryCategoryRequest => 'ご要望・改善要望';
+
+  @override
+  String get inquiryCategoryOther => 'その他';
+
+  @override
+  String shoppingListLimitExceeded(int limit) {
+    return '無料プランでは1グループあたり$limit個までリストを作成できます。プレミアムにアップグレードすると無制限に作成できます';
+  }
 }

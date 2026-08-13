@@ -29,6 +29,8 @@ class ShoppingListLimitExceededException implements Exception {
   final int limit;
   const ShoppingListLimitExceededException({required this.limit});
 
+  /// ログ・デバッグ用の文言。UI 表示には
+  /// `context.l10n.shoppingListLimitExceeded(limit)` を使う。
   @override
   String toString() =>
       '無料プランでは1グループあたり$limit個までリストを作成できます。プレミアムにアップグレードすると無制限に作成できます';

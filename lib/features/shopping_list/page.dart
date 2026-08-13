@@ -432,7 +432,9 @@ class _NoListYet extends ConsumerWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         persist: false,
-                        content: Text(e.toString()),
+                        content: Text(
+                          context.l10n.shoppingListLimitExceeded(e.limit),
+                        ),
                         action: SnackBarAction(
                           label: context.l10n.commonUpgrade,
                           onPressed: () => showPaywall(context: context),

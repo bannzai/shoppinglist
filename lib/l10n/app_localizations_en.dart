@@ -1065,4 +1065,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shoppingLocationPickerConfirm => 'Use this location';
+
+  @override
+  String get settingsThemeColorShu => 'Vermilion';
+
+  @override
+  String get settingsThemeColorMatcha => 'Matcha';
+
+  @override
+  String get settingsThemeColorAi => 'Indigo';
+
+  @override
+  String get settingsThemeColorSumi => 'Sumi ink';
+
+  @override
+  String get settingsThemeColorKuchiba => 'Kuchiba';
+
+  @override
+  String get inquiryCategoryBugReport => 'Bug report';
+
+  @override
+  String get inquiryCategoryHowToUse => 'How to use';
+
+  @override
+  String get inquiryCategoryRequest => 'Feature request';
+
+  @override
+  String get inquiryCategoryOther => 'Other';
+
+  @override
+  String shoppingListLimitExceeded(int limit) {
+    return 'On the free plan you can create up to $limit lists per group. Upgrade to premium for unlimited lists.';
+  }
 }
