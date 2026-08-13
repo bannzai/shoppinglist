@@ -127,5 +127,6 @@
   "settingsPremiumCardSubtitleFree": "5가지 색상 테마, 더 많은 사진/URL 스캔 등",
   "settingsPremiumCardStartButton": "시작하기",
   "settingsSignOut": "로그아웃",
-  "settingsSignOutConfirmBarrierLabel": "로그아웃 확인"
+  "settingsSignOutConfirmBarrierLabel": "로그아웃 확인",
+  "settingsSignOutConfirmTitle": "로그아웃할까요?"
 }
