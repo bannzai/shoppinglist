@@ -144,5 +144,6 @@
   "settingsLocationReminderAlwaysPermissionRequired": "將背景位置存取設為「永遠」以使用此功能",
   "settingsLocationReminderPremiumOnly": "位置提醒是進階版功能",
   "settingsAccountSection": "帳戶",
-  "settingsAccountLinked": "已連結你的帳戶"
+  "settingsAccountLinked": "已連結你的帳戶",
+  "settingsAccountGuestDescription": "您目前以訪客身分使用此應用程式。若連結帳號，您在更換裝置或於其他裝置上也能使用相同的清單和群組。"
 }
