@@ -248,5 +248,6 @@
   "commonSave": "저장",
   "authHeroTitle": "가족의 쇼핑,\n한 리스트에",
   "authHeroDescription": "로그인하면 목록이 기기 간에 자동으로 동기화됩니다. 광고도, 뉴스레터도 없습니다.",
-  "authStartWithoutSignIn": "로그인 없이 시작"
+  "authStartWithoutSignIn": "로그인 없이 시작",
+  "authLinkAccountLaterNote": "설정 화면에서 나중에 계정을 연결할 수 있어요"
 }

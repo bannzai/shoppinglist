@@ -248,5 +248,6 @@
   "commonSave": "儲存",
   "authHeroTitle": "家人的購物\n盡在一個清單",
   "authHeroDescription": "登入後，你的清單會在各裝置間保持同步。無廣告，無電子報。",
-  "authStartWithoutSignIn": "無需登入即可開始"
+  "authStartWithoutSignIn": "無需登入即可開始",
+  "authLinkAccountLaterNote": "你可以稍後在設定畫面連結帳號"
 }

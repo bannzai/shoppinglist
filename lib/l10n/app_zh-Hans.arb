@@ -248,5 +248,6 @@
   "commonSave": "保存",
   "authHeroTitle": "家人的购物\n尽在一个清单",
   "authHeroDescription": "登录后，你的列表会在各设备间保持同步。无广告，无新闻邮件。",
-  "authStartWithoutSignIn": "无需登录即可开始"
+  "authStartWithoutSignIn": "无需登录即可开始",
+  "authLinkAccountLaterNote": "你可以稍后在设置页面关联账号"
 }
