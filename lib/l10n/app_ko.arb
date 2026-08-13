@@ -104,5 +104,6 @@
   "shoppingListNotifyGroupGuideMessage": "이 버튼을 탭하면 그룹의 다른 멤버에게 푸시 알림이 전송되어 쇼핑 목록을 업데이트했다는 사실을 알려줍니다.",
   "shoppingListNotifyGroupSend": "알림 보내기",
   "commonCopy": "복사",
-  "commonShare": "공유"
+  "commonShare": "공유",
+  "settingsProfileSection": "프로필"
 }
