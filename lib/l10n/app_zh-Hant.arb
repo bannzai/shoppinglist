@@ -206,5 +206,6 @@
   "groupCategoryEditMatchingLabel": "比對方式",
   "groupCategoryEditMatchingExact": "完全符合",
   "groupCategoryEditMatchingPartial": "部分符合",
-  "groupCategoryEditMatchingRegex": "正則表達式"
+  "groupCategoryEditMatchingRegex": "正則表達式",
+  "groupCreateTitle": "建立群組"
 }

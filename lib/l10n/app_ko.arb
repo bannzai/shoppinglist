@@ -206,5 +206,6 @@
   "groupCategoryEditMatchingLabel": "일치 방식",
   "groupCategoryEditMatchingExact": "정확히 일치",
   "groupCategoryEditMatchingPartial": "부분 일치",
-  "groupCategoryEditMatchingRegex": "정규식"
+  "groupCategoryEditMatchingRegex": "정규식",
+  "groupCreateTitle": "그룹 만들기"
 }
