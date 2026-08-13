@@ -174,5 +174,6 @@
   "listSettingDeleteConfirmMessage": "「{name}」和其中的 {count} 個商品將被刪除。此操作無法復原。",
   "listSettingInvitationCodeTitle": "邀請碼",
   "listSettingInvitationExpired": "已過期",
-  "listSettingInvitationRemaining": "有效期 7 天 ・ 剩餘 {days} 天 {hours} 小時"
+  "listSettingInvitationRemaining": "有效期 7 天 ・ 剩餘 {days} 天 {hours} 小時",
+  "listSettingInvitationCodeCopied": "已複製邀請碼"
 }
