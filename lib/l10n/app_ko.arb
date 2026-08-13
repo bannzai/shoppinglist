@@ -196,5 +196,6 @@
   "groupCategoryEditTitle": "카테고리 편집",
   "groupCategoryEditNotFound": "카테고리를 찾을 수 없습니다",
   "groupCategoryEditNameLabel": "카테고리 이름",
-  "groupCategoryEditNameHint": "카테고리 이름을 입력하세요"
+  "groupCategoryEditNameHint": "카테고리 이름을 입력하세요",
+  "groupCategoryEditColorLabel": "카테고리 색상"
 }
