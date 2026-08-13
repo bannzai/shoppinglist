@@ -273,5 +273,6 @@
   "onboardingSlide2Title": "같은 목록을 동시에 수정",
   "onboardingSlide2Body": "초대 코드로 가족, 파트너 또는 룸메이트를 초대하면 모두가 같은 목록을 수정할 수 있어요. 중요한 건 누가 추가했는지가 아니라, 빠뜨리는 것이 없다는 점이에요.",
   "onboardingSlide3Title": "매장 근처에 가면\n알려드려요",
-  "onboardingSlide3Body": "등록한 매장 근처에 가면 쇼핑 리스트를 부드럽게 보여드려요. 꼭 필요할 때만 알림을 보내고, 지나치게 방해하지 않아요."
+  "onboardingSlide3Body": "등록한 매장 근처에 가면 쇼핑 리스트를 부드럽게 보여드려요. 꼭 필요할 때만 알림을 보내고, 지나치게 방해하지 않아요.",
+  "onboardingSkip": "건너뛰기"
 }
