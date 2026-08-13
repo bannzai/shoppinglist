@@ -274,5 +274,6 @@
   "onboardingSlide2Body": "使用邀请码邀请你的家人、伴侣或室友，大家都能编辑同一份清单。重要的不是谁添加的，而是不要漏掉任何东西。",
   "onboardingSlide3Title": "当您靠近商店时\n温馨提醒",
   "onboardingSlide3Body": "当您靠近已登记的商店时，我们会轻轻提醒您查看购物清单。只在您需要时发送通知，绝不打扰。",
-  "onboardingSkip": "跳过"
+  "onboardingSkip": "跳过",
+  "onboardingStart": "开始使用"
 }
