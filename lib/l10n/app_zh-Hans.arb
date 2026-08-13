@@ -119,5 +119,6 @@
   "settingsCommercialTransactionAct": "基于《指定商业交易法》的说明",
   "settingsInquiry": "联系我们",
   "settingsOssLicense": "开源许可证",
-  "settingsDebugSection": "调试"
+  "settingsDebugSection": "调试",
+  "settingsDeveloperOptions": "开发者选项"
 }

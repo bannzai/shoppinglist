@@ -119,5 +119,6 @@
   "settingsCommercialTransactionAct": "根據《特定商業交易法》的說明",
   "settingsInquiry": "聯絡我們",
   "settingsOssLicense": "開源授權",
-  "settingsDebugSection": "除錯"
+  "settingsDebugSection": "除錯",
+  "settingsDeveloperOptions": "開發者選項"
 }
