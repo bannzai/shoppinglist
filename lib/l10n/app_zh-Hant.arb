@@ -288,5 +288,6 @@
   "paywallSubscriptionNote": "可隨時取消・自動續訂可在續訂前 24 小時前取消",
   "paywallPrivacyLink": "隱私",
   "paywallRestore": "恢復購買",
-  "paywallRestored": "已恢復你的購買項目"
+  "paywallRestored": "已恢復你的購買項目",
+  "paywallNoPlans": "目前沒有可用的方案"
 }
