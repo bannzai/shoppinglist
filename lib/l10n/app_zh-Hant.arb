@@ -264,5 +264,6 @@
   "inquirySubmit": "送出",
   "inquirySubmitted": "您的詢問已送出",
   "notificationPermissionBarrierLabel": "推播通知權限",
-  "notificationPermissionTitle": "開啟推播通知"
+  "notificationPermissionTitle": "開啟推播通知",
+  "notificationPermissionMessage": "當群組中的成員更新購物清單並通知你時，你會立即收到推播通知。請在接下來出現的確認畫面中允許通知。"
 }

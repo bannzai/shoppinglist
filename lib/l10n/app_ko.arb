@@ -264,5 +264,6 @@
   "inquirySubmit": "보내기",
   "inquirySubmitted": "문의가 전송되었습니다",
   "notificationPermissionBarrierLabel": "푸시 알림 권한",
-  "notificationPermissionTitle": "푸시 알림을 켜세요"
+  "notificationPermissionTitle": "푸시 알림을 켜세요",
+  "notificationPermissionMessage": "그룹 구성원이 쇼핑 목록을 업데이트하고 알려 주면 바로 푸시 알림을 받을 수 있어요. 다음에 나오는 확인 창에서 알림을 허용해 주세요."
 }
