@@ -101,5 +101,6 @@
   "shoppingListNotifyGroup": "通知群組",
   "shoppingListNotifyGroupSent": "已通知群組",
   "shoppingListNotifyGroupGuideLabel": "關於群組通知",
-  "shoppingListNotifyGroupGuideMessage": "點按此按鈕會向群組中的其他成員傳送推播通知，告知他們您已更新購物清單。"
+  "shoppingListNotifyGroupGuideMessage": "點按此按鈕會向群組中的其他成員傳送推播通知，告知他們您已更新購物清單。",
+  "shoppingListNotifyGroupSend": "傳送通知"
 }
