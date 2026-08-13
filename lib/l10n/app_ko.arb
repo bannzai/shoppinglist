@@ -324,5 +324,6 @@
   "settingsThemeColorKuchiba": "쿠치바",
   "inquiryCategoryBugReport": "버그 신고",
   "inquiryCategoryHowToUse": "사용 방법",
-  "inquiryCategoryRequest": "기능 제안"
+  "inquiryCategoryRequest": "기능 제안",
+  "inquiryCategoryOther": "기타"
 }

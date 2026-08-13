@@ -324,5 +324,6 @@
   "settingsThemeColorKuchiba": "朽叶",
   "inquiryCategoryBugReport": "问题反馈",
   "inquiryCategoryHowToUse": "使用方法",
-  "inquiryCategoryRequest": "功能建议"
+  "inquiryCategoryRequest": "功能建议",
+  "inquiryCategoryOther": "其他"
 }
