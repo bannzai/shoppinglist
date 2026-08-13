@@ -322,5 +322,6 @@
   "settingsThemeColorAi": "인디고",
   "settingsThemeColorSumi": "먹물색",
   "settingsThemeColorKuchiba": "쿠치바",
-  "inquiryCategoryBugReport": "버그 신고"
+  "inquiryCategoryBugReport": "버그 신고",
+  "inquiryCategoryHowToUse": "사용 방법"
 }

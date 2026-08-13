@@ -322,5 +322,6 @@
   "settingsThemeColorAi": "靛藍",
   "settingsThemeColorSumi": "墨色",
   "settingsThemeColorKuchiba": "朽葉",
-  "inquiryCategoryBugReport": "問題回報"
+  "inquiryCategoryBugReport": "問題回報",
+  "inquiryCategoryHowToUse": "使用方法"
 }
