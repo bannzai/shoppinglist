@@ -165,5 +165,6 @@
   "listSettingStoragePeriodUpsell": "使用高级版，您可以无限期保存清单",
   "listSettingShareSection": "共享",
   "listSettingSendInvitationCode": "向群组发送邀请码",
-  "listSettingGroupSetting": "群组设置"
+  "listSettingGroupSetting": "群组设置",
+  "listSettingGroupNameRequired": "请先设置群组名称，再邀请他人"
 }
