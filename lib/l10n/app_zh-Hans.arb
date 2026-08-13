@@ -88,5 +88,6 @@
   "shoppingListHintExample4": "例如：洋葱 x2",
   "shoppingListHintExample5": "例如：番茄",
   "shoppingListHintCardTitle": "使用方法",
-  "shoppingListHintTap": "・点按一行即可直接输入"
+  "shoppingListHintTap": "・点按一行即可直接输入",
+  "shoppingListHintReturn": "・按回车换到下一行"
 }
