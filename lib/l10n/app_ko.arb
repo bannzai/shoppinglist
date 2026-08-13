@@ -106,5 +106,6 @@
   "commonCopy": "복사",
   "commonShare": "공유",
   "settingsProfileSection": "프로필",
-  "settingsDisplayNameLabel": "표시 이름"
+  "settingsDisplayNameLabel": "표시 이름",
+  "settingsDisplayNameHint": "표시 이름을 입력하세요"
 }

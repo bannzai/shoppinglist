@@ -106,5 +106,6 @@
   "commonCopy": "复制",
   "commonShare": "分享",
   "settingsProfileSection": "个人资料",
-  "settingsDisplayNameLabel": "你的显示名称"
+  "settingsDisplayNameLabel": "你的显示名称",
+  "settingsDisplayNameHint": "输入显示名称"
 }
