@@ -315,5 +315,6 @@
   "shoppingLocationSetOnMap": "在地圖上設定位置",
   "shoppingLocationDeleteConfirmTitle": "刪除「{name}」？",
   "shoppingLocationDeleteConfirmMessage": "刪除這個位置不會影響已設定此位置的購物清單",
-  "shoppingLocationPickerTitle": "在地圖上選擇位置"
+  "shoppingLocationPickerTitle": "在地圖上選擇位置",
+  "shoppingLocationPickerConfirm": "使用此位置"
 }
