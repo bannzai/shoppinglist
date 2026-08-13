@@ -53,5 +53,6 @@
   "shoppingListSpotlightTitle": "你可以在这里添加新的购物清单",
   "shoppingListSpotlightMessage": "为每个日期创建一个清单，或复制你现在使用的清单。",
   "shoppingListSpotlightDismiss": "轻触关闭",
-  "shoppingListAiProcessingImage": "正在从照片中提取建议…"
+  "shoppingListAiProcessingImage": "正在从照片中提取建议…",
+  "shoppingListAiProcessingUrl": "正在从网址提取建议…"
 }
