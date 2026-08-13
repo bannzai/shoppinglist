@@ -90,5 +90,6 @@
   "shoppingListHintCardTitle": "사용 방법",
   "shoppingListHintTap": "・행을 탭하고 바로 입력하세요",
   "shoppingListHintReturn": "・Enter 키를 누르면 다음 줄로 이동합니다",
-  "shoppingListHintDelete": "・빈 줄에서 삭제를 누르면 제거할 수 있어요"
+  "shoppingListHintDelete": "・빈 줄에서 삭제를 누르면 제거할 수 있어요",
+  "shoppingListHintFabPrefix": "오른쪽 아래의 "
 }
