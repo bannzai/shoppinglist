@@ -234,5 +234,6 @@
   "groupListFreeLimitAction": "解锁",
   "groupSettingMembersSection": "成员",
   "groupSettingMemberOwner": "群主",
-  "groupSettingMemberSelf": "你"
+  "groupSettingMemberSelf": "你",
+  "groupSettingMemberFallbackName": "成员"
 }

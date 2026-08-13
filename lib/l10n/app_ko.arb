@@ -234,5 +234,6 @@
   "groupListFreeLimitAction": "잠금 해제",
   "groupSettingMembersSection": "구성원",
   "groupSettingMemberOwner": "소유자",
-  "groupSettingMemberSelf": "나"
+  "groupSettingMemberSelf": "나",
+  "groupSettingMemberFallbackName": "멤버"
 }
