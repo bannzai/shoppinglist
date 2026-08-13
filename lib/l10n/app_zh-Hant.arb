@@ -2,5 +2,6 @@
   "@@locale": "zh-Hant",
   "appTitle": "買物清單",
   "commonCancel": "取消",
-  "commonClose": "關閉"
+  "commonClose": "關閉",
+  "commonDone": "完成"
 }
