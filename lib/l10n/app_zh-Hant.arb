@@ -275,5 +275,6 @@
   "onboardingSlide3Title": "當您靠近商店時\n溫馨提醒",
   "onboardingSlide3Body": "當您靠近已登記的商店時，我們會輕輕提醒您查看購物清單。只在您需要時發送通知，絕不打擾。",
   "onboardingSkip": "略過",
-  "onboardingStart": "開始使用"
+  "onboardingStart": "開始使用",
+  "onboardingNext": "下一步"
 }

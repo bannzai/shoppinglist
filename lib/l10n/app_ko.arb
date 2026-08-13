@@ -275,5 +275,6 @@
   "onboardingSlide3Title": "매장 근처에 가면\n알려드려요",
   "onboardingSlide3Body": "등록한 매장 근처에 가면 쇼핑 리스트를 부드럽게 보여드려요. 꼭 필요할 때만 알림을 보내고, 지나치게 방해하지 않아요.",
   "onboardingSkip": "건너뛰기",
-  "onboardingStart": "시작하기"
+  "onboardingStart": "시작하기",
+  "onboardingNext": "다음"
 }
