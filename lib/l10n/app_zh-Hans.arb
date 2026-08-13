@@ -222,5 +222,6 @@
   "groupInvitationHeading": "输入邀请码",
   "groupInvitationDescription": "输入群组成员分享给您的 8 位验证码",
   "groupInvitationJoining": "加入中…",
-  "groupInvitationJoin": "加入"
+  "groupInvitationJoin": "加入",
+  "groupInvitationVerifyingTitle": "正在检查邀请码"
 }
