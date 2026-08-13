@@ -345,5 +345,6 @@
   "purchaseErrorInvalidReceipt": "购买信息无效。请检查您的购买信息。",
   "purchaseErrorMissingReceipt": "没有购买者信息。请使用 {accountName} 登录设备后重试。",
   "purchaseErrorNetwork": "网络连接不稳定。请检查连接后重试。",
-  "purchaseErrorPurchaseFailed": "购买失败。请稍后再试。如果问题仍然存在，请前往“设置”>“反馈”联系我们。详情：{details}"
+  "purchaseErrorPurchaseFailed": "购买失败。请稍后再试。如果问题仍然存在，请前往“设置”>“反馈”联系我们。详情：{details}",
+  "purchaseErrorUnavailable": "当前无法购买。请稍后再试。如果问题仍然存在，请前往“设置”>“咨询”联系我们。详情：{details}"
 }

@@ -345,5 +345,6 @@
   "purchaseErrorInvalidReceipt": "購買資訊無效。請檢查您的購買資訊。",
   "purchaseErrorMissingReceipt": "沒有購買者資訊。請使用 {accountName} 登入您的裝置後再試一次。",
   "purchaseErrorNetwork": "網路連線不穩定。請檢查連線後再試一次。",
-  "purchaseErrorPurchaseFailed": "購買失敗。請稍後再試。如果問題仍然存在，請前往「設定」>「詢問」聯絡我們。詳細資訊：{details}"
+  "purchaseErrorPurchaseFailed": "購買失敗。請稍後再試。如果問題仍然存在，請前往「設定」>「詢問」聯絡我們。詳細資訊：{details}",
+  "purchaseErrorUnavailable": "目前無法購買。請稍後再試。如果問題仍然存在，請從「設定」>「諮詢」聯絡我們。詳情：{details}"
 }
