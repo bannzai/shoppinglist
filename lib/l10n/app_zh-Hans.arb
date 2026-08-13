@@ -159,5 +159,6 @@
   "listSettingLocationUnset": "未设置",
   "listSettingLocationChangeDetail": "更改",
   "listSettingCategorySubtitle": "管理自动分类关键词",
-  "listSettingStoragePeriodSection": "保留期限"
+  "listSettingStoragePeriodSection": "保留期限",
+  "listSettingStoragePeriodPremium": "高级版：无限制"
 }

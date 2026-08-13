@@ -159,5 +159,6 @@
   "listSettingLocationUnset": "미설정",
   "listSettingLocationChangeDetail": "변경",
   "listSettingCategorySubtitle": "자동 분류 키워드 관리",
-  "listSettingStoragePeriodSection": "보관 기간"
+  "listSettingStoragePeriodSection": "보관 기간",
+  "listSettingStoragePeriodPremium": "프리미엄: 무제한"
 }
