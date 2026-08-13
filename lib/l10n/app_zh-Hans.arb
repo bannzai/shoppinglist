@@ -207,5 +207,6 @@
   "groupCategoryEditMatchingExact": "完全匹配",
   "groupCategoryEditMatchingPartial": "部分匹配",
   "groupCategoryEditMatchingRegex": "正则表达式",
-  "groupCreateTitle": "创建群组"
+  "groupCreateTitle": "创建群组",
+  "groupCreateIconLabel": "图标"
 }
