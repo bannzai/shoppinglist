@@ -125,5 +125,6 @@
   "settingsPremiumCardTitleFree": "升级到高级版",
   "settingsPremiumCardSubtitlePremium": "您可使用全部功能",
   "settingsPremiumCardSubtitleFree": "五种颜色主题，更多照片/网址扫描等功能",
-  "settingsPremiumCardStartButton": "开始使用"
+  "settingsPremiumCardStartButton": "开始使用",
+  "settingsSignOut": "退出登录"
 }
