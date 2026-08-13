@@ -26,5 +26,6 @@
   "accountDeleteConfirmTitle": "계정 정보를 삭제",
   "accountDeleteConfirmMessage": "계정을 삭제하면 모든 사용자 정보가 제거됩니다.",
   "accountDeleteConfirmButton": "삭제",
-  "accountDeleteReauthTitle": "다시 로그인해 주세요"
+  "accountDeleteReauthTitle": "다시 로그인해 주세요",
+  "accountDeleteReauthMessage": "계정을 삭제하려면 다시 로그인해 주세요."
 }
