@@ -312,5 +312,6 @@
   "shoppingLocationNameHint": "位置名稱",
   "shoppingLocationNameHintWithExample": "地點名稱（例如：超市）",
   "shoppingLocationPositionSet": "位置已設定",
-  "shoppingLocationSetOnMap": "在地圖上設定位置"
+  "shoppingLocationSetOnMap": "在地圖上設定位置",
+  "shoppingLocationDeleteConfirmTitle": "刪除「{name}」？"
 }

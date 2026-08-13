@@ -312,5 +312,6 @@
   "shoppingLocationNameHint": "장소 이름",
   "shoppingLocationNameHintWithExample": "위치 이름(예: 슈퍼마켓)",
   "shoppingLocationPositionSet": "위치 설정됨",
-  "shoppingLocationSetOnMap": "지도에서 위치 설정"
+  "shoppingLocationSetOnMap": "지도에서 위치 설정",
+  "shoppingLocationDeleteConfirmTitle": "\"{name}\"을(를) 삭제할까요?"
 }
