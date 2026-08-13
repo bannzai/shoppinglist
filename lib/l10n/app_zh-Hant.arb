@@ -229,5 +229,6 @@
   "groupJoinDescription": "你有收到家人或伴侶提供的邀請碼嗎？\n使用邀請碼加入後，你們就能一起共用同一份購物清單。",
   "groupJoinCreateSolo": "建立自己的清單",
   "groupListEmpty": "你尚未加入任何群組",
-  "groupListMemberCount": "{count} 位成員"
+  "groupListMemberCount": "{count} 位成員",
+  "groupListFreeLimitBanner": "免費方案可額外新增一個群組"
 }
