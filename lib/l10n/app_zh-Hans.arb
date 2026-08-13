@@ -40,5 +40,6 @@
   "shoppingListLoadErrorTitle": "列表加载失败",
   "shoppingListPickerTitle": "切换清单",
   "shoppingListPickerAddList": "添加新清单",
-  "shoppingListCreateListTooltip": "添加列表"
+  "shoppingListCreateListTooltip": "添加列表",
+  "shoppingListCreateTodayList": "添加一个带有当前日期的清单"
 }
