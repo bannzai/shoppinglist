@@ -367,5 +367,6 @@
   "purchaseErrorFeatureNotSupported": "此功能不支持您的设备。请更新到最新版本后再试。代码：{code} 详情：{details}",
   "purchaseErrorInvalidWebPurchaseToken": "购买令牌无效。请重试。如果问题仍然存在，请通过“设置”>“咨询”联系我们。代码：{code} 详情：{details}",
   "purchaseErrorBelongsToOtherUser": "此购买属于其他用户。请检查你的账号。代码：{code} 详情：{details}",
-  "purchaseErrorExpiredWebPurchaseToken": "购买令牌已过期。请重试。代码：{code} 详情：{details}"
+  "purchaseErrorExpiredWebPurchaseToken": "购买令牌已过期。请重试。代码：{code} 详情：{details}",
+  "purchaseErrorTestStoreSimulated": "测试购买时发生错误。代码：{code} 详细信息：{details}"
 }

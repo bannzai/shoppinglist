@@ -367,5 +367,6 @@
   "purchaseErrorFeatureNotSupported": "此功能不支援您的裝置。請更新到最新版本後再試。代碼：{code} 詳細：{details}",
   "purchaseErrorInvalidWebPurchaseToken": "購買憑證無效。請再試一次。如果問題持續發生，請從「設定」>「詢問」聯絡我們。代碼：{code} 詳細：{details}",
   "purchaseErrorBelongsToOtherUser": "此購買屬於其他使用者。請檢查您的帳號。代碼：{code} 詳情：{details}",
-  "purchaseErrorExpiredWebPurchaseToken": "購買憑證已過期。請再試一次。代碼：{code} 詳情：{details}"
+  "purchaseErrorExpiredWebPurchaseToken": "購買憑證已過期。請再試一次。代碼：{code} 詳情：{details}",
+  "purchaseErrorTestStoreSimulated": "測試購買時發生錯誤。代碼：{code} 詳細資料：{details}"
 }

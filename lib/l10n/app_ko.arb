@@ -367,5 +367,6 @@
   "purchaseErrorFeatureNotSupported": "이 기능은 현재 기기에서 지원되지 않습니다. 최신 버전으로 업데이트한 후 다시 시도해 주세요. 코드: {code} 세부정보: {details}",
   "purchaseErrorInvalidWebPurchaseToken": "구매 토큰이 유효하지 않습니다. 다시 시도해 주세요. 문제가 계속되면 설정 > 문의에서 연락해 주세요. 코드: {code} 상세: {details}",
   "purchaseErrorBelongsToOtherUser": "이 구매는 다른 사용자에게 속해 있습니다. 계정을 확인해 주세요. 코드: {code} 세부정보: {details}",
-  "purchaseErrorExpiredWebPurchaseToken": "구매 토큰이 만료되었습니다. 다시 시도해 주세요. 코드: {code} 상세: {details}"
+  "purchaseErrorExpiredWebPurchaseToken": "구매 토큰이 만료되었습니다. 다시 시도해 주세요. 코드: {code} 상세: {details}",
+  "purchaseErrorTestStoreSimulated": "테스트 구매 중 오류가 발생했습니다. 코드: {code} 세부정보: {details}"
 }
