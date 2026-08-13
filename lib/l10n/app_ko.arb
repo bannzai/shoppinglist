@@ -82,5 +82,6 @@
   "shoppingListUrlRequired": "URL을 입력하세요",
   "shoppingListUrlInvalid": "유효한 HTTPS URL을 입력하세요",
   "shoppingListStarterRowLabel": "탭하여 입력 시작",
-  "shoppingListHintExample1": "예: 우유 1L"
+  "shoppingListHintExample1": "예: 우유 1L",
+  "shoppingListHintExample2": "예: 달걀, 1팩"
 }
