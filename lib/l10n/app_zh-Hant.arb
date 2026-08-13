@@ -283,5 +283,6 @@
   "paywallFeaturePhotoExtraction": "從照片中提取物品（每月 50 次）",
   "paywallFeatureUrlExtraction": "從網址中提取項目（每月 50 次）",
   "paywallFeatureThemeColors": "五種主題顏色",
-  "paywallFeatureUnlimitedRetention": "清單無限期保留"
+  "paywallFeatureUnlimitedRetention": "清單無限期保留",
+  "paywallFeatureReceipt": "將收據儲存到清單"
 }

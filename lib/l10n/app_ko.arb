@@ -283,5 +283,6 @@
   "paywallFeaturePhotoExtraction": "사진에서 항목 추출(월 50회)",
   "paywallFeatureUrlExtraction": "URL에서 항목 추출 (월 50회)",
   "paywallFeatureThemeColors": "5가지 테마 색상",
-  "paywallFeatureUnlimitedRetention": "목록 무제한 보관"
+  "paywallFeatureUnlimitedRetention": "목록 무제한 보관",
+  "paywallFeatureReceipt": "영수증을 목록에 저장"
 }
