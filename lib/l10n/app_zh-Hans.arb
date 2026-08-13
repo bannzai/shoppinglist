@@ -306,5 +306,6 @@
   "forceUpdateMessage": "我们希望您更新此应用。请从 {storeName} 更新到最新版本。",
   "shoppingLocationTitle": "购物地点",
   "shoppingLocationEmpty": "还没有购物地点",
-  "shoppingLocationGeoConfigured": "已设置位置"
+  "shoppingLocationGeoConfigured": "已设置位置",
+  "shoppingLocationAddTitle": "添加位置"
 }

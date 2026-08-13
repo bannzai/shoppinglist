@@ -306,5 +306,6 @@
   "forceUpdateMessage": "앱을 업데이트해 주세요. {storeName}에서 최신 버전으로 업데이트해 주세요.",
   "shoppingLocationTitle": "쇼핑 장소",
   "shoppingLocationEmpty": "아직 쇼핑 장소가 없어요",
-  "shoppingLocationGeoConfigured": "위치 설정됨"
+  "shoppingLocationGeoConfigured": "위치 설정됨",
+  "shoppingLocationAddTitle": "위치 추가"
 }
