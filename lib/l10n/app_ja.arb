@@ -1,4 +1,127 @@
 {
   "@@locale": "ja",
-  "appTitle": "買い物リスト"
+  "appTitle": "買い物リスト",
+
+  "commonCancel": "キャンセル",
+  "commonClose": "閉じる",
+  "commonDone": "完了",
+  "commonOk": "OK",
+  "commonDelete": "削除",
+  "commonAdd": "追加",
+  "commonRetry": "再試行",
+  "commonUndo": "元に戻す",
+  "commonUpgrade": "アップグレード",
+  "commonSettings": "設定",
+  "commonCategory": "カテゴリ",
+  "commonUncategorized": "未分類",
+  "commonGroup": "グループ",
+  "commonCamera": "カメラ",
+  "commonPhotoLibrary": "フォトライブラリ",
+  "commonErrorOccurred": "エラーが発生しました",
+
+  "errorUnknownTitle": "不明なエラーが発生しました",
+  "errorUnexpectedTitle": "予期せぬエラーが発生しました",
+  "errorFaqLink": "FAQを見る",
+
+  "authGoogleSignIn": "Google でサインイン",
+
+  "loadingPreparing": "準備中...",
+
+  "accountDeleteButton": "アカウントを削除する",
+  "accountDeleteConfirmTitle": "ユーザー情報を削除します",
+  "accountDeleteConfirmMessage": "アカウントを削除すると、ユーザー情報がすべて削除されます。",
+  "accountDeleteConfirmButton": "削除する",
+  "accountDeleteReauthTitle": "再ログインしてください",
+  "accountDeleteReauthMessage": "アカウントを削除するには、再ログインしてください。",
+  "accountDeleteReauthButton": "再ログインする",
+  "accountDeleteCompletedTitle": "アカウントを削除しました",
+  "accountDeleteExitAppQuestion": "アプリを終了しますか？",
+  "accountDeleteExitAppButton": "終了する",
+
+  "shoppingListDefaultName": "買い物リスト",
+  "shoppingListSettingTooltip": "リスト設定",
+  "shoppingListEmptyTitle": "買い物リストがありません",
+  "shoppingListEmptyMessage": "新しい買い物リストを作成しましょう",
+  "shoppingListEmptyCreateButton": "買い物リストを作成",
+
+  "shoppingListLoadErrorTitle": "リストを読み込めませんでした",
+
+  "shoppingListPickerTitle": "リストを切り替える",
+  "shoppingListPickerAddList": "新しいリストを追加",
+
+  "shoppingListCreateListTooltip": "リストを追加",
+  "shoppingListCreateTodayList": "今日の日付でリストを追加",
+  "shoppingListDuplicateCurrentList": "現在のリストを複製",
+  "shoppingListDuplicateUncheckedOnly": "未チェックのみ引き継いで複製",
+  "shoppingListDuplicated": "リストを複製しました",
+
+  "shoppingListDuplicatedFrom": "{name}から複製",
+  "shoppingListDeletedListName": "削除済みリスト",
+  "shoppingListDuplicateSourceDeleted": "複製元の買い物リストは削除されています",
+
+  "shoppingListRetentionBannerMessage": "無料プランは作成から30日でリストが整理されます",
+  "shoppingListRetentionBannerDetail": "詳しく",
+
+  "shoppingListSpotlightTitle": "新しい買い物リストはここから追加できます",
+  "shoppingListSpotlightMessage": "日付ごとのリストを作ったり、今のリストを複製したりできます。",
+  "shoppingListSpotlightDismiss": "タップして閉じる",
+
+  "shoppingListAiProcessingImage": "画像から候補を抽出中...",
+  "shoppingListAiProcessingUrl": "URL から候補を抽出中...",
+  "shoppingListAiProcessingCategorize": "カテゴリ分けを実行中...",
+
+  "shoppingListAiLimitUpsell": "。プレミアムにアップグレードすると月{limit}回まで利用できます",
+
+  "shoppingListAiCategorizeButton": "自動でカテゴリ分け（{count}件）",
+  "shoppingListAiCategorizeLimitReached": "自動カテゴリ分けの月間利用回数（{limit}回）に達しました",
+  "shoppingListAiCategorizeRegistered": "{count}件をカテゴリに登録しました",
+  "shoppingListAiCategorizeSheetTitle": "自動カテゴリ分け",
+  "shoppingListAiCategorizeSheetSubtitle": "カテゴリを確認・調整して登録してください",
+  "shoppingListAiCategorizeSheetEmpty": "分類できる候補がありませんでした",
+  "shoppingListAiCategorizeSheetConfirm": "{count} 件を登録",
+
+  "shoppingListCategorySelect": "カテゴリを選択",
+  "shoppingListCategoryChange": "カテゴリを変更",
+  "shoppingListNewCategoryHint": "新しいカテゴリ名",
+  "shoppingListAddCategoryLabel": "カテゴリを追加",
+
+  "shoppingListAiReviewTitle": "読み取った候補",
+  "shoppingListAiReviewSubtitle": "追加するアイテムを選んでください",
+  "shoppingListAiReviewEmpty": "候補がありませんでした",
+  "shoppingListAiReviewConfirm": "{count} 件追加",
+
+  "shoppingListFabAddFromPhoto": "写真から追加",
+  "shoppingListFabAddFromUrl": "URL から追加",
+  "shoppingListFabPasteText": "テキスト貼り付け",
+  "shoppingListImageRecognitionLimitReached": "画像読み取りの月間利用回数（{limit}回）に達しました",
+  "shoppingListUrlRecognitionLimitReached": "URL読み取りの月間利用回数（{limit}回）に達しました",
+  "shoppingListUrlDialogTitle": "URLから買い物リストを生成",
+  "shoppingListUrlDialogGenerate": "生成",
+  "shoppingListUrlRequired": "URLを入力してください",
+  "shoppingListUrlInvalid": "有効なHTTPS URLを入力してください",
+
+  "shoppingListStarterRowLabel": "タップで入力開始",
+  "shoppingListHintExample1": "例: 牛乳 1L",
+  "shoppingListHintExample2": "例: 卵 1パック",
+  "shoppingListHintExample3": "例: パン",
+  "shoppingListHintExample4": "例: 玉ねぎ 2個",
+  "shoppingListHintExample5": "例: トマト",
+  "shoppingListHintCardTitle": "こんな風に使えます",
+  "shoppingListHintTap": "・タップしてそのまま入力",
+  "shoppingListHintReturn": "・return で次の行へ",
+  "shoppingListHintDelete": "・空行で delete で行を消せます",
+  "shoppingListHintFabPrefix": "・右下の ",
+  "shoppingListHintFabSuffix": " を長押しすると写真やURLから追加できます",
+
+  "shoppingListItemDetailTooltip": "アイテム詳細",
+  "shoppingListItemDeleteTooltip": "アイテムを削除",
+  "shoppingListItemDeleteConfirm": "このアイテムを削除しますか？",
+  "shoppingListItemDeleted": "アイテムを削除しました",
+  "shoppingListItemMemoHint": "メモを書く...",
+
+  "shoppingListNotifyGroup": "グループに通知",
+  "shoppingListNotifyGroupSent": "グループに通知しました",
+  "shoppingListNotifyGroupGuideLabel": "グループ通知の説明",
+  "shoppingListNotifyGroupGuideMessage": "このボタンを押すと、買い物リストを更新したことをグループの他のメンバーにプッシュ通知でお知らせします。",
+  "shoppingListNotifyGroupSend": "通知を送る"
 }

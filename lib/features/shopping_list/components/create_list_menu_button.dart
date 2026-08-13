@@ -6,6 +6,7 @@ import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/current_shopping_list_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_fab_menu.dart';
@@ -94,7 +95,7 @@ class CreateListMenuButton extends HookConsumerWidget {
 
     return PopupMenuButton<_CreateListMenuAction>(
       key: const Key('create_list_menu_button'),
-      tooltip: 'リストを追加',
+      tooltip: context.l10n.shoppingListCreateListTooltip,
       // AppUser 未ロード・実行中は無効化（タップ不可）。
       enabled: appUser != null && !isCreating.value,
       icon:
@@ -212,9 +213,9 @@ class CreateListMenuButton extends HookConsumerWidget {
           (context) => [
             PopupMenuItem(
               value: _CreateListMenuAction.createToday,
-              child: const _CreateListMenuRow(
+              child: _CreateListMenuRow(
                 icon: Icons.today_outlined,
-                label: '今日の日付でリストを追加',
+                label: context.l10n.shoppingListCreateTodayList,
                 enabled: true,
               ),
             ),
@@ -223,7 +224,7 @@ class CreateListMenuButton extends HookConsumerWidget {
               enabled: canDuplicate,
               child: _CreateListMenuRow(
                 icon: Icons.content_copy_outlined,
-                label: '現在のリストを複製',
+                label: context.l10n.shoppingListDuplicateCurrentList,
                 enabled: canDuplicate,
               ),
             ),
@@ -232,7 +233,7 @@ class CreateListMenuButton extends HookConsumerWidget {
               enabled: canDuplicate,
               child: _CreateListMenuRow(
                 icon: Icons.check_box_outline_blank,
-                label: '未チェックのみ引き継いで複製',
+                label: context.l10n.shoppingListDuplicateUncheckedOnly,
                 enabled: canDuplicate,
               ),
             ),
@@ -273,6 +274,7 @@ class CreateListMenuButton extends HookConsumerWidget {
     required CurrentShoppingListID currentShoppingListIDNotifier,
   }) async {
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = context.l10n;
     isCreating.value = true;
     try {
       final newShoppingList = await shoppingListAdd(
@@ -302,7 +304,7 @@ class CreateListMenuButton extends HookConsumerWidget {
           persist: false,
           content: Text(e.toString()),
           action: SnackBarAction(
-            label: 'アップグレード',
+            label: l10n.commonUpgrade,
             // SnackBar はこの widget の破棄後も ScaffoldMessenger 上に残るため、
             // タップ時に破棄済み context で showPaywall しないようガードする。
             onPressed: () {
@@ -341,6 +343,7 @@ class CreateListMenuButton extends HookConsumerWidget {
     required CurrentShoppingListID currentShoppingListIDNotifier,
   }) async {
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = context.l10n;
     isCreating.value = true;
     try {
       final newShoppingList = await shoppingListDuplicate(
@@ -359,7 +362,10 @@ class CreateListMenuButton extends HookConsumerWidget {
       );
       currentShoppingListIDNotifier.update(newShoppingList.id);
       messenger.showSnackBar(
-        SnackBar(persist: false, content: const Text('リストを複製しました')),
+        SnackBar(
+          persist: false,
+          content: Text(l10n.shoppingListDuplicated),
+        ),
       );
     } on ShoppingListLimitExceededException catch (e) {
       messenger.showSnackBar(
@@ -367,7 +373,7 @@ class CreateListMenuButton extends HookConsumerWidget {
           persist: false,
           content: Text(e.toString()),
           action: SnackBarAction(
-            label: 'アップグレード',
+            label: l10n.commonUpgrade,
             // SnackBar はこの widget の破棄後も ScaffoldMessenger 上に残るため、
             // タップ時に破棄済み context で showPaywall しないようガードする。
             onPressed: () {

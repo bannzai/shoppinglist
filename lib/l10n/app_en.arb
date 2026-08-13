@@ -3,5 +3,212 @@
   "appTitle": "Shopping List",
   "@appTitle": {
     "description": "アプリ名。MaterialApp の title (タスクスイッチャー等 OS 表示用)"
-  }
+  },
+
+  "commonCancel": "Cancel",
+  "commonClose": "Close",
+  "commonDone": "Done",
+  "commonOk": "OK",
+  "commonDelete": "Delete",
+  "commonAdd": "Add",
+  "commonRetry": "Retry",
+  "commonUndo": "Undo",
+  "commonUpgrade": "Upgrade",
+  "@commonUpgrade": {
+    "description": "プレミアムへのアップグレードを促す SnackBar のアクションラベル"
+  },
+  "commonSettings": "Settings",
+  "commonCategory": "Category",
+  "commonUncategorized": "Uncategorized",
+  "@commonUncategorized": {
+    "description": "カテゴリが未設定のアイテムをまとめるセクション名"
+  },
+  "commonGroup": "Group",
+  "@commonGroup": {
+    "description": "グループ名が未設定のときのフォールバック表示"
+  },
+  "commonCamera": "Camera",
+  "commonPhotoLibrary": "Photo Library",
+  "commonErrorOccurred": "An error occurred",
+
+  "errorUnknownTitle": "An unknown error occurred",
+  "errorUnexpectedTitle": "An unexpected error occurred",
+  "errorFaqLink": "View FAQ",
+  "@errorFaqLink": {
+    "description": "エラーダイアログから FAQ ページを開くボタン"
+  },
+
+  "authGoogleSignIn": "Sign in with Google",
+
+  "loadingPreparing": "Preparing...",
+  "@loadingPreparing": {
+    "description": "全画面ローディング中に出す文言"
+  },
+
+  "accountDeleteButton": "Delete account",
+  "accountDeleteConfirmTitle": "Delete your account information",
+  "accountDeleteConfirmMessage": "Deleting your account will remove all of your user information.",
+  "accountDeleteConfirmButton": "Delete",
+  "@accountDeleteConfirmButton": {
+    "description": "アカウント削除確認ダイアログの実行ボタン (日本語では「削除する」で汎用の「削除」と区別している)"
+  },
+  "accountDeleteReauthTitle": "Please sign in again",
+  "accountDeleteReauthMessage": "To delete your account, please sign in again.",
+  "accountDeleteReauthButton": "Sign in again",
+  "accountDeleteCompletedTitle": "Your account has been deleted",
+  "accountDeleteExitAppQuestion": "Quit the app?",
+  "accountDeleteExitAppButton": "Quit",
+
+  "shoppingListDefaultName": "Shopping List",
+  "@shoppingListDefaultName": {
+    "description": "リスト名が未設定のときに上部バーへ出すフォールバック表示"
+  },
+  "shoppingListSettingTooltip": "List settings",
+  "shoppingListEmptyTitle": "No shopping lists yet",
+  "shoppingListEmptyMessage": "Create a new shopping list",
+  "shoppingListEmptyCreateButton": "Create shopping list",
+
+  "shoppingListLoadErrorTitle": "Failed to load the list",
+
+  "shoppingListPickerTitle": "Switch list",
+  "shoppingListPickerAddList": "Add a new list",
+
+  "shoppingListCreateListTooltip": "Add list",
+  "shoppingListCreateTodayList": "Add a list with the current date",
+  "shoppingListDuplicateCurrentList": "Duplicate the current list",
+  "shoppingListDuplicateUncheckedOnly": "Duplicate with unchecked items only",
+  "shoppingListDuplicated": "Duplicated the list",
+
+  "shoppingListDuplicatedFrom": "Duplicated from {name}",
+  "@shoppingListDuplicatedFrom": {
+    "description": "複製で作られたリストの上部に出す、複製元リストへの導線ラベル",
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "shoppingListDeletedListName": "Deleted list",
+  "@shoppingListDeletedListName": {
+    "description": "複製元リストが既に削除済みのときの表示名"
+  },
+  "shoppingListDuplicateSourceDeleted": "The original shopping list has been deleted",
+
+  "shoppingListRetentionBannerMessage": "On the free plan, lists are cleaned up 30 days after they are created",
+  "shoppingListRetentionBannerDetail": "Details",
+
+  "shoppingListSpotlightTitle": "You can add a new shopping list here",
+  "shoppingListSpotlightMessage": "Create a list for each date, or duplicate the list you are using now.",
+  "shoppingListSpotlightDismiss": "Tap to close",
+
+  "shoppingListAiProcessingImage": "Extracting suggestions from the photo...",
+  "shoppingListAiProcessingUrl": "Extracting suggestions from the URL...",
+  "shoppingListAiProcessingCategorize": "Sorting into categories...",
+
+  "shoppingListAiLimitUpsell": ". Upgrade to Premium and you can use it up to {limit} times a month",
+  "@shoppingListAiLimitUpsell": {
+    "description": "AI 機能の月間上限に達した SnackBar で、無料プランのときだけ上限メッセージの末尾へ連結する文",
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+
+  "shoppingListAiCategorizeButton": "Auto-categorize ({count} items)",
+  "@shoppingListAiCategorizeButton": {
+    "description": "未分類アイテムを AI でカテゴリ分けするボタン。件数は未分類アイテム数",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "shoppingListAiCategorizeLimitReached": "The monthly limit for auto-categorization ({limit} times) has been reached",
+  "@shoppingListAiCategorizeLimitReached": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "shoppingListAiCategorizeRegistered": "Registered {count} items into categories",
+  "@shoppingListAiCategorizeRegistered": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "shoppingListAiCategorizeSheetTitle": "Auto-categorize",
+  "shoppingListAiCategorizeSheetSubtitle": "Review and adjust the categories before registering them",
+  "shoppingListAiCategorizeSheetEmpty": "No items could be categorized",
+  "shoppingListAiCategorizeSheetConfirm": "Register {count} items",
+  "@shoppingListAiCategorizeSheetConfirm": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "shoppingListCategorySelect": "Select category",
+  "shoppingListCategoryChange": "Change category",
+  "shoppingListNewCategoryHint": "New category name",
+  "shoppingListAddCategoryLabel": "Add category",
+  "@shoppingListAddCategoryLabel": {
+    "description": "未分類アイテムの行に出す「カテゴリ +」ボタンの読み上げラベル"
+  },
+
+  "shoppingListAiReviewTitle": "Extracted suggestions",
+  "shoppingListAiReviewSubtitle": "Choose the items you want to add",
+  "shoppingListAiReviewEmpty": "No suggestions were found",
+  "shoppingListAiReviewConfirm": "Add {count} items",
+  "@shoppingListAiReviewConfirm": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "shoppingListFabAddFromPhoto": "Add from photo",
+  "shoppingListFabAddFromUrl": "Add from URL",
+  "shoppingListFabPasteText": "Paste text",
+  "shoppingListImageRecognitionLimitReached": "The monthly limit for photo recognition ({limit} times) has been reached",
+  "@shoppingListImageRecognitionLimitReached": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "shoppingListUrlRecognitionLimitReached": "The monthly limit for URL recognition ({limit} times) has been reached",
+  "@shoppingListUrlRecognitionLimitReached": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "shoppingListUrlDialogTitle": "Generate a shopping list from a URL",
+  "shoppingListUrlDialogGenerate": "Generate",
+  "shoppingListUrlRequired": "Please enter a URL",
+  "shoppingListUrlInvalid": "Please enter a valid HTTPS URL",
+
+  "shoppingListStarterRowLabel": "Tap to start typing",
+  "shoppingListHintExample1": "e.g. Milk 1L",
+  "shoppingListHintExample2": "e.g. Eggs, 1 pack",
+  "shoppingListHintExample3": "e.g. Bread",
+  "shoppingListHintExample4": "e.g. Onions x2",
+  "shoppingListHintExample5": "e.g. Tomatoes",
+  "shoppingListHintCardTitle": "Here is how to use it",
+  "shoppingListHintTap": "・Tap a row and type right away",
+  "shoppingListHintReturn": "・Press return to move to the next line",
+  "shoppingListHintDelete": "・Press delete on an empty line to remove it",
+  "shoppingListHintFabPrefix": "・Long-press the ",
+  "@shoppingListHintFabPrefix": {
+    "description": "ヒント文「・右下の [アイコン] を長押しすると…」のアイコンより前の部分。末尾の空白はアイコンとの間隔"
+  },
+  "shoppingListHintFabSuffix": " at the bottom right to add from a photo or a URL",
+  "@shoppingListHintFabSuffix": {
+    "description": "ヒント文「・右下の [アイコン] を長押しすると…」のアイコンより後の部分。先頭の空白はアイコンとの間隔"
+  },
+
+  "shoppingListItemDetailTooltip": "Item details",
+  "shoppingListItemDeleteTooltip": "Delete item",
+  "shoppingListItemDeleteConfirm": "Delete this item?",
+  "shoppingListItemDeleted": "Deleted the item",
+  "shoppingListItemMemoHint": "Write a note...",
+
+  "shoppingListNotifyGroup": "Notify group",
+  "@shoppingListNotifyGroup": {
+    "description": "グループ通知ボタンの tooltip と、初回タップ時の説明ダイアログのタイトル"
+  },
+  "shoppingListNotifyGroupSent": "Notified the group",
+  "shoppingListNotifyGroupGuideLabel": "About group notifications",
+  "shoppingListNotifyGroupGuideMessage": "Tapping this button sends a push notification to the other members of your group to let them know you updated the shopping list.",
+  "shoppingListNotifyGroupSend": "Send notification"
 }

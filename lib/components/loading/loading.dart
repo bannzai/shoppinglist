@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/config/environment.dart';
 
@@ -159,7 +160,7 @@ class LaunchLoading extends HookWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              '準備中...',
+              context.l10n.loadingPreparing,
               style: Theme.of(
                 context,
               ).textTheme.bodyMedium?.copyWith(color: tokens.neutral.ink3),

@@ -7,6 +7,7 @@ import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -79,7 +80,7 @@ class TextShoppingListItemDetailBottomSheet extends ConsumerWidget {
                   ),
                 ),
                 IconButton(
-                  tooltip: 'アイテムを削除',
+                  tooltip: context.l10n.shoppingListItemDeleteTooltip,
                   icon: Icon(Icons.delete_outline, color: colorScheme.error),
                   onPressed: () {
                     analytics.logEvent(
@@ -93,7 +94,9 @@ class TextShoppingListItemDetailBottomSheet extends ConsumerWidget {
                       context: context,
                       builder:
                           (dialogContext) => AlertDialog(
-                            title: const Text('このアイテムを削除しますか？'),
+                            title: Text(
+                              context.l10n.shoppingListItemDeleteConfirm,
+                            ),
                             actions: [
                               TextButton(
                                 onPressed: () {
@@ -115,7 +118,7 @@ class TextShoppingListItemDetailBottomSheet extends ConsumerWidget {
                                   Navigator.pop(context);
                                 },
                                 child: Text(
-                                  '削除',
+                                  context.l10n.commonDelete,
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(color: colorScheme.error),
                                 ),
@@ -124,7 +127,7 @@ class TextShoppingListItemDetailBottomSheet extends ConsumerWidget {
                                 onPressed: () {
                                   Navigator.pop(dialogContext);
                                 },
-                                child: const Text('キャンセル'),
+                                child: Text(context.l10n.commonCancel),
                               ),
                             ],
                           ),
@@ -139,7 +142,7 @@ class TextShoppingListItemDetailBottomSheet extends ConsumerWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'カテゴリ',
+                  context.l10n.commonCategory,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
@@ -148,7 +151,11 @@ class TextShoppingListItemDetailBottomSheet extends ConsumerWidget {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  Expanded(child: Text(matchedCategory?.name ?? '未分類')),
+                  Expanded(
+                    child: Text(
+                      matchedCategory?.name ?? context.l10n.commonUncategorized,
+                    ),
+                  ),
                   TextButton(
                     onPressed: () {
                       analytics.logEvent(
@@ -177,7 +184,9 @@ class TextShoppingListItemDetailBottomSheet extends ConsumerWidget {
                       );
                     },
                     child: Text(
-                      matchedCategory != null ? 'カテゴリを変更' : 'カテゴリを選択',
+                      matchedCategory != null
+                          ? context.l10n.shoppingListCategoryChange
+                          : context.l10n.shoppingListCategorySelect,
                     ),
                   ),
                 ],

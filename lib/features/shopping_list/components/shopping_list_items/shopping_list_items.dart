@@ -11,6 +11,7 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_section_header.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -656,14 +657,14 @@ class _GroupedListView extends HookConsumerWidget {
               if (categoryID == null) {
                 return KeyedSubtree(
                   key: ValueKey('header_$uncategorizedCategoryID'),
-                  child: _header(categoryMap, grouped, categoryID),
+                  child: _header(context, categoryMap, grouped, categoryID),
                 );
               }
               // カテゴリヘッダーは長押しでセクション(カテゴリ)単位の並び替えを開始する(Issue #386)。
               return ReorderableDelayedDragStartListener(
                 key: ValueKey('header_$categoryID'),
                 index: index,
-                child: _header(categoryMap, grouped, categoryID),
+                child: _header(context, categoryMap, grouped, categoryID),
               );
             case GroupedItemRow(:final item, :final categoryID):
               // ヘッダードラッグ中のセクションのアイテム行はゼロ高さに畳む(アイテムは
@@ -870,6 +871,7 @@ class _GroupedListView extends HookConsumerWidget {
 
   /// カテゴリID(null=未分類)から見出し行を生成する。
   Widget _header(
+    BuildContext context,
     Map<String, GroupCategory> categoryMap,
     Map<String, List<GroupShoppingListItem>> grouped,
     String? categoryID,
@@ -878,7 +880,7 @@ class _GroupedListView extends HookConsumerWidget {
     final metrics = shoppingListItemMetrics(items);
     final category = categoryID == null ? null : categoryMap[categoryID];
     return CategorySectionHeader(
-      name: category?.name ?? '未分類',
+      name: category?.name ?? context.l10n.commonUncategorized,
       colorHex: category?.color,
       doneCount: metrics.checkedCount,
       totalCount: metrics.totalCount,

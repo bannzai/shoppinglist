@@ -7,6 +7,7 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/features/shopping_list/components/source_image_strip.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_items.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/config/feature_flags.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -73,7 +74,11 @@ class ShoppingListBodyContent extends StatelessWidget {
                 onShoppingListIDChanged(sourceID);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('複製元の買い物リストは削除されています')),
+                  SnackBar(
+                    content: Text(
+                      context.l10n.shoppingListDuplicateSourceDeleted,
+                    ),
+                  ),
                 );
               }
             },
@@ -83,7 +88,17 @@ class ShoppingListBodyContent extends StatelessWidget {
                 Icon(Icons.content_copy, size: 14, color: tokens.accent),
                 const SizedBox(width: 4),
                 Text(
-                  '${shoppingLists.firstWhereOrNull((sl) => sl.id == shoppingList!.duplicatedFromGroupShoppingListID)?.name ?? "削除済みリスト"}から複製',
+                  context.l10n.shoppingListDuplicatedFrom(
+                    shoppingLists
+                            .firstWhereOrNull(
+                              (sl) =>
+                                  sl.id ==
+                                  shoppingList!
+                                      .duplicatedFromGroupShoppingListID,
+                            )
+                            ?.name ??
+                        context.l10n.shoppingListDeletedListName,
+                  ),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: tokens.accent,
                     decoration: TextDecoration.underline,

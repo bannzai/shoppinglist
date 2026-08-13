@@ -12,6 +12,7 @@ import 'package:shoppinglist/entity/group_shopping_list_source_image.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list/components/ai_review_sheet.dart';
 import 'package:shoppinglist/features/shopping_list/components/fab_action_menu.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/ai_usage.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
@@ -106,7 +107,7 @@ class ExpandableFab extends HookConsumerWidget {
     final actions = <FabMenuAction>[
       FabMenuAction(
         icon: Icons.photo_camera_outlined,
-        label: '写真から追加',
+        label: context.l10n.shoppingListFabAddFromPhoto,
         // AI 処理中は無効化（dim 表示・タップ不可）。
         onTap:
             isAIProcessing
@@ -125,7 +126,7 @@ class ExpandableFab extends HookConsumerWidget {
       ),
       FabMenuAction(
         icon: Icons.link,
-        label: 'URL から追加',
+        label: context.l10n.shoppingListFabAddFromUrl,
         // AI 処理中は無効化（dim 表示・タップ不可）。
         onTap:
             isAIProcessing
@@ -141,7 +142,7 @@ class ExpandableFab extends HookConsumerWidget {
       ),
       FabMenuAction(
         icon: Icons.content_paste_go_outlined,
-        label: 'テキスト貼り付け',
+        label: context.l10n.shoppingListFabPasteText,
         // テキスト貼り付けは AI 処理（バナー）を使わないため常に有効。
         onTap: () {
           close();
@@ -286,17 +287,18 @@ class ExpandableFab extends HookConsumerWidget {
           isPremium
               ? premiumMonthlyImageRecognitionLimit
               : freeMonthlyImageRecognitionLimit;
+      final l10n = context.l10n;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           persist: false,
           content: Text(
-            '画像読み取りの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyImageRecognitionLimit回まで利用できます'}',
+            '${l10n.shoppingListImageRecognitionLimitReached(limit)}${isPremium ? '' : l10n.shoppingListAiLimitUpsell(premiumMonthlyImageRecognitionLimit)}',
           ),
           action:
               isPremium
                   ? null
                   : SnackBarAction(
-                    label: 'アップグレード',
+                    label: l10n.commonUpgrade,
                     onPressed: () => showPaywall(context: context),
                   ),
         ),
@@ -313,7 +315,7 @@ class ExpandableFab extends HookConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: const Text('カメラ'),
+                title: Text(context.l10n.commonCamera),
                 leading: const Icon(Icons.photo_camera),
                 onTap: () async {
                   analytics.logEvent(
@@ -346,7 +348,7 @@ class ExpandableFab extends HookConsumerWidget {
                 },
               ),
               ListTile(
-                title: const Text('フォトライブラリ'),
+                title: Text(context.l10n.commonPhotoLibrary),
                 leading: const Icon(Icons.photo_album),
                 onTap: () async {
                   analytics.logEvent(
@@ -394,7 +396,7 @@ class ExpandableFab extends HookConsumerWidget {
                 );
                 Navigator.pop(dialogContext);
               },
-              child: const Text('閉じる'),
+              child: Text(context.l10n.commonClose),
             ),
           ],
         );
@@ -481,17 +483,18 @@ class ExpandableFab extends HookConsumerWidget {
           isPremium
               ? premiumMonthlyURLRecognitionLimit
               : freeMonthlyURLRecognitionLimit;
+      final l10n = context.l10n;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           persist: false,
           content: Text(
-            'URL読み取りの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyURLRecognitionLimit回まで利用できます'}',
+            '${l10n.shoppingListUrlRecognitionLimitReached(limit)}${isPremium ? '' : l10n.shoppingListAiLimitUpsell(premiumMonthlyURLRecognitionLimit)}',
           ),
           action:
               isPremium
                   ? null
                   : SnackBarAction(
-                    label: 'アップグレード',
+                    label: l10n.commonUpgrade,
                     onPressed: () => showPaywall(context: context),
                   ),
         ),
@@ -609,7 +612,7 @@ class _URLInputDialog extends HookConsumerWidget {
     final currentUserID = ref.watch(currentUserIDProvider);
 
     return AlertDialog(
-      title: const Text('URLから買い物リストを生成'),
+      title: Text(context.l10n.shoppingListUrlDialogTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -644,7 +647,7 @@ class _URLInputDialog extends HookConsumerWidget {
                     );
                     Navigator.pop(context);
                   },
-          child: const Text('キャンセル'),
+          child: Text(context.l10n.commonCancel),
         ),
         TextButton(
           onPressed:
@@ -662,7 +665,10 @@ class _URLInputDialog extends HookConsumerWidget {
                     // ダイアログ上の SnackBar は背後の Scaffold に描画されて
                     // 見えないため、前面に出るグローバルトーストで通知する。
                     if (normalizedURL.isEmpty) {
-                      showGlobalToast('URLを入力してください', title: null);
+                      showGlobalToast(
+                        context.l10n.shoppingListUrlRequired,
+                        title: null,
+                      );
                       return;
                     }
                     final parsedURL = Uri.tryParse(normalizedURL);
@@ -670,7 +676,10 @@ class _URLInputDialog extends HookConsumerWidget {
                         parsedURL.scheme != 'https' ||
                         parsedURL.host.isEmpty ||
                         parsedURL.userInfo.isNotEmpty) {
-                      showGlobalToast('有効なHTTPS URLを入力してください', title: null);
+                      showGlobalToast(
+                        context.l10n.shoppingListUrlInvalid,
+                        title: null,
+                      );
                       return;
                     }
                     // 生成の await 中にダイアログが先に閉じられると、遅延した pop が
@@ -722,7 +731,7 @@ class _URLInputDialog extends HookConsumerWidget {
                       source: 'url',
                     );
                   },
-          child: const Text('生成'),
+          child: Text(context.l10n.shoppingListUrlDialogGenerate),
         ),
       ],
     );

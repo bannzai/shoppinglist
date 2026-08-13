@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -168,7 +169,7 @@ class _AIReviewSheetState extends State<_AIReviewSheet> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '読み取った候補',
+                            context.l10n.shoppingListAiReviewTitle,
                             style: Theme.of(
                               context,
                             ).textTheme.titleLarge?.copyWith(
@@ -178,7 +179,7 @@ class _AIReviewSheetState extends State<_AIReviewSheet> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '追加するアイテムを選んでください',
+                            context.l10n.shoppingListAiReviewSubtitle,
                             style: Theme.of(context).textTheme.bodySmall
                                 ?.copyWith(color: neutral.ink3),
                           ),
@@ -211,7 +212,7 @@ class _AIReviewSheetState extends State<_AIReviewSheet> {
                     _candidates.isEmpty
                         ? Center(
                           child: Text(
-                            '候補がありませんでした',
+                            context.l10n.shoppingListAiReviewEmpty,
                             style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(color: neutral.ink3),
                           ),
@@ -266,7 +267,7 @@ class _AIReviewSheetState extends State<_AIReviewSheet> {
                     children: [
                       Expanded(
                         child: AppPill(
-                          label: 'キャンセル',
+                          label: context.l10n.commonCancel,
                           variant: AppPillVariant.ghost,
                           expanded: true,
                           onPressed: _cancel,
@@ -276,7 +277,9 @@ class _AIReviewSheetState extends State<_AIReviewSheet> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: AppPill(
-                          label: '$selectedCount 件追加',
+                          label: context.l10n.shoppingListAiReviewConfirm(
+                            selectedCount,
+                          ),
                           variant: AppPillVariant.accent,
                           large: true,
                           expanded: true,

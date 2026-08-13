@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
@@ -32,9 +33,10 @@ class _AIProcessingBannerState extends State<AIProcessingBanner>
   Widget build(BuildContext context) {
     final tokens = context.appTheme;
     final label = switch (widget.type) {
-      AIProcessingType.image => '画像から候補を抽出中...',
-      AIProcessingType.url => 'URL から候補を抽出中...',
-      AIProcessingType.categorize => 'カテゴリ分けを実行中...',
+      AIProcessingType.image => context.l10n.shoppingListAiProcessingImage,
+      AIProcessingType.url => context.l10n.shoppingListAiProcessingUrl,
+      AIProcessingType.categorize =>
+        context.l10n.shoppingListAiProcessingCategorize,
     };
     return Container(
       // デザイン JSX では上に ProgressBlock があるため top 0 だが、アプリでは

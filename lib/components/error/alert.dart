@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,7 +20,7 @@ class ErrorAlert extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return AlertDialog(
       title: Text(
-        title ?? 'エラーが発生しました',
+        title ?? context.l10n.commonErrorOccurred,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
           color: colorScheme.onSurface,
@@ -39,7 +40,7 @@ class ErrorAlert extends StatelessWidget {
               launchUrl(Uri.parse(faq));
             },
             child: Text(
-              'FAQを見る',
+              context.l10n.errorFaqLink,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: colorScheme.primary,
                 fontWeight: FontWeight.w600,
@@ -51,7 +52,7 @@ class ErrorAlert extends StatelessWidget {
             Navigator.of(context).pop();
           },
           child: Text(
-            '閉じる',
+            context.l10n.commonClose,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurface,
               fontWeight: FontWeight.w600,
@@ -76,17 +77,17 @@ void showErrorAlert(
   final String message;
   final String? faqLinkURL;
   if (error is FormatException) {
-    title = '不明なエラーが発生しました';
+    title = context.l10n.errorUnknownTitle;
     message = error.message;
     faqLinkURL = null;
   } else if (error is String) {
-    title = 'エラーが発生しました';
+    title = context.l10n.commonErrorOccurred;
     message = error;
     faqLinkURL = null;
   } else {
     // FirebaseException 等は describeError で StackTrace を分離する。
     final display = describeError(error);
-    title = display.title ?? '予期せぬエラーが発生しました';
+    title = display.title ?? context.l10n.errorUnexpectedTitle;
     message = display.message;
     faqLinkURL = null;
   }

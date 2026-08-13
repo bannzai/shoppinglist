@@ -5,6 +5,7 @@ import 'package:shoppinglist/entity/ai_usage.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list/components/ai_categorize_preview_sheet.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/ai_usage.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
@@ -55,7 +56,9 @@ class AICategorizeButton extends ConsumerWidget {
       // リスト先頭のカテゴリセクションと密着しないよう下側に余白を確保する。
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
       child: AppPill(
-        label: '自動でカテゴリ分け（${uncategorizedItems.length}件）',
+        label: context.l10n.shoppingListAiCategorizeButton(
+          uncategorizedItems.length,
+        ),
         icon: Icons.auto_fix_high,
         variant: AppPillVariant.accent,
         expanded: true,
@@ -96,17 +99,18 @@ class AICategorizeButton extends ConsumerWidget {
           isPremium
               ? premiumMonthlyCategorizeLimit
               : freeMonthlyCategorizeLimit;
+      final l10n = context.l10n;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           persist: false,
           content: Text(
-            '自動カテゴリ分けの月間利用回数（$limit回）に達しました${isPremium ? '' : '。プレミアムにアップグレードすると月$premiumMonthlyCategorizeLimit回まで利用できます'}',
+            '${l10n.shoppingListAiCategorizeLimitReached(limit)}${isPremium ? '' : l10n.shoppingListAiLimitUpsell(premiumMonthlyCategorizeLimit)}',
           ),
           action:
               isPremium
                   ? null
                   : SnackBarAction(
-                    label: 'アップグレード',
+                    label: l10n.commonUpgrade,
                     onPressed: () => showPaywall(context: context),
                   ),
         ),
@@ -162,7 +166,9 @@ class AICategorizeButton extends ConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             persist: false,
-            content: Text('${included.length}件をカテゴリに登録しました'),
+            content: Text(
+              context.l10n.shoppingListAiCategorizeRegistered(included.length),
+            ),
           ),
         );
       }

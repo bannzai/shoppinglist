@@ -8,6 +8,7 @@ import 'package:shoppinglist/components/alert/discard.dart';
 import 'package:shoppinglist/components/error/alert.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/logger/error.dart';
@@ -36,8 +37,8 @@ class DeleteUserButton extends HookConsumerWidget {
 
               showDiscardDialog(
                 context,
-                title: 'ユーザー情報を削除します',
-                message: 'アカウントを削除すると、ユーザー情報がすべて削除されます。',
+                title: context.l10n.accountDeleteConfirmTitle,
+                message: context.l10n.accountDeleteConfirmMessage,
                 actions: [
                   TextButton(
                     onPressed: () async {
@@ -48,7 +49,7 @@ class DeleteUserButton extends HookConsumerWidget {
                       Navigator.of(context).pop();
                     },
                     child: Text(
-                      'キャンセル',
+                      context.l10n.commonCancel,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
@@ -72,7 +73,7 @@ class DeleteUserButton extends HookConsumerWidget {
                       }
                     },
                     child: Text(
-                      '削除する',
+                      context.l10n.accountDeleteConfirmButton,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).colorScheme.error,
                         fontWeight: FontWeight.w600,
@@ -82,7 +83,7 @@ class DeleteUserButton extends HookConsumerWidget {
                 ],
               );
             },
-            child: const Text('アカウントを削除する'),
+            child: Text(context.l10n.accountDeleteButton),
           ),
         ),
         if (isLoading.value) const Center(child: Loading()),
@@ -110,8 +111,8 @@ class DeleteUserButton extends HookConsumerWidget {
         }
         showDiscardDialog(
           context,
-          title: '再ログインしてください',
-          message: 'アカウントを削除するには、再ログインしてください。',
+          title: context.l10n.accountDeleteReauthTitle,
+          message: context.l10n.accountDeleteReauthMessage,
           actions: [
             TextButton(
               onPressed: () async {
@@ -122,7 +123,7 @@ class DeleteUserButton extends HookConsumerWidget {
                 Navigator.of(context).pop();
               },
               child: Text(
-                'キャンセル',
+                context.l10n.commonCancel,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
@@ -153,7 +154,7 @@ class DeleteUserButton extends HookConsumerWidget {
                 );
               },
               child: Text(
-                '再ログインする',
+                context.l10n.accountDeleteReauthButton,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
@@ -192,7 +193,7 @@ class _CompletedDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'アカウントを削除しました',
+            context.l10n.accountDeleteCompletedTitle,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w700,
@@ -201,7 +202,7 @@ class _CompletedDialog extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            'アプリを終了しますか？',
+            context.l10n.accountDeleteExitAppQuestion,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Theme.of(context).colorScheme.onSurface,
             ),
@@ -219,7 +220,7 @@ class _CompletedDialog extends StatelessWidget {
                 exit(0);
               },
               child: Text(
-                '終了する',
+                context.l10n.accountDeleteExitAppButton,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,

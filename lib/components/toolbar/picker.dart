@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 
 class PickerToolbar extends StatelessWidget {
   final VoidCallback done;
@@ -22,7 +23,7 @@ class PickerToolbar extends StatelessWidget {
               vertical: 5.0,
             ),
             child: Text(
-              'キャンセル',
+              context.l10n.commonCancel,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w300,
                 color: Theme.of(context).colorScheme.onSurface,
@@ -38,7 +39,7 @@ class PickerToolbar extends StatelessWidget {
               vertical: 5.0,
             ),
             child: Text(
-              '完了',
+              context.l10n.commonDone,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: Theme.of(context).colorScheme.onSurface,

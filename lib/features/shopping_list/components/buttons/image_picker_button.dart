@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
@@ -44,7 +45,7 @@ class ImagePickerButton extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ListTile(
-                    title: const Text('カメラ'),
+                    title: Text(context.l10n.commonCamera),
                     leading: const Icon(Icons.photo_camera),
                     onTap: () async {
                       analytics.logEvent(
@@ -75,7 +76,7 @@ class ImagePickerButton extends ConsumerWidget {
                     },
                   ),
                   ListTile(
-                    title: const Text('フォトライブラリ'),
+                    title: Text(context.l10n.commonPhotoLibrary),
                     leading: const Icon(Icons.photo_album),
                     onTap: () async {
                       analytics.logEvent(
@@ -118,7 +119,7 @@ class ImagePickerButton extends ConsumerWidget {
                     );
                     Navigator.pop(context);
                   },
-                  child: const Text('閉じる'),
+                  child: Text(context.l10n.commonClose),
                 ),
               ],
             );
