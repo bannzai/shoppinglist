@@ -71,5 +71,6 @@
   "shoppingListAiReviewTitle": "擷取的建議",
   "shoppingListAiReviewSubtitle": "選擇要加入的商品",
   "shoppingListAiReviewEmpty": "找不到任何建議",
-  "shoppingListAiReviewConfirm": "新增 {count} 個項目"
+  "shoppingListAiReviewConfirm": "新增 {count} 個項目",
+  "shoppingListFabAddFromPhoto": "從照片新增"
 }
