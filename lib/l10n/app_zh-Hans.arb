@@ -325,5 +325,6 @@
   "inquiryCategoryBugReport": "问题反馈",
   "inquiryCategoryHowToUse": "使用方法",
   "inquiryCategoryRequest": "功能建议",
-  "inquiryCategoryOther": "其他"
+  "inquiryCategoryOther": "其他",
+  "shoppingListLimitExceeded": "免费方案下，每个群组最多可创建 {limit} 个清单。升级到高级版即可无限创建清单。"
 }
