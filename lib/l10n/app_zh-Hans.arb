@@ -266,5 +266,6 @@
   "notificationPermissionBarrierLabel": "推送通知权限",
   "notificationPermissionTitle": "开启推送通知",
   "notificationPermissionMessage": "当群组中的成员更新购物清单并通知你时，你会立即收到推送通知。请在接下来弹出的确认中允许通知。",
-  "notificationPermissionLater": "稍后"
+  "notificationPermissionLater": "稍后",
+  "notificationPermissionAllow": "允许通知"
 }
