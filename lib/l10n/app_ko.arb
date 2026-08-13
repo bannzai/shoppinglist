@@ -22,5 +22,6 @@
   "errorFaqLink": "FAQ 보기",
   "authGoogleSignIn": "Google로 로그인",
   "loadingPreparing": "준비 중...",
-  "accountDeleteButton": "계정 삭제"
+  "accountDeleteButton": "계정 삭제",
+  "accountDeleteConfirmTitle": "계정 정보를 삭제"
 }

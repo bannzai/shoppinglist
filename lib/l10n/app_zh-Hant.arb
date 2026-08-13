@@ -22,5 +22,6 @@
   "errorFaqLink": "查看常見問題",
   "authGoogleSignIn": "使用 Google 登入",
   "loadingPreparing": "正在準備…",
-  "accountDeleteButton": "刪除帳號"
+  "accountDeleteButton": "刪除帳號",
+  "accountDeleteConfirmTitle": "刪除您的帳戶資訊"
 }
