@@ -475,7 +475,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsAccountLinkWithApple => '使用 Apple 关联账号';
 
   @override
-  String get settingsAccountLinkWithGoogle => '将账号与 Google 关联';
+  String get settingsAccountLinkWithGoogle => '使用 Google 关联账号';
 
   @override
   String settingsAccountSignedInWith(String providerName) {
@@ -1702,7 +1702,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get settingsAccountLinkWithApple => '使用 Apple 关联账号';
 
   @override
-  String get settingsAccountLinkWithGoogle => '将账号与 Google 关联';
+  String get settingsAccountLinkWithGoogle => '使用 Google 关联账号';
 
   @override
   String settingsAccountSignedInWith(String providerName) {
@@ -2929,7 +2929,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsAccountLinkWithApple => '使用 Apple 連結帳號';
 
   @override
-  String get settingsAccountLinkWithGoogle => '將帳號與 Google 連結';
+  String get settingsAccountLinkWithGoogle => '使用 Google 連結帳號';
 
   @override
   String settingsAccountSignedInWith(String providerName) {

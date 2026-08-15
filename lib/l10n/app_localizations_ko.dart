@@ -480,7 +480,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsAccountLinkWithApple => 'Apple로 계정을 연결';
 
   @override
-  String get settingsAccountLinkWithGoogle => '계정을 Google과 연결';
+  String get settingsAccountLinkWithGoogle => 'Google로 계정을 연결';
 
   @override
   String settingsAccountSignedInWith(String providerName) {
