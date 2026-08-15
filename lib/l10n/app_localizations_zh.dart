@@ -78,7 +78,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get accountDeleteButton => '删除账号';
 
   @override
-  String get accountDeleteConfirmTitle => '删除您的账户信息';
+  String get accountDeleteConfirmTitle => '删除您的账号信息';
 
   @override
   String get accountDeleteConfirmMessage => '删除你的账号将移除所有用户信息。';
@@ -90,13 +90,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get accountDeleteReauthTitle => '请重新登录';
 
   @override
-  String get accountDeleteReauthMessage => '要删除您的账户，请重新登录。';
+  String get accountDeleteReauthMessage => '要删除您的账号，请重新登录。';
 
   @override
   String get accountDeleteReauthButton => '请重新登录';
 
   @override
-  String get accountDeleteCompletedTitle => '您的账户已被删除';
+  String get accountDeleteCompletedTitle => '您的账号已被删除';
 
   @override
   String get accountDeleteExitAppQuestion => '要退出应用吗？';
@@ -419,7 +419,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsSignOutConfirmMessageGuest =>
-      '您当前以访客身份使用此应用，因此如果退出登录，您将无法再次登录同一账户，并且会永久失去对当前列表和群组的访问权限。';
+      '您当前以访客身份使用此应用，因此如果退出登录，您将无法再次登录同一账号，并且会永久失去对当前列表和群组的访问权限。';
 
   @override
   String get settingsSignOutCompletedTitle => '已退出登录';
@@ -462,10 +462,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsLocationReminderPremiumOnly => '位置提醒是高级版功能';
 
   @override
-  String get settingsAccountSection => '账户';
+  String get settingsAccountSection => '账号';
 
   @override
-  String get settingsAccountLinked => '已关联你的账户';
+  String get settingsAccountLinked => '已关联你的账号';
 
   @override
   String get settingsAccountGuestDescription =>
@@ -1050,7 +1050,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get platformGoogleAccountName => 'Google 帐号';
+  String get platformGoogleAccountName => 'Google 账号';
 
   @override
   String get purchaseNotActivated => '您的购买尚未生效。请稍后再试。';
@@ -1305,7 +1305,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get accountDeleteButton => '删除账号';
 
   @override
-  String get accountDeleteConfirmTitle => '删除您的账户信息';
+  String get accountDeleteConfirmTitle => '删除您的账号信息';
 
   @override
   String get accountDeleteConfirmMessage => '删除你的账号将移除所有用户信息。';
@@ -1317,13 +1317,13 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get accountDeleteReauthTitle => '请重新登录';
 
   @override
-  String get accountDeleteReauthMessage => '要删除您的账户，请重新登录。';
+  String get accountDeleteReauthMessage => '要删除您的账号，请重新登录。';
 
   @override
   String get accountDeleteReauthButton => '重新登录';
 
   @override
-  String get accountDeleteCompletedTitle => '您的账户已被删除';
+  String get accountDeleteCompletedTitle => '您的账号已被删除';
 
   @override
   String get accountDeleteExitAppQuestion => '要退出应用吗？';
@@ -1646,7 +1646,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get settingsSignOutConfirmMessageGuest =>
-      '您当前以访客身份使用此应用，因此如果退出登录，您将无法再次登录同一账户，并且会永久失去对当前列表和群组的访问权限。';
+      '您当前以访客身份使用此应用，因此如果退出登录，您将无法再次登录同一账号，并且会永久失去对当前列表和群组的访问权限。';
 
   @override
   String get settingsSignOutCompletedTitle => '已登出';
@@ -1689,10 +1689,10 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get settingsLocationReminderPremiumOnly => '位置提醒是高级版功能';
 
   @override
-  String get settingsAccountSection => '账户';
+  String get settingsAccountSection => '账号';
 
   @override
-  String get settingsAccountLinked => '已关联你的账户';
+  String get settingsAccountLinked => '已关联你的账号';
 
   @override
   String get settingsAccountGuestDescription =>
@@ -2277,7 +2277,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   }
 
   @override
-  String get platformGoogleAccountName => 'Google 帐号';
+  String get platformGoogleAccountName => 'Google 账号';
 
   @override
   String get purchaseNotActivated => '您的购买尚未生效。请稍后再试。';
@@ -2532,7 +2532,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get accountDeleteButton => '刪除帳號';
 
   @override
-  String get accountDeleteConfirmTitle => '刪除您的帳戶資訊';
+  String get accountDeleteConfirmTitle => '刪除您的帳號資訊';
 
   @override
   String get accountDeleteConfirmMessage => '刪除你的帳號將移除所有使用者資訊。';
@@ -2544,13 +2544,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get accountDeleteReauthTitle => '請重新登入';
 
   @override
-  String get accountDeleteReauthMessage => '要刪除您的帳戶，請重新登入。';
+  String get accountDeleteReauthMessage => '要刪除您的帳號，請重新登入。';
 
   @override
   String get accountDeleteReauthButton => '請重新登入';
 
   @override
-  String get accountDeleteCompletedTitle => '您的帳戶已刪除';
+  String get accountDeleteCompletedTitle => '您的帳號已刪除';
 
   @override
   String get accountDeleteExitAppQuestion => '要結束應用程式嗎？';
@@ -2916,10 +2916,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsLocationReminderPremiumOnly => '位置提醒是進階版功能';
 
   @override
-  String get settingsAccountSection => '帳戶';
+  String get settingsAccountSection => '帳號';
 
   @override
-  String get settingsAccountLinked => '已連結你的帳戶';
+  String get settingsAccountLinked => '已連結你的帳號';
 
   @override
   String get settingsAccountGuestDescription =>
