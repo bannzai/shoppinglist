@@ -912,7 +912,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get paywallFeatureLocationOrder => '매장별 카테고리 정렬 순서';
 
   @override
-  String get paywallFeaturePhotoExtraction => '사진에서 항목 추출(월 50회)';
+  String get paywallFeaturePhotoExtraction => '사진에서 항목 추출 (월 50회)';
 
   @override
   String get paywallFeatureUrlExtraction => 'URL에서 항목 추출 (월 50회)';
