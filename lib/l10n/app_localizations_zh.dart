@@ -2204,7 +2204,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   }
 
   @override
-  String get shoppingLocationTitle => '购物地点清单';
+  String get shoppingLocationTitle => '购物地点';
 
   @override
   String get shoppingLocationEmpty => '还没有添加购物地点';

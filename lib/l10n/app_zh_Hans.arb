@@ -304,7 +304,7 @@
   "receiptCaptureOrSelect": "拍摄或选择收据照片",
   "forceUpdateTitle": "请更新应用",
   "forceUpdateMessage": "我们请求您更新应用版本。请从 {storeName} 更新到最新版本。",
-  "shoppingLocationTitle": "购物地点清单",
+  "shoppingLocationTitle": "购物地点",
   "shoppingLocationEmpty": "还没有添加购物地点",
   "shoppingLocationGeoConfigured": "已设置位置",
   "shoppingLocationAddTitle": "添加位置",
