@@ -120,7 +120,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get shoppingListEmptyCreateButton => '创建购物清单';
 
   @override
-  String get shoppingListLoadErrorTitle => '列表加载失败';
+  String get shoppingListLoadErrorTitle => '清单加载失败';
 
   @override
   String get shoppingListPickerTitle => '切换清单';
@@ -129,7 +129,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get shoppingListPickerAddList => '添加新清单';
 
   @override
-  String get shoppingListCreateListTooltip => '添加列表';
+  String get shoppingListCreateListTooltip => '添加清单';
 
   @override
   String get shoppingListCreateTodayList => '添加一个带有当前日期的清单';
@@ -419,7 +419,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsSignOutConfirmMessageGuest =>
-      '您当前以访客身份使用此应用，因此如果退出登录，您将无法再次登录同一账号，并且会永久失去对当前列表和群组的访问权限。';
+      '您当前以访客身份使用此应用，因此如果退出登录，您将无法再次登录同一账号，并且会永久失去对当前清单和群组的访问权限。';
 
   @override
   String get settingsSignOutCompletedTitle => '已退出登录';
@@ -490,7 +490,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsAccountReSignInMessage =>
-      '要再次使用此账号登录吗？\n如果再次登录，当前访客数据（列表和群组）将不会被保留。';
+      '要再次使用此账号登录吗？\n如果再次登录，当前访客数据（清单和群组）将不会被保留。';
 
   @override
   String get settingsAccountReSignInButton => '重新登录';
@@ -538,7 +538,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get listSettingGroupNameRequired => '请先设置群组名称，再邀请他人';
 
   @override
-  String get listSettingListActionsSection => '列表操作';
+  String get listSettingListActionsSection => '清单操作';
 
   @override
   String get listSettingDeleteList => '删除此清单';
@@ -797,7 +797,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get authHeroTitle => '家人的购物\n尽在一个清单';
 
   @override
-  String get authHeroDescription => '登录后，你的列表会在各设备间保持同步。无广告，无新闻邮件。';
+  String get authHeroDescription => '登录后，你的清单会在各设备间保持同步。无广告，无订阅邮件。';
 
   @override
   String get authStartWithoutSignIn => '无需登录即可开始';
@@ -1347,7 +1347,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get shoppingListEmptyCreateButton => '创建购物清单';
 
   @override
-  String get shoppingListLoadErrorTitle => '列表加载失败';
+  String get shoppingListLoadErrorTitle => '清单加载失败';
 
   @override
   String get shoppingListPickerTitle => '切换清单';
@@ -1356,7 +1356,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get shoppingListPickerAddList => '添加新清单';
 
   @override
-  String get shoppingListCreateListTooltip => '添加列表';
+  String get shoppingListCreateListTooltip => '添加清单';
 
   @override
   String get shoppingListCreateTodayList => '添加一个带有当前日期的清单';
@@ -1646,7 +1646,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get settingsSignOutConfirmMessageGuest =>
-      '您当前以访客身份使用此应用，因此如果退出登录，您将无法再次登录同一账号，并且会永久失去对当前列表和群组的访问权限。';
+      '您当前以访客身份使用此应用，因此如果退出登录，您将无法再次登录同一账号，并且会永久失去对当前清单和群组的访问权限。';
 
   @override
   String get settingsSignOutCompletedTitle => '已登出';
@@ -1717,7 +1717,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get settingsAccountReSignInMessage =>
-      '要再次使用此账号登录吗？\n如果再次登录，当前访客数据（列表和群组）将不会被保留。';
+      '要再次使用此账号登录吗？\n如果再次登录，当前访客数据（清单和群组）将不会被保留。';
 
   @override
   String get settingsAccountReSignInButton => '重新登录';
@@ -1765,7 +1765,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get listSettingGroupNameRequired => '请先设置群组名称，再邀请他人';
 
   @override
-  String get listSettingListActionsSection => '列表操作';
+  String get listSettingListActionsSection => '清单操作';
 
   @override
   String get listSettingDeleteList => '删除此清单';
@@ -2024,7 +2024,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get authHeroTitle => '家人的购物\n尽在一个清单';
 
   @override
-  String get authHeroDescription => '登录后，你的列表会在各设备间保持同步。无广告，无新闻邮件。';
+  String get authHeroDescription => '登录后，你的清单会在各设备间保持同步。无广告，无订阅邮件。';
 
   @override
   String get authStartWithoutSignIn => '无需登录即可开始';
@@ -2204,7 +2204,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   }
 
   @override
-  String get shoppingLocationTitle => '购物地点列表';
+  String get shoppingLocationTitle => '购物地点清单';
 
   @override
   String get shoppingLocationEmpty => '还没有添加购物地点';
@@ -2574,7 +2574,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get shoppingListEmptyCreateButton => '建立購物清單';
 
   @override
-  String get shoppingListLoadErrorTitle => '列表載入失敗';
+  String get shoppingListLoadErrorTitle => '清單載入失敗';
 
   @override
   String get shoppingListPickerTitle => '切換清單';
