@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/features/notification_permission/pre_permission_dialog.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/default_group_update.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -34,7 +35,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: neutral.paper,
       appBar: AppBar(
-        title: const Text('招待コードで参加'),
+        title: Text(context.l10n.groupInvitationTitle),
         backgroundColor: neutral.paper,
       ),
       body: SafeArea(
@@ -60,13 +61,13 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  '招待コードを入力してください',
+                  context.l10n.groupInvitationHeading,
                   style: Theme.of(context).textTheme.headlineSmall,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'グループのメンバーから共有された8桁のコードを入力してください',
+                  context.l10n.groupInvitationDescription,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: neutral.ink2,
                     height: 1.6,
@@ -126,7 +127,10 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                   width: double.infinity,
                   child: AppPill(
                     key: const ValueKey('group_invitation_accept_button'),
-                    label: isAccepting.value ? '参加中...' : '参加する',
+                    label:
+                        isAccepting.value
+                            ? context.l10n.groupInvitationJoining
+                            : context.l10n.groupInvitationJoin,
                     variant: AppPillVariant.accent,
                     large: true,
                     expanded: true,
@@ -138,6 +142,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                                 name: 'tap_join_group',
                                 parameters: null,
                               );
+                              final l10n = context.l10n;
                               isAccepting.value = true;
                               errorMessage.value = null;
                               // i-invitation-verifying: AppDialogShell ベースで
@@ -175,7 +180,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                               } catch (e, st) {
                                 logError(e, st);
                                 errorMessage.value =
-                                    describeError(e, st).message;
+                                    describeError(l10n, e, st).message;
                                 if (context.mounted) {
                                   Navigator.of(
                                     context,
@@ -193,7 +198,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
                   width: double.infinity,
                   child: AppPill(
                     key: const ValueKey('group_invitation_cancel_button'),
-                    label: 'キャンセル',
+                    label: context.l10n.commonCancel,
                     variant: AppPillVariant.ghost,
                     large: true,
                     expanded: true,
@@ -225,7 +230,7 @@ class GroupInvitationAcceptPage extends HookConsumerWidget {
 void _showVerifyingDialog(BuildContext context) {
   showGeneralDialog<void>(
     context: context,
-    barrierLabel: '招待コードを確認中',
+    barrierLabel: context.l10n.groupInvitationVerifyingTitle,
     barrierDismissible: false,
     barrierColor: Colors.transparent,
     transitionDuration: const Duration(milliseconds: 160),
@@ -247,12 +252,12 @@ void _showVerifyingDialog(BuildContext context) {
             ),
             const SizedBox(height: 16),
             Text(
-              '招待コードを確認中',
+              dialogContext.l10n.groupInvitationVerifyingTitle,
               style: Theme.of(dialogContext).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
             Text(
-              'サーバー側でグループへの参加を処理しています。',
+              dialogContext.l10n.groupInvitationVerifyingMessage,
               textAlign: TextAlign.center,
               style: Theme.of(
                 dialogContext,

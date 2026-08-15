@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -209,7 +210,7 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '自動カテゴリ分け',
+                          context.l10n.shoppingListAiCategorizeSheetTitle,
                           style: Theme.of(
                             context,
                           ).textTheme.titleLarge?.copyWith(
@@ -219,7 +220,7 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'カテゴリを確認・調整して登録してください',
+                          context.l10n.shoppingListAiCategorizeSheetSubtitle,
                           style: Theme.of(
                             context,
                           ).textTheme.bodySmall?.copyWith(color: neutral.ink3),
@@ -253,7 +254,7 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
                   _candidates.isEmpty
                       ? Center(
                         child: Text(
-                          '分類できる候補がありませんでした',
+                          context.l10n.shoppingListAiCategorizeSheetEmpty,
                           style: Theme.of(
                             context,
                           ).textTheme.bodyMedium?.copyWith(color: neutral.ink3),
@@ -283,7 +284,7 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
                   children: [
                     Expanded(
                       child: AppPill(
-                        label: 'キャンセル',
+                        label: context.l10n.commonCancel,
                         variant: AppPillVariant.ghost,
                         expanded: true,
                         onPressed: _cancel,
@@ -293,7 +294,10 @@ class _AICategorizePreviewSheetState extends State<_AICategorizePreviewSheet> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: AppPill(
-                        label: '$includedCount 件を登録',
+                        label: context.l10n
+                            .shoppingListAiCategorizeSheetConfirm(
+                              includedCount,
+                            ),
                         variant: AppPillVariant.accent,
                         large: true,
                         expanded: true,
@@ -450,7 +454,7 @@ class _CategoryPickerSheetState extends State<_CategoryPickerSheet> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
                 child: Text(
-                  'カテゴリを選択',
+                  context.l10n.shoppingListCategorySelect,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: neutral.ink,
                     fontWeight: FontWeight.w700,
@@ -482,8 +486,8 @@ class _CategoryPickerSheetState extends State<_CategoryPickerSheet> {
                   Expanded(
                     child: TextField(
                       controller: _newCategoryController,
-                      decoration: const InputDecoration(
-                        hintText: '新しいカテゴリ名',
+                      decoration: InputDecoration(
+                        hintText: context.l10n.shoppingListNewCategoryHint,
                         isDense: true,
                       ),
                       onSubmitted: (value) {
@@ -496,7 +500,7 @@ class _CategoryPickerSheetState extends State<_CategoryPickerSheet> {
                   ),
                   const SizedBox(width: 12),
                   AppPill(
-                    label: '追加',
+                    label: context.l10n.commonAdd,
                     variant: AppPillVariant.accent,
                     onPressed: () {
                       final name = _newCategoryController.text.trim();

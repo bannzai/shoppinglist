@@ -18,6 +18,7 @@ import 'package:shoppinglist/features/shopping_list/components/list_top_bar.dart
 import 'package:shoppinglist/features/shopping_list/components/progress_pill.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_body_content.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/shopping_list_item_metrics.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/ai_processing.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/current_group_id.dart';
@@ -398,12 +399,12 @@ class _NoListYet extends ConsumerWidget {
             Icon(Icons.playlist_add, size: 80, color: tokens.neutral.ink4),
             const SizedBox(height: 24),
             Text(
-              '買い物リストがありません',
+              context.l10n.shoppingListEmptyTitle,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 8),
             Text(
-              '新しい買い物リストを作成しましょう',
+              context.l10n.shoppingListEmptyMessage,
               style: Theme.of(
                 context,
               ).textTheme.bodyMedium?.copyWith(color: tokens.neutral.ink2),
@@ -431,9 +432,11 @@ class _NoListYet extends ConsumerWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         persist: false,
-                        content: Text(e.toString()),
+                        content: Text(
+                          context.l10n.shoppingListLimitExceeded(e.limit),
+                        ),
                         action: SnackBarAction(
-                          label: 'アップグレード',
+                          label: context.l10n.commonUpgrade,
                           onPressed: () => showPaywall(context: context),
                         ),
                       ),
@@ -446,7 +449,7 @@ class _NoListYet extends ConsumerWidget {
                 }
               },
               icon: const Icon(Icons.add),
-              label: const Text('買い物リストを作成'),
+              label: Text(context.l10n.shoppingListEmptyCreateButton),
             ),
           ],
         ),

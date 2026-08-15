@@ -1,11 +1,15 @@
 import 'dart:io';
 
+import 'package:shoppinglist/l10n/l10n.dart';
+
 String get storeName {
   return Platform.isIOS ? 'App Store' : 'Google Play';
 }
 
-String get accountName {
-  return Platform.isIOS ? 'Apple ID' : 'Google アカウント';
+/// 購入エラー文言に埋め込む端末アカウントの名称。
+/// iOS の 'Apple ID' は固有名詞のためロケールによらず固定。
+String accountName(AppLocalizations l10n) {
+  return Platform.isIOS ? 'Apple ID' : l10n.platformGoogleAccountName;
 }
 
 String get forceUpdateStoreURL {

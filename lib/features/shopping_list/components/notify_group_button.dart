@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/bool_shared_preferences.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
@@ -73,7 +74,7 @@ class NotifyGroupButton extends HookConsumerWidget {
     return IconButton(
       key: const Key('notify_group_button'),
       icon: const Icon(Icons.notifications_outlined),
-      tooltip: 'グループに通知',
+      tooltip: context.l10n.shoppingListNotifyGroup,
       onPressed:
           isSending.value
               ? null
@@ -101,6 +102,7 @@ class NotifyGroupButton extends HookConsumerWidget {
     );
 
     // 送信中はボタンを無効化する(二重送信防止)。タップ直後で Widget が生きているうちに立てる。
+    final l10n = context.l10n;
     isSending.value = true;
     try {
       if (!hasSeen) {
@@ -117,9 +119,9 @@ class NotifyGroupButton extends HookConsumerWidget {
         shoppingListName: shoppingListName,
         targetUserIDs: targetUserIDs,
       );
-      showGlobalToast('グループに通知しました', title: null);
+      showGlobalToast(l10n.shoppingListNotifyGroupSent, title: null);
     } catch (e, st) {
-      showGlobalErrorToast(e, st);
+      showGlobalErrorToast(l10n, e, st);
     } finally {
       // ダイアログ表示中に Widget が破棄されると useState の ValueNotifier も破棄されるため、
       // 生存している時だけフラグを戻す(破棄後の代入による例外を避ける)。
@@ -134,7 +136,7 @@ class NotifyGroupButton extends HookConsumerWidget {
     final tokens = context.appTheme;
     return showGeneralDialog<bool>(
       context: context,
-      barrierLabel: 'グループ通知の説明',
+      barrierLabel: context.l10n.shoppingListNotifyGroupGuideLabel,
       barrierDismissible: true,
       barrierColor: Colors.transparent,
       transitionDuration: const Duration(milliseconds: 160),
@@ -146,7 +148,7 @@ class NotifyGroupButton extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'グループに通知',
+                dialogContext.l10n.shoppingListNotifyGroup,
                 style: Theme.of(dialogContext).textTheme.titleMedium?.copyWith(
                   color: tokens.neutral.ink,
                   fontWeight: FontWeight.w700,
@@ -154,8 +156,7 @@ class NotifyGroupButton extends HookConsumerWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'このボタンを押すと、買い物リストを更新したことを'
-                'グループの他のメンバーにプッシュ通知でお知らせします。',
+                dialogContext.l10n.shoppingListNotifyGroupGuideMessage,
                 style: Theme.of(dialogContext).textTheme.bodyMedium?.copyWith(
                   color: tokens.neutral.ink2,
                   height: 1.4,
@@ -166,7 +167,7 @@ class NotifyGroupButton extends HookConsumerWidget {
                 children: [
                   Expanded(
                     child: AppPill(
-                      label: 'キャンセル',
+                      label: dialogContext.l10n.commonCancel,
                       icon: null,
                       variant: AppPillVariant.neutral,
                       expanded: true,
@@ -176,7 +177,7 @@ class NotifyGroupButton extends HookConsumerWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: AppPill(
-                      label: '通知を送る',
+                      label: dialogContext.l10n.shoppingListNotifyGroupSend,
                       icon: Icons.notifications,
                       variant: AppPillVariant.accent,
                       expanded: true,

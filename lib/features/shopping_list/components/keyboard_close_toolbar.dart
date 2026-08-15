@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -56,7 +57,7 @@ class KeyboardCloseToolbar extends StatelessWidget {
               color: tokens.neutral.ink2,
             ),
             label: Text(
-              '閉じる',
+              context.l10n.commonClose,
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: tokens.neutral.ink2,

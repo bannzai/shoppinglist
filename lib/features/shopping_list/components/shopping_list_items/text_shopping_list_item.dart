@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item_detail_bottom_sheet.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -283,7 +284,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
               ),
             ],
             IconButton(
-              tooltip: 'アイテム詳細',
+              tooltip: context.l10n.shoppingListItemDetailTooltip,
               onPressed: () {
                 analytics.logEvent(
                   name: 'tap_open_item_detail',
@@ -384,6 +385,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         // false になり得る。await 後に SnackBar 表示ができるよう ScaffoldMessenger は
         // await 前に捕捉しておく（復元用 call クラスは build で watch 済み）。
         final messenger = ScaffoldMessenger.of(context);
+        final l10n = context.l10n;
         try {
           await deleteShoppingListItem.call(
             shoppingListID: textShoppingListItem.shoppingListID,
@@ -394,10 +396,10 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
             ..showSnackBar(
               SnackBar(
                 persist: false,
-                content: const Text('アイテムを削除しました'),
+                content: Text(l10n.shoppingListItemDeleted),
                 duration: const Duration(seconds: 5),
                 action: SnackBarAction(
-                  label: '元に戻す',
+                  label: l10n.commonUndo,
                   onPressed: () {
                     analytics.logEvent(
                       name: 'undo_swipe_delete_shopping_list_item',
@@ -417,7 +419,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         } catch (e, st) {
           logError(e, st);
           messenger.showSnackBar(
-            SnackBar(content: Text(describeError(e, st).message)),
+            SnackBar(content: Text(describeError(l10n, e, st).message)),
           );
           return false;
         }
@@ -446,7 +448,7 @@ class AddCategoryChip extends StatelessWidget {
     // (Material のインクは子の手前に描かれない)、Ink + InkWell + Padding 構成にする。
     return Semantics(
       button: true,
-      label: 'カテゴリを追加',
+      label: context.l10n.shoppingListAddCategoryLabel,
       child: Ink(
         decoration: BoxDecoration(
           color: tokens.accentSoft.withValues(alpha: 0.6),
@@ -462,7 +464,7 @@ class AddCategoryChip extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'カテゴリ',
+                  context.l10n.commonCategory,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: tokens.accentInk,
@@ -638,11 +640,11 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
         // 長押ししても iOS 標準の選択メニューが出てドラッグを開始できない(iOS 実機で確認)。
         // 編集中(フォーカス時)は通常どおりテキスト選択を許可する。
         enableInteractiveSelection: isEditing,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           border: InputBorder.none,
           contentPadding: EdgeInsets.zero,
           isCollapsed: true,
-          hintText: 'メモを書く...',
+          hintText: context.l10n.shoppingListItemMemoHint,
         ),
         cursorColor: tokens.accent,
         cursorWidth: 1.5,

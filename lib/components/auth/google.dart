@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -102,7 +103,7 @@ class AppSignInWithGoogleButton extends HookConsumerWidget {
               SvgPicture.asset('images/google_icon.svg', width: 20, height: 20),
               const SizedBox(width: 10),
               Text(
-                'Google でサインイン',
+                context.l10n.authGoogleSignIn,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: neutral.ink,
                   fontWeight: FontWeight.w600,

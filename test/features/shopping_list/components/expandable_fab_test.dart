@@ -13,6 +13,7 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import '../../../helpers/localized_test_app.dart';
 
 /// 追加処理の呼び出し回数を記録するモック（Firestore を叩かない）。
 class _RecordingAddShoppingListItem extends AddShoppingListItem {
@@ -82,7 +83,7 @@ void main() {
               () => _ProcessingAIProcessing(aiProcessingType),
             ),
         ],
-        child: MaterialApp(
+        child: localizedTestApp(
           theme: buildAppTheme(accent: AccentPreset.shu),
           home: Scaffold(
             // キーボード表示中の unfocus 検証用にフォーカスを当てる先の TextField。

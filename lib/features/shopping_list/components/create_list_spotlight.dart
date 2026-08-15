@@ -7,6 +7,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/components/spotlight/spotlight_view.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/app_navigator_key.dart';
 import 'package:shoppinglist/provider/string_shared_preferences.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -367,7 +368,7 @@ class CreateListSpotlightBubble extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    '新しい買い物リストはここから追加できます',
+                    context.l10n.shoppingListSpotlightTitle,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: tokens.neutral.ink,
                       fontWeight: FontWeight.w700,
@@ -378,7 +379,7 @@ class CreateListSpotlightBubble extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              '日付ごとのリストを作ったり、今のリストを複製したりできます。',
+              context.l10n.shoppingListSpotlightMessage,
               style: Theme.of(
                 context,
               ).textTheme.bodySmall?.copyWith(color: tokens.neutral.ink2),
@@ -387,7 +388,7 @@ class CreateListSpotlightBubble extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: Text(
-                'タップして閉じる',
+                context.l10n.shoppingListSpotlightDismiss,
                 style: Theme.of(
                   context,
                 ).textTheme.bodySmall?.copyWith(color: tokens.neutral.ink3),

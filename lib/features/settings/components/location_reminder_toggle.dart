@@ -3,6 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/bool_shared_preferences.dart';
 import 'package:shoppinglist/utils/local_notification/local_notification.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -27,8 +28,8 @@ class LocationReminderToggle extends ConsumerWidget {
     );
 
     return SwitchListTile(
-      title: const Text('位置情報リマインダー'),
-      subtitle: const Text('店舗の近くに来たら買い物リストを通知'),
+      title: Text(context.l10n.settingsLocationReminderTitle),
+      subtitle: Text(context.l10n.settingsLocationReminderSubtitle),
       secondary: Icon(
         Icons.location_on,
         color:
@@ -58,7 +59,13 @@ class LocationReminderToggle extends ConsumerWidget {
                       false) {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('通知権限を許可すると利用できます')),
+                        SnackBar(
+                          content: Text(
+                            context
+                                .l10n
+                                .settingsLocationReminderNotificationPermissionRequired,
+                          ),
+                        ),
                       );
                     }
                     return;
@@ -76,8 +83,12 @@ class LocationReminderToggle extends ConsumerWidget {
                   if (permission != LocationPermission.always) {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('バックグラウンドの位置情報を「常に許可」にすると利用できます'),
+                        SnackBar(
+                          content: Text(
+                            context
+                                .l10n
+                                .settingsLocationReminderAlwaysPermissionRequired,
+                          ),
                         ),
                       );
                     }
@@ -98,9 +109,11 @@ class LocationReminderToggle extends ConsumerWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     persist: false,
-                    content: const Text('位置情報リマインダーはプレミアム機能です'),
+                    content: Text(
+                      context.l10n.settingsLocationReminderPremiumOnly,
+                    ),
                     action: SnackBarAction(
-                      label: 'アップグレード',
+                      label: context.l10n.commonUpgrade,
                       onPressed: () => showPaywall(context: context),
                     ),
                   ),

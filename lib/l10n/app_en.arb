@@ -1,0 +1,936 @@
+{
+  "@@locale": "en",
+  "appTitle": "Shopping List",
+  "@appTitle": {
+    "description": "アプリ名。MaterialApp の title (タスクスイッチャー等 OS 表示用)"
+  },
+
+  "commonCancel": "Cancel",
+  "commonClose": "Close",
+  "commonDone": "Done",
+  "commonOk": "OK",
+  "commonDelete": "Delete",
+  "commonAdd": "Add",
+  "commonRetry": "Retry",
+  "commonUndo": "Undo",
+  "commonUpgrade": "Upgrade",
+  "@commonUpgrade": {
+    "description": "プレミアムへのアップグレードを促す SnackBar のアクションラベル"
+  },
+  "commonSettings": "Settings",
+  "commonCategory": "Category",
+  "commonUncategorized": "Uncategorized",
+  "@commonUncategorized": {
+    "description": "カテゴリが未設定のアイテムをまとめるセクション名"
+  },
+  "commonGroup": "Group",
+  "@commonGroup": {
+    "description": "グループ名が未設定のときのフォールバック表示と、設定画面の「グループ」セクション見出し"
+  },
+  "commonCamera": "Camera",
+  "commonPhotoLibrary": "Photo Library",
+  "commonErrorOccurred": "An error occurred",
+
+  "errorUnknownTitle": "An unknown error occurred",
+  "errorUnexpectedTitle": "An unexpected error occurred",
+  "errorFaqLink": "View FAQ",
+  "@errorFaqLink": {
+    "description": "エラーダイアログから FAQ ページを開くボタン"
+  },
+
+  "authGoogleSignIn": "Sign in with Google",
+
+  "loadingPreparing": "Preparing...",
+  "@loadingPreparing": {
+    "description": "全画面ローディング中に出す文言"
+  },
+
+  "accountDeleteButton": "Delete account",
+  "accountDeleteConfirmTitle": "Delete your account information",
+  "accountDeleteConfirmMessage": "Deleting your account will remove all of your user information.",
+  "accountDeleteConfirmButton": "Delete",
+  "@accountDeleteConfirmButton": {
+    "description": "アカウント削除確認ダイアログの実行ボタン (日本語では「削除する」で汎用の「削除」と区別している)"
+  },
+  "accountDeleteReauthTitle": "Please sign in again",
+  "accountDeleteReauthMessage": "To delete your account, please sign in again.",
+  "accountDeleteReauthButton": "Sign in again",
+  "accountDeleteCompletedTitle": "Your account has been deleted",
+  "accountDeleteExitAppQuestion": "Quit the app?",
+  "accountDeleteExitAppButton": "Quit",
+
+  "shoppingListDefaultName": "Shopping List",
+  "@shoppingListDefaultName": {
+    "description": "リスト名が未設定のときに上部バーへ出すフォールバック表示"
+  },
+  "shoppingListSettingTooltip": "List settings",
+  "shoppingListEmptyTitle": "No shopping lists yet",
+  "shoppingListEmptyMessage": "Create a new shopping list",
+  "shoppingListEmptyCreateButton": "Create shopping list",
+
+  "shoppingListLoadErrorTitle": "Failed to load the list",
+
+  "shoppingListPickerTitle": "Switch list",
+  "shoppingListPickerAddList": "Add a new list",
+
+  "shoppingListCreateListTooltip": "Add list",
+  "shoppingListCreateTodayList": "Add a list with the current date",
+  "shoppingListDuplicateCurrentList": "Duplicate the current list",
+  "shoppingListDuplicateUncheckedOnly": "Duplicate with unchecked items only",
+  "shoppingListDuplicated": "Duplicated the list",
+
+  "shoppingListDuplicatedFrom": "Duplicated from {name}",
+  "@shoppingListDuplicatedFrom": {
+    "description": "複製で作られたリストの上部に出す、複製元リストへの導線ラベル",
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "shoppingListDeletedListName": "Deleted list",
+  "@shoppingListDeletedListName": {
+    "description": "複製元リストが既に削除済みのときの表示名"
+  },
+  "shoppingListDuplicateSourceDeleted": "The original shopping list has been deleted",
+
+  "shoppingListRetentionBannerMessage": "On the free plan, lists are cleaned up 30 days after they are created",
+  "shoppingListRetentionBannerDetail": "Details",
+
+  "shoppingListSpotlightTitle": "You can add a new shopping list here",
+  "shoppingListSpotlightMessage": "Create a list for each date, or duplicate the list you are using now.",
+  "shoppingListSpotlightDismiss": "Tap to close",
+
+  "shoppingListAiProcessingImage": "Extracting suggestions from the photo...",
+  "shoppingListAiProcessingUrl": "Extracting suggestions from the URL...",
+  "shoppingListAiProcessingCategorize": "Sorting into categories...",
+
+  "shoppingListAiLimitUpsell": ". Upgrade to Premium and you can use it up to {limit} times a month",
+  "@shoppingListAiLimitUpsell": {
+    "description": "AI 機能の月間上限に達した SnackBar で、無料プランのときだけ上限メッセージの末尾へ連結する文",
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+
+  "shoppingListAiCategorizeButton": "Auto-categorize ({count} items)",
+  "@shoppingListAiCategorizeButton": {
+    "description": "未分類アイテムを AI でカテゴリ分けするボタン。件数は未分類アイテム数",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "shoppingListAiCategorizeLimitReached": "The monthly limit for auto-categorization ({limit} times) has been reached",
+  "@shoppingListAiCategorizeLimitReached": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "shoppingListAiCategorizeRegistered": "Registered {count} items into categories",
+  "@shoppingListAiCategorizeRegistered": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "shoppingListAiCategorizeSheetTitle": "Auto-categorize",
+  "shoppingListAiCategorizeSheetSubtitle": "Review and adjust the categories before registering them",
+  "shoppingListAiCategorizeSheetEmpty": "No items could be categorized",
+  "shoppingListAiCategorizeSheetConfirm": "Register {count} items",
+  "@shoppingListAiCategorizeSheetConfirm": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "shoppingListCategorySelect": "Select category",
+  "shoppingListCategoryChange": "Change category",
+  "shoppingListNewCategoryHint": "New category name",
+  "shoppingListAddCategoryLabel": "Add category",
+  "@shoppingListAddCategoryLabel": {
+    "description": "未分類アイテムの行に出す「カテゴリ +」ボタンの読み上げラベル"
+  },
+
+  "shoppingListAiReviewTitle": "Extracted suggestions",
+  "shoppingListAiReviewSubtitle": "Choose the items you want to add",
+  "shoppingListAiReviewEmpty": "No suggestions were found",
+  "shoppingListAiReviewConfirm": "Add {count} items",
+  "@shoppingListAiReviewConfirm": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "shoppingListFabAddFromPhoto": "Add from photo",
+  "shoppingListFabAddFromUrl": "Add from URL",
+  "shoppingListFabPasteText": "Paste text",
+  "shoppingListImageRecognitionLimitReached": "The monthly limit for photo recognition ({limit} times) has been reached",
+  "@shoppingListImageRecognitionLimitReached": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "shoppingListUrlRecognitionLimitReached": "The monthly limit for URL recognition ({limit} times) has been reached",
+  "@shoppingListUrlRecognitionLimitReached": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "shoppingListUrlDialogTitle": "Generate a shopping list from a URL",
+  "shoppingListUrlDialogGenerate": "Generate",
+  "shoppingListUrlRequired": "Please enter a URL",
+  "shoppingListUrlInvalid": "Please enter a valid HTTPS URL",
+
+  "shoppingListStarterRowLabel": "Tap to start typing",
+  "shoppingListHintExample1": "e.g. Milk 1L",
+  "shoppingListHintExample2": "e.g. Eggs, 1 pack",
+  "shoppingListHintExample3": "e.g. Bread",
+  "shoppingListHintExample4": "e.g. Onions x2",
+  "shoppingListHintExample5": "e.g. Tomatoes",
+  "shoppingListHintCardTitle": "Here is how to use it",
+  "shoppingListHintTap": "・Tap a row and type right away",
+  "shoppingListHintReturn": "・Press return to move to the next line",
+  "shoppingListHintDelete": "・Press delete on an empty line to remove it",
+  "shoppingListHintFabPrefix": "・Long-press the ",
+  "@shoppingListHintFabPrefix": {
+    "description": "ヒント文「・右下の [アイコン] を長押しすると…」のアイコンより前の部分。末尾の空白はアイコンとの間隔"
+  },
+  "shoppingListHintFabSuffix": " at the bottom right to add from a photo or a URL",
+  "@shoppingListHintFabSuffix": {
+    "description": "ヒント文「・右下の [アイコン] を長押しすると…」のアイコンより後の部分。先頭の空白はアイコンとの間隔"
+  },
+
+  "shoppingListItemDetailTooltip": "Item details",
+  "shoppingListItemDeleteTooltip": "Delete item",
+  "shoppingListItemDeleteConfirm": "Delete this item?",
+  "shoppingListItemDeleted": "Deleted the item",
+  "shoppingListItemMemoHint": "Write a note...",
+
+  "shoppingListNotifyGroup": "Notify group",
+  "@shoppingListNotifyGroup": {
+    "description": "グループ通知ボタンの tooltip と、初回タップ時の説明ダイアログのタイトル"
+  },
+  "shoppingListNotifyGroupSent": "Notified the group",
+  "shoppingListNotifyGroupGuideLabel": "About group notifications",
+  "shoppingListNotifyGroupGuideMessage": "Tapping this button sends a push notification to the other members of your group to let them know you updated the shopping list.",
+  "shoppingListNotifyGroupSend": "Send notification",
+
+  "commonCopy": "Copy",
+  "commonShare": "Share",
+  "@commonShare": {
+    "description": "共有アクションのボタンラベル (動詞)。セクション見出しの「共有」は listSettingShareSection"
+  },
+
+  "settingsProfileSection": "Profile",
+  "settingsDisplayNameLabel": "Your display name",
+  "settingsDisplayNameHint": "Enter a display name",
+  "settingsDisplayNameUpdated": "Updated your display name",
+  "settingsGroupManagement": "Manage groups",
+  "settingsJoinGroupWithInvitationCode": "Join a group with an invitation code",
+  "settingsAppearanceSection": "Appearance",
+  "settingsNotificationSection": "Notifications",
+  "settingsAboutSection": "About this app",
+  "settingsTermsOfService": "Terms of Service",
+  "settingsPrivacyPolicy": "Privacy Policy",
+  "settingsCommercialTransactionAct": "Notation based on the Specified Commercial Transaction Act",
+  "@settingsCommercialTransactionAct": {
+    "description": "特定商取引法に基づく表記ページへの導線。日本語の現行文言は「特定商法取引法」という表記のまま (既存 UI を変えないため)"
+  },
+  "settingsInquiry": "Contact us",
+  "settingsOssLicense": "Open source licenses",
+  "settingsDebugSection": "Debug",
+  "@settingsDebugSection": {
+    "description": "debug ビルドでのみ表示する設定セクション"
+  },
+  "settingsDeveloperOptions": "Developer options",
+  "settingsPremiumCardTitlePremium": "Premium member",
+  "settingsPremiumCardTitleFree": "Upgrade to Premium",
+  "settingsPremiumCardSubtitlePremium": "You can use all features",
+  "settingsPremiumCardSubtitleFree": "Five color themes, more photo/URL scans, and more",
+  "settingsPremiumCardStartButton": "Get started",
+  "settingsSignOut": "Sign out",
+  "@settingsSignOut": {
+    "description": "サインアウトボタンのラベルと、確認ダイアログの実行ボタン"
+  },
+  "settingsSignOutConfirmBarrierLabel": "Sign-out confirmation",
+  "@settingsSignOutConfirmBarrierLabel": {
+    "description": "サインアウト確認ダイアログの barrierLabel (画面読み上げ用。画面には表示されない)"
+  },
+  "settingsSignOutConfirmTitle": "Sign out?",
+  "settingsSignOutConfirmMessage": "You will not be able to access your lists from this device until you sign in again.",
+  "settingsSignOutConfirmMessageGuest": "You are using the app as a guest, so if you sign out you cannot sign in to the same account again and you will permanently lose access to your current lists and groups.",
+  "settingsSignOutCompletedTitle": "Signed out",
+  "settingsSignOutExitAppMessage": "The app will now quit",
+  "settingsThemeColorTitle": "Theme color",
+  "settingsThemeColorDescription": "Choose from five traditional Japanese colors to change the accent color used across the app.",
+  "settingsThemeColorChanged": "Changed the theme color",
+  "settingsThemeColorSwatchLabel": "{label} theme color",
+  "@settingsThemeColorSwatchLabel": {
+    "description": "テーマカラーの色見本の読み上げラベル。label はプリセットの色名 (lib/style/tokens.dart の AccentPreset.label)",
+    "placeholders": {
+      "label": {"type": "String"}
+    }
+  },
+  "settingsThemeColorPremiumOnly": "Changing the theme color is a Premium feature",
+  "settingsLocationReminderTitle": "Location reminder",
+  "settingsLocationReminderSubtitle": "Notify me of my shopping list when I am near a store",
+  "settingsLocationReminderNotificationPermissionRequired": "Allow notifications to use this feature",
+  "settingsLocationReminderAlwaysPermissionRequired": "Set background location access to \"Always\" to use this feature",
+  "settingsLocationReminderPremiumOnly": "The location reminder is a Premium feature",
+  "settingsAccountSection": "Account",
+  "settingsAccountLinked": "Linked your account",
+  "settingsAccountGuestDescription": "You are using the app as a guest. If you link an account, you can use the same lists and groups after changing devices or on another device.",
+  "settingsAccountLinkWithApple": "Link your account with Apple",
+  "settingsAccountLinkWithGoogle": "Link your account with Google",
+  "settingsAccountSignedInWith": "Signed in with {providerName}",
+  "@settingsAccountSignedInWith": {
+    "description": "リンク済みの認証プロバイダを表示する行。providerName は 'Apple' / 'Google'",
+    "placeholders": {
+      "providerName": {"type": "String"}
+    }
+  },
+  "settingsAccountReSignInBarrierLabel": "Re-sign-in confirmation",
+  "@settingsAccountReSignInBarrierLabel": {
+    "description": "サインインし直し確認ダイアログの barrierLabel (画面読み上げ用。画面には表示されない)"
+  },
+  "settingsAccountAlreadyInUseTitle": "This account is already used by another user",
+  "settingsAccountReSignInMessage": "Do you want to sign in again with this account?\nIf you sign in again, your current guest data (lists and groups) will not be carried over.",
+  "settingsAccountReSignInButton": "Sign in again",
+
+  "listSettingTitle": "Shopping list settings",
+  "listSettingNameSection": "List name",
+  "listSettingShoppingLocationSection": "Shopping location",
+  "listSettingLocationUnset": "Not set",
+  "listSettingLocationChangeDetail": "Change",
+  "listSettingCategorySubtitle": "Manage keywords for auto-categorization",
+  "listSettingStoragePeriodSection": "Retention period",
+  "listSettingStoragePeriodPremium": "Premium: unlimited",
+  "listSettingStoragePeriodFree": "30 days from creation",
+  "listSettingStoragePeriodUpsell": "With Premium you can keep lists with no time limit",
+  "listSettingShareSection": "Sharing",
+  "@listSettingShareSection": {
+    "description": "共有関連の設定をまとめるセクション見出し (名詞)。共有ボタンのラベルは commonShare"
+  },
+  "listSettingSendInvitationCode": "Send an invitation code to your group",
+  "listSettingGroupSetting": "Group settings",
+  "listSettingGroupNameRequired": "Set a group name before inviting someone",
+  "listSettingListActionsSection": "List actions",
+  "listSettingDeleteList": "Delete this list",
+  "listSettingDeleteConfirmBarrierLabel": "Shopping list deletion confirmation",
+  "@listSettingDeleteConfirmBarrierLabel": {
+    "description": "リスト削除確認ダイアログの barrierLabel (画面読み上げ用。画面には表示されない)"
+  },
+  "listSettingDeleteConfirmTitle": "Delete this list?",
+  "listSettingDeleteConfirmMessage": "\"{name}\" and the {count} items in it will be deleted. This cannot be undone.",
+  "@listSettingDeleteConfirmMessage": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "listSettingInvitationCodeTitle": "Invitation code",
+  "@listSettingInvitationCodeTitle": {
+    "description": "招待コードダイアログのタイトルと、そのダイアログの barrierLabel"
+  },
+  "listSettingInvitationExpired": "Expired",
+  "listSettingInvitationRemaining": "Valid for 7 days ・ {days}d {hours}h left",
+  "@listSettingInvitationRemaining": {
+    "description": "招待コードの残り有効時間。days は残り日数、hours は日数を除いた残り時間",
+    "placeholders": {
+      "days": {"type": "int"},
+      "hours": {"type": "int"}
+    }
+  },
+  "listSettingInvitationCodeCopied": "Copied the invitation code",
+  "listSettingInvitationShareText": "Shopping list invitation code: {code}",
+  "@listSettingInvitationShareText": {
+    "description": "招待コードを他アプリへ共有するときの本文",
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "listSettingSelectShoppingLocationTitle": "Choose a shopping location",
+  "listSettingLocationNone": "None",
+  "listSettingLocationSelected": "Selected",
+
+  "commonDefault": "Default",
+  "@commonDefault": {
+    "description": "デフォルトグループを示すバッジと、カテゴリ並び順のドロップダウンで既定の並び順を指す選択肢"
+  },
+  "commonUnnamed": "Unnamed",
+  "@commonUnnamed": {
+    "description": "グループ名・メンバーの表示名が未設定のときのフォールバック表示"
+  },
+  "commonCreating": "Creating...",
+  "@commonCreating": {
+    "description": "グループ作成の実行中にボタンへ出すラベル"
+  },
+
+  "groupNameLabel": "Group name",
+  "@groupNameLabel": {
+    "description": "グループ作成画面・グループ設定画面の、グループ名入力欄の見出し"
+  },
+  "groupNameHint": "Enter a group name",
+
+  "groupCategoryLocationOrderLabel": "Order by shopping location",
+  "@groupCategoryLocationOrderLabel": {
+    "description": "カテゴリ一覧で、どの買い物する場所の並び順を表示するか選ぶドロップダウンのラベル"
+  },
+  "groupCategoryLocationOrderPremiumOnly": "Reordering categories per shopping location is a Premium feature",
+  "groupCategoryKeywordCount": "Keywords: {count}",
+  "@groupCategoryKeywordCount": {
+    "description": "カテゴリ一覧の各行に出す、そのカテゴリに登録されたキーワード数",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "groupCategoryDeleteConfirmTitle": "Delete \"{name}\"?",
+  "@groupCategoryDeleteConfirmTitle": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "groupCategoryDeleteConfirmMessage": "The keywords set for this category will also be deleted",
+  "groupCategoryEmptyTitle": "Group what you buy automatically",
+  "@groupCategoryEmptyTitle": {
+    "description": "カテゴリが1件も無いときに出す価値訴求カードの見出し"
+  },
+  "groupCategoryEmptyUseCaseAutoGroup": "Register tomatoes and onions under \"Vegetables\" and they are automatically grouped into the Vegetables section of your list",
+  "groupCategoryEmptyUseCaseLocationOrder": "You can change the category order for each store, so you can shop along the aisles in order",
+
+  "groupCategoryEditTitle": "Edit category",
+  "groupCategoryEditNotFound": "Category not found",
+  "groupCategoryEditNameLabel": "Category name",
+  "groupCategoryEditNameHint": "Enter a category name",
+  "groupCategoryEditColorLabel": "Category color",
+  "groupCategoryEditIconLabel": "Category icon",
+  "groupCategoryEditKeywordsLabel": "Keywords",
+  "groupCategoryEditAddKeyword": "Add keyword",
+  "@groupCategoryEditAddKeyword": {
+    "description": "キーワード追加ボタンの tooltip と、追加ダイアログのタイトル"
+  },
+  "groupCategoryEditKeywordsEmpty": "No keywords yet",
+  "groupCategoryEditKeywordHint": "Enter a keyword",
+  "groupCategoryEditMatchingLabel": "Matching",
+  "@groupCategoryEditMatchingLabel": {
+    "description": "キーワードの一致方法 (部分一致/完全一致/正規表現) を選ぶコントロールの見出し"
+  },
+  "groupCategoryEditMatchingExact": "Exact match",
+  "groupCategoryEditMatchingPartial": "Partial match",
+  "groupCategoryEditMatchingRegex": "Regular expression",
+
+  "groupCreateTitle": "Create a group",
+  "@groupCreateTitle": {
+    "description": "グループ作成画面のタイトルと、グループ管理画面の作成 FAB の tooltip"
+  },
+  "groupCreateIconLabel": "Icon",
+  "groupCreateSubmit": "Create",
+  "groupCreateIconHome": "Home",
+  "@groupCreateIconHome": {
+    "description": "グループアイコンのプリセット名 (家)。日本語はひらがなで統一している"
+  },
+  "groupCreateIconCart": "Cart",
+  "groupCreateIconFork": "Food",
+  "groupCreateIconCookie": "Snacks",
+  "groupCreateIconPets": "Pets",
+  "groupCreateIconBag": "Bag",
+  "groupCreateInvitationDialogTitle": "Invite members",
+  "groupCreateInvitationDialogMessage": "Share the invitation code with your family",
+
+  "groupInvitationTitle": "Join with an invitation code",
+  "@groupInvitationTitle": {
+    "description": "招待コード入力画面のタイトルと、その画面を開くボタンのラベル"
+  },
+  "groupInvitationHeading": "Enter your invitation code",
+  "groupInvitationDescription": "Enter the 8-character code shared with you by a member of the group",
+  "groupInvitationJoining": "Joining...",
+  "groupInvitationJoin": "Join",
+  "groupInvitationVerifyingTitle": "Checking the invitation code",
+  "@groupInvitationVerifyingTitle": {
+    "description": "参加処理中オーバレイのタイトルと、そのダイアログの barrierLabel"
+  },
+  "groupInvitationVerifyingMessage": "The server is processing your request to join the group.",
+
+  "groupJoinHeading": "Let's get started",
+  "@groupJoinHeading": {
+    "description": "グループ未参加ユーザーに出す初期セットアップ画面の見出し"
+  },
+  "groupJoinDescription": "Did you get an invitation code from your family or partner?\nJoining with a code lets you use the same shopping list together.",
+  "groupJoinCreateSolo": "Create my own list",
+
+  "groupListEmpty": "You do not belong to any group",
+  "groupListMemberCount": "{count} members",
+  "@groupListMemberCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "groupListFreeLimitBanner": "The free plan allows one additional group",
+  "groupListFreeLimitAction": "Unlock",
+  "@groupListFreeLimitAction": {
+    "description": "無料プランの上限バナーから paywall を開くアクション (日本語は「解除」)"
+  },
+
+  "groupSettingMembersSection": "Members",
+  "groupSettingMemberOwner": "Owner",
+  "@groupSettingMemberOwner": {
+    "description": "メンバー一覧で、グループのオーナーである行に出す役割表示"
+  },
+  "groupSettingMemberSelf": "You",
+  "@groupSettingMemberSelf": {
+    "description": "メンバー一覧で、自分自身の行に出す役割表示"
+  },
+  "groupSettingMemberFallbackName": "Member",
+  "@groupSettingMemberFallbackName": {
+    "description": "メンバー削除完了の SnackBar で、表示名が未設定のメンバーを指す語"
+  },
+  "groupSettingShoppingLocationSubtitle": "Register and edit stores",
+  "groupSettingInvitationSection": "Group invitation",
+  "groupSettingCreatingInvitation": "Issuing an invitation code...",
+  "groupSettingCreateInvitation": "Issue an invitation code",
+  "groupSettingRemoveMemberConfirmTitle": "Remove {name} from the group?",
+  "@groupSettingRemoveMemberConfirmTitle": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "groupSettingRemoveMemberConfirmMessage": "A removed member will no longer be able to access this group",
+  "groupSettingMemberRemoved": "Removed {name}",
+  "@groupSettingMemberRemoved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "groupSettingInvitationCodeMessage": "Share the code below",
+  "groupSettingInvitationExpiry": "Valid for 7 days",
+
+  "commonSave": "Save",
+
+  "authHeroTitle": "Your family's shopping,\nin one list",
+  "authHeroDescription": "Sign in and your lists stay in sync across devices. No ads, no newsletters.",
+  "authStartWithoutSignIn": "Start without signing in",
+  "authLinkAccountLaterNote": "You can link an account later from the settings screen",
+  "authAgreementNote": "By continuing, you agree to the {terms} and the {privacy}.",
+  "@authAgreementNote": {
+    "description": "認証画面の同意文。terms / privacy はリンクの差し込み位置で、呼び出し側は '{terms}' '{privacy}' をそのまま渡してテンプレートを復元し、リンク span へ展開する",
+    "placeholders": {
+      "terms": {"type": "String"},
+      "privacy": {"type": "String"}
+    }
+  },
+
+  "inquiryDescription": "We read everything you send and use it to improve the app. If you would like a reply, please include your email address.",
+  "inquiryEmailLabel": "Email address",
+  "inquiryEmailRequired": "Please enter your email address",
+  "inquiryEmailInvalid": "The email address format is not correct",
+  "inquiryCategoryLabel": "Type of inquiry",
+  "inquiryCategoryRequired": "Please choose the type of your inquiry",
+  "inquiryContentLabel": "Your message",
+  "inquiryContentRequired": "Please enter your message",
+  "inquiryContentHint": "Tell us what you are having trouble with or what you would like to see",
+  "inquirySubmitting": "Sending...",
+  "inquirySubmit": "Send",
+  "inquirySubmitted": "Your inquiry has been sent",
+
+  "notificationPermissionBarrierLabel": "Push notification permission",
+  "@notificationPermissionBarrierLabel": {
+    "description": "プリパーミッションダイアログの barrierLabel (画面読み上げ用。画面には表示されない)"
+  },
+  "notificationPermissionTitle": "Turn on push notifications",
+  "notificationPermissionMessage": "When a member of your group updates the shopping list and lets you know, a push notification tells you right away. Please allow notifications in the confirmation that appears next.",
+  "notificationPermissionLater": "Later",
+  "notificationPermissionAllow": "Allow notifications",
+
+  "onboardingSlide1Title": "A shopping list\nyou build as a family",
+  "onboardingSlide1Body": "Someone adds what they thought of at home, and someone else checks it off at the store. Put every \"can you pick this up?\" onto this one sheet.",
+  "onboardingSlide2Title": "Edit the same list\nat the same time",
+  "onboardingSlide2Body": "Invite your family, your partner, or your housemates with an invitation code and everyone can edit the same list. What matters is not who added it, but that nothing is forgotten.",
+  "onboardingSlide3Title": "A gentle reminder\nwhen you are near the store",
+  "onboardingSlide3Body": "When you come near a store you registered, we gently show you your shopping list. Notifications only when you need them, never pushy.",
+  "onboardingSkip": "Skip",
+  "onboardingStart": "Get started",
+  "onboardingNext": "Next",
+
+  "paywallHeroTitle": "Upgrade to Premium",
+  "@paywallHeroTitle": {
+    "description": "ペイウォール画面のヒーロー見出し。設定画面のプレミアムカードの見出しは settingsPremiumCardTitleFree"
+  },
+  "paywallHeroDescription": "Unlock every feature and enjoy the app with your whole family.",
+  "paywallFeatureLocationOrder": "Category order for each store",
+  "paywallFeaturePhotoExtraction": "Extract items from photos (50 times a month)",
+  "paywallFeatureUrlExtraction": "Extract items from URLs (50 times a month)",
+  "paywallFeatureThemeColors": "Five theme colors",
+  "paywallFeatureUnlimitedRetention": "Unlimited list retention",
+  "paywallFeatureReceipt": "Save receipts to your list",
+  "paywallSubscriptionNote": "Cancel anytime ・ auto-renewal can be canceled up to 24 hours before it renews",
+  "@paywallSubscriptionNote": {
+    "description": "購入プランの下に出す注意書き。日本語の現行文言は「いつでもキャンセル可能・自動更新は購入後 24 時間前まで」"
+  },
+  "paywallPrivacyLink": "Privacy",
+  "@paywallPrivacyLink": {
+    "description": "ペイウォール下部の短いリンクラベル。設定画面の「プライバシーポリシー」は settingsPrivacyPolicy"
+  },
+  "paywallRestore": "Restore",
+  "paywallRestored": "Restored your purchases",
+  "paywallNoPlans": "There are no plans available right now",
+  "paywallRecommendedBadge": "Recommended",
+  "paywallPurchaseCompleted": "Thank you for your purchase",
+  "paywallPurchaseButton": "Buy",
+
+  "receiptAdd": "Add a receipt",
+  "receiptEdit": "Edit the receipt",
+  "receiptSheetTitle": "Receipt",
+  "@receiptSheetTitle": {
+    "description": "既存レシートを開いた編集シートの見出し。新規登録時は receiptAdd"
+  },
+  "receiptTakePhoto": "Take a photo",
+  "receiptChooseFromLibrary": "Choose from photo library",
+  "receiptAmountLabel": "Amount",
+  "receiptMemoLabel": "Note",
+  "receiptMemoHint": "Notes such as the store name or what you bought",
+  "receiptCaptureOrSelect": "Take or choose a receipt photo",
+
+  "forceUpdateTitle": "Please update the app",
+  "forceUpdateMessage": "We ask that you update your version of the app. Please update to the latest version from {storeName}.",
+  "@forceUpdateMessage": {
+    "description": "強制アップデートダイアログの本文。storeName は 'App Store' / 'Google Play'",
+    "placeholders": {
+      "storeName": {"type": "String"}
+    }
+  },
+
+  "shoppingLocationTitle": "Shopping locations",
+  "@shoppingLocationTitle": {
+    "description": "店舗一覧画面のタイトル。リスト設定の「買い物する場所」セクション見出しは listSettingShoppingLocationSection"
+  },
+  "shoppingLocationEmpty": "No shopping locations yet",
+  "shoppingLocationGeoConfigured": "Location set",
+  "@shoppingLocationGeoConfigured": {
+    "description": "店舗一覧の行に出す、座標が登録済みであることを示すラベル"
+  },
+  "shoppingLocationAddTitle": "Add a location",
+  "shoppingLocationEditTitle": "Edit location",
+  "shoppingLocationNameHint": "Location name",
+  "shoppingLocationNameHintWithExample": "Location name (e.g. Supermarket)",
+  "shoppingLocationPositionSet": "Position set",
+  "@shoppingLocationPositionSet": {
+    "description": "店舗追加ダイアログで、地図から座標を選び終えた行のラベル"
+  },
+  "shoppingLocationSetOnMap": "Set the location on a map",
+  "shoppingLocationDeleteConfirmTitle": "Delete \"{name}\"?",
+  "@shoppingLocationDeleteConfirmTitle": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "shoppingLocationDeleteConfirmMessage": "Deleting this location does not affect the shopping lists it is set on",
+  "shoppingLocationPickerTitle": "Choose a location on the map",
+  "shoppingLocationPickerConfirm": "Use this location",
+
+  "settingsThemeColorShu": "Vermilion",
+  "@settingsThemeColorShu": {
+    "description": "テーマカラー選択の色名。和の伝統色「朱」(デフォルト)"
+  },
+  "settingsThemeColorMatcha": "Matcha",
+  "@settingsThemeColorMatcha": {
+    "description": "テーマカラー選択の色名。和の伝統色「抹茶」"
+  },
+  "settingsThemeColorAi": "Indigo",
+  "@settingsThemeColorAi": {
+    "description": "テーマカラー選択の色名。和の伝統色「藍」"
+  },
+  "settingsThemeColorSumi": "Sumi ink",
+  "@settingsThemeColorSumi": {
+    "description": "テーマカラー選択の色名。和の伝統色「墨」"
+  },
+  "settingsThemeColorKuchiba": "Kuchiba",
+  "@settingsThemeColorKuchiba": {
+    "description": "テーマカラー選択の色名。和の伝統色「朽葉」(枯れ葉の茶色)"
+  },
+
+  "inquiryCategoryBugReport": "Bug report",
+  "@inquiryCategoryBugReport": {
+    "description": "お問い合わせ画面のカテゴリチップ。InquiryCategory.bugReport の表示名"
+  },
+  "inquiryCategoryHowToUse": "How to use",
+  "@inquiryCategoryHowToUse": {
+    "description": "お問い合わせ画面のカテゴリチップ。InquiryCategory.howToUse の表示名"
+  },
+  "inquiryCategoryRequest": "Feature request",
+  "@inquiryCategoryRequest": {
+    "description": "お問い合わせ画面のカテゴリチップ。InquiryCategory.request の表示名"
+  },
+  "inquiryCategoryOther": "Other",
+  "@inquiryCategoryOther": {
+    "description": "お問い合わせ画面のカテゴリチップ。InquiryCategory.other の表示名"
+  },
+
+  "shoppingListLimitExceeded": "On the free plan you can create up to {limit} lists per group. Upgrade to premium for unlimited lists.",
+  "@shoppingListLimitExceeded": {
+    "description": "無料プランのリスト作成数上限に達した時の SnackBar / トースト本文。limit は上限数",
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "platformGoogleAccountName": "Google Account",
+  "@platformGoogleAccountName": {
+    "description": "Android 端末のアカウント名称。購入エラー文言で '$accountName' として埋め込まれる (iOS は 'Apple ID' 固定)"
+  },
+
+  "purchaseNotActivated": "Your purchase has not been activated yet. Please check again after a while.",
+  "@purchaseNotActivated": {
+    "description": "購入は成功したが Premium entitlement が未 active だった時のエラー本文"
+  },
+
+  "errorTitleServerError": "A server error occurred",
+  "@errorTitleServerError": {
+    "description": "FirebaseException firebase_functions/internal に付けるエラータイトル"
+  },
+  "errorTitleSignInRequired": "Sign-in required",
+  "@errorTitleSignInRequired": {
+    "description": "FirebaseException firebase_functions/unauthenticated に付けるエラータイトル"
+  },
+  "errorTitlePermissionDenied": "You do not have permission for this operation",
+  "@errorTitlePermissionDenied": {
+    "description": "FirebaseException firebase_functions/permission-denied に付けるエラータイトル"
+  },
+  "errorTitleProviderAlreadyLinked": "This sign-in method is already linked",
+  "@errorTitleProviderAlreadyLinked": {
+    "description": "FirebaseException firebase_auth/provider-already-linked に付けるエラータイトル"
+  },
+  "errorTitleCredentialAlreadyInUse": "This account is already used by another user",
+  "@errorTitleCredentialAlreadyInUse": {
+    "description": "FirebaseException firebase_auth/credential-already-in-use に付けるエラータイトル"
+  },
+  "errorTitleEmailAlreadyInUse": "This email address is already used by another user",
+  "@errorTitleEmailAlreadyInUse": {
+    "description": "FirebaseException firebase_auth/email-already-in-use に付けるエラータイトル"
+  },
+
+  "purchaseErrorUnknown": "An unknown error occurred. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}",
+  "@purchaseErrorUnknown": {
+    "description": "購入エラー: PurchasesErrorCode.unknownError。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorStoreProblem": "An error is occurring on {storeName}. Please wait a while and try again.",
+  "@purchaseErrorStoreProblem": {
+    "description": "購入エラー: PurchasesErrorCode.storeProblemError。storeName は 'App Store' / 'Google Play'",
+    "placeholders": {
+      "storeName": {"type": "String"}
+    }
+  },
+  "purchaseErrorNotAllowed": "Purchases are not allowed on this device.",
+  "@purchaseErrorNotAllowed": {
+    "description": "購入エラー: PurchasesErrorCode.purchaseNotAllowedError"
+  },
+  "purchaseErrorInvalidPayment": "Payment failed. Please make sure your payment method is valid and try again.",
+  "@purchaseErrorInvalidPayment": {
+    "description": "購入エラー: PurchasesErrorCode.purchaseInvalidError"
+  },
+  "purchaseErrorProductNotAvailable": "The selected plan is not currently on sale. Please restart the app and try again.",
+  "@purchaseErrorProductNotAvailable": {
+    "description": "購入エラー: PurchasesErrorCode.productNotAvailableForPurchaseError"
+  },
+  "purchaseErrorAlreadyPurchased": "You have already purchased a plan. To restore your purchase on this device, use \"Already purchased? Tap here\" to restore your purchase information.",
+  "@purchaseErrorAlreadyPurchased": {
+    "description": "購入エラー: PurchasesErrorCode.productAlreadyPurchasedError"
+  },
+  "purchaseErrorReceiptAlreadyInUse": "Already purchased, or the purchase information is used by another user. Please check your {accountName}.",
+  "@purchaseErrorReceiptAlreadyInUse": {
+    "description": "購入エラー: PurchasesErrorCode.receiptAlreadyInUseError。accountName は 'Apple ID' / 'Google アカウント'",
+    "placeholders": {
+      "accountName": {"type": "String"}
+    }
+  },
+  "purchaseErrorInvalidReceipt": "The purchase information is invalid. Please check your purchase information.",
+  "@purchaseErrorInvalidReceipt": {
+    "description": "購入エラー: PurchasesErrorCode.invalidReceiptError"
+  },
+  "purchaseErrorMissingReceipt": "No purchaser information exists. Please sign in to your device with {accountName} and try again.",
+  "@purchaseErrorMissingReceipt": {
+    "description": "購入エラー: PurchasesErrorCode.missingReceiptFileError。accountName は 'Apple ID' / 'Google アカウント'",
+    "placeholders": {
+      "accountName": {"type": "String"}
+    }
+  },
+  "purchaseErrorNetwork": "Your network connection is unstable. Please check your connection and try again.",
+  "@purchaseErrorNetwork": {
+    "description": "購入エラー: PurchasesErrorCode.networkError"
+  },
+  "purchaseErrorPurchaseFailed": "The purchase failed. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}",
+  "@purchaseErrorPurchaseFailed": {
+    "description": "購入エラー: invalidCredentialsError / invalidAppleSubscriptionKeyError / invalidSubscriberAttributesError 共通。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorUnavailable": "Purchases are currently unavailable. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}",
+  "@purchaseErrorUnavailable": {
+    "description": "購入エラー: unexpectedBackendResponseError / unknownBackendError 共通。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorReceiptInUseByOther": "The purchase information is used by another user. Please check the {accountName} you are signed in with on this device.",
+  "@purchaseErrorReceiptInUseByOther": {
+    "description": "購入エラー: PurchasesErrorCode.receiptInUseByOtherSubscriberError。accountName は 'Apple ID' / 'Google アカウント'",
+    "placeholders": {
+      "accountName": {"type": "String"}
+    }
+  },
+  "purchaseErrorInvalidAppUserId": "We could not verify your user. Please restart the app and try again. Details: {details}",
+  "@purchaseErrorInvalidAppUserId": {
+    "description": "購入エラー: PurchasesErrorCode.invalidAppUserIdError。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorOperationInProgress": "Another purchase is already in progress. Please wait a while and check again.",
+  "@purchaseErrorOperationInProgress": {
+    "description": "購入エラー: PurchasesErrorCode.operationAlreadyInProgressError"
+  },
+  "purchaseErrorIneligible": "The purchase failed for your user. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}",
+  "@purchaseErrorIneligible": {
+    "description": "購入エラー: PurchasesErrorCode.ineligibleError。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorInsufficientPermissions": "You cannot subscribe to a plan with your {accountName}. Please check your payment information and try again.",
+  "@purchaseErrorInsufficientPermissions": {
+    "description": "購入エラー: PurchasesErrorCode.insufficientPermissionsError。accountName は 'Apple ID' / 'Google アカウント'",
+    "placeholders": {
+      "accountName": {"type": "String"}
+    }
+  },
+  "purchaseErrorPaymentPending": "The payment has been interrupted. Please check {storeName} with the {accountName} you are signed in with.",
+  "@purchaseErrorPaymentPending": {
+    "description": "購入エラー: PurchasesErrorCode.paymentPendingError。accountName は 'Apple ID' / 'Google アカウント'、storeName は 'App Store' / 'Google Play'",
+    "placeholders": {
+      "accountName": {"type": "String"},
+      "storeName": {"type": "String"}
+    }
+  },
+  "purchaseErrorUserInfoFailed": "Failed to get your user information. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}",
+  "@purchaseErrorUserInfoFailed": {
+    "description": "購入エラー: PurchasesErrorCode.logOutWithAnonymousUserError。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorConfiguration": "Failed to get purchase information. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}",
+  "@purchaseErrorConfiguration": {
+    "description": "購入エラー: PurchasesErrorCode.configurationError。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorUpdateRequired": "An unknown error occurred. Please update to the latest version and try again. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}",
+  "@purchaseErrorUpdateRequired": {
+    "description": "購入エラー: unsupportedError / productDiscountMissingIdentifierError / unknownNonNativeError / productDiscountMissingSubscriptionGroupIdentifierError / apiEndpointBlocked / invalidPromotionalOfferError 共通。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorEmptySubscriberAttributes": "An unknown error occurred. Purchase information could not be retrieved in advance. Details: {details}",
+  "@purchaseErrorEmptySubscriberAttributes": {
+    "description": "購入エラー: PurchasesErrorCode.emptySubscriberAttributesError。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorCustomerInfo": "Failed to get customer information. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Details: Code: {code} {details}",
+  "@purchaseErrorCustomerInfo": {
+    "description": "購入エラー: PurchasesErrorCode.customerInfoError。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorSystemInfo": "There is a problem with your device settings. Please check them and try again. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}",
+  "@purchaseErrorSystemInfo": {
+    "description": "購入エラー: PurchasesErrorCode.systemInfoError。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorBeginRefundRequest": "A refund process has been started. Please check it and try again. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}",
+  "@purchaseErrorBeginRefundRequest": {
+    "description": "購入エラー: PurchasesErrorCode.beginRefundRequestError。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorTimeout": "The request timed out. Please check your network connection and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}",
+  "@purchaseErrorTimeout": {
+    "description": "購入エラー: PurchasesErrorCode.productRequestTimeout。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorOfflineConnection": "The connection is poor. Please check your network connection and try again. If the problem persists, contact us from Settings > Inquiry. Details: {details}",
+  "@purchaseErrorOfflineConnection": {
+    "description": "購入エラー: PurchasesErrorCode.offlineConnectionError。details は 'message:details'",
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorFeatureNotAvailable": "This feature is not available with the current configuration. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}",
+  "@purchaseErrorFeatureNotAvailable": {
+    "description": "購入エラー: PurchasesErrorCode.featureNotAvailableInCustomEntitlementsComputationMode。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorSignatureVerification": "Signature verification failed. Please wait a while and try again. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}",
+  "@purchaseErrorSignatureVerification": {
+    "description": "購入エラー: PurchasesErrorCode.signatureVerificationFailed。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorFeatureNotSupported": "This feature is not supported on your device. Please update to the latest version and try again. Code: {code} Details: {details}",
+  "@purchaseErrorFeatureNotSupported": {
+    "description": "購入エラー: PurchasesErrorCode.featureNotSupportedWithStoreKit1。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorInvalidWebPurchaseToken": "The purchase token is invalid. Please try again. If the problem persists, contact us from Settings > Inquiry. Code: {code} Details: {details}",
+  "@purchaseErrorInvalidWebPurchaseToken": {
+    "description": "購入エラー: PurchasesErrorCode.invalidWebPurchaseToken。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorBelongsToOtherUser": "This purchase belongs to another user. Please check your account. Code: {code} Details: {details}",
+  "@purchaseErrorBelongsToOtherUser": {
+    "description": "購入エラー: PurchasesErrorCode.purchaseBelongsToOtherUser。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorExpiredWebPurchaseToken": "The purchase token has expired. Please try again. Code: {code} Details: {details}",
+  "@purchaseErrorExpiredWebPurchaseToken": {
+    "description": "購入エラー: PurchasesErrorCode.expiredWebPurchaseToken。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  },
+  "purchaseErrorTestStoreSimulated": "An error occurred in the test purchase. Code: {code} Details: {details}",
+  "@purchaseErrorTestStoreSimulated": {
+    "description": "購入エラー: PurchasesErrorCode.testStoreSimulatedPurchaseError。code は PurchasesErrorCode、details は 'message:details'",
+    "placeholders": {
+      "code": {"type": "String"},
+      "details": {"type": "String"}
+    }
+  }
+}

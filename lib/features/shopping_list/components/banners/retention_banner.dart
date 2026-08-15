@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -25,7 +26,7 @@ class RetentionBanner extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              '無料プランは作成から30日でリストが整理されます',
+              context.l10n.shoppingListRetentionBannerMessage,
               style: Theme.of(
                 context,
               ).textTheme.labelSmall?.copyWith(color: tokens.neutral.ink2),
@@ -42,7 +43,7 @@ class RetentionBanner extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
               child: Text(
-                '詳しく',
+                context.l10n.shoppingListRetentionBannerDetail,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: tokens.accent,

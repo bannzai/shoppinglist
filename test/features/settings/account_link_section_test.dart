@@ -6,6 +6,7 @@ import 'package:shoppinglist/features/resolver/auth.dart';
 import 'package:shoppinglist/features/settings/components/account_link_section.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../helpers/localized_test_app.dart';
 
 /// AccountLinkSection の表示分岐（issue #548）を検証するための User フェイク。
 /// リンクフロー自体は起動しないため、表示に使う isAnonymous / providerData
@@ -41,7 +42,7 @@ Widget _wrap({required User user}) => ProviderScope(
   overrides: [
     firebaseUserChangesProvider.overrideWith((ref) => Stream.value(user)),
   ],
-  child: MaterialApp(
+  child: localizedTestApp(
     theme: buildAppTheme(accent: AccentPreset.shu),
     home: const Scaffold(
       body: SingleChildScrollView(child: AccountLinkSection()),

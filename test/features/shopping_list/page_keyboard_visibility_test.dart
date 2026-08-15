@@ -14,6 +14,7 @@ import 'package:shoppinglist/features/shopping_list/page.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../helpers/localized_test_app.dart';
 
 /// ソフトキーボード表示中の下部浮遊要素の扱い(進捗ピルは隠す・FAB は隠さず表示し続けて
 /// キーボードを閉じる導線にする。Issue #498)を検証する。
@@ -57,7 +58,7 @@ Future<void> _pumpPage(
             ]),
           ),
       ],
-      child: MaterialApp(
+      child: localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Builder(
           builder:

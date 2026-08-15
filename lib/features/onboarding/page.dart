@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/bool_shared_preferences.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -34,19 +35,15 @@ class OnboardingPage extends HookConsumerWidget {
     final slides = <_SlideContent>[
       _SlideContent(
         eyebrowIndex: 1,
-        title: '家族と作る、\n買い物リスト',
-        body:
-            '家で思いついたものを誰かが追加して、店頭で別の誰かがチェック。'
-            '「買ってきて」のやり取りを、ぜんぶこの一枚に。',
+        title: context.l10n.onboardingSlide1Title,
+        body: context.l10n.onboardingSlide1Body,
         assetPath: 'images/onboarding/slide_1.png',
         fallbackBuilder: (tokens) => _TiltedListArt(tokens: tokens),
       ),
       _SlideContent(
         eyebrowIndex: 2,
-        title: '同じリストを\n同時に編集',
-        body:
-            '家族・パートナー・同居人を招待コードで招くと、同じリストを編集できます。'
-            '誰が追加したかではなく、何を買い忘れずに済むかを大切に。',
+        title: context.l10n.onboardingSlide2Title,
+        body: context.l10n.onboardingSlide2Body,
         assetPath: 'images/onboarding/slide_2.png',
         fallbackBuilder: (tokens) => _AvatarOrbitArt(tokens: tokens),
       ),
@@ -54,10 +51,8 @@ class OnboardingPage extends HookConsumerWidget {
       if (shoppingLocationFeatureEnabled)
         _SlideContent(
           eyebrowIndex: 3,
-          title: 'お店の近くで、\nそっと思い出す',
-          body:
-              '登録した店舗の近くに来ると、買い物リストをやさしくお知らせ。'
-              '通知は必要な時だけ、押し付けがましくなく。',
+          title: context.l10n.onboardingSlide3Title,
+          body: context.l10n.onboardingSlide3Body,
           assetPath: 'images/onboarding/slide_3.png',
           fallbackBuilder: (tokens) => _MapHaloArt(tokens: tokens),
         ),
@@ -83,7 +78,7 @@ class OnboardingPage extends HookConsumerWidget {
                 child: TextButton(
                   onPressed: () => finish(reason: 'skip'),
                   child: Text(
-                    'スキップ',
+                    context.l10n.onboardingSkip,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: tokens.neutral.ink3,
                       fontWeight: FontWeight.w600,
@@ -113,7 +108,10 @@ class OnboardingPage extends HookConsumerWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: AppPill(
-                  label: index.value == slides.length - 1 ? 'はじめる' : '次へ',
+                  label:
+                      index.value == slides.length - 1
+                          ? context.l10n.onboardingStart
+                          : context.l10n.onboardingNext,
                   variant: AppPillVariant.accent,
                   large: true,
                   expanded: true,

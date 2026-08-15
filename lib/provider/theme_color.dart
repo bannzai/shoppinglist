@@ -14,17 +14,12 @@ part 'theme_color.g.dart';
 const defaultThemeColorHex = '#C2410C';
 
 /// テーマカラー設定 UI で表示するプリセット一覧。
-/// `AccentPreset` を `(hex, label, color)` 形式に変換した薄いビュー。
-final themeColorPresets =
-    <({String hex, String label, Color color, AccentPreset preset})>[
-      for (final preset in AccentPreset.values)
-        (
-          hex: preset.persistHex,
-          label: preset.label,
-          color: preset.light,
-          preset: preset,
-        ),
-    ];
+/// `AccentPreset` を `(hex, color)` 形式に変換した薄いビュー。
+/// 表示名は BuildContext が要るため `AccentPresetL10n.label(context)` で解決する。
+final themeColorPresets = <({String hex, Color color, AccentPreset preset})>[
+  for (final preset in AccentPreset.values)
+    (hex: preset.persistHex, color: preset.light, preset: preset),
+];
 
 /// HEX 文字列が現行 5 色プリセットのいずれかに完全一致するかを判定する。
 /// 旧 10 色 HEX（`#673AB7` 等）は `false` を返す。

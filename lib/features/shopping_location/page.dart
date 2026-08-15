@@ -5,6 +5,7 @@ import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_location/location_picker_page.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
@@ -38,7 +39,7 @@ class ShoppingLocationPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: neutral.paper,
       appBar: AppBar(
-        title: const Text('買い物する場所'),
+        title: Text(context.l10n.shoppingLocationTitle),
         backgroundColor: neutral.paper,
       ),
       body: locationsAsync.when(
@@ -62,7 +63,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                     Icon(Icons.store, size: 36, color: neutral.ink3),
                     const SizedBox(height: 12),
                     Text(
-                      '買い物する場所がまだありません',
+                      context.l10n.shoppingLocationEmpty,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: neutral.ink2,
                         fontWeight: FontWeight.w600,
@@ -122,7 +123,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                           ),
                           if (hasGeo)
                             Text(
-                              '位置情報設定済み',
+                              context.l10n.shoppingLocationGeoConfigured,
                               style: Theme.of(context).textTheme.labelSmall
                                   ?.copyWith(color: neutral.ink3),
                             ),
@@ -207,15 +208,18 @@ class ShoppingLocationPage extends ConsumerWidget {
           (dialogContext) => StatefulBuilder(
             builder:
                 (dialogContext, setDialogState) => AlertDialog(
-                  title: const Text('場所を追加'),
+                  title: Text(context.l10n.shoppingLocationAddTitle),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       TextField(
                         controller: controller,
                         autofocus: true,
-                        decoration: const InputDecoration(
-                          hintText: '場所の名前（例: スーパー）',
+                        decoration: InputDecoration(
+                          hintText:
+                              dialogContext
+                                  .l10n
+                                  .shoppingLocationNameHintWithExample,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -223,7 +227,9 @@ class ShoppingLocationPage extends ConsumerWidget {
                         contentPadding: EdgeInsets.zero,
                         leading: const Icon(Icons.map),
                         title: Text(
-                          selectedLatitude != null ? '位置設定済み' : '地図で場所を設定',
+                          selectedLatitude != null
+                              ? dialogContext.l10n.shoppingLocationPositionSet
+                              : dialogContext.l10n.shoppingLocationSetOnMap,
                         ),
                         trailing:
                             !isPremium
@@ -254,8 +260,11 @@ class ShoppingLocationPage extends ConsumerWidget {
                                   rootNavigator: true,
                                 ).context;
                             showGlobalActionToast(
-                              message: '位置情報リマインダーはプレミアム機能です',
-                              actionLabel: 'アップグレード',
+                              message:
+                                  dialogContext
+                                      .l10n
+                                      .settingsLocationReminderPremiumOnly,
+                              actionLabel: dialogContext.l10n.commonUpgrade,
                               onAction:
                                   () => showPaywall(context: paywallContext),
                             );
@@ -322,7 +331,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                           }
                         }
                       },
-                      child: const Text('追加'),
+                      child: Text(dialogContext.l10n.commonAdd),
                     ),
                     TextButton(
                       onPressed: () {
@@ -332,7 +341,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                         );
                         Navigator.pop(dialogContext);
                       },
-                      child: const Text('キャンセル'),
+                      child: Text(dialogContext.l10n.commonCancel),
                     ),
                   ],
                 ),
@@ -350,11 +359,13 @@ class ShoppingLocationPage extends ConsumerWidget {
       context: context,
       builder:
           (dialogContext) => AlertDialog(
-            title: const Text('場所を編集'),
+            title: Text(dialogContext.l10n.shoppingLocationEditTitle),
             content: TextField(
               controller: controller,
               autofocus: true,
-              decoration: const InputDecoration(hintText: '場所の名前'),
+              decoration: InputDecoration(
+                hintText: dialogContext.l10n.shoppingLocationNameHint,
+              ),
             ),
             actions: [
               TextButton(
@@ -379,7 +390,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                     }
                   }
                 },
-                child: const Text('保存'),
+                child: Text(dialogContext.l10n.commonSave),
               ),
               TextButton(
                 onPressed: () {
@@ -389,7 +400,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                   );
                   Navigator.pop(dialogContext);
                 },
-                child: const Text('キャンセル'),
+                child: Text(dialogContext.l10n.commonCancel),
               ),
             ],
           ),
@@ -405,8 +416,14 @@ class ShoppingLocationPage extends ConsumerWidget {
       context: context,
       builder:
           (dialogContext) => AlertDialog(
-            title: Text('「${location.name}」を削除しますか？'),
-            content: const Text('この場所を削除しても、この場所が設定されている買い物リストには影響しません'),
+            title: Text(
+              dialogContext.l10n.shoppingLocationDeleteConfirmTitle(
+                location.name,
+              ),
+            ),
+            content: Text(
+              dialogContext.l10n.shoppingLocationDeleteConfirmMessage,
+            ),
             actions: [
               TextButton(
                 onPressed: () async {
@@ -426,7 +443,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                   }
                 },
                 child: Text(
-                  '削除',
+                  dialogContext.l10n.commonDelete,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: context.appTheme.neutral.danger,
                   ),
@@ -440,7 +457,7 @@ class ShoppingLocationPage extends ConsumerWidget {
                   );
                   Navigator.pop(dialogContext);
                 },
-                child: const Text('キャンセル'),
+                child: Text(dialogContext.l10n.commonCancel),
               ),
             ],
           ),

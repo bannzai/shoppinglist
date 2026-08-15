@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -40,7 +41,7 @@ class DeleteConfirmDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'このリストを削除しますか?',
+            context.l10n.listSettingDeleteConfirmTitle,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w700,
               color: neutral.ink,
@@ -48,7 +49,10 @@ class DeleteConfirmDialog extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            '「$shoppingListName」とその中の $itemCount件 のアイテムが削除されます。元に戻せません。',
+            context.l10n.listSettingDeleteConfirmMessage(
+              shoppingListName,
+              itemCount,
+            ),
             textAlign: TextAlign.center,
             style: Theme.of(
               context,
@@ -59,7 +63,7 @@ class DeleteConfirmDialog extends StatelessWidget {
             children: [
               Expanded(
                 child: AppPill(
-                  label: 'キャンセル',
+                  label: context.l10n.commonCancel,
                   variant: AppPillVariant.ghost,
                   large: true,
                   expanded: true,
@@ -79,7 +83,7 @@ class DeleteConfirmDialog extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: AppPill(
-                  label: '削除',
+                  label: context.l10n.commonDelete,
                   variant: AppPillVariant.dangerSolid,
                   large: true,
                   expanded: true,

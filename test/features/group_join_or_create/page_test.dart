@@ -7,6 +7,7 @@ import 'package:shoppinglist/features/group_join_or_create/page.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../helpers/localized_test_app.dart';
 
 const _appUser = AppUser(id: 'test-user-001');
 
@@ -18,7 +19,7 @@ Widget _wrap() => ProviderScope(
       (ref) => UserDatabase(userID: _appUser.id),
     ),
   ],
-  child: MaterialApp(
+  child: localizedTestApp(
     theme: buildAppTheme(accent: AccentPreset.shu),
     home: const GroupJoinOrCreatePage(appUser: _appUser),
   ),

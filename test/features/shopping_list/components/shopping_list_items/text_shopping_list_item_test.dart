@@ -15,6 +15,7 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../../../helpers/localized_test_app.dart';
 
 /// 検証用アイテム。message / status / color / description / imageURL 以外は固定。
 GroupShoppingListItem _item({
@@ -185,7 +186,7 @@ Future<void> _pump(
         // 同じ Provider の override は後勝ちなので、テスト用の記録フェイクで上書きできる。
         ...extraOverrides,
       ],
-      child: MaterialApp(
+      child: localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: TextShoppingListItemWidget(

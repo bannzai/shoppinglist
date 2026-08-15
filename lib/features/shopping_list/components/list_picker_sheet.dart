@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
@@ -70,7 +71,7 @@ class ListPickerSheet extends HookConsumerWidget {
               child: Row(
                 children: [
                   Text(
-                    'リストを切り替える',
+                    context.l10n.shoppingListPickerTitle,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: tokens.neutral.ink2,
@@ -122,6 +123,7 @@ class ListPickerSheet extends HookConsumerWidget {
                 final navigator = Navigator.of(context);
                 final messenger = ScaffoldMessenger.of(context);
                 final sheetRoute = ModalRoute.of(context);
+                final l10n = context.l10n;
                 isCreatingList.value = true;
                 try {
                   final newList = await shoppingListAdd.call(
@@ -137,9 +139,9 @@ class ListPickerSheet extends HookConsumerWidget {
                   messenger.showSnackBar(
                     SnackBar(
                       persist: false,
-                      content: Text(e.toString()),
+                      content: Text(l10n.shoppingListLimitExceeded(e.limit)),
                       action: SnackBarAction(
-                        label: 'アップグレード',
+                        label: l10n.commonUpgrade,
                         onPressed:
                             () => showPaywall(context: navigator.context),
                       ),
@@ -149,7 +151,7 @@ class ListPickerSheet extends HookConsumerWidget {
                   logError(e, st);
                   popRouteSafely(navigator: navigator, route: sheetRoute);
                   messenger.showSnackBar(
-                    SnackBar(content: Text(describeError(e, st).message)),
+                    SnackBar(content: Text(describeError(l10n, e, st).message)),
                   );
                 } finally {
                   // シートが既に dispose 済み(手動クローズ等)の場合に
@@ -204,7 +206,7 @@ class ListPickerAddListRow extends StatelessWidget {
               Icon(Icons.add, size: 18, color: tokens.accent),
             const SizedBox(width: 8),
             Text(
-              '新しいリストを追加',
+              context.l10n.shoppingListPickerAddList,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: tokens.accent,

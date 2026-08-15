@@ -12,6 +12,7 @@ import 'package:shoppinglist/provider/shopping_list_fab_menu.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../../helpers/localized_test_app.dart';
 
 /// リスト作成の呼び出しを記録するモック（Firestore を叩かない）。
 class _RecordingShoppingListAdd extends ShoppingListAdd {
@@ -207,7 +208,7 @@ void main() {
             ),
           ),
         ],
-        child: MaterialApp(
+        child: localizedTestApp(
           theme: buildAppTheme(accent: AccentPreset.shu),
           home: Scaffold(
             // 実アプリの ListTopBar と同じく画面右上に置く（メニューの展開位置を揃える）。

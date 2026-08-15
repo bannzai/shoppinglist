@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/features/group_invitation/page.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
@@ -48,14 +49,13 @@ class GroupJoinOrCreatePage extends HookConsumerWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                'はじめましょう',
+                context.l10n.groupJoinHeading,
                 style: Theme.of(context).textTheme.headlineSmall,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
               Text(
-                '家族やパートナーから招待コードを受け取っていますか？\n'
-                'コードで参加すると同じ買い物リストを一緒に使えます。',
+                context.l10n.groupJoinDescription,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: neutral.ink2,
                   height: 1.7,
@@ -78,7 +78,7 @@ class GroupJoinOrCreatePage extends HookConsumerWidget {
                 width: double.infinity,
                 child: AppPill(
                   key: const ValueKey('group_join_or_create_join_button'),
-                  label: '招待コードで参加',
+                  label: context.l10n.groupInvitationTitle,
                   variant: AppPillVariant.accent,
                   large: true,
                   expanded: true,
@@ -107,7 +107,10 @@ class GroupJoinOrCreatePage extends HookConsumerWidget {
                 width: double.infinity,
                 child: AppPill(
                   key: const ValueKey('group_join_or_create_create_button'),
-                  label: isCreating.value ? '作成中...' : '自分のリストを作る',
+                  label:
+                      isCreating.value
+                          ? context.l10n.commonCreating
+                          : context.l10n.groupJoinCreateSolo,
                   variant: AppPillVariant.ghost,
                   large: true,
                   expanded: true,
@@ -119,6 +122,7 @@ class GroupJoinOrCreatePage extends HookConsumerWidget {
                               name: 'tap_create_solo_group',
                               parameters: null,
                             );
+                            final l10n = context.l10n;
                             isCreating.value = true;
                             errorMessage.value = null;
                             try {
@@ -133,7 +137,8 @@ class GroupJoinOrCreatePage extends HookConsumerWidget {
                               // 破棄済み hook への書き込みを避けるため isCreating は戻さない。
                             } catch (e, st) {
                               logError(e, st);
-                              errorMessage.value = describeError(e, st).message;
+                              errorMessage.value =
+                                  describeError(l10n, e, st).message;
                               isCreating.value = false;
                             }
                           },

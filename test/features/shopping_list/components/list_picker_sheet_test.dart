@@ -10,13 +10,14 @@ import 'package:shoppinglist/features/shopping_list/components/list_picker_sheet
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../../helpers/localized_test_app.dart';
 
 // ListPickerSheet は本体ツリー（ListTopBar）で取得済みの AppUser を引数で受け取る。
 // モーダルシートは AppEntityPrepareResolver の外に出るため、シート内で appUserProvider を
 // read しても AsyncLoading(null) になりうる。値を warm な親ツリーから渡す設計。
 // ここではシートのレンダリング（リスト名・選択中チェック・追加行）の回帰を検証する。
 Widget _wrap(Widget child) => ProviderScope(
-  child: MaterialApp(
+  child: localizedTestApp(
     theme: buildAppTheme(accent: AccentPreset.shu),
     home: Scaffold(body: child),
   ),
@@ -99,7 +100,7 @@ Future<void> _pumpSheetHost(
       overrides: [
         shoppingListAddProvider(groupID: 'group-1').overrideWith((ref) => fake),
       ],
-      child: MaterialApp(
+      child: localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: _SheetHost(
           sheet: ListPickerSheet(

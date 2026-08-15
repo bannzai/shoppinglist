@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 
 /// 和紙テイストの中立色パレット（accent を除く）。
 @immutable
@@ -121,7 +122,6 @@ enum AccentPreset {
     light: Color(0xFFC2410C),
     softLight: Color(0xFFFBE4D0),
     inkLight: Color(0xFF7C2A07),
-    label: '朱',
   ),
 
   /// 抹茶。
@@ -130,7 +130,6 @@ enum AccentPreset {
     light: Color(0xFF1F6B4E),
     softLight: Color(0xFFDCEBDF),
     inkLight: Color(0xFF0F3D2A),
-    label: '抹茶',
   ),
 
   /// 藍。
@@ -139,7 +138,6 @@ enum AccentPreset {
     light: Color(0xFF0F4C81),
     softLight: Color(0xFFD8E4F0),
     inkLight: Color(0xFF0A2E50),
-    label: '藍',
   ),
 
   /// 墨。
@@ -148,7 +146,6 @@ enum AccentPreset {
     light: Color(0xFF1B1B1B),
     softLight: Color(0xFFE8E5DD),
     inkLight: Color(0xFF000000),
-    label: '墨',
   ),
 
   /// 朽葉。
@@ -157,7 +154,6 @@ enum AccentPreset {
     light: Color(0xFFB45309),
     softLight: Color(0xFFF6E1C9),
     inkLight: Color(0xFF6B2F05),
-    label: '朽葉',
   );
 
   const AccentPreset({
@@ -165,7 +161,6 @@ enum AccentPreset {
     required this.light,
     required this.softLight,
     required this.inkLight,
-    required this.label,
   });
 
   /// Firestore `users/{uid}.themeColorHex` に保存する `#RRGGBB` 文字列。
@@ -180,9 +175,17 @@ enum AccentPreset {
 
   /// accentSoft 上に乗せる濃文字色（accentInk）。
   final Color inkLight;
+}
 
+extension AccentPresetL10n on AccentPreset {
   /// 設定画面に表示する和の伝統色名。
-  final String label;
+  String label(BuildContext context) => switch (this) {
+    AccentPreset.shu => context.l10n.settingsThemeColorShu,
+    AccentPreset.matcha => context.l10n.settingsThemeColorMatcha,
+    AccentPreset.ai => context.l10n.settingsThemeColorAi,
+    AccentPreset.sumi => context.l10n.settingsThemeColorSumi,
+    AccentPreset.kuchiba => context.l10n.settingsThemeColorKuchiba,
+  };
 }
 
 /// アプリ全体で参照するデザイントークン。

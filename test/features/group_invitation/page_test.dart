@@ -5,6 +5,7 @@ import 'package:shoppinglist/features/group_invitation/page.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../helpers/localized_test_app.dart';
 
 /// ソフトウェアキーボード表示中の viewport 縮小を MediaQuery.viewInsets で再現する。
 /// Scaffold の resizeToAvoidBottomInset がこの値を読んで body の高さを縮める。
@@ -19,7 +20,7 @@ Widget _wrap() => ProviderScope(
       (ref) => UserDatabase(userID: 'test-user-001'),
     ),
   ],
-  child: MaterialApp(
+  child: localizedTestApp(
     theme: buildAppTheme(accent: AccentPreset.shu),
     home: Builder(
       builder:

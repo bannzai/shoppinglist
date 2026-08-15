@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/config/feature_flags.dart';
@@ -70,7 +71,7 @@ class PaywallPage extends ConsumerWidget {
               const SizedBox(height: 16),
               Center(
                 child: Text(
-                  'いつでもキャンセル可能・自動更新は購入後 24 時間前まで',
+                  context.l10n.paywallSubscriptionNote,
                   textAlign: TextAlign.center,
                   style: Theme.of(
                     context,
@@ -112,7 +113,7 @@ class _PaywallFooterLinks extends ConsumerWidget {
         TextSpan(
           children: [
             TextSpan(
-              text: '利用規約',
+              text: context.l10n.settingsTermsOfService,
               style: linkStyle,
               recognizer:
                   TapGestureRecognizer()
@@ -129,7 +130,7 @@ class _PaywallFooterLinks extends ConsumerWidget {
             ),
             TextSpan(text: '   ·   ', style: separatorStyle),
             TextSpan(
-              text: 'プライバシー',
+              text: context.l10n.paywallPrivacyLink,
               style: linkStyle,
               recognizer:
                   TapGestureRecognizer()
@@ -146,7 +147,7 @@ class _PaywallFooterLinks extends ConsumerWidget {
             ),
             TextSpan(text: '   ·   ', style: separatorStyle),
             TextSpan(
-              text: '復元',
+              text: context.l10n.paywallRestore,
               style: linkStyle,
               recognizer:
                   TapGestureRecognizer()
@@ -161,7 +162,7 @@ class _PaywallFooterLinks extends ConsumerWidget {
                           return;
                         }
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('購入を復元しました')),
+                          SnackBar(content: Text(context.l10n.paywallRestored)),
                         );
                       } catch (e, st) {
                         if (!context.mounted) {
@@ -215,7 +216,7 @@ class _Hero extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Text(
-          'プレミアムにアップグレード',
+          context.l10n.paywallHeroTitle,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w800,
             color: tokens.neutral.ink,
@@ -224,7 +225,7 @@ class _Hero extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          '全機能を解放して、家族みんなで気持ちよく使えます。',
+          context.l10n.paywallHeroDescription,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: tokens.neutral.ink2,
             height: 1.6,
@@ -239,20 +240,20 @@ class _Hero extends StatelessWidget {
 class _FeatureGrid extends StatelessWidget {
   const _FeatureGrid();
 
-  static const _features = [
-    // 店舗ごとの並び順はファーストリリースでは非表示 (issue #465)。
-    if (shoppingLocationFeatureEnabled)
-      (Icons.location_on_outlined, '店舗ごとの並び順'),
-    (Icons.photo_camera_outlined, '写真からのアイテム抽出（月 50 回）'),
-    (Icons.auto_fix_high, 'URL からのアイテム抽出（月 50 回）'),
-    (Icons.palette_outlined, '5 色のテーマカラー'),
-    (Icons.all_inclusive, 'リスト保存期間が無制限'),
-    (Icons.receipt_long_outlined, 'リストにレシートを保存'),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final tokens = context.appTheme;
+    final l10n = context.l10n;
+    final features = <(IconData, String)>[
+      // 店舗ごとの並び順はファーストリリースでは非表示 (issue #465)。
+      if (shoppingLocationFeatureEnabled)
+        (Icons.location_on_outlined, l10n.paywallFeatureLocationOrder),
+      (Icons.photo_camera_outlined, l10n.paywallFeaturePhotoExtraction),
+      (Icons.auto_fix_high, l10n.paywallFeatureUrlExtraction),
+      (Icons.palette_outlined, l10n.paywallFeatureThemeColors),
+      (Icons.all_inclusive, l10n.paywallFeatureUnlimitedRetention),
+      (Icons.receipt_long_outlined, l10n.paywallFeatureReceipt),
+    ];
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
@@ -262,9 +263,9 @@ class _FeatureGrid extends StatelessWidget {
       ),
       child: Column(
         children: [
-          for (final (icon, label) in _features) ...[
+          for (final (icon, label) in features) ...[
             _FeatureRow(icon: icon, label: label),
-            if (label != _features.last.$2) const SizedBox(height: 8),
+            if (label != features.last.$2) const SizedBox(height: 8),
           ],
         ],
       ),
@@ -340,7 +341,7 @@ class _ErrorBody extends HookWidget {
             Text('📡', style: Theme.of(context).textTheme.displayMedium),
             const SizedBox(height: 8),
             Text(
-              describeError(exception, stackTrace).message,
+              describeError(context.l10n, exception, stackTrace).message,
               textAlign: TextAlign.center,
               style: Theme.of(
                 context,
@@ -348,7 +349,7 @@ class _ErrorBody extends HookWidget {
             ),
             const SizedBox(height: 16),
             AppPill(
-              label: '再試行',
+              label: context.l10n.commonRetry,
               variant: AppPillVariant.accent,
               onPressed: onRetry,
               icon: null,
@@ -369,7 +370,7 @@ class _NoPlansBody extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Text(
-          '現在ご利用いただけるプランがありません',
+          context.l10n.paywallNoPlans,
           textAlign: TextAlign.center,
           style: Theme.of(
             context,
@@ -444,7 +445,7 @@ class _PaywallPackageTile extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(999),
                         ),
                         child: Text(
-                          'おすすめ',
+                          context.l10n.paywallRecommendedBadge,
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
@@ -486,13 +487,15 @@ class _PaywallPackageTile extends ConsumerWidget {
               final navigator = Navigator.of(context);
               final paywallRoute = ModalRoute.of(context);
               try {
-                final completed = await purchase.call(package);
+                final completed = await purchase.call(context.l10n, package);
                 if (!context.mounted) {
                   return;
                 }
                 if (completed) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('購入ありがとうございました')),
+                    SnackBar(
+                      content: Text(context.l10n.paywallPurchaseCompleted),
+                    ),
                   );
                   popRouteSafely(navigator: navigator, route: paywallRoute);
                 }
@@ -503,7 +506,7 @@ class _PaywallPackageTile extends ConsumerWidget {
                 showErrorSnackBar(context, e, st);
               }
             },
-            child: const Text('購入'),
+            child: Text(context.l10n.paywallPurchaseButton),
           ),
         ],
       ),

@@ -9,6 +9,7 @@ import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/entity/group_shopping_list_receipt.dart';
 import 'package:shoppinglist/components/image/storage_image.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/receipt.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
@@ -84,7 +85,7 @@ class _ReceiptEditSheet extends HookConsumerWidget {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.camera_alt),
-                    title: const Text('カメラで撮影'),
+                    title: Text(context.l10n.receiptTakePhoto),
                     onTap: () {
                       Navigator.pop(sheetContext);
                       pickImage(ImageSource.camera);
@@ -92,7 +93,7 @@ class _ReceiptEditSheet extends HookConsumerWidget {
                   ),
                   ListTile(
                     leading: const Icon(Icons.photo_library),
-                    title: const Text('フォトライブラリから選択'),
+                    title: Text(context.l10n.receiptChooseFromLibrary),
                     onTap: () {
                       Navigator.pop(sheetContext);
                       pickImage(ImageSource.gallery);
@@ -118,6 +119,7 @@ class _ReceiptEditSheet extends HookConsumerWidget {
       // ルートに限定する（黒画面対策 #372 と同じ）。
       final navigator = Navigator.of(context);
       final sheetRoute = ModalRoute.of(context);
+      final l10n = context.l10n;
       isSaving.value = true;
       try {
         final amount = int.tryParse(amountController.text.trim());
@@ -170,7 +172,7 @@ class _ReceiptEditSheet extends HookConsumerWidget {
         popRouteSafely(navigator: navigator, route: sheetRoute);
       } catch (e, st) {
         // シート上の SnackBar は背後の Scaffold に隠れるため、前面トーストで通知する。
-        showGlobalErrorToast(e, st);
+        showGlobalErrorToast(l10n, e, st);
       } finally {
         if (context.mounted) {
           isSaving.value = false;
@@ -189,7 +191,9 @@ class _ReceiptEditSheet extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              receipt == null ? 'レシートを追加' : 'レシート',
+              receipt == null
+                  ? context.l10n.receiptAdd
+                  : context.l10n.receiptSheetTitle,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleMedium,
             ),
@@ -204,20 +208,20 @@ class _ReceiptEditSheet extends HookConsumerWidget {
               controller: amountController,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: const InputDecoration(
-                labelText: '金額',
+              decoration: InputDecoration(
+                labelText: context.l10n.receiptAmountLabel,
                 prefixText: '¥ ',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: memoController,
               maxLines: 3,
-              decoration: const InputDecoration(
-                labelText: 'メモ',
-                hintText: '店名や購入品などのメモ',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: context.l10n.receiptMemoLabel,
+                hintText: context.l10n.receiptMemoHint,
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 24),
@@ -230,7 +234,7 @@ class _ReceiptEditSheet extends HookConsumerWidget {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                      : const Text('保存'),
+                      : Text(context.l10n.commonSave),
             ),
           ],
         ),
@@ -279,7 +283,7 @@ class _ReceiptImageField extends StatelessWidget {
       child: OutlinedButton.icon(
         onPressed: onTapChange,
         icon: const Icon(Icons.add_a_photo),
-        label: const Text('レシートを撮影 / 選択'),
+        label: Text(context.l10n.receiptCaptureOrSelect),
       ),
     );
   }

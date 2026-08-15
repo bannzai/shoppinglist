@@ -13,6 +13,7 @@ import 'package:shoppinglist/provider/string_shared_preferences.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
+import '../../../helpers/localized_test_app.dart';
 
 /// CreateListSpotlightHost の表示・非表示と、表示時の SharedPreferences 記録を検証する(Issue #494, #508)。
 /// 送信系(Firebase)を伴わないため widget test で完結する。
@@ -54,7 +55,7 @@ Future<ProviderContainer> _pump(
   await tester.pumpWidget(
     UncontrolledProviderScope(
       container: container,
-      child: MaterialApp(
+      child: localizedTestApp(
         navigatorKey: appNavigatorKey,
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
@@ -154,7 +155,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: MaterialApp(
+        child: localizedTestApp(
           navigatorKey: appNavigatorKey,
           theme: buildAppTheme(accent: AccentPreset.shu),
           home: const Scaffold(body: SizedBox.shrink()),
@@ -217,7 +218,7 @@ void main() {
     Widget buildApp({required List<GroupShoppingListItem>? shoppingListItems}) {
       return UncontrolledProviderScope(
         container: container,
-        child: MaterialApp(
+        child: localizedTestApp(
           navigatorKey: appNavigatorKey,
           theme: buildAppTheme(accent: AccentPreset.shu),
           home: Scaffold(
@@ -296,7 +297,7 @@ void main() {
     }) {
       return UncontrolledProviderScope(
         container: container,
-        child: MaterialApp(
+        child: localizedTestApp(
           navigatorKey: appNavigatorKey,
           theme: buildAppTheme(accent: AccentPreset.shu),
           home: Scaffold(

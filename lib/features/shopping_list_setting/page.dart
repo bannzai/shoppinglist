@@ -15,6 +15,7 @@ import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/features/shopping_list_setting/delete_confirm_dialog.dart';
 import 'package:shoppinglist/features/shopping_list_setting/invitation_code_dialog.dart';
 import 'package:shoppinglist/features/shopping_list_setting/shopping_location_select_page.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
@@ -86,7 +87,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: neutral.paper,
       appBar: AppBar(
-        title: const Text('買い物リスト設定'),
+        title: Text(context.l10n.listSettingTitle),
         backgroundColor: neutral.paper,
         leading: IconButton(
           icon: const Icon(Icons.close),
@@ -99,7 +100,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const AppSectionLabel(text: 'リスト名'),
+              AppSectionLabel(text: context.l10n.listSettingNameSection),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -141,7 +142,9 @@ class ShoppingListSettingPage extends HookConsumerWidget {
               const SizedBox(height: 14),
               // 買い物する場所はファーストリリースでは非表示 (issue #465)。
               if (shoppingLocationFeatureEnabled) ...[
-                const AppSectionLabel(text: '買い物する場所'),
+                AppSectionLabel(
+                  text: context.l10n.listSettingShoppingLocationSection,
+                ),
                 _ShoppingLocationCell(
                   groupID: groupID,
                   currentLocationID: shoppingListState.value.shoppingLocationID,
@@ -154,15 +157,15 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 14),
               ],
-              const AppSectionLabel(text: 'カテゴリ'),
+              AppSectionLabel(text: context.l10n.commonCategory),
               ClipRRect(
                 borderRadius: BorderRadius.circular(14),
                 child: Container(
                   color: neutral.card,
                   child: AppCell(
                     icon: Icons.category_outlined,
-                    title: 'カテゴリ',
-                    subtitle: '自動分類のキーワード管理',
+                    title: context.l10n.commonCategory,
+                    subtitle: context.l10n.listSettingCategorySubtitle,
                     onTap: () {
                       analytics.logEvent(
                         name: 'navigate_category_from_list_setting',
@@ -182,10 +185,12 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                 ),
               ),
               const SizedBox(height: 14),
-              const AppSectionLabel(text: '保存期間'),
+              AppSectionLabel(
+                text: context.l10n.listSettingStoragePeriodSection,
+              ),
               _StoragePeriodCard(isPremium: isPremium),
               const SizedBox(height: 14),
-              const AppSectionLabel(text: '共有'),
+              AppSectionLabel(text: context.l10n.listSettingShareSection),
               ClipRRect(
                 borderRadius: BorderRadius.circular(14),
                 child: Container(
@@ -194,7 +199,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                     children: [
                       AppCell(
                         icon: Icons.person_add_outlined,
-                        title: 'グループに招待コードを送る',
+                        title: context.l10n.listSettingSendInvitationCode,
                         onTap:
                             isCreatingInvitation.value
                                 ? null
@@ -211,7 +216,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                       const AppDivider(),
                       AppCell(
                         icon: Icons.people_outlined,
-                        title: 'グループ設定',
+                        title: context.l10n.listSettingGroupSetting,
                         onTap: () {
                           analytics.logEvent(
                             name: 'tap_navigate_grp_setting',
@@ -235,7 +240,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                 ),
               ),
               const SizedBox(height: 14),
-              const AppSectionLabel(text: 'リストの操作'),
+              AppSectionLabel(text: context.l10n.listSettingListActionsSection),
               _ListActionsCard(
                 groupID: groupID,
                 shoppingListID: shoppingListID,
@@ -272,7 +277,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'このリストを削除',
+                            context.l10n.listSettingDeleteList,
                             style: Theme.of(
                               context,
                             ).textTheme.bodyLarge?.copyWith(
@@ -314,8 +319,8 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     if (!group.nameIsNotEmpty) {
       final rootContext = Navigator.of(context, rootNavigator: true).context;
       showGlobalActionToast(
-        message: '招待する前にグループ名を設定してください',
-        actionLabel: 'グループ設定',
+        message: context.l10n.listSettingGroupNameRequired,
+        actionLabel: context.l10n.listSettingGroupSetting,
         onAction:
             () => Navigator.push(
               rootContext,
@@ -326,6 +331,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
       );
       return;
     }
+    final l10n = context.l10n;
     isCreatingInvitation.value = true;
     try {
       final invitation = await functions.createGroupInvitation(
@@ -336,7 +342,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
       }
       await showGeneralDialog<void>(
         context: context,
-        barrierLabel: '招待コード',
+        barrierLabel: context.l10n.listSettingInvitationCodeTitle,
         barrierDismissible: true,
         barrierColor: Colors.transparent,
         transitionDuration: const Duration(milliseconds: 160),
@@ -357,7 +363,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     } catch (e, st) {
       // このページはボトムシート上に表示されるため、SnackBar は背後の
       // Scaffold に描画されて見えない。前面に出るグローバルトーストで通知する。
-      showGlobalErrorToast(e, st);
+      showGlobalErrorToast(l10n, e, st);
     } finally {
       isCreatingInvitation.value = false;
     }
@@ -374,7 +380,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     );
     await showGeneralDialog<void>(
       context: context,
-      barrierLabel: '買い物リスト削除確認',
+      barrierLabel: context.l10n.listSettingDeleteConfirmBarrierLabel,
       barrierDismissible: true,
       barrierColor: Colors.transparent,
       transitionDuration: const Duration(milliseconds: 160),
@@ -418,8 +424,8 @@ class _ShoppingLocationCell extends ConsumerWidget {
         color: context.appTheme.neutral.card,
         child: AppCell(
           icon: Icons.place_outlined,
-          title: currentName ?? '未設定',
-          detail: '変更',
+          title: currentName ?? context.l10n.listSettingLocationUnset,
+          detail: context.l10n.listSettingLocationChangeDetail,
           onTap: () async {
             analytics.logEvent(
               name: 'tap_change_list_location',
@@ -489,7 +495,9 @@ class _StoragePeriodCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isPremium ? 'プレミアム: 無制限' : '作成から30日間',
+                  isPremium
+                      ? context.l10n.listSettingStoragePeriodPremium
+                      : context.l10n.listSettingStoragePeriodFree,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -499,7 +507,7 @@ class _StoragePeriodCard extends StatelessWidget {
                 if (!isPremium) ...[
                   const SizedBox(height: 2),
                   Text(
-                    'プレミアムなら期限なしで残せます',
+                    context.l10n.listSettingStoragePeriodUpsell,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontSize: 11.5,
                       color: neutral.ink3,
@@ -512,7 +520,7 @@ class _StoragePeriodCard extends StatelessWidget {
           if (!isPremium) ...[
             const SizedBox(width: 8),
             AppPill(
-              label: 'アップグレード',
+              label: context.l10n.commonUpgrade,
               icon: Icons.workspace_premium,
               variant: AppPillVariant.soft,
               onPressed: () {
@@ -566,7 +574,7 @@ class _ListActionsCard extends ConsumerWidget {
           children: [
             AppCell(
               icon: Icons.content_copy_outlined,
-              title: '現在のリストを複製',
+              title: context.l10n.shoppingListDuplicateCurrentList,
               onTap:
                   () => _duplicate(
                     context: context,
@@ -598,6 +606,9 @@ class _ListActionsCard extends ConsumerWidget {
     // シートが閉じられた後でもアクションからペイウォールを開けるよう、
     // 生存し続ける root Navigator の context を束ねておく。
     final paywallContext = Navigator.of(context, rootNavigator: true).context;
+    final l10n = context.l10n;
+    final duplicatedMessage = l10n.shoppingListDuplicated;
+    final upgradeLabel = l10n.commonUpgrade;
     try {
       await shoppingListDuplicate.call(
         createUserID: shoppingList.createUserID,
@@ -605,15 +616,15 @@ class _ListActionsCard extends ConsumerWidget {
         sourceShoppingList: shoppingList,
         shoppingListItems: items,
       );
-      showGlobalToast('リストを複製しました', title: null);
+      showGlobalToast(duplicatedMessage, title: null);
     } on ShoppingListLimitExceededException catch (e) {
       showGlobalActionToast(
-        message: e.toString(),
-        actionLabel: 'アップグレード',
+        message: l10n.shoppingListLimitExceeded(e.limit),
+        actionLabel: upgradeLabel,
         onAction: () => showPaywall(context: paywallContext),
       );
     } catch (e, st) {
-      showGlobalErrorToast(e, st);
+      showGlobalErrorToast(l10n, e, st);
     }
   }
 }

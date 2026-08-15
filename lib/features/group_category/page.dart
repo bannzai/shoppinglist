@@ -10,6 +10,7 @@ import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/features/group_category/category_empty_state.dart';
 import 'package:shoppinglist/features/group_category_edit/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/category_matcher.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_category.dart';
@@ -46,7 +47,10 @@ class GroupCategoryPage extends ConsumerWidget {
     final groupCategoryAdd = ref.watch(
       groupCategoryAddProvider(groupID: groupID),
     );
-    final title = selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ';
+    final title =
+        selectionForItem != null
+            ? context.l10n.shoppingListCategorySelect
+            : context.l10n.commonCategory;
 
     // ログアウト・ユーザー切替直後は uid が null になる。このページが Navigator 上に
     // 残ったまま追加操作されると null 例外で落ちるため、uid が取れるまで
@@ -181,7 +185,7 @@ Future<void> _addCategoryAndNavigateToEdit({
 class _CategoryScaffold extends StatelessWidget {
   final Widget child;
   final String title;
-  const _CategoryScaffold({required this.child, this.title = 'カテゴリ'});
+  const _CategoryScaffold({required this.child, required this.title});
   @override
   Widget build(BuildContext context) {
     final tokens = context.appTheme;
@@ -229,9 +233,14 @@ class _CategoryListBody extends HookConsumerWidget {
     // ログアウト・ユーザー切替直後の uid=null の間に FAB から追加操作されると
     // null 例外で落ちるため、uid が取れるまでローディング表示にして操作させない。
     // hook (useState) の後に置くことで build 間の hook 呼び出し順を変えない。
+    final title =
+        selectionForItem != null
+            ? context.l10n.shoppingListCategorySelect
+            : context.l10n.commonCategory;
+
     if (currentUserID == null) {
       return _CategoryScaffold(
-        title: selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ',
+        title: title,
         child: const Center(child: CircularProgressIndicator()),
       );
     }
@@ -242,7 +251,7 @@ class _CategoryListBody extends HookConsumerWidget {
           (categories) => Scaffold(
             backgroundColor: tokens.neutral.paper,
             appBar: AppBar(
-              title: Text(selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ'),
+              title: Text(title),
               backgroundColor: tokens.neutral.paper,
             ),
             // カテゴリ0件時も価値訴求カードを表示する。追加導線は Scaffold の
@@ -266,7 +275,10 @@ class _CategoryListBody extends HookConsumerWidget {
                               child: DropdownButtonFormField<String?>(
                                 initialValue: selectedLocationID.value,
                                 decoration: InputDecoration(
-                                  labelText: '買い物する場所の並び順',
+                                  labelText:
+                                      context
+                                          .l10n
+                                          .groupCategoryLocationOrderLabel,
                                   border: const OutlineInputBorder(),
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 12,
@@ -285,9 +297,9 @@ class _CategoryListBody extends HookConsumerWidget {
                                           : null,
                                 ),
                                 items: [
-                                  const DropdownMenuItem<String?>(
+                                  DropdownMenuItem<String?>(
                                     value: null,
-                                    child: Text('デフォルト'),
+                                    child: Text(context.l10n.commonDefault),
                                   ),
                                   ...locations.map(
                                     (location) => DropdownMenuItem<String?>(
@@ -305,11 +317,13 @@ class _CategoryListBody extends HookConsumerWidget {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         persist: false,
-                                        content: const Text(
-                                          '買い物場所ごとのカテゴリ並び替えはプレミアム機能です',
+                                        content: Text(
+                                          context
+                                              .l10n
+                                              .groupCategoryLocationOrderPremiumOnly,
                                         ),
                                         action: SnackBarAction(
-                                          label: 'アップグレード',
+                                          label: context.l10n.commonUpgrade,
                                           onPressed:
                                               () =>
                                                   showPaywall(context: context),
@@ -359,12 +373,12 @@ class _CategoryListBody extends HookConsumerWidget {
           ),
       error:
           (e, st) => _CategoryScaffold(
-            title: selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ',
+            title: title,
             child: ErrorView(error: e, stackTrace: st),
           ),
       loading:
           () => _CategoryScaffold(
-            title: selectionForItem != null ? 'カテゴリを選択' : 'カテゴリ',
+            title: title,
             child: const Center(child: CircularProgressIndicator()),
           ),
     );
@@ -416,9 +430,11 @@ class _CategoryReorderableList extends ConsumerWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 persist: false,
-                content: const Text('買い物場所ごとのカテゴリ並び替えはプレミアム機能です'),
+                content: Text(
+                  context.l10n.groupCategoryLocationOrderPremiumOnly,
+                ),
                 action: SnackBarAction(
-                  label: 'アップグレード',
+                  label: context.l10n.commonUpgrade,
                   onPressed: () => showPaywall(context: context),
                 ),
               ),
@@ -480,6 +496,9 @@ class _CategoryReorderableList extends ConsumerWidget {
               selectionForItem == null
                   ? null
                   : () {
+                    // pop 後 (= context が破棄された後) に届くエラーもトーストで
+                    // 表示するため、l10n は pop する前に取っておく。
+                    final l10n = context.l10n;
                     analytics.logEvent(
                       name: 'select_category_for_item',
                       parameters: {
@@ -505,7 +524,10 @@ class _CategoryReorderableList extends ConsumerWidget {
                           destinationCategoryID: category.id,
                           categories: categories,
                         )
-                        .catchError(showGlobalErrorToast);
+                        .catchError(
+                          (Object e, StackTrace st) =>
+                              showGlobalErrorToast(l10n, e, st),
+                        );
                     Navigator.pop(context);
                   },
           leading: Icon(
@@ -513,7 +535,9 @@ class _CategoryReorderableList extends ConsumerWidget {
             color: categoryColor,
           ),
           title: Text(category.name),
-          subtitle: Text('キーワード: ${category.keywords.length}件'),
+          subtitle: Text(
+            context.l10n.groupCategoryKeywordCount(category.keywords.length),
+          ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -570,8 +594,10 @@ class _CategoryReorderableList extends ConsumerWidget {
       context: context,
       builder:
           (dialogContext) => AlertDialog(
-            title: Text('「${category.name}」を削除しますか？'),
-            content: const Text('このカテゴリに設定されたキーワードも削除されます'),
+            title: Text(
+              context.l10n.groupCategoryDeleteConfirmTitle(category.name),
+            ),
+            content: Text(context.l10n.groupCategoryDeleteConfirmMessage),
             actions: [
               TextButton(
                 onPressed: () async {
@@ -592,7 +618,7 @@ class _CategoryReorderableList extends ConsumerWidget {
                   }
                 },
                 child: Text(
-                  '削除',
+                  context.l10n.commonDelete,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: context.appTheme.neutral.danger,
                   ),
@@ -606,7 +632,7 @@ class _CategoryReorderableList extends ConsumerWidget {
                   );
                   Navigator.pop(dialogContext);
                 },
-                child: const Text('キャンセル'),
+                child: Text(context.l10n.commonCancel),
               ),
             ],
           ),

@@ -13,6 +13,7 @@ import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../../../helpers/localized_test_app.dart';
 
 GroupCategory _category({
   required String id,
@@ -129,7 +130,7 @@ void main() {
             groupID: mockGroupID,
           ).overrideWith((ref) => spyBatch),
         ],
-        child: MaterialApp(
+        child: localizedTestApp(
           theme: buildAppTheme(accent: AccentPreset.shu),
           home: Scaffold(
             body: ShoppingListItems(

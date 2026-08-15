@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/auth/apple.dart';
 import 'package:shoppinglist/components/auth/google.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -43,14 +44,13 @@ class AuthPage extends HookConsumerWidget {
                   ),
                   const SizedBox(height: 32),
                   Text(
-                    '家族の買い物を、\nひとつのリストへ',
+                    context.l10n.authHeroTitle,
                     style: Theme.of(context).textTheme.displayMedium,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'サインインすると端末をまたいでリストが同期します。'
-                    '広告もメールマガジンもありません。',
+                    context.l10n.authHeroDescription,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: neutral.ink2,
@@ -136,7 +136,7 @@ class GuestStartButton extends HookConsumerWidget {
                 }
               },
               child: Text(
-                'サインインせずにはじめる',
+                context.l10n.authStartWithoutSignIn,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: neutral.ink,
                   fontWeight: FontWeight.w600,
@@ -146,7 +146,7 @@ class GuestStartButton extends HookConsumerWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'あとから設定画面でアカウントをリンクできます',
+            context.l10n.authLinkAccountLaterNote,
             textAlign: TextAlign.center,
             style: Theme.of(
               context,
@@ -180,7 +180,9 @@ class _Note extends StatelessWidget {
     // 利用規約・プライバシーポリシーへのリンクを含む同意文。
     // 多言語化時はこの 1 文（テンプレート）と各リンクのラベルだけを翻訳対象にすると、
     // 語順が変わってもリンク位置が文ごとに追従する（en 例: 'By continuing, you agree to the {terms} and {privacy}.'）。
-    const template = '続けることで {terms} と {privacy} に同意したものとみなされます。';
+    // プレースホルダの実体は _spansFromTemplate が差し込むため、l10n には
+    // `{terms}` `{privacy}` をそのまま渡してテンプレート文字列を復元する。
+    final template = context.l10n.authAgreementNote('{terms}', '{privacy}');
 
     return RichText(
       textAlign: TextAlign.center,
@@ -190,13 +192,13 @@ class _Note extends StatelessWidget {
           textStyle: muted,
           placeholders: {
             'terms': _linkSpan(
-              text: '利用規約',
+              text: context.l10n.settingsTermsOfService,
               style: linkStyle,
               analyticsEventName: 'tap_auth_terms_of_service',
               url: 'https://bannzai.github.io/shoppinglist/Terms',
             ),
             'privacy': _linkSpan(
-              text: 'プライバシーポリシー',
+              text: context.l10n.settingsPrivacyPolicy,
               style: linkStyle,
               analyticsEventName: 'tap_auth_privacy_policy',
               url: 'https://bannzai.github.io/shoppinglist/PrivacyPolicy',

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://raw.githubusercontent.com/bannzai/castle/main/home/.agents/skills/_shared/translate-app.config.schema.json",
+  "format": "arb",
+  "path": "lib/l10n",
+  "source_language": "en",
+  "target_languages": [
+    "ja",
+    "zh",
+    "zh_Hans",
+    "zh_Hant",
+    "ko"
+  ],
+  "engine": "openai",
+  "source_dirs": [
+    "lib"
+  ],
+  "context": "家族やルームメイトと買い物リストを共有できる iOS/Android アプリ「買い物リスト (Shopping List - Family Share)」。リスト作成・アイテムのチェック・並べ替え・グループ共有・カテゴリ整理・レシート読み取り・位置情報リマインダー・プレミアム課金 (paywall) がある。対象ユーザーは日常の買い物を家族と分担する一般ユーザー。UI 文言は簡潔で親しみやすい文体に訳す。アプリ名は各言語のストア表記に合わせ、日本語では「買い物リスト」。",
+  "glossary": {
+    "Premium": {
+      "ja": "プレミアム",
+      "zh_Hans": "高级版",
+      "zh_Hant": "進階版",
+      "ko": "프리미엄",
+      "zh": "高级版"
+    }
+  }
+}

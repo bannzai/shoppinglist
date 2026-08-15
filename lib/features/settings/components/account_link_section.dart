@@ -10,6 +10,7 @@ import 'package:shoppinglist/components/primitives/app_dialog_shell.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/components/primitives/app_setting_section.dart';
 import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -52,9 +53,9 @@ class AccountLinkSection extends HookConsumerWidget {
       try {
         await link();
         if (context.mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('アカウントをリンクしました')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(context.l10n.settingsAccountLinked)),
+          );
         }
       } on SignInWithAppleAuthorizationException catch (e, st) {
         if (e.code == AuthorizationErrorCode.canceled) {
@@ -93,7 +94,7 @@ class AccountLinkSection extends HookConsumerWidget {
     }
 
     return AppSettingSection(
-      title: 'アカウント',
+      title: context.l10n.settingsAccountSection,
       children: [
         if (user.isAnonymous) const GuestAccountDescriptionCell(),
         if (isAppleLinked)
@@ -132,7 +133,7 @@ class GuestAccountDescriptionCell extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Text(
-        'ゲストとして利用中です。アカウントをリンクすると、機種変更後や他の端末でも同じリストとグループを使えます。',
+        context.l10n.settingsAccountGuestDescription,
         style: Theme.of(
           context,
         ).textTheme.bodySmall?.copyWith(color: neutral.ink2, height: 1.6),
@@ -152,7 +153,7 @@ class AppleAccountLinkCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCell(
       icon: Icons.apple,
-      title: 'Apple でアカウントをリンク',
+      title: context.l10n.settingsAccountLinkWithApple,
       onTap: onTap,
       detail: null,
       onSwitch: null,
@@ -173,7 +174,7 @@ class GoogleAccountLinkCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCell(
       icon: Icons.link,
-      title: 'Google でアカウントをリンク',
+      title: context.l10n.settingsAccountLinkWithGoogle,
       onTap: onTap,
       detail: null,
       onSwitch: null,
@@ -194,7 +195,7 @@ class LinkedAccountCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCell(
       icon: Icons.check_circle_outline,
-      title: '$providerName でサインイン済み',
+      title: context.l10n.settingsAccountSignedInWith(providerName),
       onTap: null,
       detail: null,
       onSwitch: null,
@@ -224,7 +225,7 @@ Future<void> _showSignInWithExistingAccountDialog({
   final tokens = context.appTheme;
   final confirmed = await showGeneralDialog<bool>(
     context: context,
-    barrierLabel: 'サインインし直し確認',
+    barrierLabel: context.l10n.settingsAccountReSignInBarrierLabel,
     barrierDismissible: true,
     barrierColor: Colors.transparent,
     transitionDuration: const Duration(milliseconds: 160),
@@ -236,13 +237,12 @@ Future<void> _showSignInWithExistingAccountDialog({
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'このアカウントは別のユーザーで使用されています',
+              dialogContext.l10n.settingsAccountAlreadyInUseTitle,
               style: Theme.of(dialogContext).textTheme.titleLarge,
             ),
             const SizedBox(height: 12),
             Text(
-              'このアカウントでサインインし直しますか?\n'
-              'サインインし直すと、今のゲストデータ（リスト・グループ）は引き継がれません。',
+              dialogContext.l10n.settingsAccountReSignInMessage,
               style: Theme.of(
                 dialogContext,
               ).textTheme.bodyMedium?.copyWith(color: tokens.neutral.ink2),
@@ -252,7 +252,7 @@ Future<void> _showSignInWithExistingAccountDialog({
               children: [
                 Expanded(
                   child: AppPill(
-                    label: 'キャンセル',
+                    label: dialogContext.l10n.commonCancel,
                     variant: AppPillVariant.ghost,
                     expanded: true,
                     onPressed: () => Navigator.pop(dialogContext, false),
@@ -262,7 +262,7 @@ Future<void> _showSignInWithExistingAccountDialog({
                 const SizedBox(width: 12),
                 Expanded(
                   child: AppPill(
-                    label: 'サインインし直す',
+                    label: dialogContext.l10n.settingsAccountReSignInButton,
                     variant: AppPillVariant.danger,
                     expanded: true,
                     onPressed: () => Navigator.pop(dialogContext, true),

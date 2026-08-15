@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 
@@ -52,7 +53,7 @@ class ListErrorCard extends HookWidget {
             Text('📡', style: Theme.of(context).textTheme.displayMedium),
             const SizedBox(height: 10),
             Text(
-              'リストを読み込めませんでした',
+              context.l10n.shoppingListLoadErrorTitle,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
                 color: tokens.neutral.danger,
@@ -61,7 +62,7 @@ class ListErrorCard extends HookWidget {
             const SizedBox(height: 6),
             if (error != null)
               Text(
-                describeError(error, stackTrace).message,
+                describeError(context.l10n, error, stackTrace).message,
                 textAlign: TextAlign.center,
                 style: Theme.of(
                   context,
@@ -69,7 +70,7 @@ class ListErrorCard extends HookWidget {
               ),
             const SizedBox(height: 14),
             AppPill(
-              label: '再試行',
+              label: context.l10n.commonRetry,
               variant: AppPillVariant.accent,
               onPressed: onRetry,
               icon: null,

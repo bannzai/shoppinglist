@@ -7,6 +7,7 @@ import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../helpers/localized_test_app.dart';
 
 const _testGroupID = 'test-group-001';
 const _testCategoryAxisID = 'test-axis-001';
@@ -61,7 +62,7 @@ Future<void> _pumpAndOpenEditPage(
   await tester.pumpWidget(
     ProviderScope(
       overrides: overrides,
-      child: MaterialApp(
+      child: localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: Builder(
@@ -102,7 +103,8 @@ void main() {
 
       // 「完了」を押さずに名前を入力 → 戻る
       await tester.enterText(find.byType(TextField), 'やさい');
-      await tester.pageBack();
+      // tester.pageBack() は tooltip 'Back' を探すが ja ロケールでは '戻る' になるため使えない
+      await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
 
       expect(spy.callCount, 1);
@@ -113,7 +115,8 @@ void main() {
       final spy = _SpyCategoryUpdate();
       await _pumpAndOpenEditPage(tester, overrides: _overrides(spy));
 
-      await tester.pageBack();
+      // tester.pageBack() は tooltip 'Back' を探すが ja ロケールでは '戻る' になるため使えない
+      await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
 
       expect(spy.callCount, 0);

@@ -5,6 +5,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
@@ -91,7 +92,7 @@ class LocationPickerPage extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: neutral.surface,
       appBar: AppBar(
-        title: const Text('場所を地図で選択'),
+        title: Text(context.l10n.shoppingLocationPickerTitle),
         backgroundColor: neutral.surface,
       ),
       body: Stack(
@@ -161,7 +162,7 @@ class LocationPickerPage extends HookConsumerWidget {
                     ),
                   const SizedBox(height: 12),
                   AppPill(
-                    label: 'この場所を設定',
+                    label: context.l10n.shoppingLocationPickerConfirm,
                     variant: AppPillVariant.accent,
                     large: true,
                     expanded: true,

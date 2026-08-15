@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/components/primitives/app_chip.dart';
 import 'package:shoppinglist/entity/group.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 
 /// グループ切替の横スクロールチップ群（高さ 46）。
@@ -34,7 +35,7 @@ class GroupChipsBar extends StatelessWidget {
           final group = groups[index];
           final selected = group.id == currentGroupID;
           return AppChip(
-            label: group.name ?? 'グループ',
+            label: group.name ?? context.l10n.commonGroup,
             active: selected,
             soft: true,
             icon: selected ? Icons.check : null,

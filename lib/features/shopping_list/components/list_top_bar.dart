@@ -7,6 +7,7 @@ import 'package:shoppinglist/features/shopping_list/components/create_list_menu_
 import 'package:shoppinglist/features/shopping_list/components/list_picker_sheet.dart';
 import 'package:shoppinglist/features/shopping_list/components/notify_group_button.dart';
 import 'package:shoppinglist/features/shopping_list_setting/page.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
@@ -95,7 +96,8 @@ class ListTopBar extends ConsumerWidget {
                   children: [
                     Flexible(
                       child: Text(
-                        shoppingList?.name ?? '買い物リスト',
+                        shoppingList?.name ??
+                            context.l10n.shoppingListDefaultName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -132,7 +134,7 @@ class ListTopBar extends ConsumerWidget {
             IconButton(
               key: const Key('list_setting_button'),
               icon: const _SettingsBadgeIcon(baseIcon: Icons.receipt_long),
-              tooltip: 'リスト設定',
+              tooltip: context.l10n.shoppingListSettingTooltip,
               onPressed:
                   shoppingList == null
                       ? null
@@ -171,7 +173,7 @@ class ListTopBar extends ConsumerWidget {
             IconButton(
               key: const Key('app_settings_button'),
               icon: const _SettingsBadgeIcon(baseIcon: Icons.person_outline),
-              tooltip: '設定',
+              tooltip: context.l10n.commonSettings,
               onPressed: () {
                 analytics.logEvent(
                   name: 'tap_open_app_setting',

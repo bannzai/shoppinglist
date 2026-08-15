@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/primitives/app_checkbox.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/ghost_item_row.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
@@ -26,17 +27,17 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
     required this.shoppingListItems,
   });
 
-  static const _hints = [
-    '例: 牛乳 1L',
-    '例: 卵 1パック',
-    '例: パン',
-    '例: 玉ねぎ 2個',
-    '例: トマト',
-  ];
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.appTheme;
+    final l10n = context.l10n;
+    final hints = [
+      l10n.shoppingListHintExample1,
+      l10n.shoppingListHintExample2,
+      l10n.shoppingListHintExample3,
+      l10n.shoppingListHintExample4,
+      l10n.shoppingListHintExample5,
+    ];
     final addShoppingListItem = ref.watch(
       addShoppingListItemProvider(groupID: groupID),
     );
@@ -63,7 +64,7 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
             );
           },
         ),
-        for (final hint in _hints) GhostItemRow(hint: hint),
+        for (final hint in hints) GhostItemRow(hint: hint),
         const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -83,16 +84,16 @@ class EmptyTextShoppingListItems extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'こんな風に使えます',
+                      l10n.shoppingListHintCardTitle,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w700,
                         color: tokens.neutral.ink2,
                       ),
                     ),
                     const SizedBox(height: 6),
-                    _HintLine(text: '・タップしてそのまま入力'),
-                    _HintLine(text: '・return で次の行へ'),
-                    _HintLine(text: '・空行で delete で行を消せます'),
+                    _HintLine(text: l10n.shoppingListHintTap),
+                    _HintLine(text: l10n.shoppingListHintReturn),
+                    _HintLine(text: l10n.shoppingListHintDelete),
                     const _FabLongPressHintLine(),
                   ],
                 ),
@@ -128,7 +129,7 @@ class _StarterRow extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'タップで入力開始',
+                context.l10n.shoppingListStarterRowLabel,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: tokens.accentInk,
                   fontWeight: FontWeight.w500,
@@ -178,7 +179,7 @@ class _FabLongPressHintLine extends StatelessWidget {
       child: Text.rich(
         TextSpan(
           children: [
-            const TextSpan(text: '・右下の '),
+            TextSpan(text: context.l10n.shoppingListHintFabPrefix),
             WidgetSpan(
               alignment: PlaceholderAlignment.middle,
               child: Icon(
@@ -187,7 +188,7 @@ class _FabLongPressHintLine extends StatelessWidget {
                 color: context.appTheme.accent,
               ),
             ),
-            const TextSpan(text: ' を長押しすると写真やURLから追加できます'),
+            TextSpan(text: context.l10n.shoppingListHintFabSuffix),
           ],
         ),
         style: _hintTextStyle(context),

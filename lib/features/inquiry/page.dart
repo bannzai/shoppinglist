@@ -7,6 +7,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
 import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/entity/inquiry_category.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
@@ -39,6 +40,8 @@ class InquiryPage extends HookConsumerWidget {
 
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
+    // 送信完了トーストは await の後に出すため、BuildContext を跨がないよう先に解決する。
+    final l10n = context.l10n;
 
     Future<void> submit() async {
       analytics.logEvent(
@@ -53,19 +56,19 @@ class InquiryPage extends HookConsumerWidget {
       final category = selectedCategory.value;
 
       if (email.isEmpty) {
-        errorMessage.value = 'メールアドレスを入力してください';
+        errorMessage.value = l10n.inquiryEmailRequired;
         return;
       }
       if (!_emailRegExp.hasMatch(email)) {
-        errorMessage.value = 'メールアドレスの形式が正しくありません';
+        errorMessage.value = l10n.inquiryEmailInvalid;
         return;
       }
       if (category == null) {
-        errorMessage.value = 'お問い合わせの種類を選択してください';
+        errorMessage.value = l10n.inquiryCategoryRequired;
         return;
       }
       if (content.isEmpty) {
-        errorMessage.value = 'お問い合わせ内容を入力してください';
+        errorMessage.value = l10n.inquiryContentRequired;
         return;
       }
 
@@ -81,7 +84,7 @@ class InquiryPage extends HookConsumerWidget {
           appVersion: '${package.version} (${package.buildNumber})',
         );
         // 画面を閉じた後も見えるよう、OverlayEntry 方式のグローバルトーストで通知する。
-        showGlobalToast('お問い合わせを送信しました', title: null);
+        showGlobalToast(l10n.inquirySubmitted, title: null);
         if (context.mounted) {
           Navigator.pop(context);
         }
@@ -102,7 +105,7 @@ class InquiryPage extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: neutral.paper,
       appBar: AppBar(
-        title: const Text('お問い合わせ'),
+        title: Text(context.l10n.settingsInquiry),
         backgroundColor: neutral.paper,
       ),
       body: SafeArea(
@@ -112,13 +115,16 @@ class InquiryPage extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'いただいた内容は開発の参考にさせていただきます。返信が必要な場合はご連絡先のメールアドレスをご記入ください。',
+                context.l10n.inquiryDescription,
                 style: Theme.of(
                   context,
                 ).textTheme.bodySmall?.copyWith(color: neutral.ink2),
               ),
               const SizedBox(height: 20),
-              _FieldLabel(label: 'メールアドレス', neutral: neutral),
+              _FieldLabel(
+                label: context.l10n.inquiryEmailLabel,
+                neutral: neutral,
+              ),
               const SizedBox(height: 8),
               _InputContainer(
                 neutral: neutral,
@@ -134,7 +140,10 @@ class InquiryPage extends HookConsumerWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              _FieldLabel(label: 'お問い合わせの種類', neutral: neutral),
+              _FieldLabel(
+                label: context.l10n.inquiryCategoryLabel,
+                neutral: neutral,
+              ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -166,7 +175,7 @@ class InquiryPage extends HookConsumerWidget {
                             ),
                           ),
                           child: Text(
-                            category.label,
+                            category.label(context),
                             style: Theme.of(
                               context,
                             ).textTheme.bodyMedium?.copyWith(
@@ -182,7 +191,10 @@ class InquiryPage extends HookConsumerWidget {
                     }).toList(),
               ),
               const SizedBox(height: 20),
-              _FieldLabel(label: 'お問い合わせ内容', neutral: neutral),
+              _FieldLabel(
+                label: context.l10n.inquiryContentLabel,
+                neutral: neutral,
+              ),
               const SizedBox(height: 8),
               _InputContainer(
                 neutral: neutral,
@@ -193,7 +205,7 @@ class InquiryPage extends HookConsumerWidget {
                   cursorColor: tokens.accent,
                   decoration: _inputDecoration(
                     context,
-                    hintText: 'お困りの内容やご要望をご記入ください',
+                    hintText: context.l10n.inquiryContentHint,
                   ),
                 ),
               ),
@@ -220,7 +232,10 @@ class InquiryPage extends HookConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: AppPill(
-                  label: isSubmitting.value ? '送信中...' : '送信する',
+                  label:
+                      isSubmitting.value
+                          ? context.l10n.inquirySubmitting
+                          : context.l10n.inquirySubmit,
                   variant: AppPillVariant.accent,
                   large: true,
                   expanded: true,

@@ -6,6 +6,7 @@ import 'package:shoppinglist/features/shopping_list/components/expandable_fab.da
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import '../../../helpers/localized_test_app.dart';
 
 /// Firestore へ書き込む代わりに追加されたアイテム名を記録する [AddShoppingListItem]。
 /// reviewAndAddAICandidates が確定分を実際に追加したかを検証する。
@@ -52,7 +53,7 @@ void main() {
     required ValueNotifier<bool> showLauncher,
   }) async {
     await tester.pumpWidget(
-      MaterialApp(
+      localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(
           body: ValueListenableBuilder<bool>(

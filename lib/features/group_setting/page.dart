@@ -12,6 +12,7 @@ import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/notification_permission/pre_permission_dialog.dart';
 import 'package:shoppinglist/features/shopping_location/page.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
@@ -70,7 +71,7 @@ class _PaperScaffold extends StatelessWidget {
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
       appBar: AppBar(
-        title: const Text('グループ設定'),
+        title: Text(context.l10n.listSettingGroupSetting),
         backgroundColor: tokens.neutral.paper,
       ),
       body: child,
@@ -108,7 +109,7 @@ class _GroupSettingBody extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
       appBar: AppBar(
-        title: const Text('グループ設定'),
+        title: Text(context.l10n.listSettingGroupSetting),
         backgroundColor: tokens.neutral.paper,
       ),
       body: SafeArea(
@@ -120,7 +121,7 @@ class _GroupSettingBody extends HookConsumerWidget {
               // 以前は全要素を paper 地へ直置きしており、入力欄を含め茶色く沈んで
               // 視認性が低かった。設定画面と同じ card ベース構造に統一する。
               AppSettingSection(
-                title: 'グループ名',
+                title: context.l10n.groupNameLabel,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -131,8 +132,8 @@ class _GroupSettingBody extends HookConsumerWidget {
                       controller: groupNameController,
                       readOnly: !isOwner,
                       cursorColor: tokens.accent,
-                      decoration: const InputDecoration(
-                        hintText: 'グループ名を入力',
+                      decoration: InputDecoration(
+                        hintText: context.l10n.groupNameHint,
                         border: InputBorder.none,
                       ),
                       onSubmitted:
@@ -151,19 +152,21 @@ class _GroupSettingBody extends HookConsumerWidget {
                 ],
               ),
               AppSettingSection(
-                title: 'メンバー一覧',
+                title: context.l10n.groupSettingMembersSection,
                 children: [
                   ...profiles.map((profile) {
                     final isProfileOwner = profile.userID == group.ownerUserID;
                     final isSelf = profile.userID == currentUserID;
                     return ListTile(
                       leading: const Icon(Icons.person),
-                      title: Text(profile.displayName ?? '名前未設定'),
+                      title: Text(
+                        profile.displayName ?? context.l10n.commonUnnamed,
+                      ),
                       subtitle: () {
                         if (isProfileOwner) {
-                          return const Text('オーナー');
+                          return Text(context.l10n.groupSettingMemberOwner);
                         } else if (isSelf) {
-                          return const Text('自分');
+                          return Text(context.l10n.groupSettingMemberSelf);
                         }
                         return null;
                       }(),
@@ -207,8 +210,9 @@ class _GroupSettingBody extends HookConsumerWidget {
                   if (shoppingLocationFeatureEnabled)
                     AppCell(
                       icon: Icons.store_outlined,
-                      title: '買い物する場所',
-                      subtitle: '店舗の登録・編集',
+                      title: context.l10n.listSettingShoppingLocationSection,
+                      subtitle:
+                          context.l10n.groupSettingShoppingLocationSubtitle,
                       onTap: () {
                         analytics.logEvent(
                           name: 'navigate_shopping_location_from_group_setting',
@@ -228,8 +232,8 @@ class _GroupSettingBody extends HookConsumerWidget {
                     ),
                   AppCell(
                     icon: Icons.category_outlined,
-                    title: 'カテゴリ',
-                    subtitle: '自動分類のキーワード管理',
+                    title: context.l10n.commonCategory,
+                    subtitle: context.l10n.listSettingCategorySubtitle,
                     onTap: () {
                       analytics.logEvent(
                         name: 'navigate_group_category_from_group_setting',
@@ -249,7 +253,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                 ],
               ),
               AppSettingSection(
-                title: 'グループ招待',
+                title: context.l10n.groupSettingInvitationSection,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -259,8 +263,8 @@ class _GroupSettingBody extends HookConsumerWidget {
                     child: AppPill(
                       label:
                           isCreatingInvitation.value
-                              ? '招待コードを発行中...'
-                              : '招待コードを発行',
+                              ? context.l10n.groupSettingCreatingInvitation
+                              : context.l10n.groupSettingCreateInvitation,
                       icon: Icons.person_add,
                       variant: AppPillVariant.soft,
                       onPressed:
@@ -279,7 +283,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                                     groupNameController.text.trim();
                                 if (inputGroupName.isEmpty) {
                                   showGlobalToast(
-                                    '招待する前にグループ名を設定してください',
+                                    context.l10n.listSettingGroupNameRequired,
                                     title: null,
                                   );
                                   return;
@@ -343,8 +347,12 @@ class _GroupSettingBody extends HookConsumerWidget {
       context: context,
       builder:
           (dialogContext) => AlertDialog(
-            title: Text('${profile.displayName ?? '名前未設定'}をグループから削除しますか？'),
-            content: const Text('削除されたメンバーはこのグループにアクセスできなくなります'),
+            title: Text(
+              context.l10n.groupSettingRemoveMemberConfirmTitle(
+                profile.displayName ?? context.l10n.commonUnnamed,
+              ),
+            ),
+            content: Text(context.l10n.groupSettingRemoveMemberConfirmMessage),
             actions: [
               TextButton(
                 onPressed: () async {
@@ -366,7 +374,10 @@ class _GroupSettingBody extends HookConsumerWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            '${profile.displayName ?? 'メンバー'}を削除しました',
+                            context.l10n.groupSettingMemberRemoved(
+                              profile.displayName ??
+                                  context.l10n.groupSettingMemberFallbackName,
+                            ),
                           ),
                         ),
                       );
@@ -380,7 +391,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                   }
                 },
                 child: Text(
-                  '削除',
+                  context.l10n.commonDelete,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: context.appTheme.neutral.danger,
                   ),
@@ -394,7 +405,7 @@ class _GroupSettingBody extends HookConsumerWidget {
                   );
                   Navigator.pop(dialogContext);
                 },
-                child: const Text('キャンセル'),
+                child: Text(context.l10n.commonCancel),
               ),
             ],
           ),
@@ -416,11 +427,11 @@ class _InvitationCodeDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('招待コード'),
+      title: Text(context.l10n.listSettingInvitationCodeTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('以下のコードを共有してください'),
+          Text(context.l10n.groupSettingInvitationCodeMessage),
           const SizedBox(height: 16),
           SelectableText(
             invitationCode,
@@ -432,7 +443,7 @@ class _InvitationCodeDialog extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            '有効期限: 7日間',
+            context.l10n.groupSettingInvitationExpiry,
             style: Theme.of(
               context,
             ).textTheme.bodySmall?.copyWith(color: Colors.grey),
@@ -446,12 +457,13 @@ class _InvitationCodeDialog extends StatelessWidget {
               name: 'tap_copy_invitation_code',
               parameters: {'groupID': groupID},
             );
+            final copiedMessage = context.l10n.listSettingInvitationCodeCopied;
             await Clipboard.setData(ClipboardData(text: invitationCode));
             // ダイアログ上の SnackBar は背後の Scaffold に描画されて
             // 見えないため、前面に出るグローバルトーストで通知する。
-            showGlobalToast('招待コードをコピーしました', title: null);
+            showGlobalToast(copiedMessage, title: null);
           },
-          child: const Text('コピー'),
+          child: Text(context.l10n.commonCopy),
         ),
         TextButton(
           onPressed: () {
@@ -461,7 +473,7 @@ class _InvitationCodeDialog extends StatelessWidget {
             );
             Navigator.pop(context);
           },
-          child: const Text('閉じる'),
+          child: Text(context.l10n.commonClose),
         ),
       ],
     );
