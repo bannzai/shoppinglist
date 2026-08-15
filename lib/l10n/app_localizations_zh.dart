@@ -906,7 +906,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get paywallFeaturePhotoExtraction => '从照片中提取物品（每月 50 次）';
 
   @override
-  String get paywallFeatureUrlExtraction => '从网址中提取项目（每月 50 次）';
+  String get paywallFeatureUrlExtraction => '从网址中提取物品（每月 50 次）';
 
   @override
   String get paywallFeatureThemeColors => '五种主题颜色';
@@ -918,7 +918,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get paywallFeatureReceipt => '将收据保存到清单';
 
   @override
-  String get paywallSubscriptionNote => '可随时取消 ・ 自动续订可在续订前 24 小时内取消';
+  String get paywallSubscriptionNote => '可随时取消 ・ 自动续订最晚可在续订前 24 小时取消';
 
   @override
   String get paywallPrivacyLink => '隐私';
@@ -2133,7 +2133,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get paywallFeaturePhotoExtraction => '从照片中提取物品（每月 50 次）';
 
   @override
-  String get paywallFeatureUrlExtraction => '从网址中提取项目（每月 50 次）';
+  String get paywallFeatureUrlExtraction => '从网址中提取物品（每月 50 次）';
 
   @override
   String get paywallFeatureThemeColors => '五种主题颜色';
@@ -2145,7 +2145,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get paywallFeatureReceipt => '将收据保存到清单';
 
   @override
-  String get paywallSubscriptionNote => '可随时取消 ・ 自动续订可在续订前 24 小时前取消';
+  String get paywallSubscriptionNote => '可随时取消 ・ 自动续订最晚可在续订前 24 小时取消';
 
   @override
   String get paywallPrivacyLink => '隐私';
@@ -3360,7 +3360,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get paywallFeaturePhotoExtraction => '從照片中提取物品（每月 50 次）';
 
   @override
-  String get paywallFeatureUrlExtraction => '從網址中提取項目（每月 50 次）';
+  String get paywallFeatureUrlExtraction => '從網址中提取物品（每月 50 次）';
 
   @override
   String get paywallFeatureThemeColors => '五種主題顏色';
@@ -3372,7 +3372,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get paywallFeatureReceipt => '將收據儲存到清單';
 
   @override
-  String get paywallSubscriptionNote => '可隨時取消・自動續訂可在續訂前 24 小時前取消';
+  String get paywallSubscriptionNote => '可隨時取消・自動續訂最晚可在續訂前 24 小時取消';
 
   @override
   String get paywallPrivacyLink => '隱私';
