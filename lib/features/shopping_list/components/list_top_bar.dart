@@ -96,7 +96,8 @@ class ListTopBar extends ConsumerWidget {
                   children: [
                     Flexible(
                       child: Text(
-                        shoppingList?.name ?? context.l10n.shoppingListDefaultName,
+                        shoppingList?.name ??
+                            context.l10n.shoppingListDefaultName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
