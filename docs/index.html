@@ -102,6 +102,17 @@
   section.cta p { color: var(--ink2); margin-top: 12px; }
   section.cta .store-buttons { justify-content: center; }
 
+  section.support { background: var(--surface2); padding: 64px 0; }
+  section.support .support-body {
+    margin: 32px auto 0; max-width: 640px;
+    background: var(--card); border-radius: 16px; padding: 28px;
+    border: 1px solid rgba(187, 178, 164, 0.3);
+  }
+  section.support h3 { font-size: 16px; margin-top: 20px; }
+  section.support h3:first-child { margin-top: 0; }
+  section.support p { margin-top: 8px; font-size: 14px; color: var(--ink2); }
+  section.support a { color: var(--accent); font-weight: 600; }
+
   footer { background: var(--ink); color: rgba(255, 255, 255, 0.8); padding: 40px 0; font-size: 13px; }
   footer .links { display: flex; gap: 20px; flex-wrap: wrap; }
   footer a { color: rgba(255, 255, 255, 0.8); text-decoration: none; }
@@ -199,11 +210,27 @@
         </div>
       </div>
     </section>
+
+    <section class="support" id="support">
+      <div class="container">
+        <h2>サポート・お問い合わせ</h2>
+        <p class="section-lead">使い方のご質問、不具合のご報告、ご要望などはこちらへどうぞ</p>
+        <div class="support-body">
+          <h3>メールで問い合わせる</h3>
+          <p><a href="mailto:bannzai.app@gmail.com">bannzai.app@gmail.com</a></p>
+          <h3>アプリ内から問い合わせる</h3>
+          <p>アプリの「設定」→「お問い合わせ」から送信できます。</p>
+          <h3>アカウントの削除</h3>
+          <p>アカウントとデータの削除手順は<a href="./AccountDeletion">こちら</a>をご覧ください。</p>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer>
     <div class="container">
       <div class="links">
+        <a href="#support">サポート</a>
         <a href="./Terms">利用規約</a>
         <a href="./PrivacyPolicy">プライバシーポリシー</a>
         <a href="./SpecifiedCommercialTransactionAct-ja">特定商取引法に基づく表記</a>

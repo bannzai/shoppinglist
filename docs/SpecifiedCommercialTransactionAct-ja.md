@@ -1,8 +1,8 @@
 # 特定商取引法に基づく表示
-下記以外の事項につきましては、awesome.shoppinglist.app@gmail.comにお問い合わせください
+下記以外の事項につきましては、bannzai.app@gmail.comにお問い合わせください
 
 ## 問い合わせ先
-awesome.shoppinglist.app@gmail.com
+bannzai.app@gmail.com
 
 ## 商品の販売価格・サービスの対価：
 購入手続きの際に画面に表示されます。
