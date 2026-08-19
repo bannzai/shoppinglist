@@ -1,8 +1,8 @@
 ---
 feature: onboarding
 verification: mobile-mcp, maestro
-last_verified_commit: 272db0ce414922e3eb1d7de51253b64e88ab8798
-last_verified_at: 2026-07-15
+last_verified_commit: 8ee973c31d4b8e2d333a459d1bfe8173e03384f7
+last_verified_at: 2026-08-19
 ---
 
 # onboarding QA
@@ -24,8 +24,11 @@ last_verified_at: 2026-07-15
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-15**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/3625c1c1-d668-4233-a3a3-eda6ed9f9115.png" width="320">
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/e38447b2-6f60-430f-beff-f50ade776847.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/ee224cd5-05ba-4e3e-a2af-c013003515f0.png" width="320">
+
+gen-l10n 導入後（UI 文字列の l10n 化）も ja ロケールで文言・改行位置・レイアウトは従来どおり。3 枚目（位置情報）は表示されず 2 枚構成。
 
 </details>
 
@@ -33,8 +36,8 @@ last_verified_at: 2026-07-15
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-15**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/3625c1c1-d668-4233-a3a3-eda6ed9f9115.png" width="320">
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/e38447b2-6f60-430f-beff-f50ade776847.png" width="320">
 
 </details>
 
@@ -42,8 +45,8 @@ last_verified_at: 2026-07-15
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-15**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/3625c1c1-d668-4233-a3a3-eda6ed9f9115.png" width="320">
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/e38447b2-6f60-430f-beff-f50ade776847.png" width="320">
 
 </details>
 
@@ -51,8 +54,8 @@ last_verified_at: 2026-07-15
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-15**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/3625c1c1-d668-4233-a3a3-eda6ed9f9115.png" width="320">
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/e38447b2-6f60-430f-beff-f50ade776847.png" width="320">
 
 </details>
 
@@ -74,8 +77,10 @@ last_verified_at: 2026-07-15
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-15**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/d49d84ec-cca0-473c-ab66-6820eac671e7.png" width="320">
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/754d3fdc-19bf-4ca4-8b57-7c8215e0f9ba.png" width="320">
+
+1 枚目（01/02・ボタン「次へ」）でボタンをタップした結果、2 枚目（02/02）へ遷移した。
 
 </details>
 
@@ -83,8 +88,8 @@ last_verified_at: 2026-07-15
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-15**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/d49d84ec-cca0-473c-ab66-6820eac671e7.png" width="320">
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/754d3fdc-19bf-4ca4-8b57-7c8215e0f9ba.png" width="320">
 
 </details>
 
@@ -92,8 +97,10 @@ last_verified_at: 2026-07-15
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-15**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/4ac0334c-b2af-43a4-b79a-55386df1f96a.png" width="320">
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/ee224cd5-05ba-4e3e-a2af-c013003515f0.png" width="320">
+
+mobile-mcp の `mobile_swipe_on_screen`（direction: left、開始 x=330 / y=400、distance 280）で 1 枚目から 2 枚目へ移動し、eyebrow が `02/02`、ドットインジケータの横長ドットが右側へ追従した。右スワイプ（開始 x=80）で 1 枚目へ戻れることも確認。
 
 </details>
 
@@ -118,14 +125,18 @@ last_verified_at: 2026-07-15
 **確認日: 2026-07-15**
 <img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/9d0c1790-a546-4c4f-9dfa-66ebd8848ec0.png" width="320">
 
+2026-08-19 の再検証は未実施。オンボーディングを再表示させるため `maestro/flows/auth_page_test_01.yaml`（`clearState: true` + `clearKeychain: true`）を実行したところ、以降アプリが LaunchLoading（白画面）のまま起動を完了しなくなり、この項目だけ再確認できなかった（詳細は root QA.md の実行ナレッジ「clearState + clearKeychain 後に起動が完了しなくなる」を参照）。同セッションで「はじめる」からの AuthPage 遷移は確認済みで、スキップ・はじめるは同じ `finish(reason:)` 経由のため、l10n 化による影響は無いと判断している。
+
 </details>
 
 ### **最終スライドの「はじめる」で認証画面へ遷移する**: 最終スライドで「はじめる」をタップすると hasSeenOnboarding を true に保存し、AuthPage が表示される（既存 E2E: maestro/flows/design_v2_entry.yaml は 3 スライド前提のstale flowのため未使用。手順は本ファイル末尾の「再現手順」参照）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-15**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/f2d01ffb-4ffd-433a-9924-6e4ec62efe6a.png" width="320">
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/5c904ee9-36b3-4484-af42-fc346ea4fb6d.png" width="320">
+
+2 枚目で「はじめる」をタップして AuthPage へ遷移した直後の画面。
 
 </details>
 
@@ -133,8 +144,10 @@ last_verified_at: 2026-07-15
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-15**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260715/bfaf7be7-ba20-41f4-911f-9cb14ac3853a.png" width="320">
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/712f2a38-3080-4c4f-ae05-9a86ed269528.png" width="320">
+
+「はじめる」でオンボーディングを完了した後、`xcrun simctl terminate` → `xcrun simctl launch`（clearState なし）で再起動すると、オンボーディングを経由せず AuthPage が表示された。
 
 </details>
 

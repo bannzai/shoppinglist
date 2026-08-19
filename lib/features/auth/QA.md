@@ -1,8 +1,8 @@
 ---
 feature: auth
 verification: mobile-mcp, maestro
-last_verified_commit: 272db0ce414922e3eb1d7de51253b64e88ab8798
-last_verified_at: 2026-07-14
+last_verified_commit: 8ee973c31d4b8e2d333a459d1bfe8173e03384f7
+last_verified_at: 2026-08-19
 ---
 
 # auth QA
@@ -13,7 +13,7 @@ last_verified_at: 2026-07-14
 
 - [x] **タイトルと説明文が表示される**: 「家族の買い物を、ひとつのリストへ」の見出しと、「サインインすると端末をまたいでリストが同期します。広告もメールマガジンもありません。」の説明文が表示される（既存 E2E: maestro/flows/design_v2_entry.yaml, maestro/flows/auth_page_test_01.yaml）
 - [x] **アート画像とサインインボタンが表示される**: 上部に `images/auth/auth_art.png`、下部に Apple サインインボタンと「Google でサインイン」ボタンが表示される
-- [ ] **ゲスト開始ボタンが常時表示される**: 「サインインせずにはじめる」ボタンと「あとから設定画面でアカウントをリンクできます」の注記が release を含む全ビルドで表示される（issue #548 で「匿名サインイン（デバッグ用）」の kDebugMode ガードを撤廃。E2E: maestro/flows/design_v2_entry.yaml、widget test: test/features/auth/page_test.dart）
+- [x] **ゲスト開始ボタンが常時表示される**: 「サインインせずにはじめる」ボタンと「あとから設定画面でアカウントをリンクできます」の注記が release を含む全ビルドで表示される（issue #548 で「匿名サインイン（デバッグ用）」の kDebugMode ガードを撤廃。E2E: maestro/flows/design_v2_entry.yaml、widget test: test/features/auth/page_test.dart）
 - [x] **規約同意文が表示される**: 「続けることで 利用規約 と プライバシーポリシー に同意したものとみなされます。」が表示され、利用規約・プライバシーポリシーがリンク（accent 色・下線）になっている（既存 E2E: maestro/flows/design_v2_entry.yaml）
 
 #### 動作確認
@@ -24,8 +24,10 @@ last_verified_at: 2026-07-14
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-14**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260714/13eb0da3-4c65-480e-98ac-355dffba53cc.png" width="320">
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/5c904ee9-36b3-4484-af42-fc346ea4fb6d.png" width="320">
+
+gen-l10n 導入（UI 文字列の l10n 化）後も ja ロケールの見出し・説明文は従来どおり表示され、改行位置・行間の崩れはない。
 
 </details>
 
@@ -33,19 +35,30 @@ last_verified_at: 2026-07-14
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-14**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260714/13eb0da3-4c65-480e-98ac-355dffba53cc.png" width="320">
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/5c904ee9-36b3-4484-af42-fc346ea4fb6d.png" width="320">
 
 </details>
 
-### **ゲスト開始ボタンが常時表示される**: 旧仕様（「匿名サインインは debug ビルドのみ表示」「ゲスト導線を UI に出さない」）は issue #548 で撤廃し、release でもゲスト開始ボタンを表示する仕様に変更した。旧仕様のエビデンス（2026-07-14）は無効。要再検証。
+### **ゲスト開始ボタンが常時表示される**: 「サインインせずにはじめる」ボタンと「あとから設定画面でアカウントをリンクできます」の注記が release を含む全ビルドで表示される（issue #548 で「匿名サインイン（デバッグ用）」の kDebugMode ガードを撤廃。E2E: maestro/flows/design_v2_entry.yaml、widget test: test/features/auth/page_test.dart）
+
+<details><summary>動作確認スクショ</summary>
+
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/5c904ee9-36b3-4484-af42-fc346ea4fb6d.png" width="320">
+
+Google サインインボタンの下に「サインインせずにはじめる」ボタンと「あとから設定画面でアカウントをリンクできます」の注記が表示される。旧仕様（匿名サインインは debug ビルドのみ）のエビデンス（2026-07-14）は issue #548 で無効化済みで、本エビデンスが現仕様のもの。release ビルドでの表示は kDebugMode ガードが撤廃されたコード（lib/features/auth/page.dart の GuestStartButton）と widget test で担保する。
+
+</details>
 
 ### **規約同意文が表示される**: 「続けることで 利用規約 と プライバシーポリシー に同意したものとみなされます。」が表示され、利用規約・プライバシーポリシーがリンク（accent 色・下線）になっている（既存 E2E: maestro/flows/design_v2_entry.yaml）
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-14**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260714/13eb0da3-4c65-480e-98ac-355dffba53cc.png" width="320">
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/5c904ee9-36b3-4484-af42-fc346ea4fb6d.png" width="320">
+
+l10n 化で同意文はテンプレート（`authAgreementNote`）+ リンクラベル（`settingsTermsOfService` / `settingsPrivacyPolicy`）の組み立てになったが、ja では従来どおり「続けることで 利用規約 と プライバシーポリシー に同意したものとみなされます。」と表示され、リンク 2 箇所が accent 色・下線で描画される。
 
 </details>
 
@@ -59,7 +72,7 @@ last_verified_at: 2026-07-14
 - [ ] **Apple サインインが実行できる**: Apple ボタンで `signInWithApple()`（nonce 付き）が実行され、成功すると認証済みとしてホームへ遷移する
   - ⏭️ スキップ: 実 Apple アカウントでの成功サインインが必要なため手動確認のみ（root QA.md 記載方針）。シミュレータに Apple ID 未設定のため「Apple Accountにサインインしてください」システムダイアログが出るところまでは確認した（→キャンセル項目のエビデンスとして使用）
 - [ ] **Google サインインが実行できる**: 「Google でサインイン」ボタンで `signInWithGoogle()` が実行され、成功するとホームへ遷移する
-  - ❌ 失敗: 「Google でサインイン」タップで即座に `PlatformException(google_sign_in, Your app is missing support for the following URL schemes: com.googleusercontent.apps.764733922439-kj775mlhnj87udbc8pl0ahr05lti791k, ...)` が発生し、ネイティブのアカウント選択 UI が開かずサインインできない。原因は `ios/Runner/Info.plist` の `GIDClientID`/`CFBundleURLSchemes`（`1036365966980-r0cueu9ul4b67undueepi9h3el0lkc3o` 系）が、dev 用 `ios/Firebase/GoogleService-Info.plist`（`PROJECT_ID=shoppinglist-dev-b2787`、`CLIENT_ID=764733922439-kj775mlhnj87udbc8pl0ahr05lti791k`）と一致していないため。dev 環境の Firebase プロジェクト分離（#410）後に Info.plist が追従していないと推測される。issue: https://github.com/bannzai/shoppinglist/issues/504
+  - ⏭️ スキップ: 実 Google アカウントでの成功サインインが必要なため手動確認のみ（root QA.md 記載方針）。2026-07-14 の失敗記録（PlatformException）は PR https://github.com/bannzai/shoppinglist/pull/505 で Info.plist の GIDClientID / URL Scheme を xcconfig 経由で dev/prod に注入する形に修正済み
 - [x] **サインインのキャンセルで画面に留まる**: Apple / Google のサインインをユーザーがキャンセルした場合（canceled）、エラー表示せずローディングを解除して認証画面に留まる。キャンセル以外の失敗は例外がそのまま送出される
 
 #### 動作確認
@@ -73,6 +86,8 @@ last_verified_at: 2026-07-14
 **確認日: 2026-07-14**
 <img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260714/a68c9b07-d2f9-451e-8895-343a71db7421.png" width="320">
 
+2026-08-19 の再検証は未実施。未認証状態を作り直すため `maestro/flows/auth_page_test_01.yaml`（`clearState: true` + `clearKeychain: true`）を実行したところ、以降アプリが LaunchLoading（白画面）のまま起動を完了しなくなり、ゲスト開始からホーム到達までを流せなかった（詳細は root QA.md の実行ナレッジ「clearState + clearKeychain 後に起動が完了しなくなる」を参照）。同セッションで AuthPage 上のボタン表示・文言（issue #548 の現仕様）は確認済み。
+
 </details>
 
 ### **Apple サインインが実行できる**: Apple ボタンで `signInWithApple()`（nonce 付き）が実行され、成功すると認証済みとしてホームへ遷移する
@@ -81,13 +96,18 @@ last_verified_at: 2026-07-14
 
 ⏭️ スキップ: 実 Apple アカウントでの成功サインインが必要なため手動確認のみ（root QA.md 記載方針、認証情報はここに書かない）
 
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/ae84d87f-261b-4701-b1d4-6729f95ddcc8.png" width="320">
+
+シミュレータに Apple ID 未設定のため、Apple ボタンのタップで「Apple Account にサインインしてください」システムダイアログまで到達することは確認した（成功サインインは未検証）。
+
 </details>
 
 ### **Google サインインが実行できる**: 「Google でサインイン」ボタンで `signInWithGoogle()` が実行され、成功するとホームへ遷移する
 
 <details><summary>動作確認スクショ</summary>
 
-❌ 失敗（2026-07-14）: `ios/Runner/Info.plist` の GIDClientID/URL Scheme が dev 用 GoogleService-Info.plist と不一致のため `PlatformException(google_sign_in, ...)` が発生しサインインできない。詳細は上記チェックリストの入れ子コメント参照。issue: https://github.com/bannzai/shoppinglist/issues/504
+⏭️ スキップ: 実 Google アカウントでの成功サインインが必要なため手動確認のみ（root QA.md 記載方針）。2026-07-14 の失敗記録（PlatformException）は PR https://github.com/bannzai/shoppinglist/pull/505 で Info.plist の GIDClientID / URL Scheme を xcconfig 経由で dev/prod に注入する形に修正済み
 
 </details>
 
@@ -95,11 +115,11 @@ last_verified_at: 2026-07-14
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-14**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260714/a873fa7d-f881-404f-8806-c4aca85446e6.png" width="320">
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/66219b37-25a1-4704-8568-b8678e99eeb4.png" width="320">
 
-Apple: シミュレータに Apple ID 未設定のため「Apple Accountにサインインしてください」ダイアログが出た状態で「閉じる」をタップ→ `simctl log` で例外ログが一切出ないまま Auth 画面に復帰することを確認（`SignInWithAppleAuthorizationException.code == canceled` の分岐でエラー表示なくローディング解除して return する経路と一致、`lib/components/auth/apple.dart:74`）。
-Google: 上記バグ（#504）により native picker 到達前に例外発生。この経路は「キャンセル以外の失敗」分岐（`lib/components/auth/google.dart:82`）で、ローディング解除後 rethrow されるが simctl log 上は Flutter 側でハンドルされ画面はクラッシュせず Auth 画面のまま留まることを確認済み。ただし Google の cancel コード自体（`GoogleSignInExceptionCode.canceled`）は #504 解消後に実アカウントで別途確認が必要。
+Apple: シミュレータに Apple ID 未設定のため「Apple Account にサインインしてください」ダイアログが出た状態で「閉じる」をタップ → エラー表示もローディングの残留もなく Auth 画面に復帰することを確認（`SignInWithAppleAuthorizationException.code == canceled` の分岐でエラー表示なくローディング解除して return する経路と一致、`lib/components/auth/apple.dart`）。`flutter run` のログにも例外は出力されなかった。
+Google: 実 Google アカウントが必要なため、キャンセル経路（`GoogleSignInExceptionCode.canceled`）は未検証。
 
 </details>
 
@@ -120,8 +140,10 @@ Google: 上記バグ（#504）により native picker 到達前に例外発生�
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-14**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260714/b774bb0b-868b-43e1-9c7e-346ad2146a86.png" width="320">
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/2cc8552c-8586-4451-9a6d-b7e1e86474eb.png" width="320">
+
+同意文中の「利用規約」タップで Safari が起動し `bannzai.github.io` の「買い物リスト利用規約」が表示される。mobile-mcp でタップする場合、リンク span はアクセシビリティツリーに独立した要素として出ないため座標指定になる。同意文 1 行目の文字の中心（iPhone 16 相当・402x874pt で y=790 付近）を狙う必要があり、数 pt 上（y=784）だと無反応になる。
 
 </details>
 
@@ -129,8 +151,8 @@ Google: 上記バグ（#504）により native picker 到達前に例外発生�
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-07-14**
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260714/7711bb56-c82f-4115-8c91-49090cf41bfe.png" width="320">
+**確認日: 2026-08-19**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/7ea1ee04-876a-4250-81d9-ae44d30a3b41.png" width="320">
 
 </details>
 
@@ -140,7 +162,8 @@ Google: 上記バグ（#504）により native picker 到達前に例外発生�
 
 ## 4. サインイン処理中の表示
 
-- [x] **処理中は全画面ローディングが重なる**: サインイン開始で画面全体に LaunchLoading が重なる。早期 return ではなく Stack で重ねる実装のため、実行中のサインインボタンは unmount されず、キャンセル / 失敗時に処理が固まらない
+- [ ] **処理中は全画面ローディングが重なる**: サインイン開始で画面全体に LaunchLoading が重なる。早期 return ではなく Stack で重ねる実装のため、実行中のサインインボタンは unmount されず、キャンセル / 失敗時に処理が固まらない
+  - ⏭️ スキップ: overlay の表示時間が 1 秒未満で、mobile-mcp のタップ→スクショ往復レイテンシではスクショに収められない。2026-07-14 にコードレビューと状態遷移（true→false の往復）で間接確認済みだが、画像エビデンスが無いためチェックは付けない。撮影するなら Firebase Emulator 接続でレイテンシを増やすか、タップと `xcrun simctl io <UDID> screenshot` の連写を同一メッセージで並列発行する（root QA.md の実行ナレッジ参照）
 
 #### 動作確認
 <details>
