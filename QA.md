@@ -43,9 +43,14 @@ flutter run --debug -d <UDID> \
 - E2E: /flutter-maestro（フロー新規作成は /maestro-flow-writer）。既存フローは `maestro/flows/` 配下
 - UI の条件分岐検証は mobile-mcp / maestro より先に widget test（`flutter test`）で書けないか検討する
 
+## リリース時の未検証記録
+
+- 1.0 (40) 再提出 (2026-08-19): 前回審査版 1.0 (38) からの変更は gen-l10n 導入 (PR #551)、OSS ライセンス一覧追加 (PR #550)、サポートページへの問い合わせ導線追加 (PR #553。App Store Guideline 1.5 却下対応。公開ページ https://bannzai.github.io/shoppinglist/ に bannzai.app@gmail.com が表示されることを curl とブラウザ表示で検証済み)。QA は onboarding / auth のみ再実施し (ja 表示の崩れなし)、shopping_list / paywall / settings / group 系ほか残り feature は**今回未検証**のまま提出した (並走ビルドの高負荷でシミュレータ QA が継続不能だったため、ユーザー判断で打ち切り)。次回リリース時に要再検証。
+
 ### 再現が難しい操作の手順
 
 - オンボーディング再現: アプリ削除では不可（Keychain に認証が残存）。`clearState: true` + `clearKeychain: true`（Maestro）か、新規シミュレータ作成（sim-boot）で行う
+  - 注意（2026-08-19 に遭遇）: `clearState` + `clearKeychain` 付きの maestro flow を実行すると、アタッチ中の `flutter run` が `Lost connection to device.` で切断され、以降そのシミュレータでアプリが LaunchLoading（白画面）のまま起動を完了しなくなることがある。`AuthResolver` の `firebaseUserChanges`（`FirebaseAuth.instance.userChanges()`）が初回値を出さず `loading` のままになるのが直接の症状で、シミュレータ側のログ上はプロセスは生存し Firebase の初期化・Remote Config 取得までは通っている。`simctl terminate`→`launch`、`flutter run` の再実行、シミュレータの `shutdown`→`boot` のいずれでも復旧しなかった（他 worktree の Xcode ビルドが並列稼働してマシンが高負荷だったことも重なり、`flutter run` が `Xcode build done` の後アプリ起動まで進まない状態になった）。オンボーディング再現が必要な QA は、他の重いビルドが走っていないタイミングで、新規シミュレータ作成（`sim-boot`）を第一候補にする
 - プレミアム状態: 課金せず開発者オプション →「プレミアム付与（1日）」（Maestro: `maestro/flows/shared/grant_premium_via_debug.yaml`）
 - 別ユーザーの操作・同期: 開発者オプション →「デバッグユーザー作成」（Maestro: `maestro/flows/virtual_pairing/02_create_debug_user.yaml`）
 - 一瞬で消える SnackBar の撮影: WDA スクショは静止待ちで撮り逃す。`xcrun simctl io <UDID> screenshot` を連写する
