@@ -13,7 +13,7 @@ last_verified_at: 2026-08-19
 
 - [x] **タイトルと説明文が表示される**: 「家族の買い物を、ひとつのリストへ」の見出しと、「サインインすると端末をまたいでリストが同期します。広告もメールマガジンもありません。」の説明文が表示される（既存 E2E: maestro/flows/design_v2_entry.yaml, maestro/flows/auth_page_test_01.yaml）
 - [x] **アート画像とサインインボタンが表示される**: 上部に `images/auth/auth_art.png`、下部に Apple サインインボタンと「Google でサインイン」ボタンが表示される
-- [x] **ゲスト開始ボタンが常時表示される**: 「サインインせずにはじめる」ボタンと「あとから設定画面でアカウントをリンクできます」の注記が release を含む全ビルドで表示される（issue #548 で「匿名サインイン（デバッグ用）」の kDebugMode ガードを撤廃。E2E: maestro/flows/design_v2_entry.yaml、widget test: test/features/auth/page_test.dart）
+- [x] **ゲスト開始ボタンが常時表示される**: 「サインインせずにはじめる」ボタンと「あとから設定画面でアカウントをリンクできます」の注記が release を含む全ビルドで表示される（issue #548 で「匿名サインイン（デバッグ用）」の kDebugMode ガードを撤廃。E2E: maestro/flows/design_v2_entry.yaml。widget test: test/features/auth/page_test.dart はボタンの存在確認のみで release モードは非検証）
 - [x] **規約同意文が表示される**: 「続けることで 利用規約 と プライバシーポリシー に同意したものとみなされます。」が表示され、利用規約・プライバシーポリシーがリンク（accent 色・下線）になっている（既存 E2E: maestro/flows/design_v2_entry.yaml）
 
 #### 動作確認
@@ -40,14 +40,14 @@ gen-l10n 導入（UI 文字列の l10n 化）後も ja ロケールの見出し�
 
 </details>
 
-### **ゲスト開始ボタンが常時表示される**: 「サインインせずにはじめる」ボタンと「あとから設定画面でアカウントをリンクできます」の注記が release を含む全ビルドで表示される（issue #548 で「匿名サインイン（デバッグ用）」の kDebugMode ガードを撤廃。E2E: maestro/flows/design_v2_entry.yaml、widget test: test/features/auth/page_test.dart）
+### **ゲスト開始ボタンが常時表示される**: 「サインインせずにはじめる」ボタンと「あとから設定画面でアカウントをリンクできます」の注記が release を含む全ビルドで表示される（issue #548 で「匿名サインイン（デバッグ用）」の kDebugMode ガードを撤廃。E2E: maestro/flows/design_v2_entry.yaml。widget test: test/features/auth/page_test.dart はボタンの存在確認のみで release モードは非検証）
 
 <details><summary>動作確認スクショ</summary>
 
 **確認日: 2026-08-19**
 <img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260819/5c904ee9-36b3-4484-af42-fc346ea4fb6d.png" width="320">
 
-Google サインインボタンの下に「サインインせずにはじめる」ボタンと「あとから設定画面でアカウントをリンクできます」の注記が表示される。旧仕様（匿名サインインは debug ビルドのみ）のエビデンス（2026-07-14）は issue #548 で無効化済みで、本エビデンスが現仕様のもの。release ビルドでの表示は kDebugMode ガードが撤廃されたコード（lib/features/auth/page.dart の GuestStartButton）と widget test で担保する。
+Google サインインボタンの下に「サインインせずにはじめる」ボタンと「あとから設定画面でアカウントをリンクできます」の注記が表示される。旧仕様（匿名サインインは debug ビルドのみ）のエビデンス（2026-07-14）は issue #548 で無効化済みで、本エビデンスが現仕様のもの。release ビルドでの表示の根拠はコード上 `GuestStartButton` に `kDebugMode` 等のビルド種別ガードが無いこと（lib/features/auth/page.dart）。widget test（test/features/auth/page_test.dart）はボタンの存在確認のみで、release モードでの表示は直接検証していない（ガードが再導入された場合はテストでは検出できないため、コードレビューで守る）。
 
 </details>
 

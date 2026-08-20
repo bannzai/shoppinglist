@@ -45,7 +45,7 @@ flutter run --debug -d <UDID> \
 
 ## リリース時の未検証記録
 
-- 1.0 (40) 再提出 (2026-08-19): 前回審査版 1.0 (38) からの変更は gen-l10n 導入 (PR #551) と OSS ライセンス一覧追加 (PR #550)。QA は onboarding / auth のみ再実施し (ja 表示の崩れなし)、shopping_list / paywall / settings / group 系ほか残り feature は**今回未検証**のまま提出した (並走ビルドの高負荷でシミュレータ QA が継続不能だったため、ユーザー判断で打ち切り)。次回リリース時に要再検証。
+- 1.0 (40) 再提出 (2026-08-19): 前回審査版 1.0 (38) からの変更は gen-l10n 導入 (PR #551)、OSS ライセンス一覧追加 (PR #550)、サポートページへの問い合わせ導線追加 (PR #553。App Store Guideline 1.5 却下対応。公開ページ https://bannzai.github.io/shoppinglist/ に bannzai.app@gmail.com が表示されることを curl とブラウザ表示で検証済み)。QA は onboarding / auth のみ再実施し (ja 表示の崩れなし)、shopping_list / paywall / settings / group 系ほか残り feature は**今回未検証**のまま提出した (並走ビルドの高負荷でシミュレータ QA が継続不能だったため、ユーザー判断で打ち切り)。次回リリース時に要再検証。
 
 ### 再現が難しい操作の手順
 
