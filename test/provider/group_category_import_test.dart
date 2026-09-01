@@ -71,6 +71,31 @@ void main() {
     });
   });
 
+  test('現在のグループメンバーが所有するカテゴリ軸だけを共有候補にする', () {
+    final currentMemberAxis = GroupCategoryAxis(
+      id: 'current-member-axis',
+      groupID: 'group-001',
+      userID: 'current-member',
+      name: '現在のメンバー',
+      order: 0,
+    );
+    final removedMemberAxis = GroupCategoryAxis(
+      id: 'removed-member-axis',
+      groupID: 'group-001',
+      userID: 'removed-member',
+      name: '削除済みメンバー',
+      order: 1,
+    );
+
+    expect(
+      filterShareableGroupCategoryAxes(
+        groupCategoryAxes: [currentMemberAxis, removedMemberAxis],
+        memberUserIDs: const ['current-member'],
+      ),
+      [currentMemberAxis],
+    );
+  });
+
   test('取り込んだカテゴリを自作カテゴリの後ろへ配置し、再取り込みでも順序を変えない', () {
     const sourceAxis = GroupCategoryAxis(
       id: 'source-axis',

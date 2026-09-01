@@ -160,43 +160,19 @@ class _GroupCategoryAxesProviderElement
 }
 
 String _$shareableGroupCategoryAxesHash() =>
-    r'afdd8b6061a740fb5ed8d007dc9968a1aea846af';
+    r'0c979bcb5c9a6146d4a930f70cc130553ae94a37';
 
-/// 同じグループに所属するメンバーが取り込み元として選べるカテゴリ軸。
-///
-/// 通常表示用の [groupCategoryAxes] は本人の軸だけを返す一方、この Provider は
-/// グループ内共有の取り込み画面に限って全メンバーの軸を返す。書き込み権限は
-/// 引き続き所有者本人に限定し、取り込み時は自分のカテゴリとしてコピーする。
-///
-/// Copied from [shareableGroupCategoryAxes].
+/// See also [shareableGroupCategoryAxes].
 @ProviderFor(shareableGroupCategoryAxes)
 const shareableGroupCategoryAxesProvider = ShareableGroupCategoryAxesFamily();
 
-/// 同じグループに所属するメンバーが取り込み元として選べるカテゴリ軸。
-///
-/// 通常表示用の [groupCategoryAxes] は本人の軸だけを返す一方、この Provider は
-/// グループ内共有の取り込み画面に限って全メンバーの軸を返す。書き込み権限は
-/// 引き続き所有者本人に限定し、取り込み時は自分のカテゴリとしてコピーする。
-///
-/// Copied from [shareableGroupCategoryAxes].
+/// See also [shareableGroupCategoryAxes].
 class ShareableGroupCategoryAxesFamily
     extends Family<AsyncValue<List<GroupCategoryAxis>>> {
-  /// 同じグループに所属するメンバーが取り込み元として選べるカテゴリ軸。
-  ///
-  /// 通常表示用の [groupCategoryAxes] は本人の軸だけを返す一方、この Provider は
-  /// グループ内共有の取り込み画面に限って全メンバーの軸を返す。書き込み権限は
-  /// 引き続き所有者本人に限定し、取り込み時は自分のカテゴリとしてコピーする。
-  ///
-  /// Copied from [shareableGroupCategoryAxes].
+  /// See also [shareableGroupCategoryAxes].
   const ShareableGroupCategoryAxesFamily();
 
-  /// 同じグループに所属するメンバーが取り込み元として選べるカテゴリ軸。
-  ///
-  /// 通常表示用の [groupCategoryAxes] は本人の軸だけを返す一方、この Provider は
-  /// グループ内共有の取り込み画面に限って全メンバーの軸を返す。書き込み権限は
-  /// 引き続き所有者本人に限定し、取り込み時は自分のカテゴリとしてコピーする。
-  ///
-  /// Copied from [shareableGroupCategoryAxes].
+  /// See also [shareableGroupCategoryAxes].
   ShareableGroupCategoryAxesProvider call({required String groupID}) {
     return ShareableGroupCategoryAxesProvider(groupID: groupID);
   }
@@ -210,6 +186,7 @@ class ShareableGroupCategoryAxesFamily
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
     groupDatabaseProvider,
+    groupProvider,
   ];
 
   @override
@@ -219,6 +196,8 @@ class ShareableGroupCategoryAxesFamily
       <ProviderOrFamily>{
         groupDatabaseProvider,
         ...?groupDatabaseProvider.allTransitiveDependencies,
+        groupProvider,
+        ...?groupProvider.allTransitiveDependencies,
       };
 
   @override
@@ -229,22 +208,10 @@ class ShareableGroupCategoryAxesFamily
   String? get name => r'shareableGroupCategoryAxesProvider';
 }
 
-/// 同じグループに所属するメンバーが取り込み元として選べるカテゴリ軸。
-///
-/// 通常表示用の [groupCategoryAxes] は本人の軸だけを返す一方、この Provider は
-/// グループ内共有の取り込み画面に限って全メンバーの軸を返す。書き込み権限は
-/// 引き続き所有者本人に限定し、取り込み時は自分のカテゴリとしてコピーする。
-///
-/// Copied from [shareableGroupCategoryAxes].
+/// See also [shareableGroupCategoryAxes].
 class ShareableGroupCategoryAxesProvider
     extends AutoDisposeStreamProvider<List<GroupCategoryAxis>> {
-  /// 同じグループに所属するメンバーが取り込み元として選べるカテゴリ軸。
-  ///
-  /// 通常表示用の [groupCategoryAxes] は本人の軸だけを返す一方、この Provider は
-  /// グループ内共有の取り込み画面に限って全メンバーの軸を返す。書き込み権限は
-  /// 引き続き所有者本人に限定し、取り込み時は自分のカテゴリとしてコピーする。
-  ///
-  /// Copied from [shareableGroupCategoryAxes].
+  /// See also [shareableGroupCategoryAxes].
   ShareableGroupCategoryAxesProvider({required String groupID})
     : this._internal(
         (ref) => shareableGroupCategoryAxes(

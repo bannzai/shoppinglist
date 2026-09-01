@@ -8,6 +8,7 @@ import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_category_keyword.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/group.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -41,17 +42,40 @@ Stream<List<GroupCategoryAxis>> groupCategoryAxes(
 /// 通常表示用の [groupCategoryAxes] は本人の軸だけを返す一方、この Provider は
 /// グループ内共有の取り込み画面に限って全メンバーの軸を返す。書き込み権限は
 /// 引き続き所有者本人に限定し、取り込み時は自分のカテゴリとしてコピーする。
-@Riverpod(dependencies: [groupDatabase])
+List<GroupCategoryAxis> filterShareableGroupCategoryAxes({
+  required List<GroupCategoryAxis> groupCategoryAxes,
+  required List<String> memberUserIDs,
+}) {
+  final memberUserIDSet = memberUserIDs.toSet();
+  return groupCategoryAxes
+      .where((axis) => memberUserIDSet.contains(axis.userID))
+      .toList();
+}
+
+@Riverpod(dependencies: [groupDatabase, group])
 Stream<List<GroupCategoryAxis>> shareableGroupCategoryAxes(
   Ref ref, {
   required String groupID,
 }) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
-  return database
-      .categoryAxesReference()
-      .orderBy(GroupCategoryAxisFirestoreKeys.order)
-      .snapshots()
-      .map((event) => event.docs.map((doc) => doc.data()).toList());
+  return ref
+      .watch(groupProvider(groupID: groupID))
+      .when(
+        data:
+            (group) => database
+                .categoryAxesReference()
+                .orderBy(GroupCategoryAxisFirestoreKeys.order)
+                .snapshots()
+                .map(
+                  (event) => filterShareableGroupCategoryAxes(
+                    groupCategoryAxes:
+                        event.docs.map((doc) => doc.data()).toList(),
+                    memberUserIDs: group.memberUserIDs,
+                  ),
+                ),
+        error: Stream.error,
+        loading: Stream.empty,
+      );
 }
 
 class GroupCategoryAxisAdd {
