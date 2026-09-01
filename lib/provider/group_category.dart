@@ -383,61 +383,53 @@ List<GroupCategory> buildImportedGroupCategories({
             (category) => !category.id.startsWith(importedDocumentIDPrefix),
           )
           .toList();
-  final sourceDefaultOrderMinimum =
-      sourceCategories.isEmpty
-          ? 0
-          : sourceCategories
-              .map((category) => category.order)
-              .reduce((minimum, order) => order < minimum ? order : minimum);
-  final defaultOrderOffset =
-      importedDestinationCategories.isNotEmpty && sourceCategories.isNotEmpty
+  final sourceDefaultOrderRanks = _categoryRanksByOrder(
+    categories: sourceCategories,
+    orderOf: (category) => category.order,
+  );
+  final defaultOrderStart =
+      importedDestinationCategories.isNotEmpty
           ? importedDestinationCategories
-                  .map((category) => category.order)
-                  .reduce(
-                    (minimum, order) => order < minimum ? order : minimum,
-                  ) -
-              sourceDefaultOrderMinimum
+              .map((category) => category.order)
+              .reduce((minimum, order) => order < minimum ? order : minimum)
           : otherDestinationCategories.fold<int>(
                 -1,
                 (maximum, category) =>
                     category.order > maximum ? category.order : maximum,
               ) +
-              1 -
-              sourceDefaultOrderMinimum;
+              1;
   final shoppingLocationIDs = <String>{
     for (final category in sourceCategories) ...category.locationOrders.keys,
     for (final category in destinationCategories)
       ...category.locationOrders.keys,
   };
-  final locationOrderOffsets = {
+  final sourceLocationOrderRanks = {
+    for (final shoppingLocationID in shoppingLocationIDs)
+      shoppingLocationID: _categoryRanksByOrder(
+        categories: sourceCategories,
+        orderOf:
+            (category) =>
+                category.locationOrders[shoppingLocationID] ?? category.order,
+      ),
+  };
+  final locationOrderStarts = {
     for (final shoppingLocationID in shoppingLocationIDs)
       shoppingLocationID:
-          importedDestinationCategories.isNotEmpty &&
-                  sourceCategories.isNotEmpty
+          importedDestinationCategories.isNotEmpty
               ? importedDestinationCategories
-                      .map(
-                        (category) =>
-                            category.locationOrders[shoppingLocationID] ??
-                            category.order,
-                      )
-                      .reduce(
-                        (minimum, order) => order < minimum ? order : minimum,
-                      ) -
-                  _minimumLocationOrder(
-                    categories: sourceCategories,
-                    shoppingLocationID: shoppingLocationID,
+                  .map(
+                    (category) =>
+                        category.locationOrders[shoppingLocationID] ??
+                        category.order,
                   )
+                  .reduce((minimum, order) => order < minimum ? order : minimum)
               : otherDestinationCategories.fold<int>(-1, (maximum, category) {
                     final order =
                         category.locationOrders[shoppingLocationID] ??
                         category.order;
                     return order > maximum ? order : maximum;
                   }) +
-                  1 -
-                  _minimumLocationOrder(
-                    categories: sourceCategories,
-                    shoppingLocationID: shoppingLocationID,
-                  ),
+                  1,
   };
   final destinationCategoriesByID = {
     for (final category in destinationCategories) category.id: category,
@@ -455,13 +447,12 @@ List<GroupCategory> buildImportedGroupCategories({
       groupID: groupID,
       userID: destinationUserID,
       groupCategoryAxisID: destinationGroupCategoryAxisID,
-      order: defaultOrderOffset + sourceCategory.order,
+      order: defaultOrderStart + sourceDefaultOrderRanks[sourceCategory.id]!,
       locationOrders: {
         for (final shoppingLocationID in shoppingLocationIDs)
           shoppingLocationID:
-              locationOrderOffsets[shoppingLocationID]! +
-              (sourceCategory.locationOrders[shoppingLocationID] ??
-                  sourceCategory.order),
+              locationOrderStarts[shoppingLocationID]! +
+              sourceLocationOrderRanks[shoppingLocationID]![sourceCategory.id]!,
       },
       createdDateTime: existingCategory?.createdDateTime,
       updatedDateTime: updatedDateTime,
@@ -469,6 +460,20 @@ List<GroupCategory> buildImportedGroupCategories({
       serverUpdatedDateTime: null,
     );
   }).toList();
+}
+
+Map<String, int> _categoryRanksByOrder({
+  required List<GroupCategory> categories,
+  required int Function(GroupCategory category) orderOf,
+}) {
+  final sortedCategories = [...categories]..sort((left, right) {
+    final orderComparison = orderOf(left).compareTo(orderOf(right));
+    return orderComparison != 0 ? orderComparison : left.id.compareTo(right.id);
+  });
+  return {
+    for (final (index, category) in sortedCategories.indexed)
+      category.id: index,
+  };
 }
 
 /// 再取り込みで対象ブロックの幅が変わる場合に、後続カテゴリを同じ差分だけ移動する。
@@ -705,8 +710,8 @@ class GroupCategoryImportFromMember {
     final importedDocumentIDs =
         importedCategories.map((category) => category.id).toSet();
 
-    // Firestore WriteBatch の上限に余裕を持たせて分割する。途中失敗しても同じ
-    // 決定的IDへの再実行で収束するため、この処理は冪等である。
+    // 順序変更を含む全操作を単一バッチにし、部分成功で再実行時の基準が変わることを
+    // 防ぐ。上限を超える場合は書き込み前に停止するため、この処理は冪等である。
     final operations = <void Function(WriteBatch)>[
       for (final category in importedCategories)
         (batch) => batch.set(
@@ -736,13 +741,14 @@ class GroupCategoryImportFromMember {
             ),
           ),
     ];
-    for (var offset = 0; offset < operations.length; offset += 450) {
-      final batch = firestore.batch();
-      for (final operation in operations.skip(offset).take(450)) {
-        operation(batch);
-      }
-      await batch.commit();
+    if (operations.length > 500) {
+      throw StateError('カテゴリ取り込みの書き込み件数が上限の500件を超えています');
     }
+    final batch = firestore.batch();
+    for (final operation in operations) {
+      operation(batch);
+    }
+    await batch.commit();
     return importedCategories.length;
   }
 

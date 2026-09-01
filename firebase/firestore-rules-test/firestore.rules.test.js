@@ -63,6 +63,12 @@ async function seed(pathStr, data) {
   });
 }
 
+async function removeSeed(pathStr) {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    await deleteDoc(doc(ctx.firestore(), pathStr));
+  });
+}
+
 // 各テストごとにデータをクリアし、rules を無効化した状態で groups/{id} 本体を seed する。
 // (isMember / isGroupMember は groups/{id} の memberUserIDs を参照するため本体が必須)
 beforeEach(async () => {
@@ -341,6 +347,10 @@ describe('userCategoryAxes/{id}/categories（グループ内read共有・write�
   const axisPath = 'groups/g1/userCategoryAxes/axis_alice';
   const categoryPath = `${axisPath}/categories/cat1`;
 
+  beforeEach(async () => {
+    await seed(axisPath, { userID: 'alice', name: '軸', order: 0 });
+  });
+
   test('メンバーかつ所有者 alice は read/create/update/delete できる', async () => {
     const d = db('alice');
     await assertSucceeds(setDoc(doc(d, categoryPath), { userID: 'alice', name: 'カテゴリ' }));
@@ -374,6 +384,12 @@ describe('userCategoryAxes/{id}/categories（グループ内read共有・write�
   test('残存メンバー bob は削除済みメンバー alice の category を read できない', async () => {
     await seed(categoryPath, { userID: 'alice', name: 'カテゴリ' });
     await seed('groups/g1', { id: 'g1', memberUserIDs: ['bob'], name: 'テストグループ' });
+    await assertFails(getDoc(doc(db('bob'), categoryPath)));
+  });
+
+  test('親 axis が削除された残存 category はメンバーでも read できない', async () => {
+    await seed(categoryPath, { userID: 'alice', name: 'カテゴリ' });
+    await removeSeed(axisPath);
     await assertFails(getDoc(doc(db('bob'), categoryPath)));
   });
 

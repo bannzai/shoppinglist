@@ -276,7 +276,7 @@ void main() {
     ]);
   });
 
-  test('初回取り込みで元の先頭順序を差し引き、取込先の末尾から連続配置する', () {
+  test('初回取り込みで元順序の欠番を正規化し、取込先の末尾から連続配置する', () {
     const sourceAxis = GroupCategoryAxis(
       id: 'source-axis',
       groupID: 'group',
@@ -292,7 +292,7 @@ void main() {
         groupCategoryAxisID: 'source-axis',
         name: '野菜',
         order: 4,
-        locationOrders: {'store': 7},
+        locationOrders: {'store': 12},
         keywords: [],
         color: null,
         iconName: null,
@@ -303,8 +303,8 @@ void main() {
         userID: 'source-user',
         groupCategoryAxisID: 'source-axis',
         name: '肉',
-        order: 5,
-        locationOrders: {'store': 6},
+        order: 9,
+        locationOrders: {'store': 7},
         keywords: [],
         color: null,
         iconName: null,
