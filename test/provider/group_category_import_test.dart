@@ -96,7 +96,7 @@ void main() {
     );
   });
 
-  test('取り込んだカテゴリを自作カテゴリの後ろへ配置し、再取り込みでも順序を変えない', () {
+  test('再取り込みで対象ブロックを維持し、増減分だけ後続カテゴリを移動する', () {
     const sourceAxis = GroupCategoryAxis(
       id: 'source-axis',
       groupID: 'group',
@@ -169,12 +169,24 @@ void main() {
       color: null,
       iconName: null,
     );
+    const addedSourceCategory = GroupCategory(
+      id: 'source-category-3',
+      groupID: 'group',
+      userID: 'source-user',
+      groupCategoryAxisID: 'source-axis',
+      name: '魚',
+      order: 2,
+      locationOrders: {'store': 2},
+      keywords: [],
+      color: null,
+      iconName: null,
+    );
     final secondImport = buildImportedGroupCategories(
       groupID: 'group',
       destinationUserID: 'destination-user',
       destinationGroupCategoryAxisID: 'destination-axis',
       sourceGroupCategoryAxis: sourceAxis,
-      sourceCategories: sourceCategories,
+      sourceCategories: [...sourceCategories, addedSourceCategory],
       destinationCategories: [
         localCategory,
         ...firstImport,
@@ -182,6 +194,17 @@ void main() {
       ],
       updatedDateTime: updatedDateTime,
     );
+    final shiftedDestinationCategories =
+        buildShiftedDestinationCategoriesForImport(
+          sourceGroupCategoryAxis: sourceAxis,
+          destinationCategories: [
+            localCategory,
+            ...firstImport,
+            anotherImportedCategory,
+          ],
+          importedCategories: secondImport,
+          updatedDateTime: updatedDateTime,
+        );
 
     expect(firstImport.map((category) => category.order), [3, 4]);
     expect(firstImport.map((category) => category.locationOrders['store']), [
@@ -196,13 +219,60 @@ void main() {
       firstImport.map((category) => category.groupCategoryAxisID),
       everyElement('destination-axis'),
     );
-    expect(secondImport.map((category) => category.id), [
+    expect(secondImport.take(2).map((category) => category.id), [
       for (final category in firstImport) category.id,
     ]);
-    expect(secondImport.map((category) => category.order), [3, 4]);
+    expect(secondImport.map((category) => category.order), [3, 4, 5]);
     expect(secondImport.map((category) => category.locationOrders['store']), [
       6,
       5,
+      7,
+    ]);
+    expect(shiftedDestinationCategories, [
+      anotherImportedCategory.copyWith(
+        order: 6,
+        locationOrders: const {'store': 9},
+        updatedDateTime: updatedDateTime,
+        serverUpdatedDateTime: null,
+      ),
+    ]);
+
+    final reducedImport = buildImportedGroupCategories(
+      groupID: 'group',
+      destinationUserID: 'destination-user',
+      destinationGroupCategoryAxisID: 'destination-axis',
+      sourceGroupCategoryAxis: sourceAxis,
+      sourceCategories: sourceCategories.take(1).toList(),
+      destinationCategories: [
+        localCategory,
+        ...secondImport,
+        ...shiftedDestinationCategories,
+      ],
+      updatedDateTime: updatedDateTime,
+    );
+    final categoriesShiftedAfterReduction =
+        buildShiftedDestinationCategoriesForImport(
+          sourceGroupCategoryAxis: sourceAxis,
+          destinationCategories: [
+            localCategory,
+            ...secondImport,
+            ...shiftedDestinationCategories,
+          ],
+          importedCategories: reducedImport,
+          updatedDateTime: updatedDateTime,
+        );
+
+    expect(reducedImport.map((category) => category.order), [3]);
+    expect(reducedImport.map((category) => category.locationOrders['store']), [
+      5,
+    ]);
+    expect(categoriesShiftedAfterReduction, [
+      anotherImportedCategory.copyWith(
+        order: 4,
+        locationOrders: const {'store': 7},
+        updatedDateTime: updatedDateTime,
+        serverUpdatedDateTime: null,
+      ),
     ]);
   });
 

@@ -471,6 +471,140 @@ List<GroupCategory> buildImportedGroupCategories({
   }).toList();
 }
 
+/// 再取り込みで対象ブロックの幅が変わる場合に、後続カテゴリを同じ差分だけ移動する。
+///
+/// 初回取り込みでは対象ブロックが取込先末尾に追加されるため移動対象は無い。
+List<GroupCategory> buildShiftedDestinationCategoriesForImport({
+  required GroupCategoryAxis sourceGroupCategoryAxis,
+  required List<GroupCategory> destinationCategories,
+  required List<GroupCategory> importedCategories,
+  required DateTime updatedDateTime,
+}) {
+  final importedDocumentIDPrefix = importedGroupCategoryDocumentIDPrefix(
+    sourceUserID: sourceGroupCategoryAxis.userID,
+    sourceGroupCategoryAxisID: sourceGroupCategoryAxis.id,
+  );
+  final previousImportedCategories =
+      destinationCategories
+          .where((category) => category.id.startsWith(importedDocumentIDPrefix))
+          .toList();
+  if (previousImportedCategories.isEmpty) {
+    return const [];
+  }
+  final otherDestinationCategories = destinationCategories.where(
+    (category) => !category.id.startsWith(importedDocumentIDPrefix),
+  );
+  final previousDefaultOrderMaximum = previousImportedCategories
+      .map((category) => category.order)
+      .reduce((maximum, order) => order > maximum ? order : maximum);
+  final previousDefaultOrderMinimum = previousImportedCategories
+      .map((category) => category.order)
+      .reduce((minimum, order) => order < minimum ? order : minimum);
+  final defaultOrderDelta =
+      importedCategories.isEmpty
+          ? -(previousDefaultOrderMaximum - previousDefaultOrderMinimum + 1)
+          : importedCategories
+                  .map((category) => category.order)
+                  .reduce(
+                    (maximum, order) => order > maximum ? order : maximum,
+                  ) -
+              previousDefaultOrderMaximum;
+  final shoppingLocationIDs = <String>{
+    for (final category in destinationCategories)
+      ...category.locationOrders.keys,
+    for (final category in importedCategories) ...category.locationOrders.keys,
+  };
+  final previousLocationOrderMaximums = {
+    for (final shoppingLocationID in shoppingLocationIDs)
+      shoppingLocationID: previousImportedCategories
+          .map(
+            (category) =>
+                category.locationOrders[shoppingLocationID] ?? category.order,
+          )
+          .reduce((maximum, order) => order > maximum ? order : maximum),
+  };
+  final locationOrderDeltas = {
+    for (final shoppingLocationID in shoppingLocationIDs)
+      shoppingLocationID:
+          importedCategories.isEmpty
+              ? -(previousLocationOrderMaximums[shoppingLocationID]! -
+                  _minimumLocationOrder(
+                    categories: previousImportedCategories,
+                    shoppingLocationID: shoppingLocationID,
+                  ) +
+                  1)
+              : importedCategories
+                      .map(
+                        (category) =>
+                            category.locationOrders[shoppingLocationID] ??
+                            category.order,
+                      )
+                      .reduce(
+                        (maximum, order) => order > maximum ? order : maximum,
+                      ) -
+                  previousLocationOrderMaximums[shoppingLocationID]!,
+  };
+
+  return [
+    for (final category in otherDestinationCategories)
+      if (_shiftDestinationCategoryAfterImportedBlock(
+            category: category,
+            previousDefaultOrderMaximum: previousDefaultOrderMaximum,
+            defaultOrderDelta: defaultOrderDelta,
+            previousLocationOrderMaximums: previousLocationOrderMaximums,
+            locationOrderDeltas: locationOrderDeltas,
+            updatedDateTime: updatedDateTime,
+          )
+          case final shiftedCategory?)
+        shiftedCategory,
+  ];
+}
+
+GroupCategory? _shiftDestinationCategoryAfterImportedBlock({
+  required GroupCategory category,
+  required int previousDefaultOrderMaximum,
+  required int defaultOrderDelta,
+  required Map<String, int> previousLocationOrderMaximums,
+  required Map<String, int> locationOrderDeltas,
+  required DateTime updatedDateTime,
+}) {
+  final shiftedOrder =
+      category.order > previousDefaultOrderMaximum
+          ? category.order + defaultOrderDelta
+          : category.order;
+  final shiftedLocationOrders = {...category.locationOrders};
+  for (final shoppingLocationID in previousLocationOrderMaximums.keys) {
+    final currentLocationOrder =
+        category.locationOrders[shoppingLocationID] ?? category.order;
+    final shiftedLocationOrder =
+        currentLocationOrder >
+                previousLocationOrderMaximums[shoppingLocationID]!
+            ? currentLocationOrder + locationOrderDeltas[shoppingLocationID]!
+            : currentLocationOrder;
+    if (category.locationOrders.containsKey(shoppingLocationID) ||
+        shiftedLocationOrder != shiftedOrder) {
+      shiftedLocationOrders[shoppingLocationID] = shiftedLocationOrder;
+    }
+  }
+  if (shiftedOrder == category.order &&
+      _intMapsEqual(shiftedLocationOrders, category.locationOrders)) {
+    return null;
+  }
+  return category.copyWith(
+    order: shiftedOrder,
+    locationOrders: shiftedLocationOrders,
+    updatedDateTime: updatedDateTime,
+    serverUpdatedDateTime: null,
+  );
+}
+
+bool _intMapsEqual(Map<String, int> left, Map<String, int> right) {
+  if (left.length != right.length) {
+    return false;
+  }
+  return left.entries.every((entry) => right[entry.key] == entry.value);
+}
+
 int _minimumLocationOrder({
   required List<GroupCategory> categories,
   required String shoppingLocationID,
@@ -551,6 +685,7 @@ class GroupCategoryImportFromMember {
       sourceUserID: sourceGroupCategoryAxis.userID,
       sourceGroupCategoryAxisID: sourceGroupCategoryAxis.id,
     );
+    final updatedDateTime = DateTime.now();
     final importedCategories = buildImportedGroupCategories(
       groupID: database.groupID,
       destinationUserID: destinationUserID,
@@ -558,8 +693,15 @@ class GroupCategoryImportFromMember {
       sourceGroupCategoryAxis: sourceGroupCategoryAxis,
       sourceCategories: sourceCategories,
       destinationCategories: destinationCategories,
-      updatedDateTime: DateTime.now(),
+      updatedDateTime: updatedDateTime,
     );
+    final shiftedDestinationCategories =
+        buildShiftedDestinationCategoriesForImport(
+          sourceGroupCategoryAxis: sourceGroupCategoryAxis,
+          destinationCategories: destinationCategories,
+          importedCategories: importedCategories,
+          updatedDateTime: updatedDateTime,
+        );
     final importedDocumentIDs =
         importedCategories.map((category) => category.id).toSet();
 
@@ -567,6 +709,15 @@ class GroupCategoryImportFromMember {
     // 決定的IDへの再実行で収束するため、この処理は冪等である。
     final operations = <void Function(WriteBatch)>[
       for (final category in importedCategories)
+        (batch) => batch.set(
+          database.categoryReference(
+            categoryAxisID: destinationAxis.id,
+            categoryID: category.id,
+          ),
+          category,
+          SetOptions(merge: true),
+        ),
+      for (final category in shiftedDestinationCategories)
         (batch) => batch.set(
           database.categoryReference(
             categoryAxisID: destinationAxis.id,
