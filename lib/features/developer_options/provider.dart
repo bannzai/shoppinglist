@@ -174,15 +174,28 @@ class DebugUserCleanup {
           )
           .delete();
     }
-    await groupDB
-        .categoryAxisReference(
-          categoryAxisID: importedGroupCategoryAxisDocumentID(
-            destinationUserID: destinationUserID,
-            sourceUserID: debugUID,
-            sourceGroupCategoryAxisID: categoryAxisID,
-          ),
-        )
-        .delete();
+    final importedAxisID = importedGroupCategoryAxisDocumentID(
+      destinationUserID: destinationUserID,
+      sourceUserID: debugUID,
+      sourceGroupCategoryAxisID: categoryAxisID,
+    );
+    if (destinationAxes.any((axis) => axis.id == importedAxisID)) {
+      final remainingImportedAxisCategories =
+          (await groupDB
+                  .categoriesReference(categoryAxisID: importedAxisID)
+                  .where(
+                    GroupCategoryFirestoreKeys.userID,
+                    isEqualTo: destinationUserID,
+                  )
+                  .limit(1)
+                  .get())
+              .docs;
+      if (remainingImportedAxisCategories.isEmpty) {
+        await groupDB
+            .categoryAxisReference(categoryAxisID: importedAxisID)
+            .delete();
+      }
+    }
     await groupDB
         .categoryReference(
           categoryAxisID: categoryAxisID,

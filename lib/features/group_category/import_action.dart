@@ -31,6 +31,7 @@ class GroupCategoryImportAction extends StatelessWidget {
       );
       final importedAxisName = await showDialog<String>(
         context: context,
+        barrierDismissible: false,
         builder:
             (context) => _GroupCategoryImportDialog(
               groupID: groupID,
@@ -84,98 +85,106 @@ class _GroupCategoryImportDialogState
       groupCategoryImportFromMemberProvider(groupID: widget.groupID),
     );
 
-    return AlertDialog(
-      title: Text(context.l10n.groupCategoryImportTitle),
-      content: SizedBox(
-        width: double.maxFinite,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(context.l10n.groupCategoryImportDescription),
-            const SizedBox(height: 16),
-            Flexible(
-              child: shareableAxesAsync.when(
-                data:
-                    (axes) => profilesAsync.when(
-                      data: (profiles) {
-                        final sourceAxes =
-                            axes
-                                .where(
-                                  (axis) => axis.userID != widget.currentUserID,
-                                )
-                                .toList();
-                        if (sourceAxes.isEmpty) {
-                          return Center(
-                            child: Text(context.l10n.groupCategoryImportEmpty),
-                          );
-                        }
-                        final displayNameByUserID = {
-                          for (final profile in profiles)
-                            profile.userID: profile.displayName,
-                        };
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: sourceAxes.length,
-                          itemBuilder: (context, index) {
-                            final axis = sourceAxes[index];
-                            final displayName =
-                                displayNameByUserID[axis.userID];
-                            final isImporting =
-                                _importingGroupCategoryAxisID == axis.id;
-                            return ListTile(
-                              key: ValueKey('import-category-axis-${axis.id}'),
-                              contentPadding: EdgeInsets.zero,
-                              leading: const Icon(Icons.person_outline),
-                              title: Text(axis.name),
-                              subtitle: Text(
-                                displayName == null ||
-                                        displayName.trim().isEmpty
-                                    ? context
-                                        .l10n
-                                        .groupCategoryImportMemberFallback
-                                    : displayName,
+    return PopScope(
+      canPop: _importingGroupCategoryAxisID == null,
+      child: AlertDialog(
+        title: Text(context.l10n.groupCategoryImportTitle),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(context.l10n.groupCategoryImportDescription),
+              const SizedBox(height: 16),
+              Flexible(
+                child: shareableAxesAsync.when(
+                  data:
+                      (axes) => profilesAsync.when(
+                        data: (profiles) {
+                          final sourceAxes =
+                              axes
+                                  .where(
+                                    (axis) =>
+                                        axis.userID != widget.currentUserID,
+                                  )
+                                  .toList();
+                          if (sourceAxes.isEmpty) {
+                            return Center(
+                              child: Text(
+                                context.l10n.groupCategoryImportEmpty,
                               ),
-                              trailing:
-                                  isImporting
-                                      ? const SizedBox.square(
-                                        dimension: 24,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                        ),
-                                      )
-                                      : const Icon(Icons.download_outlined),
-                              onTap:
-                                  _importingGroupCategoryAxisID != null
-                                      ? null
-                                      : () => _import(
-                                        sourceGroupCategoryAxis: axis,
-                                        groupCategoryImportFromMember:
-                                            groupCategoryImportFromMember,
-                                      ),
                             );
-                          },
-                        );
-                      },
-                      error: _error,
-                      loading: _loading,
-                    ),
-                error: _error,
-                loading: _loading,
+                          }
+                          final displayNameByUserID = {
+                            for (final profile in profiles)
+                              profile.userID: profile.displayName,
+                          };
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: sourceAxes.length,
+                            itemBuilder: (context, index) {
+                              final axis = sourceAxes[index];
+                              final displayName =
+                                  displayNameByUserID[axis.userID];
+                              final isImporting =
+                                  _importingGroupCategoryAxisID == axis.id;
+                              return ListTile(
+                                key: ValueKey(
+                                  'import-category-axis-${axis.id}',
+                                ),
+                                contentPadding: EdgeInsets.zero,
+                                leading: const Icon(Icons.person_outline),
+                                title: Text(axis.name),
+                                subtitle: Text(
+                                  displayName == null ||
+                                          displayName.trim().isEmpty
+                                      ? context
+                                          .l10n
+                                          .groupCategoryImportMemberFallback
+                                      : displayName,
+                                ),
+                                trailing:
+                                    isImporting
+                                        ? const SizedBox.square(
+                                          dimension: 24,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                        : const Icon(Icons.download_outlined),
+                                onTap:
+                                    _importingGroupCategoryAxisID != null
+                                        ? null
+                                        : () => _import(
+                                          sourceGroupCategoryAxis: axis,
+                                          groupCategoryImportFromMember:
+                                              groupCategoryImportFromMember,
+                                        ),
+                              );
+                            },
+                          );
+                        },
+                        error: _error,
+                        loading: _loading,
+                      ),
+                  error: _error,
+                  loading: _loading,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+        actions: [
+          TextButton(
+            onPressed:
+                _importingGroupCategoryAxisID == null
+                    ? () => Navigator.pop(context)
+                    : null,
+            child: Text(context.l10n.commonCancel),
+          ),
+        ],
       ),
-      actions: [
-        TextButton(
-          onPressed:
-              _importingGroupCategoryAxisID == null
-                  ? () => Navigator.pop(context)
-                  : null,
-          child: Text(context.l10n.commonCancel),
-        ),
-      ],
     );
   }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -34,8 +36,10 @@ class _RecordingImport extends GroupCategoryImportFromMember {
   String? destinationUserID;
   GroupCategoryAxis? sourceGroupCategoryAxis;
   GroupCategoryAxis? destinationGroupCategoryAxis;
+  final Completer<void>? completion;
 
-  _RecordingImport() : super(database: GroupDatabase(groupID: _groupID));
+  _RecordingImport({this.completion})
+    : super(database: GroupDatabase(groupID: _groupID));
 
   @override
   Future<int> call({
@@ -46,6 +50,7 @@ class _RecordingImport extends GroupCategoryImportFromMember {
     this.destinationUserID = destinationUserID;
     this.sourceGroupCategoryAxis = sourceGroupCategoryAxis;
     this.destinationGroupCategoryAxis = destinationGroupCategoryAxis;
+    await completion?.future;
     return 2;
   }
 }
@@ -123,5 +128,39 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('取り込めるカテゴリ設定はありません'), findsOneWidget);
+  });
+
+  testWidgets('取り込み中はバリアとシステムの戻る操作で閉じない', (tester) async {
+    final completion = Completer<void>();
+    await tester.pumpWidget(
+      _app(
+        axes: const [_destinationAxis, _memberAxis],
+        import: _RecordingImport(completion: completion),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('メンバーのカテゴリを取り込む'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('共有の売り場'));
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(
+      tester
+          .widget<TextButton>(find.widgetWithText(TextButton, 'キャンセル'))
+          .onPressed,
+      isNull,
+    );
+    await tester.tapAt(const Offset(1, 1));
+    await tester.pump();
+    expect(find.text('カテゴリ設定を取り込む'), findsOneWidget);
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    expect(find.text('カテゴリ設定を取り込む'), findsOneWidget);
+
+    completion.complete();
+    await tester.pumpAndSettle();
+    expect(find.text('カテゴリ設定を取り込む'), findsNothing);
   });
 }

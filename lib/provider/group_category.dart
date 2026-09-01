@@ -234,7 +234,14 @@ class GroupCategoryAdd {
       color: null,
       iconName: null,
     );
-    await docRef.set(category, SetOptions(merge: true));
+    final batch = firestore.batch();
+    batch.set(docRef, category, SetOptions(merge: true));
+    _incrementCategoryRevision(
+      batch: batch,
+      database: database,
+      categoryAxisID: categoryAxisID,
+    );
+    await batch.commit();
     return category;
   }
 }
@@ -259,7 +266,14 @@ class GroupCategoryUpdate {
       categoryAxisID: categoryAxisID,
       categoryID: categoryID,
     );
-    await docRef.set(category, SetOptions(merge: true));
+    final batch = firestore.batch();
+    batch.set(docRef, category, SetOptions(merge: true));
+    _incrementCategoryRevision(
+      batch: batch,
+      database: database,
+      categoryAxisID: categoryAxisID,
+    );
+    await batch.commit();
   }
 }
 
@@ -282,7 +296,14 @@ class GroupCategoryDelete {
       categoryAxisID: categoryAxisID,
       categoryID: categoryID,
     );
-    await docRef.delete();
+    final batch = firestore.batch();
+    batch.delete(docRef);
+    _incrementCategoryRevision(
+      batch: batch,
+      database: database,
+      categoryAxisID: categoryAxisID,
+    );
+    await batch.commit();
   }
 }
 
@@ -301,6 +322,9 @@ class GroupCategoryBatchUpdate {
     required String categoryAxisID,
     required List<GroupCategory> categories,
   }) async {
+    if (categories.length > 499) {
+      throw StateError('カテゴリ更新の書き込み件数が上限の500件を超えています');
+    }
     final batch = firestore.batch();
 
     for (final category in categories) {
@@ -311,8 +335,28 @@ class GroupCategoryBatchUpdate {
       batch.set(docRef, category, SetOptions(merge: true));
     }
 
+    if (categories.isNotEmpty) {
+      _incrementCategoryRevision(
+        batch: batch,
+        database: database,
+        categoryAxisID: categoryAxisID,
+      );
+    }
+
     await batch.commit();
   }
+}
+
+void _incrementCategoryRevision({
+  required WriteBatch batch,
+  required GroupDatabase database,
+  required String categoryAxisID,
+}) {
+  // カテゴリ本体と同じ原子的書き込みで世代を進め、取り込み処理が事前読取後の
+  // 競合を検出できるようにする。
+  batch.update(database.categoryAxisReference(categoryAxisID: categoryAxisID), {
+    GroupCategoryAxisFirestoreKeys.categoryRevision: FieldValue.increment(1),
+  });
 }
 
 @Riverpod(dependencies: [groupDatabase])
@@ -476,7 +520,7 @@ Map<String, int> _categoryRanksByOrder({
   };
 }
 
-/// 再取り込みで対象ブロックの幅が変わる場合に、後続カテゴリを同じ差分だけ移動する。
+/// 再取り込みで対象ブロックの幅が変わる場合に、対象位置以降を連続配置し直す。
 ///
 /// 初回取り込みでは対象ブロックが取込先末尾に追加されるため移動対象は無い。
 List<GroupCategory> buildShiftedDestinationCategoriesForImport({
@@ -499,65 +543,53 @@ List<GroupCategory> buildShiftedDestinationCategoriesForImport({
   final otherDestinationCategories = destinationCategories.where(
     (category) => !category.id.startsWith(importedDocumentIDPrefix),
   );
-  final previousDefaultOrderMaximum = previousImportedCategories
-      .map((category) => category.order)
-      .reduce((maximum, order) => order > maximum ? order : maximum);
   final previousDefaultOrderMinimum = previousImportedCategories
       .map((category) => category.order)
       .reduce((minimum, order) => order < minimum ? order : minimum);
-  final defaultOrderDelta =
-      importedCategories.isEmpty
-          ? -(previousDefaultOrderMaximum - previousDefaultOrderMinimum + 1)
-          : importedCategories
-                  .map((category) => category.order)
-                  .reduce(
-                    (maximum, order) => order > maximum ? order : maximum,
-                  ) -
-              previousDefaultOrderMaximum;
+  final defaultOrderRanks = _categoryRanksByOrder(
+    categories:
+        otherDestinationCategories
+            .where((category) => category.order >= previousDefaultOrderMinimum)
+            .toList(),
+    orderOf: (category) => category.order,
+  );
   final shoppingLocationIDs = <String>{
     for (final category in destinationCategories)
       ...category.locationOrders.keys,
     for (final category in importedCategories) ...category.locationOrders.keys,
   };
-  final previousLocationOrderMaximums = {
+  final previousLocationOrderMinimums = {
     for (final shoppingLocationID in shoppingLocationIDs)
-      shoppingLocationID: previousImportedCategories
-          .map(
+      shoppingLocationID: _minimumLocationOrder(
+        categories: previousImportedCategories,
+        shoppingLocationID: shoppingLocationID,
+      ),
+  };
+  final locationOrderRanks = {
+    for (final shoppingLocationID in shoppingLocationIDs)
+      shoppingLocationID: _categoryRanksByOrder(
+        categories:
+            otherDestinationCategories.where((category) {
+              final order =
+                  category.locationOrders[shoppingLocationID] ?? category.order;
+              return order >=
+                  previousLocationOrderMinimums[shoppingLocationID]!;
+            }).toList(),
+        orderOf:
             (category) =>
                 category.locationOrders[shoppingLocationID] ?? category.order,
-          )
-          .reduce((maximum, order) => order > maximum ? order : maximum),
-  };
-  final locationOrderDeltas = {
-    for (final shoppingLocationID in shoppingLocationIDs)
-      shoppingLocationID:
-          importedCategories.isEmpty
-              ? -(previousLocationOrderMaximums[shoppingLocationID]! -
-                  _minimumLocationOrder(
-                    categories: previousImportedCategories,
-                    shoppingLocationID: shoppingLocationID,
-                  ) +
-                  1)
-              : importedCategories
-                      .map(
-                        (category) =>
-                            category.locationOrders[shoppingLocationID] ??
-                            category.order,
-                      )
-                      .reduce(
-                        (maximum, order) => order > maximum ? order : maximum,
-                      ) -
-                  previousLocationOrderMaximums[shoppingLocationID]!,
+      ),
   };
 
   return [
     for (final category in otherDestinationCategories)
-      if (_shiftDestinationCategoryAfterImportedBlock(
+      if (_repositionDestinationCategoryAfterImportedBlock(
             category: category,
-            previousDefaultOrderMaximum: previousDefaultOrderMaximum,
-            defaultOrderDelta: defaultOrderDelta,
-            previousLocationOrderMaximums: previousLocationOrderMaximums,
-            locationOrderDeltas: locationOrderDeltas,
+            previousDefaultOrderMinimum: previousDefaultOrderMinimum,
+            importedCategoryCount: importedCategories.length,
+            defaultOrderRanks: defaultOrderRanks,
+            previousLocationOrderMinimums: previousLocationOrderMinimums,
+            locationOrderRanks: locationOrderRanks,
             updatedDateTime: updatedDateTime,
           )
           case final shiftedCategory?)
@@ -565,26 +597,31 @@ List<GroupCategory> buildShiftedDestinationCategoriesForImport({
   ];
 }
 
-GroupCategory? _shiftDestinationCategoryAfterImportedBlock({
+GroupCategory? _repositionDestinationCategoryAfterImportedBlock({
   required GroupCategory category,
-  required int previousDefaultOrderMaximum,
-  required int defaultOrderDelta,
-  required Map<String, int> previousLocationOrderMaximums,
-  required Map<String, int> locationOrderDeltas,
+  required int previousDefaultOrderMinimum,
+  required int importedCategoryCount,
+  required Map<String, int> defaultOrderRanks,
+  required Map<String, int> previousLocationOrderMinimums,
+  required Map<String, Map<String, int>> locationOrderRanks,
   required DateTime updatedDateTime,
 }) {
   final shiftedOrder =
-      category.order > previousDefaultOrderMaximum
-          ? category.order + defaultOrderDelta
+      category.order >= previousDefaultOrderMinimum
+          ? previousDefaultOrderMinimum +
+              importedCategoryCount +
+              defaultOrderRanks[category.id]!
           : category.order;
   final shiftedLocationOrders = {...category.locationOrders};
-  for (final shoppingLocationID in previousLocationOrderMaximums.keys) {
+  for (final shoppingLocationID in previousLocationOrderMinimums.keys) {
     final currentLocationOrder =
         category.locationOrders[shoppingLocationID] ?? category.order;
     final shiftedLocationOrder =
-        currentLocationOrder >
-                previousLocationOrderMaximums[shoppingLocationID]!
-            ? currentLocationOrder + locationOrderDeltas[shoppingLocationID]!
+        currentLocationOrder >=
+                previousLocationOrderMinimums[shoppingLocationID]!
+            ? previousLocationOrderMinimums[shoppingLocationID]! +
+                importedCategoryCount +
+                locationOrderRanks[shoppingLocationID]![category.id]!
             : currentLocationOrder;
     if (category.locationOrders.containsKey(shoppingLocationID) ||
         shiftedLocationOrder != shiftedOrder) {
@@ -669,23 +706,40 @@ class GroupCategoryImportFromMember {
 
     final destinationAxis =
         destinationGroupCategoryAxis ??
-        await _createOrUpdateImportedAxis(
+        _buildImportedAxis(
           destinationUserID: destinationUserID,
           sourceGroupCategoryAxis: sourceGroupCategoryAxis,
         );
     final destinationReference = database.categoriesReference(
       categoryAxisID: destinationAxis.id,
     );
-    final destinationCategories =
-        (await destinationReference
-                .where(
-                  GroupCategoryFirestoreKeys.userID,
-                  isEqualTo: destinationUserID,
-                )
-                .get())
-            .docs
-            .map((doc) => doc.data())
-            .toList();
+    final int? expectedCategoryRevision;
+    final List<GroupCategory> destinationCategories;
+    if (destinationGroupCategoryAxis == null) {
+      expectedCategoryRevision = null;
+      destinationCategories = const [];
+    } else {
+      final destinationAxisSnapshot =
+          await database
+              .categoryAxisReference(categoryAxisID: destinationAxis.id)
+              .get();
+      final currentDestinationAxis = destinationAxisSnapshot.data();
+      if (currentDestinationAxis == null ||
+          currentDestinationAxis.userID != destinationUserID) {
+        throw StateError('取込先のカテゴリ軸が見つかりません');
+      }
+      expectedCategoryRevision = currentDestinationAxis.categoryRevision;
+      destinationCategories =
+          (await destinationReference
+                  .where(
+                    GroupCategoryFirestoreKeys.userID,
+                    isEqualTo: destinationUserID,
+                  )
+                  .get())
+              .docs
+              .map((doc) => doc.data())
+              .toList();
+    }
     final importedDocumentIDPrefix = importedGroupCategoryDocumentIDPrefix(
       sourceUserID: sourceGroupCategoryAxis.userID,
       sourceGroupCategoryAxisID: sourceGroupCategoryAxis.id,
@@ -710,61 +764,94 @@ class GroupCategoryImportFromMember {
     final importedDocumentIDs =
         importedCategories.map((category) => category.id).toSet();
 
-    // 順序変更を含む全操作を単一バッチにし、部分成功で再実行時の基準が変わることを
-    // 防ぐ。上限を超える場合は書き込み前に停止するため、この処理は冪等である。
-    final operations = <void Function(WriteBatch)>[
-      for (final category in importedCategories)
-        (batch) => batch.set(
-          database.categoryReference(
-            categoryAxisID: destinationAxis.id,
-            categoryID: category.id,
-          ),
-          category,
-          SetOptions(merge: true),
-        ),
-      for (final category in shiftedDestinationCategories)
-        (batch) => batch.set(
-          database.categoryReference(
-            categoryAxisID: destinationAxis.id,
-            categoryID: category.id,
-          ),
-          category,
-          SetOptions(merge: true),
-        ),
-      for (final category in destinationCategories)
-        if (category.id.startsWith(importedDocumentIDPrefix) &&
-            !importedDocumentIDs.contains(category.id))
-          (batch) => batch.delete(
-            database.categoryReference(
-              categoryAxisID: destinationAxis.id,
-              categoryID: category.id,
-            ),
-          ),
-    ];
-    if (operations.length > 500) {
+    final staleImportedCategories =
+        destinationCategories
+            .where(
+              (category) =>
+                  category.id.startsWith(importedDocumentIDPrefix) &&
+                  !importedDocumentIDs.contains(category.id),
+            )
+            .toList();
+    final categoryOperationCount =
+        importedCategories.length +
+        shiftedDestinationCategories.length +
+        staleImportedCategories.length;
+    // 軸の作成または更新世代の加算も同じ原子的書き込みに含めるため、カテゴリ操作に
+    // 使える上限は499件。超える場合は何も書き込まず停止する。
+    if (categoryOperationCount > 499) {
       throw StateError('カテゴリ取り込みの書き込み件数が上限の500件を超えています');
     }
-    final batch = firestore.batch();
-    for (final operation in operations) {
-      operation(batch);
+
+    if (expectedCategoryRevision == null) {
+      final batch = firestore.batch();
+      batch.set(
+        database.categoryAxisReference(categoryAxisID: destinationAxis.id),
+        destinationAxis.copyWith(categoryRevision: 1),
+        SetOptions(
+          mergeFields: const [
+            'id',
+            'groupID',
+            'userID',
+            'name',
+            'order',
+            'categoryRevision',
+            'updatedDateTime',
+            'serverUpdatedDateTime',
+          ],
+        ),
+      );
+      _writeImportedCategories(
+        writer: _BatchCategoryImportWriter(batch: batch),
+        database: database,
+        destinationGroupCategoryAxisID: destinationAxis.id,
+        importedCategories: importedCategories,
+        shiftedDestinationCategories: shiftedDestinationCategories,
+        staleImportedCategories: staleImportedCategories,
+      );
+      await batch.commit();
+    } else {
+      final destinationAxisReference = database.categoryAxisReference(
+        categoryAxisID: destinationAxis.id,
+      );
+      await firestore.runTransaction((transaction) async {
+        final currentDestinationAxis =
+            (await transaction.get(destinationAxisReference)).data();
+        if (currentDestinationAxis == null ||
+            currentDestinationAxis.userID != destinationUserID) {
+          throw StateError('取込先のカテゴリ軸が見つかりません');
+        }
+        if (currentDestinationAxis.categoryRevision !=
+            expectedCategoryRevision) {
+          throw StateError('カテゴリ設定が別の端末で変更されました。もう一度取り込んでください');
+        }
+        _writeImportedCategories(
+          writer: _TransactionCategoryImportWriter(transaction: transaction),
+          database: database,
+          destinationGroupCategoryAxisID: destinationAxis.id,
+          importedCategories: importedCategories,
+          shiftedDestinationCategories: shiftedDestinationCategories,
+          staleImportedCategories: staleImportedCategories,
+        );
+        transaction.update(destinationAxisReference, {
+          GroupCategoryAxisFirestoreKeys.categoryRevision: FieldValue.increment(
+            1,
+          ),
+        });
+      });
     }
-    await batch.commit();
     return importedCategories.length;
   }
 
-  Future<GroupCategoryAxis> _createOrUpdateImportedAxis({
+  GroupCategoryAxis _buildImportedAxis({
     required String destinationUserID,
     required GroupCategoryAxis sourceGroupCategoryAxis,
-  }) async {
+  }) {
     final destinationAxisID = importedGroupCategoryAxisDocumentID(
       destinationUserID: destinationUserID,
       sourceUserID: sourceGroupCategoryAxis.userID,
       sourceGroupCategoryAxisID: sourceGroupCategoryAxis.id,
     );
-    final reference = database.categoryAxisReference(
-      categoryAxisID: destinationAxisID,
-    );
-    final destinationAxis = GroupCategoryAxis(
+    return GroupCategoryAxis(
       id: destinationAxisID,
       groupID: database.groupID,
       userID: destinationUserID,
@@ -773,23 +860,74 @@ class GroupCategoryImportFromMember {
       updatedDateTime: DateTime.now(),
       serverUpdatedDateTime: null,
     );
-    // 存在しない文書の read は所有者を判定できず Rules で拒否されるため、事前に
-    // 読み取らず直接 upsert する。mergeFields で作成日時は既存なら維持する。
-    await reference.set(
-      destinationAxis,
-      SetOptions(
-        mergeFields: const [
-          'id',
-          'groupID',
-          'userID',
-          'name',
-          'order',
-          'updatedDateTime',
-          'serverUpdatedDateTime',
-        ],
+  }
+}
+
+abstract interface class _CategoryImportWriter {
+  void set(DocumentReference<GroupCategory> reference, GroupCategory category);
+
+  void delete(DocumentReference<GroupCategory> reference);
+}
+
+class _BatchCategoryImportWriter implements _CategoryImportWriter {
+  final WriteBatch batch;
+
+  _BatchCategoryImportWriter({required this.batch});
+
+  @override
+  void set(
+    DocumentReference<GroupCategory> reference,
+    GroupCategory category,
+  ) => batch.set(reference, category, SetOptions(merge: true));
+
+  @override
+  void delete(DocumentReference<GroupCategory> reference) =>
+      batch.delete(reference);
+}
+
+class _TransactionCategoryImportWriter implements _CategoryImportWriter {
+  final Transaction transaction;
+
+  _TransactionCategoryImportWriter({required this.transaction});
+
+  @override
+  void set(
+    DocumentReference<GroupCategory> reference,
+    GroupCategory category,
+  ) => transaction.set(reference, category, SetOptions(merge: true));
+
+  @override
+  void delete(DocumentReference<GroupCategory> reference) =>
+      transaction.delete(reference);
+}
+
+void _writeImportedCategories({
+  required _CategoryImportWriter writer,
+  required GroupDatabase database,
+  required String destinationGroupCategoryAxisID,
+  required List<GroupCategory> importedCategories,
+  required List<GroupCategory> shiftedDestinationCategories,
+  required List<GroupCategory> staleImportedCategories,
+}) {
+  for (final category in [
+    ...importedCategories,
+    ...shiftedDestinationCategories,
+  ]) {
+    writer.set(
+      database.categoryReference(
+        categoryAxisID: destinationGroupCategoryAxisID,
+        categoryID: category.id,
+      ),
+      category,
+    );
+  }
+  for (final category in staleImportedCategories) {
+    writer.delete(
+      database.categoryReference(
+        categoryAxisID: destinationGroupCategoryAxisID,
+        categoryID: category.id,
       ),
     );
-    return destinationAxis;
   }
 }
 
@@ -823,7 +961,11 @@ class GroupCategoryKeywordAdd {
       categoryAxisID: categoryAxisID,
       categoryID: categoryID,
     );
+    final axisRef = database.categoryAxisReference(
+      categoryAxisID: categoryAxisID,
+    );
     await firestore.runTransaction((transaction) async {
+      await transaction.get(axisRef);
       final snapshot = await transaction.get(docRef);
       final current = snapshot.data();
       if (current == null) {
@@ -848,6 +990,11 @@ class GroupCategoryKeywordAdd {
         ),
         SetOptions(merge: true),
       );
+      transaction.update(axisRef, {
+        GroupCategoryAxisFirestoreKeys.categoryRevision: FieldValue.increment(
+          1,
+        ),
+      });
     });
   }
 }
@@ -940,7 +1087,14 @@ class AICategorizeApply {
         color: null,
         iconName: null,
       );
-      await docRef.set(category, SetOptions(merge: true));
+      final batch = firestore.batch();
+      batch.set(docRef, category, SetOptions(merge: true));
+      _incrementCategoryRevision(
+        batch: batch,
+        database: database,
+        categoryAxisID: axisID,
+      );
+      await batch.commit();
       categoryByName[categoryName] = category;
     }
 
@@ -956,9 +1110,11 @@ class AICategorizeApply {
         categoryAxisID: axisID,
         categoryID: categoryByName[entry.key]!.id,
       );
+      final axisRef = database.categoryAxisReference(categoryAxisID: axisID);
       // 同時編集でキーワードが消えないよう read-modify-write を transaction で行う
       // （firestore-transaction.md: group 配下の同時書き込み対策）。
       await firestore.runTransaction((transaction) async {
+        await transaction.get(axisRef);
         final snapshot = await transaction.get(docRef);
         final current = snapshot.data();
         if (current == null) {
@@ -979,6 +1135,11 @@ class AICategorizeApply {
           current.copyWith(keywords: [...current.keywords, ...addedKeywords]),
           SetOptions(merge: true),
         );
+        transaction.update(axisRef, {
+          GroupCategoryAxisFirestoreKeys.categoryRevision: FieldValue.increment(
+            1,
+          ),
+        });
       });
     }
   }
@@ -1049,6 +1210,10 @@ class MoveItemCategoryKeyword {
     // (firestore-transaction.md)。
     await firestore.runTransaction((transaction) async {
       // transaction の制約により read を全て先に行う。
+      final axisRef = database.categoryAxisReference(
+        categoryAxisID: categoryAxisID,
+      );
+      await transaction.get(axisRef);
       final currentByCategoryID = <String, GroupCategory>{};
       for (final category in categories) {
         final snapshot = await transaction.get(
@@ -1063,6 +1228,7 @@ class MoveItemCategoryKeyword {
         }
       }
 
+      var hasChanges = false;
       for (final entry in currentByCategoryID.entries) {
         final updatedKeywords = keywordsAfterItemMove(
           category: entry.value,
@@ -1080,6 +1246,14 @@ class MoveItemCategoryKeyword {
           entry.value.copyWith(keywords: updatedKeywords),
           SetOptions(merge: true),
         );
+        hasChanges = true;
+      }
+      if (hasChanges) {
+        transaction.update(axisRef, {
+          GroupCategoryAxisFirestoreKeys.categoryRevision: FieldValue.increment(
+            1,
+          ),
+        });
       }
     });
   }
