@@ -1,7 +1,7 @@
 ---
 feature: shopping_list
 verification: mobile-mcp, maestro
-last_verified_commit: 2347b30e7ab9ef6349eefa3449564b6a5f6b5215
+last_verified_commit: b7250919fd90ddffb00c68a29a6fd7148b083199
 last_verified_at: 2026-09-01
 ---
 
