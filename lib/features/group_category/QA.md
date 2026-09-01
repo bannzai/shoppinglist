@@ -1,8 +1,8 @@
 ---
 feature: group_category
 verification: mobile-mcp, maestro
-last_verified_commit: 272db0ce414922e3eb1d7de51253b64e88ab8798
-last_verified_at: 2026-07-15
+last_verified_commit: c2df66ae37b8c519f945fc536bd20b6b4a3a0bfc
+last_verified_at: 2026-09-01
 ---
 
 # group_category QA
@@ -63,7 +63,48 @@ last_verified_at: 2026-07-15
 
 ---
 
-## 2. カテゴリ追加
+## 2. 別メンバーのカテゴリ設定取り込み
+
+- [ ] **取り込み元の選択**: 通常モードのAppBarから取り込みダイアログを開くと、同じグループの別メンバーが所有するカテゴリ軸だけを表示する（E2E: `maestro/flows/category_import_from_member.yaml`、Widget Test: `test/features/group_category/group_category_import_action_test.dart`）
+  - ⏭️ スキップ: iOS 18.5の専用シミュレータでE2Eを実行したが、`clearState: true` + `clearKeychain: true` 後に既知のLaunchLoading白画面が再発し、オンボーディングの「スキップ」へ到達できなかった。Widget Testでは自分の軸を除外し、別メンバーの軸だけを表示することを確認済み
+- [ ] **カテゴリと店舗別順序のコピー**: 取り込み元を選ぶと、カテゴリ・キーワード・店舗ごとの並び順を自分所有の設定としてコピーし、完了メッセージと取り込んだカテゴリを表示する（E2E: `maestro/flows/category_import_from_member.yaml`、Unit Test: `test/provider/group_category_import_test.dart`）
+  - ⏭️ スキップ: 上記の起動障害により画面操作は未到達。Unit Testではコピー後の所有者、キーワード、既存カテゴリの後ろへの配置、店舗ごとの相対順序を確認済み
+- [ ] **再取り込みによる更新**: 同じカテゴリ軸を再度取り込んでも重複せず、決定的IDの同じ文書を更新する（E2E: `maestro/flows/category_import_from_member.yaml`、Unit Test: `test/provider/group_category_import_test.dart`）
+  - ⏭️ スキップ: 上記の起動障害により画面操作は未到達。Unit Testでは同じ入力から同じIDを生成し、再取り込みでも順序がずれないことを確認済み
+
+#### 動作確認
+<details>
+<summary>動作確認エビデンス</summary>
+
+### **取り込み元の選択**: 通常モードのAppBarから取り込みダイアログを開くと、同じグループの別メンバーが所有するカテゴリ軸だけを表示する（E2E: `maestro/flows/category_import_from_member.yaml`、Widget Test: `test/features/group_category/group_category_import_action_test.dart`）
+
+<details><summary>動作確認スクショ</summary>
+
+⏭️ スキップ: 2026-09-01、iOS 18.5の専用シミュレータで `maestro/flows/category_import_from_member.yaml` を実行した。アプリのFirebase・Remote Config初期化までは通過したが、既知の `clearState: true` + `clearKeychain: true` 後のLaunchLoading白画面が再発し、オンボーディングの「スキップ」表示待ちで失敗したため、取り込み画面の有効なスクリーンショットは取得できなかった。
+
+</details>
+
+### **カテゴリと店舗別順序のコピー**: 取り込み元を選ぶと、カテゴリ・キーワード・店舗ごとの並び順を自分所有の設定としてコピーし、完了メッセージと取り込んだカテゴリを表示する（E2E: `maestro/flows/category_import_from_member.yaml`、Unit Test: `test/provider/group_category_import_test.dart`）
+
+<details><summary>動作確認スクショ</summary>
+
+⏭️ スキップ: 同じ起動障害により機能画面へ未到達。代替のUnit TestとWidget Testは成功したが、画面を確認したことにはしない。
+
+</details>
+
+### **再取り込みによる更新**: 同じカテゴリ軸を再度取り込んでも重複せず、決定的IDの同じ文書を更新する（E2E: `maestro/flows/category_import_from_member.yaml`、Unit Test: `test/provider/group_category_import_test.dart`）
+
+<details><summary>動作確認スクショ</summary>
+
+⏭️ スキップ: 同じ起動障害により機能画面へ未到達。決定的IDと再取り込み時の順序安定性はUnit Testで確認済み。
+
+</details>
+
+</details>
+
+---
+
+## 3. カテゴリ追加
 
 - [x] **空状態ボタンからの追加**: 軸0件の空状態でカード内「カテゴリを追加」をタップすると、軸が無ければ「デフォルト」軸を自動作成し、空名カテゴリを作成して GroupCategoryEditPage へ遷移する（既存 E2E: maestro/flows/category_crud.yaml）
 - [x] **FAB からの追加**: 一覧表示中に右下 FAB（＋）をタップすると、名前入力ダイアログを挟まず空名カテゴリを作成し、GroupCategoryEditPage へ直接遷移する（既存 E2E: maestro/flows/category_matching_test.yaml）
@@ -100,7 +141,7 @@ FAB タップ直後にダイアログなしで GroupCategoryEditPage が開く�
 
 ---
 
-## 3. カテゴリの並び替え
+## 4. カテゴリの並び替え
 
 - [x] **ドラッグ&ドロップでの並び替え**: 一覧の行を長押しドラッグして並び替えると、デフォルト順序（order フィールド）を更新して保存する（長押し D&D は maestro の duration 10000ms swipe で再現、または widget test での検証を検討）
 
@@ -130,7 +171,7 @@ maestro の低速 swipe（duration 10000ms、`category_section_reorder.yaml` と
 
 ---
 
-## 4. カテゴリの編集・削除
+## 5. カテゴリの編集・削除
 
 - [x] **編集ボタンからの遷移**: カテゴリ行の編集アイコンをタップすると、そのカテゴリの GroupCategoryEditPage へ遷移する
 - [x] **削除確認ダイアログ**: カテゴリ行の削除アイコンをタップすると「「<カテゴリ名>」を削除しますか？」ダイアログと「このカテゴリに設定されたキーワードも削除されます」の説明を表示する
@@ -182,7 +223,7 @@ maestro の低速 swipe（duration 10000ms、`category_section_reorder.yaml` と
 
 ---
 
-## 5. カテゴリ選択モード（アイテムからの割り当て）
+## 6. カテゴリ選択モード（アイテムからの割り当て）
 
 - [x] **選択モードのタイトル**: selectionForItem 指定で開いた場合、AppBar タイトルが「カテゴリを選択」になる（通常時は「カテゴリ」）（既存 E2E: maestro/flows/category_select_from_item.yaml）
 - [x] **行タップでカテゴリ付け替え**: 選択モードでカテゴリ行をタップすると、対象アイテム名（message）を移動先カテゴリの完全一致キーワードに追記し、他カテゴリから同名の完全一致キーワードを削除して画面を pop する（既存 E2E: maestro/flows/category_select_from_item.yaml）
