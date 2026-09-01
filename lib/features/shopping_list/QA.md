@@ -1,8 +1,8 @@
 ---
 feature: shopping_list
 verification: mobile-mcp, maestro
-last_verified_commit: 272db0ce414922e3eb1d7de51253b64e88ab8798
-last_verified_at: 2026-07-15
+last_verified_commit: 2347b30e7ab9ef6349eefa3449564b6a5f6b5215
+last_verified_at: 2026-09-01
 ---
 
 # shopping_list QA
@@ -56,6 +56,9 @@ last_verified_at: 2026-07-15
 
 - [x] **FAB タップで空行追加**: 右下 FAB（add_task アイコン）タップで空の入力行を 1 件追加し、自動フォーカスしてキーボードを開く（既存 E2E: maestro/flows/design_v2_list_core.yaml）
 - [x] **Enter 連続入力**: 入力行で文字を入力し Enter（改行）で確定すると、確定アイテムが上に積まれ、入力行は空のまま末尾に残ってフォーカス・キーボードを維持し連続入力できる（既存 E2E: maestro/flows/shopping_list_enter_and_empty_row_removal.yaml）
+- [ ] **手入力直後の行ハイライト**: Enter で追加した最新のアイテム行をアクセント背景と左線で 3 秒間強調し、自動カテゴリ分けで行が移動しても見失わない。短時間に連続入力した場合は最後の入力だけを強調する
+  - 自動化: auto（maestro/flows/category_matching_test.yaml）
+  - ⏭️ スキップ: iOS 18.5 の専用シミュレータ2台で `flutter run` を実行し Dart VM Service への接続までは成功したが、どちらも白画面のままアプリ内 UI に到達せず、Maestro を実行できなかった。背景・左線・3秒後の解除・最新入力だけを対象にする条件は Widget Test と Provider Test で確認済み
 - [x] **空行の自動削除**: 空の入力行からフォーカスが外れる、または空欄で Backspace を押すとその行を削除する。入力途中のテキストがあればフォーカス喪失時に確定保存する（既存 E2E: maestro/flows/add_and_check_item.yaml）
 - [x] **キーボード閉じるツールバー**: アイテム入力でキーボード表示中、キーボード直上に「閉じる」ツールバーを出し、タップでフォーカスを外してキーボードを閉じる。キーボード表示中も FAB は表示し続け、タップ・長押しでキーボードを閉じる（空行追加はしない）（既存 E2E: maestro/flows/keyboard_close_toolbar.yaml）
 
@@ -108,6 +111,14 @@ shopping_list_enter_and_empty_row_removal.yaml でフォーカス喪失時（ス
 
 「閉じる」タップ後（キーボード閉・空行は残らず確定済みアイテムのみ）:
 <img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260714/97d978d2-406a-4677-9e4a-61871ba7313d.png" width="320">
+
+</details>
+
+### **手入力直後の行ハイライト**: Enter で追加した最新のアイテム行をアクセント背景と左線で 3 秒間強調し、自動カテゴリ分けで行が移動しても見失わない。短時間に連続入力した場合は最後の入力だけを強調する
+
+<details><summary>動作確認スクショ</summary>
+
+（未実行）
 
 </details>
 
@@ -417,7 +428,7 @@ design_v2_list_core.yaml のスワイプは通過確認のみだったため、m
 <details>
 <summary>動作確認エビデンス</summary>
 
-### **グループへの更新通知**: グループに自分以外のメンバーが居るときだけ上部バーに通知ボタン（ベルアイコン）を表示（ソロでは非表示）。初回タップ時のみ説明ダイアログを出し「通知を送る」で送信 + 説明済みフラグ保存、2 回目以降は確認なしで他メンバー全員へ送信し「グループに通知しました」トーストを出す（開発者オプション →「グループにデバッグユーザーを追加」で他メンバーを用意して確認）
+### **グループへの更新通知**: グループに自分以外のメンバーが居るときだけ上部バーに通知ボタン（ベルアイコン）を表示（ソロでは非表示）。初回タップ時のみ説明ダイアログを出し「通知を送る」で送信 + 説明済みフラグ保存、2 回目以降は確認なしで他メンバー全員へ送信し「グループに通知しました」トーストを出す（開発者オプション →「グループにデバッグユーザーを追加」で他メンバーを用意して確認。既存 E2E: maestro/flows/notify_group_button_test.yaml 新規作成）
 
 <details><summary>動作確認スクショ</summary>
 
@@ -447,7 +458,7 @@ design_v2_list_core.yaml のスワイプは通過確認のみだったため、m
 
 </details>
 
-### **リテンションバナー・AI 上限のプレミアム拡張**: 無料プランでアイテムが 50 件超のとき最下部に「無料プランは作成から30日でリストが整理されます」バナーを出し「詳しく」でペイウォールを開く。プレミアムでは AI 画像 / URL / カテゴリ分けの月間上限が拡張される（既存 E2E: maestro/flows/premium_ai_image_recognition.yaml, maestro/flows/premium_ai_url_recognition.yaml）
+### **リテンションバナー・AI 上限のプレミアム拡張**: 無料プランでアイテムが 50 件超のとき最下部に「無料プランは作成から30日でリストが整理されます」バナーを出し「詳しく」でペイウォールを開く。プレミアムでは AI 画像 / URL / カテゴリ分けの月間上限が拡張される（バナーは maestro/flows/retention_banner_test.yaml 新規作成で確認。AI 上限拡張はカテゴリ分けを新規作成 maestro/flows/premium_ai_categorize_limit_extension.yaml で無料上限 5 回を超えて 6 回連続成功を確認。既存 E2E premium_ai_image_recognition.yaml / premium_ai_url_recognition.yaml は root QA.md 記載の通り popup_menu_button 参照の stale flow のため使用不可）
 
 <details><summary>動作確認スクショ</summary>
 
