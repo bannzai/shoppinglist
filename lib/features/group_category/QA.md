@@ -1,7 +1,7 @@
 ---
 feature: group_category
 verification: mobile-mcp, maestro
-last_verified_commit: 9aba5c8d2344d908328e0ae13c6af7ade46f39ce
+last_verified_commit: 12f8d59ae73053c0f1ea7ad71b3a30fbc821c4ac
 last_verified_at: 2026-09-01
 ---
 
@@ -71,6 +71,7 @@ last_verified_at: 2026-09-01
   - ⏭️ スキップ: 上記の起動障害により画面操作は未到達。Unit Testではコピー後の所有者、キーワード、既存カテゴリの後ろへの配置、店舗ごとの相対順序を確認済み
 - [ ] **再取り込みによる更新**: 同じカテゴリ軸を再度取り込んでも重複せず、決定的IDの同じ文書を更新する（E2E: `maestro/flows/category_import_from_member.yaml`、Unit Test: `test/provider/group_category_import_test.dart`）
   - ⏭️ スキップ: 上記の起動障害により画面操作は未到達。Unit Testでは同じ入力から同じIDを生成し、再取り込みでも順序がずれないことを確認済み
+- [x] **取り込み中の多重操作防止**: 取り込み中は一覧とキャンセルを無効化し、画面外タップおよびシステムの戻る操作でもダイアログを閉じない（Widget Test: `test/features/group_category/group_category_import_action_test.dart`）
 
 #### 動作確認
 <details>
