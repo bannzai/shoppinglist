@@ -1,7 +1,7 @@
 ---
 feature: group_category
 verification: mobile-mcp, maestro
-last_verified_commit: c2df66ae37b8c519f945fc536bd20b6b4a3a0bfc
+last_verified_commit: 4801f5a983c74aa6430f35e5d43063ced57615e2
 last_verified_at: 2026-09-01
 ---
 
