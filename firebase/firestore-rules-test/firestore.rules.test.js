@@ -5,7 +5,18 @@ const {
   assertSucceeds,
   assertFails,
 } = require('@firebase/rules-unit-testing');
-const { doc, getDoc, setDoc, updateDoc, deleteDoc } = require('firebase/firestore');
+const {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  orderBy,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} = require('firebase/firestore');
 
 // demo- 接頭辞により Emulator が demo モード (実プロジェクト不要) で動作する。
 // package.json の `firebase emulators:exec --project demo-shoppinglist` と一致させる。
@@ -49,6 +60,12 @@ function unauthDb() {
 async function seed(pathStr, data) {
   await testEnv.withSecurityRulesDisabled(async (ctx) => {
     await setDoc(doc(ctx.firestore(), pathStr), data);
+  });
+}
+
+async function removeSeed(pathStr) {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    await deleteDoc(doc(ctx.firestore(), pathStr));
   });
 }
 
@@ -265,8 +282,8 @@ describe('groups/{id}/shoppingLists/{id}/sourceImages（読み取りのみ）', 
   });
 });
 
-// 10. groups/{id}/userCategoryAxes（所有者判定付き）
-describe('groups/{id}/userCategoryAxes（所有者判定付き）', () => {
+// 10. groups/{id}/userCategoryAxes（グループ内read共有・writeは所有者のみ）
+describe('groups/{id}/userCategoryAxes（グループ内read共有・writeは所有者のみ）', () => {
   const axisPath = 'groups/g1/userCategoryAxes/axis_alice';
 
   test('メンバーかつ所有者 alice は read/create/update/delete できる', async () => {
@@ -286,12 +303,33 @@ describe('groups/{id}/userCategoryAxes（所有者判定付き）', () => {
     );
   });
 
-  test('メンバーだが非所有者 bob は alice の axis を read/update/delete できない', async () => {
+  test('メンバーだが非所有者 bob は alice の axis を read でき、update/delete はできない', async () => {
     await seed(axisPath, { userID: 'alice', name: '軸' });
     const d = db('bob');
-    await assertFails(getDoc(doc(d, axisPath)));
+    await assertSucceeds(getDoc(doc(d, axisPath)));
     await assertFails(updateDoc(doc(d, axisPath), { name: 'x' }));
     await assertFails(deleteDoc(doc(d, axisPath)));
+  });
+
+  test('現在のメンバー所有に限定した axis クエリだけを許可する', async () => {
+    await seed(axisPath, { userID: 'alice', name: '軸', order: 0 });
+    const axes = collection(db('bob'), 'groups/g1/userCategoryAxes');
+    await assertSucceeds(
+      getDocs(query(axes, where('userID', '==', 'alice'), orderBy('order')))
+    );
+    await assertFails(getDocs(query(axes, orderBy('order'))));
+  });
+
+  test('残存メンバー bob は削除済みメンバー alice の axis を read できない', async () => {
+    await seed(axisPath, { userID: 'alice', name: '軸' });
+    await seed('groups/g1', { id: 'g1', memberUserIDs: ['bob'], name: 'テストグループ' });
+    await assertFails(getDoc(doc(db('bob'), axisPath)));
+  });
+
+  test('所有者 alice でも axis の userID を別ユーザーへ変更できない', async () => {
+    await seed(axisPath, { userID: 'alice', name: '軸' });
+    const d = db('alice');
+    await assertFails(updateDoc(doc(d, axisPath), { userID: 'bob' }));
   });
 
   test('非メンバー charlie は所有者情報に関わらず拒否', async () => {
@@ -304,10 +342,14 @@ describe('groups/{id}/userCategoryAxes（所有者判定付き）', () => {
   });
 });
 
-// 11. userCategoryAxes/{id}/categories（axis と同じ所有者判定）
-describe('userCategoryAxes/{id}/categories（axis と同じ所有者判定）', () => {
+// 11. userCategoryAxes/{id}/categories（グループ内read共有・writeは所有者のみ）
+describe('userCategoryAxes/{id}/categories（グループ内read共有・writeは所有者のみ）', () => {
   const axisPath = 'groups/g1/userCategoryAxes/axis_alice';
   const categoryPath = `${axisPath}/categories/cat1`;
+
+  beforeEach(async () => {
+    await seed(axisPath, { userID: 'alice', name: '軸', order: 0 });
+  });
 
   test('メンバーかつ所有者 alice は read/create/update/delete できる', async () => {
     const d = db('alice');
@@ -324,12 +366,37 @@ describe('userCategoryAxes/{id}/categories（axis と同じ所有者判定）', 
     );
   });
 
-  test('メンバーだが非所有者 bob は read/update/delete できない', async () => {
+  test('メンバーだが非所有者 bob は read でき、update/delete はできない', async () => {
     await seed(categoryPath, { userID: 'alice', name: 'カテゴリ' });
     const d = db('bob');
-    await assertFails(getDoc(doc(d, categoryPath)));
+    await assertSucceeds(getDoc(doc(d, categoryPath)));
     await assertFails(updateDoc(doc(d, categoryPath), { name: 'x' }));
     await assertFails(deleteDoc(doc(d, categoryPath)));
+  });
+
+  test('所有者に限定した category クエリだけを許可する', async () => {
+    await seed(categoryPath, { userID: 'alice', name: 'カテゴリ', order: 0 });
+    const categories = collection(db('bob'), `${axisPath}/categories`);
+    await assertSucceeds(getDocs(query(categories, where('userID', '==', 'alice'))));
+    await assertFails(getDocs(query(categories)));
+  });
+
+  test('残存メンバー bob は削除済みメンバー alice の category を read できない', async () => {
+    await seed(categoryPath, { userID: 'alice', name: 'カテゴリ' });
+    await seed('groups/g1', { id: 'g1', memberUserIDs: ['bob'], name: 'テストグループ' });
+    await assertFails(getDoc(doc(db('bob'), categoryPath)));
+  });
+
+  test('親 axis が削除された残存 category はメンバーでも read できない', async () => {
+    await seed(categoryPath, { userID: 'alice', name: 'カテゴリ' });
+    await removeSeed(axisPath);
+    await assertFails(getDoc(doc(db('bob'), categoryPath)));
+  });
+
+  test('所有者 alice でも category の userID を別ユーザーへ変更できない', async () => {
+    await seed(categoryPath, { userID: 'alice', name: 'カテゴリ' });
+    const d = db('alice');
+    await assertFails(updateDoc(doc(d, categoryPath), { userID: 'bob' }));
   });
 
   test('非メンバー charlie は拒否', async () => {

@@ -659,6 +659,28 @@ class AppLocalizationsEn extends AppLocalizations {
       'You can change the category order for each store, so you can shop along the aisles in order';
 
   @override
+  String get groupCategoryImportTooltip => 'Import a member\'s categories';
+
+  @override
+  String get groupCategoryImportTitle => 'Import category settings';
+
+  @override
+  String get groupCategoryImportDescription =>
+      'Copy another member\'s categories and store-specific ordering into your settings. Import again to update the previous copy.';
+
+  @override
+  String get groupCategoryImportEmpty =>
+      'No category settings are available to import';
+
+  @override
+  String groupCategoryImportSuccess(String name) {
+    return 'Imported $name';
+  }
+
+  @override
+  String get groupCategoryImportMemberFallback => 'Group member';
+
+  @override
   String get groupCategoryEditTitle => 'Edit category';
 
   @override

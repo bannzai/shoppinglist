@@ -3,8 +3,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shoppinglist/entity/app_user.dart';
 import 'package:shoppinglist/entity/app_user_private.dart';
+import 'package:shoppinglist/entity/group_category.dart';
+import 'package:shoppinglist/entity/group_category_axis.dart';
+import 'package:shoppinglist/entity/group_category_keyword.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/group_category.dart';
 
 /// デバッグユーザーIDを生成する。
 /// 形式: {realUID}_debug_{index}
@@ -47,6 +51,56 @@ class DebugUserAddToGroup {
   }
 }
 
+/// カテゴリ共有E2E用に、デバッグユーザー所有のカテゴリ設定を冪等に作成する。
+class DebugUserCategorySetup {
+  static String categoryAxisID({required String debugUID}) =>
+      'DebugGroupCategoryAxis_users_$debugUID';
+
+  static String categoryID({required String debugUID}) =>
+      'DebugGroupCategory_users_$debugUID';
+
+  Future<void> call({required String debugUID, required String groupID}) async {
+    final groupDB = GroupDatabase(groupID: groupID);
+    final axisID = categoryAxisID(debugUID: debugUID);
+    await groupDB
+        .categoryAxisReference(categoryAxisID: axisID)
+        .set(
+          GroupCategoryAxis(
+            id: axisID,
+            groupID: groupID,
+            userID: debugUID,
+            name: 'デバッグ売り場',
+            order: 0,
+          ),
+          SetOptions(merge: true),
+        );
+    final debugCategoryID = categoryID(debugUID: debugUID);
+    await groupDB
+        .categoryReference(categoryAxisID: axisID, categoryID: debugCategoryID)
+        .set(
+          GroupCategory(
+            id: debugCategoryID,
+            groupID: groupID,
+            userID: debugUID,
+            groupCategoryAxisID: axisID,
+            name: '共有野菜',
+            order: 0,
+            locationOrders: const {},
+            keywords: const [
+              GroupCategoryKeyword(
+                keyword: 'にんじん',
+                matchingType: GroupCategoryKeywordMatchingType.exact,
+              ),
+            ],
+            color: null,
+            iconName: null,
+          ),
+          SetOptions(merge: true),
+        );
+    debugPrint('[DebugUserCategorySetup] カテゴリ設定作成完了: $debugUID -> $groupID');
+  }
+}
+
 /// この端末の FCM トークンをデバッグユーザーの privates ドキュメントに登録する。
 ///
 /// グループ通知 (sendShoppingListUpdateNotification) は送信者以外のメンバーの
@@ -74,9 +128,13 @@ class DebugUserRegisterFcmToken {
 }
 
 /// デバッグユーザー関連データをクリーンアップする。
-/// memberUserIDs から除去、プロフィール削除、privates 削除、ユーザードキュメント削除。
+/// memberUserIDs から除去、プロフィール・カテゴリ・privates・ユーザー文書を削除。
 class DebugUserCleanup {
-  Future<void> call({required String debugUID, required String groupID}) async {
+  Future<void> call({
+    required String debugUID,
+    required String destinationUserID,
+    required String groupID,
+  }) async {
     final groupDB = GroupDatabase(groupID: groupID);
 
     // memberUserIDs から除去
@@ -86,6 +144,67 @@ class DebugUserCleanup {
 
     // プロフィール削除
     await groupDB.userProfileReference(userID: debugUID).delete();
+
+    // 既存軸へ取り込んだコピーを含め、デバッグカテゴリ由来の決定的IDを削除する。
+    // 文書が存在しない場合もdeleteは成功するため、クリーンアップは冪等である。
+    final categoryAxisID = DebugUserCategorySetup.categoryAxisID(
+      debugUID: debugUID,
+    );
+    final importedCategoryID = importedGroupCategoryDocumentID(
+      sourceUserID: debugUID,
+      sourceGroupCategoryAxisID: categoryAxisID,
+      sourceGroupCategoryID: DebugUserCategorySetup.categoryID(
+        debugUID: debugUID,
+      ),
+    );
+    final destinationAxes =
+        (await groupDB
+                .categoryAxesReference()
+                .where(
+                  GroupCategoryAxisFirestoreKeys.userID,
+                  isEqualTo: destinationUserID,
+                )
+                .get())
+            .docs;
+    for (final destinationAxis in destinationAxes) {
+      await groupDB
+          .categoryReference(
+            categoryAxisID: destinationAxis.id,
+            categoryID: importedCategoryID,
+          )
+          .delete();
+    }
+    final importedAxisID = importedGroupCategoryAxisDocumentID(
+      destinationUserID: destinationUserID,
+      sourceUserID: debugUID,
+      sourceGroupCategoryAxisID: categoryAxisID,
+    );
+    if (destinationAxes.any((axis) => axis.id == importedAxisID)) {
+      final remainingImportedAxisCategories =
+          (await groupDB
+                  .categoriesReference(categoryAxisID: importedAxisID)
+                  .where(
+                    GroupCategoryFirestoreKeys.userID,
+                    isEqualTo: destinationUserID,
+                  )
+                  .limit(1)
+                  .get())
+              .docs;
+      if (remainingImportedAxisCategories.isEmpty) {
+        await groupDB
+            .categoryAxisReference(categoryAxisID: importedAxisID)
+            .delete();
+      }
+    }
+    await groupDB
+        .categoryReference(
+          categoryAxisID: categoryAxisID,
+          categoryID: DebugUserCategorySetup.categoryID(debugUID: debugUID),
+        )
+        .delete();
+    await groupDB
+        .categoryAxisReference(categoryAxisID: categoryAxisID)
+        .delete();
 
     // ユーザードキュメント削除
     final userDB = UserDatabase(userID: debugUID);

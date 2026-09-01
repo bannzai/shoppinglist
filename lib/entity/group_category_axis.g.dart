@@ -13,6 +13,7 @@ _GroupCategoryAxis _$GroupCategoryAxisFromJson(Map<String, dynamic> json) =>
       userID: json['userID'] as String,
       name: json['name'] as String,
       order: (json['order'] as num).toInt(),
+      categoryRevision: (json['categoryRevision'] as num?)?.toInt() ?? 0,
       createdDateTime: const ClientCreatedTimestamp().fromJson(
         json['createdDateTime'] as Timestamp?,
       ),
@@ -34,6 +35,7 @@ Map<String, dynamic> _$GroupCategoryAxisToJson(_GroupCategoryAxis instance) =>
       'userID': instance.userID,
       'name': instance.name,
       'order': instance.order,
+      'categoryRevision': instance.categoryRevision,
       'createdDateTime': const ClientCreatedTimestamp().toJson(
         instance.createdDateTime,
       ),

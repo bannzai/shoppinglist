@@ -8,6 +8,7 @@ import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/features/group_category/category_empty_state.dart';
+import 'package:shoppinglist/features/group_category/import_action.dart';
 import 'package:shoppinglist/features/group_category_edit/page.dart';
 import 'package:shoppinglist/features/paywall/paywall.dart';
 import 'package:shoppinglist/l10n/l10n.dart';
@@ -67,6 +68,16 @@ class GroupCategoryPage extends ConsumerWidget {
         if (axes.isEmpty) {
           return _CategoryScaffold(
             title: title,
+            actions:
+                selectionForItem == null
+                    ? [
+                      GroupCategoryImportAction(
+                        groupID: groupID,
+                        currentUserID: currentUserID,
+                        destinationGroupCategoryAxis: null,
+                      ),
+                    ]
+                    : null,
             child: CategoryEmptyState(
               onAddCategory: () {
                 analytics.logEvent(
@@ -185,13 +196,22 @@ Future<void> _addCategoryAndNavigateToEdit({
 class _CategoryScaffold extends StatelessWidget {
   final Widget child;
   final String title;
-  const _CategoryScaffold({required this.child, required this.title});
+  final List<Widget>? actions;
+  const _CategoryScaffold({
+    required this.child,
+    required this.title,
+    this.actions,
+  });
   @override
   Widget build(BuildContext context) {
     final tokens = context.appTheme;
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
-      appBar: AppBar(title: Text(title), backgroundColor: tokens.neutral.paper),
+      appBar: AppBar(
+        title: Text(title),
+        actions: actions,
+        backgroundColor: tokens.neutral.paper,
+      ),
       body: child,
     );
   }
@@ -252,6 +272,16 @@ class _CategoryListBody extends HookConsumerWidget {
             backgroundColor: tokens.neutral.paper,
             appBar: AppBar(
               title: Text(title),
+              actions:
+                  selectionForItem == null
+                      ? [
+                        GroupCategoryImportAction(
+                          groupID: groupID,
+                          currentUserID: currentUserID,
+                          destinationGroupCategoryAxis: axis,
+                        ),
+                      ]
+                      : null,
               backgroundColor: tokens.neutral.paper,
             ),
             // カテゴリ0件時も価値訴求カードを表示する。追加導線は Scaffold の

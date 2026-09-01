@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$GroupCategoryAxis {
 
- String get id; String get groupID; String get userID; String get name; int get order;@ClientCreatedTimestamp() DateTime? get createdDateTime;@ClientUpdatedTimestamp() DateTime? get updatedDateTime;@ServerCreatedTimestamp() DateTime? get serverCreatedDateTime;@ServerUpdatedTimestamp() DateTime? get serverUpdatedDateTime;
+ String get id; String get groupID; String get userID; String get name; int get order; int get categoryRevision;@ClientCreatedTimestamp() DateTime? get createdDateTime;@ClientUpdatedTimestamp() DateTime? get updatedDateTime;@ServerCreatedTimestamp() DateTime? get serverCreatedDateTime;@ServerUpdatedTimestamp() DateTime? get serverUpdatedDateTime;
 /// Create a copy of GroupCategoryAxis
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $GroupCategoryAxisCopyWith<GroupCategoryAxis> get copyWith => _$GroupCategoryAxi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupCategoryAxis&&(identical(other.id, id) || other.id == id)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.userID, userID) || other.userID == userID)&&(identical(other.name, name) || other.name == name)&&(identical(other.order, order) || other.order == order)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupCategoryAxis&&(identical(other.id, id) || other.id == id)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.userID, userID) || other.userID == userID)&&(identical(other.name, name) || other.name == name)&&(identical(other.order, order) || other.order == order)&&(identical(other.categoryRevision, categoryRevision) || other.categoryRevision == categoryRevision)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,groupID,userID,name,order,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+int get hashCode => Object.hash(runtimeType,id,groupID,userID,name,order,categoryRevision,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
 
 @override
 String toString() {
-  return 'GroupCategoryAxis(id: $id, groupID: $groupID, userID: $userID, name: $name, order: $order, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+  return 'GroupCategoryAxis(id: $id, groupID: $groupID, userID: $userID, name: $name, order: $order, categoryRevision: $categoryRevision, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $GroupCategoryAxisCopyWith<$Res>  {
   factory $GroupCategoryAxisCopyWith(GroupCategoryAxis value, $Res Function(GroupCategoryAxis) _then) = _$GroupCategoryAxisCopyWithImpl;
 @useResult
 $Res call({
- String id, String groupID, String userID, String name, int order,@ClientCreatedTimestamp() DateTime? createdDateTime,@ClientUpdatedTimestamp() DateTime? updatedDateTime,@ServerCreatedTimestamp() DateTime? serverCreatedDateTime,@ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime
+ String id, String groupID, String userID, String name, int order, int categoryRevision,@ClientCreatedTimestamp() DateTime? createdDateTime,@ClientUpdatedTimestamp() DateTime? updatedDateTime,@ServerCreatedTimestamp() DateTime? serverCreatedDateTime,@ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime
 });
 
 
@@ -65,13 +65,14 @@ class _$GroupCategoryAxisCopyWithImpl<$Res>
 
 /// Create a copy of GroupCategoryAxis
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? groupID = null,Object? userID = null,Object? name = null,Object? order = null,Object? createdDateTime = freezed,Object? updatedDateTime = freezed,Object? serverCreatedDateTime = freezed,Object? serverUpdatedDateTime = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? groupID = null,Object? userID = null,Object? name = null,Object? order = null,Object? categoryRevision = null,Object? createdDateTime = freezed,Object? updatedDateTime = freezed,Object? serverCreatedDateTime = freezed,Object? serverUpdatedDateTime = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,groupID: null == groupID ? _self.groupID : groupID // ignore: cast_nullable_to_non_nullable
 as String,userID: null == userID ? _self.userID : userID // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,order: null == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
+as int,categoryRevision: null == categoryRevision ? _self.categoryRevision : categoryRevision // ignore: cast_nullable_to_non_nullable
 as int,createdDateTime: freezed == createdDateTime ? _self.createdDateTime : createdDateTime // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedDateTime: freezed == updatedDateTime ? _self.updatedDateTime : updatedDateTime // ignore: cast_nullable_to_non_nullable
 as DateTime?,serverCreatedDateTime: freezed == serverCreatedDateTime ? _self.serverCreatedDateTime : serverCreatedDateTime // ignore: cast_nullable_to_non_nullable
@@ -161,10 +162,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String groupID,  String userID,  String name,  int order, @ClientCreatedTimestamp()  DateTime? createdDateTime, @ClientUpdatedTimestamp()  DateTime? updatedDateTime, @ServerCreatedTimestamp()  DateTime? serverCreatedDateTime, @ServerUpdatedTimestamp()  DateTime? serverUpdatedDateTime)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String groupID,  String userID,  String name,  int order,  int categoryRevision, @ClientCreatedTimestamp()  DateTime? createdDateTime, @ClientUpdatedTimestamp()  DateTime? updatedDateTime, @ServerCreatedTimestamp()  DateTime? serverCreatedDateTime, @ServerUpdatedTimestamp()  DateTime? serverUpdatedDateTime)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GroupCategoryAxis() when $default != null:
-return $default(_that.id,_that.groupID,_that.userID,_that.name,_that.order,_that.createdDateTime,_that.updatedDateTime,_that.serverCreatedDateTime,_that.serverUpdatedDateTime);case _:
+return $default(_that.id,_that.groupID,_that.userID,_that.name,_that.order,_that.categoryRevision,_that.createdDateTime,_that.updatedDateTime,_that.serverCreatedDateTime,_that.serverUpdatedDateTime);case _:
   return orElse();
 
 }
@@ -182,10 +183,10 @@ return $default(_that.id,_that.groupID,_that.userID,_that.name,_that.order,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String groupID,  String userID,  String name,  int order, @ClientCreatedTimestamp()  DateTime? createdDateTime, @ClientUpdatedTimestamp()  DateTime? updatedDateTime, @ServerCreatedTimestamp()  DateTime? serverCreatedDateTime, @ServerUpdatedTimestamp()  DateTime? serverUpdatedDateTime)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String groupID,  String userID,  String name,  int order,  int categoryRevision, @ClientCreatedTimestamp()  DateTime? createdDateTime, @ClientUpdatedTimestamp()  DateTime? updatedDateTime, @ServerCreatedTimestamp()  DateTime? serverCreatedDateTime, @ServerUpdatedTimestamp()  DateTime? serverUpdatedDateTime)  $default,) {final _that = this;
 switch (_that) {
 case _GroupCategoryAxis():
-return $default(_that.id,_that.groupID,_that.userID,_that.name,_that.order,_that.createdDateTime,_that.updatedDateTime,_that.serverCreatedDateTime,_that.serverUpdatedDateTime);case _:
+return $default(_that.id,_that.groupID,_that.userID,_that.name,_that.order,_that.categoryRevision,_that.createdDateTime,_that.updatedDateTime,_that.serverCreatedDateTime,_that.serverUpdatedDateTime);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -202,10 +203,10 @@ return $default(_that.id,_that.groupID,_that.userID,_that.name,_that.order,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String groupID,  String userID,  String name,  int order, @ClientCreatedTimestamp()  DateTime? createdDateTime, @ClientUpdatedTimestamp()  DateTime? updatedDateTime, @ServerCreatedTimestamp()  DateTime? serverCreatedDateTime, @ServerUpdatedTimestamp()  DateTime? serverUpdatedDateTime)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String groupID,  String userID,  String name,  int order,  int categoryRevision, @ClientCreatedTimestamp()  DateTime? createdDateTime, @ClientUpdatedTimestamp()  DateTime? updatedDateTime, @ServerCreatedTimestamp()  DateTime? serverCreatedDateTime, @ServerUpdatedTimestamp()  DateTime? serverUpdatedDateTime)?  $default,) {final _that = this;
 switch (_that) {
 case _GroupCategoryAxis() when $default != null:
-return $default(_that.id,_that.groupID,_that.userID,_that.name,_that.order,_that.createdDateTime,_that.updatedDateTime,_that.serverCreatedDateTime,_that.serverUpdatedDateTime);case _:
+return $default(_that.id,_that.groupID,_that.userID,_that.name,_that.order,_that.categoryRevision,_that.createdDateTime,_that.updatedDateTime,_that.serverCreatedDateTime,_that.serverUpdatedDateTime);case _:
   return null;
 
 }
@@ -217,7 +218,7 @@ return $default(_that.id,_that.groupID,_that.userID,_that.name,_that.order,_that
 
 @JsonSerializable(explicitToJson: true)
 class _GroupCategoryAxis extends GroupCategoryAxis {
-  const _GroupCategoryAxis({required this.id, required this.groupID, required this.userID, required this.name, required this.order, @ClientCreatedTimestamp() this.createdDateTime, @ClientUpdatedTimestamp() this.updatedDateTime, @ServerCreatedTimestamp() this.serverCreatedDateTime, @ServerUpdatedTimestamp() this.serverUpdatedDateTime}): super._();
+  const _GroupCategoryAxis({required this.id, required this.groupID, required this.userID, required this.name, required this.order, this.categoryRevision = 0, @ClientCreatedTimestamp() this.createdDateTime, @ClientUpdatedTimestamp() this.updatedDateTime, @ServerCreatedTimestamp() this.serverCreatedDateTime, @ServerUpdatedTimestamp() this.serverUpdatedDateTime}): super._();
   factory _GroupCategoryAxis.fromJson(Map<String, dynamic> json) => _$GroupCategoryAxisFromJson(json);
 
 @override final  String id;
@@ -225,6 +226,7 @@ class _GroupCategoryAxis extends GroupCategoryAxis {
 @override final  String userID;
 @override final  String name;
 @override final  int order;
+@override@JsonKey() final  int categoryRevision;
 @override@ClientCreatedTimestamp() final  DateTime? createdDateTime;
 @override@ClientUpdatedTimestamp() final  DateTime? updatedDateTime;
 @override@ServerCreatedTimestamp() final  DateTime? serverCreatedDateTime;
@@ -243,16 +245,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupCategoryAxis&&(identical(other.id, id) || other.id == id)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.userID, userID) || other.userID == userID)&&(identical(other.name, name) || other.name == name)&&(identical(other.order, order) || other.order == order)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupCategoryAxis&&(identical(other.id, id) || other.id == id)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.userID, userID) || other.userID == userID)&&(identical(other.name, name) || other.name == name)&&(identical(other.order, order) || other.order == order)&&(identical(other.categoryRevision, categoryRevision) || other.categoryRevision == categoryRevision)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,groupID,userID,name,order,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+int get hashCode => Object.hash(runtimeType,id,groupID,userID,name,order,categoryRevision,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
 
 @override
 String toString() {
-  return 'GroupCategoryAxis(id: $id, groupID: $groupID, userID: $userID, name: $name, order: $order, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+  return 'GroupCategoryAxis(id: $id, groupID: $groupID, userID: $userID, name: $name, order: $order, categoryRevision: $categoryRevision, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
 }
 
 
@@ -263,7 +265,7 @@ abstract mixin class _$GroupCategoryAxisCopyWith<$Res> implements $GroupCategory
   factory _$GroupCategoryAxisCopyWith(_GroupCategoryAxis value, $Res Function(_GroupCategoryAxis) _then) = __$GroupCategoryAxisCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String groupID, String userID, String name, int order,@ClientCreatedTimestamp() DateTime? createdDateTime,@ClientUpdatedTimestamp() DateTime? updatedDateTime,@ServerCreatedTimestamp() DateTime? serverCreatedDateTime,@ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime
+ String id, String groupID, String userID, String name, int order, int categoryRevision,@ClientCreatedTimestamp() DateTime? createdDateTime,@ClientUpdatedTimestamp() DateTime? updatedDateTime,@ServerCreatedTimestamp() DateTime? serverCreatedDateTime,@ServerUpdatedTimestamp() DateTime? serverUpdatedDateTime
 });
 
 
@@ -280,13 +282,14 @@ class __$GroupCategoryAxisCopyWithImpl<$Res>
 
 /// Create a copy of GroupCategoryAxis
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? groupID = null,Object? userID = null,Object? name = null,Object? order = null,Object? createdDateTime = freezed,Object? updatedDateTime = freezed,Object? serverCreatedDateTime = freezed,Object? serverUpdatedDateTime = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? groupID = null,Object? userID = null,Object? name = null,Object? order = null,Object? categoryRevision = null,Object? createdDateTime = freezed,Object? updatedDateTime = freezed,Object? serverCreatedDateTime = freezed,Object? serverUpdatedDateTime = freezed,}) {
   return _then(_GroupCategoryAxis(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,groupID: null == groupID ? _self.groupID : groupID // ignore: cast_nullable_to_non_nullable
 as String,userID: null == userID ? _self.userID : userID // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,order: null == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
+as int,categoryRevision: null == categoryRevision ? _self.categoryRevision : categoryRevision // ignore: cast_nullable_to_non_nullable
 as int,createdDateTime: freezed == createdDateTime ? _self.createdDateTime : createdDateTime // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedDateTime: freezed == updatedDateTime ? _self.updatedDateTime : updatedDateTime // ignore: cast_nullable_to_non_nullable
 as DateTime?,serverCreatedDateTime: freezed == serverCreatedDateTime ? _self.serverCreatedDateTime : serverCreatedDateTime // ignore: cast_nullable_to_non_nullable

@@ -8,6 +8,7 @@ part 'group_category_axis.freezed.dart';
 abstract class GroupCategoryAxisFirestoreKeys {
   static const userID = 'userID';
   static const order = 'order';
+  static const categoryRevision = 'categoryRevision';
 }
 
 /// [Group] 内でユーザーが定義するカテゴリの軸を表すエンティティ。
@@ -30,6 +31,7 @@ abstract class GroupCategoryAxis with _$GroupCategoryAxis {
     required String userID,
     required String name,
     required int order,
+    @Default(0) int categoryRevision,
     @ClientCreatedTimestamp() DateTime? createdDateTime,
     @ClientUpdatedTimestamp() DateTime? updatedDateTime,
     @ServerCreatedTimestamp() DateTime? serverCreatedDateTime,

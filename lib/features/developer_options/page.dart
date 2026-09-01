@@ -311,6 +311,27 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
                   ),
         ),
 
+        // デバッグユーザーのカテゴリ設定作成
+        _ActionTile(
+          title: 'デバッグユーザーのカテゴリ設定作成',
+          subtitle: 'カテゴリ共有E2E用の「デバッグ売り場 / 共有野菜」を作成',
+          icon: Icons.category_outlined,
+          isProcessing: isProcessing.value,
+          onTap:
+              defaultGroupID == null
+                  ? null
+                  : () => _execute(
+                    isProcessing: isProcessing,
+                    resultMessage: resultMessage,
+                    action:
+                        () => DebugUserCategorySetup().call(
+                          debugUID: debugUID!,
+                          groupID: defaultGroupID,
+                        ),
+                    actionName: 'デバッグカテゴリ設定作成',
+                  ),
+        ),
+
         // デバッグユーザーにこの端末のFCMトークンを登録
         _ActionTile(
           title: 'デバッグユーザーにFCMトークン登録',
@@ -382,6 +403,7 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
                     action:
                         () => DebugUserCleanup().call(
                           debugUID: debugUID!,
+                          destinationUserID: currentUID!,
                           groupID: defaultGroupID,
                         ),
                     actionName: 'クリーンアップ',

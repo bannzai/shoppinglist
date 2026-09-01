@@ -1,0 +1,62 @@
+appId: ${APP_ID}
+---
+# 同じグループの別メンバーが持つカテゴリ設定を、自分のカテゴリへ取り込めることを検証する。
+# デバッグユーザー機能で2人目のメンバーとカテゴリを作り、実アカウントや実課金は使わない。
+- runFlow: shared/anonymous_sign_in.yaml
+- runFlow: virtual_pairing/02_create_debug_user.yaml
+- runFlow: virtual_pairing/03_add_to_group.yaml
+
+# デバッグユーザー所有のカテゴリ軸「デバッグ売り場」とカテゴリ「共有野菜」を作成する。
+- runFlow: shared/open_developer_options.yaml
+- scrollUntilVisible:
+    element:
+      text: "デバッグユーザーのカテゴリ設定作成"
+    direction: DOWN
+    timeout: 15000
+- tapOn: "デバッグユーザーのカテゴリ設定作成"
+- scrollUntilVisible:
+    element:
+      text: "デバッグカテゴリ設定作成 完了"
+    direction: UP
+    timeout: 15000
+- tapOn: "Back"
+- waitForAnimationToEnd
+- tapOn:
+    point: "7%,10%"
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "タップで入力開始"
+    timeout: 10000
+
+# リスト設定からカテゴリ画面を開き、別メンバーの設定が取り込み候補に出ることを確認する。
+- tapOn: "リスト設定"
+- waitForAnimationToEnd
+- tapOn:
+    text: "(?s).*自動分類のキーワード管理.*"
+- waitForAnimationToEnd
+- tapOn: "メンバーのカテゴリを取り込む"
+- assertVisible: "カテゴリ設定を取り込む"
+- assertVisible: "デバッグ売り場"
+- assertVisible: "Debug User"
+- takeScreenshot: screenshots/category_import_01_source_selection
+
+# 取り込み後、自分のカテゴリ一覧に元カテゴリが表示されることを確認する。
+- tapOn: "デバッグ売り場"
+- extendedWaitUntil:
+    visible: "デバッグ売り場を取り込みました"
+    timeout: 15000
+- extendedWaitUntil:
+    visible: "(?s).*共有野菜.*"
+    timeout: 15000
+- takeScreenshot: screenshots/category_import_02_imported
+
+# 再取り込みでも同じ決定的IDのカテゴリを更新でき、エラーにならないことを確認する。
+- tapOn: "メンバーのカテゴリを取り込む"
+- tapOn: "デバッグ売り場"
+- extendedWaitUntil:
+    visible: "デバッグ売り場を取り込みました"
+    timeout: 15000
+- assertVisible: "(?s).*共有野菜.*"
+
+# デバッグユーザー側のテストデータを削除する。
+- runFlow: virtual_pairing/06_cleanup.yaml

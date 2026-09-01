@@ -59,9 +59,14 @@ service cloud.firestore {
         return isMember(get(/databases/$(database)/documents/groups/$(groupID)).data.memberUserIDs);
       }
 
-      // userCategoryAxes / categories はユーザーごとのカテゴリ設定（グループ共有ではない）
+      // userCategoryAxes / categories はユーザー所有のまま、同じグループのメンバーが
+      // 自分の設定へ取り込めるよう読み取りのみ共有する。
       function isCategoryDataOwner(userID) {
         return isUserAuth(userID) || isDebugUserOf(userID);
+      }
+
+      function isCurrentGroupMember(userID) {
+        return userID in get(/databases/$(database)/documents/groups/$(groupID)).data.memberUserIDs;
       }
 
       match /userProfiles/{profileID} {
@@ -73,14 +78,23 @@ service cloud.firestore {
       }
 
       match /userCategoryAxes/{axisID} {
-        allow read: if isGroupMember() && isCategoryDataOwner(resource.data.userID);
+        allow read: if isGroupMember() && isCurrentGroupMember(resource.data.userID);
         allow create: if isGroupMember() && isCategoryDataOwner(request.resource.data.userID);
-        allow update, delete: if isGroupMember() && isCategoryDataOwner(resource.data.userID);
+        allow update: if isGroupMember()
+          && isCategoryDataOwner(resource.data.userID)
+          && request.resource.data.userID == resource.data.userID;
+        allow delete: if isGroupMember() && isCategoryDataOwner(resource.data.userID);
 
         match /categories/{categoryID} {
-          allow read: if isGroupMember() && isCategoryDataOwner(resource.data.userID);
+          allow read: if isGroupMember()
+            && isCurrentGroupMember(resource.data.userID)
+            && exists(/databases/$(database)/documents/groups/$(groupID)/userCategoryAxes/$(axisID))
+            && get(/databases/$(database)/documents/groups/$(groupID)/userCategoryAxes/$(axisID)).data.userID == resource.data.userID;
           allow create: if isGroupMember() && isCategoryDataOwner(request.resource.data.userID);
-          allow update, delete: if isGroupMember() && isCategoryDataOwner(resource.data.userID);
+          allow update: if isGroupMember()
+            && isCategoryDataOwner(resource.data.userID)
+            && request.resource.data.userID == resource.data.userID;
+          allow delete: if isGroupMember() && isCategoryDataOwner(resource.data.userID);
         }
       }
 
