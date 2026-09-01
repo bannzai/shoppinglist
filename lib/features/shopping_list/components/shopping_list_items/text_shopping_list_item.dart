@@ -190,9 +190,10 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
     // セクションの境界が見分けられなくなる（Issue #374）。チェック状態は Checkbox 塗り +
     // 取り消し線 + checked 文字色で表現する。
     final emphasized = focused || isRecentlyAdded;
-    final backgroundColor = emphasized
-        ? tokens.accentSoft.withValues(alpha: 0.6)
-        : Colors.transparent;
+    final backgroundColor =
+        emphasized
+            ? tokens.accentSoft.withValues(alpha: 0.6)
+            : Colors.transparent;
 
     // ReorderableListView のドラッグ移動中に Material が必要
     final content = Material(
@@ -718,8 +719,8 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
             // 入力行: 確定テキストを別アイテム E として入力行の位置(order)へ追加し、
             // 入力行(C)は nextOrder へ繰り下げて E の下に保つ。入力行は空のまま
             // フォーカスを維持する（移譲しないのでキーボードは閉じない）。
-            final submissionSequence = recentlyAddedShoppingListItemNotifier
-                .beginSubmission();
+            final submissionSequence =
+                recentlyAddedShoppingListItemNotifier.beginSubmission();
             final addShoppingListItemFuture = addShoppingListItem.call(
               shoppingListID: textShoppingListItem.shoppingListID,
               userID: currentUserID,

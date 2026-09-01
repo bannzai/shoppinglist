@@ -232,18 +232,16 @@ Material _rowMaterial(WidgetTester tester) {
 
 /// 行の左端ボーダーを描画する [Container] を特定する。
 Container _rowContainer(WidgetTester tester) {
-  final rowMaterialFinder = find
-      .descendant(
-        of: find.byType(Dismissible),
-        matching: find.byType(Material),
-      )
-      .first;
+  final rowMaterialFinder =
+      find
+          .descendant(
+            of: find.byType(Dismissible),
+            matching: find.byType(Material),
+          )
+          .first;
   return tester.widget<Container>(
     find
-        .descendant(
-          of: rowMaterialFinder,
-          matching: find.byType(Container),
-        )
+        .descendant(of: rowMaterialFinder, matching: find.byType(Container))
         .first,
   );
 }
