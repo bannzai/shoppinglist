@@ -5,7 +5,18 @@ const {
   assertSucceeds,
   assertFails,
 } = require('@firebase/rules-unit-testing');
-const { doc, getDoc, setDoc, updateDoc, deleteDoc } = require('firebase/firestore');
+const {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  orderBy,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} = require('firebase/firestore');
 
 // demo- 接頭辞により Emulator が demo モード (実プロジェクト不要) で動作する。
 // package.json の `firebase emulators:exec --project demo-shoppinglist` と一致させる。
@@ -294,6 +305,15 @@ describe('groups/{id}/userCategoryAxes（グループ内read共有・writeは所
     await assertFails(deleteDoc(doc(d, axisPath)));
   });
 
+  test('現在のメンバー所有に限定した axis クエリだけを許可する', async () => {
+    await seed(axisPath, { userID: 'alice', name: '軸', order: 0 });
+    const axes = collection(db('bob'), 'groups/g1/userCategoryAxes');
+    await assertSucceeds(
+      getDocs(query(axes, where('userID', '==', 'alice'), orderBy('order')))
+    );
+    await assertFails(getDocs(query(axes, orderBy('order'))));
+  });
+
   test('残存メンバー bob は削除済みメンバー alice の axis を read できない', async () => {
     await seed(axisPath, { userID: 'alice', name: '軸' });
     await seed('groups/g1', { id: 'g1', memberUserIDs: ['bob'], name: 'テストグループ' });
@@ -342,6 +362,13 @@ describe('userCategoryAxes/{id}/categories（グループ内read共有・write�
     await assertSucceeds(getDoc(doc(d, categoryPath)));
     await assertFails(updateDoc(doc(d, categoryPath), { name: 'x' }));
     await assertFails(deleteDoc(doc(d, categoryPath)));
+  });
+
+  test('所有者に限定した category クエリだけを許可する', async () => {
+    await seed(categoryPath, { userID: 'alice', name: 'カテゴリ', order: 0 });
+    const categories = collection(db('bob'), `${axisPath}/categories`);
+    await assertSucceeds(getDocs(query(categories, where('userID', '==', 'alice'))));
+    await assertFails(getDocs(query(categories)));
   });
 
   test('残存メンバー bob は削除済みメンバー alice の category を read できない', async () => {

@@ -205,4 +205,68 @@ void main() {
       5,
     ]);
   });
+
+  test('初回取り込みで元の先頭順序を差し引き、取込先の末尾から連続配置する', () {
+    const sourceAxis = GroupCategoryAxis(
+      id: 'source-axis',
+      groupID: 'group',
+      userID: 'source-user',
+      name: '売り場',
+      order: 0,
+    );
+    const sourceCategories = [
+      GroupCategory(
+        id: 'source-category-1',
+        groupID: 'group',
+        userID: 'source-user',
+        groupCategoryAxisID: 'source-axis',
+        name: '野菜',
+        order: 4,
+        locationOrders: {'store': 7},
+        keywords: [],
+        color: null,
+        iconName: null,
+      ),
+      GroupCategory(
+        id: 'source-category-2',
+        groupID: 'group',
+        userID: 'source-user',
+        groupCategoryAxisID: 'source-axis',
+        name: '肉',
+        order: 5,
+        locationOrders: {'store': 6},
+        keywords: [],
+        color: null,
+        iconName: null,
+      ),
+    ];
+    const localCategory = GroupCategory(
+      id: 'local-category',
+      groupID: 'group',
+      userID: 'destination-user',
+      groupCategoryAxisID: 'destination-axis',
+      name: '自作',
+      order: 0,
+      locationOrders: {'store': 0},
+      keywords: [],
+      color: null,
+      iconName: null,
+    );
+
+    final imported = buildImportedGroupCategories(
+      groupID: 'group',
+      destinationUserID: 'destination-user',
+      destinationGroupCategoryAxisID: 'destination-axis',
+      sourceGroupCategoryAxis: sourceAxis,
+      sourceCategories: sourceCategories,
+      destinationCategories: const [localCategory],
+      updatedDateTime: DateTime(2026, 9),
+    );
+
+    expect(imported.map((category) => category.order), [1, 2]);
+    expect(imported.map((category) => category.locationOrders['store']), [
+      2,
+      1,
+    ]);
+  });
 }

@@ -8,6 +8,7 @@ import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_category_keyword.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/group_category.dart';
 
 /// デバッグユーザーIDを生成する。
 /// 形式: {realUID}_debug_{index}
@@ -129,7 +130,11 @@ class DebugUserRegisterFcmToken {
 /// デバッグユーザー関連データをクリーンアップする。
 /// memberUserIDs から除去、プロフィール・カテゴリ・privates・ユーザー文書を削除。
 class DebugUserCleanup {
-  Future<void> call({required String debugUID, required String groupID}) async {
+  Future<void> call({
+    required String debugUID,
+    required String destinationUserID,
+    required String groupID,
+  }) async {
     final groupDB = GroupDatabase(groupID: groupID);
 
     // memberUserIDs から除去
@@ -140,11 +145,44 @@ class DebugUserCleanup {
     // プロフィール削除
     await groupDB.userProfileReference(userID: debugUID).delete();
 
-    // カテゴリ共有E2Eで作成した決定的IDのカテゴリと軸を削除する。文書が存在しない
-    // 場合もdeleteは成功するため、クリーンアップは冪等である。
+    // 既存軸へ取り込んだコピーを含め、デバッグカテゴリ由来の決定的IDを削除する。
+    // 文書が存在しない場合もdeleteは成功するため、クリーンアップは冪等である。
     final categoryAxisID = DebugUserCategorySetup.categoryAxisID(
       debugUID: debugUID,
     );
+    final importedCategoryID = importedGroupCategoryDocumentID(
+      sourceUserID: debugUID,
+      sourceGroupCategoryAxisID: categoryAxisID,
+      sourceGroupCategoryID: DebugUserCategorySetup.categoryID(
+        debugUID: debugUID,
+      ),
+    );
+    final destinationAxes =
+        (await groupDB
+                .categoryAxesReference()
+                .where(
+                  GroupCategoryAxisFirestoreKeys.userID,
+                  isEqualTo: destinationUserID,
+                )
+                .get())
+            .docs;
+    for (final destinationAxis in destinationAxes) {
+      await groupDB
+          .categoryReference(
+            categoryAxisID: destinationAxis.id,
+            categoryID: importedCategoryID,
+          )
+          .delete();
+    }
+    await groupDB
+        .categoryAxisReference(
+          categoryAxisID: importedGroupCategoryAxisDocumentID(
+            destinationUserID: destinationUserID,
+            sourceUserID: debugUID,
+            sourceGroupCategoryAxisID: categoryAxisID,
+          ),
+        )
+        .delete();
     await groupDB
         .categoryReference(
           categoryAxisID: categoryAxisID,

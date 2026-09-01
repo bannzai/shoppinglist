@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -62,20 +63,73 @@ Stream<List<GroupCategoryAxis>> shareableGroupCategoryAxes(
       .watch(groupProvider(groupID: groupID))
       .when(
         data:
-            (group) => database
-                .categoryAxesReference()
-                .orderBy(GroupCategoryAxisFirestoreKeys.order)
-                .snapshots()
-                .map(
-                  (event) => filterShareableGroupCategoryAxes(
-                    groupCategoryAxes:
-                        event.docs.map((doc) => doc.data()).toList(),
-                    memberUserIDs: group.memberUserIDs,
-                  ),
-                ),
+            (group) => _watchShareableGroupCategoryAxes(
+              database: database,
+              memberUserIDs: group.memberUserIDs,
+            ),
         error: Stream.error,
         loading: Stream.empty,
       );
+}
+
+/// Rules が各クエリの読み取り対象を現在のメンバー所有に限定できるよう、所有者ごとに
+/// クエリして結果を結合する。これによりメンバー数が whereIn の上限を超えても動く。
+Stream<List<GroupCategoryAxis>> _watchShareableGroupCategoryAxes({
+  required GroupDatabase database,
+  required List<String> memberUserIDs,
+}) {
+  final uniqueMemberUserIDs = memberUserIDs.toSet();
+  if (uniqueMemberUserIDs.isEmpty) {
+    return Stream.value(const <GroupCategoryAxis>[]);
+  }
+
+  final latestAxesByUserID = <String, List<GroupCategoryAxis>>{};
+  final subscriptions =
+      <StreamSubscription<QuerySnapshot<GroupCategoryAxis>>>[];
+  late final StreamController<List<GroupCategoryAxis>> controller;
+
+  void emitCombinedAxes() {
+    if (latestAxesByUserID.length != uniqueMemberUserIDs.length) {
+      return;
+    }
+    final axes =
+        latestAxesByUserID.values.expand((axes) => axes).toList()
+          ..sort((left, right) {
+            final orderComparison = left.order.compareTo(right.order);
+            return orderComparison != 0
+                ? orderComparison
+                : left.id.compareTo(right.id);
+          });
+    controller.add(axes);
+  }
+
+  controller = StreamController<List<GroupCategoryAxis>>(
+    onListen: () {
+      for (final memberUserID in uniqueMemberUserIDs) {
+        subscriptions.add(
+          database
+              .categoryAxesReference()
+              .where(
+                GroupCategoryAxisFirestoreKeys.userID,
+                isEqualTo: memberUserID,
+              )
+              .orderBy(GroupCategoryAxisFirestoreKeys.order)
+              .snapshots()
+              .listen((snapshot) {
+                latestAxesByUserID[memberUserID] =
+                    snapshot.docs.map((doc) => doc.data()).toList();
+                emitCombinedAxes();
+              }, onError: controller.addError),
+        );
+      }
+    },
+    onCancel: () async {
+      await Future.wait(
+        subscriptions.map((subscription) => subscription.cancel()),
+      );
+    },
+  );
+  return controller.stream;
 }
 
 class GroupCategoryAxisAdd {
@@ -329,6 +383,12 @@ List<GroupCategory> buildImportedGroupCategories({
             (category) => !category.id.startsWith(importedDocumentIDPrefix),
           )
           .toList();
+  final sourceDefaultOrderMinimum =
+      sourceCategories.isEmpty
+          ? 0
+          : sourceCategories
+              .map((category) => category.order)
+              .reduce((minimum, order) => order < minimum ? order : minimum);
   final defaultOrderOffset =
       importedDestinationCategories.isNotEmpty && sourceCategories.isNotEmpty
           ? importedDestinationCategories
@@ -336,15 +396,14 @@ List<GroupCategory> buildImportedGroupCategories({
                   .reduce(
                     (minimum, order) => order < minimum ? order : minimum,
                   ) -
-              sourceCategories
-                  .map((category) => category.order)
-                  .reduce((minimum, order) => order < minimum ? order : minimum)
+              sourceDefaultOrderMinimum
           : otherDestinationCategories.fold<int>(
                 -1,
                 (maximum, category) =>
                     category.order > maximum ? category.order : maximum,
               ) +
-              1;
+              1 -
+              sourceDefaultOrderMinimum;
   final shoppingLocationIDs = <String>{
     for (final category in sourceCategories) ...category.locationOrders.keys,
     for (final category in destinationCategories)
@@ -364,22 +423,21 @@ List<GroupCategory> buildImportedGroupCategories({
                       .reduce(
                         (minimum, order) => order < minimum ? order : minimum,
                       ) -
-                  sourceCategories
-                      .map(
-                        (category) =>
-                            category.locationOrders[shoppingLocationID] ??
-                            category.order,
-                      )
-                      .reduce(
-                        (minimum, order) => order < minimum ? order : minimum,
-                      )
+                  _minimumLocationOrder(
+                    categories: sourceCategories,
+                    shoppingLocationID: shoppingLocationID,
+                  )
               : otherDestinationCategories.fold<int>(-1, (maximum, category) {
                     final order =
                         category.locationOrders[shoppingLocationID] ??
                         category.order;
                     return order > maximum ? order : maximum;
                   }) +
-                  1,
+                  1 -
+                  _minimumLocationOrder(
+                    categories: sourceCategories,
+                    shoppingLocationID: shoppingLocationID,
+                  ),
   };
   final destinationCategoriesByID = {
     for (final category in destinationCategories) category.id: category,
@@ -412,6 +470,19 @@ List<GroupCategory> buildImportedGroupCategories({
     );
   }).toList();
 }
+
+int _minimumLocationOrder({
+  required List<GroupCategory> categories,
+  required String shoppingLocationID,
+}) =>
+    categories.isEmpty
+        ? 0
+        : categories
+            .map(
+              (category) =>
+                  category.locationOrders[shoppingLocationID] ?? category.order,
+            )
+            .reduce((minimum, order) => order < minimum ? order : minimum);
 
 /// 同じグループの別メンバーが持つカテゴリ設定を、自分のカテゴリ設定へ取り込む。
 ///
@@ -467,7 +538,13 @@ class GroupCategoryImportFromMember {
       categoryAxisID: destinationAxis.id,
     );
     final destinationCategories =
-        (await destinationReference.get()).docs
+        (await destinationReference
+                .where(
+                  GroupCategoryFirestoreKeys.userID,
+                  isEqualTo: destinationUserID,
+                )
+                .get())
+            .docs
             .map((doc) => doc.data())
             .toList();
     final importedDocumentIDPrefix = importedGroupCategoryDocumentIDPrefix(
@@ -530,19 +607,31 @@ class GroupCategoryImportFromMember {
     final reference = database.categoryAxisReference(
       categoryAxisID: destinationAxisID,
     );
-    final existing = (await reference.get()).data();
     final destinationAxis = GroupCategoryAxis(
       id: destinationAxisID,
       groupID: database.groupID,
       userID: destinationUserID,
       name: sourceGroupCategoryAxis.name,
       order: 0,
-      createdDateTime: existing?.createdDateTime,
       updatedDateTime: DateTime.now(),
-      serverCreatedDateTime: existing?.serverCreatedDateTime,
       serverUpdatedDateTime: null,
     );
-    await reference.set(destinationAxis, SetOptions(merge: true));
+    // 存在しない文書の read は所有者を判定できず Rules で拒否されるため、事前に
+    // 読み取らず直接 upsert する。mergeFields で作成日時は既存なら維持する。
+    await reference.set(
+      destinationAxis,
+      SetOptions(
+        mergeFields: const [
+          'id',
+          'groupID',
+          'userID',
+          'name',
+          'order',
+          'updatedDateTime',
+          'serverUpdatedDateTime',
+        ],
+      ),
+    );
     return destinationAxis;
   }
 }

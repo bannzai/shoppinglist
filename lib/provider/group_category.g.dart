@@ -160,7 +160,7 @@ class _GroupCategoryAxesProviderElement
 }
 
 String _$shareableGroupCategoryAxesHash() =>
-    r'0c979bcb5c9a6146d4a930f70cc130553ae94a37';
+    r'a63e833a778ecfc12da501a03470123ab5aa9df7';
 
 /// See also [shareableGroupCategoryAxes].
 @ProviderFor(shareableGroupCategoryAxes)

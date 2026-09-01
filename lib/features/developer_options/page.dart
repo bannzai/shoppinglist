@@ -403,6 +403,7 @@ class _DeveloperOptionsContent extends HookConsumerWidget {
                     action:
                         () => DebugUserCleanup().call(
                           debugUID: debugUID!,
+                          destinationUserID: currentUID!,
                           groupID: defaultGroupID,
                         ),
                     actionName: 'クリーンアップ',
