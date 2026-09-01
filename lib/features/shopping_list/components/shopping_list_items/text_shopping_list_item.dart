@@ -8,6 +8,7 @@ import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item_detail_bottom_sheet.dart';
+import 'package:shoppinglist/provider/recently_added_shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
@@ -28,7 +29,7 @@ final shoppingListInputRowFocusRequestProvider = StateProvider<int>((ref) => 0);
 /// - TextField（編集中フォーカス枠なし）
 /// - 詳細アイコン
 ///
-/// focused 中は左端に 2px の accent ボーダーと accentSoft 0.4 の背景を出す。
+/// focused 中または手入力直後は、左端に 2px の accent ボーダーと accentSoft の背景を出す。
 /// checked 時はテキスト色 `t.checked` + 取り消し線、Checkbox 内 accent 塗り。
 class TextShoppingListItemWidget extends HookConsumerWidget {
   final String groupID;
@@ -74,6 +75,11 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
     );
     final deleteShoppingListItem = ref.watch(
       deleteShoppingListItemProvider(groupID: groupID),
+    );
+    final recentlyAddedShoppingListItemID = ref.watch(
+      recentlyAddedShoppingListItemProvider(
+        textShoppingListItem.shoppingListID,
+      ),
     );
 
     // 初回に空行(入力行)へフォーカスし、フォーカスの有無を isEditing に同期する。加えて、
@@ -177,12 +183,17 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
     // チェックボックスのタップ・右スワイプの両方を無効化するための判定。
     final isEmptyMessage = textShoppingListItem.message.trim().isEmpty;
     final focused = isEditing.value;
+    final isRecentlyAdded =
+        recentlyAddedShoppingListItemID == textShoppingListItem.id;
     // チェック済み行に背景は塗らない（screens-list.jsx#ItemRow は checked でも transparent）。
     // divider2 半透過を塗るとカテゴリヘッダーの surface とほぼ同色になり、チェックを入れると
     // セクションの境界が見分けられなくなる（Issue #374）。チェック状態は Checkbox 塗り +
     // 取り消し線 + checked 文字色で表現する。
+    final emphasized = focused || isRecentlyAdded;
     final backgroundColor =
-        focused ? tokens.accentSoft.withValues(alpha: 0.6) : Colors.transparent;
+        emphasized
+            ? tokens.accentSoft.withValues(alpha: 0.6)
+            : Colors.transparent;
 
     // ReorderableListView のドラッグ移動中に Material が必要
     final content = Material(
@@ -195,7 +206,7 @@ class TextShoppingListItemWidget extends HookConsumerWidget {
         decoration: BoxDecoration(
           border: Border(
             left: BorderSide(
-              color: focused ? tokens.accent : Colors.transparent,
+              color: emphasized ? tokens.accent : Colors.transparent,
               width: 2,
             ),
           ),
@@ -595,6 +606,11 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
     final inputRowFocusRequestNotifier = ref.watch(
       shoppingListInputRowFocusRequestProvider.notifier,
     );
+    final recentlyAddedShoppingListItemNotifier = ref.watch(
+      recentlyAddedShoppingListItemProvider(
+        textShoppingListItem.shoppingListID,
+      ).notifier,
+    );
     final tokens = context.appTheme;
     final neutral = tokens.neutral;
     final isChecked =
@@ -667,7 +683,7 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
         // 入力行（保存済み message が空の行）のフォーカスを移譲しない。確定テキストは
         // 別アイテム E として入力行の位置に追加し、入力行自体は空のままフォーカスを
         // 保ち、次の入力欄として再利用する（E は非空なので auto-focus されない）。
-        onChanged: (String v) {
+        onChanged: (String v) async {
           if (!v.contains('\n')) {
             return;
           }
@@ -703,7 +719,9 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
             // 入力行: 確定テキストを別アイテム E として入力行の位置(order)へ追加し、
             // 入力行(C)は nextOrder へ繰り下げて E の下に保つ。入力行は空のまま
             // フォーカスを維持する（移譲しないのでキーボードは閉じない）。
-            addShoppingListItem.call(
+            final submissionSequence =
+                recentlyAddedShoppingListItemNotifier.beginSubmission();
+            final addShoppingListItemFuture = addShoppingListItem.call(
               shoppingListID: textShoppingListItem.shoppingListID,
               userID: currentUserID,
               message: value,
@@ -720,6 +738,13 @@ class TextShoppingListItemTextField extends HookConsumerWidget {
               ],
             );
             textEditingController.clear();
+            final addedShoppingListItem = await addShoppingListItemFuture;
+            if (context.mounted) {
+              recentlyAddedShoppingListItemNotifier.highlightIfLatest(
+                submissionSequence: submissionSequence,
+                shoppingListItemID: addedShoppingListItem.id,
+              );
+            }
           } else {
             // 既存アイテムの編集確定: 内容を更新し、末尾の入力行へフォーカスを移して
             // 続けて追加できるようにする(origin/main の「Enter で次の入力へ」を踏襲)。
