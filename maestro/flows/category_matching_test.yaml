@@ -90,6 +90,10 @@ appId: ${APP_ID}
 - tapOn: "タップで入力開始"
 - inputText: "牛乳"
 - pressKey: enter
+# 手入力直後、牛乳は「乳製品」へ移動してもアクセント背景と左線で強調される。
+# 色・線の自動判定は Widget Test が担い、ここでは実描画をスクリーンショットで確認する。
+- assertVisible: "牛乳"
+- takeScreenshot: screenshots/category_matching_02_recently_added_highlight
 - inputText: "牛肉"
 - pressKey: enter
 - inputText: "milk"
@@ -109,4 +113,4 @@ appId: ${APP_ID}
 - extendedWaitUntil:
     visible: "(?s).*肉.*"
     timeout: 5000
-- takeScreenshot: screenshots/category_matching_02_result
+- takeScreenshot: screenshots/category_matching_03_result

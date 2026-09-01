@@ -12,6 +12,7 @@ import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/features/previews/mock/mock_provider_overrides.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
+import 'package:shoppinglist/provider/recently_added_shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -224,6 +225,24 @@ Material _rowMaterial(WidgetTester tester) {
         .descendant(
           of: find.byType(Dismissible),
           matching: find.byType(Material),
+        )
+        .first,
+  );
+}
+
+/// 行の左端ボーダーを描画する [Container] を特定する。
+Container _rowContainer(WidgetTester tester) {
+  final rowMaterialFinder = find
+      .descendant(
+        of: find.byType(Dismissible),
+        matching: find.byType(Material),
+      )
+      .first;
+  return tester.widget<Container>(
+    find
+        .descendant(
+          of: rowMaterialFinder,
+          matching: find.byType(Container),
         )
         .first,
   );
@@ -493,6 +512,36 @@ void main() {
       expect(add.calls.map((c) => c.message).toList(), ['牛乳', '卵']);
     });
 
+    testWidgets('Enter で追加したアイテムIDを入力直後の強調表示対象にする', (tester) async {
+      final add = _RecordingAddShoppingListItem();
+      await _pump(
+        tester,
+        _item(id: 'input', message: ''),
+        extraOverrides: [
+          addShoppingListItemProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => add),
+          shoppingListItemBatchUpdateProvider(
+            groupID: mockGroupID,
+          ).overrideWith((ref) => _RecordingShoppingListItemBatchUpdate()),
+        ],
+      );
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(TextShoppingListItemWidget)),
+      );
+
+      await tester.enterText(find.byType(TextField), '牛乳\n');
+      await tester.pump();
+
+      expect(
+        container.read(
+          recentlyAddedShoppingListItemProvider(mockShoppingListID),
+        ),
+        'added-1',
+      );
+      await tester.pump(recentlyAddedShoppingListItemHighlightDuration);
+    });
+
     testWidgets('既存行の Enter 確定は update し、入力行が無ければ末尾 (nextOrder) に空の入力行を追加する', (
       tester,
     ) async {
@@ -516,6 +565,39 @@ void main() {
       // shoppingListItems に空行が無いので、末尾に空の入力行が新規作成される。
       expect(add.calls.single.message, isEmpty);
       expect(add.calls.single.order, 1);
+    });
+  });
+
+  group('手入力直後の行ハイライト (Issue #555)', () {
+    testWidgets('対象IDの行をアクセント背景で強調し、3秒後に解除する', (tester) async {
+      await _pump(tester, _item(id: 'added-1', message: '牛乳'));
+      final context = tester.element(find.byType(TextShoppingListItemWidget));
+      final container = ProviderScope.containerOf(context);
+      final notifier = container.read(
+        recentlyAddedShoppingListItemProvider(mockShoppingListID).notifier,
+      );
+      final submissionSequence = notifier.beginSubmission();
+
+      notifier.highlightIfLatest(
+        submissionSequence: submissionSequence,
+        shoppingListItemID: 'added-1',
+      );
+      await tester.pump();
+
+      expect(
+        _rowMaterial(tester).color,
+        context.appTheme.accentSoft.withValues(alpha: 0.6),
+      );
+      final highlightedDecoration =
+          _rowContainer(tester).decoration! as BoxDecoration;
+      expect(
+        (highlightedDecoration.border! as Border).left,
+        BorderSide(color: context.appTheme.accent, width: 2),
+      );
+
+      await tester.pump(recentlyAddedShoppingListItemHighlightDuration);
+      await tester.pump();
+      expect(_rowMaterial(tester).color, Colors.transparent);
     });
   });
 
