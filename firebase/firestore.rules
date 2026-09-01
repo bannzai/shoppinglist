@@ -65,6 +65,10 @@ service cloud.firestore {
         return isUserAuth(userID) || isDebugUserOf(userID);
       }
 
+      function isCurrentGroupMember(userID) {
+        return userID in get(/databases/$(database)/documents/groups/$(groupID)).data.memberUserIDs;
+      }
+
       match /userProfiles/{profileID} {
         allow read, write: if isGroupMember();
       }
@@ -74,7 +78,7 @@ service cloud.firestore {
       }
 
       match /userCategoryAxes/{axisID} {
-        allow read: if isGroupMember();
+        allow read: if isGroupMember() && isCurrentGroupMember(resource.data.userID);
         allow create: if isGroupMember() && isCategoryDataOwner(request.resource.data.userID);
         allow update: if isGroupMember()
           && isCategoryDataOwner(resource.data.userID)
@@ -82,7 +86,7 @@ service cloud.firestore {
         allow delete: if isGroupMember() && isCategoryDataOwner(resource.data.userID);
 
         match /categories/{categoryID} {
-          allow read: if isGroupMember();
+          allow read: if isGroupMember() && isCurrentGroupMember(resource.data.userID);
           allow create: if isGroupMember() && isCategoryDataOwner(request.resource.data.userID);
           allow update: if isGroupMember()
             && isCategoryDataOwner(resource.data.userID)

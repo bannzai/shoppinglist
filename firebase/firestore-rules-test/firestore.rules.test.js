@@ -294,6 +294,12 @@ describe('groups/{id}/userCategoryAxes（グループ内read共有・writeは所
     await assertFails(deleteDoc(doc(d, axisPath)));
   });
 
+  test('残存メンバー bob は削除済みメンバー alice の axis を read できない', async () => {
+    await seed(axisPath, { userID: 'alice', name: '軸' });
+    await seed('groups/g1', { id: 'g1', memberUserIDs: ['bob'], name: 'テストグループ' });
+    await assertFails(getDoc(doc(db('bob'), axisPath)));
+  });
+
   test('所有者 alice でも axis の userID を別ユーザーへ変更できない', async () => {
     await seed(axisPath, { userID: 'alice', name: '軸' });
     const d = db('alice');
@@ -336,6 +342,12 @@ describe('userCategoryAxes/{id}/categories（グループ内read共有・write�
     await assertSucceeds(getDoc(doc(d, categoryPath)));
     await assertFails(updateDoc(doc(d, categoryPath), { name: 'x' }));
     await assertFails(deleteDoc(doc(d, categoryPath)));
+  });
+
+  test('残存メンバー bob は削除済みメンバー alice の category を read できない', async () => {
+    await seed(categoryPath, { userID: 'alice', name: 'カテゴリ' });
+    await seed('groups/g1', { id: 'g1', memberUserIDs: ['bob'], name: 'テストグループ' });
+    await assertFails(getDoc(doc(db('bob'), categoryPath)));
   });
 
   test('所有者 alice でも category の userID を別ユーザーへ変更できない', async () => {

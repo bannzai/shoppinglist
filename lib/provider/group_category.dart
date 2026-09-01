@@ -304,8 +304,8 @@ String importedGroupCategoryAxisDocumentID({
 }) =>
     'imported_${_categoryImportHash([destinationUserID, sourceUserID, sourceGroupCategoryAxisID])}';
 
-/// 取込先にある自作カテゴリ・別メンバーからの取込済みカテゴリの後ろへ、元の
-/// 相対順序を保ったままカテゴリを配置する。
+/// 初回は取込先にあるカテゴリの後ろへ配置し、再取り込みでは既存ブロックの
+/// 開始位置と元の相対順序を維持する。
 List<GroupCategory> buildImportedGroupCategories({
   required String groupID,
   required String destinationUserID,
@@ -319,6 +319,10 @@ List<GroupCategory> buildImportedGroupCategories({
     sourceUserID: sourceGroupCategoryAxis.userID,
     sourceGroupCategoryAxisID: sourceGroupCategoryAxis.id,
   );
+  final importedDestinationCategories =
+      destinationCategories
+          .where((category) => category.id.startsWith(importedDocumentIDPrefix))
+          .toList();
   final otherDestinationCategories =
       destinationCategories
           .where(
@@ -326,26 +330,56 @@ List<GroupCategory> buildImportedGroupCategories({
           )
           .toList();
   final defaultOrderOffset =
-      otherDestinationCategories.fold<int>(
-        -1,
-        (maximum, category) =>
-            category.order > maximum ? category.order : maximum,
-      ) +
-      1;
+      importedDestinationCategories.isNotEmpty && sourceCategories.isNotEmpty
+          ? importedDestinationCategories
+                  .map((category) => category.order)
+                  .reduce(
+                    (minimum, order) => order < minimum ? order : minimum,
+                  ) -
+              sourceCategories
+                  .map((category) => category.order)
+                  .reduce((minimum, order) => order < minimum ? order : minimum)
+          : otherDestinationCategories.fold<int>(
+                -1,
+                (maximum, category) =>
+                    category.order > maximum ? category.order : maximum,
+              ) +
+              1;
   final shoppingLocationIDs = <String>{
     for (final category in sourceCategories) ...category.locationOrders.keys,
-    for (final category in otherDestinationCategories)
+    for (final category in destinationCategories)
       ...category.locationOrders.keys,
   };
   final locationOrderOffsets = {
     for (final shoppingLocationID in shoppingLocationIDs)
       shoppingLocationID:
-          otherDestinationCategories.fold<int>(-1, (maximum, category) {
-            final order =
-                category.locationOrders[shoppingLocationID] ?? category.order;
-            return order > maximum ? order : maximum;
-          }) +
-          1,
+          importedDestinationCategories.isNotEmpty &&
+                  sourceCategories.isNotEmpty
+              ? importedDestinationCategories
+                      .map(
+                        (category) =>
+                            category.locationOrders[shoppingLocationID] ??
+                            category.order,
+                      )
+                      .reduce(
+                        (minimum, order) => order < minimum ? order : minimum,
+                      ) -
+                  sourceCategories
+                      .map(
+                        (category) =>
+                            category.locationOrders[shoppingLocationID] ??
+                            category.order,
+                      )
+                      .reduce(
+                        (minimum, order) => order < minimum ? order : minimum,
+                      )
+              : otherDestinationCategories.fold<int>(-1, (maximum, category) {
+                    final order =
+                        category.locationOrders[shoppingLocationID] ??
+                        category.order;
+                    return order > maximum ? order : maximum;
+                  }) +
+                  1,
   };
   final destinationCategoriesByID = {
     for (final category in destinationCategories) category.id: category,

@@ -50,8 +50,8 @@ npm test
 6. **groups/{id}/userProfiles・shoppingLocations**: メンバーは read/write 可。非メンバー・未認証は拒否。
 7. **groups/{id}/shoppingLists と items**: メンバーは read/write 可。非メンバーは拒否。
 8. **groups/{id}/shoppingLists/{id}/receipts**: メンバーは read/create/update 可。**メンバーでも delete は拒否**。非メンバーは拒否。
-9. **groups/{id}/userCategoryAxes**: グループメンバーは取り込み用に read 可。create/update/delete は所有者（`userID` 一致）のみ可で、updateによる所有者変更は拒否。
-10. **userCategoryAxes/{id}/categories**: 9 と同じくグループメンバーは read 可、write は所有者のみ可。
+9. **groups/{id}/userCategoryAxes**: 現在のグループメンバーが所有する軸は取り込み用に read 可。削除済みメンバーの残存軸は拒否。create/update/delete は所有者（`userID` 一致）のみ可で、updateによる所有者変更も拒否。
+10. **userCategoryAxes/{id}/categories**: 9 と同じく現在のグループメンバーが所有するカテゴリは read 可、削除済みメンバーの残存カテゴリは拒否、write は所有者のみ可。
 
 ## 対象外
 

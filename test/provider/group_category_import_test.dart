@@ -153,13 +153,33 @@ void main() {
       destinationCategories: const [localCategory],
       updatedDateTime: updatedDateTime,
     );
+    final anotherImportedCategory = GroupCategory(
+      id: importedGroupCategoryDocumentID(
+        sourceUserID: 'another-source-user',
+        sourceGroupCategoryAxisID: 'another-source-axis',
+        sourceGroupCategoryID: 'another-source-category',
+      ),
+      groupID: 'group',
+      userID: 'destination-user',
+      groupCategoryAxisID: 'destination-axis',
+      name: '別メンバーから取り込み済み',
+      order: 5,
+      locationOrders: const {'store': 8},
+      keywords: const [],
+      color: null,
+      iconName: null,
+    );
     final secondImport = buildImportedGroupCategories(
       groupID: 'group',
       destinationUserID: 'destination-user',
       destinationGroupCategoryAxisID: 'destination-axis',
       sourceGroupCategoryAxis: sourceAxis,
       sourceCategories: sourceCategories,
-      destinationCategories: [localCategory, ...firstImport],
+      destinationCategories: [
+        localCategory,
+        ...firstImport,
+        anotherImportedCategory,
+      ],
       updatedDateTime: updatedDateTime,
     );
 
