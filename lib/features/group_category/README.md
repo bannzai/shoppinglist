@@ -32,9 +32,21 @@
 2. 軸が無ければ「デフォルト」軸を自動作成（`_addCategoryWithAutoAxis`）
 3. 空名のカテゴリを即座に作成し、`GroupCategoryEditPage` へ遷移（名前・色・アイコン・キーワードをまとめて設定）
 
+## グループメンバーからの取り込み
+
+カテゴリはユーザーごとの所有を維持しつつ、カテゴリ一覧右上の取り込みボタンから、
+同じグループに所属する別メンバーのカテゴリ軸を自分の設定へコピーできる。
+
+- 他メンバーのカテゴリは読み取り専用で、元データを直接編集しない
+- 取り込んだカテゴリは自分のカテゴリ軸に保存され、自分だけが編集・削除できる
+- 元ユーザーID・元軸ID・元カテゴリIDから決定したDocument IDを使うため、同じ軸を再度取り込むと以前のコピーが更新される
+- 元側で削除されたカテゴリは再取り込み時に取込先からも削除される
+- `locationOrders` もコピーする。参照先の買い物場所は元からグループ共有のため、位置情報機能を再度有効化した際も同じ並び順を利用できる
+
 ## 関連ファイル
 
 - `page.dart` — カテゴリ一覧・空状態・追加/並び替え/削除
+- `import_action.dart` — 別メンバーのカテゴリ設定を選択・取り込むダイアログ
 - `category_empty_state.dart` — 空状態の価値訴求カード（`CategoryEmptyState`）
 - `../group_category_edit/page.dart` — カテゴリ編集画面
 - `../shopping_list/components/shopping_list_items/category_matcher.dart` — 自動分類（`findMatchingCategoryID`）・並び替え（`sortCategoriesByLocation`）

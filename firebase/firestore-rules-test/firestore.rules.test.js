@@ -265,8 +265,8 @@ describe('groups/{id}/shoppingLists/{id}/sourceImages（読み取りのみ）', 
   });
 });
 
-// 10. groups/{id}/userCategoryAxes（所有者判定付き）
-describe('groups/{id}/userCategoryAxes（所有者判定付き）', () => {
+// 10. groups/{id}/userCategoryAxes（グループ内read共有・writeは所有者のみ）
+describe('groups/{id}/userCategoryAxes（グループ内read共有・writeは所有者のみ）', () => {
   const axisPath = 'groups/g1/userCategoryAxes/axis_alice';
 
   test('メンバーかつ所有者 alice は read/create/update/delete できる', async () => {
@@ -286,12 +286,18 @@ describe('groups/{id}/userCategoryAxes（所有者判定付き）', () => {
     );
   });
 
-  test('メンバーだが非所有者 bob は alice の axis を read/update/delete できない', async () => {
+  test('メンバーだが非所有者 bob は alice の axis を read でき、update/delete はできない', async () => {
     await seed(axisPath, { userID: 'alice', name: '軸' });
     const d = db('bob');
-    await assertFails(getDoc(doc(d, axisPath)));
+    await assertSucceeds(getDoc(doc(d, axisPath)));
     await assertFails(updateDoc(doc(d, axisPath), { name: 'x' }));
     await assertFails(deleteDoc(doc(d, axisPath)));
+  });
+
+  test('所有者 alice でも axis の userID を別ユーザーへ変更できない', async () => {
+    await seed(axisPath, { userID: 'alice', name: '軸' });
+    const d = db('alice');
+    await assertFails(updateDoc(doc(d, axisPath), { userID: 'bob' }));
   });
 
   test('非メンバー charlie は所有者情報に関わらず拒否', async () => {
@@ -304,8 +310,8 @@ describe('groups/{id}/userCategoryAxes（所有者判定付き）', () => {
   });
 });
 
-// 11. userCategoryAxes/{id}/categories（axis と同じ所有者判定）
-describe('userCategoryAxes/{id}/categories（axis と同じ所有者判定）', () => {
+// 11. userCategoryAxes/{id}/categories（グループ内read共有・writeは所有者のみ）
+describe('userCategoryAxes/{id}/categories（グループ内read共有・writeは所有者のみ）', () => {
   const axisPath = 'groups/g1/userCategoryAxes/axis_alice';
   const categoryPath = `${axisPath}/categories/cat1`;
 
@@ -324,12 +330,18 @@ describe('userCategoryAxes/{id}/categories（axis と同じ所有者判定）', 
     );
   });
 
-  test('メンバーだが非所有者 bob は read/update/delete できない', async () => {
+  test('メンバーだが非所有者 bob は read でき、update/delete はできない', async () => {
     await seed(categoryPath, { userID: 'alice', name: 'カテゴリ' });
     const d = db('bob');
-    await assertFails(getDoc(doc(d, categoryPath)));
+    await assertSucceeds(getDoc(doc(d, categoryPath)));
     await assertFails(updateDoc(doc(d, categoryPath), { name: 'x' }));
     await assertFails(deleteDoc(doc(d, categoryPath)));
+  });
+
+  test('所有者 alice でも category の userID を別ユーザーへ変更できない', async () => {
+    await seed(categoryPath, { userID: 'alice', name: 'カテゴリ' });
+    const d = db('alice');
+    await assertFails(updateDoc(doc(d, categoryPath), { userID: 'bob' }));
   });
 
   test('非メンバー charlie は拒否', async () => {

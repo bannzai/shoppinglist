@@ -1262,6 +1262,42 @@ abstract class AppLocalizations {
   /// **'You can change the category order for each store, so you can shop along the aisles in order'**
   String get groupCategoryEmptyUseCaseLocationOrder;
 
+  /// カテゴリ一覧のAppBarに出す、同じグループの別メンバーからカテゴリ設定を取り込むボタンのtooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Import a member\'s categories'**
+  String get groupCategoryImportTooltip;
+
+  /// 同じグループの別メンバーから取り込むカテゴリ軸を選ぶダイアログのタイトル
+  ///
+  /// In en, this message translates to:
+  /// **'Import category settings'**
+  String get groupCategoryImportTitle;
+
+  /// カテゴリ設定の取り込みが個人所有のコピーであり、再取り込みで更新されることを説明する文
+  ///
+  /// In en, this message translates to:
+  /// **'Copy another member\'s categories and store-specific ordering into your settings. Import again to update the previous copy.'**
+  String get groupCategoryImportDescription;
+
+  /// 同じグループの別メンバーがカテゴリ軸を持っていないときの空表示
+  ///
+  /// In en, this message translates to:
+  /// **'No category settings are available to import'**
+  String get groupCategoryImportEmpty;
+
+  /// 別メンバーのカテゴリ軸を自分の設定へ取り込んだ後に出すメッセージ
+  ///
+  /// In en, this message translates to:
+  /// **'Imported {name}'**
+  String groupCategoryImportSuccess(String name);
+
+  /// 取り込み元メンバーのグループ内表示名が未設定のときのラベル
+  ///
+  /// In en, this message translates to:
+  /// **'Group member'**
+  String get groupCategoryImportMemberFallback;
+
   /// No description provided for @groupCategoryEditTitle.
   ///
   /// In en, this message translates to:

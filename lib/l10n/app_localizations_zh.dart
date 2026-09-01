@@ -628,6 +628,27 @@ class AppLocalizationsZh extends AppLocalizations {
       '您可以为每个商店调整分类顺序，这样就能按货架顺序购物。';
 
   @override
+  String get groupCategoryImportTooltip => '导入成员的分类';
+
+  @override
+  String get groupCategoryImportTitle => '导入分类设置';
+
+  @override
+  String get groupCategoryImportDescription =>
+      '将其他成员的分类和按商店设置的排序复制到你的设置中。再次导入即可更新之前的副本。';
+
+  @override
+  String get groupCategoryImportEmpty => '没有可导入的分类设置';
+
+  @override
+  String groupCategoryImportSuccess(String name) {
+    return '已导入$name';
+  }
+
+  @override
+  String get groupCategoryImportMemberFallback => '群组成员';
+
+  @override
   String get groupCategoryEditTitle => '编辑分类';
 
   @override
@@ -1855,6 +1876,27 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
       '您可以为每个商店调整分类顺序，这样就能按商店内的货架顺序购物。';
 
   @override
+  String get groupCategoryImportTooltip => '导入成员的分类';
+
+  @override
+  String get groupCategoryImportTitle => '导入分类设置';
+
+  @override
+  String get groupCategoryImportDescription =>
+      '将其他成员的分类和按商店设置的排序复制到你的设置中。再次导入即可更新之前的副本。';
+
+  @override
+  String get groupCategoryImportEmpty => '没有可导入的分类设置';
+
+  @override
+  String groupCategoryImportSuccess(String name) {
+    return '已导入$name';
+  }
+
+  @override
+  String get groupCategoryImportMemberFallback => '群组成员';
+
+  @override
   String get groupCategoryEditTitle => '编辑分类';
 
   @override
@@ -3080,6 +3122,27 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String get groupCategoryEmptyUseCaseLocationOrder =>
       '您可以為每間商店調整分類順序，這樣就能依照走道順序購物。';
+
+  @override
+  String get groupCategoryImportTooltip => '匯入成員的分類';
+
+  @override
+  String get groupCategoryImportTitle => '匯入分類設定';
+
+  @override
+  String get groupCategoryImportDescription =>
+      '將其他成員的分類和商店專屬排序複製到你的設定中。再次匯入即可更新先前的副本。';
+
+  @override
+  String get groupCategoryImportEmpty => '沒有可匯入的分類設定';
+
+  @override
+  String groupCategoryImportSuccess(String name) {
+    return '已匯入$name';
+  }
+
+  @override
+  String get groupCategoryImportMemberFallback => '群組成員';
 
   @override
   String get groupCategoryEditTitle => '編輯分類';

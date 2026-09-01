@@ -635,6 +635,27 @@ class AppLocalizationsKo extends AppLocalizations {
       '각 매장마다 카테고리 순서를 바꿀 수 있어, 통로 순서대로 쇼핑할 수 있어요.';
 
   @override
+  String get groupCategoryImportTooltip => '멤버의 카테고리 가져오기';
+
+  @override
+  String get groupCategoryImportTitle => '카테고리 설정 가져오기';
+
+  @override
+  String get groupCategoryImportDescription =>
+      '다른 멤버의 카테고리와 매장별 정렬 순서를 내 설정으로 복사할 수 있어요. 이전 복사본을 업데이트하려면 다시 가져오세요.';
+
+  @override
+  String get groupCategoryImportEmpty => '가져올 수 있는 카테고리 설정이 없어요';
+
+  @override
+  String groupCategoryImportSuccess(String name) {
+    return '$name 가져왔어요';
+  }
+
+  @override
+  String get groupCategoryImportMemberFallback => '그룹 멤버';
+
+  @override
   String get groupCategoryEditTitle => '카테고리 편집';
 
   @override

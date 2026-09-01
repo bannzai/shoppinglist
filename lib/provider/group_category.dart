@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:shoppinglist/utils/firestore/firestore.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
@@ -28,6 +31,24 @@ Stream<List<GroupCategoryAxis>> groupCategoryAxes(
   return database
       .categoryAxesReference()
       .where(GroupCategoryAxisFirestoreKeys.userID, isEqualTo: currentUserID)
+      .orderBy(GroupCategoryAxisFirestoreKeys.order)
+      .snapshots()
+      .map((event) => event.docs.map((doc) => doc.data()).toList());
+}
+
+/// 同じグループに所属するメンバーが取り込み元として選べるカテゴリ軸。
+///
+/// 通常表示用の [groupCategoryAxes] は本人の軸だけを返す一方、この Provider は
+/// グループ内共有の取り込み画面に限って全メンバーの軸を返す。書き込み権限は
+/// 引き続き所有者本人に限定し、取り込み時は自分のカテゴリとしてコピーする。
+@Riverpod(dependencies: [groupDatabase])
+Stream<List<GroupCategoryAxis>> shareableGroupCategoryAxes(
+  Ref ref, {
+  required String groupID,
+}) {
+  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
+  return database
+      .categoryAxesReference()
       .orderBy(GroupCategoryAxisFirestoreKeys.order)
       .snapshots()
       .map((event) => event.docs.map((doc) => doc.data()).toList());
@@ -223,6 +244,258 @@ GroupCategoryBatchUpdate groupCategoryBatchUpdate(
 }) {
   final database = ref.watch(groupDatabaseProvider(groupID: groupID));
   return GroupCategoryBatchUpdate(database: database);
+}
+
+String _categoryImportHash(List<String> components) => sha256
+    .convert(utf8.encode(jsonEncode(components)))
+    .toString()
+    .substring(0, 32);
+
+/// 取り込み元の軸に対応するカテゴリIDの接頭辞。
+///
+/// 元ユーザーと元軸が同じなら毎回同じ値になるため、再取り込み時に以前のコピーを
+/// 特定できる。表示名は変更され得るためIDの材料には含めない。
+String importedGroupCategoryDocumentIDPrefix({
+  required String sourceUserID,
+  required String sourceGroupCategoryAxisID,
+}) =>
+    'imported_${_categoryImportHash([sourceUserID, sourceGroupCategoryAxisID])}_';
+
+/// 取り込んだカテゴリの決定的なDocument ID。
+///
+/// 同じカテゴリを再度取り込むと同じ文書を更新し、元カテゴリの表示名変更でも
+/// 別文書を作らない。
+String importedGroupCategoryDocumentID({
+  required String sourceUserID,
+  required String sourceGroupCategoryAxisID,
+  required String sourceGroupCategoryID,
+}) =>
+    '${importedGroupCategoryDocumentIDPrefix(sourceUserID: sourceUserID, sourceGroupCategoryAxisID: sourceGroupCategoryAxisID)}${_categoryImportHash([sourceGroupCategoryID])}';
+
+/// 取込先にカテゴリ軸がまだ無い場合に作成する軸の決定的なDocument ID。
+String importedGroupCategoryAxisDocumentID({
+  required String destinationUserID,
+  required String sourceUserID,
+  required String sourceGroupCategoryAxisID,
+}) =>
+    'imported_${_categoryImportHash([destinationUserID, sourceUserID, sourceGroupCategoryAxisID])}';
+
+/// 取込先にある自作カテゴリ・別メンバーからの取込済みカテゴリの後ろへ、元の
+/// 相対順序を保ったままカテゴリを配置する。
+List<GroupCategory> buildImportedGroupCategories({
+  required String groupID,
+  required String destinationUserID,
+  required String destinationGroupCategoryAxisID,
+  required GroupCategoryAxis sourceGroupCategoryAxis,
+  required List<GroupCategory> sourceCategories,
+  required List<GroupCategory> destinationCategories,
+  required DateTime updatedDateTime,
+}) {
+  final importedDocumentIDPrefix = importedGroupCategoryDocumentIDPrefix(
+    sourceUserID: sourceGroupCategoryAxis.userID,
+    sourceGroupCategoryAxisID: sourceGroupCategoryAxis.id,
+  );
+  final otherDestinationCategories =
+      destinationCategories
+          .where(
+            (category) => !category.id.startsWith(importedDocumentIDPrefix),
+          )
+          .toList();
+  final defaultOrderOffset =
+      otherDestinationCategories.fold<int>(
+        -1,
+        (maximum, category) =>
+            category.order > maximum ? category.order : maximum,
+      ) +
+      1;
+  final shoppingLocationIDs = <String>{
+    for (final category in sourceCategories) ...category.locationOrders.keys,
+    for (final category in otherDestinationCategories)
+      ...category.locationOrders.keys,
+  };
+  final locationOrderOffsets = {
+    for (final shoppingLocationID in shoppingLocationIDs)
+      shoppingLocationID:
+          otherDestinationCategories.fold<int>(-1, (maximum, category) {
+            final order =
+                category.locationOrders[shoppingLocationID] ?? category.order;
+            return order > maximum ? order : maximum;
+          }) +
+          1,
+  };
+  final destinationCategoriesByID = {
+    for (final category in destinationCategories) category.id: category,
+  };
+
+  return sourceCategories.map((sourceCategory) {
+    final importedDocumentID = importedGroupCategoryDocumentID(
+      sourceUserID: sourceGroupCategoryAxis.userID,
+      sourceGroupCategoryAxisID: sourceGroupCategoryAxis.id,
+      sourceGroupCategoryID: sourceCategory.id,
+    );
+    final existingCategory = destinationCategoriesByID[importedDocumentID];
+    return sourceCategory.copyWith(
+      id: importedDocumentID,
+      groupID: groupID,
+      userID: destinationUserID,
+      groupCategoryAxisID: destinationGroupCategoryAxisID,
+      order: defaultOrderOffset + sourceCategory.order,
+      locationOrders: {
+        for (final shoppingLocationID in shoppingLocationIDs)
+          shoppingLocationID:
+              locationOrderOffsets[shoppingLocationID]! +
+              (sourceCategory.locationOrders[shoppingLocationID] ??
+                  sourceCategory.order),
+      },
+      createdDateTime: existingCategory?.createdDateTime,
+      updatedDateTime: updatedDateTime,
+      serverCreatedDateTime: existingCategory?.serverCreatedDateTime,
+      serverUpdatedDateTime: null,
+    );
+  }).toList();
+}
+
+/// 同じグループの別メンバーが持つカテゴリ設定を、自分のカテゴリ設定へ取り込む。
+///
+/// 個人所有モデルを維持するため元文書は直接編集せず、取込先ユーザー所有の文書を
+/// 作成する。元ユーザー・元軸・元カテゴリIDから決定したDocument IDを使うため、
+/// 再実行は新規作成ではなく同じ文書の更新になり冪等である。元側で削除された
+/// カテゴリは、同じ決定的ID接頭辞を持つ取込済み文書から削除して同期する。
+class GroupCategoryImportFromMember {
+  final GroupDatabase database;
+
+  GroupCategoryImportFromMember({required this.database});
+
+  Future<int> call({
+    required String destinationUserID,
+    required GroupCategoryAxis sourceGroupCategoryAxis,
+    required GroupCategoryAxis? destinationGroupCategoryAxis,
+  }) async {
+    if (sourceGroupCategoryAxis.groupID != database.groupID) {
+      throw ArgumentError.value(
+        sourceGroupCategoryAxis.groupID,
+        'sourceGroupCategoryAxis.groupID',
+      );
+    }
+    if (sourceGroupCategoryAxis.userID == destinationUserID) {
+      throw ArgumentError('自分のカテゴリ設定は取り込み元に指定できません');
+    }
+    if (destinationGroupCategoryAxis != null &&
+        (destinationGroupCategoryAxis.groupID != database.groupID ||
+            destinationGroupCategoryAxis.userID != destinationUserID)) {
+      throw ArgumentError('取込先には自分が所有するカテゴリ軸を指定してください');
+    }
+
+    final sourceCategories =
+        (await database
+                .categoriesReference(categoryAxisID: sourceGroupCategoryAxis.id)
+                .where(
+                  GroupCategoryFirestoreKeys.userID,
+                  isEqualTo: sourceGroupCategoryAxis.userID,
+                )
+                .orderBy(GroupCategoryFirestoreKeys.order)
+                .get())
+            .docs
+            .map((doc) => doc.data())
+            .toList();
+
+    final destinationAxis =
+        destinationGroupCategoryAxis ??
+        await _createOrUpdateImportedAxis(
+          destinationUserID: destinationUserID,
+          sourceGroupCategoryAxis: sourceGroupCategoryAxis,
+        );
+    final destinationReference = database.categoriesReference(
+      categoryAxisID: destinationAxis.id,
+    );
+    final destinationCategories =
+        (await destinationReference.get()).docs
+            .map((doc) => doc.data())
+            .toList();
+    final importedDocumentIDPrefix = importedGroupCategoryDocumentIDPrefix(
+      sourceUserID: sourceGroupCategoryAxis.userID,
+      sourceGroupCategoryAxisID: sourceGroupCategoryAxis.id,
+    );
+    final importedCategories = buildImportedGroupCategories(
+      groupID: database.groupID,
+      destinationUserID: destinationUserID,
+      destinationGroupCategoryAxisID: destinationAxis.id,
+      sourceGroupCategoryAxis: sourceGroupCategoryAxis,
+      sourceCategories: sourceCategories,
+      destinationCategories: destinationCategories,
+      updatedDateTime: DateTime.now(),
+    );
+    final importedDocumentIDs =
+        importedCategories.map((category) => category.id).toSet();
+
+    // Firestore WriteBatch の上限に余裕を持たせて分割する。途中失敗しても同じ
+    // 決定的IDへの再実行で収束するため、この処理は冪等である。
+    final operations = <void Function(WriteBatch)>[
+      for (final category in importedCategories)
+        (batch) => batch.set(
+          database.categoryReference(
+            categoryAxisID: destinationAxis.id,
+            categoryID: category.id,
+          ),
+          category,
+          SetOptions(merge: true),
+        ),
+      for (final category in destinationCategories)
+        if (category.id.startsWith(importedDocumentIDPrefix) &&
+            !importedDocumentIDs.contains(category.id))
+          (batch) => batch.delete(
+            database.categoryReference(
+              categoryAxisID: destinationAxis.id,
+              categoryID: category.id,
+            ),
+          ),
+    ];
+    for (var offset = 0; offset < operations.length; offset += 450) {
+      final batch = firestore.batch();
+      for (final operation in operations.skip(offset).take(450)) {
+        operation(batch);
+      }
+      await batch.commit();
+    }
+    return importedCategories.length;
+  }
+
+  Future<GroupCategoryAxis> _createOrUpdateImportedAxis({
+    required String destinationUserID,
+    required GroupCategoryAxis sourceGroupCategoryAxis,
+  }) async {
+    final destinationAxisID = importedGroupCategoryAxisDocumentID(
+      destinationUserID: destinationUserID,
+      sourceUserID: sourceGroupCategoryAxis.userID,
+      sourceGroupCategoryAxisID: sourceGroupCategoryAxis.id,
+    );
+    final reference = database.categoryAxisReference(
+      categoryAxisID: destinationAxisID,
+    );
+    final existing = (await reference.get()).data();
+    final destinationAxis = GroupCategoryAxis(
+      id: destinationAxisID,
+      groupID: database.groupID,
+      userID: destinationUserID,
+      name: sourceGroupCategoryAxis.name,
+      order: 0,
+      createdDateTime: existing?.createdDateTime,
+      updatedDateTime: DateTime.now(),
+      serverCreatedDateTime: existing?.serverCreatedDateTime,
+      serverUpdatedDateTime: null,
+    );
+    await reference.set(destinationAxis, SetOptions(merge: true));
+    return destinationAxis;
+  }
+}
+
+@Riverpod(dependencies: [groupDatabase])
+GroupCategoryImportFromMember groupCategoryImportFromMember(
+  Ref ref, {
+  required String groupID,
+}) {
+  final database = ref.watch(groupDatabaseProvider(groupID: groupID));
+  return GroupCategoryImportFromMember(database: database);
 }
 
 /// 指定カテゴリに完全一致キーワードを1件追記する。

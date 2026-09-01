@@ -631,6 +631,27 @@ class AppLocalizationsJa extends AppLocalizations {
       '店ごとにカテゴリの並び順を変えられるので、売り場の動線どおりに回れます';
 
   @override
+  String get groupCategoryImportTooltip => 'メンバーのカテゴリを取り込む';
+
+  @override
+  String get groupCategoryImportTitle => 'カテゴリ設定を取り込む';
+
+  @override
+  String get groupCategoryImportDescription =>
+      '他のメンバーのカテゴリと店舗ごとの並び順を設定にコピーできます。前回のコピーを更新するには、もう一度取り込んでください。';
+
+  @override
+  String get groupCategoryImportEmpty => '取り込めるカテゴリ設定はありません';
+
+  @override
+  String groupCategoryImportSuccess(String name) {
+    return '$nameを取り込みました';
+  }
+
+  @override
+  String get groupCategoryImportMemberFallback => 'グループメンバー';
+
+  @override
   String get groupCategoryEditTitle => 'カテゴリ編集';
 
   @override

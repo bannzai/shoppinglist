@@ -221,6 +221,12 @@
   "groupCategoryEmptyUseCaseAutoGroup": "「野菜」に トマト・玉ねぎ を登録すると、リストで自動的に野菜セクションにまとまります",
   "groupCategoryEmptyUseCaseLocationOrder": "店ごとにカテゴリの並び順を変えられるので、売り場の動線どおりに回れます",
 
+  "groupCategoryImportTooltip": "メンバーのカテゴリを取り込む",
+  "groupCategoryImportTitle": "カテゴリ設定を取り込む",
+  "groupCategoryImportDescription": "他のメンバーのカテゴリと店舗ごとの並び順を設定にコピーできます。前回のコピーを更新するには、もう一度取り込んでください。",
+  "groupCategoryImportEmpty": "取り込めるカテゴリ設定はありません",
+  "groupCategoryImportSuccess": "{name}を取り込みました",
+  "groupCategoryImportMemberFallback": "グループメンバー",
   "groupCategoryEditTitle": "カテゴリ編集",
   "groupCategoryEditNotFound": "カテゴリが見つかりません",
   "groupCategoryEditNameLabel": "カテゴリ名",
