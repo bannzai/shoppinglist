@@ -1,20 +1,10 @@
-「買い物リスト」という買い物リストを管理できるアプリを作成しようとしています
-
-このアプリはFlutter製でバックエンドにはFirebaseを採用しています。認証・DB・バックエンドロジック・AIの処理、プッシュ通知等すべてFirebaseファミリーのインフラで構築されます
-
-- Flutterのコード: @lib/
-- Firebase のコード: @firebase/
-
-あなたにはこの「買い物リスト」の開発の手伝い、および相談にのっていただきたいです
-
 ## 開発時の Firebase 接続先
 - 開発時は Firebase Emulator を使う。`cd firebase && firebase emulators:start` で起動し、アプリは `--dart-define=USE_FIREBASE_EMULATOR=true`（VS Code は `shoppinglist(dev, emulator)` 構成）で接続する
 - Emulator では都合が悪い場合（Remote Config・FCM・RevenueCat の実検証、永続データが必要な確認など）は dev 環境を直接使う（`--dart-define` なしの debug ビルドが dev プロジェクトに接続する）
 
 ## Plan時に考慮すること
 - 必ず実装修正内容の動作確認のチェックリストを作ってください。それを確認するテストも後述する検証方法を参考に用意して検証完了までを行ってください
-- プランファイルには必ず具体的な実装コード提案（コードブロック）を含めること。説明のみのプランは不可
-- プランファイル末尾に `.claude/rules/plan-checklist.md` のチェックリストを追記すること
+- プランの具体的なコード提案と末尾のチェックリストは `.claude/rules/plan-checklist.md` に従う
 
 ### Flutter
 iOS,Androidアプリをサポートします。Firebase の設定ファイルは flutterfireの.jsonを定義する方法を使用せずに、iOSではGoogleService-Info.plist,Androidでは、google-service.jsonの配置を行い構成します
@@ -35,7 +25,7 @@ iOS,Androidアプリをサポートします。Firebase の設定ファイルは
 - `.vscode/launch.json` は git 管理対象。VS Code デバッグ起動とコマンドライン実行で条件差を生まないよう常に同期する
 
 ### Firebase
-firebase/ ディレクトリ配下についてです。主にbackendで動くFirebase Functionsの設定です。クライアントから呼ぶ処理は GenKit を使って定義します。AIを使わなくてもGenKitでonCallの関数を定義します。なぜならAPI コンソールがついてきて検証がしやすいから
+クライアントから呼ぶ処理は、AI の有無を問わず GenKit で定義する。API コンソールで検証しやすくするため。
 
 #### ビルド・テスト・検証方法
 以下のコマンドは全て `firebase/functions/functions/` ディレクトリで実行する
@@ -53,13 +43,8 @@ Firebase Functions の規約です
 - Deployはユーザーが行うので禁止。ただしユーザーに deploy を依頼する際は、実行すべき deploy コマンド（対象関数を絞ったもの・実行ディレクトリ込み）を必ず提示すること
 
 ### コーディング規約
-- Entityのフィールド名は省略せず、長くても実態がわかる名前をつける（例: `categoryID` ではなく `groupShoppingListItemCategoryID`）
-- FirestoreのDBをクライアントから操作する場合は、`call` 関数を定義したclassを通じて行う（例: `ShoppingListAdd`, `CreateGroup` など。Providerからそのclassのインスタンスを返却する）
-- 関数の引数は原則 `{required}` でラベルが呼び出し元につくようにする
-- コンストラクタの引数も nullable であっても `required` をつける。ただしtimestamp等のメタデータフィールドは除く
-- Providerの取得はbuild内で`ref.watch`しローカル変数にキャプチャし、コールバックはその変数を参照する（詳細: `.claude/rules/riverpod-rules.md`）
-- エラーメッセージについては、基本的にそのまま表示する（`e.toString()` の加工・プレフィックス除去等はしない）
-- Firestoreのサブコレクションに保存されるEntityは、親ドキュメントのIDをフィールドとして保持する
+- Dart の規約は `.claude/rules/coding-conventions.md`、Provider の取得は `.claude/rules/riverpod-rules.md` を参照する
+- Firestore の直接読み書きは `call` メソッドを持つclassとProvider経由で行う（詳細: `.claude/rules/firebase-functions-call-rules.md`）
 
 ### テスト方針
 - 実装後は手動テスト前に必ず、ユニットテスト・MaestroによるE2Eテストを実行する。該当するものがなければテストを新規作成をする。作成・実行が難しい場合はユーザーに報告する
@@ -69,11 +54,8 @@ Firebase Functions の規約です
 - 上記のように、プレミアム化・他ユーザー操作は実課金・実アカウントではなく開発者オプションのデバッグ機能で行う。**該当するデバッグ機能が無ければ `lib/features/developer_options/` に追加してから検証する**
 
 ### プロジェクト構成・ドキュメント方針
-- 実装のことは全てコード上のコメントに記載する
-- GenKitのFunctionsの検証のために引数は、Functionsの定義位置に記載する
-- 細かい点は既存の構成を汲み取って欲しい。原則、機能(Feature)ごとにディレクトリを切っている。 {feature}/README.md にその機能の説明・使用方法・役割を書いていく。必要があればそのREADMEを参照する
-- コーディング規約・ルールは `.claude/rules/` ディレクトリに配置する（Claude Code rules機能で自動ロード）
-- プロジェクト仕様書・ADR等のドキュメントは `documents/` ディレクトリに配置する
+- `.claude/rules/project-structure.md` と `.claude/rules/feature-readme-guideline.md` を参照する
+- GenKit の検証用引数の記載は `.claude/rules/firebase-functions.md` に従う
 - CLAUDE.mdには基本的にコーディング規約等は書かない。コンテキストを圧迫するから
 
 <!-- ai-review-config begin -->
