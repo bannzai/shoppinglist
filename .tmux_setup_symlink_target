@@ -1,0 +1,9 @@
+# tmux-issue-setup / tmux-branch-setup が worktree へ反映する git 管理外ファイル
+android/key.properties
+android/upload-keystore.jks
+firebase/functions/.env
+firebase/functions/.env.shopping-list-prod-a615c
+firebase/functions/.env.shoppinglist-dev
+firebase/functions/.env.shoppinglist-prod
+firebase/functions/.env.shoppinglist-prod-857bb
+firebase/functions/service-account-key.json

@@ -1,0 +1,6 @@
+# tmux-issue-setup / tmux-branch-setup が worktree へ反映する git 管理外ファイル
+android/app/google-services.json
+ios/Firebase/GoogleService-Info.plist
+lib/secret/secret.dart
+android/local.properties
+firebase/functions/.env.local
