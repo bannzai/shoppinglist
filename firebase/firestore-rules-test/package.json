@@ -7,7 +7,7 @@
     "test": "firebase emulators:exec --only firestore --project demo-shoppinglist 'jest'"
   },
   "devDependencies": {
-    "@firebase/rules-unit-testing": "^4.0.1",
+    "@firebase/rules-unit-testing": "^5.0.2",
     "firebase": "^11.10.0",
     "jest": "^29.7.0"
   }
