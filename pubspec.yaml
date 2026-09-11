@@ -88,7 +88,7 @@ dependencies:
   geolocator: ^14.0.2
   google_maps_flutter: ^2.18.0
   flutter_local_notifications: ^21.0.0
-  geocoding: ^4.0.0
+  geocoding: ^5.0.0
   firebase_app_check: 0.4.3
 
 dev_dependencies:
