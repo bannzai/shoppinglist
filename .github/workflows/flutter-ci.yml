@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !contains(github.event.pull_request.title, '[Skip CI]') }}
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v7
     - run: make secret
     - uses: subosito/flutter-action@v2
       with:
@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !contains(github.event.pull_request.title, '[Skip CI]') }}
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v7
     - run: make secret
     - uses: subosito/flutter-action@v2
       with:
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !contains(github.event.pull_request.title, '[Skip CI]') }}
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v7
     - run: make secret
     - uses: subosito/flutter-action@v2
       with:
