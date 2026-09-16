@@ -19,7 +19,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@genkit-ai/firebase": "^1.41.0",
+    "@genkit-ai/firebase": "^1.42.0",
     "@genkit-ai/googleai": "^1.28.0",
     "firebase-admin": "^13.6.1",
     "firebase-functions": "^7.3.2",
@@ -29,16 +29,16 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.68.0",
+    "@typescript-eslint/eslint-plugin": "^8.69.0",
     "@typescript-eslint/parser": "^8.54.0",
     "eslint": "^8.57.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.5.6",
     "firebase-functions-test": "^3.5.0",
     "genkit-cli": "^1.42.0",
-    "jest": "^30.4.2",
+    "jest": "^30.5.1",
     "prettier": "^3.9.6",
     "ts-jest": "^29.4.12",
     "typescript": "^5.9.3"
