@@ -416,7 +416,8 @@ bool _sectionOrderReflected({
 /// カテゴリヘッダー付きのグルーピング表示。
 /// ヘッダーとアイテムを 1 つの [ReorderableListView] にフラットに並べ、長押しドラッグで
 /// 「同一カテゴリ内の並び替え」「別カテゴリへの移動」(アイテム行)と「セクション(カテゴリ)単位の
-/// 並び替え」(ヘッダー行、Issue #386)を行える。
+/// 並び替え」(ヘッダー行、Issue #386)を行える。セクション単位の並び替えは、ヘッダー右端の
+/// 上下ボタンで隣のセクションと入れ替えることでも行える(Issue #622)。
 ///
 /// 既定のドラッグハンドルは無効化し(`buildDefaultDragHandles: false`)、確定アイテム行と
 /// カテゴリヘッダー行のみ [ReorderableDelayedDragStartListener] でラップする(入力行と
@@ -556,6 +557,57 @@ class _GroupedListView extends HookConsumerWidget {
           category,
     ];
 
+    // セクションの新しい並び順を楽観の表示順として同期セットし、GroupCategory.order
+    // (買い物場所選択時は locationOrders)へ永続化する。ヘッダーの長押しドラッグ(Issue #386)と
+    // ヘッダーの上下ボタン(Issue #622)の両方から使う。
+    void applySectionOrder(List<GroupCategory> reordered) {
+      // 楽観の表示順を同期セットし、操作直後から新しいセクション順で描画する。
+      final appliedSectionOrder =
+          reordered.map((category) => category.id).toList();
+      optimisticSectionOrder.value = appliedSectionOrder;
+
+      // 永続化失敗時は楽観の表示順を破棄し stream の実状態へ戻す(ロールバック)。
+      // 後続の別操作で楽観状態が差し替わっている場合は消さない。
+      void rollbackIfCurrent(Object error, StackTrace stackTrace) {
+        debugPrint('[reorder] セクション並び永続化失敗: $error\n$stackTrace');
+        if (optimisticSectionOrder.value == appliedSectionOrder) {
+          optimisticSectionOrder.value = null;
+        }
+      }
+
+      final locationID = shoppingLocationID;
+      if (locationID == null) {
+        groupCategoryBatchUpdate
+            .call(
+              categoryAxisID: categoryAxisID,
+              categories:
+                  reordered
+                      .asMap()
+                      .entries
+                      .map((entry) => entry.value.copyWith(order: entry.key))
+                      .toList(),
+            )
+            .catchError(rollbackIfCurrent);
+      } else {
+        // 買い物場所選択時(プレミアム限定で渡される)はその場所専用の並び順だけを更新する。
+        groupCategoryBatchUpdate
+            .call(
+              categoryAxisID: categoryAxisID,
+              categories:
+                  reordered.asMap().entries.map((entry) {
+                    final updatedLocationOrders = Map<String, int>.from(
+                      entry.value.locationOrders,
+                    );
+                    updatedLocationOrders[locationID] = entry.key;
+                    return entry.value.copyWith(
+                      locationOrders: updatedLocationOrders,
+                    );
+                  }).toList(),
+            )
+            .catchError(rollbackIfCurrent);
+      }
+    }
+
     return Listener(
       // ドラッグ中のポインタキャンセル(システム割り込み等)では onReorderEnd / onReorder の
       // どちらも呼ばれない(SliverReorderableList は内部リセットのみ)ため、畳んだセクションが
@@ -657,14 +709,71 @@ class _GroupedListView extends HookConsumerWidget {
               if (categoryID == null) {
                 return KeyedSubtree(
                   key: ValueKey('header_$uncategorizedCategoryID'),
-                  child: _header(context, categoryMap, grouped, categoryID),
+                  child: _header(
+                    context,
+                    categoryMap,
+                    grouped,
+                    categoryID,
+                    onMoveUp: null,
+                    onMoveDown: null,
+                  ),
                 );
               }
+              // 上下ボタン(Issue #622)は、ヘッダーを持つセクション列の中で隣のセクションと
+              // 入れ替える。先頭の上・末尾の下は入れ替え先が無いため無効にする。
+              final visibleIndex = headerCategories.indexWhere(
+                (category) => category.id == categoryID,
+              );
+              final sectionMoveParameters = {
+                'groupID': groupID,
+                'shoppingListID': shoppingListID,
+                'categoryAxisID': categoryAxisID,
+              };
               // カテゴリヘッダーは長押しでセクション(カテゴリ)単位の並び替えを開始する(Issue #386)。
               return ReorderableDelayedDragStartListener(
                 key: ValueKey('header_$categoryID'),
                 index: index,
-                child: _header(context, categoryMap, grouped, categoryID),
+                child: _header(
+                  context,
+                  categoryMap,
+                  grouped,
+                  categoryID,
+                  onMoveUp:
+                      visibleIndex > 0
+                          ? () {
+                            analytics.logEvent(
+                              name: 'tap_move_category_section_up',
+                              parameters: sectionMoveParameters,
+                            );
+                            applySectionOrder(
+                              reorderCategorySections(
+                                sortedCategories: sortedCategories,
+                                visibleCategories: headerCategories,
+                                oldVisibleIndex: visibleIndex,
+                                newVisibleIndex: visibleIndex - 1,
+                              ),
+                            );
+                          }
+                          : null,
+                  onMoveDown:
+                      visibleIndex >= 0 &&
+                              visibleIndex < headerCategories.length - 1
+                          ? () {
+                            analytics.logEvent(
+                              name: 'tap_move_category_section_down',
+                              parameters: sectionMoveParameters,
+                            );
+                            applySectionOrder(
+                              reorderCategorySections(
+                                sortedCategories: sortedCategories,
+                                visibleCategories: headerCategories,
+                                oldVisibleIndex: visibleIndex,
+                                newVisibleIndex: visibleIndex + 1,
+                              ),
+                            );
+                          }
+                          : null,
+                ),
               );
             case GroupedItemRow(:final item, :final categoryID):
               // ヘッダードラッグ中のセクションのアイテム行はゼロ高さに畳む(アイテムは
@@ -737,62 +846,14 @@ class _GroupedListView extends HookConsumerWidget {
                 if (oldVisibleIndex < 0 || newVisibleIndex == oldVisibleIndex) {
                   return; // 位置が変わらないドロップは書き込まない(冪等)。
                 }
-                final reordered = reorderCategorySections(
-                  sortedCategories: sortedCategories,
-                  visibleCategories: headerCategories,
-                  oldVisibleIndex: oldVisibleIndex,
-                  newVisibleIndex: newVisibleIndex,
+                applySectionOrder(
+                  reorderCategorySections(
+                    sortedCategories: sortedCategories,
+                    visibleCategories: headerCategories,
+                    oldVisibleIndex: oldVisibleIndex,
+                    newVisibleIndex: newVisibleIndex,
+                  ),
                 );
-
-                // 楽観の表示順を同期セットし、ドロップ直後から新しいセクション順で描画する。
-                final appliedSectionOrder =
-                    reordered.map((category) => category.id).toList();
-                optimisticSectionOrder.value = appliedSectionOrder;
-
-                // 永続化失敗時は楽観の表示順を破棄し stream の実状態へ戻す(ロールバック)。
-                // 後続の別操作で楽観状態が差し替わっている場合は消さない。
-                void rollbackIfCurrent(Object error, StackTrace stackTrace) {
-                  debugPrint('[reorder] セクション並び永続化失敗: $error\n$stackTrace');
-                  if (optimisticSectionOrder.value == appliedSectionOrder) {
-                    optimisticSectionOrder.value = null;
-                  }
-                }
-
-                final locationID = shoppingLocationID;
-                if (locationID == null) {
-                  groupCategoryBatchUpdate
-                      .call(
-                        categoryAxisID: categoryAxisID,
-                        categories:
-                            reordered
-                                .asMap()
-                                .entries
-                                .map(
-                                  (entry) =>
-                                      entry.value.copyWith(order: entry.key),
-                                )
-                                .toList(),
-                      )
-                      .catchError(rollbackIfCurrent);
-                } else {
-                  // 買い物場所選択時(プレミアム限定で渡される)はその場所専用の並び順だけを更新する。
-                  groupCategoryBatchUpdate
-                      .call(
-                        categoryAxisID: categoryAxisID,
-                        categories:
-                            reordered.asMap().entries.map((entry) {
-                              final updatedLocationOrders =
-                                  Map<String, int>.from(
-                                    entry.value.locationOrders,
-                                  );
-                              updatedLocationOrders[locationID] = entry.key;
-                              return entry.value.copyWith(
-                                locationOrders: updatedLocationOrders,
-                              );
-                            }).toList(),
-                      )
-                      .catchError(rollbackIfCurrent);
-                }
               }
             case final GroupedItemRow moved:
               {
@@ -870,12 +931,15 @@ class _GroupedListView extends HookConsumerWidget {
   }
 
   /// カテゴリID(null=未分類)から見出し行を生成する。
+  /// [onMoveUp] / [onMoveDown] は見出しの上下ボタンの処理([CategorySectionHeader] に渡す)。
   Widget _header(
     BuildContext context,
     Map<String, GroupCategory> categoryMap,
     Map<String, List<GroupShoppingListItem>> grouped,
-    String? categoryID,
-  ) {
+    String? categoryID, {
+    required VoidCallback? onMoveUp,
+    required VoidCallback? onMoveDown,
+  }) {
     final items = grouped[categoryID ?? uncategorizedCategoryID] ?? const [];
     final metrics = shoppingListItemMetrics(items);
     final category = categoryID == null ? null : categoryMap[categoryID];
@@ -884,6 +948,8 @@ class _GroupedListView extends HookConsumerWidget {
       colorHex: category?.color,
       doneCount: metrics.checkedCount,
       totalCount: metrics.totalCount,
+      onMoveUp: onMoveUp,
+      onMoveDown: onMoveDown,
     );
   }
 }

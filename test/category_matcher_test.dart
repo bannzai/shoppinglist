@@ -835,5 +835,54 @@ void main() {
         ['b', 'a', 'hidden'],
       );
     });
+
+    // ヘッダーの上下ボタン(Issue #622)は newVisibleIndex に visible index ∓1 を渡す。
+    test('上ボタン相当(index-1): 1つ上の visible カテゴリの直前に入る', () {
+      final a = category(id: 'a', order: 0);
+      final hidden = category(id: 'hidden', order: 1);
+      final b = category(id: 'b', order: 2);
+      final c = category(id: 'c', order: 3);
+      expect(
+        reorderCategorySections(
+          sortedCategories: [a, hidden, b, c],
+          visibleCategories: [a, b, c],
+          oldVisibleIndex: 1,
+          newVisibleIndex: 0,
+        ).map((category) => category.id).toList(),
+        ['b', 'a', 'hidden', 'c'],
+      );
+    });
+
+    test('下ボタン相当(index+1): 1つ下の visible カテゴリの直後に入る', () {
+      final a = category(id: 'a', order: 0);
+      final b = category(id: 'b', order: 1);
+      final c = category(id: 'c', order: 2);
+      final d = category(id: 'd', order: 3);
+      expect(
+        reorderCategorySections(
+          sortedCategories: [a, b, c, d],
+          visibleCategories: [a, b, c, d],
+          oldVisibleIndex: 1,
+          newVisibleIndex: 2,
+        ).map((category) => category.id).toList(),
+        ['a', 'c', 'b', 'd'],
+      );
+    });
+
+    test('下ボタン相当(index+1)で visible 末尾へ: 間の非表示カテゴリを越えて最後の visible の直後に入る', () {
+      final a = category(id: 'a', order: 0);
+      final b = category(id: 'b', order: 1);
+      final hidden = category(id: 'hidden', order: 2);
+      final c = category(id: 'c', order: 3);
+      expect(
+        reorderCategorySections(
+          sortedCategories: [a, b, hidden, c],
+          visibleCategories: [a, b, c],
+          oldVisibleIndex: 1,
+          newVisibleIndex: 2,
+        ).map((category) => category.id).toList(),
+        ['a', 'hidden', 'c', 'b'],
+      );
+    });
   });
 }
