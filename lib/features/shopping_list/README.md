@@ -208,7 +208,7 @@ ISO8601 文字列）に保存する。読み書きは `provider/string_shared_pr
 - E2E: `maestro/flows/category_section_reorder.yaml`（長押しドラッグは超低速 swipe で再現）。
 
 ### 上下ボタンによる並び替え（Issue #622）
-カテゴリのセクションヘッダー右端（`done/total` の右）に上下ボタンがあり、タップすると隣のセクションと
+カテゴリのセクションヘッダー右側（右端の `done/total` の左）に上下ボタンがあり、タップすると隣のセクションと
 順番が入れ替わる。長押しドラッグと同じ経路（`reorderCategorySections` → 楽観の表示順 →
 `GroupCategory.order` / `locationOrders` へ永続化）を通る。
 

@@ -94,6 +94,30 @@ void main() {
       expect(_enabled(tester, _moveDownButton), isTrue);
     });
 
+    testWidgets('done/total は右端に置き、上下ボタンはその左に並ぶ', (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          CategorySectionHeader(
+            name: '野菜',
+            colorHex: null,
+            doneCount: 0,
+            totalCount: 1,
+            onMoveUp: () {},
+            onMoveDown: () {},
+          ),
+        ),
+      );
+      final countLeft = tester.getTopLeft(find.text('0/1')).dx;
+      expect(
+        tester.getTopRight(find.byKey(_moveDownButton)).dx,
+        lessThanOrEqualTo(countLeft),
+      );
+      expect(
+        tester.getTopRight(find.byKey(_moveUpButton)).dx,
+        lessThanOrEqualTo(tester.getTopLeft(find.byKey(_moveDownButton)).dx),
+      );
+    });
+
     testWidgets('上ボタン・下ボタンのタップでそれぞれの処理が呼ばれる', (tester) async {
       final calls = <String>[];
       await tester.pumpWidget(

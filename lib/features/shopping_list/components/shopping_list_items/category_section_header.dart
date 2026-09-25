@@ -6,8 +6,8 @@ import 'package:shoppinglist/style/tokens.dart';
 
 /// カテゴリ別表示時の見出し行。
 /// `design_handoff_shopping_list/source/screens-list.jsx` のカテゴリヘッダ相当。
-/// 色ドット + カテゴリ名（11px / 700 / ink2）+ 末尾に mono の `done/total` と
-/// セクションの順番を入れ替える上下ボタン（Issue #622）。
+/// 色ドット + カテゴリ名（11px / 700 / ink2）+ セクションの順番を入れ替える上下ボタン
+/// （Issue #622）+ 右端に mono の `done/total`。
 class CategorySectionHeader extends StatelessWidget {
   final String name;
 
@@ -65,17 +65,7 @@ class CategorySectionHeader extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          Text(
-            '$doneCount/$totalCount',
-            style: monoTextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w400,
-              color: neutral.ink3,
-              letterSpacing: null,
-            ),
-          ),
           if (onMoveUp != null || onMoveDown != null) ...[
-            const SizedBox(width: 4),
             _sectionMoveButton(
               key: const Key('category_section_move_up_button'),
               icon: Icons.keyboard_arrow_up,
@@ -90,7 +80,18 @@ class CategorySectionHeader extends StatelessWidget {
               onPressed: onMoveDown,
               neutral: neutral,
             ),
+            const SizedBox(width: 4),
           ],
+          // 件数は上下ボタンの有無(未分類はボタンなし)にかかわらず右端にそろえる。
+          Text(
+            '$doneCount/$totalCount',
+            style: monoTextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w400,
+              color: neutral.ink3,
+              letterSpacing: null,
+            ),
+          ),
         ],
       ),
     );
