@@ -255,6 +255,7 @@ design_v2_list_core.yaml のスワイプは通過確認のみだったため、m
 - [ ] **カテゴリ間移動**: カテゴリ表示時、アイテムを別カテゴリのセクションへドラッグすると移動先カテゴリへ分類が変わり（完全一致キーワードの付け替え）、順序も保存される
   - ⏭️ スキップ: 上記「アイテムの並び替え」と同じ理由（アイテム行の長押しドラッグが自動化操作で発火しない）により検証できなかった
 - [x] **セクション並び替え**: カテゴリのセクションヘッダーを長押しドラッグでセクション単位に並び替えできる。「未分類」セクションは常に末尾でドラッグ不可（既存 E2E: maestro/flows/category_section_reorder.yaml）
+- [x] **セクションの上下ボタン**: カテゴリのセクションヘッダー右端の上下ボタンで隣のセクションと順番が入れ替わり、再起動後も保持される。先頭の上・末尾カテゴリの下は無効、「未分類」ヘッダーにはボタンが出ない（既存 E2E: maestro/flows/category_section_move_buttons.yaml）
 
 #### 動作確認
 <details>
@@ -289,6 +290,32 @@ design_v2_list_core.yaml のスワイプは通過確認のみだったため、m
 肉/乳製品/未分類の順から、肉セクションを長押しドラッグして乳製品と入れ替え、さらに未分類を先頭へドラッグしても末尾に固定されたままであることを確認:
 
 <img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/bannzai/shoppinglist/20260714/2438516a-59ee-41a4-94e5-400a8ecd2042.png" width="320">
+
+**確認日: 2026-09-26**（Issue #622 で上下ボタン追加に伴いヘッダーが高くなり、E2E の未分類ヘッダーの swipe 座標を 44% に追従して再実行しパス）
+
+</details>
+
+### **セクションの上下ボタン**: カテゴリのセクションヘッダー右端の上下ボタンで隣のセクションと順番が入れ替わり、再起動後も保持される。先頭の上・末尾カテゴリの下は無効、「未分類」ヘッダーにはボタンが出ない（既存 E2E: maestro/flows/category_section_move_buttons.yaml）
+
+<details><summary>動作確認スクショ</summary>
+
+**確認日: 2026-09-26**（iOS 27.0 シミュレータ・dev 環境で maestro/flows/category_section_move_buttons.yaml がパス）
+
+乳製品 → 肉 → 未分類 の初期状態。乳製品の上・肉の下が無効、未分類にはボタンなし:
+
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/09/25/ebe6f5d2-fdc5-4a4a-a57d-4dae4d21aae7-category_section_move_buttons_01_before.png" width="320">
+
+乳製品の下ボタンで 肉 → 乳製品 に入れ替わる:
+
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/09/25/341a9699-f22f-4d92-a810-73732a8c0787-category_section_move_buttons_02_after_down.png" width="320">
+
+再起動後も 肉 → 乳製品 が保持される:
+
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/09/25/6669ba96-c934-4f12-b133-cb8f4401e02e-category_section_move_buttons_03_persisted.png" width="320">
+
+乳製品の上ボタンで 乳製品 → 肉 に戻る:
+
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/09/25/c428634b-5ab0-4dc9-a0c8-98fcafa875bd-category_section_move_buttons_04_after_up.png" width="320">
 
 </details>
 
