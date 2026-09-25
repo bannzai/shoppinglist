@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
@@ -20,6 +21,7 @@ import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:shoppinglist/utils/purchase/purchase.dart';
 import '../../../../helpers/localized_test_app.dart';
 
 /// カテゴリ軸なしテスト用のグループID。previewProviderOverrides が override 済みの
@@ -271,16 +273,49 @@ class _RecordingUpdateShoppingListItem extends UpdateShoppingListItem {
   }
 }
 
+/// プレミアム会員の CustomerInfo。買い物場所ごとの並び順(locationOrders)はプレミアム限定で
+/// 有効になる(_CategorizedShoppingListItems が非プレミアムでは shoppingLocationID を null にする)ため、
+/// 買い物場所選択時のセクション並び替えの検証に使う。
+final _premiumCustomerInfo = CustomerInfo(
+  const EntitlementInfos(
+    {premiumEntitlementIdentifier: _premiumEntitlement},
+    {premiumEntitlementIdentifier: _premiumEntitlement},
+  ),
+  const {},
+  const [],
+  const [],
+  const [],
+  '2026-01-01T00:00:00Z',
+  mockUserID,
+  const {},
+  '2026-01-01T00:00:00Z',
+);
+
+/// [_premiumCustomerInfo] が持つ有効なプレミアム entitlement。
+const _premiumEntitlement = EntitlementInfo(
+  premiumEntitlementIdentifier,
+  true,
+  true,
+  '2026-01-01T00:00:00Z',
+  '2026-01-01T00:00:00Z',
+  'premium_monthly',
+  true,
+);
+
 /// セクション並び替えテスト用の ShoppingListItems を pump する。
 /// 食品(牛乳・卵・食パン)・日用品(洗剤)の2カテゴリ + 未分類(ガムテープ)の3セクション構成。
 /// 食品を3件にして、ヘッダードラッグ proxy のプレビュー上限(先頭2件)を検証できるようにする。
+/// [shoppingLocationID] を渡すとプレミアム会員として買い物場所選択中の表示にする。
 Future<
   ({
     _RecordingCategoryBatchUpdate categoryBatch,
     _RecordingUpdateShoppingListItem itemUpdate,
   })
 >
-_pumpSectionReorder(WidgetTester tester) async {
+_pumpSectionReorder(
+  WidgetTester tester, {
+  required String? shoppingLocationID,
+}) async {
   // ignore: invalid_use_of_visible_for_testing_member
   SharedPreferences.setMockInitialValues({});
   final sharedPreferences = await SharedPreferences.getInstance();
@@ -339,13 +374,23 @@ _pumpSectionReorder(WidgetTester tester) async {
           groupID: _sectionReorderGroupID,
         ).overrideWith((ref) => itemUpdateRecorder),
       ],
-      child: localizedTestApp(
-        theme: buildAppTheme(accent: AccentPreset.shu),
-        home: Scaffold(
-          body: ShoppingListItems(
-            groupID: _sectionReorderGroupID,
-            shoppingListID: mockShoppingListID,
-            shoppingLocationID: null,
+      // previewProviderOverrides が customerInfoProvider を override 済みのため、
+      // プレミアム会員にする時は子の ProviderScope で上書きする。
+      child: ProviderScope(
+        overrides: [
+          if (shoppingLocationID != null)
+            customerInfoProvider.overrideWith(
+              (ref) => Stream.value(_premiumCustomerInfo),
+            ),
+        ],
+        child: localizedTestApp(
+          theme: buildAppTheme(accent: AccentPreset.shu),
+          home: Scaffold(
+            body: ShoppingListItems(
+              groupID: _sectionReorderGroupID,
+              shoppingListID: mockShoppingListID,
+              shoppingLocationID: shoppingLocationID,
+            ),
           ),
         ),
       ),
@@ -354,6 +399,23 @@ _pumpSectionReorder(WidgetTester tester) async {
   await tester.pumpAndSettle();
   return (categoryBatch: recorder, itemUpdate: itemUpdateRecorder);
 }
+
+/// CategorySectionHeader の上ボタンの Key。
+const _sectionMoveUpButton = Key('category_section_move_up_button');
+
+/// CategorySectionHeader の下ボタンの Key。
+const _sectionMoveDownButton = Key('category_section_move_down_button');
+
+/// 表示順で [headerIndex] 番目のセクションヘッダーにある上下ボタン([buttonKey])。
+Finder _sectionMoveButton({required int headerIndex, required Key buttonKey}) =>
+    find.descendant(
+      of: find.byType(CategorySectionHeader).at(headerIndex),
+      matching: find.byKey(buttonKey),
+    );
+
+/// 上下ボタンが押せる状態か(onPressed が設定されているか)。
+bool _sectionMoveButtonEnabled(WidgetTester tester, Finder button) =>
+    tester.widget<IconButton>(button).onPressed != null;
 
 /// セクションヘッダーを長押ししてから offset 分ドラッグして離す。
 Future<void> _longPressDragHeader(
@@ -512,7 +574,7 @@ void main() {
   group('ShoppingListItems: 未分類アイテムの「カテゴリ +」ボタン', () {
     testWidgets('カテゴリ表示では未分類セクションの確定行にのみチップが出る', (tester) async {
       // 食品(牛乳・卵・食パン)・日用品(洗剤)は分類済み、ガムテープのみ未分類。
-      await _pumpSectionReorder(tester);
+      await _pumpSectionReorder(tester, shoppingLocationID: null);
       expect(find.byType(AddCategoryChip), findsOneWidget);
       // チップはガムテープ(未分類)の行にある。
       expect(
@@ -585,12 +647,12 @@ void main() {
 
   group('ShoppingListItems: セクション並び替え (Issue #386)', () {
     testWidgets('カテゴリ2つ + 未分類の3セクションが表示される', (tester) async {
-      await _pumpSectionReorder(tester);
+      await _pumpSectionReorder(tester, shoppingLocationID: null);
       expect(find.byType(CategorySectionHeader), findsNWidgets(3));
     });
 
     testWidgets('カテゴリセクションのヘッダーのみドラッグリスナーが付く（未分類は対象外）', (tester) async {
-      await _pumpSectionReorder(tester);
+      await _pumpSectionReorder(tester, shoppingLocationID: null);
       expect(
         find.ancestor(
           of: find.byType(CategorySectionHeader),
@@ -601,7 +663,10 @@ void main() {
     });
 
     testWidgets('ヘッダーの長押しドラッグでセクションが並び替わり order が振り直される', (tester) async {
-      final recorders = await _pumpSectionReorder(tester);
+      final recorders = await _pumpSectionReorder(
+        tester,
+        shoppingLocationID: null,
+      );
 
       // 先頭セクション(食品)のヘッダーを、2番目のセクション(日用品)の下端より下までドラッグする。
       final foodHeader = find.byType(CategorySectionHeader).first;
@@ -628,7 +693,10 @@ void main() {
     });
 
     testWidgets('行の編集中にヘッダードラッグを開始しても未確定テキストが保存される', (tester) async {
-      final recorders = await _pumpSectionReorder(tester);
+      final recorders = await _pumpSectionReorder(
+        tester,
+        shoppingLocationID: null,
+      );
       // 牛乳の行を編集して Enter 未確定のままにする。
       await tester.enterText(find.widgetWithText(TextField, '牛乳'), '低脂肪牛乳');
       await tester.pump();
@@ -647,7 +715,7 @@ void main() {
     });
 
     testWidgets('ヘッダードラッグ中はセクションを畳み、proxy に先頭2件だけが出る', (tester) async {
-      await _pumpSectionReorder(tester);
+      await _pumpSectionReorder(tester, shoppingLocationID: null);
       // pump 直後は 食品3件 + 洗剤 + ガムテープ の5行。
       expect(find.byType(TextShoppingListItemWidget), findsNWidgets(5));
 
@@ -678,7 +746,7 @@ void main() {
     testWidgets('ドロップ直後、stream 未更新でも楽観的にセクション順が入れ替わる', (tester) async {
       // stream(Stream.value)は再 emit しないため、楽観の表示順が破棄されず維持される。
       // 牛乳(食品)が洗剤(日用品)より下に来ていれば楽観反映できている。
-      await _pumpSectionReorder(tester);
+      await _pumpSectionReorder(tester, shoppingLocationID: null);
       final foodHeader = find.byType(CategorySectionHeader).first;
       final dailySectionBottom = tester.getBottomLeft(find.text('洗剤')).dy + 40;
       await _longPressDragHeader(
@@ -691,6 +759,135 @@ void main() {
         greaterThan(tester.getCenter(find.text('洗剤')).dy),
         reason: '牛乳(食品)が洗剤(日用品)より上のまま＝楽観のセクション順が反映されていない',
       );
+    });
+  });
+
+  group('ShoppingListItems: セクションヘッダーの上下ボタン (Issue #622)', () {
+    testWidgets('カテゴリのヘッダーにだけ上下ボタンが出る（未分類には出ない）', (tester) async {
+      await _pumpSectionReorder(tester, shoppingLocationID: null);
+      expect(find.byKey(_sectionMoveUpButton), findsNWidgets(2));
+      expect(find.byKey(_sectionMoveDownButton), findsNWidgets(2));
+      // 表示順で3番目(末尾)は未分類ヘッダー。
+      expect(
+        find.descendant(
+          of: find.byType(CategorySectionHeader).at(2),
+          matching: find.byType(IconButton),
+        ),
+        findsNothing,
+      );
+    });
+
+    testWidgets('先頭セクションの上ボタンと末尾カテゴリの下ボタンは無効', (tester) async {
+      await _pumpSectionReorder(tester, shoppingLocationID: null);
+      final firstUp = _sectionMoveButton(
+        headerIndex: 0,
+        buttonKey: _sectionMoveUpButton,
+      );
+      final firstDown = _sectionMoveButton(
+        headerIndex: 0,
+        buttonKey: _sectionMoveDownButton,
+      );
+      final lastUp = _sectionMoveButton(
+        headerIndex: 1,
+        buttonKey: _sectionMoveUpButton,
+      );
+      final lastDown = _sectionMoveButton(
+        headerIndex: 1,
+        buttonKey: _sectionMoveDownButton,
+      );
+      expect(_sectionMoveButtonEnabled(tester, firstUp), isFalse);
+      expect(_sectionMoveButtonEnabled(tester, firstDown), isTrue);
+      expect(_sectionMoveButtonEnabled(tester, lastUp), isTrue);
+      expect(_sectionMoveButtonEnabled(tester, lastDown), isFalse);
+    });
+
+    testWidgets('下ボタンで隣のセクションと入れ替わり order が振り直される', (tester) async {
+      final recorders = await _pumpSectionReorder(
+        tester,
+        shoppingLocationID: null,
+      );
+      await tester.tap(
+        _sectionMoveButton(headerIndex: 0, buttonKey: _sectionMoveDownButton),
+      );
+      await tester.pumpAndSettle();
+
+      expect(recorders.categoryBatch.lastCategoryAxisID, _sectionReorderAxisID);
+      expect(
+        recorders.categoryBatch.lastCategories!
+            .map((category) => category.id)
+            .toList(),
+        ['cat-daily', 'cat-food'],
+      );
+      expect(
+        recorders.categoryBatch.lastCategories!
+            .map((category) => category.order)
+            .toList(),
+        [0, 1],
+      );
+      // stream(Stream.value)は再 emit しないため、入れ替わって見えるのは楽観の表示順による。
+      expect(
+        tester.getCenter(find.text('牛乳')).dy,
+        greaterThan(tester.getCenter(find.text('洗剤')).dy),
+        reason: '牛乳(食品)が洗剤(日用品)より上のまま＝楽観のセクション順が反映されていない',
+      );
+    });
+
+    testWidgets('連続操作: 下ボタンの後に同じセクションの上ボタンで元の順に戻る', (tester) async {
+      final recorders = await _pumpSectionReorder(
+        tester,
+        shoppingLocationID: null,
+      );
+      await tester.tap(
+        _sectionMoveButton(headerIndex: 0, buttonKey: _sectionMoveDownButton),
+      );
+      await tester.pumpAndSettle();
+      // 楽観の表示順で食品は2番目のセクションになり、上ボタンが有効・下ボタンが無効になる。
+      final movedDown = _sectionMoveButton(
+        headerIndex: 1,
+        buttonKey: _sectionMoveDownButton,
+      );
+      expect(_sectionMoveButtonEnabled(tester, movedDown), isFalse);
+
+      await tester.tap(
+        _sectionMoveButton(headerIndex: 1, buttonKey: _sectionMoveUpButton),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        recorders.categoryBatch.lastCategories!
+            .map((category) => category.id)
+            .toList(),
+        ['cat-food', 'cat-daily'],
+      );
+      expect(
+        tester.getCenter(find.text('牛乳')).dy,
+        lessThan(tester.getCenter(find.text('洗剤')).dy),
+      );
+    });
+
+    testWidgets('買い物場所選択中は場所ごとの並び順(locationOrders)だけを更新する', (tester) async {
+      const shoppingLocationID = 'location-supermarket';
+      final recorders = await _pumpSectionReorder(
+        tester,
+        shoppingLocationID: shoppingLocationID,
+      );
+      await tester.tap(
+        _sectionMoveButton(headerIndex: 0, buttonKey: _sectionMoveDownButton),
+      );
+      await tester.pumpAndSettle();
+
+      final categories = recorders.categoryBatch.lastCategories!;
+      expect(categories.map((category) => category.id).toList(), [
+        'cat-daily',
+        'cat-food',
+      ]);
+      expect(
+        categories
+            .map((category) => category.locationOrders[shoppingLocationID])
+            .toList(),
+        [0, 1],
+      );
+      // 既定の並び順(order)は変えない。
+      expect(categories.map((category) => category.order).toList(), [1, 0]);
     });
   });
 }

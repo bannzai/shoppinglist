@@ -312,6 +312,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get shoppingListItemDetailTooltip => '항목 상세';
 
   @override
+  String get shoppingListSectionMoveUpTooltip => '카테고리를 위로 이동';
+
+  @override
+  String get shoppingListSectionMoveDownTooltip => '카테고리를 아래로 이동';
+
+  @override
   String get shoppingListItemDeleteTooltip => '항목 삭제';
 
   @override

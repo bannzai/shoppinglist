@@ -114,6 +114,8 @@
   "shoppingListHintFabSuffix": " を長押しすると写真やURLから追加できます",
 
   "shoppingListItemDetailTooltip": "アイテム詳細",
+  "shoppingListSectionMoveUpTooltip": "カテゴリを上へ移動",
+  "shoppingListSectionMoveDownTooltip": "カテゴリを下へ移動",
   "shoppingListItemDeleteTooltip": "アイテムを削除",
   "shoppingListItemDeleteConfirm": "このアイテムを削除しますか？",
   "shoppingListItemDeleted": "アイテムを削除しました",

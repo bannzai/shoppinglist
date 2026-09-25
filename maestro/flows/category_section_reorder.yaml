@@ -115,8 +115,9 @@ appId: ${APP_ID}
       text: "(?s)肉.*"
 
 # --- 未分類ヘッダーはドラッグできない(末尾固定のまま) ---
+# 未分類ヘッダーの位置。カテゴリヘッダーに上下ボタン(Issue #622)が入り行が高くなったため 44%
 - swipe:
-    start: "30%, 41%"
+    start: "30%, 44%"
     end: "30%, 10%"
     duration: 10000
 - waitForAnimationToEnd

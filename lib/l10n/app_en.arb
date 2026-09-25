@@ -198,6 +198,14 @@
   },
 
   "shoppingListItemDetailTooltip": "Item details",
+  "shoppingListSectionMoveUpTooltip": "Move category up",
+  "@shoppingListSectionMoveUpTooltip": {
+    "description": "カテゴリ別表示のセクションヘッダーにある、セクションを1つ上へ移動するボタンのツールチップ"
+  },
+  "shoppingListSectionMoveDownTooltip": "Move category down",
+  "@shoppingListSectionMoveDownTooltip": {
+    "description": "カテゴリ別表示のセクションヘッダーにある、セクションを1つ下へ移動するボタンのツールチップ"
+  },
   "shoppingListItemDeleteTooltip": "Delete item",
   "shoppingListItemDeleteConfirm": "Delete this item?",
   "shoppingListItemDeleted": "Deleted the item",

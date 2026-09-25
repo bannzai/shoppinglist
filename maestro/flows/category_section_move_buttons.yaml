@@ -1,0 +1,143 @@
+appId: ${APP_ID}
+---
+# カテゴリセクションの上下ボタン (Issue #622)
+# 買い物リスト画面のセクションヘッダー右端にある上下ボタンをタップすると、隣のセクションと
+# 順番が入れ替わることを確認する。
+#
+# テクニック:
+# - 上下ボタンは tooltip(「カテゴリを上へ移動」「カテゴリを下へ移動」)を accessibility label に持つ。
+#   カテゴリが2つある時は同じ label のボタンが2つ並ぶため index で表示順に指定する
+# - ReorderableList は各セクションを Semantics(container: true) で包むため、ヘッダーの accessibility
+#   label は「ヘッダー名\nカウント\nアイテム…」に結合される。(?s) 付き regex で先頭一致させる
+# - iOS には back キーが無いため、戻りは左上シェブロンの座標タップで行う
+
+- runFlow: shared/anonymous_sign_in.yaml
+
+# --- セットアップ: カテゴリ2つ作成 (category_section_reorder.yaml と同じ手順) ---
+# リスト設定 → グループ設定 → カテゴリ
+- tapOn: "リスト設定"
+- waitForAnimationToEnd
+- tapOn: "グループ設定"
+- waitForAnimationToEnd
+# AppCell の accessibility label は「カテゴリ\n自動分類のキーワード管理」(改行結合)
+- tapOn: "(?s)カテゴリ.*"
+- waitForAnimationToEnd
+
+# カテゴリ1: 乳製品 (キーワード: 牛乳)
+- tapOn: "カテゴリを追加"
+- waitForAnimationToEnd
+- assertVisible: "カテゴリ編集"
+- tapOn: "カテゴリ名を入力"
+- inputText: "乳製品"
+- pressKey: enter
+- waitForAnimationToEnd
+- tapOn: "キーワードを追加"
+- inputText: "牛乳"
+- tapOn:
+    text: "追加"
+    index: 0
+- waitForAnimationToEnd
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+
+# カテゴリ2: 肉 (キーワード: 牛肉) — カテゴリ一覧の FAB から追加
+- tapOn:
+    point: "90%,93%"
+- waitForAnimationToEnd
+- assertVisible: "カテゴリ編集"
+- tapOn: "カテゴリ名を入力"
+- inputText: "肉"
+- pressKey: enter
+- waitForAnimationToEnd
+- tapOn: "キーワードを追加"
+- inputText: "牛肉"
+- tapOn:
+    text: "追加"
+    index: 0
+- waitForAnimationToEnd
+# カテゴリ名は useOnDisappear（画面離脱時）保存で Enter では確定しない。launchApp の前に
+# back シェブロン(左上 <)で「カテゴリ編集」を離脱して「肉」の名前を確定させる。
+- tapOn:
+    point: "5%,10%"
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "(?s).*肉.*"
+    timeout: 10000
+
+# 買い物リスト画面へは再起動で戻る(シェブロン連打よりも安定するため)
+- launchApp
+- waitForAnimationToEnd
+
+# --- アイテム追加: 牛乳(乳製品) / 牛肉(肉) / ガムテープ(未分類) ---
+- tapOn: "タップで入力開始"
+- inputText: "牛乳"
+- pressKey: enter
+- inputText: "牛肉"
+- pressKey: enter
+- inputText: "ガムテープ"
+- pressKey: enter
+- hideKeyboard
+- waitForAnimationToEnd
+
+# 3セクション構成: 乳製品 → 肉 → 未分類。上下ボタンはカテゴリの2セクションにだけ出る
+- assertVisible:
+    text: "(?s)肉.*"
+    below:
+      text: "(?s)乳製品.*"
+- assertVisible: "カテゴリを下へ移動"
+- takeScreenshot: screenshots/category_section_move_buttons_01_before
+
+# --- 並び替え1: 乳製品(先頭)の下ボタン → 肉 → 乳製品 → 未分類 ---
+- tapOn:
+    text: "カテゴリを下へ移動"
+    index: 0
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/category_section_move_buttons_02_after_down
+- assertVisible:
+    text: "(?s)乳製品.*"
+    below:
+      text: "(?s)肉.*"
+- assertVisible:
+    text: "(?s)未分類.*"
+    below:
+      text: "(?s)乳製品.*"
+
+# --- 永続化: 再起動後も 肉 → 乳製品 → 未分類 が保持されている ---
+# 並び替え直後の iOS accessibility tree では、移動したヘッダー内のボタンの座標が古いまま
+# (画面左上の小さな矩形)になり、座標で押す Maestro の tapOn が空振りする(2026-09-26 実測)。
+# 次のボタン操作の前に再起動して座標を取り直す(永続化の確認も兼ねる)。
+- launchApp
+- waitForAnimationToEnd
+- assertVisible:
+    text: "(?s)乳製品.*"
+    below:
+      text: "(?s)肉.*"
+- assertVisible:
+    text: "(?s)未分類.*"
+    below:
+      text: "(?s)乳製品.*"
+- takeScreenshot: screenshots/category_section_move_buttons_03_persisted
+
+# --- 並び替え2: 乳製品(2番目)の上ボタン → 乳製品 → 肉 → 未分類 ---
+- tapOn:
+    text: "カテゴリを上へ移動"
+    index: 1
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/category_section_move_buttons_04_after_up
+- assertVisible:
+    text: "(?s)肉.*"
+    below:
+      text: "(?s)乳製品.*"
+
+# --- 永続化: 再起動後も 乳製品 → 肉 → 未分類 が保持されている ---
+- launchApp
+- waitForAnimationToEnd
+- assertVisible:
+    text: "(?s)肉.*"
+    below:
+      text: "(?s)乳製品.*"
+- assertVisible:
+    text: "(?s)未分類.*"
+    below:
+      text: "(?s)肉.*"

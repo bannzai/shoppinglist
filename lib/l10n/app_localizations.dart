@@ -668,6 +668,18 @@ abstract class AppLocalizations {
   /// **'Item details'**
   String get shoppingListItemDetailTooltip;
 
+  /// カテゴリ別表示のセクションヘッダーにある、セクションを1つ上へ移動するボタンのツールチップ
+  ///
+  /// In en, this message translates to:
+  /// **'Move category up'**
+  String get shoppingListSectionMoveUpTooltip;
+
+  /// カテゴリ別表示のセクションヘッダーにある、セクションを1つ下へ移動するボタンのツールチップ
+  ///
+  /// In en, this message translates to:
+  /// **'Move category down'**
+  String get shoppingListSectionMoveDownTooltip;
+
   /// No description provided for @shoppingListItemDeleteTooltip.
   ///
   /// In en, this message translates to:

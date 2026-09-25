@@ -94,6 +94,8 @@
   "shoppingListHintFabPrefix": "长按右下角的 ",
   "shoppingListHintFabSuffix": "右下角可从照片或网址添加",
   "shoppingListItemDetailTooltip": "商品详情",
+  "shoppingListSectionMoveUpTooltip": "上移分类",
+  "shoppingListSectionMoveDownTooltip": "下移分类",
   "shoppingListItemDeleteTooltip": "删除项目",
   "shoppingListItemDeleteConfirm": "删除此项目？",
   "shoppingListItemDeleted": "已删除该商品",

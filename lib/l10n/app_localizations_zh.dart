@@ -309,6 +309,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get shoppingListItemDetailTooltip => '商品详情';
 
   @override
+  String get shoppingListSectionMoveUpTooltip => '上移分类';
+
+  @override
+  String get shoppingListSectionMoveDownTooltip => '下移分类';
+
+  @override
   String get shoppingListItemDeleteTooltip => '删除项目';
 
   @override
@@ -1557,6 +1563,12 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get shoppingListItemDetailTooltip => '项目详情';
 
   @override
+  String get shoppingListSectionMoveUpTooltip => '上移分类';
+
+  @override
+  String get shoppingListSectionMoveDownTooltip => '下移分类';
+
+  @override
   String get shoppingListItemDeleteTooltip => '删除项目';
 
   @override
@@ -2803,6 +2815,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get shoppingListItemDetailTooltip => '項目詳情';
+
+  @override
+  String get shoppingListSectionMoveUpTooltip => '上移分類';
+
+  @override
+  String get shoppingListSectionMoveDownTooltip => '下移分類';
 
   @override
   String get shoppingListItemDeleteTooltip => '刪除項目';
