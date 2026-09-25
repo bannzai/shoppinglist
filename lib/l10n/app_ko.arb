@@ -94,6 +94,8 @@
   "shoppingListHintFabPrefix": "오른쪽 아래의 ",
   "shoppingListHintFabSuffix": " 사진이나 URL에서 추가하려면",
   "shoppingListItemDetailTooltip": "항목 상세",
+  "shoppingListSectionMoveUpTooltip": "카테고리를 위로 이동",
+  "shoppingListSectionMoveDownTooltip": "카테고리를 아래로 이동",
   "shoppingListItemDeleteTooltip": "항목 삭제",
   "shoppingListItemDeleteConfirm": "이 항목을 삭제할까요?",
   "shoppingListItemDeleted": "항목을 삭제했어요",

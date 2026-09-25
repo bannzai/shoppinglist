@@ -323,6 +323,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shoppingListItemDetailTooltip => 'Item details';
 
   @override
+  String get shoppingListSectionMoveUpTooltip => 'Move category up';
+
+  @override
+  String get shoppingListSectionMoveDownTooltip => 'Move category down';
+
+  @override
   String get shoppingListItemDeleteTooltip => 'Delete item';
 
   @override

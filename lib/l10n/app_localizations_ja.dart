@@ -309,6 +309,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get shoppingListItemDetailTooltip => 'アイテム詳細';
 
   @override
+  String get shoppingListSectionMoveUpTooltip => 'カテゴリを上へ移動';
+
+  @override
+  String get shoppingListSectionMoveDownTooltip => 'カテゴリを下へ移動';
+
+  @override
   String get shoppingListItemDeleteTooltip => 'アイテムを削除';
 
   @override
