@@ -299,23 +299,23 @@ design_v2_list_core.yaml のスワイプは通過確認のみだったため、m
 
 <details><summary>動作確認スクショ</summary>
 
-**確認日: 2026-09-26**（iOS 27.0 シミュレータ・dev 環境で maestro/flows/category_section_move_buttons.yaml がパス）
+**確認日: 2026-09-26**（iOS 27.0 シミュレータ・dev 環境で maestro/flows/category_section_move_buttons.yaml がパス。件数を右端・上下ボタンをその左に並べた配置）
 
 乳製品 → 肉 → 未分類 の初期状態。乳製品の上・肉の下が無効、未分類にはボタンなし:
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/09/25/ebe6f5d2-fdc5-4a4a-a57d-4dae4d21aae7-category_section_move_buttons_01_before.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/09/25/48328a25-6994-4dc4-b9bc-57ff0a3f688f-category_section_move_buttons_01_before.png" width="320">
 
 乳製品の下ボタンで 肉 → 乳製品 に入れ替わる:
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/09/25/341a9699-f22f-4d92-a810-73732a8c0787-category_section_move_buttons_02_after_down.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/09/25/c2903510-1ceb-4bec-a7f5-4242c9bcf9de-category_section_move_buttons_02_after_down.png" width="320">
 
 再起動後も 肉 → 乳製品 が保持される:
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/09/25/6669ba96-c934-4f12-b133-cb8f4401e02e-category_section_move_buttons_03_persisted.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/09/25/f196a1a6-d71d-41f6-8011-18c4002b066c-category_section_move_buttons_03_persisted.png" width="320">
 
 乳製品の上ボタンで 乳製品 → 肉 に戻る:
 
-<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/09/25/c428634b-5ab0-4dc9-a0c8-98fcafa875bd-category_section_move_buttons_04_after_up.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/09/25/33d1d0d2-824a-4c85-9ad6-f73f170dc2a6-category_section_move_buttons_04_after_up.png" width="320">
 
 </details>
 
