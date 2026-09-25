@@ -207,6 +207,15 @@ ISO8601 文字列）に保存する。読み書きは `provider/string_shared_pr
   入力行の GlobalKey（fix-350）はセクションドラッグ中も二重化しない。
 - E2E: `maestro/flows/category_section_reorder.yaml`（長押しドラッグは超低速 swipe で再現）。
 
+### 上下ボタンによる並び替え（Issue #622）
+カテゴリのセクションヘッダー右端（`done/total` の右）に上下ボタンがあり、タップすると隣のセクションと
+順番が入れ替わる。長押しドラッグと同じ経路（`reorderCategorySections` → 楽観の表示順 →
+`GroupCategory.order` / `locationOrders` へ永続化）を通る。
+
+- 先頭セクションの上ボタンと、末尾のカテゴリセクションの下ボタンは無効（入れ替え先が無い）。
+- 「未分類」ヘッダーにはボタンを出さない（並び順を持たず常に末尾固定のため）。
+- E2E: `maestro/flows/category_section_move_buttons.yaml`。
+
 ## アイテム詳細からのカテゴリ確認・編集
 アイテム詳細シート（`text_shopping_list_item_detail_bottom_sheet.dart`）に、先頭軸
 （`groupCategoryAxes.first`）で `findMatchingCategoryID`（`category_matcher.dart`）により判定した
