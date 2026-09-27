@@ -159,3 +159,9 @@ if (
 ) {
   exports.submitInquiry = require("./functions/submitInquiry/function");
 }
+
+// firebase-crashlytics-alert-setup begin (bannzai/castle の skill が管理する区間。手で編集しない)
+exports.crashlyticsNewFatalIssueToSlack = require("./lib/crashlyticsAlert").crashlyticsNewFatalIssueToSlack;
+exports.crashlyticsRegressionToSlack = require("./lib/crashlyticsAlert").crashlyticsRegressionToSlack;
+exports.crashlyticsVelocityToSlack = require("./lib/crashlyticsAlert").crashlyticsVelocityToSlack;
+// firebase-crashlytics-alert-setup end
