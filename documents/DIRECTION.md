@@ -18,7 +18,7 @@ launched_at: 2026-08-20   # 公開日 (YYYY-MM-DD)。App Store の初回公開�
 | 指標 | 計測元 (skill / コマンド) | 継続のしきい値 | 打ち切り条件 | 転換の条件 |
 | --- | --- | --- | --- | --- |
 | 直近14日の★1〜2レビュー数 | appstore-research skill: `bash ~/.agents/skills/appstore-research/scripts/fetch-reviews.sh 6739724511 --country jp --pages 1` の出力で `date` が直近 14 日かつ `rating` が 2 以下の行数 | <= 1 | >= 3 x2 | 低評価の内容が共有 (招待・同期) に集中していたら、共有の導線の作り直しを最優先の改善 issue にする |
-| 直近14日のFATALクラッシュissue数 | firebase-crashlytics-triage skill: `bash ~/.agents/skills/firebase-crashlytics-triage/scripts/crashlytics.sh top-issues --app-id 1:323773689605:ios:a8663a6921f6488b15516c --days 14 --error-types FATAL` の topIssues の行数 (prod の plist はリポジトリに無いため Firebase project `shoppinglist-prod-857bb` の iOS app ID を直接渡す) | <= 5 | > 30 x2 | 上位 issue のイベント数が 1 件で 100 を超えていたら、機能追加より先にその修正 issue を出す |
+| 直近14日のFATALクラッシュissue数 | firebase-crashlytics-triage skill: `bash ~/.agents/skills/firebase-crashlytics-triage/scripts/crashlytics.sh top-issues --app-id <iOS の app ID> --days 14 --error-types FATAL` の topIssues の行数 (prod の plist はリポジトリに無いため、`firebase apps:list --project shoppinglist-prod-857bb` で iOS の app ID を取って渡す) | <= 5 | > 30 x2 | 上位 issue のイベント数が 1 件で 100 を超えていたら、機能追加より先にその修正 issue を出す |
 
 平均評価は 2026-09-29 時点で 0 件のため判定基準に入れない。10 件を超えたら agent が `>= 4.0` / `< 3.5 x2` の行を足す。
 
