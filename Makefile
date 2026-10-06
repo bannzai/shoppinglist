@@ -11,3 +11,18 @@ secret:
 
 
 
+
+# 引数なしの make で動作確認 (verify) を実行する
+.DEFAULT_GOAL := verify
+
+.PHONY: verify
+verify:
+	flutter pub get
+	dart pub run build_runner build --delete-conflicting-outputs
+	flutter analyze --no-pub --no-fatal-infos --fatal-warnings
+	dart format --set-exit-if-changed ./
+	flutter test
+	cd firebase/functions && npm ci
+	cd firebase/functions && npm run lint
+	cd firebase/functions && npm run build
+	cd firebase/functions && npm test
