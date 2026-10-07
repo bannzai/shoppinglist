@@ -14,7 +14,7 @@ castle issue https://github.com/bannzai/castle/issues/1503 の「各リポジト
 | 訴求 (ディレクトリ) | 用途 | header の IMAGE_ID | search results の IMAGE_ID | 配置先 |
 |---|---|---|---|---|
 | default | 既定の製品ページ | 25000019-1b80-88df-802e-2324e8ddd466 | 36c00019-1b80-88df-8034-688a9c728a2a | 未配置 (配置先が承認済みのため、画像の承認後に配置する) |
-| grocery | CPP grocery-202610 | (未アップロード) | (未アップロード) | - |
+| grocery | CPP grocery-202610 | cc000019-1b80-88df-8022-10b066255d12 | 03800019-1b80-88df-803d-0e74fda0830d | 配置 4 件 (ローカライズ x 種別) |
 
 ## 再生成と検証の手順
 
