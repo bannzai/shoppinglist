@@ -72,7 +72,7 @@ jobs:
       - uses: subosito/flutter-action@fd55f4c5af5b953cc57a2be44cb082c8f6635e8e # v2.21.0
         with:
           channel: stable
-          flutter-version: '3.41.9'
+          flutter-version: '3.44.9'
 
       # アプリ内シークレットを復元（GoogleService-Info.plist / lib/secret/secret.dart など）
       - name: Restore app secrets
@@ -202,7 +202,7 @@ jobs:
       - uses: subosito/flutter-action@fd55f4c5af5b953cc57a2be44cb082c8f6635e8e # v2.21.0
         with:
           channel: stable
-          flutter-version: '3.41.9'
+          flutter-version: '3.44.9'
 
       - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
