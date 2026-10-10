@@ -2,6 +2,10 @@
 
 A new Flutter project.
 
+## Release
+
+TestFlight / Google Play への配布手順は [documents/release.md](documents/release.md) を参照。リリースのたびに `pubspec.yaml` の `version:` を上げる必要がある。
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
