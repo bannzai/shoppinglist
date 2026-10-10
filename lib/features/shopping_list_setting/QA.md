@@ -229,3 +229,28 @@ OS 共有シート:
 </details>
 
 </details>
+
+---
+
+## 7. iPhone Duo（外側・内側ディスプレイ）
+
+- [x] **内側ディスプレイでシートの中身がシートの右端まで届く**: iPhone Duo の内側（950×678pt）で、買い物リスト設定シートの中身の右端がシートの右端と揃い、地の色の余白が残らない。外側（466×678pt）ではシートが右端のステータスバーの列の左に収まる（issue #640。リスト切り替えシートも同じ共通関数 appShowModalBottomSheet のため同じ）
+  - 自動化: manual（姿勢の切り替えは root QA.md の実行ナレッジ「iPhone Duo（折りたたみ）の外側・内側ディスプレイの確認」）
+
+#### 動作確認
+<details>
+<summary>動作確認エビデンス</summary>
+
+### **内側ディスプレイでシートの中身がシートの右端まで届く**: iPhone Duo の内側（950×678pt）で、買い物リスト設定シートの中身の右端がシートの右端と揃い、地の色の余白が残らない。外側（466×678pt）ではシートが右端のステータスバーの列の左に収まる（issue #640。リスト切り替えシートも同じ共通関数 appShowModalBottomSheet のため同じ）
+
+<details><summary>動作確認スクショ</summary>
+
+**確認日: 2026-10-11**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/10/10/6f46da27-7a65-4dff-b597-db12c595fc0f-duo-list-settings-inner-after.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/10/10/878c8c13-f337-4a62-8e93-498ff899db85-duo-list-picker-inner-after.png" width="320">
+
+修正前は中身の白い面がシートより右に約 80pt 短く、シートの地の色が余白として残っていた（修正前の画像は PR https://github.com/bannzai/shoppinglist/pull/652 ）。showModalBottomSheet を useSafeArea: true にして直した。iPhone 17 Pro（iOS 27.0）ではシートの上端が 23pt 下がり（以前はドラッグハンドルがステータスバーの領域に重なっていた）、中身の位置はシートに対して同じ。
+
+</details>
+
+</details>

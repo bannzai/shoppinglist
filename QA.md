@@ -66,6 +66,8 @@ flutter run --debug -d <UDID> \
 - 非対話 QA セッションの Bash sandbox では、上記 2 secret 変数に限らず **あらゆる `$var` 展開が `Contains simple_expansion` でブロックされる**（`$i` のような一般的なループ変数も不可）。加えて `sleep`（フォアグラウンド）・`break`・`&&`/`&`/`||`・ブレースグループ `{ ...; }` も弾かれる。この制約下でループを書く手段: (a) `flutter run` の起動待ちは `until grep -q "A Dart VM Service" <log>; do sleep 3; done`（`&` ではなく Bash ツールの `run_in_background: true`）で 1 回だけ完了通知を受ける。(b) スクショの連写はループを使わず、リテラルのファイル名で `xcrun simctl io <UDID> screenshot ./tmp/qa/s01.png ; ... ; ./tmp/qa/s14.png` のように `;` 区切りで並べる（各 1 枚が約 300ms かかるため 14 枚で約 3〜4 秒の窓を自然にカバーでき、`送信中...` のような一瞬のローディング状態やトーストを捕捉できる）。タップ（mobile-mcp）と連写（Bash）を同一メッセージで並列発行すると窓の開始をタップ直後に合わせられる（`lib/features/inquiry/QA.md` セクション5参照）
 - サーバー側で文字数上限などの入力検証がある項目の「失敗時エラー表示」を検証する際の長文入力: `xcrun simctl pbcopy <UDID> < ./tmp/qa/long_content.txt`（上限超の長さのテキストファイル）でシミュレータのクリップボードへコピー → 対象 TextField をタップしてフォーカス → 長押しで出る「Paste」をタップして貼り付ける。mobile-mcp の文字入力は 1 文字ずつで数千字は非現実的なため、この pbcopy + 長押し Paste が実用的（`lib/features/inquiry/QA.md` セクション5、内容 5000 字超で `[firebase_functions/internal] INTERNAL` を誘発した例参照）
 
+- iPhone Duo（折りたたみ）の外側・内側ディスプレイの確認: iOS 27.1 以上のランタイムで `SIM_DEVICE_TYPE="iPhone Duo" sim-boot` で起動する（iOS 27.1 のランタイムが対応する機種は iPhone Duo だけ）。起動直後は閉じた姿勢（外側 466×678pt、`xcrun simctl io <UDID> screenshot --display=primary`）。内側（950×678pt の横長、右端にステータスバーの列、`--display=primary-1`）は `bash ~/.claude/skills/ios-simulator/scripts/duo-pose.sh set --udid <UDID> open` で開き、`closed` で戻す（`xcrun simctl` / `devicectl` に姿勢の切り替えは無く、Device Hub の姿勢ボタンをアクセシビリティ API で押す。切り替えの後 2〜5 秒おいてから撮る）。画面ごとに「閉じた → 開いた → 閉じ直した」の順に撮り、閉じ直した後に崩れが残らないかも見る（ios-simulator skill Phase 2「折りたたみ端末の外側・内側ディスプレイを切り替える」）。mobile-mcp の最初の呼び出し（WDA の起動）でアプリがホームに追い出されるため、`xcrun simctl launch <UDID> com.bannzai.shoppinglist.dev` で前面に戻してから操作する（issue #640 の確認で実測、2026-10-11）
+
 ## 横断確認項目
 
 ## 1. 起動・認証
@@ -137,6 +139,41 @@ flutter run --debug -d <UDID> \
 <details><summary>動作確認スクショ</summary>
 
 （未実行）
+
+</details>
+
+</details>
+
+---
+
+## 3. iPhone Duo（外側・内側ディスプレイ）での主要画面の表示
+
+- [x] **外側・内側ディスプレイで主要画面が崩れない**: iPhone Duo（iOS 27.1 の Simulator）の閉じた姿勢（外側）と開いた姿勢（内側）の両方で、オンボーディング・認証・はじめましょう・買い物リスト・アイテム詳細シート・リスト切り替えシート・買い物リスト設定シート・課金画面・グループ設定・カテゴリ・設定・グループ管理に見切れ・重なり・不自然な余白・固定幅による偏りが無く、開いて閉じ直した後も崩れが残らない（issue #640。既存 E2E: なし）
+  - 自動化: manual（姿勢の切り替えが Device Hub のウィンドウ操作でしかできず、maestro / mobile-mcp のフローに組み込めない。手順は上の実行ナレッジ）
+
+#### 動作確認
+<details>
+<summary>動作確認エビデンス</summary>
+
+### **外側・内側ディスプレイで主要画面が崩れない**: iPhone Duo（iOS 27.1 の Simulator）の閉じた姿勢（外側）と開いた姿勢（内側）の両方で、オンボーディング・認証・はじめましょう・買い物リスト・アイテム詳細シート・リスト切り替えシート・買い物リスト設定シート・課金画面・グループ設定・カテゴリ・設定・グループ管理に見切れ・重なり・不自然な余白・固定幅による偏りが無く、開いて閉じ直した後も崩れが残らない（issue #640。既存 E2E: なし）
+
+<details><summary>動作確認スクショ</summary>
+
+**確認日: 2026-10-11**
+
+認証（外側 / 内側）:
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/10/10/ba7d58c6-7cf9-4282-9d2e-f8e559a42db3-duo-auth-outer-after.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/10/10/10ea4829-0a89-4718-b8bc-dc78a305a28c-duo-auth-inner-after.png" width="320">
+
+買い物リスト（外側 / 内側）:
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/10/10/a34895eb-5110-4cd2-8519-9932ad9eb8a2-duo-list-item-outer.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/10/10/4e77869d-d609-4d78-8a80-5cae071edc59-duo-list-item-inner.png" width="320">
+
+課金画面（内側）/ 設定（内側）:
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/10/10/dacd32bf-3d1b-495a-ab84-e6bdc3c35ece-duo-paywall-inner-after.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/10/10/613cabbe-d6e2-492c-8ced-a977656ac2d1-duo-settings-inner.png" width="320">
+
+Xcode 27.1（27A9275）/ Flutter 3.44.9 でビルドした debug アプリを、ローカルの sim-boot で作った iPhone Duo（iOS 27.1）の Simulator に入れ、12 画面を閉じた → 開いた → 閉じ直したの順に撮った。修正前は認証（外側で 45pt の overflow）、課金・グループ管理・カテゴリ（内側で右端の列の下に重なる）、リスト切り替え・買い物リスト設定のシート（内側で右に余白）が崩れており、PR https://github.com/bannzai/shoppinglist/pull/652 で直した。全画面の外側・内側と修正前後の画像は同 PR 本文のスクリーンショットの節にある。
 
 </details>
 
