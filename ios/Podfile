@@ -1,5 +1,7 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '16.0'
+# アプリの最低 iOS バージョン。post_install で pod の deployment target の下限にも使う
+IOS_PLATFORM_VERSION = '16.0'
+platform :ios, IOS_PLATFORM_VERSION
 
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
@@ -72,6 +74,16 @@ post_install do |installer|
 
     target.build_configurations.each do |config|
       config.build_settings['ENABLE_BITCODE'] = 'NO'
+
+      # Xcode 27.1 は iOS Simulator の deployment target が 15.0 未満の target を
+      # "Target Integrity" エラーでビルドしない (実測: 27A9275 で Firebase の依存 (BoringSSL-GRPC・abseil 等。
+      # podspec の下限が 9.0〜14.0) が落ちた)。Flutter に依存する pod は podhelper が Runner の値を
+      # 継承させるが、Flutter に依存しない pod は podspec の値のまま残るため、アプリの最低バージョンまで引き上げる
+      # (アプリより低い OS では動かないので挙動は変わらない)
+      deployment_target = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
+      if deployment_target && deployment_target.to_f < IOS_PLATFORM_VERSION.to_f
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = IOS_PLATFORM_VERSION
+      end
 
       # workaround: https://github.com/CocoaPods/CocoaPods/issues/11196#issuecomment-1058716826
       if config.build_settings['WRAPPER_EXTENSION'] == 'bundle'
