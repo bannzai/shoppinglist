@@ -19,6 +19,7 @@ launched_at: 2026-08-20   # 公開日 (YYYY-MM-DD)。App Store の初回公開�
 | --- | --- | --- | --- | --- |
 | 直近14日の★1〜2レビュー数 | appstore-research skill: `bash ~/.agents/skills/appstore-research/scripts/fetch-reviews.sh 6739724511 --country jp --pages 1` の出力で `date` が直近 14 日かつ `rating` が 2 以下の行数 | <= 1 | >= 3 x2 | 低評価の内容が共有 (招待・同期) に集中していたら、共有の導線の作り直しを最優先の改善 issue にする |
 | 直近14日のFATALクラッシュissue数 | firebase-crashlytics-triage skill: `bash ~/.agents/skills/firebase-crashlytics-triage/scripts/crashlytics.sh top-issues --app-id <iOS の app ID> --days 14 --error-types FATAL` の topIssues の行数 (prod の plist はリポジトリに無いため、`firebase apps:list --project shoppinglist-prod-857bb` で iOS の app ID を取って渡す) | <= 5 | > 30 x2 | 上位 issue のイベント数が 1 件で 100 を超えていたら、機能追加より先にその修正 issue を出す |
+| 直近14日のFATALクラッシュissue数 (Android) | 上と同じコマンドで `--app-id` に `firebase apps:list --project shoppinglist-prod-857bb` の ANDROID の app ID を渡した topIssues の行数 | <= 5 | > 30 x2 | 上の iOS の行と同じ |
 
 平均評価は 2026-09-29 時点で 0 件のため判定基準に入れない。10 件を超えたら agent が `>= 4.0` / `< 3.5 x2` の行を足す。
 
@@ -32,6 +33,7 @@ launched_at: 2026-08-20   # 公開日 (YYYY-MM-DD)。App Store の初回公開�
 - [x] プレミアムの paywall (RevenueCat)
 - [ ] 店舗の近くで知らせるリマインダーの公開 (実装済みだがコンパイル時のフラグで非表示。`documents/adr/0032`)
 - [ ] iOS の App Check を DeviceCheck から App Attest へ移行 (#594)
+- [ ] ストアの評価依頼の導線 (OS 標準の in-app review を、アイテムを買ったにチェックした累計 10 回で 1 回だけ出す。#651)
 
 ## デザインの方向
 
@@ -42,7 +44,10 @@ launched_at: 2026-08-20   # 公開日 (YYYY-MM-DD)。App Store の初回公開�
 | 日付 | 場面 | 決めたこと | 決めた人 |
 | --- | --- | --- | --- |
 | 2026-09-29 | 既存アプリへの後付け | 下書きを agent が作成。bannzai が直すか黙認する。しきい値は 2026-09-29 時点の実測 (評価 0 件、直近 14 日の ★1〜2 レビュー 0 件、直近 14 日の FATAL issue 0 件) を基準に「現状維持なら継続、明確に落ちたら打ち切り」で置いた | agent |
+| 2026-10-11 | 無人ループ | Google Play の製品ページ (`https://play.google.com/store/apps/details?id=com.bannzai.shoppinglist`) が HTTP 200 で公開済みと実測したため、Android の FATAL クラッシュ issue 数を iOS と同じしきい値で判定基準に足した (2026-10-11 の実測 0 件) | agent |
+| 2026-10-11 | 無人ループ | 公開 52 日で評価 0 件・レビュー 0 件のため、OS 標準の評価依頼を出す導線を改善 issue にした (#651)。依頼のタイミングは「アイテムを買ったにチェックした累計 10 回」とし、回数は定数で後から変えられるようにする | agent |
+| 2026-10-11 | 無人ループ | 1.0 以降にマージされた改善 (PR #623・#643 等) のリリースは見送った。配布ワークフロー `flutter-deploy` が承認済みと同じ version 1.0.0 で TestFlight に拒否される (#650) こと、release-app skill の QA ゲートが root `unverified` と 11 feature `changed` で fail すること、iPhone Duo 対応 (#640) が進行中であることが理由。#650 のマージ後に QA ゲートを通してからリリースする | agent |
 
 ## agent に任せること
 
-文書に無い問いはすべて。RevenueCat の課金指標は、`metrics/overview` を読める v2 API key が `.envrc` に入った時に agent が判定基準へ足す。Android (Google Play の internal トラック) の公開状況は未確認で、公開済みなら Android の指標も同様に扱う。
+文書に無い問いはすべて。RevenueCat の課金指標は、`metrics/overview` を読める v2 API key (`sk_` で始まる) が `.envrc` に入った時に agent が判定基準へ足す (2026-10-11 時点の `REVENUECAT_SECRET_API_KEY` は legacy key で、API v2 が 403 を返すことを実測)。App Store のダウンロード数・インプレッションは、aso-analytics-explorer skill が読める Sales and Reports ロールの App Store Connect API キー (`ASC_SALES_AND_REPORT_*`) が入った時に agent が判定基準へ足す (2026-10-11 時点の配布用キー `ASC_API_KEY_*` は Analytics Reports に 403 を返すことを実測)。Android は Google Play で公開済み (2026-10-11 実測) で、Google Play のレビューは castle の skill で取れるようになった時に行を足す。
