@@ -43,54 +43,62 @@ class GroupListPage extends ConsumerWidget {
         title: Text(context.l10n.settingsGroupManagement),
         backgroundColor: neutral.paper,
       ),
-      body: switch ((appUserAsync, groupsAsync)) {
-        (AsyncData(value: final appUser), AsyncData(value: final groups)) =>
-          groups.isEmpty
-              ? Center(
-                child: Text(
-                  context.l10n.groupListEmpty,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: neutral.ink2),
-                ),
-              )
-              : ListView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
-                itemCount: groups.length + (isPremium ? 0 : 1),
-                itemBuilder: (context, index) {
-                  if (!isPremium && index == groups.length) {
-                    return _FreeLimitBanner(
-                      onTap: () => showPaywall(context: context),
+      // 左右の safe area を避ける。ListView は padding を明示すると MediaQuery の
+      // inset を足さないため、画面の端にステータスバーの列がある iPhone Duo では
+      // グループのカードが列の下に重なっていた (issue #640)。上下はこれまでどおり。
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: switch ((appUserAsync, groupsAsync)) {
+          (AsyncData(value: final appUser), AsyncData(value: final groups)) =>
+            groups.isEmpty
+                ? Center(
+                  child: Text(
+                    context.l10n.groupListEmpty,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: neutral.ink2),
+                  ),
+                )
+                : ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
+                  itemCount: groups.length + (isPremium ? 0 : 1),
+                  itemBuilder: (context, index) {
+                    if (!isPremium && index == groups.length) {
+                      return _FreeLimitBanner(
+                        onTap: () => showPaywall(context: context),
+                      );
+                    }
+                    final group = groups[index];
+                    final isDefault = group.id == appUser.defaultGroupID;
+                    return _GroupCard(
+                      group: group,
+                      isDefault: isDefault,
+                      onTap: () {
+                        analytics.logEvent(
+                          name: 'tap_select_group',
+                          parameters: {'groupID': group.id},
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                    GroupSettingPage(groupID: group.id),
+                          ),
+                        );
+                      },
                     );
-                  }
-                  final group = groups[index];
-                  final isDefault = group.id == appUser.defaultGroupID;
-                  return _GroupCard(
-                    group: group,
-                    isDefault: isDefault,
-                    onTap: () {
-                      analytics.logEvent(
-                        name: 'tap_select_group',
-                        parameters: {'groupID': group.id},
-                      );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => GroupSettingPage(groupID: group.id),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-        (AsyncError(:final error, :final stackTrace), _) ||
-        (
-          _,
-          AsyncError(:final error, :final stackTrace),
-        ) => ErrorView(error: error, stackTrace: stackTrace),
-        _ => const Center(child: CircularProgressIndicator()),
-      },
+                  },
+                ),
+          (AsyncError(:final error, :final stackTrace), _) ||
+          (
+            _,
+            AsyncError(:final error, :final stackTrace),
+          ) => ErrorView(error: error, stackTrace: stackTrace),
+          _ => const Center(child: CircularProgressIndicator()),
+        },
+      ),
       // 上限到達時はFAB自体を非表示にする。上限の案内と解除導線は本文の _FreeLimitBanner が担う。
       floatingActionButton:
           isLimitReached

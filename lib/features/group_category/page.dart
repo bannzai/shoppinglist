@@ -212,7 +212,8 @@ class _CategoryScaffold extends StatelessWidget {
         actions: actions,
         backgroundColor: tokens.neutral.paper,
       ),
-      body: child,
+      // 左右の safe area を避ける (理由は _CategoryListBody の data 時の Scaffold と同じ)。
+      body: SafeArea(top: false, bottom: false, child: child),
     );
   }
 }
@@ -284,105 +285,116 @@ class _CategoryListBody extends HookConsumerWidget {
                       : null,
               backgroundColor: tokens.neutral.paper,
             ),
+            // 左右の safe area を避ける。空状態の SingleChildScrollView は padding を
+            // 明示しており、ReorderableListView は padding 未指定でも MediaQuery の inset を
+            // 足さないため、画面の端にステータスバーの列がある iPhone Duo では価値訴求カードと
+            // カテゴリの行が列の下に重なっていた (issue #640)。上下はこれまでどおり。
             // カテゴリ0件時も価値訴求カードを表示する。追加導線は Scaffold の
             // FloatingActionButton が担うため onAddCategory は null（カード内ボタンは出さない）。
-            body:
-                categories.isEmpty
-                    ? const CategoryEmptyState(onAddCategory: null)
-                    : Column(
-                      children: [
-                        // ロケーション選択ドロップダウン
-                        locationsAsync.when(
-                          data: (locations) {
-                            if (locations.isEmpty) {
-                              return const SizedBox.shrink();
-                            }
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                                vertical: 8.0,
-                              ),
-                              child: DropdownButtonFormField<String?>(
-                                initialValue: selectedLocationID.value,
-                                decoration: InputDecoration(
-                                  labelText:
-                                      context
-                                          .l10n
-                                          .groupCategoryLocationOrderLabel,
-                                  border: const OutlineInputBorder(),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 8,
-                                  ),
-                                  suffixIcon:
-                                      !isPremium
-                                          ? Icon(
-                                            Icons.lock,
-                                            size: 16,
-                                            color:
-                                                Theme.of(
-                                                  context,
-                                                ).colorScheme.onSurfaceVariant,
-                                          )
-                                          : null,
+            body: SafeArea(
+              top: false,
+              bottom: false,
+              child:
+                  categories.isEmpty
+                      ? const CategoryEmptyState(onAddCategory: null)
+                      : Column(
+                        children: [
+                          // ロケーション選択ドロップダウン
+                          locationsAsync.when(
+                            data: (locations) {
+                              if (locations.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0,
+                                  vertical: 8.0,
                                 ),
-                                items: [
-                                  DropdownMenuItem<String?>(
-                                    value: null,
-                                    child: Text(context.l10n.commonDefault),
-                                  ),
-                                  ...locations.map(
-                                    (location) => DropdownMenuItem<String?>(
-                                      value: location.id,
-                                      child: Text(location.name),
+                                child: DropdownButtonFormField<String?>(
+                                  initialValue: selectedLocationID.value,
+                                  decoration: InputDecoration(
+                                    labelText:
+                                        context
+                                            .l10n
+                                            .groupCategoryLocationOrderLabel,
+                                    border: const OutlineInputBorder(),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
                                     ),
+                                    suffixIcon:
+                                        !isPremium
+                                            ? Icon(
+                                              Icons.lock,
+                                              size: 16,
+                                              color:
+                                                  Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurfaceVariant,
+                                            )
+                                            : null,
                                   ),
-                                ],
-                                onChanged: (value) {
-                                  analytics.logEvent(
-                                    name: 'select_category_location_order',
-                                    parameters: {'groupID': groupID},
-                                  );
-                                  if (value != null && !isPremium) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        persist: false,
-                                        content: Text(
-                                          context
-                                              .l10n
-                                              .groupCategoryLocationOrderPremiumOnly,
-                                        ),
-                                        action: SnackBarAction(
-                                          label: context.l10n.commonUpgrade,
-                                          onPressed:
-                                              () =>
-                                                  showPaywall(context: context),
-                                        ),
+                                  items: [
+                                    DropdownMenuItem<String?>(
+                                      value: null,
+                                      child: Text(context.l10n.commonDefault),
+                                    ),
+                                    ...locations.map(
+                                      (location) => DropdownMenuItem<String?>(
+                                        value: location.id,
+                                        child: Text(location.name),
                                       ),
+                                    ),
+                                  ],
+                                  onChanged: (value) {
+                                    analytics.logEvent(
+                                      name: 'select_category_location_order',
+                                      parameters: {'groupID': groupID},
                                     );
-                                    return;
-                                  }
-                                  selectedLocationID.value = value;
-                                },
-                              ),
-                            );
-                          },
-                          error: (e, st) => const SizedBox.shrink(),
-                          loading: () => const SizedBox.shrink(),
-                        ),
-                        Expanded(
-                          child: _CategoryReorderableList(
-                            groupID: groupID,
-                            categoryAxisID: axis.id,
-                            categories: categories,
-                            selectedShoppingLocationID:
-                                selectedLocationID.value,
-                            isPremium: isPremium,
-                            selectionForItem: selectionForItem,
+                                    if (value != null && !isPremium) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          persist: false,
+                                          content: Text(
+                                            context
+                                                .l10n
+                                                .groupCategoryLocationOrderPremiumOnly,
+                                          ),
+                                          action: SnackBarAction(
+                                            label: context.l10n.commonUpgrade,
+                                            onPressed:
+                                                () => showPaywall(
+                                                  context: context,
+                                                ),
+                                          ),
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                    selectedLocationID.value = value;
+                                  },
+                                ),
+                              );
+                            },
+                            error: (e, st) => const SizedBox.shrink(),
+                            loading: () => const SizedBox.shrink(),
                           ),
-                        ),
-                      ],
-                    ),
+                          Expanded(
+                            child: _CategoryReorderableList(
+                              groupID: groupID,
+                              categoryAxisID: axis.id,
+                              categories: categories,
+                              selectedShoppingLocationID:
+                                  selectedLocationID.value,
+                              isPremium: isPremium,
+                              selectionForItem: selectionForItem,
+                            ),
+                          ),
+                        ],
+                      ),
+            ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 analytics.logEvent(
