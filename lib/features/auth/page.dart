@@ -34,30 +34,42 @@ class AuthPage extends HookConsumerWidget {
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
               child: Column(
                 children: [
-                  const Spacer(),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxHeight: 240),
-                    child: Image.asset(
-                      'images/auth/auth_art.png',
-                      fit: BoxFit.contain,
+                  // 画像と見出しの塊はボタン群より上の余りの高さの中央に置き、高さが足りない
+                  // 端末 (iPhone Duo の外側ディスプレイは 678pt。iPhone SE も同程度) では
+                  // 画像だけを縮めてボタンと同意文を画面内に収める (issue #640 で 45pt の
+                  // overflow を実測)。余りが十分な端末では画像は上限の 240 のままで、
+                  // 以前の Spacer で挟む配置と同じ位置になる。
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxHeight: 240),
+                              child: Image.asset(
+                                'images/auth/auth_art.png',
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          Text(
+                            context.l10n.authHeroTitle,
+                            style: Theme.of(context).textTheme.displayMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            context.l10n.authHeroDescription,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(color: neutral.ink2, height: 1.7),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 32),
-                  Text(
-                    context.l10n.authHeroTitle,
-                    style: Theme.of(context).textTheme.displayMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    context.l10n.authHeroDescription,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: neutral.ink2,
-                      height: 1.7,
-                    ),
-                  ),
-                  const Spacer(),
                   AppSignInWithAppleButton(
                     onLoadingChanged: (value) => isSigningIn.value = value,
                   ),

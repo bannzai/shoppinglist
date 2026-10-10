@@ -271,3 +271,27 @@ maestro の低速 swipe（duration 10000ms、`category_section_reorder.yaml` と
 </details>
 
 ---
+
+---
+
+## 7. iPhone Duo（外側・内側ディスプレイ）
+
+- [x] **内側ディスプレイで価値訴求カードが右端のステータスバーの列に重ならない**: iPhone Duo の内側（950×678pt、右端にステータスバーの列）で、カテゴリ 0 件の価値訴求カードが列の左に収まる。外側（466×678pt）でも見切れ・重なりが無い（issue #640）
+  - 自動化: manual（姿勢の切り替えは root QA.md の実行ナレッジ「iPhone Duo（折りたたみ）の外側・内側ディスプレイの確認」）
+
+#### 動作確認
+<details>
+<summary>動作確認エビデンス</summary>
+
+### **内側ディスプレイで価値訴求カードが右端のステータスバーの列に重ならない**: iPhone Duo の内側（950×678pt、右端にステータスバーの列）で、カテゴリ 0 件の価値訴求カードが列の左に収まる。外側（466×678pt）でも見切れ・重なりが無い（issue #640）
+
+<details><summary>動作確認スクショ</summary>
+
+**確認日: 2026-10-11**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/10/10/62f69204-c41c-429a-a9a0-9bcd49fab54f-duo-group-category-inner-after.png" width="320">
+
+修正前はカードの右端が列の下に入っていた（修正前の画像は PR https://github.com/bannzai/shoppinglist/pull/652 ）。body を左右だけの SafeArea で包んで直した（カテゴリ 1 件以上の一覧も同じ SafeArea の内側に置いたが、1 件以上の状態は Duo では未撮影）。iPhone 17 Pro（iOS 27.0）ではカードの位置が修正前と同じ。
+
+</details>
+
+</details>

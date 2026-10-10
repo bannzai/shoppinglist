@@ -17,6 +17,13 @@ Future<T?> appShowModalBottomSheet<T>({
     context: context,
     isScrollControlled: true,
     showDragHandle: true,
+    // シート自体を画面の上・左・右の safe area の内側に置く。false だとシートは
+    // 画面幅いっぱいに置かれ、中身の SafeArea が左右の inset ぶんだけ内側に寄るため、
+    // 左右に inset がある端末 (iPhone Duo の内側ディスプレイは右端にステータスバーの列が
+    // あり、シートは最大幅 640 で中央に置かれる) でシートと中身の右端がずれて余白が残る
+    // (issue #640)。true にすると SafeArea が消費した inset は中身の MediaQuery から
+    // 除かれるため、各シートの SafeArea(top: false) は下端だけに効く。
+    useSafeArea: true,
     builder: (context) {
       final content = AppResolvers(
         builder: (context, user) => builder(context),

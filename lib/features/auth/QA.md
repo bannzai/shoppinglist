@@ -223,3 +223,28 @@ Google: 実 Google アカウントが必要なため、キャンセル経路（`
 </details>
 
 </details>
+
+---
+
+## 6. iPhone Duo（外側・内側ディスプレイ）
+
+- [x] **外側・内側ディスプレイでボタンと同意文が収まる**: iPhone Duo の外側（466×678pt）と内側（950×678pt）で、画像・見出し・サインインボタン 3 つ・注記・同意文が画面内に収まり、下端があふれない。高さが足りない時は画像だけが縮む（issue #640。widget test: test/features/auth/page_test.dart「高さの足りない画面でも AuthPage が overflow せずボタンが収まる」）
+  - 自動化: manual（姿勢の切り替えは root QA.md の実行ナレッジ「iPhone Duo（折りたたみ）の外側・内側ディスプレイの確認」。収まることは widget test でも固定）
+
+#### 動作確認
+<details>
+<summary>動作確認エビデンス</summary>
+
+### **外側・内側ディスプレイでボタンと同意文が収まる**: iPhone Duo の外側（466×678pt）と内側（950×678pt）で、画像・見出し・サインインボタン 3 つ・注記・同意文が画面内に収まり、下端があふれない。高さが足りない時は画像だけが縮む（issue #640。widget test: test/features/auth/page_test.dart「高さの足りない画面でも AuthPage が overflow せずボタンが収まる」）
+
+<details><summary>動作確認スクショ</summary>
+
+**確認日: 2026-10-11**
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/10/10/ba7d58c6-7cf9-4282-9d2e-f8e559a42db3-duo-auth-outer-after.png" width="320">
+<img src="https://pub-7f3469dd3e2e445b9b8ec2d1381b5ea8.r2.dev/2026/10/10/10ea4829-0a89-4718-b8bc-dc78a305a28c-duo-auth-inner-after.png" width="320">
+
+修正前は外側で 45pt、内側で 13pt の BOTTOM OVERFLOW（debug の黄黒の帯）が出て、ゲスト開始ボタンと同意文が切れていた（修正前の画像は PR https://github.com/bannzai/shoppinglist/pull/652 ）。修正後は外側で画像が 195pt に縮み、同意文まで収まる。iPhone 17 Pro（iOS 27.0）では画像 240pt のまま各要素の位置が修正前と同じ。
+
+</details>
+
+</details>

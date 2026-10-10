@@ -39,50 +39,61 @@ class PaywallPage extends ConsumerWidget {
         title: const SizedBox.shrink(),
         backgroundColor: neutral.paper,
       ),
-      body: offerings.when(
-        loading: () => const _LoadingBody(),
-        error:
-            (e, st) => _ErrorBody(
-              exception: e,
-              stackTrace: st,
-              onRetry: () {
-                analytics.logEvent(name: 'tap_paywall_retry', parameters: null);
-                ref.invalidate(offeringsProvider);
-              },
-            ),
-        data: (_) {
-          final monthly = ref.watch(monthlyPackageProvider);
-          final annual = ref.watch(annualPackageProvider);
-          final lifetime = ref.watch(lifetimePackageProvider);
-          if (monthly == null && annual == null && lifetime == null) {
-            return const _NoPlansBody();
-          }
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
-            children: [
-              const _Hero(),
-              const SizedBox(height: 24),
-              const _FeatureGrid(),
-              const SizedBox(height: 24),
-              if (monthly != null) _PaywallPackageTile(package: monthly),
-              if (annual != null)
-                _PaywallPackageTile(package: annual, recommended: true),
-              if (lifetime != null) _PaywallPackageTile(package: lifetime),
-              const SizedBox(height: 16),
-              Center(
-                child: Text(
-                  context.l10n.paywallSubscriptionNote,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.labelSmall?.copyWith(color: neutral.ink3),
-                ),
+      // 左右の safe area を避ける。ListView は padding を明示すると MediaQuery の
+      // inset を足さないため、画面の端にステータスバーの列がある iPhone Duo では
+      // 機能一覧のチェックと購入ボタンが列の下に重なっていた (issue #640)。
+      // 上下は AppBar と ListView の余白がこれまでどおり担う。
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: offerings.when(
+          loading: () => const _LoadingBody(),
+          error:
+              (e, st) => _ErrorBody(
+                exception: e,
+                stackTrace: st,
+                onRetry: () {
+                  analytics.logEvent(
+                    name: 'tap_paywall_retry',
+                    parameters: null,
+                  );
+                  ref.invalidate(offeringsProvider);
+                },
               ),
-              const SizedBox(height: 12),
-              const _PaywallFooterLinks(),
-            ],
-          );
-        },
+          data: (_) {
+            final monthly = ref.watch(monthlyPackageProvider);
+            final annual = ref.watch(annualPackageProvider);
+            final lifetime = ref.watch(lifetimePackageProvider);
+            if (monthly == null && annual == null && lifetime == null) {
+              return const _NoPlansBody();
+            }
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+              children: [
+                const _Hero(),
+                const SizedBox(height: 24),
+                const _FeatureGrid(),
+                const SizedBox(height: 24),
+                if (monthly != null) _PaywallPackageTile(package: monthly),
+                if (annual != null)
+                  _PaywallPackageTile(package: annual, recommended: true),
+                if (lifetime != null) _PaywallPackageTile(package: lifetime),
+                const SizedBox(height: 16),
+                Center(
+                  child: Text(
+                    context.l10n.paywallSubscriptionNote,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.labelSmall?.copyWith(color: neutral.ink3),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const _PaywallFooterLinks(),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
