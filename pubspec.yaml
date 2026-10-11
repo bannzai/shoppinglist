@@ -58,6 +58,9 @@ dependencies:
   json_annotation: ^4.8.0
 
   shared_preferences: ^2.5.5
+  # OS 標準のストア評価依頼 (iOS: AppStore.requestReview / Android: Play In-App Review)。
+  # アイテムを「買った」にチェックした累計回数で 1 回だけ出す (Issue #651)
+  in_app_review: ^2.0.12
   # ^10 は win32 ^6 を要求し、win32 6.x の Dart 3.10 dot-shorthand 構文を
   # 現行コード生成ツールチェーン (riverpod_generator/custom_lint/freezed が analyzer 7.6.0 を固定) が
   # 解析できず build_runner がクラッシュするため ^9 に留める (dependabot PR #568 の部分適用)

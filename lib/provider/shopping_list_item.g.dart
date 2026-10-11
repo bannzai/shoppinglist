@@ -602,7 +602,7 @@ class _RestoreShoppingListItemProviderElement
 }
 
 String _$toggleShoppingListItemCheckHash() =>
-    r'290724efc9feef517e22306a335a6c6c7b874227';
+    r'94d50b13acc9f88d1100ab2e9fff81f49b96bddb';
 
 /// See also [toggleShoppingListItemCheck].
 @ProviderFor(toggleShoppingListItemCheck)
@@ -628,6 +628,7 @@ class ToggleShoppingListItemCheckFamily
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
     groupDatabaseProvider,
+    requestStoreReviewOnPurchasedItemCheckProvider,
   ];
 
   @override
@@ -637,6 +638,9 @@ class ToggleShoppingListItemCheckFamily
       <ProviderOrFamily>{
         groupDatabaseProvider,
         ...?groupDatabaseProvider.allTransitiveDependencies,
+        requestStoreReviewOnPurchasedItemCheckProvider,
+        ...?requestStoreReviewOnPurchasedItemCheckProvider
+            .allTransitiveDependencies,
       };
 
   @override

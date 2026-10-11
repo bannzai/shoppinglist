@@ -14,6 +14,7 @@ import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/shopping_list_items/text_shopping_list_item.dart';
 import 'package:shoppinglist/provider/recently_added_shopping_list_item.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/provider/store_review_request.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../../../helpers/localized_test_app.dart';
@@ -107,8 +108,17 @@ class _RecordingToggleShoppingListItemCheck
   /// 呼び出しごとの item。
   final List<GroupShoppingListItem> calls = [];
 
+  /// call() を丸ごと差し替えるため、親に渡す評価依頼の依存は使われない。
+  /// 同期のコンストラクタで作れるよう、何もしない Fake の SharedPreferences を渡す。
   _RecordingToggleShoppingListItemCheck()
-    : super(database: GroupDatabase(groupID: mockGroupID));
+    : super(
+        database: GroupDatabase(groupID: mockGroupID),
+        requestStoreReviewOnPurchasedItemCheck:
+            RequestStoreReviewOnPurchasedItemCheck(
+              sharedPreferences: _UnusedSharedPreferences(),
+              requestReview: () async {},
+            ),
+      );
 
   @override
   Future<void> call({
@@ -119,6 +129,10 @@ class _RecordingToggleShoppingListItemCheck
     calls.add(item);
   }
 }
+
+/// [_RecordingToggleShoppingListItemCheck] が親に渡すだけで一度も触らない
+/// [SharedPreferences] の Fake。メソッドを呼ぶと Fake が UnimplementedError を投げる。
+class _UnusedSharedPreferences extends Fake implements SharedPreferences {}
 
 /// フォーカス喪失時の空行削除 (`doc(id).delete()`) を記録する [GroupDatabase] のフェイク。
 /// 本物は FirebaseFirestore.instance に触れて未初期化の test 環境で落ちるため差し替える。

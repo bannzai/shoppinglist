@@ -5,6 +5,7 @@ import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shoppinglist/provider/store_review_request.dart';
 
 part 'shopping_list_item.g.dart';
 
@@ -139,7 +140,16 @@ RestoreShoppingListItem restoreShoppingListItem(
 class ToggleShoppingListItemCheck {
   final GroupDatabase database;
 
-  ToggleShoppingListItemCheck({required this.database});
+  /// チェック (未チェック → チェック) の書き込みが完了した後に呼ぶ。
+  /// チェックボックスのタップと右スワイプの両方がこの class を通るため、
+  /// 「買った」の回数はここで数える (Issue #651)。
+  final RequestStoreReviewOnPurchasedItemCheck
+  requestStoreReviewOnPurchasedItemCheck;
+
+  ToggleShoppingListItemCheck({
+    required this.database,
+    required this.requestStoreReviewOnPurchasedItemCheck,
+  });
 
   /// [item] のチェック状態をトグルする。
   ///
@@ -182,16 +192,23 @@ class ToggleShoppingListItemCheck {
           GroupShoppingListItemFirestoreKeys.serverUpdatedDateTime:
               FieldValue.serverTimestamp(),
         });
+    // 書き込みが失敗したチェックは数えないよう update の後に呼ぶ。
+    if (isChecking) {
+      await requestStoreReviewOnPurchasedItemCheck.call();
+    }
   }
 }
 
-@Riverpod(dependencies: [groupDatabase])
+@Riverpod(dependencies: [groupDatabase, requestStoreReviewOnPurchasedItemCheck])
 ToggleShoppingListItemCheck toggleShoppingListItemCheck(
   Ref ref, {
   required String groupID,
 }) {
   return ToggleShoppingListItemCheck(
     database: ref.watch(groupDatabaseProvider(groupID: groupID)),
+    requestStoreReviewOnPurchasedItemCheck: ref.watch(
+      requestStoreReviewOnPurchasedItemCheckProvider,
+    ),
   );
 }
 

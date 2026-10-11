@@ -256,6 +256,34 @@ Issue #464 で一旦削除した（データフィールドと Functions は温�
 キャンセルで送信しない）を widget test で検証する。送信（Firebase Functions 呼び出し）と2回目以降の
 直接送信は、シミュレータ + 開発者オプション「グループにデバッグユーザーを追加」で確認する。
 
+## ストア評価依頼（Issue #651）
+アイテムを「買った」にチェックした累計回数が `purchasedItemCheckCountForStoreReviewRequest`
+（`provider/store_review_request.dart`、10 回）に達した時に、OS 標準の評価依頼
+（`in_app_review` の `InAppReview.instance.requestReview`。iOS は `AppStore.requestReview`、
+Android は Play In-App Review）を生涯 1 回だけ出す。独自ダイアログ・設定項目・l10n の文言は無い。
+
+- 数える場所: `ToggleShoppingListItemCheck.call`（`provider/shopping_list_item.dart`）。
+  チェックボックスのタップと右スワイプの両方がここを通るため、Firestore の `update` が
+  完了した後の未チェック → チェックの時だけ `RequestStoreReviewOnPurchasedItemCheck.call` を呼ぶ。
+  チェック解除は数えない。
+- 保存先: `SharedPreferences` の `IntKey.purchasedItemCheckCount`（累計）と
+  `BoolKey.hasRequestedStoreReview`（依頼済み）。依頼済みフラグは `requestReview` を待つ前に
+  立てる（失敗しても 2 回出さない）。依頼済みなら以後は数えもしない。
+- `requestReview` の失敗（Play ストアが無い端末・iOS の unavailable。プラグインは
+  `PlatformException` を投げる）は `RequestStoreReviewOnPurchasedItemCheck` 内で握りつぶして
+  `debugPrint` に出す。評価依頼はチェック処理の付随で、チェック自体を失敗させないため。
+- 表示するかどうかと回数の上限は OS が制御する（`in_app_review` の README「Testing」:
+  iOS は simulator・実機でプロンプトは出るが送信ボタンが無効で、実際のレビューは本番配布でしか
+  作られない。Android は emulator での通常実行では出ず、Play の internal test track か
+  internal app sharing が要る）。本番配布での表示確認は agent にはできないため、
+  リリース前の一括確認へ回す。
+
+### 検証
+`test/provider/store_review_request_test.dart` で、9 回目では呼ばない・10 回目で 1 回呼ぶ・
+依頼済みなら 11 回目以降も呼ばない・失敗しても例外を出さないことを、`requestReview` を
+差し替えた呼び出し回数で検証する。`test/provider/shopping_list_item_test.dart` で、
+チェック時だけ数えてチェック解除は数えないことを検証する。
+
 ## Native 広告の廃止（Issue #540）
 かつて一覧の上部に AdMob の Native 広告を固定表示していた（Issue #77, #150）が、Issue #540 で
 AdMob ごと撤去した。App ID などの Secret / Env（`ios/Flutter/{Debug,Release}.xcconfig` の
