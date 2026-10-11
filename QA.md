@@ -199,12 +199,17 @@ Xcode 27.1（27A9275）/ Flutter 3.44.9 でビルドした debug アプリを、
 - [group_setting](lib/features/group_setting/QA.md) — グループ設定
 - [group_category](lib/features/group_category/QA.md) — カテゴリ
 - [group_category_edit](lib/features/group_category_edit/QA.md) — カテゴリ編集
+- [notification_permission](lib/features/notification_permission/QA.md) — 通知のプリパーミッションダイアログ（表示条件）
 
 ## QA 対象外
 
-- `developer_options` — 開発者専用のデバッグ機能。QA の道具であり対象ではない
-- `previews` — 開発用プレビュー画面。エンドユーザーは到達できない
-- `resolver` — 画面を持たない DI・初期化基盤
-- `location_reminder` — feature flag `shoppingLocationFeatureEnabled = false` で無効・UI 非到達（https://github.com/bannzai/shoppinglist/issues/465）
-- `shopping_location` — 同上（feature flag で UI 非到達）
-- `home_widget` — 画面を持たない iOS/Android ホームウィジェット同期。ウィジェットのタップは WDA/mobile-mcp の合成タップで発火せず、手動・実機確認のみのため QA.md 運用外
+QA.md を作らない feature ディレクトリ。release-app の `check_qa_gate.sh` はこの表の 1 列目を読んで `no-qa-md` の検出から外す（書式: setup-qa skill の `references/qa-md-format.md`「QA 対象外の書式」）。
+
+| feature | 理由 |
+| --- | --- |
+| `developer_options` | 開発者専用のデバッグ機能。QA の道具であり対象ではない |
+| `previews` | 開発用プレビュー画面。エンドユーザーは到達できない |
+| `resolver` | 画面を持たない DI・初期化基盤 |
+| `location_reminder` | feature flag `shoppingLocationFeatureEnabled = false` で無効・UI 非到達（https://github.com/bannzai/shoppinglist/issues/465） |
+| `shopping_location` | 同上（feature flag で UI 非到達） |
+| `home_widget` | 画面を持たない iOS/Android ホームウィジェット同期。ウィジェットのタップは WDA/mobile-mcp の合成タップで発火せず、手動・実機確認のみのため QA.md 運用外 |
