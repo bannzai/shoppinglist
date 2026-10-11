@@ -88,6 +88,23 @@ void main() {
       expect(calls, hasLength(1));
     });
 
+    test('完了を待たずに続けて呼んでも (10 回目と 11 回目が並行) requestReview は 1 回だけ', () async {
+      // チェックボックスのタップは call() の完了を待たないため、10 回目の setInt を待っている間に
+      // 11 回目が始まる。直列化していないと両方が依頼済み判定を通過して 2 回呼ばれる。
+      final (:request, :calls) = await _subject({
+        IntKey.purchasedItemCheckCount:
+            purchasedItemCheckCountForStoreReviewRequest - 1,
+      });
+
+      await Future.wait([request.call(), request.call()]);
+
+      expect(calls, hasLength(1));
+      expect(
+        request.sharedPreferences.getInt(IntKey.purchasedItemCheckCount),
+        purchasedItemCheckCountForStoreReviewRequest,
+      );
+    });
+
     test('requestReview が失敗しても例外を外へ出さず、依頼済みフラグは立つ', () async {
       // ignore: invalid_use_of_visible_for_testing_member
       SharedPreferences.setMockInitialValues({

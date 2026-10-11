@@ -30,6 +30,9 @@ class RequestStoreReviewOnPurchasedItemCheck {
   final SharedPreferences sharedPreferences;
   final Future<void> Function() requestReview;
 
+  /// 直前の [call] の処理。次の呼び出しはこれを待ってから始める。
+  Future<void> _previousCall = Future.value();
+
   RequestStoreReviewOnPurchasedItemCheck({
     required this.sharedPreferences,
     required this.requestReview,
@@ -37,12 +40,21 @@ class RequestStoreReviewOnPurchasedItemCheck {
 
   /// 「買った」チェック 1 回分を加算し、条件を満たせば評価依頼を出す。
   ///
-  /// 依頼済みフラグは [requestReview] を待つ前に立てる。失敗しても、累計が同時に
-  /// しきい値へ達しても、依頼が 2 回出ないようにするため。
+  /// 呼び出しは到着順に直列化する。チェックボックスのタップは完了を待たないため、
+  /// 複数アイテムを続けてチェックすると前の呼び出しの `setInt` を待っている間に次の呼び出しが
+  /// 始まり、どちらも冒頭の依頼済み判定を通過して依頼が 2 回出る (Codex レビューの指摘)。
+  /// 依頼済みフラグは [requestReview] を待つ前に立てる。失敗しても依頼を 2 回出さないため。
   /// [requestReview] の失敗 (Android で Play ストアが無い・iOS の unavailable 等。
   /// どちらもプラグインが PlatformException を投げる) は握りつぶして debugPrint に出す。
   /// 評価依頼はチェック処理の付随であり、呼び出し元のチェック自体を失敗させないため。
-  Future<void> call() async {
+  Future<void> call() {
+    final thisCall = _previousCall.then((_) => _countAndRequest());
+    // 前の呼び出しが失敗しても次の呼び出しを止めない (失敗は thisCall の側で呼び出し元へ返る)。
+    _previousCall = thisCall.catchError((_) {});
+    return thisCall;
+  }
+
+  Future<void> _countAndRequest() async {
     if (sharedPreferences.getBool(BoolKey.hasRequestedStoreReview) ?? false) {
       return;
     }
