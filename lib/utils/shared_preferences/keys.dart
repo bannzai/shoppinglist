@@ -15,6 +15,10 @@ extension BoolKey on String {
   /// 要求済みかどうかをアプリ側で追跡する必要がある(Issue #500)。
   static const String hasRequestedNotificationPermission =
       'hasRequestedNotificationPermission';
+
+  /// OS 標準のストア評価依頼 (in_app_review の requestReview) を一度でも呼んだか。
+  /// true なら以後は呼ばない (生涯 1 回のみ。Issue #651)。
+  static const String hasRequestedStoreReview = 'hasRequestedStoreReview';
 }
 
 extension StringKey on String {
@@ -29,4 +33,8 @@ extension StringKey on String {
 
 extension ReleaseNoteKey on String {}
 
-extension IntKey on String {}
+extension IntKey on String {
+  /// 買い物リストのアイテムを「買った」にチェックした累計回数 (チェック解除は数えない)。
+  /// ストア評価依頼を出すタイミングの判定に使う (Issue #651)。
+  static const String purchasedItemCheckCount = 'purchasedItemCheckCount';
+}

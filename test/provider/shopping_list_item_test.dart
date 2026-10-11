@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/previews/mock/mock_data.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/provider/store_review_request.dart';
+import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 
 /// 検証用アイテム。id / message / status / description 以外は固定。
 GroupShoppingListItem _item({
@@ -69,13 +72,37 @@ class _CapturingShoppingListItemReference extends Fake
   Future<void> update(Map<Object, Object?> data) async => updates.add(data);
 }
 
+/// requestReview の呼び出し回数を [reviewRequestCalls] に記録する評価依頼と、
+/// [initialValues] で初期化した SharedPreferences を持つ [ToggleShoppingListItemCheck] を作る。
+Future<ToggleShoppingListItemCheck> _toggle({
+  required GroupDatabase database,
+  required List<int> reviewRequestCalls,
+  Map<String, Object> initialValues = const {},
+}) async {
+  // ignore: invalid_use_of_visible_for_testing_member
+  SharedPreferences.setMockInitialValues(initialValues);
+  return ToggleShoppingListItemCheck(
+    database: database,
+    requestStoreReviewOnPurchasedItemCheck:
+        RequestStoreReviewOnPurchasedItemCheck(
+          sharedPreferences: await SharedPreferences.getInstance(),
+          requestReview:
+              () async => reviewRequestCalls.add(reviewRequestCalls.length),
+        ),
+  );
+}
+
 void main() {
   group('ToggleShoppingListItemCheck の部分更新（並行編集の巻き戻し防止）', () {
     test(
       'チェック時: status / checkedByUserID / lastCheckedDateTime とサーバータイムスタンプのみ更新し、message や説明は書かない',
       () async {
         final database = _CapturingGroupDatabase();
-        await ToggleShoppingListItemCheck(database: database).call(
+        final toggle = await _toggle(
+          database: database,
+          reviewRequestCalls: [],
+        );
+        await toggle.call(
           shoppingListID: mockShoppingListID,
           item: _item(
             id: 'item-1',
@@ -126,7 +153,11 @@ void main() {
       'チェック解除時: status とサーバータイムスタンプのみ更新し、lastCheckedDateTime / checkedByUserID はクリアしない',
       () async {
         final database = _CapturingGroupDatabase();
-        await ToggleShoppingListItemCheck(database: database).call(
+        final toggle = await _toggle(
+          database: database,
+          reviewRequestCalls: [],
+        );
+        await toggle.call(
           shoppingListID: mockShoppingListID,
           item: _item(
             id: 'item-1',
@@ -166,5 +197,57 @@ void main() {
         );
       },
     );
+  });
+
+  group('ToggleShoppingListItemCheck のストア評価依頼 (Issue #651)', () {
+    test('チェック時は「買った」の累計を 1 進め、しきい値に達すると requestReview を 1 回呼ぶ', () async {
+      final reviewRequestCalls = <int>[];
+      final toggle = await _toggle(
+        database: _CapturingGroupDatabase(),
+        reviewRequestCalls: reviewRequestCalls,
+        initialValues: {
+          IntKey.purchasedItemCheckCount:
+              purchasedItemCheckCountForStoreReviewRequest - 1,
+        },
+      );
+      await toggle.call(
+        shoppingListID: mockShoppingListID,
+        item: _item(
+          id: 'item-1',
+          message: '牛乳',
+          status: GroupShoppingListItemStatus.unchecked,
+        ),
+        userID: mockUserID,
+      );
+      expect(reviewRequestCalls, hasLength(1));
+    });
+
+    test('チェック解除は「買った」に数えず requestReview を呼ばない', () async {
+      final reviewRequestCalls = <int>[];
+      final toggle = await _toggle(
+        database: _CapturingGroupDatabase(),
+        reviewRequestCalls: reviewRequestCalls,
+        initialValues: {
+          IntKey.purchasedItemCheckCount:
+              purchasedItemCheckCountForStoreReviewRequest - 1,
+        },
+      );
+      await toggle.call(
+        shoppingListID: mockShoppingListID,
+        item: _item(
+          id: 'item-1',
+          message: '牛乳',
+          status: GroupShoppingListItemStatus.checked,
+        ),
+        userID: mockUserID,
+      );
+      expect(reviewRequestCalls, isEmpty);
+      expect(
+        toggle.requestStoreReviewOnPurchasedItemCheck.sharedPreferences.getInt(
+          IntKey.purchasedItemCheckCount,
+        ),
+        purchasedItemCheckCountForStoreReviewRequest - 1,
+      );
+    });
   });
 }
