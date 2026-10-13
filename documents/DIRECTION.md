@@ -1,6 +1,6 @@
 ---
 status: launched          # evaluating | building | launched | pivoting | retiring | retired
-decision_date: 2026-10-13 # 次の判定日 (YYYY-MM-DD)。判定のたびに cycle_days 後へ進める
+decision_date: 2026-10-27 # 次の判定日 (YYYY-MM-DD)。判定のたびに cycle_days 後へ進める
 cycle_days: 14            # 判定の周期 (7 または 14)
 veto_wait_hours: 12       # 公開後の無人ループの拒否権の待ち時間 (既定 12)
 daily_issue_cap: 3        # 1 日に生成してよい改善 issue の上限 (意味の門。既定 3)
@@ -33,7 +33,7 @@ launched_at: 2026-08-20   # 公開日 (YYYY-MM-DD)。App Store の初回公開�
 - [x] プレミアムの paywall (RevenueCat)
 - [ ] 店舗の近くで知らせるリマインダーの公開 (実装済みだがコンパイル時のフラグで非表示。`documents/adr/0032`)
 - [ ] iOS の App Check を DeviceCheck から App Attest へ移行 (#594)
-- [ ] ストアの評価依頼の導線 (OS 標準の in-app review を、アイテムを買ったにチェックした累計 10 回で 1 回だけ出す。#651)
+- [x] ストアの評価依頼の導線 (OS 標準の in-app review を、アイテムを買ったにチェックした累計 10 回で 1 回だけ出す。#651、PR #659。ストア未リリース)
 
 ## デザインの方向
 
@@ -48,6 +48,7 @@ launched_at: 2026-08-20   # 公開日 (YYYY-MM-DD)。App Store の初回公開�
 | 2026-10-11 | 無人ループ | 公開 52 日で評価 0 件・レビュー 0 件のため、OS 標準の評価依頼を出す導線を改善 issue にした (#651)。依頼のタイミングは「アイテムを買ったにチェックした累計 10 回」とし、回数は定数で後から変えられるようにする | agent |
 | 2026-10-11 | 無人ループ | 1.0 以降にマージされた改善 (PR #623・#643 等) のリリースは見送った。配布ワークフロー `flutter-deploy` が承認済みと同じ version 1.0.0 で TestFlight に拒否される (#650) こと、release-app skill の QA ゲートが root `unverified` と 11 feature `changed` で fail すること、iPhone Duo 対応 (#640) が進行中であることが理由。#650 のマージ後に QA ゲートを通してからリリースする | agent |
 | 2026-10-12 | 無人ループ | リリースを再び見送った。#650 (version 1.0.1) と #640 (iPhone Duo) はマージ済みだが、QA ゲートが root `unverified`・11 feature `changed`・QA.md 無し 7 件で fail し、評価依頼の導線 (#651) が未マージで買い物リストの再 QA をもう一度やり直すことになるため。QA.md 無し 7 件は root QA.md の「QA 対象外」が箇条書きでゲートの表の書式と合っていないのが原因で、書式の修正を #655 にした。#651・#655 のマージ後に release-app skill の run-qa を 1 回で行う | agent |
+| 2026-10-13 | 判定日 | 継続。判定基準の 3 行すべてが継続のしきい値内 (直近 14 日の ★1〜2 レビュー 0 件、FATAL クラッシュ issue は iOS 0 件・Android 0 件。`documents/loop/metrics-2026-10-13.json`)。ストアの公開版が 1.0 のままで評価 0 件のため、指標は「問題が起きていない」ことしか示しておらず、利用の有無は読めない。次の判定日 2026-10-27 までに 1.0.1 (評価依頼の導線を含む) をリリースし、ダウンロード数・課金の計測キーが入れば行を足す | agent |
 
 ## agent に任せること
 
