@@ -4,6 +4,15 @@
 /// スクリーンショット専用の静的辞書として持つ。アプリ本体の文言とは独立して更新する。
 library;
 
+import 'dart:ui';
+
+/// ストアのロケール (`screenshotCopies` のキー) に対応する、アプリ画面の表示ロケール。
+///
+/// アプリの arb は言語コードだけで分かれている (`app_ja.arb` / `app_en.arb`) ため、
+/// `en-US` のような地域付きのキーは言語コードに落とす。
+Locale screenshotAppLocale({required String storeLocale}) =>
+    Locale(storeLocale.split('-').first);
+
 /// 1 枚のスクリーンショットに載せる見出しと補足。
 class ScreenshotCopy {
   /// 大きく表示する主見出し。
