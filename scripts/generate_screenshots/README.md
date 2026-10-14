@@ -11,6 +11,8 @@
 | `lib/screenshot/screenshot_layout.dart` | 背景・コピー・デバイスフレームの合成レイアウト |
 | `lib/screenshot/screenshot_pages.dart` | 提出順のページ定義。アプリ画面は本番 Page を `previewProviderOverrides` の mock で動かす |
 | `integration_test/app_store_screenshots_test.dart` | 撮影本体。ロケール × ページの数だけ撮る |
+| `lib/screenshot/screenshot_iphone_duo_displays.dart` | iPhone Duo の外側・内側ディスプレイの寸法と使うレイアウト |
+| `integration_test/app_store_screenshots_iphone_duo_test.dart` | iPhone Duo 用の撮影本体。ディスプレイ × ロケール × ページの数だけ書き出す |
 | `test_driver/screenshot_test.dart` | 撮影結果をホスト側に PNG として書き出す driver |
 
 ## 実行
@@ -21,12 +23,18 @@ bash scripts/generate_screenshots/generate_appstore_screenshots.sh
 
 # Google Play 用に縦横比を変換（App Store 用の撮影後に実行する）
 bash scripts/generate_screenshots/convert_for_google_play.sh
+
+# iPhone Duo の外側 (1398x2034)・内側 (2853x2007)
+bash scripts/generate_screenshots/generate_iphone_duo_screenshots.sh
 ```
 
 出力先:
 
 - 中間: `artifacts/appstore_screenshots/{locale}/`
 - App Store 提出用: `ios/fastlane/screenshots/{locale}/`
+- App Store 提出用 (iPhone Duo): `ios/fastlane/screenshots_iphone_duo/{locale}/`。
+  `upload_appstore_screenshots.sh` (fastlane deliver) は Duo の寸法を受け付けないため対象外で、
+  App Store Connect の iPhone Duo の枠へ別に上げる
 - Google Play 提出用: `artifacts/googleplay_screenshots/{locale}/`
 
 ## 仕様上の制約
