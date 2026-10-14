@@ -34,15 +34,15 @@ dependencies:
     sdk: flutter
   collection:
     
-  firebase_core: ^4.4.0
-  firebase_analytics: 12.3.0 
-  firebase_auth: 6.4.0
-  firebase_messaging: 16.2.0 
-  firebase_remote_config: 6.4.0 
-  cloud_firestore: 6.3.0
-  cloud_functions: 6.2.0
-  firebase_storage: 13.3.0
-  firebase_crashlytics: 5.2.0
+  firebase_core: ^4.15.0
+  firebase_analytics: 12.6.0 
+  firebase_auth: 6.7.0
+  firebase_messaging: 16.7.0 
+  firebase_remote_config: 6.7.0 
+  cloud_firestore: 6.10.0
+  cloud_functions: 6.5.0
+  firebase_storage: 13.6.0
+  firebase_crashlytics: 5.4.0
   purchases_flutter: ^10.15.2
 
   crypto:
@@ -57,24 +57,24 @@ dependencies:
   freezed_annotation: ^3.1.0
   json_annotation: ^4.8.0
 
-  shared_preferences: ^2.5.5
+  shared_preferences: ^2.5.6
   # OS 標準のストア評価依頼 (iOS: AppStore.requestReview / Android: Play In-App Review)。
   # アイテムを「買った」にチェックした累計回数で 1 回だけ出す (Issue #651)
   in_app_review: ^2.0.12
   # ^10 は win32 ^6 を要求し、win32 6.x の Dart 3.10 dot-shorthand 構文を
   # 現行コード生成ツールチェーン (riverpod_generator/custom_lint/freezed が analyzer 7.6.0 を固定) が
   # 解析できず build_runner がクラッシュするため ^9 に留める (dependabot PR #568 の部分適用)
-  package_info_plus: ^9.0.0
-  url_launcher: ^6.3.0
+  package_info_plus: ^10.2.2
+  url_launcher: ^6.3.3
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.9
   
   async_value_group: ^1.0.1
-  intl: any
+  intl: 0.20.3
   metadata_fetch: ^0.4.2
-  image_picker: ^1.2.3
+  image_picker: ^1.2.4
   image: ^4.9.2
   cached_network_image: ^3.4.1
   flutter_svg: ^2.3.0
@@ -82,17 +82,17 @@ dependencies:
   # pre-release(work-runtime 2.12.0-alpha01等)を拾ってcompileReleaseKotlinが失敗する(Issue #511)。
   # 0.9.2の依存ピン止めと0.9.2+1のkotlin plugin適用修正を含む0.9.2+1を最低バージョンとする。
   # 0.9.3はDart >=3.10を要求し本プロジェクトのSDK下限(>=3.7.0)と矛盾するため下限にしない。
-  home_widget: ^0.9.2+1
+  home_widget: ^0.10.0
   sensors_plus: ^6.1.1
   # ^12 以降は win32 ^6 を要求する (package_info_plus と同じ理由で更新できない) ため ^11 に留める
-  share_plus: ^11.1.0
+  share_plus: ^13.3.1
   # 14.0.3 は geolocator_linux ^0.2.6 経由で package_info_plus ^10 (= win32 ^6) を要求するため
   # ^14.0.2 に留める (dependabot PR #568 の部分適用。理由は package_info_plus のコメントを参照)
-  geolocator: ^14.0.2
+  geolocator: ^14.1.1
   google_maps_flutter: ^2.18.0
   flutter_local_notifications: ^21.0.0
   geocoding: ^4.0.0
-  firebase_app_check: 0.4.3
+  firebase_app_check: 0.4.8
 
 dev_dependencies:
   flutter_test:
