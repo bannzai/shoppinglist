@@ -1,14 +1,11 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppinglist/features/previews/mock/mock_provider_overrides.dart';
-import 'package:shoppinglist/l10n/l10n.dart';
+import 'package:shoppinglist/screenshot/screenshot_app.dart';
 import 'package:shoppinglist/screenshot/screenshot_copy.dart';
 import 'package:shoppinglist/screenshot/screenshot_iphone_duo_displays.dart';
 import 'package:shoppinglist/screenshot/screenshot_pages.dart';
-import 'package:shoppinglist/style/theme.dart';
-import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/config/environment.dart';
 
 void main() {
@@ -45,13 +42,8 @@ void main() {
                 overrides: previewProviderOverrides(
                   sharedPreferences: sharedPreferences,
                 ),
-                child: MaterialApp(
-                  debugShowCheckedModeBanner: false,
-                  localizationsDelegates:
-                      AppLocalizations.localizationsDelegates,
-                  supportedLocales: AppLocalizations.supportedLocales,
-                  locale: screenshotAppLocale(storeLocale: localeEntry.key),
-                  theme: buildAppTheme(accent: AccentPreset.shu),
+                child: screenshotApp(
+                  storeLocale: localeEntry.key,
                   home: display.layout(
                     copy: localeEntry.value[index],
                     appScreen: page.appScreen(),
