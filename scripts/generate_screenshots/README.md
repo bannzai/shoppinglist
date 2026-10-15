@@ -7,6 +7,7 @@
 
 | 場所 | 役割 |
 |---|---|
+| `lib/screenshot/screenshot_app.dart` | 撮影・検証が共通で使う MaterialApp（l10n・テーマの設定を 1 か所に持つ） |
 | `lib/screenshot/screenshot_copy.dart` | ロケール別のキャッチコピー（スクリーンショット専用の静的辞書） |
 | `lib/screenshot/screenshot_layout.dart` | 背景・コピー・デバイスフレームの合成レイアウト |
 | `lib/screenshot/screenshot_pages.dart` | 提出順のページ定義。アプリ画面は本番 Page を `previewProviderOverrides` の mock で動かす |

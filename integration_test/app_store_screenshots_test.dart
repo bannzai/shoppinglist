@@ -5,17 +5,15 @@
 /// 実行は `scripts/generate_screenshots/generate_appstore_screenshots.sh` から行う。
 library;
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppinglist/features/previews/mock/mock_provider_overrides.dart';
+import 'package:shoppinglist/screenshot/screenshot_app.dart';
 import 'package:shoppinglist/screenshot/screenshot_copy.dart';
 import 'package:shoppinglist/screenshot/screenshot_layout.dart';
 import 'package:shoppinglist/screenshot/screenshot_pages.dart';
-import 'package:shoppinglist/style/theme.dart';
-import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/config/environment.dart';
 
 /// 撮影結果の出力先。generate スクリプトが fastlane 形式へ整理する前の中間置き場。
@@ -46,9 +44,8 @@ void main() {
               overrides: previewProviderOverrides(
                 sharedPreferences: sharedPreferences,
               ),
-              child: MaterialApp(
-                debugShowCheckedModeBanner: false,
-                theme: buildAppTheme(accent: AccentPreset.shu),
+              child: screenshotApp(
+                storeLocale: localeEntry.key,
                 home: ScreenshotLayout(
                   copy: localeEntry.value[index],
                   appScreen: page.appScreen(),
