@@ -51,11 +51,12 @@ func fetchFirestoreShoppingLists() async -> [ShoppingListEntity] {
 
 /// 指定した買い物リストのアイテムを取得
 func fetchFirestoreItems(groupID: String, shoppingListID: String) async -> [ShoppingListItemData] {
-    guard currentUserID() != nil else { return [] }
+    guard currentUserID() != nil,
+          let collectionPath = widgetItemsCollectionPath(groupID: groupID, shoppingListID: shoppingListID) else { return [] }
     defer { Task { await teardownFirestore() } }
     do {
         let snapshot = try await Firestore.firestore()
-            .collection("groups/\(groupID)/shoppingLists/\(shoppingListID)/items")
+            .collection(collectionPath)
             .order(by: "order", descending: false)
             .limit(to: 20)
             .getDocuments()
@@ -67,8 +68,6 @@ func fetchFirestoreItems(groupID: String, shoppingListID: String) async -> [Shop
                   let order = data["order"] as? Int else { return nil }
             return ShoppingListItemData(
                 id: doc.documentID,
-                groupID: data["groupID"] as? String ?? groupID,
-                shoppingListID: data["shoppingListID"] as? String ?? shoppingListID,
                 message: message,
                 status: status,
                 order: order,
@@ -80,20 +79,22 @@ func fetchFirestoreItems(groupID: String, shoppingListID: String) async -> [Shop
     }
 }
 
-/// アイテムのステータスを切り替え
+/// アイテムのステータスを切り替え。groupID・shoppingListID はアイテムを取得したリストの ID を渡す。
+/// ID が不正な時と文書が存在しない時は書き込まず false を返す。
 func toggleFirestoreItemStatus(groupID: String, shoppingListID: String, itemID: String, currentStatus: String) async -> Bool {
-    guard currentUserID() != nil else { return false }
+    guard currentUserID() != nil,
+          let documentPath = widgetItemDocumentPath(groupID: groupID, shoppingListID: shoppingListID, itemID: itemID) else { return false }
     defer { Task { await teardownFirestore() } }
     let newStatus = currentStatus == "checked" ? "unchecked" : "checked"
     do {
+        // updateData は文書が無ければ失敗するため、存在しないアイテム文書を作らない
         try await Firestore.firestore()
-            .collection("groups/\(groupID)/shoppingLists/\(shoppingListID)/items")
-            .document(itemID)
-            .setData([
+            .document(documentPath)
+            .updateData([
                 "status": newStatus,
                 "updatedDateTime": FieldValue.serverTimestamp(),
                 "serverUpdatedDateTime": FieldValue.serverTimestamp()
-            ], merge: true)
+            ])
         return true
     } catch {
         return false
