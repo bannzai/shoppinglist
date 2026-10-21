@@ -94,10 +94,14 @@ describe('users ツリー（本人のみ read/write 可）', () => {
     await assertSucceeds(getDoc(doc(d, 'users/alice/privates/x')));
   });
 
-  test('本人 alice は users/alice/aiUsage/2026-07 を read/write できる', async () => {
+  test('本人 alice は users/alice/aiUsage/2026-07 を read できるが write できない', async () => {
+    await seed('users/alice/aiUsage/2026-07', { imageRecognitionCount: 5 });
     const d = db('alice');
-    await assertSucceeds(setDoc(doc(d, 'users/alice/aiUsage/2026-07'), { count: 1 }));
     await assertSucceeds(getDoc(doc(d, 'users/alice/aiUsage/2026-07')));
+    await assertFails(setDoc(doc(d, 'users/alice/aiUsage/2026-07'), { imageRecognitionCount: -1000 }));
+    await assertFails(updateDoc(doc(d, 'users/alice/aiUsage/2026-07'), { imageRecognitionCount: 0 }));
+    await assertFails(deleteDoc(doc(d, 'users/alice/aiUsage/2026-07')));
+    await assertFails(setDoc(doc(d, 'users/alice/aiUsage/2026-08'), { imageRecognitionCount: 0 }));
   });
 
   test('他人 bob は users/alice ツリーを read/write できない', async () => {
@@ -121,12 +125,20 @@ describe('users ツリー（本人のみ read/write 可）', () => {
 
 // 2. デバッグユーザーパターン（{uid}_debug_{n}）
 describe('デバッグユーザーパターン（{uid}_debug_{n}）', () => {
-  test('alice は users/alice_debug_1（+ privates/aiUsage）を read/write できる', async () => {
+  test('alice は users/alice_debug_1（+ privates）を read/write できる', async () => {
     const d = db('alice');
     await assertSucceeds(setDoc(doc(d, 'users/alice_debug_1'), { id: 'alice_debug_1' }));
     await assertSucceeds(getDoc(doc(d, 'users/alice_debug_1')));
     await assertSucceeds(setDoc(doc(d, 'users/alice_debug_1/privates/x'), { value: 1 }));
-    await assertSucceeds(setDoc(doc(d, 'users/alice_debug_1/aiUsage/2026-07'), { count: 1 }));
+  });
+
+  test('alice は users/alice_debug_1/aiUsage を read できるが write できない', async () => {
+    await seed('users/alice_debug_1/aiUsage/2026-07', { imageRecognitionCount: 5 });
+    const d = db('alice');
+    await assertSucceeds(getDoc(doc(d, 'users/alice_debug_1/aiUsage/2026-07')));
+    await assertFails(setDoc(doc(d, 'users/alice_debug_1/aiUsage/2026-07'), { imageRecognitionCount: -1000 }));
+    await assertFails(updateDoc(doc(d, 'users/alice_debug_1/aiUsage/2026-07'), { imageRecognitionCount: 0 }));
+    await assertFails(deleteDoc(doc(d, 'users/alice_debug_1/aiUsage/2026-07')));
   });
 
   test('alice は他人のデバッグユーザー users/bob_debug_1 を操作できない', async () => {
