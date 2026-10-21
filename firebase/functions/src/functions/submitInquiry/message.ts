@@ -1,19 +1,23 @@
 import { Inquiry, inquiryCategoryLabels } from "../../entity/inquiry";
+import { escapeSlackText } from "../utils/slack";
 
 /** Slack の section text(mrkdwn)1要素あたりの文字数上限。これを超えると Slack が拒否する。 */
 const MRKDWN_TEXT_LIMIT = 2900;
 
-/** 上限を超えるテキストを省略表示用に切り詰める。 */
-function truncate(text: string): string {
-  if (text.length <= MRKDWN_TEXT_LIMIT) {
-    return text;
+/** ユーザー入力をエスケープし、上限を超える場合は省略表示用に切り詰める。
+ * エスケープで文字数が増えるため、エスケープ後に切り詰める。
+ * 切った位置が実体参照(`&amp;` 等)の途中だと Slack 上で `&am` のような断片が残るため、末尾の断片を除く。 */
+function escapeAndTruncate(text: string): string {
+  const escaped = escapeSlackText(text);
+  if (escaped.length <= MRKDWN_TEXT_LIMIT) {
+    return escaped;
   }
-  return `${text.slice(0, MRKDWN_TEXT_LIMIT)}…(省略)`;
+  return `${escaped.slice(0, MRKDWN_TEXT_LIMIT).replace(/&[a-z]*$/, "")}…(省略)`;
 }
 
 /** Slack 通知のフォールバック(通知本文)テキストを生成する。 */
 export function buildInquirySlackText(inquiry: Inquiry): string {
-  return `お問い合わせ[${inquiryCategoryLabels[inquiry.categoryType]}] ${truncate(
+  return `お問い合わせ[${inquiryCategoryLabels[inquiry.categoryType]}] ${escapeAndTruncate(
     inquiry.content
   )}`;
 }
@@ -40,7 +44,10 @@ export function buildInquirySlackBlocks(inquiry: Inquiry): unknown[] {
         { type: "mrkdwn", text: `*ユーザーID*\n${inquiry.userID}` },
         { type: "mrkdwn", text: `*メール*\n${inquiry.email}` },
         { type: "mrkdwn", text: `*プラットフォーム*\n${inquiry.platform}` },
-        { type: "mrkdwn", text: `*アプリバージョン*\n${inquiry.appVersion}` },
+        {
+          type: "mrkdwn",
+          text: `*アプリバージョン*\n${escapeSlackText(inquiry.appVersion)}`,
+        },
         { type: "mrkdwn", text: `*スナップショット*\n${snapshotStatus}` },
       ],
     },
@@ -49,7 +56,7 @@ export function buildInquirySlackBlocks(inquiry: Inquiry): unknown[] {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `*お問い合わせ内容*\n${truncate(inquiry.content)}`,
+        text: `*お問い合わせ内容*\n${escapeAndTruncate(inquiry.content)}`,
       },
     },
     {

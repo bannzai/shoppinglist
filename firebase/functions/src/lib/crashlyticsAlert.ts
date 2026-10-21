@@ -20,6 +20,7 @@ import type {
   RegressionAlertPayload,
   VelocityAlertPayload,
 } from "firebase-functions/v2/alerts/crashlytics";
+import { escapeSlackText } from "../functions/utils/slack";
 
 /**
  * 投稿先の Slack チャンネル。
@@ -72,15 +73,19 @@ const KIND_HEADLINE: Record<CrashlyticsAlertKind, string> = {
   velocity: ":chart_with_upwards_trend: Crashlytics velocity alert (クラッシュの急増)",
 };
 
-/** Slack へ投稿する本文。見出し・issue の title と subtitle・バージョン・補足・コンソール URL・分析コマンドを 1 通にまとめる */
+/**
+ * Slack へ投稿する本文。見出し・issue の title と subtitle・バージョン・補足・コンソール URL・分析コマンドを 1 通にまとめる。
+ * title・subtitle・appVersion・detail (初出バージョン等) はクライアントが送るクラッシュデータ由来のため、
+ * Slack の制御記法 (`<!channel>` 等) として解釈されないようエスケープする
+ */
 export function formatCrashlyticsAlertText(input: CrashlyticsAlertMessageInput): string {
   const lines = [
-    `${KIND_HEADLINE[input.kind]}: ${input.issue.title}`,
-    input.issue.subtitle,
-    `バージョン ${input.issue.appVersion} / app ${input.appId} / issue ${input.issue.id}`,
+    `${KIND_HEADLINE[input.kind]}: ${escapeSlackText(input.issue.title)}`,
+    escapeSlackText(input.issue.subtitle),
+    `バージョン ${escapeSlackText(input.issue.appVersion)} / app ${input.appId} / issue ${input.issue.id}`,
   ];
   if (input.detail) {
-    lines.push(input.detail);
+    lines.push(escapeSlackText(input.detail));
   }
   lines.push(crashlyticsIssueUrl(input.projectId, input.appId, input.issue.id));
   lines.push(`分析: ${crashlyticsTriageCommand(input.appId, input.issue.id)}`);
