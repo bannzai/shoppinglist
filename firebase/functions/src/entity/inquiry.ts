@@ -24,6 +24,15 @@ export const InquiryPlatformSchema = z.enum(["ios", "android"]);
 
 export type InquiryPlatform = z.infer<typeof InquiryPlatformSchema>;
 
+/** クライアントが送るアプリバージョン(lib/features/inquiry/page.dart の `'${version} (${buildNumber})'`)。
+ * Slack 通知にそのまま載るため、長さと文字種をバージョン表記に必要な範囲に絞る。
+ * 32 文字は "1.0.1 (1)" 形式に、プレリリース表記(例: "10.20.30-beta.12 (12345)")を足しても収まる長さとして選んだ。 */
+export const InquiryAppVersionSchema = z
+  .string()
+  .min(1)
+  .max(32)
+  .regex(/^[0-9A-Za-z.+\-_ ()]+$/);
+
 /** inquiries コレクションのドキュメント。
  * クライアントからの直接 read/write は禁止し(firestore.rules 参照)、
  * submitInquiry Function(Admin SDK)経由でのみ作成する。 */

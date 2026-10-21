@@ -13,6 +13,7 @@ import {
   uploadFileToSlackThread,
 } from "../utils/slack";
 import {
+  InquiryAppVersionSchema,
   InquiryCategorySchema,
   InquiryPlatformSchema,
   inquiryCollectionPath,
@@ -50,7 +51,7 @@ const submitInquiryFlow = ai.defineFlow(
       categoryType: InquiryCategorySchema,
       content: z.string().min(1).max(MAX_CONTENT_LENGTH),
       platform: InquiryPlatformSchema,
-      appVersion: z.string().min(1),
+      appVersion: InquiryAppVersionSchema,
     }),
     outputSchema: ResponseSchema,
   },

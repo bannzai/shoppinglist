@@ -28,6 +28,26 @@ describe("buildInquirySlackText", () => {
     });
     expect(text).toContain("…(省略)");
   });
+
+  it("本文の Slack 制御記法をエスケープする", () => {
+    const text = buildInquirySlackText({
+      ...baseInquiry,
+      content: "<!channel> <https://evil|label>",
+    });
+    expect(text).toContain("&lt;!channel&gt; &lt;https://evil|label&gt;");
+    expect(text).not.toContain("<!");
+    expect(text).not.toContain("<http");
+  });
+
+  it("切り詰め位置が実体参照の途中でも断片を残さない", () => {
+    // エスケープ後の 2900 文字目が "&amp;" の途中("&am")に来る入力
+    const text = buildInquirySlackText({
+      ...baseInquiry,
+      content: `${"a".repeat(2897)}&<`,
+    });
+    const body = text.slice(text.indexOf("] ") + 2);
+    expect(body).toBe(`${"a".repeat(2897)}…(省略)`);
+  });
 });
 
 describe("buildInquirySlackBlocks", () => {
@@ -36,6 +56,21 @@ describe("buildInquirySlackBlocks", () => {
     expect(json).toContain("INQ123");
     expect(json).toContain("foo@example.com");
     expect(json).toContain("script-restore-inquiry-snapshot");
+  });
+
+  it("本文とアプリバージョンの Slack 制御記法をエスケープする", () => {
+    const json = JSON.stringify(
+      buildInquirySlackBlocks({
+        ...baseInquiry,
+        content: "<!channel> <https://evil|label>",
+        appVersion: "<!here> <@U123>",
+      })
+    );
+    expect(json).toContain("&lt;!channel&gt; &lt;https://evil|label&gt;");
+    expect(json).toContain("&lt;!here&gt; &lt;@U123&gt;");
+    expect(json).not.toContain("<!");
+    expect(json).not.toContain("<http");
+    expect(json).not.toContain("<@");
   });
 
   it("スナップショットが無い場合は理由を表示する", () => {
