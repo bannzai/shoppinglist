@@ -7,6 +7,8 @@ import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/fcm_token.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/utils/functions/firebase_function.dart';
+import 'package:shoppinglist/utils/logger/error.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 class AppEntityPrepareResolver extends HookConsumerWidget {
@@ -51,6 +53,28 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
       }
       return null;
     }, [appUser]);
+
+    // プレミアム状態の写しの同期: firestore.rules は RevenueCat を参照できないため、無料プランの
+    // 買い物リスト数の上限判定 (Issue #683) に使う写しを Functions 経由で Firestore に書かせる。
+    // 依存配列: [appUser?.id, isPremium, premiumExpirationDate] — ログイン直後と、購入・更新・失効・
+    // プロモーション付与で RevenueCat の状態が変わった時だけ同期する。appUser の他のフィールドの
+    // 変更では RevenueCat の状態は変わらないため appUser 自体は含めない。
+    final premiumExpirationDate =
+        customerInfoAsync
+            .asData
+            ?.value
+            .entitlements
+            .active[premiumEntitlementIdentifier]
+            ?.expirationDate;
+    useEffect(() {
+      if (appUser != null && isPremium != null) {
+        functions.syncPremiumEntitlement().catchError(
+          (Object error, StackTrace stackTrace) =>
+              errorLogger.recordError(error, stackTrace),
+        );
+      }
+      return null;
+    }, [appUser?.id, isPremium, premiumExpirationDate]);
 
     useEffect(() {
       void f() async {

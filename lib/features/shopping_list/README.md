@@ -64,6 +64,11 @@
   空アイテム追加→auto-focus」まで連鎖し、新しい買い物の開始につなげる。無料プランの上限超過時は
   SnackBar（アップグレード導線付き）を表示する。複製は `ShoppingListDuplicate` に委譲し、
   完了後は複製先リストへ表示を切り替える。
+- 無料プランの上限はクライアントの判定に加えて `firebase/firestore.rules` でも判定する（Issue #683）。
+  グループの `activeShoppingListCount`（`updateActiveShoppingListCount` Function が保つ）が上限に達し、
+  作成者もグループのオーナーもプレミアムでない時は、active なリストの作成を拒否する。
+  rules が読むプレミアム状態は、`AppEntityPrepareResolver` が RevenueCat の状態が変わるたびに呼ぶ
+  `syncPremiumEntitlement` Function が `users/{uid}/premiumEntitlements` に書き写したもの。
 
 ## 写真から追加の元画像保存（Issue #530）
 「写真から追加」で AI 画像認識に使った元画像を買い物リストに保存し、リスト上部に

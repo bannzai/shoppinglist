@@ -241,6 +241,19 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     _throwIfNotOK(response);
   }
 
+  /// 認証ユーザーのプレミアム状態を RevenueCat から Firestore へ書き写す。
+  /// firestore.rules が無料プランの買い物リスト数の上限を判定する時に、この写しを読む。
+  Future<void> syncPremiumEntitlement() async {
+    // 引数なし call() は data が null になり、GenKit の inputSchema
+    // z.object({}) の検証が INTERNAL で落ちるため空オブジェクトを渡す。
+    final result = await httpsCallable(
+      'syncPremiumEntitlement',
+    ).call(<String, dynamic>{});
+    debugPrint('syncPremiumEntitlement.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    _throwIfNotOK(response);
+  }
+
   /// お問い合わせを送信する。Firestore へのスナップショット保存と Slack 通知は
   /// Functions 側で行う。戻り値は作成された問い合わせの ID。
   Future<String> submitInquiry({
