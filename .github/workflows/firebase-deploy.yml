@@ -84,7 +84,6 @@ jobs:
           fi
 
       - name: Restore service account key
-        working-directory: firebase/functions
         env:
           # environment(dev/prod)単位で値が出し分けられる同名 Secret。
           FIREBASE_SERVICE_ACCOUNT_BASE64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASE64 }}
@@ -93,10 +92,10 @@ jobs:
             echo "::error::Secret FIREBASE_SERVICE_ACCOUNT_BASE64 が未設定です(GitHub Environment '${{ inputs.project }}' に登録してください)"
             exit 1
           fi
-          # secret/ は firebase/functions/.gitignore 済み(ローカルの Makefile secret と同じ配置)
-          mkdir -p secret
-          echo "$FIREBASE_SERVICE_ACCOUNT_BASE64" | base64 --decode > secret/GOOGLE_APPLICATION_CREDENTIALS.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/firebase/functions/secret/GOOGLE_APPLICATION_CREDENTIALS.json" >> "$GITHUB_ENV"
+          # Functions の source(firebase/functions)の外に置く。source 内に置くと firebase deploy が
+          # 関数のソースと一緒に鍵をアップロードするため(Issue #675)。
+          echo "$FIREBASE_SERVICE_ACCOUNT_BASE64" | base64 --decode > "$RUNNER_TEMP/GOOGLE_APPLICATION_CREDENTIALS.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/GOOGLE_APPLICATION_CREDENTIALS.json" >> "$GITHUB_ENV"
 
       - name: Restore functions env (APP_ENV)
         working-directory: firebase/functions

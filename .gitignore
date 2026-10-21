@@ -48,6 +48,9 @@ GoogleService-Info.plist
 
 lib/secret/secret.dart
 
+# Functions の Makefile secret が書き出すサービスアカウント鍵 (Functions の source の外に置く。Issue #675)
+firebase/.secret/
+
 # iOS のローカルシークレット（APIキー実値）
 ios/Flutter/Secret.xcconfig
 
