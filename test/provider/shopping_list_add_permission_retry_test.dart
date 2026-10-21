@@ -89,9 +89,38 @@ void main() {
       expect(shoppingListReference.setCallCount, 2);
     });
 
-    test('無料ユーザーの permission-denied は同期せずそのまま投げる', () async {
+    test('無料ユーザーは件数の数え直しを待って書き直し、追いつけば作成できる', () async {
       final shoppingListReference = _FakeShoppingListReference(
-        setErrors: [_permissionDenied()],
+        setErrors: [_permissionDenied(), null],
+      );
+      var premiumEntitlementSyncCount = 0;
+      final shoppingListAdd = ShoppingListAdd(
+        database: _FakeGroupDatabase(
+          newShoppingListReference: shoppingListReference,
+        ),
+        isPremiumResolver: () => false,
+        premiumEntitlementSyncer: () async => premiumEntitlementSyncCount += 1,
+      );
+
+      await shoppingListAdd.call(
+        createUserID: 'user-1',
+        groupID: _testGroupID,
+        shoppingLocationID: null,
+        duplicatedFromGroupShoppingListID: null,
+      );
+
+      expect(premiumEntitlementSyncCount, 0);
+      expect(shoppingListReference.setCallCount, 2);
+    });
+
+    test('無料ユーザーの permission-denied が上限回数まで続けば同期せずそのまま投げる', () async {
+      final shoppingListReference = _FakeShoppingListReference(
+        setErrors: [
+          _permissionDenied(),
+          _permissionDenied(),
+          _permissionDenied(),
+          _permissionDenied(),
+        ],
       );
       var premiumEntitlementSyncCount = 0;
       final shoppingListAdd = ShoppingListAdd(
@@ -118,7 +147,8 @@ void main() {
         ),
       );
       expect(premiumEntitlementSyncCount, 0);
-      expect(shoppingListReference.setCallCount, 1);
+      // 最初の 1 回と書き直し 3 回
+      expect(shoppingListReference.setCallCount, 4);
     });
 
     test('permission-denied 以外の失敗はプレミアムでも同期せずそのまま投げる', () async {
