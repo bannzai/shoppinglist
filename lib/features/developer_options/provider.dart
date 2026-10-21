@@ -9,6 +9,7 @@ import 'package:shoppinglist/entity/group_category_keyword.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/utils/functions/firebase_function.dart';
 
 /// デバッグユーザーIDを生成する。
 /// 形式: {realUID}_debug_{index}
@@ -30,10 +31,11 @@ class DebugUserAddToGroup {
   Future<void> call({required String debugUID, required String groupID}) async {
     final groupDB = GroupDatabase(groupID: groupID);
 
-    // memberUserIDs に arrayUnion で追加
-    await groupDB.groupReference().update({
-      'memberUserIDs': FieldValue.arrayUnion([debugUID]),
-    });
+    await functions.updateDebugUserGroupMembership(
+      groupID: groupID,
+      debugUserID: debugUID,
+      membership: 'join',
+    );
 
     // プロフィール作成
     final profileDocID = GroupUserProfile.documentID(
@@ -137,10 +139,11 @@ class DebugUserCleanup {
   }) async {
     final groupDB = GroupDatabase(groupID: groupID);
 
-    // memberUserIDs から除去
-    await groupDB.groupReference().update({
-      'memberUserIDs': FieldValue.arrayRemove([debugUID]),
-    });
+    await functions.updateDebugUserGroupMembership(
+      groupID: groupID,
+      debugUserID: debugUID,
+      membership: 'leave',
+    );
 
     // プロフィール削除
     await groupDB.userProfileReference(userID: debugUID).delete();
