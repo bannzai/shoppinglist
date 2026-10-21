@@ -46,7 +46,7 @@ npm test
 2. **デバッグユーザーパターン**: `{uid}_debug_{数字}` は本人が操作可。他人の debug user・数字でない suffix は拒否。
 3. **groupInvitations**: 認証済みでも read/write 全拒否（Functions Admin SDK 経由のみ）。
 4. **inquiries**: 認証済みでも read/write 全拒否（submitInquiry Function 経由のみ）。
-5. **groups 本体**: メンバーは read/update/delete 可。create はクライアントから拒否（createGroup Function 経由のみ）。非メンバー・未認証は拒否。
+5. **groups 本体**: メンバーは read と、`ownerUserID` / `memberUserIDs` 以外の update が可。`ownerUserID` の変更と `memberUserIDs` の変更はオーナーを含めて拒否し、自分の uid だけを除く脱退のみ可。`ownerUserID` を持たないレガシーグループへの null の書き足しは変更とみなさない。delete はオーナーのみ可。create はクライアントから拒否（createGroup Function 経由のみ）。非メンバー・未認証は拒否。
 6. **groups/{id}/userProfiles・shoppingLocations**: メンバーは read/write 可。非メンバー・未認証は拒否。
 7. **groups/{id}/shoppingLists と items**: メンバーは read/write 可。非メンバーは拒否。
 8. **groups/{id}/shoppingLists/{id}/receipts**: メンバーは read/create/update 可。**メンバーでも delete は拒否**。非メンバーは拒否。
