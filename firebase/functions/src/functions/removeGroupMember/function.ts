@@ -95,9 +95,18 @@ const removeGroupMemberFlow = ai.defineFlow(
         }
 
         // Firestoreトランザクションは全てのreadを全てのwriteより前に実行する必要があるため、
-        // defaultGroupID判定に使う対象ユーザーのreadを書き込みより先に済ませる。
+        // defaultGroupID判定に使う対象ユーザーと、失効させる招待のreadを書き込みより先に済ませる。
         const userRef = firestore.collection("users").doc(targetUserID);
-        const userDoc = await transaction.get(userRef);
+        const [userDoc, pendingInvitationsSnapshot] = await Promise.all([
+          transaction.get(userRef),
+          transaction.get(
+            firestore
+              .collection("groupInvitations")
+              .where("groupID", "==", groupID)
+              .where("inviterUserID", "==", targetUserID)
+              .where("status", "==", "pending")
+          ),
+        ]);
 
         transaction.update(groupRef, {
           memberUserIDs: FieldValue.arrayRemove(targetUserID),
@@ -110,6 +119,15 @@ const removeGroupMemberFlow = ai.defineFlow(
           .collection("userProfiles")
           .doc(groupUserProfileDocumentID({ groupID, userID: targetUserID }));
         transaction.delete(profileRef);
+
+        // 外したユーザーが在籍中に発行した招待コードで戻れないよう、pending の招待を失効させる
+        for (const invitationDoc of pendingInvitationsSnapshot.docs) {
+          transaction.update(invitationDoc.ref, {
+            status: "expired",
+            updatedDateTime: FieldValue.serverTimestamp(),
+            serverUpdatedDateTime: FieldValue.serverTimestamp(),
+          });
+        }
 
         // 対象ユーザーの defaultGroupID が当該グループの場合はnullに更新
         if (userDoc.exists) {
