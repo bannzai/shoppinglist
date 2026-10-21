@@ -15,9 +15,14 @@ import {
  * `.claude/rules/firebase-functions.md` は Firestore トリガーを原則禁止しているが、
  * Issue #683 でオーナーがこの方式 (案 B) を選んだため例外として使う。
  * active かどうかが変わらない書き込み (名前の変更等) では数え直さない。
+ * 数え直しが一時的に失敗すると次の active の変化まで数がずれたまま作成を拒否し得るため、
+ * 冪等な数え直しであることを前提に retry を有効にする。
  */
 module.exports = onDocumentWritten(
-  "groups/{groupID}/shoppingLists/{shoppingListID}",
+  {
+    document: "groups/{groupID}/shoppingLists/{shoppingListID}",
+    retry: true,
+  },
   async (event) => {
     const beforeIsActive = isActiveShoppingListData(
       event.data?.before.data() as ShoppingListData | undefined

@@ -2,7 +2,7 @@ const mockRecountActiveShoppingLists = jest.fn();
 let capturedHandler: (event: any) => Promise<void>;
 
 jest.mock("firebase-functions/v2/firestore", () => ({
-  onDocumentWritten: (_document: string, handler: any) => {
+  onDocumentWritten: (_options: unknown, handler: any) => {
     capturedHandler = handler;
     return handler;
   },

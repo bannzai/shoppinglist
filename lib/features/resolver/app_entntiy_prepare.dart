@@ -56,9 +56,12 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
 
     // プレミアム状態の写しの同期: firestore.rules は RevenueCat を参照できないため、無料プランの
     // 買い物リスト数の上限判定 (Issue #683) に使う写しを Functions 経由で Firestore に書かせる。
-    // 依存配列: [appUser?.id, isPremium, premiumExpirationDate] — ログイン直後と、購入・更新・失効・
-    // プロモーション付与で RevenueCat の状態が変わった時だけ同期する。appUser の他のフィールドの
-    // 変更では RevenueCat の状態は変わらないため appUser 自体は含めない。
+    // 依存配列: [appUser?.id, isPremium, premiumExpirationDate, appLifecycleState] — ログイン直後と、
+    // 購入・更新・失効・プロモーション付与で RevenueCat の状態が変わった時に同期する。appLifecycleState は、
+    // 通信障害などで同期に失敗した写しを、RevenueCat の状態が変わらなくてもフォアグラウンド復帰で
+    // 直すために含める。appUser の他のフィールドの変更では RevenueCat の状態は変わらないため
+    // appUser 自体は含めない。
+    final appLifecycleState = useAppLifecycleState();
     final premiumExpirationDate =
         customerInfoAsync
             .asData
@@ -67,14 +70,16 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
             .active[premiumEntitlementIdentifier]
             ?.expirationDate;
     useEffect(() {
-      if (appUser != null && isPremium != null) {
+      if (appUser != null &&
+          isPremium != null &&
+          appLifecycleState == AppLifecycleState.resumed) {
         functions.syncPremiumEntitlement().catchError(
           (Object error, StackTrace stackTrace) =>
               errorLogger.recordError(error, stackTrace),
         );
       }
       return null;
-    }, [appUser?.id, isPremium, premiumExpirationDate]);
+    }, [appUser?.id, isPremium, premiumExpirationDate, appLifecycleState]);
 
     useEffect(() {
       void f() async {
