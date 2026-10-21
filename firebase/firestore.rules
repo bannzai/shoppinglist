@@ -34,8 +34,11 @@ service cloud.firestore {
         allow read, write: if isUserAuth(userID) || isDebugUserOf(userID);
       }
 
+      // AI 機能の月次利用回数。カウンタは AI 関数 (generateShoppingListItemsFromURL・
+      // generateShoppingListItemsFromImage・categorizeShoppingListItems) の Admin SDK だけが更新し、
+      // クライアントは読み取りのみ（書けると上限判定を回避できるため、Issue #677）。
       match /aiUsage/{yearMonth} {
-        allow read, write: if isUserAuth(userID) || isDebugUserOf(userID);
+        allow read: if isUserAuth(userID) || isDebugUserOf(userID);
       }
     }
 

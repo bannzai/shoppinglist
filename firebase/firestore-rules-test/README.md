@@ -42,8 +42,8 @@ npm test
 `firestore.rules` の全パスについて、認証状態（本人 / 他人 / 未認証）とグループメンバーシップ・所有者判定ごとの
 許可・拒否を検証します。
 
-1. **users ツリー（本人のみ）**: 本人は `users/{uid}`・`privates`・`aiUsage` を read/write 可。他人・未認証は拒否。
-2. **デバッグユーザーパターン**: `{uid}_debug_{数字}` は本人が操作可。他人の debug user・数字でない suffix は拒否。
+1. **users ツリー（本人のみ）**: 本人は `users/{uid}`・`privates` を read/write 可、`aiUsage` は read のみ可で write（set/update/delete）は拒否（カウンタは AI 関数の Admin SDK だけが更新する）。他人・未認証は拒否。
+2. **デバッグユーザーパターン**: `{uid}_debug_{数字}` は本人が操作可（`aiUsage` は 1 と同じく read のみ）。他人の debug user・数字でない suffix は拒否。
 3. **groupInvitations**: 認証済みでも read/write 全拒否（Functions Admin SDK 経由のみ）。
 4. **inquiries**: 認証済みでも read/write 全拒否（submitInquiry Function 経由のみ）。
 5. **groups 本体**: メンバーは read/update/delete 可。create はクライアントから拒否（createGroup Function 経由のみ）。非メンバー・未認証は拒否。
