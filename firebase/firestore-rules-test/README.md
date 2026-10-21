@@ -1,6 +1,6 @@
 # firestore-rules-test
 
-`firebase/firestore.rules` の内容を Firestore Emulator 上で自動検証する単体テストパッケージです。
+`firebase/firestore.rules` と `firebase/storage.rules` の内容を Firestore / Storage Emulator 上で自動検証する単体テストパッケージです。
 `@firebase/rules-unit-testing` + Jest を `firebase emulators:exec` から実行し、各パスの許可・拒否を検証します。
 
 bannzai/medicalarm#243 の同名パッケージの移植です（bannzai/shoppinglist#501 参照）。
@@ -30,7 +30,7 @@ npm test
 
 デフォルトの `java` が JDK 21 未満の環境では、先に `JAVA_HOME` を JDK 21+ に設定してから `npm test` を実行してください（上記「前提」参照）。
 
-`npm test` は `firebase emulators:exec --only firestore --project demo-shoppinglist 'jest'` を実行します。
+`npm test` は `firebase emulators:exec --only firestore,storage --project demo-shoppinglist 'jest --runInBand'` を実行します。
 
 - `--project demo-shoppinglist`: `demo-` 接頭辞により実プロジェクト・認証情報なしの demo モードで Emulator が起動します。
 - Emulator 設定（`firestore.rules` の場所）は親ディレクトリの `firebase/firebase.json` を Firebase CLI が自動検出します。
@@ -53,7 +53,9 @@ npm test
 9. **groups/{id}/userCategoryAxes**: 現在のグループメンバーが所有する軸は取り込み用に read 可。所有者を `userID` で限定したクエリは許可し、限定しないクエリと削除済みメンバーの残存軸は拒否。create/update/delete は所有者（`userID` 一致）のみ可で、updateによる所有者変更も拒否。
 10. **userCategoryAxes/{id}/categories**: 9 と同じく現在のグループメンバーが所有し、親軸が存在して所有者も一致するカテゴリは read 可。所有者を限定しないクエリ、削除済みメンバーの残存カテゴリ、親軸削除後の残存カテゴリは拒否し、write は所有者のみ可。
 
-## 対象外
+`storage.rules.test.js` は `firebase/storage.rules` を Storage Emulator 上で検証します（Issue #678）。
 
-- `firebase/storage.rules`（Storage のルール）はこのパッケージの検証対象外です。レシート画像等の Storage アクセスは
-  Cloud Functions 経由で制御します。
+11. **Storage の receipts / sourceImages**: グループの現メンバーは get（`getDownloadURL`・`getMetadata`）と list（`listAll`）が可。非メンバー・グループから外されたメンバー・存在しないグループ・未認証は拒否。メンバーでも write は拒否。
+12. **Storage の items**: メンバーでも read/write 全拒否（Functions Admin SDK 経由のみ）。
+
+2 つのテストファイルは同じ Firestore Emulator をクリアして seed するため、`jest --runInBand` で直列に実行します。
