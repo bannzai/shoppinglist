@@ -729,6 +729,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get groupCategoryEditMatchingRegex => 'Regular expression';
 
   @override
+  String groupCategoryEditRegexTooComplex(int maxLength) {
+    return 'This regular expression is too complex. Use up to $maxLength characters and avoid nested repetition such as (a+)+';
+  }
+
+  @override
   String get groupCreateTitle => 'Create a group';
 
   @override

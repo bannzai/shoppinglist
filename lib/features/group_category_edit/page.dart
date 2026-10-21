@@ -300,6 +300,8 @@ class _CategoryEditBody extends HookConsumerWidget {
   }) {
     final keywordController = TextEditingController();
     var selectedMatchingType = GroupCategoryKeywordMatchingType.partial;
+    // 保存を拒否した正規表現の入力欄に出すエラー。入力か一致方法が変わったら消す。
+    String? keywordErrorText;
 
     showDialog(
       context: context,
@@ -317,7 +319,16 @@ class _CategoryEditBody extends HookConsumerWidget {
                         autofocus: true,
                         decoration: InputDecoration(
                           hintText: context.l10n.groupCategoryEditKeywordHint,
+                          errorText: keywordErrorText,
+                          errorMaxLines: 3,
                         ),
+                        onChanged: (_) {
+                          if (keywordErrorText != null) {
+                            setState(() {
+                              keywordErrorText = null;
+                            });
+                          }
+                        },
                       ),
                       const SizedBox(height: 24),
                       Text(
@@ -372,6 +383,7 @@ class _CategoryEditBody extends HookConsumerWidget {
                             );
                             setState(() {
                               selectedMatchingType = matchingType;
+                              keywordErrorText = null;
                             });
                           },
                         ),
@@ -383,6 +395,26 @@ class _CategoryEditBody extends HookConsumerWidget {
                       onPressed: () async {
                         final keyword = keywordController.text.trim();
                         if (keyword.isEmpty) {
+                          return;
+                        }
+                        if (selectedMatchingType ==
+                                GroupCategoryKeywordMatchingType.regex &&
+                            !isSafeGroupCategoryKeywordRegex(
+                              keyword: keyword,
+                            )) {
+                          analytics.logEvent(
+                            name: 'reject_unsafe_regex_keyword',
+                            parameters: {
+                              'groupID': groupID,
+                              'categoryID': category.id,
+                            },
+                          );
+                          setState(() {
+                            keywordErrorText = context.l10n
+                                .groupCategoryEditRegexTooComplex(
+                                  groupCategoryKeywordRegexMaxLength,
+                                );
+                          });
                           return;
                         }
                         analytics.logEvent(

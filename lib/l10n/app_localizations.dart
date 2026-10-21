@@ -1394,6 +1394,12 @@ abstract class AppLocalizations {
   /// **'Regular expression'**
   String get groupCategoryEditMatchingRegex;
 
+  /// キーワード追加ダイアログで、長すぎる・入れ子の繰り返しを含む正規表現を保存しようとした時に入力欄の下に出すエラー
+  ///
+  /// In en, this message translates to:
+  /// **'This regular expression is too complex. Use up to {maxLength} characters and avoid nested repetition such as (a+)+'**
+  String groupCategoryEditRegexTooComplex(int maxLength);
+
   /// グループ作成画面のタイトルと、グループ管理画面の作成 FAB の tooltip
   ///
   /// In en, this message translates to:

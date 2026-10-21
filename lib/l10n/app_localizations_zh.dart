@@ -697,6 +697,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get groupCategoryEditMatchingRegex => '正则表达式';
 
   @override
+  String groupCategoryEditRegexTooComplex(int maxLength) {
+    return '正则表达式过于复杂。请控制在$maxLength个字符以内，并且不要使用 (a+)+ 这样的嵌套重复';
+  }
+
+  @override
   String get groupCreateTitle => '创建群组';
 
   @override
@@ -1951,6 +1956,11 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get groupCategoryEditMatchingRegex => '正则表达式';
 
   @override
+  String groupCategoryEditRegexTooComplex(int maxLength) {
+    return '正则表达式过于复杂。请控制在$maxLength个字符以内，并且不要使用 (a+)+ 这样的嵌套重复';
+  }
+
+  @override
   String get groupCreateTitle => '创建群组';
 
   @override
@@ -3203,6 +3213,11 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get groupCategoryEditMatchingRegex => '正則表達式';
+
+  @override
+  String groupCategoryEditRegexTooComplex(int maxLength) {
+    return '正則表達式過於複雜。請控制在$maxLength個字元以內，並且不要使用 (a+)+ 這樣的巢狀重複';
+  }
 
   @override
   String get groupCreateTitle => '建立群組';
