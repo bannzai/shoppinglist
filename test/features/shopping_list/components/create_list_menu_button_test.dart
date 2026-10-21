@@ -22,6 +22,7 @@ class _RecordingShoppingListAdd extends ShoppingListAdd {
     : super(
         database: GroupDatabase(groupID: 'g'),
         isPremiumResolver: () => false,
+        premiumEntitlementSyncer: () async {},
       );
 
   @override
@@ -50,6 +51,7 @@ class _LimitExceededShoppingListAdd extends ShoppingListAdd {
     : super(
         database: GroupDatabase(groupID: 'g'),
         isPremiumResolver: () => false,
+        premiumEntitlementSyncer: () async {},
       );
 
   @override

@@ -8,6 +8,7 @@ import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 part 'shopping_list.g.dart';
@@ -90,7 +91,14 @@ class ShoppingListAdd {
   final GroupDatabase database;
   final IsPremiumResolver isPremiumResolver;
 
-  ShoppingListAdd({required this.database, required this.isPremiumResolver});
+  /// firestore.rules が上限判定に読むプレミアム状態の写しを RevenueCat から更新する。
+  final Future<void> Function() premiumEntitlementSyncer;
+
+  ShoppingListAdd({
+    required this.database,
+    required this.isPremiumResolver,
+    required this.premiumEntitlementSyncer,
+  });
 
   Future<GroupShoppingList> call({
     required String createUserID,
@@ -125,7 +133,18 @@ class ShoppingListAdd {
       shoppingLocationID: shoppingLocationID,
       duplicatedFromGroupShoppingListID: duplicatedFromGroupShoppingListID,
     );
-    await docRef.set(shoppingList, SetOptions(merge: true));
+    try {
+      await docRef.set(shoppingList, SetOptions(merge: true));
+    } on FirebaseException catch (error) {
+      // 購入直後は、firestore.rules が読むプレミアム状態の写しの同期が終わっておらず、
+      // 上限に達したグループでの作成が permission-denied になり得る (Issue #683)。
+      // 写しを同期してから 1 回だけ書き直す。同じ docRef への同じ内容の set なので冪等。
+      if (error.code != 'permission-denied' || !isPremiumResolver()) {
+        rethrow;
+      }
+      await premiumEntitlementSyncer();
+      await docRef.set(shoppingList, SetOptions(merge: true));
+    }
     return shoppingList;
   }
 }
@@ -141,6 +160,8 @@ ShoppingListAdd shoppingListAdd(Ref ref, {required String groupID}) {
   return ShoppingListAdd(
     database: database,
     isPremiumResolver: () => isPremium,
+    // tear-off にすると provider の生成時に FirebaseFunctions を初期化するため、呼ぶ時まで遅らせる。
+    premiumEntitlementSyncer: () => functions.syncPremiumEntitlement(),
   );
 }
 
