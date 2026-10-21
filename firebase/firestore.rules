@@ -4,6 +4,8 @@ rules_version = '2';
 // JWT (Firebase Auth) の本人認証 + リソース所有判定のみを行い、データ内容に踏み込んだ
 // ガード（プレミアム判定・期間判定・フィールド diff 等）は実装しない。詳細は
 // `.claude/rules/firestore-rules-simplicity.md` を参照。
+// 例外: 無料プランの買い物リスト数の上限 (shoppingLists の create / update) は、オフライン作成を
+// 残したままサーバー側で判定するため rules で判定する (Issue #683)。
 service cloud.firestore {
   match /databases/{database}/documents {
     function isAuth() {
@@ -23,6 +25,16 @@ service cloud.firestore {
       return isAuth() && request.auth.uid in memberUserIDs;
     }
 
+    // userID のプレミアム状態を、syncPremiumEntitlement Function が RevenueCat から書き写した
+    // users/{userID}/premiumEntitlements の文書で判定する。expiresDateTime が null は無期限。
+    function isPremiumUser(userID) {
+      let premiumEntitlementPath = /databases/$(database)/documents/users/$(userID)/premiumEntitlements/$('PremiumEntitlement_users_' + userID);
+      return exists(premiumEntitlementPath)
+        && get(premiumEntitlementPath).data.get('isPremium', false) == true
+        && (get(premiumEntitlementPath).data.get('expiresDateTime', null) == null
+          || get(premiumEntitlementPath).data.expiresDateTime > request.time);
+    }
+
     match /users/{userID} {
       // developerToken フィールドは Cloud Functions の dev only 関数 (grantPromotionalPremium 等)
       // のユーザー単位ガードに使われる。dart-define SHOPPINGLIST_DEVELOPER_TOKEN を持つ開発者ビルドでのみ
@@ -36,6 +48,13 @@ service cloud.firestore {
 
       match /aiUsage/{yearMonth} {
         allow read, write: if isUserAuth(userID) || isDebugUserOf(userID);
+      }
+
+      // プレミアム状態の写し: rules の上限判定に使うため、書き込みは syncPremiumEntitlement
+      // Function (Admin SDK) 経由のみ。
+      match /premiumEntitlements/{premiumEntitlementID} {
+        allow read: if isUserAuth(userID);
+        allow write: if false;
       }
     }
 
@@ -51,12 +70,32 @@ service cloud.firestore {
     }
 
     match /groups/{groupID} {
-      allow read, update, delete: if isMember(resource.data.memberUserIDs);
+      allow read, delete: if isMember(resource.data.memberUserIDs);
+      // activeShoppingListCount (updateActiveShoppingListCount Function だけが保つ値) と ownerUserID
+      // (オーナーのプレミアム状態で上限を外すため) は、上限判定に使うためクライアントから書き換えさせない。
+      allow update: if isMember(resource.data.memberUserIDs)
+        && request.resource.data.get('activeShoppingListCount', null) == resource.data.get('activeShoppingListCount', null)
+        && request.resource.data.get('ownerUserID', null) == resource.data.get('ownerUserID', null);
       // グループ作成は Cloud Functions (createGroup) 経由でのみ許可する
       allow create: if false;
 
       function isGroupMember() {
         return isMember(get(/databases/$(database)/documents/groups/$(groupID)).data.memberUserIDs);
+      }
+
+      // done / archived 以外を active として数える (status 欠落もクライアントの既定値 active に合わせる)。
+      // updateActiveShoppingListCount Function の数え方と一致させること。
+      function isActiveShoppingListData(data) {
+        return !(data.get('status', 'active') in ['done', 'archived']);
+      }
+
+      // 無料プランのグループあたり active なリスト数の上限。
+      // NOTE: lib/entity/group_shopping_list.dart の freeGroupActiveShoppingListLimit と同じ値を維持すること。
+      function canAddActiveShoppingList() {
+        let group = get(/databases/$(database)/documents/groups/$(groupID)).data;
+        return group.get('activeShoppingListCount', 0) < 20
+          || isPremiumUser(request.auth.uid)
+          || (group.get('ownerUserID', null) != null && isPremiumUser(group.ownerUserID));
       }
 
       // userCategoryAxes / categories はユーザー所有のまま、同じグループのメンバーが
@@ -99,7 +138,14 @@ service cloud.firestore {
       }
 
       match /shoppingLists/{shoppingListID} {
-        allow read, write: if isGroupMember();
+        allow read, delete: if isGroupMember();
+        // active なリストが増える書き込み (active での作成、done / archived から active への変更) だけ上限を判定する。
+        allow create: if isGroupMember()
+          && (!isActiveShoppingListData(request.resource.data) || canAddActiveShoppingList());
+        allow update: if isGroupMember()
+          && (!isActiveShoppingListData(request.resource.data)
+            || isActiveShoppingListData(resource.data)
+            || canAddActiveShoppingList());
 
         match /items/{itemID} {
           allow read, write: if isGroupMember();
