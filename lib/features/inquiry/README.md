@@ -35,7 +35,7 @@ Firebase Functions(`submitInquiry`)経由で Firestore への保存と Slack 通
 不具合を再現できる (`firebase/functions/src/script/restoreInquirySnapshot.ts`)。
 
 ```
-GOOGLE_APPLICATION_CREDENTIALS=secret/GOOGLE_APPLICATION_CREDENTIALS.json \
+GOOGLE_APPLICATION_CREDENTIALS=../.secret/GOOGLE_APPLICATION_CREDENTIALS.json \
   npm run script-restore-inquiry-snapshot -- <inquiryID> [--apply]
 ```
 
