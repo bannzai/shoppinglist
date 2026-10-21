@@ -14,11 +14,11 @@ import { SnapshotEntry, restoreSnapshot } from "../entity/snapshot";
  *
  * 使い方:
  *   # 問い合わせ ID から(接続中プロジェクトの inquiries を読んで同プロジェクトの (default) へ復元)
- *   GOOGLE_APPLICATION_CREDENTIALS=secret/GOOGLE_APPLICATION_CREDENTIALS.json \
+ *   GOOGLE_APPLICATION_CREDENTIALS=../.secret/GOOGLE_APPLICATION_CREDENTIALS.json \
  *     npm run script-restore-inquiry-snapshot -- <inquiryID> [--apply]
  *
  *   # Slack からダウンロードしたスナップショット JSON ファイルから、別 uid に載せ替えて復元
- *   GOOGLE_APPLICATION_CREDENTIALS=secret/GOOGLE_APPLICATION_CREDENTIALS.json \
+ *   GOOGLE_APPLICATION_CREDENTIALS=../.secret/GOOGLE_APPLICATION_CREDENTIALS.json \
  *     npm run script-restore-inquiry-snapshot -- --file ./inquiry_snapshot_xxx.json \
  *       --target-uid <devの匿名uid> [--apply]
  *

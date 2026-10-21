@@ -57,7 +57,7 @@ export function buildInquirySlackBlocks(inquiry: Inquiry): unknown[] {
       elements: [
         {
           type: "mrkdwn",
-          text: `DB復元: \`GOOGLE_APPLICATION_CREDENTIALS=secret/GOOGLE_APPLICATION_CREDENTIALS.json npm run script-restore-inquiry-snapshot -- ${inquiry.id} --apply\``,
+          text: `DB復元: \`GOOGLE_APPLICATION_CREDENTIALS=../.secret/GOOGLE_APPLICATION_CREDENTIALS.json npm run script-restore-inquiry-snapshot -- ${inquiry.id} --apply\``,
         },
       ],
     },
