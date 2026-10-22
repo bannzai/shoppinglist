@@ -704,6 +704,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get groupCategoryEditMatchingRegex => '정규식';
 
   @override
+  String groupCategoryEditRegexTooComplex(int maxLength) {
+    return '정규식이 너무 복잡합니다. $maxLength자 이내로 하고 (a+)+ 같은 반복의 중첩은 사용하지 마세요';
+  }
+
+  @override
   String get groupCreateTitle => '그룹 만들기';
 
   @override

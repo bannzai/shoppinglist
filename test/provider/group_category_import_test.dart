@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
+import 'package:shoppinglist/entity/group_category_keyword.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 
 void main() {
@@ -439,6 +440,62 @@ void main() {
     );
     expect(shifted.single.order, 2);
     expect(shifted.single.locationOrders['store'], 2);
+  });
+
+  test('取り込みでは正規表現のキーワードを外し、完全一致・部分一致だけをコピーする', () {
+    const sourceAxis = GroupCategoryAxis(
+      id: 'source-axis',
+      groupID: 'group',
+      userID: 'source-user',
+      name: '売り場',
+      order: 0,
+    );
+    const sourceCategory = GroupCategory(
+      id: 'source-category',
+      groupID: 'group',
+      userID: 'source-user',
+      groupCategoryAxisID: 'source-axis',
+      name: '野菜',
+      order: 0,
+      locationOrders: {},
+      keywords: [
+        GroupCategoryKeyword(
+          keyword: 'にんじん',
+          matchingType: GroupCategoryKeywordMatchingType.exact,
+        ),
+        GroupCategoryKeyword(
+          keyword: r'^(a+)+$',
+          matchingType: GroupCategoryKeywordMatchingType.regex,
+        ),
+        GroupCategoryKeyword(
+          keyword: '菜',
+          matchingType: GroupCategoryKeywordMatchingType.partial,
+        ),
+      ],
+      color: null,
+      iconName: null,
+    );
+
+    final imported = buildImportedGroupCategories(
+      groupID: 'group',
+      destinationUserID: 'destination-user',
+      destinationGroupCategoryAxisID: 'destination-axis',
+      sourceGroupCategoryAxis: sourceAxis,
+      sourceCategories: const [sourceCategory],
+      destinationCategories: const [],
+      updatedDateTime: DateTime(2026, 10),
+    );
+
+    expect(imported.single.keywords, const [
+      GroupCategoryKeyword(
+        keyword: 'にんじん',
+        matchingType: GroupCategoryKeywordMatchingType.exact,
+      ),
+      GroupCategoryKeyword(
+        keyword: '菜',
+        matchingType: GroupCategoryKeywordMatchingType.partial,
+      ),
+    ]);
   });
 
   test('既存カテゴリ軸でカテゴリ更新世代が無い文書は0として読み込む', () {

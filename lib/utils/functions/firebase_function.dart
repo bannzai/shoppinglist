@@ -254,6 +254,25 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
     _throwIfNotOK(response);
   }
 
+  /// 自分のデバッグユーザー（`{uid}_debug_{数字}`）をグループの memberUserIDs に
+  /// 追加 (`membership: 'join'`) または除去 (`membership: 'leave'`) する。
+  /// memberUserIDs は firestore.rules がクライアントからの書き換えを拒否するため Functions 経由で行う。
+  /// 開発者オプションでのテスト用。
+  Future<void> updateDebugUserGroupMembership({
+    required String groupID,
+    required String debugUserID,
+    required String membership,
+  }) async {
+    final result = await httpsCallable('updateDebugUserGroupMembership').call({
+      'groupID': groupID,
+      'debugUserID': debugUserID,
+      'membership': membership,
+    });
+    debugPrint('updateDebugUserGroupMembership.result: ${result.data}');
+    final response = mapToJSON(result.data);
+    _throwIfNotOK(response);
+  }
+
   /// お問い合わせを送信する。Firestore へのスナップショット保存と Slack 通知は
   /// Functions 側で行う。戻り値は作成された問い合わせの ID。
   Future<String> submitInquiry({

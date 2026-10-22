@@ -2,10 +2,10 @@ rules_version = '2';
 
 // 設計方針:
 // JWT (Firebase Auth) の本人認証 + リソース所有判定のみを行い、データ内容に踏み込んだ
-// ガード（プレミアム判定・期間判定・フィールド diff 等）は実装しない。詳細は
-// `.claude/rules/firestore-rules-simplicity.md` を参照。
-// 例外: 無料プランの買い物リスト数の上限 (shoppingLists の create / update) は、オフライン作成を
-// 残したままサーバー側で判定するため rules で判定する (Issue #683)。
+// ガード（プレミアム判定・期間判定・フィールド diff 等）は実装しない。例外は groups の
+// ownerUserID / memberUserIDs / activeShoppingListCount の書き換え禁止と、無料プランの買い物リスト数の
+// 上限 (shoppingLists の create / update。オフライン作成を残したままサーバー側で判定するため。Issue #683) のみ。
+// 詳細は `.claude/rules/firestore-rules-simplicity.md` を参照。
 service cloud.firestore {
   match /databases/{database}/documents {
     function isAuth() {
@@ -46,8 +46,11 @@ service cloud.firestore {
         allow read, write: if isUserAuth(userID) || isDebugUserOf(userID);
       }
 
+      // AI 機能の月次利用回数。カウンタは AI 関数 (generateShoppingListItemsFromURL・
+      // generateShoppingListItemsFromImage・categorizeShoppingListItems) の Admin SDK だけが更新し、
+      // クライアントは読み取りのみ（書けると上限判定を回避できるため、Issue #677）。
       match /aiUsage/{yearMonth} {
-        allow read, write: if isUserAuth(userID) || isDebugUserOf(userID);
+        allow read: if isUserAuth(userID) || isDebugUserOf(userID);
       }
 
       // プレミアム状態の写し: rules の上限判定に使うため、書き込みは syncPremiumEntitlement
@@ -70,12 +73,20 @@ service cloud.firestore {
     }
 
     match /groups/{groupID} {
-      allow read, delete: if isMember(resource.data.memberUserIDs);
-      // activeShoppingListCount (updateActiveShoppingListCount Function だけが保つ値) と ownerUserID
-      // (オーナーのプレミアム状態で上限を外すため) は、上限判定に使うためクライアントから書き換えさせない。
+      allow read: if isMember(resource.data.memberUserIDs);
+      // ownerUserID / memberUserIDs はサーバーがオーナー判定・グループ数上限・通知の宛先の認可に使う
+      // 権限境界のため、メンバーにも書き換えさせない (Functions の Admin SDK 経由のみ。Issue #676)。
+      // 例外は自分の脱退 (自分の uid だけを除く) のみ。null とフィールド欠落を同じに扱うのは、
+      // ownerUserID を持たないレガシーグループに旧アプリが Group 全体を set merge すると null が書き足されるため。
+      // activeShoppingListCount は updateActiveShoppingListCount Function だけが保つ、買い物リスト数の
+      // 上限判定 (Issue #683) に使う値のため、同じくメンバーにも書き換えさせない。
       allow update: if isMember(resource.data.memberUserIDs)
+        && request.resource.data.get('ownerUserID', null) == resource.data.get('ownerUserID', null)
         && request.resource.data.get('activeShoppingListCount', null) == resource.data.get('activeShoppingListCount', null)
-        && request.resource.data.get('ownerUserID', null) == resource.data.get('ownerUserID', null);
+        && (request.resource.data.memberUserIDs == resource.data.memberUserIDs
+          || request.resource.data.memberUserIDs == resource.data.memberUserIDs.removeAll([request.auth.uid]));
+      allow delete: if isMember(resource.data.memberUserIDs)
+        && resource.data.get('ownerUserID', null) == request.auth.uid;
       // グループ作成は Cloud Functions (createGroup) 経由でのみ許可する
       allow create: if false;
 

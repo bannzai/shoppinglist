@@ -16,6 +16,10 @@ private let supportedThemeColorHexes: Set<String> = [
 
 struct ShoppingListEntry: TimelineEntry {
     let date: Date
+    /// アイテムを取得したリストの groupID。トグルの書き込み先はこれと shoppingListID から組み立てる。
+    let groupID: String
+    /// アイテムを取得したリストの ID。
+    let shoppingListID: String
     let shoppingListName: String
     let items: [ShoppingListItemData]
     let showCheckedItems: Bool
@@ -28,8 +32,6 @@ struct ShoppingListEntry: TimelineEntry {
 
 struct ShoppingListItemData: Identifiable, Codable {
     let id: String
-    let groupID: String
-    let shoppingListID: String
     let message: String
     var status: String
     let order: Int
@@ -47,10 +49,12 @@ struct Provider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> ShoppingListEntry {
         ShoppingListEntry(
             date: Date(),
+            groupID: "",
+            shoppingListID: "",
             shoppingListName: "買い物リスト",
             items: [
-                ShoppingListItemData(id: "1", groupID: "", shoppingListID: "", message: "牛乳", status: "unchecked", order: 0, color: nil),
-                ShoppingListItemData(id: "2", groupID: "", shoppingListID: "", message: "卵", status: "checked", order: 1, color: nil),
+                ShoppingListItemData(id: "1", message: "牛乳", status: "unchecked", order: 0, color: nil),
+                ShoppingListItemData(id: "2", message: "卵", status: "checked", order: 1, color: nil),
             ],
             showCheckedItems: true,
             themeColorHex: defaultThemeColorHex,
@@ -109,6 +113,8 @@ struct Provider: AppIntentTimelineProvider {
 
         return ShoppingListEntry(
             date: Date(),
+            groupID: groupID,
+            shoppingListID: shoppingListID,
             shoppingListName: shoppingListName,
             items: items,
             showCheckedItems: showChecked,

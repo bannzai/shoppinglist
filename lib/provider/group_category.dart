@@ -491,6 +491,16 @@ List<GroupCategory> buildImportedGroupCategories({
       groupID: groupID,
       userID: destinationUserID,
       groupCategoryAxisID: destinationGroupCategoryAxisID,
+      // 他メンバーの書いた正規表現を取込先の build 内で同期的に照合すると、
+      // 壊滅的なバックトラック (ReDoS) で取込先の買い物リストが固まり得るため持ち込まない。
+      keywords:
+          sourceCategory.keywords
+              .where(
+                (keyword) =>
+                    keyword.matchingType !=
+                    GroupCategoryKeywordMatchingType.regex,
+              )
+              .toList(),
       order: defaultOrderStart + sourceDefaultOrderRanks[sourceCategory.id]!,
       locationOrders: {
         for (final shoppingLocationID in shoppingLocationIDs)

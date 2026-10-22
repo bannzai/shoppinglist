@@ -88,13 +88,14 @@ describe("acceptGroupInvitation", () => {
     const mockInvitationRef = {
       update: jest.fn(),
       get: jest.fn().mockResolvedValue({
-        data: () => ({ status: "pending" }),
+        data: () => ({ status: "pending", inviterUserID: "user-1" }),
       }),
     };
     const mockInvitationDoc = {
       ref: mockInvitationRef,
       data: () => ({
         groupID: "group-1",
+        inviterUserID: "user-1",
         invitationCode: "ABCD3456",
         status: "pending",
         expiresDateTime: {
@@ -227,11 +228,12 @@ describe("acceptGroupInvitation", () => {
       ref: {
         update: jest.fn(),
         get: jest.fn().mockResolvedValue({
-          data: () => ({ status: "pending" }),
+          data: () => ({ status: "pending", inviterUserID: "user-1" }),
         }),
       },
       data: () => ({
         groupID: "group-1",
+        inviterUserID: "user-1",
         invitationCode: "ABCD3456",
         status: "pending",
         expiresDateTime: {
@@ -276,6 +278,84 @@ describe("acceptGroupInvitation", () => {
     expect(result.result).toBe("OK");
     expect(result.data.groupID).toBe("group-1");
     expect(mockRunTransaction).toHaveBeenCalled();
+  });
+
+  test("異常系: 招待した人が既にメンバーでない招待コードは拒否され、招待が失効する", async () => {
+    mockCurrentContext.mockReturnValue({ auth: { uid: "removed-user" } });
+    mockGetUser.mockResolvedValue({ displayName: "Removed User" });
+
+    const mockInvitationRef = {
+      get: jest.fn().mockResolvedValue({
+        data: () => ({ status: "pending", inviterUserID: "removed-user" }),
+      }),
+    };
+    const mockInvitationDoc = {
+      ref: mockInvitationRef,
+      data: () => ({
+        groupID: "group-1",
+        inviterUserID: "removed-user",
+        invitationCode: "ABCD3456",
+        status: "pending",
+        expiresDateTime: {
+          toDate: () => new Date(Date.now() + 86400000),
+        },
+      }),
+    };
+    const mockGroupDoc = {
+      exists: true,
+      ref: {},
+      data: () => ({ memberUserIDs: ["owner-user"] }),
+    };
+
+    mockCollection.mockImplementation((path: string) => {
+      if (path === "groupInvitations") {
+        return {
+          where: jest.fn().mockReturnValue({
+            where: jest.fn().mockReturnValue({
+              limit: jest.fn().mockReturnValue({
+                get: jest.fn().mockResolvedValue({
+                  empty: false,
+                  docs: [mockInvitationDoc],
+                }),
+              }),
+            }),
+          }),
+        };
+      }
+      if (path === "groups") {
+        return {
+          doc: jest.fn(() => ({
+            get: jest.fn().mockResolvedValue(mockGroupDoc),
+            collection: jest.fn(),
+          })),
+        };
+      }
+      return {};
+    });
+
+    const mockTransaction = {
+      update: jest.fn(),
+      get: jest.fn((ref: any) => ref.get()),
+      set: jest.fn(),
+    };
+    mockRunTransaction.mockImplementation(async (fn: any) => fn(mockTransaction));
+
+    const result = await capturedFlowFn({ invitationCode: "ABCD3456" });
+
+    expect(result.result).toBe("NG");
+    expect(result.error.message).toBe(
+      "招待した人がグループのメンバーではなくなったためこの招待コードは使えません"
+    );
+    expect(mockTransaction.update).toHaveBeenCalledTimes(1);
+    expect(mockTransaction.update).toHaveBeenCalledWith(
+      mockInvitationRef,
+      expect.objectContaining({
+        status: "expired",
+        serverUpdatedDateTime: "SERVER_TIMESTAMP",
+      })
+    );
+    expect(mockTransaction.set).not.toHaveBeenCalled();
+    expect(mockArrayUnion).not.toHaveBeenCalled();
   });
 
   test("異常系: 未認証ユーザーがエラーになる", async () => {

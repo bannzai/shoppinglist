@@ -1,6 +1,16 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
+    // groups/{groupID} の現メンバーか。Firestore 側の isGroupMember() と同じ基準にし、
+    // グループから外されたユーザーが覚えているパスで画像を get / list できないようにする（Issue #678）。
+    // Storage rules から参照できるのは default データベースだけなので $(database) ではなく (default) を書く。
+    // firestore.get() の評価には Storage のサービスエージェントへの
+    // 「Firebase Rules Firestore Service Agent」ロール（roles/firebaserules.firestoreServiceAgent）が必要。
+    function isGroupMember(groupID) {
+      return request.auth != null
+        && request.auth.uid in firestore.get(/databases/(default)/documents/groups/$(groupID)).data.memberUserIDs;
+    }
+
     // Cloud Function (Admin SDK) 経由でのみアクセスさせるため、クライアントSDK経由の read/write は不可
     match /groups/{groupID}/shoppingLists/{shoppingListID}/items/{itemID}/{fileName} {
       allow read: if false;
@@ -8,22 +18,22 @@ service firebase.storage {
     }
 
     // レシート画像。書き込みは Cloud Function (Admin SDK) 経由のみ。
-    // 読み取りは認証済みユーザーに許可（クライアントが storagePath から getDownloadURL で取得）。
-    // 以前は firestore.get() でグループメンバー判定をしていたが、クロスサービス参照は
-    // permission-denied の切り分けを難しくし getDownloadURL 失敗（画像が表示できない）の
-    // 原因になりうるため、JWT 認証のみのシンプルなルールにする
-    // （.claude/rules/firestore-rules-simplicity.md）。
+    // 読み取りはグループの現メンバーに許可（クライアントが storagePath から getDownloadURL で取得）。
+    // a06e6174 で「画像が表示できない」不具合の対処としてこの判定を一度外したが、確定した原因は
+    // uploadReceiptImage がダウンロードトークンを生成していなかったことで（同コミットで修正済み）、
+    // firestore.get() は permission-denied に「なりうる」という推測だった。メンバー判定は
+    // .claude/rules/firestore-rules-simplicity.md の許可パターン（uid in memberUserIDs）に当たる。
     match /groups/{groupID}/shoppingLists/{shoppingListID}/receipts/{fileName} {
-      allow read: if request.auth != null;
+      allow read: if isGroupMember(groupID);
       allow write: if false;
     }
 
     // 「写真から追加」の元画像（Issue #530）。書き込みは Cloud Function
     // (generateShoppingListItemsFromImage, Admin SDK) 経由のみ。
-    // 読み取りはレシート画像と同じく認証済みユーザーに許可
+    // 読み取りはレシート画像と同じくグループの現メンバーに許可
     // （クライアントが storagePath から getDownloadURL で取得）。
     match /groups/{groupID}/shoppingLists/{shoppingListID}/sourceImages/{fileName} {
-      allow read: if request.auth != null;
+      allow read: if isGroupMember(groupID);
       allow write: if false;
     }
   }

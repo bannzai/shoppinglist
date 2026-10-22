@@ -141,6 +141,13 @@ if (
 
 if (
   !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "updateDebugUserGroupMembership"
+) {
+  exports.updateDebugUserGroupMembership = require("./functions/updateDebugUserGroupMembership/function");
+}
+
+if (
+  !process.env.FUNCTION_NAME ||
   process.env.FUNCTION_NAME === "setupTestCategoryLocationOrder"
 ) {
   exports.setupTestCategoryLocationOrder = require("./functions/setupTestCategoryLocationOrder/function");
