@@ -66,6 +66,15 @@ jest.mock("firebase-functions/params", () => ({
 // モジュール読み込み
 require("./function");
 
+/** where を何度連結しても自身を返し、get で docs の招待を返す groupInvitations の query のモック。 */
+function mockInvitationsQuery(docs: { ref: any }[]) {
+  const query: any = {
+    where: jest.fn(() => query),
+    get: jest.fn().mockResolvedValue({ docs }),
+  };
+  return query;
+}
+
 describe("removeGroupMember", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -115,6 +124,7 @@ describe("removeGroupMember", () => {
           doc: jest.fn(() => mockUserRef),
         };
       }
+      if (path === "groupInvitations") return mockInvitationsQuery([]);
       return {};
     });
 
@@ -319,9 +329,13 @@ describe("removeGroupMember", () => {
         data: () => ({ defaultGroupID: "group-1" }),
       }),
     };
+    const mockInvitationRef = { id: "invitation-1" };
     mockCollection.mockImplementation((path: string) => {
       if (path === "groups") return { doc: jest.fn(() => mockGroupRef) };
       if (path === "users") return { doc: jest.fn(() => mockUserRef) };
+      if (path === "groupInvitations") {
+        return mockInvitationsQuery([{ ref: mockInvitationRef }]);
+      }
       return {};
     });
 
@@ -353,5 +367,66 @@ describe("removeGroupMember", () => {
     });
 
     expect(result.result).toBe("OK");
+  });
+
+  test("正常系: 外したユーザーが発行した pending の招待を同じトランザクションで失効させる", async () => {
+    mockCurrentContext.mockReturnValue({ auth: { uid: "owner-user" } });
+
+    const mockGroupRef = {
+      get: jest.fn().mockResolvedValue({
+        exists: true,
+        data: () => ({
+          ownerUserID: "owner-user",
+          memberUserIDs: ["owner-user", "target-user"],
+        }),
+      }),
+      collection: jest.fn().mockReturnValue({
+        doc: jest.fn().mockReturnValue({ id: "profile-doc" }),
+      }),
+    };
+    const mockUserRef = {
+      get: jest.fn().mockResolvedValue({ exists: false, data: () => undefined }),
+    };
+    const mockInvitationRefs = [{ id: "invitation-1" }, { id: "invitation-2" }];
+    const mockQuery = mockInvitationsQuery(
+      mockInvitationRefs.map((ref) => ({ ref }))
+    );
+    mockCollection.mockImplementation((path: string) => {
+      if (path === "groups") return { doc: jest.fn(() => mockGroupRef) };
+      if (path === "users") return { doc: jest.fn(() => mockUserRef) };
+      if (path === "groupInvitations") return mockQuery;
+      return {};
+    });
+
+    const mockTransaction = {
+      update: jest.fn(),
+      get: jest.fn((ref: any) => ref.get()),
+      delete: jest.fn(),
+    };
+    mockRunTransaction.mockImplementation(async (fn: any) => fn(mockTransaction));
+
+    const result = await capturedFlowFn({
+      groupID: "group-1",
+      targetUserID: "target-user",
+    });
+
+    expect(result.result).toBe("OK");
+    expect(mockQuery.where).toHaveBeenCalledWith("groupID", "==", "group-1");
+    expect(mockQuery.where).toHaveBeenCalledWith(
+      "inviterUserID",
+      "==",
+      "target-user"
+    );
+    expect(mockQuery.where).toHaveBeenCalledWith("status", "==", "pending");
+    expect(mockTransaction.get).toHaveBeenCalledWith(mockQuery);
+    for (const ref of mockInvitationRefs) {
+      expect(mockTransaction.update).toHaveBeenCalledWith(
+        ref,
+        expect.objectContaining({
+          status: "expired",
+          serverUpdatedDateTime: "SERVER_TIMESTAMP",
+        })
+      );
+    }
   });
 });
