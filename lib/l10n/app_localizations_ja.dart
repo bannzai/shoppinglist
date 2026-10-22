@@ -700,6 +700,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get groupCategoryEditMatchingRegex => '正規表現';
 
   @override
+  String groupCategoryEditRegexTooComplex(int maxLength) {
+    return '複雑すぎる正規表現です。$maxLength文字以内にし、(a+)+ のような繰り返しの入れ子は使わないでください';
+  }
+
+  @override
   String get groupCreateTitle => 'グループ作成';
 
   @override

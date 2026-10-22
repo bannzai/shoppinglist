@@ -450,6 +450,13 @@
   "groupCategoryEditMatchingExact": "Exact match",
   "groupCategoryEditMatchingPartial": "Partial match",
   "groupCategoryEditMatchingRegex": "Regular expression",
+  "groupCategoryEditRegexTooComplex": "This regular expression is too complex. Use up to {maxLength} characters and avoid nested repetition such as (a+)+",
+  "@groupCategoryEditRegexTooComplex": {
+    "description": "キーワード追加ダイアログで、長すぎる・入れ子の繰り返しを含む正規表現を保存しようとした時に入力欄の下に出すエラー",
+    "placeholders": {
+      "maxLength": {"type": "int"}
+    }
+  },
 
   "groupCreateTitle": "Create a group",
   "@groupCreateTitle": {

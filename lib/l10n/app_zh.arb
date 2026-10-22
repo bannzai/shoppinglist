@@ -215,6 +215,7 @@
   "groupCategoryEditMatchingExact": "完全匹配",
   "groupCategoryEditMatchingPartial": "部分匹配",
   "groupCategoryEditMatchingRegex": "正则表达式",
+  "groupCategoryEditRegexTooComplex": "正则表达式过于复杂。请控制在{maxLength}个字符以内，并且不要使用 (a+)+ 这样的嵌套重复",
   "groupCreateTitle": "创建群组",
   "groupCreateIconLabel": "图标",
   "groupCreateSubmit": "创建",
