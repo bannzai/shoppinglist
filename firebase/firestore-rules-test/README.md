@@ -46,9 +46,11 @@ npm test
 2. **デバッグユーザーパターン**: `{uid}_debug_{数字}` は本人が操作可（`aiUsage` は 1 と同じく read のみ）。他人の debug user・数字でない suffix は拒否。
 3. **groupInvitations**: 認証済みでも read/write 全拒否（Functions Admin SDK 経由のみ）。
 4. **inquiries**: 認証済みでも read/write 全拒否（submitInquiry Function 経由のみ）。
-5. **groups 本体**: メンバーは read と、`ownerUserID` / `memberUserIDs` 以外の update が可。`ownerUserID` の変更と `memberUserIDs` の変更はオーナーを含めて拒否し、自分の uid だけを除く脱退のみ可。`ownerUserID` を持たないレガシーグループへの null の書き足しは変更とみなさない。delete はオーナーのみ可。create はクライアントから拒否（createGroup Function 経由のみ）。非メンバー・未認証は拒否。
+5. **groups 本体**: メンバーは read と、`ownerUserID` / `memberUserIDs` / `activeShoppingListCount` 以外の update が可。`ownerUserID` の変更と `memberUserIDs` の変更はオーナーを含めて拒否し、自分の uid だけを除く脱退のみ可。`ownerUserID` を持たないレガシーグループへの null の書き足しは変更とみなさない。買い物リスト数の上限判定に使う `activeShoppingListCount` の書き換えもメンバーでも拒否（updateActiveShoppingListCount Function 経由のみ）。delete はオーナーのみ可。create はクライアントから拒否（createGroup Function 経由のみ）。非メンバー・未認証は拒否。
 6. **groups/{id}/userProfiles・shoppingLocations**: メンバーは read/write 可。非メンバー・未認証は拒否。
 7. **groups/{id}/shoppingLists と items**: メンバーは read/write 可。非メンバーは拒否。
+   - 無料プランの上限（Issue #683）: `activeShoppingListCount` が 20 以上で、作成者もオーナーもプレミアムでない時は、active での作成と done / archived から active への変更を拒否。done / archived での作成、active なリストの更新・削除は上限に関係なく可。プレミアム状態は `users/{id}/premiumEntitlements` の写しで判定し、期限切れ・`isPremium: false`・同期 (`serverUpdatedDateTime`) から 1 日を過ぎた写しは無料扱い。
+   - `users/{id}/premiumEntitlements`: 本人は read のみ可、write は拒否（syncPremiumEntitlement Function 経由のみ）。他人は read/write 拒否。
 8. **groups/{id}/shoppingLists/{id}/receipts**: メンバーは read/create/update 可。**メンバーでも delete は拒否**。非メンバーは拒否。
 9. **groups/{id}/userCategoryAxes**: 現在のグループメンバーが所有する軸は取り込み用に read 可。所有者を `userID` で限定したクエリは許可し、限定しないクエリと削除済みメンバーの残存軸は拒否。create/update/delete は所有者（`userID` 一致）のみ可で、updateによる所有者変更も拒否。
 10. **userCategoryAxes/{id}/categories**: 9 と同じく現在のグループメンバーが所有し、親軸が存在して所有者も一致するカテゴリは read 可。所有者を限定しないクエリ、削除済みメンバーの残存カテゴリ、親軸削除後の残存カテゴリは拒否し、write は所有者のみ可。

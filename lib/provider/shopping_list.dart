@@ -8,6 +8,7 @@ import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 
 part 'shopping_list.g.dart';
@@ -90,7 +91,14 @@ class ShoppingListAdd {
   final GroupDatabase database;
   final IsPremiumResolver isPremiumResolver;
 
-  ShoppingListAdd({required this.database, required this.isPremiumResolver});
+  /// firestore.rules が上限判定に読むプレミアム状態の写しを RevenueCat から更新する。
+  final Future<void> Function() premiumEntitlementSyncer;
+
+  ShoppingListAdd({
+    required this.database,
+    required this.isPremiumResolver,
+    required this.premiumEntitlementSyncer,
+  });
 
   Future<GroupShoppingList> call({
     required String createUserID,
@@ -125,10 +133,38 @@ class ShoppingListAdd {
       shoppingLocationID: shoppingLocationID,
       duplicatedFromGroupShoppingListID: duplicatedFromGroupShoppingListID,
     );
-    await docRef.set(shoppingList, SetOptions(merge: true));
-    return shoppingList;
+    // firestore.rules の上限判定が読む値は Functions が書き込みの後に更新するため、直前の
+    // 変化に追いついていない間は、上限内の作成も permission-denied になり得る (Issue #683)。
+    // プレミアムは購入直後の写しの同期を待ち、無料はリスト削除後の件数の数え直しを待ってから
+    // 書き直す。同じ docRef への同じ内容の set なので冪等。
+    for (var retryCount = 0; ; retryCount += 1) {
+      try {
+        await docRef.set(shoppingList, SetOptions(merge: true));
+        return shoppingList;
+      } on FirebaseException catch (error) {
+        if (error.code != 'permission-denied' ||
+            retryCount >= _shoppingListAddPermissionDeniedRetryLimit) {
+          rethrow;
+        }
+        if (isPremiumResolver()) {
+          await premiumEntitlementSyncer();
+        } else {
+          await Future<void>.delayed(
+            _shoppingListAddPermissionDeniedRetryDelay,
+          );
+        }
+      }
+    }
   }
 }
+
+/// ShoppingListAdd が permission-denied で書き直す上限回数。
+/// updateActiveShoppingListCount の数え直しはトリガーの起動を含めて数秒で終わるため、
+/// 1 秒間隔で 3 回待てば追いつく。それでも拒否されるなら本当に上限を超えているとみなす。
+const _shoppingListAddPermissionDeniedRetryLimit = 3;
+
+/// 無料ユーザーの作成が permission-denied になった時に、件数の数え直しを待つ間隔。
+const _shoppingListAddPermissionDeniedRetryDelay = Duration(seconds: 1);
 
 @Riverpod(dependencies: [groupDatabase])
 ShoppingListAdd shoppingListAdd(Ref ref, {required String groupID}) {
@@ -141,6 +177,8 @@ ShoppingListAdd shoppingListAdd(Ref ref, {required String groupID}) {
   return ShoppingListAdd(
     database: database,
     isPremiumResolver: () => isPremium,
+    // tear-off にすると provider の生成時に FirebaseFunctions を初期化するため、呼ぶ時まで遅らせる。
+    premiumEntitlementSyncer: () => functions.syncPremiumEntitlement(),
   );
 }
 

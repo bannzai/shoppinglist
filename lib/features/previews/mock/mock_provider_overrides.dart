@@ -33,6 +33,7 @@ class _NoOpShoppingListAdd extends ShoppingListAdd {
     : super(
         database: GroupDatabase(groupID: mockGroupID),
         isPremiumResolver: () => false,
+        premiumEntitlementSyncer: () async {},
       );
 
   @override
