@@ -40,6 +40,11 @@ on:
         required: false
         type: boolean
         default: false
+      force:
+        description: 'firebase deploy に --force を付ける。retry (failure policy) を有効にした関数を初めて出す時など、CLI が確認を求めて止まる時に使う。deploy_all と併用するとソースに無い関数も確認なしで削除する'
+        required: false
+        type: boolean
+        default: false
 
 # 半端な状態を避けるため、デプロイは同時に1本だけ実行する(実行中はキャンセルせず待機させる)。
 concurrency:
@@ -112,13 +117,19 @@ jobs:
         env:
           DEPLOY_ALL: ${{ inputs.deploy_all }}
           DEPLOY_FUNCTIONS: ${{ inputs.functions }}
+          DEPLOY_FORCE: ${{ inputs.force }}
           PROJECT_ID: ${{ steps.resolve.outputs.project_id }}
         # --project で .firebaserc の alias(dev/prod)を明示。firebase.json の predeploy で lint + build。
+        # CI では確認に答えられないため、確認を求める変更 (failure policy の追加等) は force=true で通す。
         run: |
+          FORCE_OPTION=()
+          if [ "$DEPLOY_FORCE" = "true" ]; then
+            FORCE_OPTION=(--force)
+          fi
           if [ "$DEPLOY_ALL" = "true" ]; then
-            firebase deploy --only functions --project "$PROJECT_ID"
+            firebase deploy --only functions --project "$PROJECT_ID" "${FORCE_OPTION[@]}"
           elif [ -n "$DEPLOY_FUNCTIONS" ]; then
-            firebase deploy --only "$DEPLOY_FUNCTIONS" --project "$PROJECT_ID"
+            firebase deploy --only "$DEPLOY_FUNCTIONS" --project "$PROJECT_ID" "${FORCE_OPTION[@]}"
           else
             echo "::error::deploy_all=false のときは functions に対象(例: functions:createGroup)を指定してください"
             exit 1
