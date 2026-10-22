@@ -14,7 +14,7 @@ iOS・Android 2台のデバイスでMaestro E2Eテストを実行する方式に
 
 1. **デバッグユーザーID**: `{実UID}_debug_1` 形式のIDでFirestoreにドキュメントを作成
 2. **Firestoreセキュリティルール**: `isDebugUserOf()` ヘルパーで `{uid}_debug_[0-9]+` パターンをマッチ。実ユーザーがデバッグユーザーのドキュメントを読み書きできる
-3. **グループ参加**: デバッグユーザーIDをグループの `memberUserIDs` に追加。既存の `isGroupMember()` ルールで共有リソースにアクセス可能
+3. **グループ参加**: デバッグユーザーIDをグループの `memberUserIDs` に追加。既存の `isGroupMember()` ルールで共有リソースにアクセス可能。`memberUserIDs` は firestore.rules がクライアントからの書き換えを拒否するため、開発者限定の Function `updateDebugUserGroupMembership`（呼び出し元本人の `{uid}_debug_{数字}` のみ追加・除去できる）を経由する（Issue #676）
 4. **アイテム追加**: 既存の `AddShoppingListItem` を再利用し、`userID` にデバッグユーザーIDを指定
 5. **カテゴリ設定作成**: カテゴリ共有E2E用に、デバッグユーザー所有の「デバッグ売り場 / 共有野菜」を決定的IDで作成
 

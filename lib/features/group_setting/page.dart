@@ -93,9 +93,6 @@ class _GroupSettingBody extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUserID = ref.watch(currentUserIDProvider);
-    final groupNameUpdate = ref.watch(
-      groupNameUpdateProvider(groupID: groupID),
-    );
     final isOwner =
         group.ownerUserID != null && group.ownerUserID == currentUserID;
     final groupNameController = useTextEditingController(
@@ -145,7 +142,10 @@ class _GroupSettingBody extends HookConsumerWidget {
                                     newName == (group.name ?? '')) {
                                   return;
                                 }
-                                groupNameUpdate.call(name: newName);
+                                functions.updateGroupName(
+                                  groupID: groupID,
+                                  name: newName,
+                                );
                               },
                     ),
                   ),
@@ -291,7 +291,8 @@ class _GroupSettingBody extends HookConsumerWidget {
                                 isCreatingInvitation.value = true;
                                 try {
                                   if (inputGroupName != (group.name ?? '')) {
-                                    await groupNameUpdate.call(
+                                    await functions.updateGroupName(
+                                      groupID: groupID,
                                       name: inputGroupName,
                                     );
                                   }

@@ -16,6 +16,8 @@ const {
   setDoc,
   updateDoc,
   where,
+  arrayRemove,
+  arrayUnion,
 } = require('firebase/firestore');
 
 // demo- 接頭辞により Emulator が demo モード (実プロジェクト不要) で動作する。
@@ -75,6 +77,7 @@ beforeEach(async () => {
   await testEnv.clearFirestore();
   await seed('groups/g1', {
     id: 'g1',
+    ownerUserID: 'alice',
     memberUserIDs: ['alice', 'bob'],
     name: 'テストグループ',
   });
@@ -174,10 +177,79 @@ describe('inquiries（クライアント直アクセス全拒否）', () => {
 
 // 5. groups 本体
 describe('groups 本体', () => {
-  test('メンバー alice は read/update/delete できる', async () => {
-    const d = db('alice');
+  test('メンバー bob は read と name の update ができる', async () => {
+    const d = db('bob');
     await assertSucceeds(getDoc(doc(d, 'groups/g1')));
     await assertSucceeds(updateDoc(doc(d, 'groups/g1'), { name: '更新' }));
+  });
+
+  test('同じ ownerUserID / memberUserIDs を含む Group 全体の set merge は通る', async () => {
+    const d = db('bob');
+    await assertSucceeds(
+      setDoc(
+        doc(d, 'groups/g1'),
+        { id: 'g1', ownerUserID: 'alice', memberUserIDs: ['alice', 'bob'], name: '更新' },
+        { merge: true }
+      )
+    );
+  });
+
+  test('ownerUserID を持たないレガシーグループに ownerUserID: null を含めて set merge できる', async () => {
+    await seed('groups/g1', { id: 'g1', memberUserIDs: ['alice', 'bob'], name: 'テストグループ' });
+    const d = db('bob');
+    await assertSucceeds(
+      setDoc(
+        doc(d, 'groups/g1'),
+        { id: 'g1', ownerUserID: null, memberUserIDs: ['alice', 'bob'], name: '更新' },
+        { merge: true }
+      )
+    );
+  });
+
+  test('非オーナー bob は ownerUserID を自分・null に変更できない', async () => {
+    const d = db('bob');
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { ownerUserID: 'bob' }));
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { ownerUserID: null }));
+  });
+
+  test('レガシーグループで非オーナー bob が ownerUserID を自分に設定できない', async () => {
+    await seed('groups/g1', { id: 'g1', memberUserIDs: ['alice', 'bob'], name: 'テストグループ' });
+    const d = db('bob');
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { ownerUserID: 'bob' }));
+  });
+
+  test('非オーナー bob は他のメンバーの除去・部外者の追加をできない', async () => {
+    const d = db('bob');
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { memberUserIDs: arrayRemove('alice') }));
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { memberUserIDs: arrayUnion('charlie') }));
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { memberUserIDs: ['bob'] }));
+  });
+
+  test('オーナー alice も memberUserIDs に部外者を追加できない', async () => {
+    const d = db('alice');
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { memberUserIDs: arrayUnion('charlie') }));
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { memberUserIDs: arrayRemove('bob') }));
+  });
+
+  test('自分の脱退（自分の uid だけを arrayRemove）は通る', async () => {
+    const d = db('bob');
+    await assertSucceeds(updateDoc(doc(d, 'groups/g1'), { memberUserIDs: arrayRemove('bob') }));
+  });
+
+  test('自分の脱退と同時に ownerUserID を変えることはできない', async () => {
+    const d = db('bob');
+    await assertFails(
+      updateDoc(doc(d, 'groups/g1'), { memberUserIDs: arrayRemove('bob'), ownerUserID: 'bob' })
+    );
+  });
+
+  test('非オーナー bob は delete できない', async () => {
+    const d = db('bob');
+    await assertFails(deleteDoc(doc(d, 'groups/g1')));
+  });
+
+  test('オーナー alice は delete できる', async () => {
+    const d = db('alice');
     await assertSucceeds(deleteDoc(doc(d, 'groups/g1')));
   });
 
