@@ -27,10 +27,15 @@ service cloud.firestore {
 
     // userID のプレミアム状態を、syncPremiumEntitlement Function が RevenueCat から書き写した
     // users/{userID}/premiumEntitlements の文書で判定する。expiresDateTime が null は無期限。
+    // 写しは 1 日で失効させる。返金などで RevenueCat の権利が取り消されても、同期を止めた
+    // クライアントの写しが有効なまま残らないようにするため。アプリはフォアグラウンドのたびに同期し、
+    // 拒否された作成も同期してから書き直すので、使っているプレミアム会員の写しは常に新しい。
     function isPremiumUser(userID) {
       let premiumEntitlementPath = /databases/$(database)/documents/users/$(userID)/premiumEntitlements/$('PremiumEntitlement_users_' + userID);
       return exists(premiumEntitlementPath)
         && get(premiumEntitlementPath).data.get('isPremium', false) == true
+        && get(premiumEntitlementPath).data.get('serverUpdatedDateTime', null) != null
+        && get(premiumEntitlementPath).data.serverUpdatedDateTime > request.time - duration.value(1, 'd')
         && (get(premiumEntitlementPath).data.get('expiresDateTime', null) == null
           || get(premiumEntitlementPath).data.expiresDateTime > request.time);
     }

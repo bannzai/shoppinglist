@@ -370,13 +370,30 @@ describe('groups/{id}/shoppingLists の無料プラン上限', () => {
   }
 
   // syncPremiumEntitlement Function が書く形でプレミアム状態の写しを seed する。
-  async function seedPremiumEntitlement(userID, { isPremium, expiresDateTime }) {
+  // serverUpdatedDateTime は同期した日時で、既定は今 (rules の 1 日の再検証期限内)。
+  async function seedPremiumEntitlement(
+    userID,
+    { isPremium, expiresDateTime, serverUpdatedDateTime = Timestamp.now() }
+  ) {
     await seed(`users/${userID}/premiumEntitlements/PremiumEntitlement_users_${userID}`, {
       userID,
       isPremium,
       expiresDateTime,
+      serverUpdatedDateTime,
     });
   }
+
+  test('同期から 1 日を過ぎた写しは無料として扱う（返金後に同期を止めたクライアント対策）', async () => {
+    await seedGroup(FREE_LIMIT);
+    await seedPremiumEntitlement('alice', {
+      isPremium: true,
+      expiresDateTime: null,
+      serverUpdatedDateTime: Timestamp.fromMillis(Date.now() - 2 * ONE_DAY_MILLISECONDS),
+    });
+    await assertFails(
+      setDoc(doc(db('alice'), 'groups/g1/shoppingLists/new'), { status: 'active' })
+    );
+  });
 
   test('上限未満なら無料ユーザーも active なリストを作成できる', async () => {
     await seedGroup(FREE_LIMIT - 1);
