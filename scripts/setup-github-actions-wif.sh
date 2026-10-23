@@ -5,8 +5,8 @@
 # 交換できるようにする(Issue #694。手本: bannzai/Alarmify documents/functions-deploy.md)。
 #
 # 使い方(IAM の変更を含むため owner の認証情報で実行する):
-#   with-gcloud-owner bash scripts/setup-github-actions-wif.sh          # dev と prod の両方
-#   with-gcloud-owner bash scripts/setup-github-actions-wif.sh dev      # 片方だけ
+#   bash scripts/setup-github-actions-wif.sh          # dev と prod の両方
+#   bash scripts/setup-github-actions-wif.sh dev      # 片方だけ
 #
 # 冪等: Pool / Provider は存在すれば作らず、Provider の条件は毎回同じ値に更新する。binding の追加は重複しない。
 

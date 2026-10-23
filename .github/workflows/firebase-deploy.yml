@@ -16,7 +16,7 @@ name: firebase-deploy
 # 1. dev/prod それぞれにデプロイ専用 SA を用意し gen2 デプロイに必要な IAM 権限を付与する。
 #    → firebase-functions-deploy-iam-setup スキルで診断・付与できる。
 # 2. Workload Identity Pool / Provider と SA への binding を作る(冪等):
-#      with-gcloud-owner bash scripts/setup-github-actions-wif.sh
+#      bash scripts/setup-github-actions-wif.sh   # owner の認証情報で実行する
 # 3. GitHub の Environments(dev / prod)を作成する。Secret の登録は不要。
 # 4. APP_ENV は deploy 対象 project(dev/prod) から導出するため Variable は不要(.env.<projectId> を CI で生成)。
 
