@@ -20,7 +20,7 @@ Maps キーの名前は `GOOGLE_MAPS_API_KEY_IOS_DEV` / `GOOGLE_MAPS_API_KEY_IOS
 gcloud secrets versions access latest --secret=google-maps-sdk-ios-apikey --project=shoppinglist-dev-b2787 | secchain set GOOGLE_MAPS_API_KEY_IOS_DEV
 ```
 
-`make secret` を通さないビルドでも地図以外は動く (Maps キーが空になり地図だけ描画されない)。
+`make secret` を通さないと Maps キーが空になり、ビルドは通るが地図ピッカー (グループ設定 → 買い物場所 → 場所を選ぶ) を開いた時に iOS は Maps SDK 未初期化で落ちる。Firebase の設定ファイルと同じく、起動前に必ず通す。
 
 ## Getting Started
 

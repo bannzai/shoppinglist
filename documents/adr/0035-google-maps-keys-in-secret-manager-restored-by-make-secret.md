@@ -20,7 +20,7 @@ Maps SDK for iOS / Android のキーは native SDK が Info.plist (`GMSApiKey`) 
 - prod のキーは Maps SDK for iOS / Android 専用に新規作成し、アプリ制限 (iOS = bundleId `com.bannzai.shoppinglist`、Android = package + Firebase に登録済みの SHA-1) と API 制限 (`maps-ios-backend` / `mapsios`、`maps-android-backend` / `mapsandroid`) を掛ける。prod で Maps SDK for iOS / Android の API を有効化する (ネイティブ SDK の地図表示は Maps SDK SKU として無料。出典: https://developers.google.com/maps/billing-and-pricing/faq )
 
 ### 2. リポジトリには値を置かず、`make secret` がローカルファイルへ書き出す
-- `scripts/google-maps-secret.sh` が環境変数 `GOOGLE_MAPS_API_KEY_IOS_DEV` / `_IOS_PROD` / `_ANDROID_DEV` / `_ANDROID_PROD` から、gitignore 済みの `ios/Flutter/GoogleMaps.xcconfig` と `android/google-maps.properties` を書き出す。未設定は空で書き、ビルドは通る (地図は描画されない)
+- `scripts/google-maps-secret.sh` が環境変数 `GOOGLE_MAPS_API_KEY_IOS_DEV` / `_IOS_PROD` / `_ANDROID_DEV` / `_ANDROID_PROD` から、gitignore 済みの `ios/Flutter/GoogleMaps.xcconfig` と `android/google-maps.properties` を書き出す。未設定は空で書き、ビルドは通る (PR の lint / test の CI が認証なしで通るため)。空のまま起動すると iOS は `AppDelegate` が `GMSServices.provideAPIKey` を呼ばず地図ピッカーで落ちるので、`make secret` は Firebase の設定ファイルと同じく起動の前提とし、Dart 側に未設定の表示経路は足さない
 - `Debug.xcconfig` / `Release.xcconfig` は `#include? "GoogleMaps.xcconfig"` の上で `GOOGLE_MAPS_API_KEY = $(GOOGLE_MAPS_API_KEY_IOS_DEV|PROD)` を定義し、`build.gradle` は `google-maps.properties` を `getProperty(名前, "")` で読む。Debug = dev / Release (+Profile) = prod の切替は ADR 0030 のまま
 
 ### 3. CI は WIF で Secret Manager から取り出す
@@ -35,6 +35,6 @@ Maps SDK for iOS / Android のキーは native SDK が Info.plist (`GMSApiKey`) 
 ## Consequences
 - リポジトリと履歴 (今回以降) に Maps キーが入らず、public 化と secret scanning の障害にならない。過去のコミットに残る旧キーは、アプリ制限付き (dev) または Firebase の自動生成キー (prod) で、公開しても使い道が無い
 - 値のローテーションは Secret Manager の version 追加と CI の再実行で済み、コード変更を伴わない。誰がいつ読んだかは Secret Manager の Data Access 監査ログ (`DATA_READ`、両プロジェクトで有効) に残る
-- `make secret` を通さないビルドでは地図が描画されない。ローカルの初回セットアップに `secchain run -- make secret` が増える
+- `make secret` を通さないビルドは地図ピッカーで落ちる (iOS)。ローカルの初回セットアップに `secchain run -- make secret` が増える
 - `flutter-deploy.yml` が GitHub Environment `prod` に紐づく。Environment の保護ルールは無いため挙動は変わらないが、feature ブランチの改変した workflow から prod の SA を借りられる経路は Issue #694 と同じく残る (Environment のデプロイブランチ制限は別途)
 - 同じ仕組みに `FIREBASE_BASE64_*` / `REVENUE_CAT_PUBLIC_API_KEY` 等の他のアプリ内 secret を載せ替えられるが、本 ADR の範囲は Maps キーだけ
