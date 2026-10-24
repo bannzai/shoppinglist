@@ -1,0 +1,156 @@
+# iOS Simulator セッションを張る caller workflow。実体は bannzai/simtunnel の session.yml（reusable workflow）。
+# 参照: https://github.com/bannzai/simtunnel の PROJECT.md「各アプリ repo での実行」
+# 使い方は AGENTS.md「テスト方針」の「動作確認 (UI・挙動)」
+name: simulator-session
+# run-name は local/simtunnel CLI が run を特定するキーのためこの形式を維持する
+run-name: "session=${{ inputs.session }} device=${{ inputs.device }}"
+
+on:
+  workflow_dispatch: # fork PR に Secrets を渡さないため workflow_dispatch のみ
+    # session / device / duration_minutes は local/simtunnel の up が常に送るため宣言必須
+    # （未定義の input を送ると dispatch が拒否される）
+    inputs:
+      session:
+        description: "セッション名。tailnet ホスト名 simtunnel-<session> になる（小文字英数字とハイフンのみ）"
+        required: true
+        default: shoppinglist
+      device:
+        description: "Simulator のデバイス名"
+        required: true
+        default: iPhone 17
+      duration_minutes:
+        description: "セッション維持時間（分）"
+        required: true
+        default: "60"
+      serve_sim:
+        description: "serve-sim (ブラウザ preview) を起動する。runner のメモリに余裕を持たせたい時は false"
+        required: false
+        default: "true"
+
+jobs:
+  # dev (shoppinglist-dev-b2787) に接続する Simulator 用 .app (debug) をビルドして artifact に上げる。
+  # Debug configuration = dev の識別子 (ios/Flutter/Debug.xcconfig) のため、Firebase 設定・Maps キーも dev の値を使う。
+  # artifact は public リポジトリの誰でも取得できるため、開発者トークン (SHOPPINGLIST_DEVELOPER_TOKEN) のような
+  # 認可に使う値は埋め込まない (開発者オプションのうち Functions の開発者判定を要する操作は simtunnel では使えない)
+  build:
+    runs-on: macos-26
+    timeout-minutes: 40
+    # Google Maps の dev キーを Secret Manager から取るため、flutter-deploy と同じ Workload Identity Federation (ADR 0035) で
+    # dev の deployer SA を借りる。Provider は environment claim == 'dev' のトークンだけを通すので GitHub Environment dev で動かす
+    environment: dev
+    permissions:
+      id-token: write # GCP の Workload Identity Federation 認証に必要
+      contents: read
+    # `make secret` が復元するアプリ内シークレット。FIREBASE_BASE64_IOS は flutter-deploy と違い dev の値 (ADR 0030)。
+    # Android の設定は iOS の Simulator ビルドでは使わないが、`make secret` が常に書き出すため同じ変数名で渡す
+    env:
+      FIREBASE_BASE64_IOS: ${{ secrets.FIREBASE_BASE64_IOS_DEV }}
+      FIREBASE_BASE64_ANDROID: ${{ secrets.FIREBASE_BASE64_ANDROID }}
+      REVENUE_CAT_PUBLIC_API_KEY: ${{ secrets.REVENUE_CAT_PUBLIC_API_KEY }}
+      IOS_ADMOB_NATIVE_ADVANCE_IDENTIFIER: ${{ secrets.IOS_ADMOB_NATIVE_ADVANCE_IDENTIFIER }}
+      ANDROID_ADMOB_NATIVE_ADVANCE_IDENTIFIER: ${{ secrets.ANDROID_ADMOB_NATIVE_ADVANCE_IDENTIFIER }}
+      IOS_ADMOB_BANNER_IDENTIFIER: ${{ secrets.IOS_ADMOB_BANNER_IDENTIFIER }}
+      ANDROID_ADMOB_BANNER_IDENTIFIER: ${{ secrets.ANDROID_ADMOB_BANNER_IDENTIFIER }}
+    steps:
+      # simtunnel 経路の workflow は uses を commit SHA で固定する（simtunnel PROJECT.md「リポジトリ公開に耐える安全性」）
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1.7.0
+        with:
+          xcode-version: latest-stable
+
+      - uses: subosito/flutter-action@fd55f4c5af5b953cc57a2be44cb082c8f6635e8e # v2.21.0
+        with:
+          channel: stable
+          flutter-version: '3.44.9'
+
+      # 資格情報ファイルは $GITHUB_WORKSPACE 直下にできるため、ビルド成果物 (.app) には含まれない
+      - name: Authenticate to GCP (dev)
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: projects/764733922439/locations/global/workloadIdentityPools/github/providers/shoppinglist
+          service_account: github-firebase-deployer@shoppinglist-dev-b2787.iam.gserviceaccount.com
+
+      # Secret Manager の値を環境変数に取り出す (make secret の scripts/google-maps-secret.sh が読む)
+      - name: Fetch app secrets from Secret Manager (dev)
+        uses: google-github-actions/get-secretmanager-secrets@bc9c54b29fdffb8a47776820a7d26e77b379d262 # v3.0.0
+        with:
+          export_to_environment: true
+          secrets: |-
+            GOOGLE_MAPS_API_KEY_IOS_DEV:shoppinglist-dev-b2787/google-maps-sdk-ios-apikey
+
+      # 任意のブランチを dispatch できる workflow のため、auth が書いた資格情報ファイル (OIDC トークンを含む) を
+      # secret の取り出し直後に消し、参照する環境変数を空にして、以降の pub get / pod install / flutter build が
+      # 動かす依存パッケージのスクリプトが残った資格情報を拾えないようにする。同じ job に id-token: write が残るため
+      # OIDC トークンの取り直しは防げない。借りる SA を読み取り専用に分ける対処は #711
+      - name: Discard GCP credentials before build
+        run: |
+          rm -f "$GITHUB_WORKSPACE"/gha-creds-*.json
+          for name in GOOGLE_APPLICATION_CREDENTIALS CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE GOOGLE_GHA_CREDS_PATH; do
+            echo "$name=" >> "$GITHUB_ENV"
+          done
+
+      # アプリ内シークレットを復元（GoogleService-Info.plist / lib/secret/secret.dart / GoogleMaps.xcconfig など）
+      - name: Restore app secrets
+        run: make secret
+
+      # dev の Firebase 設定や RevenueCat の Test Store キーが空のまま進むと、ビルドは通りアプリが起動時に落ちて原因が分かりにくいため、ここで止める
+      # (debug ビルドは REVENUECAT_TEST_STORE_API_KEY が空だと lib/utils/purchase/purchase.dart の assert で落ちる)
+      - name: Verify dev secrets
+        env:
+          REVENUECAT_TEST_STORE_API_KEY: ${{ secrets.REVENUECAT_TEST_STORE_API_KEY }}
+        run: |
+          if [ ! -s ios/Firebase/GoogleService-Info.plist ]; then
+            echo "::error::Secrets の FIREBASE_BASE64_IOS_DEV が未登録か空です (dev の GoogleService-Info.plist を base64 にした値を登録してください)"
+            exit 1
+          fi
+          bundle_id=$(/usr/libexec/PlistBuddy -c "Print :BUNDLE_ID" ios/Firebase/GoogleService-Info.plist)
+          if [ "$bundle_id" != "com.bannzai.shoppinglist.dev" ]; then
+            echo "::error::GoogleService-Info.plist の BUNDLE_ID が $bundle_id です。Debug configuration (ios/Flutter/Debug.xcconfig) の dev の bundle ID と一致する dev の plist を FIREBASE_BASE64_IOS_DEV に登録してください"
+            exit 1
+          fi
+          if [ -z "$REVENUECAT_TEST_STORE_API_KEY" ]; then
+            echo "::error::Secrets の REVENUECAT_TEST_STORE_API_KEY が未登録か空です (手元の .envrc / SecChain と同じ RevenueCat Test Store の公開 SDK キーを登録してください)"
+            exit 1
+          fi
+
+      - run: flutter pub get
+
+      # ios/.symlinks を .flutter-plugins-dependencies から再生成する（理由はスクリプト冒頭。flutter-deploy と同じ手順）
+      - name: Link iOS plugin symlinks
+        run: python3 ios/scripts/link_plugin_symlinks.py
+
+      # dart-define は Makefile の ios ターゲット・.vscode/launch.json の shoppinglist(dev) のうち、クライアント埋め込み前提の
+      # 公開 SDK キーだけを渡す (SHOPPINGLIST_DEVELOPER_TOKEN は上記のとおり渡さない)
+      - name: Build simulator app
+        env:
+          REVENUECAT_TEST_STORE_API_KEY: ${{ secrets.REVENUECAT_TEST_STORE_API_KEY }}
+        run: |
+          flutter build ios --simulator --debug \
+            --dart-define=REVENUECAT_TEST_STORE_API_KEY="$REVENUECAT_TEST_STORE_API_KEY"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: simulator-app
+          path: build/ios/iphonesimulator # .app の親ディレクトリ（.app 直指定は中身が flatten される）
+          retention-days: 1 # 同じ run の session job が使うだけ。public リポジトリでは誰でも取得できるため最短で消す
+
+  session:
+    needs: build
+    # id-token: write が必要なのは reusable workflow を呼ぶこの job だけのため、job 単位で最小権限にする
+    permissions:
+      id-token: write # Tailscale の OIDC (workload identity federation) 認証に必要
+      contents: read
+    # タグ運用はしないため main の commit SHA で固定する（更新時は SHA を書き換える）
+    uses: bannzai/simtunnel/.github/workflows/session.yml@841306c15b0e59e718f9a4bf2d0527bf5a246d61 # main 2026-10-22
+    with:
+      session: ${{ inputs.session }}
+      device: ${{ inputs.device }}
+      duration_minutes: ${{ inputs.duration_minutes }}
+      serve_sim: ${{ inputs.serve_sim }}
+      app_artifact: simulator-app
+    secrets:
+      TS_OIDC_CLIENT_ID: ${{ secrets.TS_OIDC_CLIENT_ID }}
+      TS_OIDC_AUDIENCE: ${{ secrets.TS_OIDC_AUDIENCE }}
