@@ -54,6 +54,14 @@ firebase/.secret/
 # iOS のローカルシークレット（APIキー実値）
 ios/Flutter/Secret.xcconfig
 
+# make secret (scripts/google-maps-secret.sh) が書き出す Google Maps クライアントキー (ADR 0035)
+ios/Flutter/GoogleMaps.xcconfig
+android/google-maps.properties
+
+# Functions の .env (値は Secret Manager / SecChain が正。global gitignore だけに頼らない)
+firebase/functions/.env
+firebase/functions/.env.*
+
 maestro/screenshots/
 maestro/test-results/
 screenshots/
