@@ -18,10 +18,11 @@ import 'package:flutter/foundation.dart';
 /// release ビルドのプロバイダがトークンを取得できるのは、Firebase 側に次が揃った時だけ:
 /// - DeviceCheck: Apple Developer で DeviceCheck を有効にした key (.p8) の Key ID と秘密鍵を、
 ///   App Check REST の `projects/<番号>/apps/<iOS アプリ ID>/deviceCheckConfig` に PATCH で登録する
-///   (`updateMask=keyId,privateKey`)。Firebase の iOS アプリに Team ID も要る
+///   (`updateMask=keyId,privateKey`)
 /// - Play Integrity: Play Console の「App integrity」で同じ Firebase プロジェクトを Cloud project として
 ///   リンクし、Firebase の Android アプリに配布用署名証明書の SHA-256 を登録する
-/// debug プロバイダは、端末が出したデバッグトークンを各 Firebase プロジェクトの `debugTokens` に登録した時だけ検証を通る。
+/// debug プロバイダは、端末が出したデバッグトークンを App Check REST の
+/// `projects/<番号>/apps/<アプリ ID>/debugTokens` に登録した時だけ検証を通る。
 /// 強制適用 (App Check REST の `services`) を有効にするまでは、トークンが無くてもリクエストは拒否されない。
 ///
 /// App Check のトークン添付は isolate ごとの設定のため、main() だけでなく
