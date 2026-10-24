@@ -33,9 +33,9 @@ const ShoppingListItemsSchema = z.object({
 
 const googleAIApiKey = defineSecret("GOOGLE_GENAI_API_KEY");
 
-/** URL解析に使うモデル。環境変数で切り替え可能。 */
+/** URL解析に使うモデル。環境変数で切り替え可能。既定値の根拠は utils/genkit.ts のコメント。 */
 const urlRecognitionModel =
-  process.env.URL_RECOGNITION_MODEL ?? "googleai/gemini-2.5-flash";
+  process.env.URL_RECOGNITION_MODEL ?? "googleai/gemini-3.1-flash-lite";
 
 /** URLの最大文字数。 */
 const maxURLLength = 2048;

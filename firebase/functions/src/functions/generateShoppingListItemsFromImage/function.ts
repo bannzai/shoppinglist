@@ -237,12 +237,15 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
     const genAI = new GoogleGenerativeAI(apiKey);
     const fileManager = new GoogleAIFileManager(apiKey);
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
+      // モデル選定の根拠は utils/genkit.ts のコメント。
+      model: "gemini-3.1-flash-lite",
     });
     // gemini-2.0-flash 提供終了に伴い gemini-2.5-flash へ移行した（2026-06）。
-    // 2.5 系は thinking がデフォルト ON で、thinking トークンが maxOutputTokens を
-    // 消費し、function call が args 空（{}）の状態で返る事象が発生する。
-    // thinkingBudget: 0 で thinking を無効化し、出力トークンを抽出結果に充てる。
+    // 2.5 Flash は thinking がデフォルト ON で、thinking トークンが maxOutputTokens を
+    // 消費し、function call が args 空（{}）の状態で返る事象が発生した。
+    // gemini-3.1-flash-lite は既定の呼び出しで thinking トークンを消費しなかった
+    // (2026-10-24 実測) が、既定の変更に左右されないよう thinkingBudget: 0 で
+    // thinking の無効化を明示し、出力トークンを抽出結果に充てる。
     // 旧 SDK(@google/generative-ai 0.24) の GenerationConfig 型には thinkingConfig が
     // 無いが、generationConfig は REST API へ素通しで転送されるため実行時に有効。
     const generationConfig = {

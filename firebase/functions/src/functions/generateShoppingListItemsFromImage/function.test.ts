@@ -96,11 +96,11 @@ const mockStartChat = jest.fn().mockResolvedValue({
   sendMessage: mockSendMessage,
 });
 
+const mockGetGenerativeModel = jest.fn();
+
 jest.mock("@google/generative-ai", () => ({
   GoogleGenerativeAI: jest.fn().mockImplementation(() => ({
-    getGenerativeModel: jest.fn().mockReturnValue({
-      startChat: mockStartChat,
-    }),
+    getGenerativeModel: (...args: unknown[]) => mockGetGenerativeModel(...args),
   })),
   SchemaType: { OBJECT: "OBJECT", ARRAY: "ARRAY", STRING: "STRING" },
 }));
@@ -196,6 +196,7 @@ function setupUsageTransaction() {
 describe("generateShoppingListItemsFromImage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetGenerativeModel.mockReturnValue({ startChat: mockStartChat });
     // デフォルト: Geminiから正常レスポンスを返す
     mockSendMessage.mockResolvedValue({
       response: {
@@ -237,6 +238,9 @@ describe("generateShoppingListItemsFromImage", () => {
       })
     );
     expect(txSet).not.toHaveBeenCalled();
+    expect(mockGetGenerativeModel).toHaveBeenCalledWith({
+      model: "gemini-3.1-flash-lite",
+    });
   });
 
   test("正常系: AI利用回数が新規作成される（ドキュメント未存在）", async () => {

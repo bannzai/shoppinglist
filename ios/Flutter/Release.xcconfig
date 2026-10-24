@@ -8,8 +8,12 @@ APP_GROUP_ID = group.com.bannzai.shoppinglist
 KEYCHAIN_ACCESS_GROUP = com.bannzai.shoppinglist
 
 // Google Maps クライアントキー(prod)。Info.plist の GMSApiKey=$(GOOGLE_MAPS_API_KEY) が参照。
-// クライアント埋め込み前提の公開情報のため直書き。GCP 側でアプリ制限(bundleId)+API制限(Maps SDK for iOS)を必須とする。
-GOOGLE_MAPS_API_KEY = AIzaSyDhdAhZIgKuIwjsQesJTlayEWnjXx-fvcI
+// 値は GCP Secret Manager (shoppinglist-prod-857bb の google-maps-sdk-ios-apikey) が正で、リポジトリには置かない。
+// `make secret` が gitignore 済みの GoogleMaps.xcconfig に GOOGLE_MAPS_API_KEY_IOS_DEV / _PROD を書き出す(ADR 0035)。
+// ファイルが無い時は空になりビルドは通るが、AppDelegate が GMSServices.provideAPIKey を呼ばず、
+// 地図ピッカーを開くと SDK 未初期化で落ちる。GoogleService-Info.plist と同じく make secret は起動の前提。
+#include? "GoogleMaps.xcconfig"
+GOOGLE_MAPS_API_KEY = $(GOOGLE_MAPS_API_KEY_IOS_PROD)
 
 // Google Sign-In OAuth クライアント(prod, Issue #504)。dev/prod で Firebase プロジェクトが異なり
 // OAuth クライアントも別になるため、Info.plist の GIDClientID / CFBundleURLSchemes は xcconfig 経由で注入する。
