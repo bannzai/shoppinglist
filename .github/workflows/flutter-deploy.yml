@@ -4,6 +4,10 @@ name: flutter-deploy
 # iOS: 手動署名で IPA をビルドし TestFlight (App Store Connect) へアップロード。
 # Android: リリース署名で AAB をビルドし Google Play internal トラックへアップロード。
 # 配布は release=prod のみ(Issue #410 / ADR 0030)。秘匿情報は `make secret`(secrets.FIREBASE_BASE64_* には prod 値を登録)と各種 Secrets から CI 上で復元する。
+# Google Maps クライアントキーは GCP Secret Manager (shoppinglist-prod-857bb) が正で、build job が Workload Identity Federation
+# (GitHub の OIDC トークン → github-firebase-deployer SA の短命な token。Pool `github` / Provider `shoppinglist` は environment=prod の
+# トークンだけを通す) で認証し、google-github-actions/get-secretmanager-secrets で環境変数に取り出してから `make secret` に渡す(ADR 0035)。
+# GCP 側の作成は ~/.agents/skills/firebase-functions-deploy-iam-setup/scripts/setup-workload-identity.sh --environment prod。
 on:
   workflow_dispatch:
     inputs:
@@ -53,6 +57,11 @@ jobs:
     if: inputs.platform == 'ios' || inputs.platform == 'both'
     needs: prepare-version
     runs-on: macos-latest
+    # OIDC トークンの environment claim(prod)を Workload Identity Provider の条件に使う
+    environment: prod
+    permissions:
+      contents: read
+      id-token: write
     # `make secret` がアプリ内シークレット（Firebase 設定 / xcconfig / AdMob / RevenueCat）を復元するための環境変数
     env:
       FIREBASE_BASE64_IOS: ${{ secrets.FIREBASE_BASE64_IOS }}
@@ -74,7 +83,23 @@ jobs:
           channel: stable
           flutter-version: '3.44.9'
 
-      # アプリ内シークレットを復元（GoogleService-Info.plist / lib/secret/secret.dart など）
+      # GCP へ Workload Identity Federation で認証する(SA 鍵は使わない)。
+      # 資格情報ファイルは $GITHUB_WORKSPACE 直下にできるため、ビルド成果物(ipa)には含まれない
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: projects/323773689605/locations/global/workloadIdentityPools/github/providers/shoppinglist
+          service_account: github-firebase-deployer@shoppinglist-prod-857bb.iam.gserviceaccount.com
+
+      # Secret Manager の値を環境変数に取り出す(make secret の scripts/google-maps-secret.sh が読む)
+      - name: Fetch app secrets from Secret Manager
+        uses: google-github-actions/get-secretmanager-secrets@bc9c54b29fdffb8a47776820a7d26e77b379d262 # v3.0.0
+        with:
+          export_to_environment: true
+          secrets: |-
+            GOOGLE_MAPS_API_KEY_IOS_PROD:shoppinglist-prod-857bb/google-maps-sdk-ios-apikey
+
+      # アプリ内シークレットを復元（GoogleService-Info.plist / lib/secret/secret.dart / GoogleMaps.xcconfig など）
       - name: Restore app secrets
         run: make secret
 
@@ -188,6 +213,11 @@ jobs:
     if: inputs.platform == 'android' || inputs.platform == 'both'
     needs: prepare-version
     runs-on: ubuntu-latest
+    # OIDC トークンの environment claim(prod)を Workload Identity Provider の条件に使う
+    environment: prod
+    permissions:
+      contents: read
+      id-token: write
     env:
       FIREBASE_BASE64_IOS: ${{ secrets.FIREBASE_BASE64_IOS }}
       FIREBASE_BASE64_ANDROID: ${{ secrets.FIREBASE_BASE64_ANDROID }}
@@ -209,7 +239,23 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      # アプリ内シークレットを復元（google-services.json / lib/secret/secret.dart など）
+      # GCP へ Workload Identity Federation で認証する(SA 鍵は使わない)。
+      # 資格情報ファイルは $GITHUB_WORKSPACE 直下にできるため、ビルド成果物(aab)には含まれない
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: projects/323773689605/locations/global/workloadIdentityPools/github/providers/shoppinglist
+          service_account: github-firebase-deployer@shoppinglist-prod-857bb.iam.gserviceaccount.com
+
+      # Secret Manager の値を環境変数に取り出す(make secret の scripts/google-maps-secret.sh が読む)
+      - name: Fetch app secrets from Secret Manager
+        uses: google-github-actions/get-secretmanager-secrets@bc9c54b29fdffb8a47776820a7d26e77b379d262 # v3.0.0
+        with:
+          export_to_environment: true
+          secrets: |-
+            GOOGLE_MAPS_API_KEY_ANDROID_PROD:shoppinglist-prod-857bb/google-maps-sdk-android-apikey
+
+      # アプリ内シークレットを復元（google-services.json / lib/secret/secret.dart / google-maps.properties など）
       - name: Restore app secrets
         run: make secret
 
