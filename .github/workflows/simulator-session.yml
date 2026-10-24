@@ -1,0 +1,114 @@
+# iOS Simulator セッションを張る caller workflow。実体は bannzai/simtunnel の session.yml（reusable workflow）。
+# 参照: https://github.com/bannzai/simtunnel の PROJECT.md「各アプリ repo での実行」
+# 使い方は AGENTS.md「テスト方針」の「動作確認 (UI・挙動)」
+name: simulator-session
+# run-name は local/simtunnel CLI が run を特定するキーのためこの形式を維持する
+run-name: "session=${{ inputs.session }} device=${{ inputs.device }}"
+
+on:
+  workflow_dispatch: # fork PR に Secrets を渡さないため workflow_dispatch のみ
+    # session / device / duration_minutes は local/simtunnel の up が常に送るため宣言必須
+    # （未定義の input を送ると dispatch が拒否される）
+    inputs:
+      session:
+        description: "セッション名。tailnet ホスト名 simtunnel-<session> になる（小文字英数字とハイフンのみ）"
+        required: true
+        default: shoppinglist
+      device:
+        description: "Simulator のデバイス名"
+        required: true
+        default: iPhone 17
+      duration_minutes:
+        description: "セッション維持時間（分）"
+        required: true
+        default: "60"
+      serve_sim:
+        description: "serve-sim (ブラウザ preview) を起動する。runner のメモリに余裕を持たせたい時は false"
+        required: false
+        default: "true"
+
+jobs:
+  # dev (shoppinglist-dev-b2787) に接続する Simulator 用 .app (debug) をビルドして artifact に上げる。
+  # Debug configuration = dev の識別子 (ios/Flutter/Debug.xcconfig) のため、Firebase 設定も dev の値を使う
+  build:
+    runs-on: macos-26
+    timeout-minutes: 40
+    permissions:
+      contents: read # checkout のみ。OIDC token (id-token) は session job だけに与える
+    # `make secret` が復元するアプリ内シークレット。FIREBASE_BASE64_IOS は flutter-deploy と違い dev の値 (ADR 0030)。
+    # Android の設定は iOS の Simulator ビルドでは使わないが、`make secret` が常に書き出すため同じ変数名で渡す
+    env:
+      FIREBASE_BASE64_IOS: ${{ secrets.FIREBASE_BASE64_IOS_DEV }}
+      FIREBASE_BASE64_ANDROID: ${{ secrets.FIREBASE_BASE64_ANDROID }}
+      REVENUE_CAT_PUBLIC_API_KEY: ${{ secrets.REVENUE_CAT_PUBLIC_API_KEY }}
+      IOS_ADMOB_NATIVE_ADVANCE_IDENTIFIER: ${{ secrets.IOS_ADMOB_NATIVE_ADVANCE_IDENTIFIER }}
+      ANDROID_ADMOB_NATIVE_ADVANCE_IDENTIFIER: ${{ secrets.ANDROID_ADMOB_NATIVE_ADVANCE_IDENTIFIER }}
+      IOS_ADMOB_BANNER_IDENTIFIER: ${{ secrets.IOS_ADMOB_BANNER_IDENTIFIER }}
+      ANDROID_ADMOB_BANNER_IDENTIFIER: ${{ secrets.ANDROID_ADMOB_BANNER_IDENTIFIER }}
+    steps:
+      # simtunnel 経路の workflow は uses を commit SHA で固定する（simtunnel PROJECT.md「リポジトリ公開に耐える安全性」）
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1
+        with:
+          xcode-version: latest-stable
+
+      - uses: subosito/flutter-action@fd55f4c5af5b953cc57a2be44cb082c8f6635e8e # v2.21.0
+        with:
+          channel: stable
+          flutter-version: '3.44.9'
+
+      # アプリ内シークレットを復元（GoogleService-Info.plist / lib/secret/secret.dart など）
+      - name: Restore app secrets
+        run: make secret
+
+      # dev の Firebase 設定が空のまま進むとビルドは通りアプリが起動時に落ちて原因が分かりにくいため、ここで止める
+      - name: Verify dev Firebase config
+        run: |
+          if [ ! -s ios/Firebase/GoogleService-Info.plist ]; then
+            echo "::error::Secrets の FIREBASE_BASE64_IOS_DEV が未登録か空です (dev の GoogleService-Info.plist を base64 にした値を登録してください)"
+            exit 1
+          fi
+          /usr/libexec/PlistBuddy -c "Print :BUNDLE_ID" ios/Firebase/GoogleService-Info.plist
+
+      - run: flutter pub get
+
+      # ios/.symlinks を .flutter-plugins-dependencies から再生成する（理由はスクリプト冒頭。flutter-deploy と同じ手順）
+      - name: Link iOS plugin symlinks
+        run: python3 ios/scripts/link_plugin_symlinks.py
+
+      # dart-define は Makefile の ios ターゲット・.vscode/launch.json の shoppinglist(dev) と同じ。
+      # 開発者オプション (プレミアム付与等) の認可に SHOPPINGLIST_DEVELOPER_TOKEN が要る。未登録なら空で渡り、開発者オプションの操作だけが使えない
+      - name: Build simulator app
+        env:
+          SHOPPINGLIST_DEVELOPER_TOKEN: ${{ secrets.SHOPPINGLIST_DEVELOPER_TOKEN }}
+          REVENUECAT_TEST_STORE_API_KEY: ${{ secrets.REVENUECAT_TEST_STORE_API_KEY }}
+        run: |
+          flutter build ios --simulator --debug \
+            --dart-define=SHOPPINGLIST_DEVELOPER_TOKEN="$SHOPPINGLIST_DEVELOPER_TOKEN" \
+            --dart-define=REVENUECAT_TEST_STORE_API_KEY="$REVENUECAT_TEST_STORE_API_KEY"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: simulator-app
+          path: build/ios/iphonesimulator # .app の親ディレクトリ（.app 直指定は中身が flatten される）
+
+  session:
+    needs: build
+    # id-token: write が必要なのは reusable workflow を呼ぶこの job だけのため、job 単位で最小権限にする
+    permissions:
+      id-token: write # Tailscale の OIDC (workload identity federation) 認証に必要
+      contents: read
+    # タグ運用はしないため main の commit SHA で固定する（更新時は SHA を書き換える）
+    uses: bannzai/simtunnel/.github/workflows/session.yml@841306c15b0e59e718f9a4bf2d0527bf5a246d61 # main 2026-10-22
+    with:
+      session: ${{ inputs.session }}
+      device: ${{ inputs.device }}
+      duration_minutes: ${{ inputs.duration_minutes }}
+      serve_sim: ${{ inputs.serve_sim }}
+      app_artifact: simulator-app
+    secrets:
+      TS_OIDC_CLIENT_ID: ${{ secrets.TS_OIDC_CLIENT_ID }}
+      TS_OIDC_AUDIENCE: ${{ secrets.TS_OIDC_AUDIENCE }}
