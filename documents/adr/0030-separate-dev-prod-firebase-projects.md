@@ -1,7 +1,7 @@
 # 0030. dev/prod を別 Firebase プロジェクトに分離し、識別子を環境ごとに分ける
 
 ## Status
-Accepted (supersedes [[0028-dev-environment-firestore-named-database]], partially supersedes [[0029-restore-snapshot-uid-remapping]])
+Accepted (supersedes [[0028-dev-environment-firestore-named-database]], partially supersedes [[0029-restore-snapshot-uid-remapping]]。決定 6 の Maps クライアントキーの直書きは [[0035-google-maps-keys-in-secret-manager-restored-by-make-secret]] が置き換えた)
 
 ## Context
 [[0028-dev-environment-firestore-named-database]] では、本番プロジェクト `shopping-list-prod-a615c` 内に Firestore named database `development` を作り、クライアントは dart-define `FIRESTORE_DATABASE_ID` で接続先 DB を切り替える方式(選択肢B)を採った。これは軽量だが、**バックエンド(Cloud Functions)が named DB に未対応**という致命的な不整合を残していた。`admin.firestore()` は常に `(default)`(本番)を見るため、dev クライアントから `submitInquiry` / `createGroup` 等を呼ぶと「Function は本番 `(default)` に書き、クライアントは `development` を読む」という状態になり、dev で挙動を再現できない。

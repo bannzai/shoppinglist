@@ -10,6 +10,22 @@ TestFlight / Google Play への配布手順は [documents/release.md](documents/
 
 `gh workflow run firebase-deploy.yml -f project=<dev|prod> -f deploy_all=true` で GitHub Actions から行う。認証は Workload Identity Federation で、Secret の SA 鍵は持たない。事前準備と認証の仕組みは [.github/workflows/firebase-deploy.yml](.github/workflows/firebase-deploy.yml) のヘッダーコメント、GCP 側の設定は [scripts/setup-github-actions-wif.sh](scripts/setup-github-actions-wif.sh) を参照。
 
+## ローカルの secret の復元
+
+Firebase の設定ファイルと Google Maps のクライアントキーはリポジトリに入っていない。手元では SecChain に保管した値を渡して `make secret` で復元する (値の正は GCP Secret Manager。設計は [documents/adr/0035](documents/adr/0035-google-maps-keys-in-secret-manager-restored-by-make-secret.md))。
+
+```sh
+secchain run -- make secret
+```
+
+Maps キーの名前は `GOOGLE_MAPS_API_KEY_IOS_DEV` / `GOOGLE_MAPS_API_KEY_IOS_PROD` / `GOOGLE_MAPS_API_KEY_ANDROID_DEV` / `GOOGLE_MAPS_API_KEY_ANDROID_PROD` で、Secret Manager の `google-maps-sdk-ios-apikey` / `google-maps-sdk-android-apikey` (dev は `shoppinglist-dev-b2787`、prod は `shoppinglist-prod-857bb`) に対応する。SecChain に無い名前は、Secret Manager から値を画面に出さずに写す:
+
+```sh
+gcloud secrets versions access latest --secret=google-maps-sdk-ios-apikey --project=shoppinglist-dev-b2787 | secchain set GOOGLE_MAPS_API_KEY_IOS_DEV
+```
+
+`make secret` を通さないと Maps キーが空になり、ビルドは通るが地図ピッカー (グループ設定 → 買い物場所 → 場所を選ぶ) を開いた時に iOS は Maps SDK 未初期化で落ちる。Firebase の設定ファイルと同じく、起動前に必ず通す。
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.

@@ -8,6 +8,15 @@ export const slackBotToken = defineSecret("SLACK_BOT_TOKEN");
  * `firebase functions:secrets:set SLACK_INQUIRY_CHANNEL_ID` で設定する。 */
 export const slackInquiryChannelID = defineSecret("SLACK_INQUIRY_CHANNEL_ID");
 
+/** ユーザー・クライアント由来の文字列を、Slack の mrkdwn / text で制御記法
+ * (`<!channel>`・`<@U…>`・`<https://…|label>` 等) として解釈されない形に変換する。
+ * Slack が求めるエスケープは `&`・`<`・`>` の 3 文字だけ
+ * (https://docs.slack.dev/messaging/formatting-message-text#escaping )。
+ * `&` を先に置換しないと、他の 2 文字の置換結果を二重にエスケープしてしまう。 */
+export function escapeSlackText(text: string): string {
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 /** Slack Web API のベース URL。 */
 const SLACK_API_BASE = "https://slack.com/api";
 

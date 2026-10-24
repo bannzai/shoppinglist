@@ -17,9 +17,9 @@ import { defineSecret } from "firebase-functions/params";
 /// Gemini API Key。Secret Manager 経由で取得する。
 const googleAIApiKey = defineSecret("GOOGLE_GENAI_API_KEY");
 
-/** カテゴリ分けに使うモデル。環境変数で切り替え可能。 */
+/** カテゴリ分けに使うモデル。環境変数で切り替え可能。既定値の根拠は utils/genkit.ts のコメント。 */
 const categorizeModel =
-  process.env.CATEGORIZE_MODEL ?? "googleai/gemini-2.5-flash";
+  process.env.CATEGORIZE_MODEL ?? "googleai/gemini-3.1-flash-lite";
 
 /** 1リクエストで分類できる最大アイテム数。 */
 const maxItems = 100;

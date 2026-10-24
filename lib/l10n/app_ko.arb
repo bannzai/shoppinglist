@@ -215,6 +215,7 @@
   "groupCategoryEditMatchingExact": "정확히 일치",
   "groupCategoryEditMatchingPartial": "부분 일치",
   "groupCategoryEditMatchingRegex": "정규식",
+  "groupCategoryEditRegexTooComplex": "정규식이 너무 복잡합니다. {maxLength}자 이내로 하고 (a+)+ 같은 반복의 중첩은 사용하지 마세요",
   "groupCreateTitle": "그룹 만들기",
   "groupCreateIconLabel": "아이콘",
   "groupCreateSubmit": "만들기",

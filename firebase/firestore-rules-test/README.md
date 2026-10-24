@@ -1,6 +1,6 @@
 # firestore-rules-test
 
-`firebase/firestore.rules` の内容を Firestore Emulator 上で自動検証する単体テストパッケージです。
+`firebase/firestore.rules` と `firebase/storage.rules` の内容を Firestore / Storage Emulator 上で自動検証する単体テストパッケージです。
 `@firebase/rules-unit-testing` + Jest を `firebase emulators:exec` から実行し、各パスの許可・拒否を検証します。
 
 bannzai/medicalarm#243 の同名パッケージの移植です（bannzai/shoppinglist#501 参照）。
@@ -30,7 +30,7 @@ npm test
 
 デフォルトの `java` が JDK 21 未満の環境では、先に `JAVA_HOME` を JDK 21+ に設定してから `npm test` を実行してください（上記「前提」参照）。
 
-`npm test` は `firebase emulators:exec --only firestore --project demo-shoppinglist 'jest'` を実行します。
+`npm test` は `firebase emulators:exec --only firestore,storage --project demo-shoppinglist 'jest --runInBand'` を実行します。
 
 - `--project demo-shoppinglist`: `demo-` 接頭辞により実プロジェクト・認証情報なしの demo モードで Emulator が起動します。
 - Emulator 設定（`firestore.rules` の場所）は親ディレクトリの `firebase/firebase.json` を Firebase CLI が自動検出します。
@@ -42,18 +42,22 @@ npm test
 `firestore.rules` の全パスについて、認証状態（本人 / 他人 / 未認証）とグループメンバーシップ・所有者判定ごとの
 許可・拒否を検証します。
 
-1. **users ツリー（本人のみ）**: 本人は `users/{uid}`・`privates`・`aiUsage` を read/write 可。他人・未認証は拒否。
-2. **デバッグユーザーパターン**: `{uid}_debug_{数字}` は本人が操作可。他人の debug user・数字でない suffix は拒否。
+1. **users ツリー（本人のみ）**: 本人は `users/{uid}`・`privates` を read/write 可、`aiUsage` は read のみ可で write（set/update/delete）は拒否（カウンタは AI 関数の Admin SDK だけが更新する）。他人・未認証は拒否。
+2. **デバッグユーザーパターン**: `{uid}_debug_{数字}` は本人が操作可（`aiUsage` は 1 と同じく read のみ）。他人の debug user・数字でない suffix は拒否。
 3. **groupInvitations**: 認証済みでも read/write 全拒否（Functions Admin SDK 経由のみ）。
 4. **inquiries**: 認証済みでも read/write 全拒否（submitInquiry Function 経由のみ）。
-5. **groups 本体**: メンバーは read/update/delete 可。create はクライアントから拒否（createGroup Function 経由のみ）。非メンバー・未認証は拒否。
+5. **groups 本体**: メンバーは read と、`ownerUserID` / `memberUserIDs` / `activeShoppingListCount` 以外の update が可。`ownerUserID` の変更と `memberUserIDs` の変更はオーナーを含めて拒否し、自分の uid だけを除く脱退のみ可。`ownerUserID` を持たないレガシーグループへの null の書き足しは変更とみなさない。買い物リスト数の上限判定に使う `activeShoppingListCount` の書き換えもメンバーでも拒否（updateActiveShoppingListCount Function 経由のみ）。delete はオーナーのみ可。create はクライアントから拒否（createGroup Function 経由のみ）。非メンバー・未認証は拒否。
 6. **groups/{id}/userProfiles・shoppingLocations**: メンバーは read/write 可。非メンバー・未認証は拒否。
 7. **groups/{id}/shoppingLists と items**: メンバーは read/write 可。非メンバーは拒否。
+   - 無料プランの上限（Issue #683）: `activeShoppingListCount` が 20 以上で、作成者もオーナーもプレミアムでない時は、active での作成と done / archived から active への変更を拒否。done / archived での作成、active なリストの更新・削除は上限に関係なく可。プレミアム状態は `users/{id}/premiumEntitlements` の写しで判定し、期限切れ・`isPremium: false`・同期 (`serverUpdatedDateTime`) から 1 日を過ぎた写しは無料扱い。
+   - `users/{id}/premiumEntitlements`: 本人は read のみ可、write は拒否（syncPremiumEntitlement Function 経由のみ）。他人は read/write 拒否。
 8. **groups/{id}/shoppingLists/{id}/receipts**: メンバーは read/create/update 可。**メンバーでも delete は拒否**。非メンバーは拒否。
 9. **groups/{id}/userCategoryAxes**: 現在のグループメンバーが所有する軸は取り込み用に read 可。所有者を `userID` で限定したクエリは許可し、限定しないクエリと削除済みメンバーの残存軸は拒否。create/update/delete は所有者（`userID` 一致）のみ可で、updateによる所有者変更も拒否。
 10. **userCategoryAxes/{id}/categories**: 9 と同じく現在のグループメンバーが所有し、親軸が存在して所有者も一致するカテゴリは read 可。所有者を限定しないクエリ、削除済みメンバーの残存カテゴリ、親軸削除後の残存カテゴリは拒否し、write は所有者のみ可。
 
-## 対象外
+`storage.rules.test.js` は `firebase/storage.rules` を Storage Emulator 上で検証します（Issue #678）。
 
-- `firebase/storage.rules`（Storage のルール）はこのパッケージの検証対象外です。レシート画像等の Storage アクセスは
-  Cloud Functions 経由で制御します。
+11. **Storage の receipts / sourceImages**: グループの現メンバーは get（`getDownloadURL`・`getMetadata`）と list（`listAll`）が可。非メンバー・グループから外されたメンバー・存在しないグループ・未認証は拒否。メンバーでも write は拒否。
+12. **Storage の items**: メンバーでも read/write 全拒否（Functions Admin SDK 経由のみ）。
+
+2 つのテストファイルは同じ Firestore Emulator をクリアして seed するため、`jest --runInBand` で直列に実行します。

@@ -50,6 +50,10 @@ class _FakeShoppingListAdd implements ShoppingListAdd {
   IsPremiumResolver get isPremiumResolver => throw UnimplementedError();
 
   @override
+  Future<void> Function() get premiumEntitlementSyncer =>
+      throw UnimplementedError();
+
+  @override
   Future<GroupShoppingList> call({
     required String createUserID,
     required String groupID,

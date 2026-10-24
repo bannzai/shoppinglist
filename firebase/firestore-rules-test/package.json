@@ -2,13 +2,16 @@
   "name": "shoppinglist-firestore-rules-test",
   "version": "1.0.0",
   "private": true,
-  "description": "firestore.rules の単体テスト (@firebase/rules-unit-testing + Firestore Emulator)",
+  "description": "firestore.rules / storage.rules の単体テスト (@firebase/rules-unit-testing + Firestore / Storage Emulator)",
   "scripts": {
-    "test": "firebase emulators:exec --only firestore --project demo-shoppinglist 'jest'"
+    "test": "firebase emulators:exec --only firestore,storage --project demo-shoppinglist 'jest --runInBand'"
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^5.0.2",
     "firebase": "^12.18.0",
     "jest": "^30.4.2"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "^1.13.6"
   }
 }

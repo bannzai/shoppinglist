@@ -67,6 +67,10 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/shopping_list_widget_info" />
         </receiver>
+        <!-- ウィジェットの行タップのトグルを受ける。他のアプリから送れないよう export しない (Issue #681) -->
+        <receiver
+            android:name=".ShoppingListWidgetToggleReceiver"
+            android:exported="false" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

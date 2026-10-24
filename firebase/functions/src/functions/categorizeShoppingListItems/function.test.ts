@@ -147,6 +147,9 @@ describe("categorizeShoppingListItems", () => {
       expect.objectContaining({ categorizeCount: "INCREMENT_1" })
     );
     expect(txSet).not.toHaveBeenCalled();
+    expect(mockGenerate).toHaveBeenCalledWith(
+      expect.objectContaining({ model: "googleai/gemini-3.1-flash-lite" })
+    );
   });
 
   test("正常系: 新規ドキュメントが作成される", async () => {

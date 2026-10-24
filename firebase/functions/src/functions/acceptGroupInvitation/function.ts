@@ -11,6 +11,7 @@ import {
   ErrorResponseSchema,
 } from "../../entity/response";
 import { groupUserProfileDocumentID } from "../../entity/group_user_profile";
+import { GroupInvitation } from "../../entity/groupInvitation";
 
 const ResponseSchema = z.union([
   DataResponseSchema.extend({
@@ -82,7 +83,8 @@ const acceptGroupInvitationFlow = ai.defineFlow(
 
       // トランザクションを使用して、グループへの参加と招待ステータスの更新をアトミックに行います。
       // 招待ドキュメントもトランザクション内で再読み込みし、レースコンディションを防ぎます。
-      const joined = await firestore.runTransaction(async (transaction) => {
+      // 招待者が非メンバーの時は招待の失効を確定させるため、throw (ロールバック) せず戻り値で区別します。
+      const outcome = await firestore.runTransaction(async (transaction) => {
         const [groupDoc, invitationDocSnapshot] = await Promise.all([
           transaction.get(groupRef),
           transaction.get(invitationDoc.ref),
@@ -93,7 +95,9 @@ const acceptGroupInvitationFlow = ai.defineFlow(
         }
 
         // トランザクション内で招待ステータスを再検証（同時利用によるレースコンディション対策）
-        const currentInvitationData = invitationDocSnapshot.data();
+        const currentInvitationData = invitationDocSnapshot.data() as
+          | GroupInvitation
+          | undefined;
         if (!currentInvitationData || currentInvitationData.status !== "pending") {
           throw new Error("この招待コードは既に使用されています");
         }
@@ -101,9 +105,19 @@ const acceptGroupInvitationFlow = ai.defineFlow(
         const groupData = groupDoc.data();
         const memberUserIDs: string[] = groupData?.memberUserIDs ?? [];
 
+        // 外されたメンバーが在籍中に控えたコードで戻れないよう、招待の有効性を招待者の在籍に連動させる
+        if (!memberUserIDs.includes(currentInvitationData.inviterUserID)) {
+          transaction.update(invitationDoc.ref, {
+            status: "expired",
+            updatedDateTime: FieldValue.serverTimestamp(),
+            serverUpdatedDateTime: FieldValue.serverTimestamp(),
+          });
+          return "inviterNotMember" as const;
+        }
+
         // 冪等性: 既にメンバーの場合は何もしない
         if (memberUserIDs.includes(uid)) {
-          return false;
+          return "alreadyMember" as const;
         }
 
         transaction.update(groupDoc.ref, {
@@ -132,10 +146,23 @@ const acceptGroupInvitationFlow = ai.defineFlow(
           serverUpdatedDateTime: FieldValue.serverTimestamp(),
         });
 
-        return true;
+        return "joined" as const;
       });
 
-      if (joined) {
+      if (outcome === "inviterNotMember") {
+        logger.info(
+          `Invitation ${invitationDoc.ref.id} expired because the inviter is no longer a member of group ${groupID}`
+        );
+        return {
+          result: "NG" as const,
+          error: {
+            message:
+              "招待した人がグループのメンバーではなくなったためこの招待コードは使えません",
+          },
+        };
+      }
+
+      if (outcome === "joined") {
         logger.info(`User ${uid} joined group ${groupID} via invitation`);
       } else {
         logger.info(

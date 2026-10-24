@@ -14,8 +14,11 @@ const {
   orderBy,
   query,
   setDoc,
+  Timestamp,
   updateDoc,
   where,
+  arrayRemove,
+  arrayUnion,
 } = require('firebase/firestore');
 
 // demo- 接頭辞により Emulator が demo モード (実プロジェクト不要) で動作する。
@@ -75,6 +78,7 @@ beforeEach(async () => {
   await testEnv.clearFirestore();
   await seed('groups/g1', {
     id: 'g1',
+    ownerUserID: 'alice',
     memberUserIDs: ['alice', 'bob'],
     name: 'テストグループ',
   });
@@ -94,10 +98,14 @@ describe('users ツリー（本人のみ read/write 可）', () => {
     await assertSucceeds(getDoc(doc(d, 'users/alice/privates/x')));
   });
 
-  test('本人 alice は users/alice/aiUsage/2026-07 を read/write できる', async () => {
+  test('本人 alice は users/alice/aiUsage/2026-07 を read できるが write できない', async () => {
+    await seed('users/alice/aiUsage/2026-07', { imageRecognitionCount: 5 });
     const d = db('alice');
-    await assertSucceeds(setDoc(doc(d, 'users/alice/aiUsage/2026-07'), { count: 1 }));
     await assertSucceeds(getDoc(doc(d, 'users/alice/aiUsage/2026-07')));
+    await assertFails(setDoc(doc(d, 'users/alice/aiUsage/2026-07'), { imageRecognitionCount: -1000 }));
+    await assertFails(updateDoc(doc(d, 'users/alice/aiUsage/2026-07'), { imageRecognitionCount: 0 }));
+    await assertFails(deleteDoc(doc(d, 'users/alice/aiUsage/2026-07')));
+    await assertFails(setDoc(doc(d, 'users/alice/aiUsage/2026-08'), { imageRecognitionCount: 0 }));
   });
 
   test('他人 bob は users/alice ツリーを read/write できない', async () => {
@@ -121,12 +129,20 @@ describe('users ツリー（本人のみ read/write 可）', () => {
 
 // 2. デバッグユーザーパターン（{uid}_debug_{n}）
 describe('デバッグユーザーパターン（{uid}_debug_{n}）', () => {
-  test('alice は users/alice_debug_1（+ privates/aiUsage）を read/write できる', async () => {
+  test('alice は users/alice_debug_1（+ privates）を read/write できる', async () => {
     const d = db('alice');
     await assertSucceeds(setDoc(doc(d, 'users/alice_debug_1'), { id: 'alice_debug_1' }));
     await assertSucceeds(getDoc(doc(d, 'users/alice_debug_1')));
     await assertSucceeds(setDoc(doc(d, 'users/alice_debug_1/privates/x'), { value: 1 }));
-    await assertSucceeds(setDoc(doc(d, 'users/alice_debug_1/aiUsage/2026-07'), { count: 1 }));
+  });
+
+  test('alice は users/alice_debug_1/aiUsage を read できるが write できない', async () => {
+    await seed('users/alice_debug_1/aiUsage/2026-07', { imageRecognitionCount: 5 });
+    const d = db('alice');
+    await assertSucceeds(getDoc(doc(d, 'users/alice_debug_1/aiUsage/2026-07')));
+    await assertFails(setDoc(doc(d, 'users/alice_debug_1/aiUsage/2026-07'), { imageRecognitionCount: -1000 }));
+    await assertFails(updateDoc(doc(d, 'users/alice_debug_1/aiUsage/2026-07'), { imageRecognitionCount: 0 }));
+    await assertFails(deleteDoc(doc(d, 'users/alice_debug_1/aiUsage/2026-07')));
   });
 
   test('alice は他人のデバッグユーザー users/bob_debug_1 を操作できない', async () => {
@@ -162,10 +178,79 @@ describe('inquiries（クライアント直アクセス全拒否）', () => {
 
 // 5. groups 本体
 describe('groups 本体', () => {
-  test('メンバー alice は read/update/delete できる', async () => {
-    const d = db('alice');
+  test('メンバー bob は read と name の update ができる', async () => {
+    const d = db('bob');
     await assertSucceeds(getDoc(doc(d, 'groups/g1')));
     await assertSucceeds(updateDoc(doc(d, 'groups/g1'), { name: '更新' }));
+  });
+
+  test('同じ ownerUserID / memberUserIDs を含む Group 全体の set merge は通る', async () => {
+    const d = db('bob');
+    await assertSucceeds(
+      setDoc(
+        doc(d, 'groups/g1'),
+        { id: 'g1', ownerUserID: 'alice', memberUserIDs: ['alice', 'bob'], name: '更新' },
+        { merge: true }
+      )
+    );
+  });
+
+  test('ownerUserID を持たないレガシーグループに ownerUserID: null を含めて set merge できる', async () => {
+    await seed('groups/g1', { id: 'g1', memberUserIDs: ['alice', 'bob'], name: 'テストグループ' });
+    const d = db('bob');
+    await assertSucceeds(
+      setDoc(
+        doc(d, 'groups/g1'),
+        { id: 'g1', ownerUserID: null, memberUserIDs: ['alice', 'bob'], name: '更新' },
+        { merge: true }
+      )
+    );
+  });
+
+  test('非オーナー bob は ownerUserID を自分・null に変更できない', async () => {
+    const d = db('bob');
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { ownerUserID: 'bob' }));
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { ownerUserID: null }));
+  });
+
+  test('レガシーグループで非オーナー bob が ownerUserID を自分に設定できない', async () => {
+    await seed('groups/g1', { id: 'g1', memberUserIDs: ['alice', 'bob'], name: 'テストグループ' });
+    const d = db('bob');
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { ownerUserID: 'bob' }));
+  });
+
+  test('非オーナー bob は他のメンバーの除去・部外者の追加をできない', async () => {
+    const d = db('bob');
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { memberUserIDs: arrayRemove('alice') }));
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { memberUserIDs: arrayUnion('charlie') }));
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { memberUserIDs: ['bob'] }));
+  });
+
+  test('オーナー alice も memberUserIDs に部外者を追加できない', async () => {
+    const d = db('alice');
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { memberUserIDs: arrayUnion('charlie') }));
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { memberUserIDs: arrayRemove('bob') }));
+  });
+
+  test('自分の脱退（自分の uid だけを arrayRemove）は通る', async () => {
+    const d = db('bob');
+    await assertSucceeds(updateDoc(doc(d, 'groups/g1'), { memberUserIDs: arrayRemove('bob') }));
+  });
+
+  test('自分の脱退と同時に ownerUserID を変えることはできない', async () => {
+    const d = db('bob');
+    await assertFails(
+      updateDoc(doc(d, 'groups/g1'), { memberUserIDs: arrayRemove('bob'), ownerUserID: 'bob' })
+    );
+  });
+
+  test('非オーナー bob は delete できない', async () => {
+    const d = db('bob');
+    await assertFails(deleteDoc(doc(d, 'groups/g1')));
+  });
+
+  test('オーナー alice は delete できる', async () => {
+    const d = db('alice');
     await assertSucceeds(deleteDoc(doc(d, 'groups/g1')));
   });
 
@@ -187,6 +272,40 @@ describe('groups 本体', () => {
     const d = unauthDb();
     await assertFails(getDoc(doc(d, 'groups/g1')));
     await assertFails(updateDoc(doc(d, 'groups/g1'), { name: '更新' }));
+  });
+
+  test('メンバーでも activeShoppingListCount は書き換えられない（updateActiveShoppingListCount Function だけが保つ）', async () => {
+    await seed('groups/g1', {
+      id: 'g1',
+      memberUserIDs: ['alice', 'bob'],
+      name: 'テストグループ',
+      activeShoppingListCount: 20,
+    });
+    const d = db('alice');
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { activeShoppingListCount: 0 }));
+    await assertSucceeds(
+      setDoc(doc(d, 'groups/g1'), { name: '更新' }, { merge: true })
+    );
+  });
+
+  test('activeShoppingListCount が無いグループに足すことも拒否', async () => {
+    const d = db('alice');
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { activeShoppingListCount: 0 }));
+  });
+
+  test('メンバーでも ownerUserID は書き換えられない（オーナーのプレミアム状態で上限を外すため）', async () => {
+    await seed('groups/g1', {
+      id: 'g1',
+      ownerUserID: 'bob',
+      memberUserIDs: ['alice', 'bob'],
+      name: 'テストグループ',
+    });
+    const d = db('alice');
+    await assertFails(updateDoc(doc(d, 'groups/g1'), { ownerUserID: 'alice' }));
+    // GroupNameUpdate と同じく、同じ ownerUserID を含めた merge set は通る
+    await assertSucceeds(
+      setDoc(doc(d, 'groups/g1'), { ownerUserID: 'bob', name: '更新' }, { merge: true })
+    );
   });
 });
 
@@ -231,6 +350,144 @@ describe('groups/{id}/shoppingLists と items（メンバーのみ）', () => {
     await assertFails(setDoc(doc(d, 'groups/g1/shoppingLists/sl1'), { name: 'x' }));
     await assertFails(getDoc(doc(d, 'groups/g1/shoppingLists/sl1/items/it1')));
     await assertFails(setDoc(doc(d, 'groups/g1/shoppingLists/sl1/items/it1'), { name: 'x' }));
+  });
+});
+
+// 7-2. 無料プランの active な買い物リスト数の上限（Issue #683）
+describe('groups/{id}/shoppingLists の無料プラン上限', () => {
+  const FREE_LIMIT = 20;
+  const ONE_DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
+
+  // オーナー bob、メンバー alice のグループを、active なリスト数 activeShoppingListCount で seed する。
+  async function seedGroup(activeShoppingListCount) {
+    await seed('groups/g1', {
+      id: 'g1',
+      ownerUserID: 'bob',
+      memberUserIDs: ['alice', 'bob'],
+      name: 'テストグループ',
+      activeShoppingListCount,
+    });
+  }
+
+  // syncPremiumEntitlement Function が書く形でプレミアム状態の写しを seed する。
+  // serverUpdatedDateTime は同期した日時で、既定は今 (rules の 1 日の再検証期限内)。
+  async function seedPremiumEntitlement(
+    userID,
+    { isPremium, expiresDateTime, serverUpdatedDateTime = Timestamp.now() }
+  ) {
+    await seed(`users/${userID}/premiumEntitlements/PremiumEntitlement_users_${userID}`, {
+      userID,
+      isPremium,
+      expiresDateTime,
+      serverUpdatedDateTime,
+    });
+  }
+
+  test('同期から 1 日を過ぎた写しは無料として扱う（返金後に同期を止めたクライアント対策）', async () => {
+    await seedGroup(FREE_LIMIT);
+    await seedPremiumEntitlement('alice', {
+      isPremium: true,
+      expiresDateTime: null,
+      serverUpdatedDateTime: Timestamp.fromMillis(Date.now() - 2 * ONE_DAY_MILLISECONDS),
+    });
+    await assertFails(
+      setDoc(doc(db('alice'), 'groups/g1/shoppingLists/new'), { status: 'active' })
+    );
+  });
+
+  test('上限未満なら無料ユーザーも active なリストを作成できる', async () => {
+    await seedGroup(FREE_LIMIT - 1);
+    await assertSucceeds(
+      setDoc(doc(db('alice'), 'groups/g1/shoppingLists/new'), { status: 'active' })
+    );
+  });
+
+  test('activeShoppingListCount が未設定のグループは 0 件として扱う', async () => {
+    await assertSucceeds(
+      setDoc(doc(db('alice'), 'groups/g1/shoppingLists/new'), { status: 'active' })
+    );
+  });
+
+  test('上限に達したグループでは無料ユーザーの active なリスト作成を拒否', async () => {
+    await seedGroup(FREE_LIMIT);
+    const d = db('alice');
+    await assertFails(setDoc(doc(d, 'groups/g1/shoppingLists/new'), { status: 'active' }));
+    // status 欠落はクライアントの既定値 active として扱うため拒否
+    await assertFails(setDoc(doc(d, 'groups/g1/shoppingLists/new'), { name: 'x' }));
+  });
+
+  test('上限に達していても作成者がプレミアムなら作成できる', async () => {
+    await seedGroup(FREE_LIMIT);
+    await seedPremiumEntitlement('alice', {
+      isPremium: true,
+      expiresDateTime: Timestamp.fromMillis(Date.now() + ONE_DAY_MILLISECONDS),
+    });
+    await assertSucceeds(
+      setDoc(doc(db('alice'), 'groups/g1/shoppingLists/new'), { status: 'active' })
+    );
+  });
+
+  test('上限に達していてもオーナーがプレミアム（無期限）ならメンバーも作成できる', async () => {
+    await seedGroup(FREE_LIMIT);
+    await seedPremiumEntitlement('bob', { isPremium: true, expiresDateTime: null });
+    await assertSucceeds(
+      setDoc(doc(db('alice'), 'groups/g1/shoppingLists/new'), { status: 'active' })
+    );
+  });
+
+  test('有効期限切れ・isPremium: false の写しは無料として扱う', async () => {
+    await seedGroup(FREE_LIMIT);
+    await seedPremiumEntitlement('alice', {
+      isPremium: true,
+      expiresDateTime: Timestamp.fromMillis(Date.now() - ONE_DAY_MILLISECONDS),
+    });
+    await seedPremiumEntitlement('bob', { isPremium: false, expiresDateTime: null });
+    await assertFails(
+      setDoc(doc(db('alice'), 'groups/g1/shoppingLists/new'), { status: 'active' })
+    );
+  });
+
+  test('上限に達していても done / archived での作成と、active なリストの更新・削除はできる', async () => {
+    await seedGroup(FREE_LIMIT);
+    await seed('groups/g1/shoppingLists/existing', { status: 'active', name: '既存' });
+    const d = db('alice');
+    await assertSucceeds(setDoc(doc(d, 'groups/g1/shoppingLists/done'), { status: 'done' }));
+    await assertSucceeds(
+      updateDoc(doc(d, 'groups/g1/shoppingLists/existing'), { name: '名前変更' })
+    );
+    await assertSucceeds(
+      updateDoc(doc(d, 'groups/g1/shoppingLists/existing'), { status: 'archived' })
+    );
+    await assertSucceeds(deleteDoc(doc(d, 'groups/g1/shoppingLists/existing')));
+  });
+
+  test('上限に達したグループでは done / archived から active への変更を拒否', async () => {
+    await seedGroup(FREE_LIMIT);
+    await seed('groups/g1/shoppingLists/done', { status: 'done' });
+    await assertFails(
+      updateDoc(doc(db('alice'), 'groups/g1/shoppingLists/done'), { status: 'active' })
+    );
+  });
+});
+
+// 7-3. users/{id}/premiumEntitlements（本人は read のみ。書き込みは syncPremiumEntitlement Function 経由のみ）
+describe('users/{id}/premiumEntitlements（本人 read のみ）', () => {
+  const premiumEntitlementPath =
+    'users/alice/premiumEntitlements/PremiumEntitlement_users_alice';
+
+  test('本人 alice は read できるが write は拒否', async () => {
+    await seed(premiumEntitlementPath, { userID: 'alice', isPremium: false, expiresDateTime: null });
+    const d = db('alice');
+    await assertSucceeds(getDoc(doc(d, premiumEntitlementPath)));
+    await assertFails(
+      setDoc(doc(d, premiumEntitlementPath), { userID: 'alice', isPremium: true, expiresDateTime: null })
+    );
+  });
+
+  test('他人 bob は read/write 拒否', async () => {
+    const d = db('bob');
+    await assertFails(getDoc(doc(d, premiumEntitlementPath)));
+    await assertFails(setDoc(doc(d, premiumEntitlementPath), { isPremium: true }));
   });
 });
 

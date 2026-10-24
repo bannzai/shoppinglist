@@ -4,10 +4,13 @@
 # (local 開発=dev は direnv 等、release 配布(flutter-deploy)=prod は CI Secrets)。
 # bundleId / App Group / Keychain group は build configuration 側(Debug=dev/Release=prod)で分離する。
 .PHONY: secret
+# レシピ行は `@` で表示を抑える。make は実行前に $(VAR) を展開した行を標準出力に出すため、
+# `@` が無いと base64 の全文が端末と agent の会話ログに残る。
 secret:
-	echo $(FIREBASE_BASE64_IOS) | base64 --decode > ios/Firebase/GoogleService-Info.plist
-	echo $(FIREBASE_BASE64_ANDROID) | base64 --decode > android/app/google-services.json
+	@echo $(FIREBASE_BASE64_IOS) | base64 --decode > ios/Firebase/GoogleService-Info.plist
+	@echo $(FIREBASE_BASE64_ANDROID) | base64 --decode > android/app/google-services.json
 	./scripts/secret.sh
+	./scripts/google-maps-secret.sh
 
 
 

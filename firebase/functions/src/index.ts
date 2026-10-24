@@ -141,6 +141,13 @@ if (
 
 if (
   !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "updateDebugUserGroupMembership"
+) {
+  exports.updateDebugUserGroupMembership = require("./functions/updateDebugUserGroupMembership/function");
+}
+
+if (
+  !process.env.FUNCTION_NAME ||
   process.env.FUNCTION_NAME === "setupTestCategoryLocationOrder"
 ) {
   exports.setupTestCategoryLocationOrder = require("./functions/setupTestCategoryLocationOrder/function");
@@ -158,6 +165,20 @@ if (
   process.env.FUNCTION_NAME === "submitInquiry"
 ) {
   exports.submitInquiry = require("./functions/submitInquiry/function");
+}
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "syncPremiumEntitlement"
+) {
+  exports.syncPremiumEntitlement = require("./functions/syncPremiumEntitlement/function");
+}
+
+if (
+  !process.env.FUNCTION_NAME ||
+  process.env.FUNCTION_NAME === "updateActiveShoppingListCount"
+) {
+  exports.updateActiveShoppingListCount = require("./functions/updateActiveShoppingListCount/function");
 }
 
 // firebase-crashlytics-alert-setup begin (bannzai/castle の skill が管理する区間。手で編集しない)

@@ -92,7 +92,7 @@ struct ShoppingListWidgetView: View {
         let maxItems = maxItemCount
         return VStack(alignment: .leading, spacing: 4) {
             ForEach(Array(entry.items.prefix(maxItems))) { item in
-                ShoppingListItemRow(item: item, accent: themeColor)
+                ShoppingListItemRow(groupID: entry.groupID, shoppingListID: entry.shoppingListID, item: item, accent: themeColor)
             }
             if entry.items.count > maxItems {
                 Text("他 \(entry.items.count - maxItems) 件")
@@ -136,13 +136,17 @@ struct ShoppingListWidgetView: View {
 }
 
 struct ShoppingListItemRow: View {
+    /// アイテムを取得したリストの groupID。アイテム文書のフィールドではなくこちらをトグル先に使う。
+    let groupID: String
+    /// アイテムを取得したリストの ID。
+    let shoppingListID: String
     let item: ShoppingListItemData
     let accent: Color
 
     var body: some View {
         Button(intent: ToggleItemIntent(
-            groupID: item.groupID,
-            shoppingListID: item.shoppingListID,
+            groupID: groupID,
+            shoppingListID: shoppingListID,
             itemID: item.id,
             currentStatus: item.status
         )) {

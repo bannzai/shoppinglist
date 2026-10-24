@@ -23,7 +23,8 @@ Firestore Security Rules は **JWT (Firebase Auth) 本人認証 + リソース�
 - データ所有者の不正書き換え等はグループメンバー全員を信頼する設計（同居家族・同居者向けアプリ）で許容する
 
 ## 例外
-クライアントからの直接 read/write を完全に禁止し Functions Admin SDK 経由のみとするケースは `allow read, write: if false` を明示する（例: `groupInvitations/`）。
+- クライアントからの直接 read/write を完全に禁止し Functions Admin SDK 経由のみとするケースは `allow read, write: if false` を明示する（例: `groupInvitations/`）。
+- `groups/{groupID}` の `ownerUserID` / `memberUserIDs` は、書き込み前後の値を比べて変更を拒否する（自分の脱退だけ許可）。サーバーがオーナー判定・グループ数上限・通知の宛先の認可に使う権限境界で、メンバーへの信頼では塞げないため（オーナーの乗っ取り・上限の回避・任意のユーザーへの通知。Issue #676）。このフィールドを変える処理は Functions に置く。他のフィールドにこの例外を広げない
 
 ## 参照
 - `firebase/firestore.rules` (本ルールに従って簡略化済み)

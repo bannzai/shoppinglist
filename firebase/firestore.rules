@@ -2,8 +2,10 @@ rules_version = '2';
 
 // 設計方針:
 // JWT (Firebase Auth) の本人認証 + リソース所有判定のみを行い、データ内容に踏み込んだ
-// ガード（プレミアム判定・期間判定・フィールド diff 等）は実装しない。詳細は
-// `.claude/rules/firestore-rules-simplicity.md` を参照。
+// ガード（プレミアム判定・期間判定・フィールド diff 等）は実装しない。例外は groups の
+// ownerUserID / memberUserIDs / activeShoppingListCount の書き換え禁止と、無料プランの買い物リスト数の
+// 上限 (shoppingLists の create / update。オフライン作成を残したままサーバー側で判定するため。Issue #683) のみ。
+// 詳細は `.claude/rules/firestore-rules-simplicity.md` を参照。
 service cloud.firestore {
   match /databases/{database}/documents {
     function isAuth() {
@@ -23,6 +25,21 @@ service cloud.firestore {
       return isAuth() && request.auth.uid in memberUserIDs;
     }
 
+    // userID のプレミアム状態を、syncPremiumEntitlement Function が RevenueCat から書き写した
+    // users/{userID}/premiumEntitlements の文書で判定する。expiresDateTime が null は無期限。
+    // 写しは 1 日で失効させる。返金などで RevenueCat の権利が取り消されても、同期を止めた
+    // クライアントの写しが有効なまま残らないようにするため。アプリはフォアグラウンドのたびに同期し、
+    // 拒否された作成も同期してから書き直すので、使っているプレミアム会員の写しは常に新しい。
+    function isPremiumUser(userID) {
+      let premiumEntitlementPath = /databases/$(database)/documents/users/$(userID)/premiumEntitlements/$('PremiumEntitlement_users_' + userID);
+      return exists(premiumEntitlementPath)
+        && get(premiumEntitlementPath).data.get('isPremium', false) == true
+        && get(premiumEntitlementPath).data.get('serverUpdatedDateTime', null) != null
+        && get(premiumEntitlementPath).data.serverUpdatedDateTime > request.time - duration.value(1, 'd')
+        && (get(premiumEntitlementPath).data.get('expiresDateTime', null) == null
+          || get(premiumEntitlementPath).data.expiresDateTime > request.time);
+    }
+
     match /users/{userID} {
       // developerToken フィールドは Cloud Functions の dev only 関数 (grantPromotionalPremium 等)
       // のユーザー単位ガードに使われる。dart-define SHOPPINGLIST_DEVELOPER_TOKEN を持つ開発者ビルドでのみ
@@ -34,8 +51,18 @@ service cloud.firestore {
         allow read, write: if isUserAuth(userID) || isDebugUserOf(userID);
       }
 
+      // AI 機能の月次利用回数。カウンタは AI 関数 (generateShoppingListItemsFromURL・
+      // generateShoppingListItemsFromImage・categorizeShoppingListItems) の Admin SDK だけが更新し、
+      // クライアントは読み取りのみ（書けると上限判定を回避できるため、Issue #677）。
       match /aiUsage/{yearMonth} {
-        allow read, write: if isUserAuth(userID) || isDebugUserOf(userID);
+        allow read: if isUserAuth(userID) || isDebugUserOf(userID);
+      }
+
+      // プレミアム状態の写し: rules の上限判定に使うため、書き込みは syncPremiumEntitlement
+      // Function (Admin SDK) 経由のみ。
+      match /premiumEntitlements/{premiumEntitlementID} {
+        allow read: if isUserAuth(userID);
+        allow write: if false;
       }
     }
 
@@ -51,12 +78,40 @@ service cloud.firestore {
     }
 
     match /groups/{groupID} {
-      allow read, update, delete: if isMember(resource.data.memberUserIDs);
+      allow read: if isMember(resource.data.memberUserIDs);
+      // ownerUserID / memberUserIDs はサーバーがオーナー判定・グループ数上限・通知の宛先の認可に使う
+      // 権限境界のため、メンバーにも書き換えさせない (Functions の Admin SDK 経由のみ。Issue #676)。
+      // 例外は自分の脱退 (自分の uid だけを除く) のみ。null とフィールド欠落を同じに扱うのは、
+      // ownerUserID を持たないレガシーグループに旧アプリが Group 全体を set merge すると null が書き足されるため。
+      // activeShoppingListCount は updateActiveShoppingListCount Function だけが保つ、買い物リスト数の
+      // 上限判定 (Issue #683) に使う値のため、同じくメンバーにも書き換えさせない。
+      allow update: if isMember(resource.data.memberUserIDs)
+        && request.resource.data.get('ownerUserID', null) == resource.data.get('ownerUserID', null)
+        && request.resource.data.get('activeShoppingListCount', null) == resource.data.get('activeShoppingListCount', null)
+        && (request.resource.data.memberUserIDs == resource.data.memberUserIDs
+          || request.resource.data.memberUserIDs == resource.data.memberUserIDs.removeAll([request.auth.uid]));
+      allow delete: if isMember(resource.data.memberUserIDs)
+        && resource.data.get('ownerUserID', null) == request.auth.uid;
       // グループ作成は Cloud Functions (createGroup) 経由でのみ許可する
       allow create: if false;
 
       function isGroupMember() {
         return isMember(get(/databases/$(database)/documents/groups/$(groupID)).data.memberUserIDs);
+      }
+
+      // done / archived 以外を active として数える (status 欠落もクライアントの既定値 active に合わせる)。
+      // updateActiveShoppingListCount Function の数え方と一致させること。
+      function isActiveShoppingListData(data) {
+        return !(data.get('status', 'active') in ['done', 'archived']);
+      }
+
+      // 無料プランのグループあたり active なリスト数の上限。
+      // NOTE: lib/entity/group_shopping_list.dart の freeGroupActiveShoppingListLimit と同じ値を維持すること。
+      function canAddActiveShoppingList() {
+        let group = get(/databases/$(database)/documents/groups/$(groupID)).data;
+        return group.get('activeShoppingListCount', 0) < 20
+          || isPremiumUser(request.auth.uid)
+          || (group.get('ownerUserID', null) != null && isPremiumUser(group.ownerUserID));
       }
 
       // userCategoryAxes / categories はユーザー所有のまま、同じグループのメンバーが
@@ -99,7 +154,14 @@ service cloud.firestore {
       }
 
       match /shoppingLists/{shoppingListID} {
-        allow read, write: if isGroupMember();
+        allow read, delete: if isGroupMember();
+        // active なリストが増える書き込み (active での作成、done / archived から active への変更) だけ上限を判定する。
+        allow create: if isGroupMember()
+          && (!isActiveShoppingListData(request.resource.data) || canAddActiveShoppingList());
+        allow update: if isGroupMember()
+          && (!isActiveShoppingListData(request.resource.data)
+            || isActiveShoppingListData(resource.data)
+            || canAddActiveShoppingList());
 
         match /items/{itemID} {
           allow read, write: if isGroupMember();

@@ -243,6 +243,7 @@
   "groupCategoryEditMatchingExact": "完全一致",
   "groupCategoryEditMatchingPartial": "部分一致",
   "groupCategoryEditMatchingRegex": "正規表現",
+  "groupCategoryEditRegexTooComplex": "複雑すぎる正規表現です。{maxLength}文字以内にし、(a+)+ のような繰り返しの入れ子は使わないでください",
 
   "groupCreateTitle": "グループ作成",
   "groupCreateIconLabel": "アイコン",
