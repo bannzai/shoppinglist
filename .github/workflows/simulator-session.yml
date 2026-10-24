@@ -57,7 +57,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1
+      - uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1.7.0
         with:
           xcode-version: latest-stable
 
@@ -80,6 +80,16 @@ jobs:
           export_to_environment: true
           secrets: |-
             GOOGLE_MAPS_API_KEY_IOS_DEV:shoppinglist-dev-b2787/google-maps-sdk-ios-apikey
+
+      # 任意のブランチを dispatch できる workflow のため、deployer SA の資格情報を secret の取り出しだけに限る。
+      # 以降の pub get / pod install / flutter build が動かす依存パッケージのスクリプトから GCP に届かないよう、
+      # auth が書いた資格情報ファイル (OIDC トークンを含む) を消し、参照する環境変数を空にする
+      - name: Discard GCP credentials before build
+        run: |
+          rm -f "$GITHUB_WORKSPACE"/gha-creds-*.json
+          for name in GOOGLE_APPLICATION_CREDENTIALS CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE GOOGLE_GHA_CREDS_PATH; do
+            echo "$name=" >> "$GITHUB_ENV"
+          done
 
       # アプリ内シークレットを復元（GoogleService-Info.plist / lib/secret/secret.dart / GoogleMaps.xcconfig など）
       - name: Restore app secrets
@@ -120,6 +130,7 @@ jobs:
         with:
           name: simulator-app
           path: build/ios/iphonesimulator # .app の親ディレクトリ（.app 直指定は中身が flatten される）
+          retention-days: 1 # 同じ run の session job が使うだけ。public リポジトリでは誰でも取得できるため最短で消す
 
   session:
     needs: build
