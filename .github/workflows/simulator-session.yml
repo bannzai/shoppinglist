@@ -116,11 +116,6 @@ jobs:
             exit 1
           fi
 
-      # iOS の依存はローカルと同じ CocoaPods (ios/Podfile.lock) で解決する。runner の Flutter は Swift Package Manager が
-      # 既定で有効なため、そのままだと cloud_firestore が SPM 経由で別バージョンの FirebaseFirestore と組まれコンパイルに失敗する
-      # (run 40138739402: FLTPipelineParser.m の ARC Semantic Issue)
-      - run: flutter config --no-enable-swift-package-manager
-
       - run: flutter pub get
 
       # ios/.symlinks を .flutter-plugins-dependencies から再生成する（理由はスクリプト冒頭。flutter-deploy と同じ手順）
