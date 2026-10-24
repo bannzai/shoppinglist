@@ -81,9 +81,10 @@ jobs:
           secrets: |-
             GOOGLE_MAPS_API_KEY_IOS_DEV:shoppinglist-dev-b2787/google-maps-sdk-ios-apikey
 
-      # 任意のブランチを dispatch できる workflow のため、deployer SA の資格情報を secret の取り出しだけに限る。
-      # 以降の pub get / pod install / flutter build が動かす依存パッケージのスクリプトから GCP に届かないよう、
-      # auth が書いた資格情報ファイル (OIDC トークンを含む) を消し、参照する環境変数を空にする
+      # 任意のブランチを dispatch できる workflow のため、auth が書いた資格情報ファイル (OIDC トークンを含む) を
+      # secret の取り出し直後に消し、参照する環境変数を空にして、以降の pub get / pod install / flutter build が
+      # 動かす依存パッケージのスクリプトが残った資格情報を拾えないようにする。同じ job に id-token: write が残るため
+      # OIDC トークンの取り直しは防げない。借りる SA を読み取り専用に分ける対処は #711
       - name: Discard GCP credentials before build
         run: |
           rm -f "$GITHUB_WORKSPACE"/gha-creds-*.json
@@ -105,7 +106,11 @@ jobs:
             echo "::error::Secrets の FIREBASE_BASE64_IOS_DEV が未登録か空です (dev の GoogleService-Info.plist を base64 にした値を登録してください)"
             exit 1
           fi
-          /usr/libexec/PlistBuddy -c "Print :BUNDLE_ID" ios/Firebase/GoogleService-Info.plist
+          bundle_id=$(/usr/libexec/PlistBuddy -c "Print :BUNDLE_ID" ios/Firebase/GoogleService-Info.plist)
+          if [ "$bundle_id" != "com.bannzai.shoppinglist.dev" ]; then
+            echo "::error::GoogleService-Info.plist の BUNDLE_ID が $bundle_id です。Debug configuration (ios/Flutter/Debug.xcconfig) の dev の bundle ID と一致する dev の plist を FIREBASE_BASE64_IOS_DEV に登録してください"
+            exit 1
+          fi
           if [ -z "$REVENUECAT_TEST_STORE_API_KEY" ]; then
             echo "::error::Secrets の REVENUECAT_TEST_STORE_API_KEY が未登録か空です (手元の .envrc / SecChain と同じ RevenueCat Test Store の公開 SDK キーを登録してください)"
             exit 1
