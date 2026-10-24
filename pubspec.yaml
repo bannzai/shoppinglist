@@ -127,6 +127,13 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  # iOS の依存は CocoaPods (ios/Podfile.lock) で解決する。Flutter 3.44 から Swift Package Manager が既定で有効になり、
+  # 設定の無い環境 (CI の runner) では cloud_firestore が SPM 経由で別バージョンの FirebaseFirestore と組まれて
+  # コンパイルに失敗する (simulator-session の run 40138739402)。ローカルの `flutter config` と同じ設定をプロジェクトに
+  # 置き、ローカル・simulator-session・flutter-deploy で揃える。CocoaPods のレジストリは 2026-12-02 に読み取り専用になり、
+  # この無効化も将来は使えなくなる (https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-app-developers)
+  config:
+    enable-swift-package-manager: false
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
