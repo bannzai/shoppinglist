@@ -76,12 +76,15 @@ jobs:
           cache: 'npm'
           cache-dependency-path: firebase/functions/package-lock.json
 
+      # id-token: write は job 全体に効き、依存の lifecycle script (preinstall / install / postinstall) も
+      # OIDC トークンを取得できるため、インストール時の script は実行しない。
+      # predeploy (lint・build) と関数の検出は script 無しで入れた依存で動く。
       - name: Install dependencies
         working-directory: firebase/functions
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Install firebase-tools
-        run: npm install -g "firebase-tools@${FIREBASE_TOOLS_VERSION}"
+        run: npm install -g --ignore-scripts "firebase-tools@${FIREBASE_TOOLS_VERSION}"
 
       - name: Resolve project
         id: resolve
@@ -97,9 +100,8 @@ jobs:
             echo "project_number=764733922439" >> "$GITHUB_OUTPUT"
           fi
 
-      # 依存のインストールより後に置き、npm ci / npm install が実行する依存の lifecycle script の時点では
-      # 資格情報ファイルがまだ無いようにする。ただし id-token: write は job 全体に効くため、
-      # 依存のコードは OIDC トークンを自分で取得できる。この順序は依存のコードへの防御にはならない。
+      # 依存のコードは firebase deploy の predeploy (lint・build) と関数の検出でもこの job 内で動き、
+      # OIDC トークンを取得できる。step の順序はこれへの防御にはならない。
       # 資格情報ファイル(gha-creds-*.json)は $GITHUB_WORKSPACE 直下に作られ、Functions の source(firebase/functions)の
       # 外なのでデプロイの成果物に含まれない(Issue #675)。ファイルは post step が削除する。
       - name: Authenticate to Google Cloud
