@@ -97,8 +97,9 @@ jobs:
             echo "project_number=764733922439" >> "$GITHUB_OUTPUT"
           fi
 
-      # 依存のインストールより後に置く。npm ci / npm install は依存の lifecycle script を実行するため、
-      # 先に資格情報を配置すると依存のスクリプトから読めてしまう。
+      # 依存のインストールより後に置き、npm ci / npm install が実行する依存の lifecycle script の時点では
+      # 資格情報ファイルがまだ無いようにする。ただし id-token: write は job 全体に効くため、
+      # 依存のコードは OIDC トークンを自分で取得できる。この順序は依存のコードへの防御にはならない。
       # 資格情報ファイル(gha-creds-*.json)は $GITHUB_WORKSPACE 直下に作られ、Functions の source(firebase/functions)の
       # 外なのでデプロイの成果物に含まれない(Issue #675)。ファイルは post step が削除する。
       - name: Authenticate to Google Cloud

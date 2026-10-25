@@ -34,7 +34,8 @@ setup() {
   local attribute_mapping="google.subject=assertion.sub,attribute.repository_id=assertion.repository_id,attribute.repository_owner_id=assertion.repository_owner_id,attribute.environment=assertion.environment"
 
   echo "== ${environment} (${project_id} / ${project_number})"
-  gcloud services enable sts.googleapis.com --project="$project_id"
+  # workflow は service_account を指定した SA の借用で認証するため、STS に加えて generateAccessToken の API も要る。
+  gcloud services enable sts.googleapis.com iamcredentials.googleapis.com --project="$project_id"
 
   if ! gcloud iam workload-identity-pools describe "$POOL_ID" --project="$project_id" --location=global >/dev/null 2>&1; then
     gcloud iam workload-identity-pools create "$POOL_ID" --project="$project_id" --location=global --display-name="GitHub Actions"

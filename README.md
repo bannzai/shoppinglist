@@ -8,7 +8,7 @@ TestFlight / Google Play への配布手順は [documents/release.md](documents/
 
 ## Firebase Functions のデプロイ
 
-`gh workflow run firebase-deploy.yml -f project=<dev|prod> -f deploy_all=true` で GitHub Actions から行う。認証は Workload Identity Federation で、Secret の SA 鍵は持たない。事前準備と認証の仕組みは [.github/workflows/firebase-deploy.yml](.github/workflows/firebase-deploy.yml) のヘッダーコメント、GCP 側の設定は [scripts/setup-github-actions-wif.sh](scripts/setup-github-actions-wif.sh) を参照。
+`gh workflow run firebase-deploy.yml -f project=<dev|prod> -f functions=functions:<関数名>` で GitHub Actions から行う。`-f deploy_all=true` は全関数を出すため、前回のデプロイ以降に main へ入った未デプロイの変更もまとめて出る。認証は Workload Identity Federation で、Secret の SA 鍵は持たない。事前準備と認証の仕組みは [.github/workflows/firebase-deploy.yml](.github/workflows/firebase-deploy.yml) のヘッダーコメント、GCP 側の設定は [scripts/setup-github-actions-wif.sh](scripts/setup-github-actions-wif.sh) を参照。
 
 ## ローカルの secret の復元
 
