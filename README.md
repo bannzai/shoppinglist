@@ -6,6 +6,10 @@ A new Flutter project.
 
 TestFlight / Google Play への配布手順は [documents/release.md](documents/release.md) を参照。リリースのたびに `pubspec.yaml` の `version:` を上げる必要がある。
 
+## Firebase Functions のデプロイ
+
+`gh workflow run firebase-deploy.yml -f project=<dev|prod> -f functions=functions:<関数名>` で GitHub Actions から行う。`-f deploy_all=true` は全関数を出すため、前回のデプロイ以降に main へ入った未デプロイの変更もまとめて出る。認証は Workload Identity Federation で、Secret の SA 鍵は持たない。事前準備と認証の仕組みは [.github/workflows/firebase-deploy.yml](.github/workflows/firebase-deploy.yml) のヘッダーコメント、GCP 側の設定は [scripts/setup-github-actions-wif.sh](scripts/setup-github-actions-wif.sh) を参照。
+
 ## ローカルの secret の復元
 
 Firebase の設定ファイルと Google Maps のクライアントキーはリポジトリに入っていない。手元では SecChain に保管した値を渡して `make secret` で復元する (値の正は GCP Secret Manager。設計は [documents/adr/0035](documents/adr/0035-google-maps-keys-in-secret-manager-restored-by-make-secret.md))。

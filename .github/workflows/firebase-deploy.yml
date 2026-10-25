@@ -5,20 +5,20 @@ name: firebase-deploy
 # 方針:
 # - プロジェクト規約「Deploy はユーザーが行う」に従い、push による自動デプロイはせず
 #   workflow_dispatch（手動実行）のみをトリガーとする。
-# - 認証はデプロイ専用サービスアカウントの鍵(JSON)を base64 化した GitHub Secret を
-#   Application Default Credentials (GOOGLE_APPLICATION_CREDENTIALS) として復元して行う。
+# - 認証は Workload Identity Federation で行い、GitHub の OIDC トークンをデプロイ専用 SA
+#   github-firebase-deployer@<projectId>.iam.gserviceaccount.com の短命な access token に交換する
+#   (長期の SA 鍵は持たない。Issue #694)。
 # - 対象プロジェクトは入力 project(dev/prod) で選択し、--project で .firebaserc の alias を指定する(Issue #410 / ADR 0030)。
-# - dev/prod の切替は GitHub Environments で行う。同名 Secret FIREBASE_SERVICE_ACCOUNT_BASE64 を
-#   environment(dev/prod)単位で出し分ける(_DEV/_PROD のような名前分けはしない)。
+# - job は GitHub Environment(dev/prod)で動かす。Workload Identity Provider は OIDC トークンの
+#   environment claim で絞っており、dev の job から prod の SA は借りられない。
 #
 # 事前準備(初回のみ):
 # 1. dev/prod それぞれにデプロイ専用 SA を用意し gen2 デプロイに必要な IAM 権限を付与する。
 #    → firebase-functions-deploy-iam-setup スキルで診断・付与できる。
-#      既定 SA: github-firebase-deployer@<projectId>.iam.gserviceaccount.com
-# 2. GitHub の Environments(dev / prod)を作成し、各 environment の Secret として
-#    FIREBASE_SERVICE_ACCOUNT_BASE64(その project の SA 鍵 JSON を base64 化)を登録する。
-#      例: base64 -i service-account.json | pbcopy   # macOS
-# 3. APP_ENV は deploy 対象 project(dev/prod) から導出するため Variable は不要(.env.<projectId> を CI で生成)。
+# 2. Workload Identity Pool / Provider と SA への binding を作る(冪等):
+#      bash scripts/setup-github-actions-wif.sh   # owner の認証情報で実行する
+# 3. GitHub の Environments(dev / prod)を作成する。Secret の登録は不要。
+# 4. APP_ENV は deploy 対象 project(dev/prod) から導出するため Variable は不要(.env.<projectId> を CI で生成)。
 
 on:
   workflow_dispatch:
@@ -51,14 +51,20 @@ concurrency:
   group: firebase-deploy
   cancel-in-progress: false
 
-# リポジトリの読み取りのみ。デプロイ認証は SA 鍵で行うため書き込み権限は不要。
+# id-token は Workload Identity Federation の OIDC トークン発行に要る。
 permissions:
   contents: read
+  id-token: write
+
+env:
+  # latest だと CLI の更新で挙動が変わりデプロイが再現しなくなるため固定する。
+  # 15.22.2 は external_account 資格情報(WIF)を ADC として読めない回帰があり、15.22.3 で修正済み。
+  FIREBASE_TOOLS_VERSION: '15.32.1'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # dev/prod の Secret(FIREBASE_SERVICE_ACCOUNT_BASE64)を environment 単位で出し分ける。
+    # OIDC トークンの environment claim(dev/prod)を Workload Identity Provider の条件に使う。
     environment: ${{ inputs.project }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -70,37 +76,42 @@ jobs:
           cache: 'npm'
           cache-dependency-path: firebase/functions/package-lock.json
 
+      # id-token: write は job 全体に効き、依存の lifecycle script (preinstall / install / postinstall) も
+      # OIDC トークンを取得できるため、インストール時の script は実行しない。
+      # predeploy (lint・build) と関数の検出は script 無しで入れた依存で動く。
       - name: Install dependencies
         working-directory: firebase/functions
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Install firebase-tools
-        run: npm install -g firebase-tools
+        run: npm install -g --ignore-scripts "firebase-tools@${FIREBASE_TOOLS_VERSION}"
 
       - name: Resolve project
         id: resolve
         env:
           PROJECT: ${{ inputs.project }}
+        # project_number は Workload Identity Pool のリソース名に要る(scripts/setup-github-actions-wif.sh)。
         run: |
           if [ "$PROJECT" = "prod" ]; then
             echo "project_id=shoppinglist-prod-857bb" >> "$GITHUB_OUTPUT"
+            echo "project_number=323773689605" >> "$GITHUB_OUTPUT"
           else
             echo "project_id=shoppinglist-dev-b2787" >> "$GITHUB_OUTPUT"
+            echo "project_number=764733922439" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Restore service account key
-        env:
-          # environment(dev/prod)単位で値が出し分けられる同名 Secret。
-          FIREBASE_SERVICE_ACCOUNT_BASE64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASE64 }}
-        run: |
-          if [ -z "$FIREBASE_SERVICE_ACCOUNT_BASE64" ]; then
-            echo "::error::Secret FIREBASE_SERVICE_ACCOUNT_BASE64 が未設定です(GitHub Environment '${{ inputs.project }}' に登録してください)"
-            exit 1
-          fi
-          # Functions の source(firebase/functions)の外に置く。source 内に置くと firebase deploy が
-          # 関数のソースと一緒に鍵をアップロードするため(Issue #675)。
-          echo "$FIREBASE_SERVICE_ACCOUNT_BASE64" | base64 --decode > "$RUNNER_TEMP/GOOGLE_APPLICATION_CREDENTIALS.json"
-          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/GOOGLE_APPLICATION_CREDENTIALS.json" >> "$GITHUB_ENV"
+      # 依存のコードは firebase deploy の predeploy (lint・build) と関数の検出でもこの job 内で動き、
+      # OIDC トークンを取得できる。step の順序はこれへの防御にはならない。
+      # 資格情報ファイル(gha-creds-*.json)は $GITHUB_WORKSPACE 直下に作られ、Functions の source(firebase/functions)の
+      # 外なのでデプロイの成果物に含まれない(Issue #675)。ファイルは post step が削除する。
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          project_id: ${{ steps.resolve.outputs.project_id }}
+          workload_identity_provider: projects/${{ steps.resolve.outputs.project_number }}/locations/global/workloadIdentityPools/github/providers/shoppinglist
+          service_account: github-firebase-deployer@${{ steps.resolve.outputs.project_id }}.iam.gserviceaccount.com
+          create_credentials_file: true
+          export_environment_variables: true
 
       - name: Restore functions env (APP_ENV)
         working-directory: firebase/functions
