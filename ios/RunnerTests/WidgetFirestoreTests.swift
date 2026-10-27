@@ -2,6 +2,7 @@ import FirebaseCore
 import FirebaseFirestore
 import XCTest
 
+/// ウィジェット拡張の `withWidgetFirestore` が、同じプロセスで重なる呼び出しと LevelDB のロックで落ちないことのテスト
 class WidgetFirestoreTests: XCTestCase {
 
   /// テストごとに別の名前で FirebaseApp を作る。Firestore のインスタンスとローカルキャッシュのディレクトリは app 名ごとに分かれるため、
