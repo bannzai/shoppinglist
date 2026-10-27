@@ -59,10 +59,11 @@ class WidgetFirestoreTests: XCTestCase {
       (try? await firestore.collection("items").getDocuments(source: .cache))?.count ?? -1
     }
     XCTAssertEqual(count, 0)
+    // SDK が LevelDB を置く階層が版で変わっても見逃さないよう、firestore の下のどの階層でも app 名を含むパスが無いことを確かめる
     let firestoreDirectory = try FileManager.default
       .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
       .appendingPathComponent("firestore")
-      .appendingPathComponent(appName)
-    XCTAssertFalse(FileManager.default.fileExists(atPath: firestoreDirectory.path), firestoreDirectory.path)
+    let appPaths = (FileManager.default.subpaths(atPath: firestoreDirectory.path) ?? []).filter { $0.contains(appName) }
+    XCTAssertEqual(appPaths, [], firestoreDirectory.path)
   }
 }
