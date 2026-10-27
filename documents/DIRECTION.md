@@ -1,6 +1,6 @@
 ---
 status: launched          # evaluating | building | launched | pivoting | retiring | retired
-decision_date: 2026-10-27 # 次の判定日 (YYYY-MM-DD)。判定のたびに cycle_days 後へ進める
+decision_date: 2026-11-10 # 次の判定日 (YYYY-MM-DD)。判定のたびに cycle_days 後へ進める
 cycle_days: 14            # 判定の周期 (7 または 14)
 veto_wait_hours: 12       # 公開後の無人ループの拒否権の待ち時間 (既定 12)
 daily_issue_cap: 3        # 1 日に生成してよい改善 issue の上限 (意味の門。既定 3)
@@ -50,7 +50,8 @@ launched_at: 2026-08-20   # 公開日 (YYYY-MM-DD)。App Store の初回公開�
 | 2026-10-12 | 無人ループ | リリースを再び見送った。#650 (version 1.0.1) と #640 (iPhone Duo) はマージ済みだが、QA ゲートが root `unverified`・11 feature `changed`・QA.md 無し 7 件で fail し、評価依頼の導線 (#651) が未マージで買い物リストの再 QA をもう一度やり直すことになるため。QA.md 無し 7 件は root QA.md の「QA 対象外」が箇条書きでゲートの表の書式と合っていないのが原因で、書式の修正を #655 にした。#651・#655 のマージ後に release-app skill の run-qa を 1 回で行う | agent |
 | 2026-10-13 | 判定日 | 継続。判定基準の 3 行すべてが継続のしきい値内 (直近 14 日の ★1〜2 レビュー 0 件、FATAL クラッシュ issue は iOS 0 件・Android 0 件。`documents/loop/metrics-2026-10-13.json`)。ストアの公開版が 1.0 のままで評価 0 件のため、指標は「問題が起きていない」ことしか示しておらず、利用の有無は読めない。次の判定日 2026-10-27 までに 1.0.1 (評価依頼の導線を含む) をリリースし、ダウンロード数・課金の計測キーが入れば行を足す | agent |
 | 2026-10-15 | 無人ループ | リリースを再び見送り、run-qa にも着手しなかった。マシンの負荷は下がった (load average 16.8) が、「ユーザー作業の一覧」#657 の確認の未チェック 2 件のうち「本番配布のビルドでレビューを送信できる」はリリース後にしか確かめられず、残る限りリリースに進めないため。QA を先に済ませても #657 の扱いが決まるまでに main の変更で QA がやり直しになる。bannzai がこの項目をリリース後の確認に移すか不要と判断した次の実行で、release-app の run-qa から進める。クラッシュの 2 指標はこのマシンの `firebase login` が外れて UNMEASURED (記録 issue #649 の 2026-10-15 のコメント) | agent |
+| 2026-10-27 | 判定日 | 継続。判定基準の 3 行すべてが継続のしきい値内 (値は `documents/loop/metrics-2026-10-27.json`)。iOS の FATAL クラッシュ issue はどちらもウィジェット拡張の Firestore の後始末によるもので、修正を #718 で無人実装中。上位の issue のイベント数が転換の条件 (1 件で 100 超) に近づいているため、次の判定日までに #718 を含む版をリリースできるかを優先して見る。ストアの公開版は 1.0 のままで、リリースは「ユーザー作業の一覧」#657 の扱いが決まるまで止まっている | agent |
 
 ## agent に任せること
 
-文書に無い問いはすべて。RevenueCat の課金指標は、`metrics/overview` を読める v2 API key (`sk_` で始まる) が `.envrc` に入った時に agent が判定基準へ足す (2026-10-11 時点の `REVENUECAT_SECRET_API_KEY` は legacy key で、API v2 が 403 を返すことを実測)。App Store のダウンロード数・インプレッションは、aso-analytics-explorer skill が読める Sales and Reports ロールの App Store Connect API キー (`ASC_SALES_AND_REPORT_*`) が入った時に agent が判定基準へ足す (2026-10-11 時点の配布用キー `ASC_API_KEY_*` は Analytics Reports に 403 を返すことを実測)。Android は Google Play で公開済み (2026-10-11 実測) で、Google Play のレビューは castle の skill で取れるようになった時に行を足す。
+文書に無い問いはすべて。RevenueCat の課金指標 (MRR・有効な購読・売上・新規顧客等) は bannzai/dashboard が日次で集めており、手元の API key 無しで `bash ~/.agents/skills/product-loop/scripts/read-dashboard-metric.sh --repo bannzai/shoppinglist --metric <指標> --field <列>` で読める (2026-10-27 に `STATUS=ok` を実測)。判定基準への行の追加は週次の承認に回す (`documents/loop/pending-proposals.md`)。App Store のダウンロード数・インプレッションは、aso-analytics-explorer skill が読める Sales and Reports ロールの App Store Connect API キー (`ASC_SALES_AND_REPORT_*`) が入った時に agent が判定基準へ足す (2026-10-11 時点の配布用キー `ASC_API_KEY_*` は Analytics Reports に 403 を返すことを実測)。Android は Google Play で公開済み (2026-10-11 実測) で、Google Play のレビューは castle の skill で取れるようになった時に行を足す。
