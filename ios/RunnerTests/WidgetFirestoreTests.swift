@@ -7,8 +7,11 @@ class WidgetFirestoreTests: XCTestCase {
   /// テストごとに別の名前で FirebaseApp を作る。Firestore のインスタンスとローカルキャッシュのディレクトリは app 名ごとに分かれるため、
   /// テスト間・ホストアプリの既定 app と状態を共有しない。
   private func makeFirebaseApp(name: String) -> FirebaseApp {
-    // ネットワークに出ない (`source: .cache` だけを使う) ため、形式だけ満たす架空の値にしている
+    // ネットワークに出ない (`source: .cache` だけを使う) ため、形式だけ満たす架空の値にしている。
+    // テストのホストアプリ (Runner) が FirebaseAuth・FirebaseInstallations をリンクしており、configure の時点で両者が
+    // API キーの有無と形式 (`A` で始まる 39 文字。FIRInstallations の validateAPIKey) を検査して落ちるため、API キーも入れる
     let options = FirebaseOptions(googleAppID: "1:1234567890:ios:0123456789abcdef", gcmSenderID: "1234567890")
+    options.apiKey = "A" + String(repeating: "0", count: 38)
     options.projectID = "demo-widget-firestore-test"
     FirebaseApp.configure(name: name, options: options)
     return FirebaseApp.app(name: name)!
@@ -30,6 +33,19 @@ class WidgetFirestoreTests: XCTestCase {
     }
     let results = await [longOperation, shortOperation]
     XCTAssertEqual(results, [0, 0])
+  }
+
+  /// 先の呼び出しで Firestore の操作が始まった後に、同じ app でもう一度呼んでも動くこと。
+  /// 操作が始まった Firestore に違う settings を入れると SDK が例外を投げるため、2 回目の呼び出しで settings を入れ直さないことを確かめる
+  func testSequentialOperationsOnSameApp() async {
+    let app = makeFirebaseApp(name: "widget-sequential-\(UUID().uuidString)")
+    let first = await withWidgetFirestore(app: app) { firestore in
+      (try? await firestore.collection("items").getDocuments(source: .cache))?.count ?? -1
+    }
+    let second = await withWidgetFirestore(app: app) { firestore in
+      (try? await firestore.collection("items").getDocuments(source: .cache))?.count ?? -1
+    }
+    XCTAssertEqual([first, second], [0, 0])
   }
 
   /// ウィジェット拡張の Firestore が LevelDB のローカルキャッシュを作らないこと。
