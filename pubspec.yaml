@@ -34,15 +34,17 @@ dependencies:
     sdk: flutter
   collection:
     
-  firebase_core: ^4.4.0
-  firebase_analytics: 12.3.0 
-  firebase_auth: 6.4.0
-  firebase_messaging: 16.2.0 
-  firebase_remote_config: 6.4.0 
-  cloud_firestore: 6.3.0
-  cloud_functions: 6.2.0
-  firebase_storage: 13.3.0
-  firebase_crashlytics: 5.2.0
+  firebase_core: ^4.15.2
+  firebase_analytics: ^12.6.1 
+  firebase_auth: ^6.7.1
+  firebase_messaging: ^16.7.1 
+  firebase_remote_config: ^6.7.1 
+  # eMudhra の中間 CA の失効に対応した FirebaseFirestore 12.19.3 を使う 6.10.2 以上。他の FlutterFire も
+  # 同じ BoM 4.20.2 に揃える (https://firebase.google.com/support/guides/compromised-emudhra-intermediate-ca)
+  cloud_firestore: ^6.10.2
+  cloud_functions: ^6.5.1
+  firebase_storage: ^13.6.1
+  firebase_crashlytics: ^5.4.1
   purchases_flutter: ^10.15.2
 
   crypto:
@@ -92,7 +94,7 @@ dependencies:
   google_maps_flutter: ^2.18.0
   flutter_local_notifications: ^21.0.0
   geocoding: ^4.0.0
-  firebase_app_check: 0.4.3
+  firebase_app_check: ^0.4.9
 
 dev_dependencies:
   flutter_test:
@@ -127,10 +129,10 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-  # iOS の依存は CocoaPods (ios/Podfile.lock) で解決する。Flutter 3.44 から Swift Package Manager が既定で有効になり、
-  # 設定の無い環境 (CI の runner) では cloud_firestore が SPM 経由で別バージョンの FirebaseFirestore と組まれて
-  # コンパイルに失敗する (simulator-session の run 40138739402)。ローカルの `flutter config` と同じ設定をプロジェクトに
-  # 置き、ローカル・simulator-session・flutter-deploy で揃える。CocoaPods のレジストリは 2026-12-02 に読み取り専用になり、
+  # iOS の依存は CocoaPods (ios/Podfile.lock) で解決する。Swift Package Manager に移すには、Podfile の Firestore の
+  # 事前ビルド pod (firebase_core の .symlinks の firebase_sdk_version.rb を読む) と、ShoppingListWidgetExtension が
+  # Pods の Firebase の framework を OTHER_LDFLAGS で直接リンクする構成を作り直す必要がある。設定の無い環境
+  # (CI の runner) でも同じ経路になるようプロジェクトに置く。CocoaPods のレジストリは 2026-12-02 に読み取り専用になり、
   # この無効化も将来は使えなくなる (https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-app-developers)
   config:
     enable-swift-package-manager: false

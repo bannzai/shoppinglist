@@ -295,7 +295,7 @@ class Purchase {
       if (!premiumEntitlement.isActive) {
         throw FormatException(l10n.purchaseNotActivated);
       }
-      return Future.value(true);
+      return true;
     } on PlatformException catch (exception, stack) {
       analytics.logEvent(
         name: 'catched_purchase_exception',

@@ -34,12 +34,13 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
   # Firestoreのビルド高速化: プリコンパイル済みフレームワークを使用
-  # バージョンは firebase_core の firebase_sdk_version.rb から動的取得
+  # バージョンは firebase_core の firebase_sdk_version.rb から動的取得。.symlinks は flutter_install_all_ios_pods が
+  # 作り直すため、その後に読む (先に読むと .symlinks の無い checkout で pod install が失敗する)
   require File.expand_path(File.join('.symlinks', 'plugins', 'firebase_core', 'ios', 'firebase_sdk_version.rb'), File.dirname(File.realpath(__FILE__)))
   pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => firebase_sdk_version!
-
-  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
     inherit! :search_paths
   end
