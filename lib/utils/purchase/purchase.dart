@@ -217,7 +217,7 @@ Package? lifetimePackage(Ref ref) {
 Package? monthlyPremiumPackage(Ref ref) {
   const premiumPackageOfferingType = OfferingType.premium;
   final offering =
-      ref.watch(offeringsProvider).valueOrNull?.all[premiumPackageOfferingType
+      ref.watch(offeringsProvider).value?.all[premiumPackageOfferingType
           .identifier];
   if (offering == null) {
     return null;

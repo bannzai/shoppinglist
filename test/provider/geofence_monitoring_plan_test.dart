@@ -12,6 +12,7 @@ import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import '../helpers/read_provider_future.dart';
 
 // CustomerInfo.isPremium は entitlements.active に premiumEntitlementIdentifier が
 // 含まれるかで判定される（purchase.dart の CustomerInfoExtension）。
@@ -91,8 +92,14 @@ void main() {
         ],
       );
       addTearDown(container.dispose);
-      await container.read(customerInfoProvider.future);
-      await container.read(userGroupsProvider.future);
+      await readProviderFuture(
+        container: container,
+        provider: customerInfoProvider.future,
+      );
+      await readProviderFuture(
+        container: container,
+        provider: userGroupsProvider.future,
+      );
 
       final plan = container.read(geofenceMonitoringPlanProvider);
       expect(plan.shouldMonitor, isFalse);
@@ -112,8 +119,14 @@ void main() {
         ],
       );
       addTearDown(container.dispose);
-      await container.read(customerInfoProvider.future);
-      await container.read(userGroupsProvider.future);
+      await readProviderFuture(
+        container: container,
+        provider: customerInfoProvider.future,
+      );
+      await readProviderFuture(
+        container: container,
+        provider: userGroupsProvider.future,
+      );
 
       final plan = container.read(geofenceMonitoringPlanProvider);
       expect(plan.shouldMonitor, isFalse);
@@ -131,8 +144,14 @@ void main() {
         ],
       );
       addTearDown(container.dispose);
-      await container.read(customerInfoProvider.future);
-      await container.read(userGroupsProvider.future);
+      await readProviderFuture(
+        container: container,
+        provider: customerInfoProvider.future,
+      );
+      await readProviderFuture(
+        container: container,
+        provider: userGroupsProvider.future,
+      );
 
       final plan = container.read(geofenceMonitoringPlanProvider);
       expect(plan.shouldMonitor, isFalse);
@@ -161,13 +180,25 @@ void main() {
           ],
         );
         addTearDown(container.dispose);
-        await container.read(customerInfoProvider.future);
-        await container.read(userGroupsProvider.future);
-        await container.read(
-          shoppingLocationsProvider(groupID: mockGroupID).future,
+        await readProviderFuture(
+          container: container,
+          provider: customerInfoProvider.future,
         );
-        await container.read(
-          shoppingListsProvider(groupID: mockGroupID, isPremium: true).future,
+        await readProviderFuture(
+          container: container,
+          provider: userGroupsProvider.future,
+        );
+        await readProviderFuture(
+          container: container,
+          provider: shoppingLocationsProvider(groupID: mockGroupID).future,
+        );
+        await readProviderFuture(
+          container: container,
+          provider:
+              shoppingListsProvider(
+                groupID: mockGroupID,
+                isPremium: true,
+              ).future,
         );
 
         final plan = container.read(geofenceMonitoringPlanProvider);

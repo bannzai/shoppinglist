@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'remote_config_parameter.dart';
@@ -9,6 +9,7 @@ part of 'remote_config_parameter.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $RemoteConfigParameterCopyWith<RemoteConfigParameter> get copyWith => _$RemoteCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RemoteConfigParameter&&(identical(other.releasedVersion, releasedVersion) || other.releasedVersion == releasedVersion)&&(identical(other.minimumAppVersion, minimumAppVersion) || other.minimumAppVersion == minimumAppVersion));
+  final _this = this as RemoteConfigParameter;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RemoteConfigParameter&&(identical(other.releasedVersion, _this.releasedVersion) || other.releasedVersion == _this.releasedVersion)&&(identical(other.minimumAppVersion, _this.minimumAppVersion) || other.minimumAppVersion == _this.minimumAppVersion));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,releasedVersion,minimumAppVersion);
+int get hashCode {
+  final _this = this as RemoteConfigParameter;
+  return Object.hash(runtimeType,_this.releasedVersion,_this.minimumAppVersion);
+}
 
 @override
 String toString() {
-  return 'RemoteConfigParameter(releasedVersion: $releasedVersion, minimumAppVersion: $minimumAppVersion)';
+  final _this = this as RemoteConfigParameter;
+  return 'RemoteConfigParameter(releasedVersion: ${_this.releasedVersion}, minimumAppVersion: ${_this.minimumAppVersion})';
 }
 
 
@@ -66,7 +72,7 @@ class _$RemoteConfigParameterCopyWithImpl<$Res>
 /// Create a copy of RemoteConfigParameter
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? releasedVersion = null,Object? minimumAppVersion = null,}) {
-  return _then(_self.copyWith(
+  return _then(RemoteConfigParameter(
 releasedVersion: null == releasedVersion ? _self.releasedVersion : releasedVersion // ignore: cast_nullable_to_non_nullable
 as String,minimumAppVersion: null == minimumAppVersion ? _self.minimumAppVersion : minimumAppVersion // ignore: cast_nullable_to_non_nullable
 as String,
@@ -229,16 +235,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RemoteConfigParameter&&(identical(other.releasedVersion, releasedVersion) || other.releasedVersion == releasedVersion)&&(identical(other.minimumAppVersion, minimumAppVersion) || other.minimumAppVersion == minimumAppVersion));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RemoteConfigParameter&&(identical(other.releasedVersion, releasedVersion) || other.releasedVersion == releasedVersion)&&(identical(other.minimumAppVersion, minimumAppVersion) || other.minimumAppVersion == minimumAppVersion));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,releasedVersion,minimumAppVersion);
+int get hashCode {
+    return Object.hash(runtimeType,releasedVersion,minimumAppVersion);
+}
 
 @override
 String toString() {
-  return 'RemoteConfigParameter(releasedVersion: $releasedVersion, minimumAppVersion: $minimumAppVersion)';
+    return 'RemoteConfigParameter(releasedVersion: $releasedVersion, minimumAppVersion: $minimumAppVersion)';
 }
 
 

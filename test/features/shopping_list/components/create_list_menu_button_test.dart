@@ -415,11 +415,10 @@ void main() {
 
     expect(recordingDuplicate.callCount, 1);
     expect(recordingDuplicate.lastSourceShoppingList?.id, 'current-list');
-    expect(
-      recordingDuplicate.lastShoppingListItems?.map((item) => item.id),
-      ['unchecked-item', 'checked-item'],
-      reason: 'チェック済みを含む全アイテムを引き継ぐ',
-    );
+    expect(recordingDuplicate.lastShoppingListItems?.map((item) => item.id), [
+      'unchecked-item',
+      'checked-item',
+    ], reason: 'チェック済みを含む全アイテムを引き継ぐ');
     expect(
       recordingListAdd.callCount,
       0,
@@ -466,11 +465,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(recordingDuplicate.callCount, 1);
-    expect(
-      recordingDuplicate.lastShoppingListItems?.map((item) => item.id),
-      ['unchecked-item-1', 'unchecked-item-2'],
-      reason: 'チェック済みアイテムは引き継がない',
-    );
+    expect(recordingDuplicate.lastShoppingListItems?.map((item) => item.id), [
+      'unchecked-item-1',
+      'unchecked-item-2',
+    ], reason: 'チェック済みアイテムは引き継がない');
   });
 
   testWidgets('複製元リスト未取得(null)の間は複製アクションが無効でタップしても何もしない', (tester) async {
@@ -535,11 +533,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(recordingDuplicate.callCount, 1);
-    expect(
-      recordingDuplicate.lastShoppingListItems?.map((item) => item.id),
-      ['existing-item', 'just-confirmed-item'],
-      reason: 'build 時の一覧ではなく選択時点の最新一覧で複製し、直前に確定した入力の欠落を防ぐ',
-    );
+    expect(recordingDuplicate.lastShoppingListItems?.map((item) => item.id), [
+      'existing-item',
+      'just-confirmed-item',
+    ], reason: 'build 時の一覧ではなく選択時点の最新一覧で複製し、直前に確定した入力の欠落を防ぐ');
   });
 
   testWidgets('メニューを開くとアイテム追加 FAB の展開メニューを閉じる', (tester) async {

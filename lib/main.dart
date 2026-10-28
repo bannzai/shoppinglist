@@ -68,6 +68,10 @@ void main() async {
     // MEMO: FirebaseCrashlytics#recordFlutterError called dumpErrorToConsole in function.
     // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
     appProviderContainer = ProviderContainer(
+      // Riverpod 3 は失敗した provider を既定で自動再試行するが、このアプリは Riverpod 2 の時から
+      // 失敗をそのまま画面のエラー表示・再試行ボタンで扱っている (permission-denied 等を
+      // 自動で叩き直さない)。移行で挙動を変えないよう自動再試行を止める
+      retry: (retryCount, error) => null,
       overrides: [
         sharedPreferencesProvider.overrideWith((ref) => sharedPreferences),
       ],

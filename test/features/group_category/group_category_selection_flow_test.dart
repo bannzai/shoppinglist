@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hooks_riverpod/misc.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
@@ -78,7 +79,7 @@ class _DetailHost extends ConsumerWidget {
                 categoryAxisID: _testCategoryAxisID,
               ),
             )
-            .valueOrNull ??
+            .value ??
         const <GroupCategory>[];
     final matched = categories.firstWhereOrNull(
       (category) =>

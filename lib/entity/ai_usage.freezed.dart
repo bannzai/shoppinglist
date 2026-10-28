@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'ai_usage.dart';
@@ -9,6 +9,7 @@ part of 'ai_usage.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -33,16 +34,21 @@ $UserAIUsageCopyWith<UserAIUsage> get copyWith => _$UserAIUsageCopyWithImpl<User
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserAIUsage&&(identical(other.id, id) || other.id == id)&&(identical(other.userID, userID) || other.userID == userID)&&(identical(other.imageRecognitionCount, imageRecognitionCount) || other.imageRecognitionCount == imageRecognitionCount)&&(identical(other.urlRecognitionCount, urlRecognitionCount) || other.urlRecognitionCount == urlRecognitionCount)&&(identical(other.categorizeCount, categorizeCount) || other.categorizeCount == categorizeCount)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+  final _this = this as UserAIUsage;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserAIUsage&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.userID, _this.userID) || other.userID == _this.userID)&&(identical(other.imageRecognitionCount, _this.imageRecognitionCount) || other.imageRecognitionCount == _this.imageRecognitionCount)&&(identical(other.urlRecognitionCount, _this.urlRecognitionCount) || other.urlRecognitionCount == _this.urlRecognitionCount)&&(identical(other.categorizeCount, _this.categorizeCount) || other.categorizeCount == _this.categorizeCount)&&(identical(other.serverCreatedDateTime, _this.serverCreatedDateTime) || other.serverCreatedDateTime == _this.serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, _this.serverUpdatedDateTime) || other.serverUpdatedDateTime == _this.serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userID,imageRecognitionCount,urlRecognitionCount,categorizeCount,serverCreatedDateTime,serverUpdatedDateTime);
+int get hashCode {
+  final _this = this as UserAIUsage;
+  return Object.hash(runtimeType,_this.id,_this.userID,_this.imageRecognitionCount,_this.urlRecognitionCount,_this.categorizeCount,_this.serverCreatedDateTime,_this.serverUpdatedDateTime);
+}
 
 @override
 String toString() {
-  return 'UserAIUsage(id: $id, userID: $userID, imageRecognitionCount: $imageRecognitionCount, urlRecognitionCount: $urlRecognitionCount, categorizeCount: $categorizeCount, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+  final _this = this as UserAIUsage;
+  return 'UserAIUsage(id: ${_this.id}, userID: ${_this.userID}, imageRecognitionCount: ${_this.imageRecognitionCount}, urlRecognitionCount: ${_this.urlRecognitionCount}, categorizeCount: ${_this.categorizeCount}, serverCreatedDateTime: ${_this.serverCreatedDateTime}, serverUpdatedDateTime: ${_this.serverUpdatedDateTime})';
 }
 
 
@@ -71,7 +77,7 @@ class _$UserAIUsageCopyWithImpl<$Res>
 /// Create a copy of UserAIUsage
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userID = null,Object? imageRecognitionCount = null,Object? urlRecognitionCount = null,Object? categorizeCount = null,Object? serverCreatedDateTime = freezed,Object? serverUpdatedDateTime = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(UserAIUsage(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userID: null == userID ? _self.userID : userID // ignore: cast_nullable_to_non_nullable
 as String,imageRecognitionCount: null == imageRecognitionCount ? _self.imageRecognitionCount : imageRecognitionCount // ignore: cast_nullable_to_non_nullable
@@ -249,16 +255,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserAIUsage&&(identical(other.id, id) || other.id == id)&&(identical(other.userID, userID) || other.userID == userID)&&(identical(other.imageRecognitionCount, imageRecognitionCount) || other.imageRecognitionCount == imageRecognitionCount)&&(identical(other.urlRecognitionCount, urlRecognitionCount) || other.urlRecognitionCount == urlRecognitionCount)&&(identical(other.categorizeCount, categorizeCount) || other.categorizeCount == categorizeCount)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserAIUsage&&(identical(other.id, id) || other.id == id)&&(identical(other.userID, userID) || other.userID == userID)&&(identical(other.imageRecognitionCount, imageRecognitionCount) || other.imageRecognitionCount == imageRecognitionCount)&&(identical(other.urlRecognitionCount, urlRecognitionCount) || other.urlRecognitionCount == urlRecognitionCount)&&(identical(other.categorizeCount, categorizeCount) || other.categorizeCount == categorizeCount)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userID,imageRecognitionCount,urlRecognitionCount,categorizeCount,serverCreatedDateTime,serverUpdatedDateTime);
+int get hashCode {
+    return Object.hash(runtimeType,id,userID,imageRecognitionCount,urlRecognitionCount,categorizeCount,serverCreatedDateTime,serverUpdatedDateTime);
+}
 
 @override
 String toString() {
-  return 'UserAIUsage(id: $id, userID: $userID, imageRecognitionCount: $imageRecognitionCount, urlRecognitionCount: $urlRecognitionCount, categorizeCount: $categorizeCount, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'UserAIUsage(id: $id, userID: $userID, imageRecognitionCount: $imageRecognitionCount, urlRecognitionCount: $urlRecognitionCount, categorizeCount: $categorizeCount, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
 }
 
 

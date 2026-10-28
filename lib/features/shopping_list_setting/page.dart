@@ -74,7 +74,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
                 shoppingListID: shoppingListID,
               ),
             )
-            .valueOrNull ??
+            .value ??
         const <GroupShoppingListItem>[];
 
     void autoSave(GroupShoppingList updated) {
@@ -311,7 +311,15 @@ class ShoppingListSettingPage extends HookConsumerWidget {
     // Issue #432: グループ名未設定のまま招待すると混乱を招くため、招待前に名前登録を
     // 必須化する。アクション実行時のみ必要なグループ情報は build で watch せず、ここで
     // 最新値を非同期取得する（ロード中の誤判定と不要な再描画を避ける）。
-    final group = await ref.read(groupProvider(groupID: groupID).future);
+    // Riverpod 3 は listener の無い autoDispose provider を値が出る前に破棄し、
+    // ref.read(...future) が StateError で失敗するため、取得し終えるまで購読して保持する。
+    final groupSubscription = ref.listenManual(
+      groupProvider(groupID: groupID).future,
+      (_, _) {},
+    );
+    final group = await groupSubscription.read().whenComplete(
+      groupSubscription.close,
+    );
     if (!context.mounted) {
       return;
     }
@@ -412,7 +420,7 @@ class _ShoppingLocationCell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locations =
-        ref.watch(shoppingLocationsProvider(groupID: groupID)).valueOrNull;
+        ref.watch(shoppingLocationsProvider(groupID: groupID)).value;
     final currentName =
         locations
             ?.where((l) => l.id == currentLocationID)
@@ -561,7 +569,7 @@ class _ListActionsCard extends ConsumerWidget {
                 shoppingListID: shoppingListID,
               ),
             )
-            .valueOrNull ??
+            .value ??
         const <GroupShoppingListItem>[];
     final shoppingListDuplicate = ref.watch(
       shoppingListDuplicateProvider(groupID: groupID),

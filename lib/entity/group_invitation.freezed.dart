@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'group_invitation.dart';
@@ -9,6 +9,7 @@ part of 'group_invitation.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $GroupInvitationCopyWith<GroupInvitation> get copyWith => _$GroupInvitationCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupInvitation&&(identical(other.id, id) || other.id == id)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.inviterUserID, inviterUserID) || other.inviterUserID == inviterUserID)&&(identical(other.invitationCode, invitationCode) || other.invitationCode == invitationCode)&&(identical(other.status, status) || other.status == status)&&(identical(other.expiresDateTime, expiresDateTime) || other.expiresDateTime == expiresDateTime)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+  final _this = this as GroupInvitation;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupInvitation&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.groupID, _this.groupID) || other.groupID == _this.groupID)&&(identical(other.inviterUserID, _this.inviterUserID) || other.inviterUserID == _this.inviterUserID)&&(identical(other.invitationCode, _this.invitationCode) || other.invitationCode == _this.invitationCode)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.expiresDateTime, _this.expiresDateTime) || other.expiresDateTime == _this.expiresDateTime)&&(identical(other.createdDateTime, _this.createdDateTime) || other.createdDateTime == _this.createdDateTime)&&(identical(other.updatedDateTime, _this.updatedDateTime) || other.updatedDateTime == _this.updatedDateTime)&&(identical(other.serverCreatedDateTime, _this.serverCreatedDateTime) || other.serverCreatedDateTime == _this.serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, _this.serverUpdatedDateTime) || other.serverUpdatedDateTime == _this.serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,groupID,inviterUserID,invitationCode,status,expiresDateTime,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+int get hashCode {
+  final _this = this as GroupInvitation;
+  return Object.hash(runtimeType,_this.id,_this.groupID,_this.inviterUserID,_this.invitationCode,_this.status,_this.expiresDateTime,_this.createdDateTime,_this.updatedDateTime,_this.serverCreatedDateTime,_this.serverUpdatedDateTime);
+}
 
 @override
 String toString() {
-  return 'GroupInvitation(id: $id, groupID: $groupID, inviterUserID: $inviterUserID, invitationCode: $invitationCode, status: $status, expiresDateTime: $expiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+  final _this = this as GroupInvitation;
+  return 'GroupInvitation(id: ${_this.id}, groupID: ${_this.groupID}, inviterUserID: ${_this.inviterUserID}, invitationCode: ${_this.invitationCode}, status: ${_this.status}, expiresDateTime: ${_this.expiresDateTime}, createdDateTime: ${_this.createdDateTime}, updatedDateTime: ${_this.updatedDateTime}, serverCreatedDateTime: ${_this.serverCreatedDateTime}, serverUpdatedDateTime: ${_this.serverUpdatedDateTime})';
 }
 
 
@@ -66,7 +72,7 @@ class _$GroupInvitationCopyWithImpl<$Res>
 /// Create a copy of GroupInvitation
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? groupID = null,Object? inviterUserID = null,Object? invitationCode = null,Object? status = null,Object? expiresDateTime = freezed,Object? createdDateTime = freezed,Object? updatedDateTime = freezed,Object? serverCreatedDateTime = freezed,Object? serverUpdatedDateTime = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(GroupInvitation(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,groupID: null == groupID ? _self.groupID : groupID // ignore: cast_nullable_to_non_nullable
 as String,inviterUserID: null == inviterUserID ? _self.inviterUserID : inviterUserID // ignore: cast_nullable_to_non_nullable
@@ -245,16 +251,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupInvitation&&(identical(other.id, id) || other.id == id)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.inviterUserID, inviterUserID) || other.inviterUserID == inviterUserID)&&(identical(other.invitationCode, invitationCode) || other.invitationCode == invitationCode)&&(identical(other.status, status) || other.status == status)&&(identical(other.expiresDateTime, expiresDateTime) || other.expiresDateTime == expiresDateTime)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupInvitation&&(identical(other.id, id) || other.id == id)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.inviterUserID, inviterUserID) || other.inviterUserID == inviterUserID)&&(identical(other.invitationCode, invitationCode) || other.invitationCode == invitationCode)&&(identical(other.status, status) || other.status == status)&&(identical(other.expiresDateTime, expiresDateTime) || other.expiresDateTime == expiresDateTime)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,groupID,inviterUserID,invitationCode,status,expiresDateTime,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+int get hashCode {
+    return Object.hash(runtimeType,id,groupID,inviterUserID,invitationCode,status,expiresDateTime,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+}
 
 @override
 String toString() {
-  return 'GroupInvitation(id: $id, groupID: $groupID, inviterUserID: $inviterUserID, invitationCode: $invitationCode, status: $status, expiresDateTime: $expiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupInvitation(id: $id, groupID: $groupID, inviterUserID: $inviterUserID, invitationCode: $invitationCode, status: $status, expiresDateTime: $expiresDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
 }
 
 

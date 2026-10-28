@@ -34,7 +34,7 @@ class TextShoppingListItemDetailBottomSheet extends ConsumerWidget {
     // appShowModalBottomSheet は AppResolvers でラップされているため build 内の ref.watch が機能する。
     // 遷移時の ref.read だと AsyncLoading(null) になり得るので、ここで watch して値を確定させる。
     final categoryAxes =
-        ref.watch(groupCategoryAxesProvider(groupID: groupID)).valueOrNull ??
+        ref.watch(groupCategoryAxesProvider(groupID: groupID)).value ??
         const <GroupCategoryAxis>[];
     final categoryAxis = categoryAxes.firstOrNull;
     final categories =
@@ -47,7 +47,7 @@ class TextShoppingListItemDetailBottomSheet extends ConsumerWidget {
                         categoryAxisID: categoryAxis.id,
                       ),
                     )
-                    .valueOrNull ??
+                    .value ??
                 const <GroupCategory>[];
     final matchedCategory =
         categoryAxis == null

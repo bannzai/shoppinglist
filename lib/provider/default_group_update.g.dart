@@ -6,28 +6,60 @@ part of 'default_group_update.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(defaultGroupUpdate)
+final defaultGroupUpdateProvider = DefaultGroupUpdateProvider._();
+
+final class DefaultGroupUpdateProvider
+    extends
+        $FunctionalProvider<
+          DefaultGroupUpdate,
+          DefaultGroupUpdate,
+          DefaultGroupUpdate
+        >
+    with $Provider<DefaultGroupUpdate> {
+  DefaultGroupUpdateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'defaultGroupUpdateProvider',
+        isAutoDispose: true,
+        dependencies: <ProviderOrFamily>[userDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          DefaultGroupUpdateProvider.$allTransitiveDependencies0,
+          DefaultGroupUpdateProvider.$allTransitiveDependencies1,
+        ],
+      );
+
+  static final $allTransitiveDependencies0 = userDatabaseProvider;
+  static final $allTransitiveDependencies1 =
+      UserDatabaseProvider.$allTransitiveDependencies0;
+
+  @override
+  String debugGetCreateSourceHash() => _$defaultGroupUpdateHash();
+
+  @$internal
+  @override
+  $ProviderElement<DefaultGroupUpdate> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  DefaultGroupUpdate create(Ref ref) {
+    return defaultGroupUpdate(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DefaultGroupUpdate value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DefaultGroupUpdate>(value),
+    );
+  }
+}
+
 String _$defaultGroupUpdateHash() =>
     r'14dc7bb6ee08c6921daf4c795fa16abe52ba8396';
-
-/// See also [defaultGroupUpdate].
-@ProviderFor(defaultGroupUpdate)
-final defaultGroupUpdateProvider =
-    AutoDisposeProvider<DefaultGroupUpdate>.internal(
-      defaultGroupUpdate,
-      name: r'defaultGroupUpdateProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$defaultGroupUpdateHash,
-      dependencies: <ProviderOrFamily>[userDatabaseProvider],
-      allTransitiveDependencies: <ProviderOrFamily>{
-        userDatabaseProvider,
-        ...?userDatabaseProvider.allTransitiveDependencies,
-      },
-    );
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef DefaultGroupUpdateRef = AutoDisposeProviderRef<DefaultGroupUpdate>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

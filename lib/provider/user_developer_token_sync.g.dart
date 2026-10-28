@@ -6,31 +6,64 @@ part of 'user_developer_token_sync.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$userDeveloperTokenSyncHash() =>
-    r'4a1798dd847dfaa9d1b08475813c0c1f8d72fad6';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+/// [UserDeveloperTokenSync] を提供する Provider。
+
+@ProviderFor(userDeveloperTokenSync)
+final userDeveloperTokenSyncProvider = UserDeveloperTokenSyncProvider._();
 
 /// [UserDeveloperTokenSync] を提供する Provider。
-///
-/// Copied from [userDeveloperTokenSync].
-@ProviderFor(userDeveloperTokenSync)
-final userDeveloperTokenSyncProvider =
-    AutoDisposeProvider<UserDeveloperTokenSync>.internal(
-      userDeveloperTokenSync,
-      name: r'userDeveloperTokenSyncProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$userDeveloperTokenSyncHash,
-      dependencies: <ProviderOrFamily>[userDatabaseProvider],
-      allTransitiveDependencies: <ProviderOrFamily>{
-        userDatabaseProvider,
-        ...?userDatabaseProvider.allTransitiveDependencies,
-      },
-    );
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef UserDeveloperTokenSyncRef =
-    AutoDisposeProviderRef<UserDeveloperTokenSync>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class UserDeveloperTokenSyncProvider
+    extends
+        $FunctionalProvider<
+          UserDeveloperTokenSync,
+          UserDeveloperTokenSync,
+          UserDeveloperTokenSync
+        >
+    with $Provider<UserDeveloperTokenSync> {
+  /// [UserDeveloperTokenSync] を提供する Provider。
+  UserDeveloperTokenSyncProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'userDeveloperTokenSyncProvider',
+        isAutoDispose: true,
+        dependencies: <ProviderOrFamily>[userDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          UserDeveloperTokenSyncProvider.$allTransitiveDependencies0,
+          UserDeveloperTokenSyncProvider.$allTransitiveDependencies1,
+        ],
+      );
+
+  static final $allTransitiveDependencies0 = userDatabaseProvider;
+  static final $allTransitiveDependencies1 =
+      UserDatabaseProvider.$allTransitiveDependencies0;
+
+  @override
+  String debugGetCreateSourceHash() => _$userDeveloperTokenSyncHash();
+
+  @$internal
+  @override
+  $ProviderElement<UserDeveloperTokenSync> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  UserDeveloperTokenSync create(Ref ref) {
+    return userDeveloperTokenSync(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(UserDeveloperTokenSync value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<UserDeveloperTokenSync>(value),
+    );
+  }
+}
+
+String _$userDeveloperTokenSyncHash() =>
+    r'4a1798dd847dfaa9d1b08475813c0c1f8d72fad6';

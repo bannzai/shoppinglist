@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hooks_riverpod/misc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppinglist/components/primitives/app_cell.dart';
 import 'package:shoppinglist/components/primitives/app_pill.dart';
@@ -17,6 +18,7 @@ import 'package:shoppinglist/provider/group.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../helpers/localized_test_app.dart';
+import '../../helpers/merge_provider_overrides.dart';
 
 Future<void> _pumpPage(
   WidgetTester tester, {
@@ -29,10 +31,10 @@ Future<void> _pumpPage(
   // 描画して検証するため、本体 (main.dart / app.dart) と同じ構成
   // (appProviderContainer + appNavigatorKey + ToastOverlay) を組む。
   final container = ProviderContainer(
-    overrides: [
-      ...previewProviderOverrides(sharedPreferences: sharedPreferences),
-      ...extraOverrides,
-    ],
+    overrides: mergeProviderOverrides(
+      base: previewProviderOverrides(sharedPreferences: sharedPreferences),
+      extra: extraOverrides,
+    ),
   );
   addTearDown(container.dispose);
   appProviderContainer = container;

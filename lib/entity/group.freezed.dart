@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'group.dart';
@@ -9,6 +9,7 @@ part of 'group.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -36,16 +37,21 @@ $GroupCopyWith<Group> get copyWith => _$GroupCopyWithImpl<Group>(this as Group, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Group&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.memberUserIDs, memberUserIDs)&&(identical(other.name, name) || other.name == name)&&(identical(other.ownerUserID, ownerUserID) || other.ownerUserID == ownerUserID)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+  final _this = this as Group;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Group&&(identical(other.id, _this.id) || other.id == _this.id)&&const DeepCollectionEquality().equals(other.memberUserIDs, _this.memberUserIDs)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.ownerUserID, _this.ownerUserID) || other.ownerUserID == _this.ownerUserID)&&(identical(other.iconName, _this.iconName) || other.iconName == _this.iconName)&&(identical(other.createdDateTime, _this.createdDateTime) || other.createdDateTime == _this.createdDateTime)&&(identical(other.updatedDateTime, _this.updatedDateTime) || other.updatedDateTime == _this.updatedDateTime)&&(identical(other.serverCreatedDateTime, _this.serverCreatedDateTime) || other.serverCreatedDateTime == _this.serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, _this.serverUpdatedDateTime) || other.serverUpdatedDateTime == _this.serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,const DeepCollectionEquality().hash(memberUserIDs),name,ownerUserID,iconName,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+int get hashCode {
+  final _this = this as Group;
+  return Object.hash(runtimeType,_this.id,const DeepCollectionEquality().hash(_this.memberUserIDs),_this.name,_this.ownerUserID,_this.iconName,_this.createdDateTime,_this.updatedDateTime,_this.serverCreatedDateTime,_this.serverUpdatedDateTime);
+}
 
 @override
 String toString() {
-  return 'Group(id: $id, memberUserIDs: $memberUserIDs, name: $name, ownerUserID: $ownerUserID, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+  final _this = this as Group;
+  return 'Group(id: ${_this.id}, memberUserIDs: ${_this.memberUserIDs}, name: ${_this.name}, ownerUserID: ${_this.ownerUserID}, iconName: ${_this.iconName}, createdDateTime: ${_this.createdDateTime}, updatedDateTime: ${_this.updatedDateTime}, serverCreatedDateTime: ${_this.serverCreatedDateTime}, serverUpdatedDateTime: ${_this.serverUpdatedDateTime})';
 }
 
 
@@ -74,7 +80,7 @@ class _$GroupCopyWithImpl<$Res>
 /// Create a copy of Group
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? memberUserIDs = null,Object? name = freezed,Object? ownerUserID = freezed,Object? iconName = null,Object? createdDateTime = freezed,Object? updatedDateTime = freezed,Object? serverCreatedDateTime = freezed,Object? serverUpdatedDateTime = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(Group(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,memberUserIDs: null == memberUserIDs ? _self.memberUserIDs : memberUserIDs // ignore: cast_nullable_to_non_nullable
 as List<String>,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -225,7 +231,7 @@ return $default(_that.id,_that.memberUserIDs,_that.name,_that.ownerUserID,_that.
 
 @JsonSerializable(explicitToJson: true)
 class _Group extends Group {
-  const _Group({required this.id, required final  List<String> memberUserIDs, required this.name, this.ownerUserID, this.iconName = 'home', @ClientCreatedTimestamp() this.createdDateTime, @ClientUpdatedTimestamp() this.updatedDateTime, @ServerCreatedTimestamp() this.serverCreatedDateTime, @ServerUpdatedTimestamp() this.serverUpdatedDateTime}): _memberUserIDs = memberUserIDs,super._();
+  const _Group({required this.id, required  List<String> memberUserIDs, required this.name, this.ownerUserID, this.iconName = 'home', @ClientCreatedTimestamp() this.createdDateTime, @ClientUpdatedTimestamp() this.updatedDateTime, @ServerCreatedTimestamp() this.serverCreatedDateTime, @ServerUpdatedTimestamp() this.serverUpdatedDateTime}): _memberUserIDs = memberUserIDs,super._();
   factory _Group.fromJson(Map<String, dynamic> json) => _$GroupFromJson(json);
 
 @override final  String id;
@@ -266,16 +272,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Group&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other._memberUserIDs, _memberUserIDs)&&(identical(other.name, name) || other.name == name)&&(identical(other.ownerUserID, ownerUserID) || other.ownerUserID == ownerUserID)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Group&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.memberUserIDs, _memberUserIDs)&&(identical(other.name, name) || other.name == name)&&(identical(other.ownerUserID, ownerUserID) || other.ownerUserID == ownerUserID)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,const DeepCollectionEquality().hash(_memberUserIDs),name,ownerUserID,iconName,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+int get hashCode {
+    return Object.hash(runtimeType,id,const DeepCollectionEquality().hash(_memberUserIDs),name,ownerUserID,iconName,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+}
 
 @override
 String toString() {
-  return 'Group(id: $id, memberUserIDs: $memberUserIDs, name: $name, ownerUserID: $ownerUserID, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'Group(id: $id, memberUserIDs: $memberUserIDs, name: $name, ownerUserID: $ownerUserID, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
 }
 
 

@@ -41,7 +41,7 @@ class AuthResolver extends HookConsumerWidget {
     // 依存配列は AsyncValue 全体ではなく uid のみ — token refresh 等で userChanges が
     // 再発火しても uid が変わらない限り再実行せず、Purchases.logIn 等の重複呼び出しを防ぐ。
     useEffect(() {
-      final userID = firebaseUserChanges.asData?.valueOrNull?.uid;
+      final userID = firebaseUserChanges.asData?.value?.uid;
       if (userID != null) {
         sharedPreferences.setString(
           StringKey.lastSignInFirebaseAuthUserID,
@@ -53,7 +53,7 @@ class AuthResolver extends HookConsumerWidget {
         unawaited(FirebaseAnalytics.instance.setUserId(id: userID));
       }
       return null;
-    }, [firebaseUserChanges.asData?.valueOrNull?.uid]);
+    }, [firebaseUserChanges.asData?.value?.uid]);
 
     return Retry(
       retry: () => ref.invalidate(firebaseUserChangesProvider),

@@ -36,15 +36,14 @@ class HomeWidgetSync extends HookConsumerWidget {
     final customerInfoIsPremium =
         ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;
     final themeColorHex =
-        ref.watch(appUserProvider).valueOrNull?.themeColorHex ??
-        defaultThemeColorHex;
-    final groups = ref.watch(userGroupsProvider).valueOrNull ?? [];
+        ref.watch(appUserProvider).value?.themeColorHex ?? defaultThemeColorHex;
+    final groups = ref.watch(userGroupsProvider).value ?? [];
     final shoppingListsAsync = ref.watch(
       shoppingListsProvider(groupID: groupID, isPremium: customerInfoIsPremium),
     );
     final resolvedShoppingListID = resolveShoppingListID(
       selected: ref.watch(currentShoppingListIDProvider),
-      shoppingLists: shoppingListsAsync.valueOrNull ?? [],
+      shoppingLists: shoppingListsAsync.value ?? [],
     );
 
     // 初回マウント時にテーマカラー・プレミアム状態・買い物リスト一覧を同期する。
@@ -56,7 +55,7 @@ class HomeWidgetSync extends HookConsumerWidget {
     useEffect(() {
       HomeWidgetDataSync.syncThemeColor(themeColorHex: themeColorHex);
       HomeWidgetDataSync.syncPremiumStatus(isPremium: customerInfoIsPremium);
-      final lists = shoppingListsAsync.valueOrNull ?? [];
+      final lists = shoppingListsAsync.value ?? [];
       if (lists.isNotEmpty) {
         final group = groups.firstWhereOrNull((g) => g.id == groupID);
         HomeWidgetDataSync.syncShoppingLists(
@@ -71,9 +70,9 @@ class HomeWidgetSync extends HookConsumerWidget {
     // テーマカラーの変更を検知して同期
     ref.listen(appUserProvider, (prev, next) {
       final prevThemeColorHex =
-          prev?.valueOrNull?.themeColorHex ?? defaultThemeColorHex;
+          prev?.value?.themeColorHex ?? defaultThemeColorHex;
       final nextThemeColorHex =
-          next.valueOrNull?.themeColorHex ?? defaultThemeColorHex;
+          next.value?.themeColorHex ?? defaultThemeColorHex;
       if (prevThemeColorHex == nextThemeColorHex) {
         return;
       }
@@ -84,8 +83,8 @@ class HomeWidgetSync extends HookConsumerWidget {
     // RC の購入・プロモーション付与・剥奪は customerInfoProvider の
     // CustomerInfo 更新として流れてくる。
     ref.listen(customerInfoProvider, (prev, next) {
-      final prevIsPremium = prev?.valueOrNull?.isPremium;
-      final nextIsPremium = next.valueOrNull?.isPremium;
+      final prevIsPremium = prev?.value?.isPremium;
+      final nextIsPremium = next.value?.isPremium;
       if (prevIsPremium == nextIsPremium) {
         return;
       }
@@ -98,7 +97,7 @@ class HomeWidgetSync extends HookConsumerWidget {
     ref.listen(
       shoppingListsProvider(groupID: groupID, isPremium: customerInfoIsPremium),
       (prev, next) {
-        final lists = next.valueOrNull;
+        final lists = next.value;
         if (lists != null && lists.isNotEmpty) {
           final group = groups.firstWhereOrNull((g) => g.id == groupID);
           HomeWidgetDataSync.syncShoppingLists(
@@ -119,7 +118,7 @@ class HomeWidgetSync extends HookConsumerWidget {
     return _HomeWidgetItemSync(
       groupID: groupID,
       shoppingListID: resolvedShoppingListID,
-      shoppingLists: shoppingListsAsync.valueOrNull ?? [],
+      shoppingLists: shoppingListsAsync.value ?? [],
       builder: builder,
     );
   }
@@ -148,7 +147,7 @@ class _HomeWidgetItemSync extends ConsumerWidget {
         shoppingListID: shoppingListID,
       ),
       (prev, next) {
-        final items = next.valueOrNull;
+        final items = next.value;
         if (items != null) {
           final list = shoppingLists.firstWhereOrNull(
             (sl) => sl.id == shoppingListID,

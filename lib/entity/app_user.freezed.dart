@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'app_user.dart';
@@ -9,21 +9,14 @@ part of 'app_user.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$AppUser {
 
- String get id;// NOTE: アプリ開始時に作られるデータであり、その時にはdefaultGroupIDができてない。作成されるパターンはこのケースのみなので required はつけない。テストの時とかに簡単に使えるようにするため
- String? get defaultGroupID;// NOTE: Firebase Auth の displayName からマッピング。匿名ユーザーや既存ユーザーでは null になりうる
- String? get name;// NOTE: Firebase Auth の photoURL からマッピング。匿名ユーザーや既存ユーザーでは null になりうる
- String? get iconImageURL;// NOTE: テーマカラーのHEX値。プレミアムユーザーのみ変更可能。nullの場合はデフォルト(deepPurple=#673AB7)を使用する
- String? get themeColorHex;// NOTE: 開発者識別用トークン。dart-define `SHOPPINGLIST_DEVELOPER_TOKEN` を持つビルドが起動時に
-// upsert する。Cloud Functions (grantPromotionalPremium 等) で
-// Secret Manager の SHOPPINGLIST_DEVELOPER_TOKEN と一致比較し、ユーザー単位の認可に使う。
-// 本番ユーザービルドでは null のまま。
- String? get developerToken;@ClientCreatedTimestamp() DateTime? get createdDateTime;@ClientUpdatedTimestamp() DateTime? get updatedDateTime;@ServerCreatedTimestamp() DateTime? get serverCreatedDateTime;@ServerUpdatedTimestamp() DateTime? get serverUpdatedDateTime;
+ String get id; String? get defaultGroupID; String? get name; String? get iconImageURL; String? get themeColorHex; String? get developerToken;@ClientCreatedTimestamp() DateTime? get createdDateTime;@ClientUpdatedTimestamp() DateTime? get updatedDateTime;@ServerCreatedTimestamp() DateTime? get serverCreatedDateTime;@ServerUpdatedTimestamp() DateTime? get serverUpdatedDateTime;
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -36,16 +29,21 @@ $AppUserCopyWith<AppUser> get copyWith => _$AppUserCopyWithImpl<AppUser>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppUser&&(identical(other.id, id) || other.id == id)&&(identical(other.defaultGroupID, defaultGroupID) || other.defaultGroupID == defaultGroupID)&&(identical(other.name, name) || other.name == name)&&(identical(other.iconImageURL, iconImageURL) || other.iconImageURL == iconImageURL)&&(identical(other.themeColorHex, themeColorHex) || other.themeColorHex == themeColorHex)&&(identical(other.developerToken, developerToken) || other.developerToken == developerToken)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+  final _this = this as AppUser;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppUser&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.defaultGroupID, _this.defaultGroupID) || other.defaultGroupID == _this.defaultGroupID)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.iconImageURL, _this.iconImageURL) || other.iconImageURL == _this.iconImageURL)&&(identical(other.themeColorHex, _this.themeColorHex) || other.themeColorHex == _this.themeColorHex)&&(identical(other.developerToken, _this.developerToken) || other.developerToken == _this.developerToken)&&(identical(other.createdDateTime, _this.createdDateTime) || other.createdDateTime == _this.createdDateTime)&&(identical(other.updatedDateTime, _this.updatedDateTime) || other.updatedDateTime == _this.updatedDateTime)&&(identical(other.serverCreatedDateTime, _this.serverCreatedDateTime) || other.serverCreatedDateTime == _this.serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, _this.serverUpdatedDateTime) || other.serverUpdatedDateTime == _this.serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,defaultGroupID,name,iconImageURL,themeColorHex,developerToken,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+int get hashCode {
+  final _this = this as AppUser;
+  return Object.hash(runtimeType,_this.id,_this.defaultGroupID,_this.name,_this.iconImageURL,_this.themeColorHex,_this.developerToken,_this.createdDateTime,_this.updatedDateTime,_this.serverCreatedDateTime,_this.serverUpdatedDateTime);
+}
 
 @override
 String toString() {
-  return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, name: $name, iconImageURL: $iconImageURL, themeColorHex: $themeColorHex, developerToken: $developerToken, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+  final _this = this as AppUser;
+  return 'AppUser(id: ${_this.id}, defaultGroupID: ${_this.defaultGroupID}, name: ${_this.name}, iconImageURL: ${_this.iconImageURL}, themeColorHex: ${_this.themeColorHex}, developerToken: ${_this.developerToken}, createdDateTime: ${_this.createdDateTime}, updatedDateTime: ${_this.updatedDateTime}, serverCreatedDateTime: ${_this.serverCreatedDateTime}, serverUpdatedDateTime: ${_this.serverUpdatedDateTime})';
 }
 
 
@@ -74,7 +72,7 @@ class _$AppUserCopyWithImpl<$Res>
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? defaultGroupID = freezed,Object? name = freezed,Object? iconImageURL = freezed,Object? themeColorHex = freezed,Object? developerToken = freezed,Object? createdDateTime = freezed,Object? updatedDateTime = freezed,Object? serverCreatedDateTime = freezed,Object? serverUpdatedDateTime = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(AppUser(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,defaultGroupID: freezed == defaultGroupID ? _self.defaultGroupID : defaultGroupID // ignore: cast_nullable_to_non_nullable
 as String?,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -230,18 +228,10 @@ class _AppUser extends AppUser {
   factory _AppUser.fromJson(Map<String, dynamic> json) => _$AppUserFromJson(json);
 
 @override final  String id;
-// NOTE: アプリ開始時に作られるデータであり、その時にはdefaultGroupIDができてない。作成されるパターンはこのケースのみなので required はつけない。テストの時とかに簡単に使えるようにするため
 @override final  String? defaultGroupID;
-// NOTE: Firebase Auth の displayName からマッピング。匿名ユーザーや既存ユーザーでは null になりうる
 @override final  String? name;
-// NOTE: Firebase Auth の photoURL からマッピング。匿名ユーザーや既存ユーザーでは null になりうる
 @override final  String? iconImageURL;
-// NOTE: テーマカラーのHEX値。プレミアムユーザーのみ変更可能。nullの場合はデフォルト(deepPurple=#673AB7)を使用する
 @override final  String? themeColorHex;
-// NOTE: 開発者識別用トークン。dart-define `SHOPPINGLIST_DEVELOPER_TOKEN` を持つビルドが起動時に
-// upsert する。Cloud Functions (grantPromotionalPremium 等) で
-// Secret Manager の SHOPPINGLIST_DEVELOPER_TOKEN と一致比較し、ユーザー単位の認可に使う。
-// 本番ユーザービルドでは null のまま。
 @override final  String? developerToken;
 @override@ClientCreatedTimestamp() final  DateTime? createdDateTime;
 @override@ClientUpdatedTimestamp() final  DateTime? updatedDateTime;
@@ -261,16 +251,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppUser&&(identical(other.id, id) || other.id == id)&&(identical(other.defaultGroupID, defaultGroupID) || other.defaultGroupID == defaultGroupID)&&(identical(other.name, name) || other.name == name)&&(identical(other.iconImageURL, iconImageURL) || other.iconImageURL == iconImageURL)&&(identical(other.themeColorHex, themeColorHex) || other.themeColorHex == themeColorHex)&&(identical(other.developerToken, developerToken) || other.developerToken == developerToken)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppUser&&(identical(other.id, id) || other.id == id)&&(identical(other.defaultGroupID, defaultGroupID) || other.defaultGroupID == defaultGroupID)&&(identical(other.name, name) || other.name == name)&&(identical(other.iconImageURL, iconImageURL) || other.iconImageURL == iconImageURL)&&(identical(other.themeColorHex, themeColorHex) || other.themeColorHex == themeColorHex)&&(identical(other.developerToken, developerToken) || other.developerToken == developerToken)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,defaultGroupID,name,iconImageURL,themeColorHex,developerToken,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+int get hashCode {
+    return Object.hash(runtimeType,id,defaultGroupID,name,iconImageURL,themeColorHex,developerToken,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+}
 
 @override
 String toString() {
-  return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, name: $name, iconImageURL: $iconImageURL, themeColorHex: $themeColorHex, developerToken: $developerToken, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'AppUser(id: $id, defaultGroupID: $defaultGroupID, name: $name, iconImageURL: $iconImageURL, themeColorHex: $themeColorHex, developerToken: $developerToken, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
 }
 
 

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'group_shopping_list_receipt.dart';
@@ -9,6 +9,7 @@ part of 'group_shopping_list_receipt.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -34,16 +35,21 @@ $GroupShoppingListReceiptCopyWith<GroupShoppingListReceipt> get copyWith => _$Gr
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupShoppingListReceipt&&(identical(other.id, id) || other.id == id)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.shoppingListID, shoppingListID) || other.shoppingListID == shoppingListID)&&(identical(other.userID, userID) || other.userID == userID)&&(identical(other.storagePath, storagePath) || other.storagePath == storagePath)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.memo, memo) || other.memo == memo)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+  final _this = this as GroupShoppingListReceipt;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupShoppingListReceipt&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.groupID, _this.groupID) || other.groupID == _this.groupID)&&(identical(other.shoppingListID, _this.shoppingListID) || other.shoppingListID == _this.shoppingListID)&&(identical(other.userID, _this.userID) || other.userID == _this.userID)&&(identical(other.storagePath, _this.storagePath) || other.storagePath == _this.storagePath)&&(identical(other.amount, _this.amount) || other.amount == _this.amount)&&(identical(other.memo, _this.memo) || other.memo == _this.memo)&&(identical(other.createdDateTime, _this.createdDateTime) || other.createdDateTime == _this.createdDateTime)&&(identical(other.updatedDateTime, _this.updatedDateTime) || other.updatedDateTime == _this.updatedDateTime)&&(identical(other.serverCreatedDateTime, _this.serverCreatedDateTime) || other.serverCreatedDateTime == _this.serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, _this.serverUpdatedDateTime) || other.serverUpdatedDateTime == _this.serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,groupID,shoppingListID,userID,storagePath,amount,memo,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+int get hashCode {
+  final _this = this as GroupShoppingListReceipt;
+  return Object.hash(runtimeType,_this.id,_this.groupID,_this.shoppingListID,_this.userID,_this.storagePath,_this.amount,_this.memo,_this.createdDateTime,_this.updatedDateTime,_this.serverCreatedDateTime,_this.serverUpdatedDateTime);
+}
 
 @override
 String toString() {
-  return 'GroupShoppingListReceipt(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, storagePath: $storagePath, amount: $amount, memo: $memo, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+  final _this = this as GroupShoppingListReceipt;
+  return 'GroupShoppingListReceipt(id: ${_this.id}, groupID: ${_this.groupID}, shoppingListID: ${_this.shoppingListID}, userID: ${_this.userID}, storagePath: ${_this.storagePath}, amount: ${_this.amount}, memo: ${_this.memo}, createdDateTime: ${_this.createdDateTime}, updatedDateTime: ${_this.updatedDateTime}, serverCreatedDateTime: ${_this.serverCreatedDateTime}, serverUpdatedDateTime: ${_this.serverUpdatedDateTime})';
 }
 
 
@@ -72,7 +78,7 @@ class _$GroupShoppingListReceiptCopyWithImpl<$Res>
 /// Create a copy of GroupShoppingListReceipt
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? groupID = null,Object? shoppingListID = null,Object? userID = null,Object? storagePath = freezed,Object? amount = freezed,Object? memo = freezed,Object? createdDateTime = freezed,Object? updatedDateTime = freezed,Object? serverCreatedDateTime = freezed,Object? serverUpdatedDateTime = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(GroupShoppingListReceipt(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,groupID: null == groupID ? _self.groupID : groupID // ignore: cast_nullable_to_non_nullable
 as String,shoppingListID: null == shoppingListID ? _self.shoppingListID : shoppingListID // ignore: cast_nullable_to_non_nullable
@@ -259,16 +265,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupShoppingListReceipt&&(identical(other.id, id) || other.id == id)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.shoppingListID, shoppingListID) || other.shoppingListID == shoppingListID)&&(identical(other.userID, userID) || other.userID == userID)&&(identical(other.storagePath, storagePath) || other.storagePath == storagePath)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.memo, memo) || other.memo == memo)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupShoppingListReceipt&&(identical(other.id, id) || other.id == id)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.shoppingListID, shoppingListID) || other.shoppingListID == shoppingListID)&&(identical(other.userID, userID) || other.userID == userID)&&(identical(other.storagePath, storagePath) || other.storagePath == storagePath)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.memo, memo) || other.memo == memo)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,groupID,shoppingListID,userID,storagePath,amount,memo,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+int get hashCode {
+    return Object.hash(runtimeType,id,groupID,shoppingListID,userID,storagePath,amount,memo,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+}
 
 @override
 String toString() {
-  return 'GroupShoppingListReceipt(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, storagePath: $storagePath, amount: $amount, memo: $memo, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListReceipt(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, storagePath: $storagePath, amount: $amount, memo: $memo, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
 }
 
 

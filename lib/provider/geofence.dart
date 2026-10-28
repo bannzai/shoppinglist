@@ -1,5 +1,4 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/features/location_reminder/geofence_service.dart';
@@ -55,7 +54,16 @@ class GeofenceMonitoringPlan {
 /// 監視すべきか否かと監視対象データを [GeofenceMonitoringPlan] として返す。
 /// 副作用（GeofenceService の開始/停止）はここでは行わず、購読側（app.dart）の
 /// ref.listen で起こす。Riverpod 公式 DO/DON'T「build で副作用を行うな」に従う。
-@Riverpod()
+// watch する provider は dependencies を持つ (scoped な) provider で、Riverpod 3 は
+// それらを dependencies に列挙していないと実行時に例外を投げる
+@Riverpod(
+  dependencies: [
+    BoolSharedPreferences,
+    userGroups,
+    shoppingLocations,
+    shoppingLists,
+  ],
+)
 GeofenceMonitoringPlan geofenceMonitoringPlan(Ref ref) {
   final isPremium =
       ref.watch(customerInfoProvider).asData?.value.isPremium ?? false;

@@ -500,8 +500,7 @@ class _SignOutButton extends ConsumerWidget {
     // 無いため、確認ダイアログの本文を恒久的なデータ喪失の警告に切り替える。
     // 読込中や未認証（通常この画面には到達しない）は通常の警告文で扱う。
     final isAnonymous =
-        ref.watch(firebaseUserChangesProvider).valueOrNull?.isAnonymous ??
-        false;
+        ref.watch(firebaseUserChangesProvider).value?.isAnonymous ?? false;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: SizedBox(

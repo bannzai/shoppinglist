@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'group_shopping_list_item.dart';
@@ -9,15 +9,14 @@ part of 'group_shopping_list_item.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$GroupShoppingListItem {
 
- String get id; String get groupID; String get shoppingListID; String get userID; String get message;// NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
-// NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
- int get order; GroupShoppingListItemStatus get status; String? get description; String? get color;/// Firebase Storage上の商品写真のダウンロードURL。プレミアム機能。
+ String get id; String get groupID; String get shoppingListID; String get userID; String get message; int get order; GroupShoppingListItemStatus get status; String? get description; String? get color;/// Firebase Storage上の商品写真のダウンロードURL。プレミアム機能。
  String? get imageURL;@NullableTimestampConverter() DateTime? get reminderDateTime; String? get checkedByUserID;@NullableTimestampConverter() DateTime? get lastCheckedDateTime; String? get lastEditedByUserID;@NullableTimestampConverter() DateTime? get lastEditedDateTime;@ClientCreatedTimestamp() DateTime? get createdDateTime;@ClientUpdatedTimestamp() DateTime? get updatedDateTime;@ServerCreatedTimestamp() DateTime? get serverCreatedDateTime;@ServerUpdatedTimestamp() DateTime? get serverUpdatedDateTime;
 /// Create a copy of GroupShoppingListItem
 /// with the given fields replaced by the non-null parameter values.
@@ -31,16 +30,21 @@ $GroupShoppingListItemCopyWith<GroupShoppingListItem> get copyWith => _$GroupSho
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupShoppingListItem&&(identical(other.id, id) || other.id == id)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.shoppingListID, shoppingListID) || other.shoppingListID == shoppingListID)&&(identical(other.userID, userID) || other.userID == userID)&&(identical(other.message, message) || other.message == message)&&(identical(other.order, order) || other.order == order)&&(identical(other.status, status) || other.status == status)&&(identical(other.description, description) || other.description == description)&&(identical(other.color, color) || other.color == color)&&(identical(other.imageURL, imageURL) || other.imageURL == imageURL)&&(identical(other.reminderDateTime, reminderDateTime) || other.reminderDateTime == reminderDateTime)&&(identical(other.checkedByUserID, checkedByUserID) || other.checkedByUserID == checkedByUserID)&&(identical(other.lastCheckedDateTime, lastCheckedDateTime) || other.lastCheckedDateTime == lastCheckedDateTime)&&(identical(other.lastEditedByUserID, lastEditedByUserID) || other.lastEditedByUserID == lastEditedByUserID)&&(identical(other.lastEditedDateTime, lastEditedDateTime) || other.lastEditedDateTime == lastEditedDateTime)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+  final _this = this as GroupShoppingListItem;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupShoppingListItem&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.groupID, _this.groupID) || other.groupID == _this.groupID)&&(identical(other.shoppingListID, _this.shoppingListID) || other.shoppingListID == _this.shoppingListID)&&(identical(other.userID, _this.userID) || other.userID == _this.userID)&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.order, _this.order) || other.order == _this.order)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.color, _this.color) || other.color == _this.color)&&(identical(other.imageURL, _this.imageURL) || other.imageURL == _this.imageURL)&&(identical(other.reminderDateTime, _this.reminderDateTime) || other.reminderDateTime == _this.reminderDateTime)&&(identical(other.checkedByUserID, _this.checkedByUserID) || other.checkedByUserID == _this.checkedByUserID)&&(identical(other.lastCheckedDateTime, _this.lastCheckedDateTime) || other.lastCheckedDateTime == _this.lastCheckedDateTime)&&(identical(other.lastEditedByUserID, _this.lastEditedByUserID) || other.lastEditedByUserID == _this.lastEditedByUserID)&&(identical(other.lastEditedDateTime, _this.lastEditedDateTime) || other.lastEditedDateTime == _this.lastEditedDateTime)&&(identical(other.createdDateTime, _this.createdDateTime) || other.createdDateTime == _this.createdDateTime)&&(identical(other.updatedDateTime, _this.updatedDateTime) || other.updatedDateTime == _this.updatedDateTime)&&(identical(other.serverCreatedDateTime, _this.serverCreatedDateTime) || other.serverCreatedDateTime == _this.serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, _this.serverUpdatedDateTime) || other.serverUpdatedDateTime == _this.serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,groupID,shoppingListID,userID,message,order,status,description,color,imageURL,reminderDateTime,checkedByUserID,lastCheckedDateTime,lastEditedByUserID,lastEditedDateTime,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime]);
+int get hashCode {
+  final _this = this as GroupShoppingListItem;
+  return Object.hashAll([runtimeType,_this.id,_this.groupID,_this.shoppingListID,_this.userID,_this.message,_this.order,_this.status,_this.description,_this.color,_this.imageURL,_this.reminderDateTime,_this.checkedByUserID,_this.lastCheckedDateTime,_this.lastEditedByUserID,_this.lastEditedDateTime,_this.createdDateTime,_this.updatedDateTime,_this.serverCreatedDateTime,_this.serverUpdatedDateTime]);
+}
 
 @override
 String toString() {
-  return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, message: $message, order: $order, status: $status, description: $description, color: $color, imageURL: $imageURL, reminderDateTime: $reminderDateTime, checkedByUserID: $checkedByUserID, lastCheckedDateTime: $lastCheckedDateTime, lastEditedByUserID: $lastEditedByUserID, lastEditedDateTime: $lastEditedDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+  final _this = this as GroupShoppingListItem;
+  return 'GroupShoppingListItem(id: ${_this.id}, groupID: ${_this.groupID}, shoppingListID: ${_this.shoppingListID}, userID: ${_this.userID}, message: ${_this.message}, order: ${_this.order}, status: ${_this.status}, description: ${_this.description}, color: ${_this.color}, imageURL: ${_this.imageURL}, reminderDateTime: ${_this.reminderDateTime}, checkedByUserID: ${_this.checkedByUserID}, lastCheckedDateTime: ${_this.lastCheckedDateTime}, lastEditedByUserID: ${_this.lastEditedByUserID}, lastEditedDateTime: ${_this.lastEditedDateTime}, createdDateTime: ${_this.createdDateTime}, updatedDateTime: ${_this.updatedDateTime}, serverCreatedDateTime: ${_this.serverCreatedDateTime}, serverUpdatedDateTime: ${_this.serverUpdatedDateTime})';
 }
 
 
@@ -69,7 +73,7 @@ class _$GroupShoppingListItemCopyWithImpl<$Res>
 /// Create a copy of GroupShoppingListItem
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? groupID = null,Object? shoppingListID = null,Object? userID = null,Object? message = null,Object? order = null,Object? status = null,Object? description = freezed,Object? color = freezed,Object? imageURL = freezed,Object? reminderDateTime = freezed,Object? checkedByUserID = freezed,Object? lastCheckedDateTime = freezed,Object? lastEditedByUserID = freezed,Object? lastEditedDateTime = freezed,Object? createdDateTime = freezed,Object? updatedDateTime = freezed,Object? serverCreatedDateTime = freezed,Object? serverUpdatedDateTime = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(GroupShoppingListItem(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,groupID: null == groupID ? _self.groupID : groupID // ignore: cast_nullable_to_non_nullable
 as String,shoppingListID: null == shoppingListID ? _self.shoppingListID : shoppingListID // ignore: cast_nullable_to_non_nullable
@@ -238,8 +242,6 @@ class _GroupShoppingListItem implements GroupShoppingListItem {
 @override final  String shoppingListID;
 @override final  String userID;
 @override final  String message;
-// NOTE: 0,1,3と飛ぶことがある。削除時にorderを詰めることはしてない
-// NOTE: 0,1,2,2 と同列になることも許容する。確認はされてないが、orderが同じであっても良い
 @override final  int order;
 @override@JsonKey() final  GroupShoppingListItemStatus status;
 @override final  String? description;
@@ -269,16 +271,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupShoppingListItem&&(identical(other.id, id) || other.id == id)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.shoppingListID, shoppingListID) || other.shoppingListID == shoppingListID)&&(identical(other.userID, userID) || other.userID == userID)&&(identical(other.message, message) || other.message == message)&&(identical(other.order, order) || other.order == order)&&(identical(other.status, status) || other.status == status)&&(identical(other.description, description) || other.description == description)&&(identical(other.color, color) || other.color == color)&&(identical(other.imageURL, imageURL) || other.imageURL == imageURL)&&(identical(other.reminderDateTime, reminderDateTime) || other.reminderDateTime == reminderDateTime)&&(identical(other.checkedByUserID, checkedByUserID) || other.checkedByUserID == checkedByUserID)&&(identical(other.lastCheckedDateTime, lastCheckedDateTime) || other.lastCheckedDateTime == lastCheckedDateTime)&&(identical(other.lastEditedByUserID, lastEditedByUserID) || other.lastEditedByUserID == lastEditedByUserID)&&(identical(other.lastEditedDateTime, lastEditedDateTime) || other.lastEditedDateTime == lastEditedDateTime)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupShoppingListItem&&(identical(other.id, id) || other.id == id)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.shoppingListID, shoppingListID) || other.shoppingListID == shoppingListID)&&(identical(other.userID, userID) || other.userID == userID)&&(identical(other.message, message) || other.message == message)&&(identical(other.order, order) || other.order == order)&&(identical(other.status, status) || other.status == status)&&(identical(other.description, description) || other.description == description)&&(identical(other.color, color) || other.color == color)&&(identical(other.imageURL, imageURL) || other.imageURL == imageURL)&&(identical(other.reminderDateTime, reminderDateTime) || other.reminderDateTime == reminderDateTime)&&(identical(other.checkedByUserID, checkedByUserID) || other.checkedByUserID == checkedByUserID)&&(identical(other.lastCheckedDateTime, lastCheckedDateTime) || other.lastCheckedDateTime == lastCheckedDateTime)&&(identical(other.lastEditedByUserID, lastEditedByUserID) || other.lastEditedByUserID == lastEditedByUserID)&&(identical(other.lastEditedDateTime, lastEditedDateTime) || other.lastEditedDateTime == lastEditedDateTime)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,groupID,shoppingListID,userID,message,order,status,description,color,imageURL,reminderDateTime,checkedByUserID,lastCheckedDateTime,lastEditedByUserID,lastEditedDateTime,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime]);
+int get hashCode {
+    return Object.hashAll([runtimeType,id,groupID,shoppingListID,userID,message,order,status,description,color,imageURL,reminderDateTime,checkedByUserID,lastCheckedDateTime,lastEditedByUserID,lastEditedDateTime,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime]);
+}
 
 @override
 String toString() {
-  return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, message: $message, order: $order, status: $status, description: $description, color: $color, imageURL: $imageURL, reminderDateTime: $reminderDateTime, checkedByUserID: $checkedByUserID, lastCheckedDateTime: $lastCheckedDateTime, lastEditedByUserID: $lastEditedByUserID, lastEditedDateTime: $lastEditedDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupShoppingListItem(id: $id, groupID: $groupID, shoppingListID: $shoppingListID, userID: $userID, message: $message, order: $order, status: $status, description: $description, color: $color, imageURL: $imageURL, reminderDateTime: $reminderDateTime, checkedByUserID: $checkedByUserID, lastCheckedDateTime: $lastCheckedDateTime, lastEditedByUserID: $lastEditedByUserID, lastEditedDateTime: $lastEditedDateTime, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
 }
 
 
