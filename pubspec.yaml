@@ -47,7 +47,7 @@ dependencies:
 
   crypto:
   google_sign_in: ^7.2.0
-  sign_in_with_apple: ^7.0.1
+  sign_in_with_apple: ^8.2.0
   
   riverpod: ^2.6.1
   hooks_riverpod: ^2.6.1
