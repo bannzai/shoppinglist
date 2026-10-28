@@ -13,6 +13,9 @@
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		45CA956D62254DE4A9DEBD53 /* WidgetItemDocumentPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D6B56F3DE4F4C11AC51D77 /* WidgetItemDocumentPath.swift */; };
 		52811A04C8E393BE2C149E4A /* WidgetItemDocumentPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A9FE248B6DDAEF2DC3D940 /* WidgetItemDocumentPathTests.swift */; };
+		B7E1F0A1C2D3E4F5A6B7C8D1 /* WidgetFirestore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7E1F0A1C2D3E4F5A6B7C8D1 /* WidgetFirestore.swift */; };
+		B7E1F0A1C2D3E4F5A6B7C8D2 /* WidgetFirestore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7E1F0A1C2D3E4F5A6B7C8D1 /* WidgetFirestore.swift */; };
+		B7E1F0A1C2D3E4F5A6B7C8D3 /* WidgetFirestoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7E1F0A1C2D3E4F5A6B7C8D2 /* WidgetFirestoreTests.swift */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		76648321C49827E2F845383E /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41110E7B045A2A838D8A7F4E /* Pods_RunnerTests.framework */; };
 		7D3C290D2A8FD232025D5B2E /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FB4E7C0C180E2B0167D0E7C /* Pods_Runner.framework */; };
@@ -114,6 +117,8 @@
 		C304F35642E4EAF6A757BC5B /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
 		D0B7A6AC1EE9955D68677889 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		D5A9FE248B6DDAEF2DC3D940 /* WidgetItemDocumentPathTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetItemDocumentPathTests.swift; sourceTree = "<group>"; };
+		C7E1F0A1C2D3E4F5A6B7C8D1 /* WidgetFirestore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetFirestore.swift; sourceTree = "<group>"; };
+		C7E1F0A1C2D3E4F5A6B7C8D2 /* WidgetFirestoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetFirestoreTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +162,7 @@
 			children = (
 				331C807B294A618700263BE5 /* RunnerTests.swift */,
 				D5A9FE248B6DDAEF2DC3D940 /* WidgetItemDocumentPathTests.swift */,
+				C7E1F0A1C2D3E4F5A6B7C8D2 /* WidgetFirestoreTests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -250,6 +256,7 @@
 				A1B2C3D411000006 /* ShoppingListWidget.entitlements */,
 				A1B2C3D411000007 /* Info.plist */,
 				57D6B56F3DE4F4C11AC51D77 /* WidgetItemDocumentPath.swift */,
+				C7E1F0A1C2D3E4F5A6B7C8D1 /* WidgetFirestore.swift */,
 			);
 			path = ShoppingListWidget;
 			sourceTree = "<group>";
@@ -534,6 +541,8 @@
 				331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */,
 				45CA956D62254DE4A9DEBD53 /* WidgetItemDocumentPath.swift in Sources */,
 				52811A04C8E393BE2C149E4A /* WidgetItemDocumentPathTests.swift in Sources */,
+				B7E1F0A1C2D3E4F5A6B7C8D2 /* WidgetFirestore.swift in Sources */,
+				B7E1F0A1C2D3E4F5A6B7C8D3 /* WidgetFirestoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -558,6 +567,7 @@
 				A1B2C3D401000005 /* ToggleItemIntent.swift in Sources */,
 				A1B2C3D401000007 /* FirestoreService.swift in Sources */,
 				FA66933CACAC6D1EF9D6E605 /* WidgetItemDocumentPath.swift in Sources */,
+				B7E1F0A1C2D3E4F5A6B7C8D1 /* WidgetFirestore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -681,6 +691,15 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"FirebaseCore\"",
+					"-framework",
+					"\"FirebaseFirestore\"",
+					"-framework",
+					"\"FirebaseFirestoreInternal\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.bannzai.shoppinglist.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -699,6 +718,15 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"FirebaseCore\"",
+					"-framework",
+					"\"FirebaseFirestore\"",
+					"-framework",
+					"\"FirebaseFirestoreInternal\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.bannzai.shoppinglist.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -715,6 +743,15 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"FirebaseCore\"",
+					"-framework",
+					"\"FirebaseFirestore\"",
+					"-framework",
+					"\"FirebaseFirestoreInternal\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.bannzai.shoppinglist.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -854,6 +891,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(APP_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
