@@ -277,6 +277,8 @@ bool isLinkedAppleFor(User user) {
       .isNotEmpty;
 }
 
+// firebaseUserChangesProvider は dependencies を持つ (scoped な) provider のため、
+// Riverpod 3 ではそれを watch する側も dependencies に列挙しないと実行時に例外になる
 final isAppleLinkedProvider = Provider((ref) {
   final user = ref.watch(firebaseUserChangesProvider);
   final userValue = user.value;
@@ -284,7 +286,7 @@ final isAppleLinkedProvider = Provider((ref) {
     return false;
   }
   return isLinkedAppleFor(userValue);
-});
+}, dependencies: [firebaseUserChangesProvider]);
 
 final isGoogleLinkedProvider = Provider((ref) {
   final user = ref.watch(firebaseUserChangesProvider);
@@ -293,4 +295,4 @@ final isGoogleLinkedProvider = Provider((ref) {
     return false;
   }
   return isLinkedGoogleFor(userValue);
-});
+}, dependencies: [firebaseUserChangesProvider]);
