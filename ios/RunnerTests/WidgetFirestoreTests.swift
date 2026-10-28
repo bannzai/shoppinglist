@@ -24,7 +24,8 @@ class WidgetFirestoreTests: XCTestCase {
     let app = makeFirebaseApp(name: "widget-overlap-\(UUID().uuidString)")
     async let longOperation: Int = withWidgetFirestore(app: app) { firestore in
       let first = try? await firestore.collection("items").getDocuments(source: .cache)
-      // 短い方の呼び出しが終わり、その後始末が走り終えるのを待つ
+      // 短い方の呼び出しが終わり、その後始末が走り終えるのを待つ。後始末はテストから完了を待てない Task のため時間で待つ。
+      // 1 秒は、修正前のコード (後始末で terminate する) でこのテストがクラッシュした待ち時間 (2026-10-27 に commit 4d9b421 で確認)
       try? await Task.sleep(nanoseconds: 1_000_000_000)
       let second = try? await firestore.collection("items").getDocuments(source: .cache)
       return (first?.count ?? -1) + (second?.count ?? -1)
@@ -54,8 +55,7 @@ class WidgetFirestoreTests: XCTestCase {
   /// `LOCK: already held by process`) も、ロックを持ったまま suspend されること (0xdead10cc) も起きない
   func testOperationDoesNotCreateLevelDBDirectory() async throws {
     let appName = "widget-leveldb-\(UUID().uuidString)"
-    let app = makeFirebaseApp(name: appName)
-    let count = await withWidgetFirestore(app: app) { firestore in
+    let count = await withWidgetFirestore(app: makeFirebaseApp(name: appName)) { firestore in
       (try? await firestore.collection("items").getDocuments(source: .cache))?.count ?? -1
     }
     XCTAssertEqual(count, 0)
@@ -63,7 +63,10 @@ class WidgetFirestoreTests: XCTestCase {
     let firestoreDirectory = try FileManager.default
       .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
       .appendingPathComponent("firestore")
-    let appPaths = (FileManager.default.subpaths(atPath: firestoreDirectory.path) ?? []).filter { $0.contains(appName) }
-    XCTAssertEqual(appPaths, [], firestoreDirectory.path)
+    XCTAssertEqual(
+      (FileManager.default.subpaths(atPath: firestoreDirectory.path) ?? []).filter { $0.contains(appName) },
+      [],
+      firestoreDirectory.path
+    )
   }
 }
