@@ -7,3 +7,7 @@ firebase/functions/.env.shoppinglist-dev
 firebase/functions/.env.shoppinglist-prod
 firebase/functions/.env.shoppinglist-prod-857bb
 firebase/functions/service-account-key.json
+android/app/src/google-services.json
+firebase/.envrc
+firebase/functions/.envrc
+ios/Flutter/Secret.xcconfig
