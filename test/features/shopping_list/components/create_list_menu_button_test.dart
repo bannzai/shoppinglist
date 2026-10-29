@@ -6,6 +6,7 @@ import 'package:shoppinglist/entity/group_shopping_list.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/create_list_menu_button.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/current_shopping_list_id.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/provider/shopping_list_fab_menu.dart';
@@ -186,6 +187,8 @@ void main() {
     // provider(選択時点の最新一覧)が build 時に渡した一覧より進んでいる状況を
     // 再現するためのオーバーライド。省略時は build 時の一覧と同じ値を返す。
     List<GroupShoppingListItem>? latestShoppingListItemsOnProvider,
+    // 既定の ja は他のテストが日本語の文言でメニュー行をタップするため。
+    Locale locale = const Locale('ja'),
   }) async {
     await tester.pumpWidget(
       ProviderScope(
@@ -211,6 +214,7 @@ void main() {
           ),
         ],
         child: localizedTestApp(
+          locale: locale,
           theme: buildAppTheme(accent: AccentPreset.shu),
           home: Scaffold(
             // 実アプリの ListTopBar と同じく画面右上に置く（メニューの展開位置を揃える）。
@@ -600,4 +604,32 @@ void main() {
     // 無効アクションのタップではメニューは閉じない。
     expect(find.text('現在のリストを複製'), findsOneWidget);
   });
+
+  // Issue #742: 英語の「Duplicate with unchecked items only」がメニューの最大幅を超えて
+  // はみ出した。overflow は FlutterError として報告され takeException で拾えるため、
+  // 文言の一致ではなく例外が出ないことで全言語のメニュー行を確かめる。
+  for (final locale in AppLocalizations.supportedLocales) {
+    testWidgets('メニューを開いても各行の文言がはみ出さない($locale)', (tester) async {
+      await pumpButton(
+        tester,
+        shoppingListAdd: _RecordingShoppingListAdd(),
+        addShoppingListItem: _RecordingAddShoppingListItem(),
+        shoppingListDuplicate: _RecordingShoppingListDuplicate(),
+        appUser: const AppUser(id: 'u'),
+        shoppingList: _sourceShoppingList,
+        shoppingListItems: const [],
+        locale: locale,
+      );
+
+      await tester.tap(buttonFinder);
+      await tester.pumpAndSettle();
+
+      // メニューが開き 3 行とも描画されたうえで overflow が無いことを確かめる。
+      expect(
+        find.byWidgetPredicate((widget) => widget is PopupMenuItem),
+        findsNWidgets(3),
+      );
+      expect(tester.takeException(), isNull);
+    });
+  }
 }
