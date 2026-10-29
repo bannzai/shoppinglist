@@ -275,6 +275,8 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
 
   /// お問い合わせを送信する。Firestore へのスナップショット保存と Slack 通知は
   /// Functions 側で行う。戻り値は作成された問い合わせの ID。
+  /// DEBUG ビルドではテスト用の引数 `test: true` を付け、Slack 通知を本番の
+  /// チャンネルではなく `#test-notification` に送らせる。
   Future<String> submitInquiry({
     required String email,
     required InquiryCategory categoryType,
@@ -288,6 +290,7 @@ extension FirebaseFunctionsExt on FirebaseFunctions {
       'content': content,
       'platform': platform,
       'appVersion': appVersion,
+      if (kDebugMode) 'test': true,
     });
     debugPrint('submitInquiry.result: ${result.data}');
     final response = mapToJSON(result.data);
