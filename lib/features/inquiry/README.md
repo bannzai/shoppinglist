@@ -23,6 +23,8 @@ Firebase Functions(`submitInquiry`)経由で Firestore への保存と Slack 通
    - 送信ユーザーの関連データ (users/{uid} とサブコレクション、所属 groups と全サブコレクション) をスナップショット
    - `inquiries/{id}` ドキュメントを作成 (スナップショットを `snapshotJson` に格納)
    - Slack へ Block Kit メッセージで通知 (問い合わせ ID・ユーザー情報・内容・復元コマンド例)
+     - 投稿先は Secret `SLACK_INQUIRY_CHANNEL_ID` のチャンネル。DEBUG ビルドのアプリはテスト用の引数 `test: true` を付けて呼ぶため、
+       その通知は bannzai のプロジェクト共通の `#test-notification` に届く (dev / prod のプロジェクトでは切り替えない)
 6. 成功時はトーストを表示して画面を閉じる。失敗時はエラーメッセージをそのまま表示
 
 ## データ形式

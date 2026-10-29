@@ -23,20 +23,12 @@ import type {
 import { escapeSlackText } from "../functions/utils/slack";
 
 /**
- * 本番の Firebase プロジェクト ID (firebase/.firebaserc の prod alias)。
- * これと一致するプロジェクトで動く時だけ本番の通知チャンネルへ投稿する
+ * 投稿先の Slack チャンネル。
+ * slack-notification-setup skill の規約 (サービス名-notification) で作った通知チャンネルに揃える。
+ * Firebase が起動する関数はテスト用の引数を受け取れないため、実行中のプロジェクトを問わず本番のチャンネルに送る
+ * (規約: bannzai/castle の home/.claude/documents/rules/slack-test-notification-channel.md)
  */
-const PROD_PROJECT_ID = "shoppinglist-prod-857bb";
-
-/**
- * 実行中のプロジェクトに対応する投稿先の Slack チャンネル。
- * 本番のプロジェクトでは slack-notification-setup skill の規約で作った「サービス名-notification」、それ以外 (dev・QA・判定できない時) では
- * 「サービス名-notification-qa」を返し、QA の投稿を本番の通知に混ぜない (規約: bannzai/castle の
- * home/.claude/documents/rules/qa-notifications-to-separate-channel.md)
- */
-export function crashlyticsSlackChannel(projectId: string): string {
-  return projectId === PROD_PROJECT_ID ? "#shoppinglist-notification" : "#shoppinglist-notification-qa";
-}
+export const CRASHLYTICS_SLACK_CHANNEL = "#shoppinglist-notification";
 
 /** slack-notification-setup skill の通知 bot の bot token (chat:write)。Secret Manager から起動時に読む */
 const SLACK_BOT_TOKEN = defineSecret("SLACK_BOT_TOKEN");
@@ -104,10 +96,9 @@ export function formatCrashlyticsAlertText(input: CrashlyticsAlertMessageInput):
 
 /**
  * 実行中の Firebase プロジェクト ID。Cloud Functions のランタイムが環境変数で渡す
- * (https://firebase.google.com/docs/functions/config-env の「Automatically populated environment variables」)。
- * どちらも無い時の "unknown-project" は本番の ID と一致しないため、crashlyticsSlackChannel は -qa に倒す
+ * (https://firebase.google.com/docs/functions/config-env の「Automatically populated environment variables」)
  */
-export function currentProjectId(): string {
+function currentProjectId(): string {
   const fromEnv = process.env.GCLOUD_PROJECT;
   if (fromEnv) {
     return fromEnv;
@@ -156,7 +147,7 @@ async function postToSlack(text: string): Promise<void> {
       authorization: `Bearer ${SLACK_BOT_TOKEN.value()}`,
       "content-type": "application/json; charset=utf-8",
     },
-    body: JSON.stringify({ channel: crashlyticsSlackChannel(currentProjectId()), text }),
+    body: JSON.stringify({ channel: CRASHLYTICS_SLACK_CHANNEL, text }),
     // 関数の実行時間の上限 (既定 60 秒) より十分に短くし、Slack が応答しない時も失敗として記録できるようにする
     signal: AbortSignal.timeout(SLACK_REQUEST_TIMEOUT_MS),
   });

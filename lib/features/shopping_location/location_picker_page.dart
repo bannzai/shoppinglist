@@ -65,7 +65,7 @@ class LocationPickerPage extends HookConsumerWidget {
     Future<void> onCameraIdle() async {
       isLoadingAddress.value = true;
       try {
-        final placemarks = await placemarkFromCoordinates(
+        final placemarks = await Geocoding().placemarkFromCoordinates(
           selectedLatLng.value.latitude,
           selectedLatLng.value.longitude,
         );

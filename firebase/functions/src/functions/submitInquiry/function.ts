@@ -9,6 +9,7 @@ import { appAuthPolicy } from "../utils/authPolicy";
 import {
   slackBotToken,
   slackInquiryChannelID,
+  inquirySlackChannelID,
   postSlackMessage,
   uploadFileToSlackThread,
 } from "../utils/slack";
@@ -42,7 +43,7 @@ const ResponseSchema = z.union([
   ErrorResponseSchema,
 ]);
 
-// 検証用引数: { "email": "test@example.com", "categoryType": "bugReport", "content": "アイテムが消えます", "platform": "ios", "appVersion": "1.0.0 (1)" }
+// 検証用引数: { "email": "test@example.com", "categoryType": "bugReport", "content": "アイテムが消えます", "platform": "ios", "appVersion": "1.0.0 (1)", "test": true }
 const submitInquiryFlow = ai.defineFlow(
   {
     name: "submitInquiry",
@@ -52,10 +53,13 @@ const submitInquiryFlow = ai.defineFlow(
       content: z.string().min(1).max(MAX_CONTENT_LENGTH),
       platform: InquiryPlatformSchema,
       appVersion: InquiryAppVersionSchema,
+      // テスト用の引数。true の時は Slack 通知を #test-notification に送る。
+      // 省略可にするのは、この引数を送らない配布済みのアプリからの問い合わせを本番のチャンネルに届けるため。
+      test: z.boolean().optional(),
     }),
     outputSchema: ResponseSchema,
   },
-  async ({ email, categoryType, content, platform, appVersion }) => {
+  async ({ email, categoryType, content, platform, appVersion, test }) => {
     try {
       const uid = currentAuthUID();
       if (!uid) {
@@ -102,10 +106,14 @@ const submitInquiryFlow = ai.defineFlow(
 
       // Slack 通知。失敗してもお問い合わせ保存自体は成立させ、結果は slackNotified に記録する。
       let slackNotified = false;
+      const slackChannelID = inquirySlackChannelID({
+        test: test === true,
+        inquiryChannelID: slackInquiryChannelID.value(),
+      });
       try {
         const threadTs = await postSlackMessage({
           token: slackBotToken.value(),
-          channel: slackInquiryChannelID.value(),
+          channel: slackChannelID,
           text: buildInquirySlackText(inquiry),
           blocks: buildInquirySlackBlocks(inquiry),
         });
@@ -116,7 +124,7 @@ const submitInquiryFlow = ai.defineFlow(
           try {
             await uploadFileToSlackThread({
               token: slackBotToken.value(),
-              channel: slackInquiryChannelID.value(),
+              channel: slackChannelID,
               threadTs,
               filename: `inquiry_snapshot_${inquiryRef.id}.json`,
               content: snapshotJson,
