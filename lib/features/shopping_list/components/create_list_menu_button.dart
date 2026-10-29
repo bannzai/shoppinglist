@@ -419,7 +419,9 @@ class _CreateListMenuRow extends StatelessWidget {
         children: [
           Icon(icon, size: 20, color: tokens.neutral.ink),
           const SizedBox(width: 12),
-          Text(label),
+          // PopupMenu の最大幅を超える文言（英語の「Duplicate with unchecked items only」。
+          // Issue #742）を、はみ出させずに折り返すため。
+          Flexible(child: Text(label)),
         ],
       ),
     );
