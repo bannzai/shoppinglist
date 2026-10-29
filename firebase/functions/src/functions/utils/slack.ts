@@ -8,6 +8,22 @@ export const slackBotToken = defineSecret("SLACK_BOT_TOKEN");
  * `firebase functions:secrets:set SLACK_INQUIRY_CHANNEL_ID` で設定する。 */
 export const slackInquiryChannelID = defineSecret("SLACK_INQUIRY_CHANNEL_ID");
 
+/** テスト・QA の投稿先。bannzai のプロジェクト共通の `#test-notification` のチャンネル ID。
+ * files.completeUploadExternal の channel_id はチャンネル名を受け付けないため ID で持つ。
+ * 値と運用は bannzai/castle の home/.claude/documents/rules/slack-test-notification-channel.md が正。 */
+export const TEST_NOTIFICATION_CHANNEL_ID = "C0CD2MGHCAJ";
+
+/** お問い合わせ通知の投稿先チャンネル ID を返す。
+ * リクエストにテスト用の引数 `test: true` が付いている時だけ `#test-notification`、それ以外は本番の
+ * `inquiryChannelID` を返す。実行中のプロジェクト (dev / prod) では切り替えない
+ * (規約: bannzai/castle の home/.claude/documents/rules/slack-test-notification-channel.md)。 */
+export function inquirySlackChannelID(args: {
+  test: boolean;
+  inquiryChannelID: string;
+}): string {
+  return args.test ? TEST_NOTIFICATION_CHANNEL_ID : args.inquiryChannelID;
+}
+
 /** ユーザー・クライアント由来の文字列を、Slack の mrkdwn / text で制御記法
  * (`<!channel>`・`<@U…>`・`<https://…|label>` 等) として解釈されない形に変換する。
  * Slack が求めるエスケープは `&`・`<`・`>` の 3 文字だけ
