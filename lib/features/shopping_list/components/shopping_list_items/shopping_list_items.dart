@@ -81,7 +81,7 @@ class ShoppingListItems extends ConsumerWidget {
                 shoppingListID: shoppingListID,
               ),
             )
-            .valueOrNull ??
+            .value ??
         [];
     final axesAsync = ref.watch(groupCategoryAxesProvider(groupID: groupID));
 

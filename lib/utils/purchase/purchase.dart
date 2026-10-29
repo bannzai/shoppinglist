@@ -217,7 +217,7 @@ Package? lifetimePackage(Ref ref) {
 Package? monthlyPremiumPackage(Ref ref) {
   const premiumPackageOfferingType = OfferingType.premium;
   final offering =
-      ref.watch(offeringsProvider).valueOrNull?.all[premiumPackageOfferingType
+      ref.watch(offeringsProvider).value?.all[premiumPackageOfferingType
           .identifier];
   if (offering == null) {
     return null;
@@ -295,7 +295,7 @@ class Purchase {
       if (!premiumEntitlement.isActive) {
         throw FormatException(l10n.purchaseNotActivated);
       }
-      return Future.value(true);
+      return true;
     } on PlatformException catch (exception, stack) {
       analytics.logEvent(
         name: 'catched_purchase_exception',

@@ -26,7 +26,7 @@ class AccountLinkSection extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(firebaseUserChangesProvider).valueOrNull;
+    final user = ref.watch(firebaseUserChangesProvider).value;
     if (user == null) {
       return const SizedBox.shrink();
     }

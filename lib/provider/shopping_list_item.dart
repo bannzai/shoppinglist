@@ -3,7 +3,6 @@ import 'package:shoppinglist/utils/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/provider/store_review_request.dart';
 

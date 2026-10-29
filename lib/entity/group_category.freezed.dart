@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'group_category.dart';
@@ -9,6 +9,7 @@ part of 'group_category.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -31,16 +32,21 @@ $GroupCategoryCopyWith<GroupCategory> get copyWith => _$GroupCategoryCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupCategory&&(identical(other.id, id) || other.id == id)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.userID, userID) || other.userID == userID)&&(identical(other.groupCategoryAxisID, groupCategoryAxisID) || other.groupCategoryAxisID == groupCategoryAxisID)&&(identical(other.name, name) || other.name == name)&&(identical(other.order, order) || other.order == order)&&const DeepCollectionEquality().equals(other.locationOrders, locationOrders)&&const DeepCollectionEquality().equals(other.keywords, keywords)&&(identical(other.color, color) || other.color == color)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+  final _this = this as GroupCategory;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupCategory&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.groupID, _this.groupID) || other.groupID == _this.groupID)&&(identical(other.userID, _this.userID) || other.userID == _this.userID)&&(identical(other.groupCategoryAxisID, _this.groupCategoryAxisID) || other.groupCategoryAxisID == _this.groupCategoryAxisID)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.order, _this.order) || other.order == _this.order)&&const DeepCollectionEquality().equals(other.locationOrders, _this.locationOrders)&&const DeepCollectionEquality().equals(other.keywords, _this.keywords)&&(identical(other.color, _this.color) || other.color == _this.color)&&(identical(other.iconName, _this.iconName) || other.iconName == _this.iconName)&&(identical(other.createdDateTime, _this.createdDateTime) || other.createdDateTime == _this.createdDateTime)&&(identical(other.updatedDateTime, _this.updatedDateTime) || other.updatedDateTime == _this.updatedDateTime)&&(identical(other.serverCreatedDateTime, _this.serverCreatedDateTime) || other.serverCreatedDateTime == _this.serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, _this.serverUpdatedDateTime) || other.serverUpdatedDateTime == _this.serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,groupID,userID,groupCategoryAxisID,name,order,const DeepCollectionEquality().hash(locationOrders),const DeepCollectionEquality().hash(keywords),color,iconName,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+int get hashCode {
+  final _this = this as GroupCategory;
+  return Object.hash(runtimeType,_this.id,_this.groupID,_this.userID,_this.groupCategoryAxisID,_this.name,_this.order,const DeepCollectionEquality().hash(_this.locationOrders),const DeepCollectionEquality().hash(_this.keywords),_this.color,_this.iconName,_this.createdDateTime,_this.updatedDateTime,_this.serverCreatedDateTime,_this.serverUpdatedDateTime);
+}
 
 @override
 String toString() {
-  return 'GroupCategory(id: $id, groupID: $groupID, userID: $userID, groupCategoryAxisID: $groupCategoryAxisID, name: $name, order: $order, locationOrders: $locationOrders, keywords: $keywords, color: $color, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+  final _this = this as GroupCategory;
+  return 'GroupCategory(id: ${_this.id}, groupID: ${_this.groupID}, userID: ${_this.userID}, groupCategoryAxisID: ${_this.groupCategoryAxisID}, name: ${_this.name}, order: ${_this.order}, locationOrders: ${_this.locationOrders}, keywords: ${_this.keywords}, color: ${_this.color}, iconName: ${_this.iconName}, createdDateTime: ${_this.createdDateTime}, updatedDateTime: ${_this.updatedDateTime}, serverCreatedDateTime: ${_this.serverCreatedDateTime}, serverUpdatedDateTime: ${_this.serverUpdatedDateTime})';
 }
 
 
@@ -69,7 +75,7 @@ class _$GroupCategoryCopyWithImpl<$Res>
 /// Create a copy of GroupCategory
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? groupID = null,Object? userID = null,Object? groupCategoryAxisID = null,Object? name = null,Object? order = null,Object? locationOrders = null,Object? keywords = null,Object? color = freezed,Object? iconName = freezed,Object? createdDateTime = freezed,Object? updatedDateTime = freezed,Object? serverCreatedDateTime = freezed,Object? serverUpdatedDateTime = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(GroupCategory(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,groupID: null == groupID ? _self.groupID : groupID // ignore: cast_nullable_to_non_nullable
 as String,userID: null == userID ? _self.userID : userID // ignore: cast_nullable_to_non_nullable
@@ -225,7 +231,7 @@ return $default(_that.id,_that.groupID,_that.userID,_that.groupCategoryAxisID,_t
 
 @JsonSerializable(explicitToJson: true)
 class _GroupCategory extends GroupCategory {
-  const _GroupCategory({required this.id, required this.groupID, required this.userID, required this.groupCategoryAxisID, required this.name, required this.order, required final  Map<String, int> locationOrders, required final  List<GroupCategoryKeyword> keywords, required this.color, required this.iconName, @ClientCreatedTimestamp() this.createdDateTime, @ClientUpdatedTimestamp() this.updatedDateTime, @ServerCreatedTimestamp() this.serverCreatedDateTime, @ServerUpdatedTimestamp() this.serverUpdatedDateTime}): _locationOrders = locationOrders,_keywords = keywords,super._();
+  const _GroupCategory({required this.id, required this.groupID, required this.userID, required this.groupCategoryAxisID, required this.name, required this.order, required  Map<String, int> locationOrders, required  List<GroupCategoryKeyword> keywords, required this.color, required this.iconName, @ClientCreatedTimestamp() this.createdDateTime, @ClientUpdatedTimestamp() this.updatedDateTime, @ServerCreatedTimestamp() this.serverCreatedDateTime, @ServerUpdatedTimestamp() this.serverUpdatedDateTime}): _locationOrders = locationOrders,_keywords = keywords,super._();
   factory _GroupCategory.fromJson(Map<String, dynamic> json) => _$GroupCategoryFromJson(json);
 
 @override final  String id;
@@ -274,16 +280,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupCategory&&(identical(other.id, id) || other.id == id)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.userID, userID) || other.userID == userID)&&(identical(other.groupCategoryAxisID, groupCategoryAxisID) || other.groupCategoryAxisID == groupCategoryAxisID)&&(identical(other.name, name) || other.name == name)&&(identical(other.order, order) || other.order == order)&&const DeepCollectionEquality().equals(other._locationOrders, _locationOrders)&&const DeepCollectionEquality().equals(other._keywords, _keywords)&&(identical(other.color, color) || other.color == color)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupCategory&&(identical(other.id, id) || other.id == id)&&(identical(other.groupID, groupID) || other.groupID == groupID)&&(identical(other.userID, userID) || other.userID == userID)&&(identical(other.groupCategoryAxisID, groupCategoryAxisID) || other.groupCategoryAxisID == groupCategoryAxisID)&&(identical(other.name, name) || other.name == name)&&(identical(other.order, order) || other.order == order)&&const DeepCollectionEquality().equals(other.locationOrders, _locationOrders)&&const DeepCollectionEquality().equals(other.keywords, _keywords)&&(identical(other.color, color) || other.color == color)&&(identical(other.iconName, iconName) || other.iconName == iconName)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.updatedDateTime, updatedDateTime) || other.updatedDateTime == updatedDateTime)&&(identical(other.serverCreatedDateTime, serverCreatedDateTime) || other.serverCreatedDateTime == serverCreatedDateTime)&&(identical(other.serverUpdatedDateTime, serverUpdatedDateTime) || other.serverUpdatedDateTime == serverUpdatedDateTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,groupID,userID,groupCategoryAxisID,name,order,const DeepCollectionEquality().hash(_locationOrders),const DeepCollectionEquality().hash(_keywords),color,iconName,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+int get hashCode {
+    return Object.hash(runtimeType,id,groupID,userID,groupCategoryAxisID,name,order,const DeepCollectionEquality().hash(_locationOrders),const DeepCollectionEquality().hash(_keywords),color,iconName,createdDateTime,updatedDateTime,serverCreatedDateTime,serverUpdatedDateTime);
+}
 
 @override
 String toString() {
-  return 'GroupCategory(id: $id, groupID: $groupID, userID: $userID, groupCategoryAxisID: $groupCategoryAxisID, name: $name, order: $order, locationOrders: $locationOrders, keywords: $keywords, color: $color, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
+    return 'GroupCategory(id: $id, groupID: $groupID, userID: $userID, groupCategoryAxisID: $groupCategoryAxisID, name: $name, order: $order, locationOrders: $locationOrders, keywords: $keywords, color: $color, iconName: $iconName, createdDateTime: $createdDateTime, updatedDateTime: $updatedDateTime, serverCreatedDateTime: $serverCreatedDateTime, serverUpdatedDateTime: $serverUpdatedDateTime)';
 }
 
 

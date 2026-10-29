@@ -16,8 +16,7 @@ class CurrentGroupResolver extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentGroupID = ref.watch(currentGroupIDProvider);
-    final defaultGroupID =
-        ref.watch(appUserProvider).valueOrNull?.defaultGroupID;
+    final defaultGroupID = ref.watch(appUserProvider).value?.defaultGroupID;
     final currentGroupIDNotifier = ref.watch(currentGroupIDProvider.notifier);
 
     // currentGroupID が未設定の時だけ defaultGroupID で初期化する。

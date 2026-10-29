@@ -1,4 +1,3 @@
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shoppinglist/entity/ai_usage.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
@@ -20,7 +19,7 @@ Stream<UserAIUsage?> currentMonthAIUsage(Ref ref) {
 /// 現在月のAI画像認識の残り回数を返すProvider。
 @Riverpod(dependencies: [currentMonthAIUsage])
 int remainingImageRecognitionCount(Ref ref, {required bool isPremium}) {
-  final aiUsage = ref.watch(currentMonthAIUsageProvider).valueOrNull;
+  final aiUsage = ref.watch(currentMonthAIUsageProvider).value;
   final limit =
       isPremium
           ? premiumMonthlyImageRecognitionLimit
@@ -32,7 +31,7 @@ int remainingImageRecognitionCount(Ref ref, {required bool isPremium}) {
 /// 現在月のURL認識の残り回数を返すProvider。
 @Riverpod(dependencies: [currentMonthAIUsage])
 int remainingURLRecognitionCount(Ref ref, {required bool isPremium}) {
-  final aiUsage = ref.watch(currentMonthAIUsageProvider).valueOrNull;
+  final aiUsage = ref.watch(currentMonthAIUsageProvider).value;
   final limit =
       isPremium
           ? premiumMonthlyURLRecognitionLimit
@@ -44,7 +43,7 @@ int remainingURLRecognitionCount(Ref ref, {required bool isPremium}) {
 /// 現在月のAIカテゴリ分けの残り回数を返すProvider。
 @Riverpod(dependencies: [currentMonthAIUsage])
 int remainingCategorizeCount(Ref ref, {required bool isPremium}) {
-  final aiUsage = ref.watch(currentMonthAIUsageProvider).valueOrNull;
+  final aiUsage = ref.watch(currentMonthAIUsageProvider).value;
   final limit =
       isPremium ? premiumMonthlyCategorizeLimit : freeMonthlyCategorizeLimit;
   final used = aiUsage?.categorizeCount ?? 0;

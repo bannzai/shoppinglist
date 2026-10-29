@@ -6,1783 +6,1166 @@ part of 'group_category.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$groupCategoryAxesHash() => r'659ba6989ab7693f1e8786760ad4116b6a30717c';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [groupCategoryAxes].
 @ProviderFor(groupCategoryAxes)
-const groupCategoryAxesProvider = GroupCategoryAxesFamily();
+final groupCategoryAxesProvider = GroupCategoryAxesFamily._();
 
-/// See also [groupCategoryAxes].
-class GroupCategoryAxesFamily
-    extends Family<AsyncValue<List<GroupCategoryAxis>>> {
-  /// See also [groupCategoryAxes].
-  const GroupCategoryAxesFamily();
+final class GroupCategoryAxesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<GroupCategoryAxis>>,
+          List<GroupCategoryAxis>,
+          Stream<List<GroupCategoryAxis>>
+        >
+    with
+        $FutureModifier<List<GroupCategoryAxis>>,
+        $StreamProvider<List<GroupCategoryAxis>> {
+  GroupCategoryAxesProvider._({
+    required GroupCategoryAxesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'groupCategoryAxesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [groupCategoryAxes].
-  GroupCategoryAxesProvider call({required String groupID}) {
-    return GroupCategoryAxesProvider(groupID: groupID);
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
+  static final $allTransitiveDependencies1 = currentUserIDProvider;
+  static final $allTransitiveDependencies2 =
+      CurrentUserIDProvider.$allTransitiveDependencies0;
+
+  @override
+  String debugGetCreateSourceHash() => _$groupCategoryAxesHash();
+
+  @override
+  String toString() {
+    return r'groupCategoryAxesProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  GroupCategoryAxesProvider getProviderOverride(
-    covariant GroupCategoryAxesProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
+  $StreamProviderElement<List<GroupCategoryAxis>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
 
   @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'groupCategoryAxesProvider';
-}
-
-/// See also [groupCategoryAxes].
-class GroupCategoryAxesProvider
-    extends AutoDisposeStreamProvider<List<GroupCategoryAxis>> {
-  /// See also [groupCategoryAxes].
-  GroupCategoryAxesProvider({required String groupID})
-    : this._internal(
-        (ref) =>
-            groupCategoryAxes(ref as GroupCategoryAxesRef, groupID: groupID),
-        from: groupCategoryAxesProvider,
-        name: r'groupCategoryAxesProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$groupCategoryAxesHash,
-        dependencies: GroupCategoryAxesFamily._dependencies,
-        allTransitiveDependencies:
-            GroupCategoryAxesFamily._allTransitiveDependencies,
-        groupID: groupID,
-      );
-
-  GroupCategoryAxesProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
-
-  @override
-  Override overrideWith(
-    Stream<List<GroupCategoryAxis>> Function(GroupCategoryAxesRef provider)
-    create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: GroupCategoryAxesProvider._internal(
-        (ref) => create(ref as GroupCategoryAxesRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeStreamProviderElement<List<GroupCategoryAxis>> createElement() {
-    return _GroupCategoryAxesProviderElement(this);
+  Stream<List<GroupCategoryAxis>> create(Ref ref) {
+    final argument = this.argument as String;
+    return groupCategoryAxes(ref, groupID: argument);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is GroupCategoryAxesProvider && other.groupID == groupID;
+    return other is GroupCategoryAxesProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin GroupCategoryAxesRef
-    on AutoDisposeStreamProviderRef<List<GroupCategoryAxis>> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
+String _$groupCategoryAxesHash() => r'c6d00a94280e72e264ff31760d0b33e9aa884990';
 
-class _GroupCategoryAxesProviderElement
-    extends AutoDisposeStreamProviderElement<List<GroupCategoryAxis>>
-    with GroupCategoryAxesRef {
-  _GroupCategoryAxesProviderElement(super.provider);
-
-  @override
-  String get groupID => (origin as GroupCategoryAxesProvider).groupID;
-}
-
-String _$shareableGroupCategoryAxesHash() =>
-    r'a63e833a778ecfc12da501a03470123ab5aa9df7';
-
-/// See also [shareableGroupCategoryAxes].
-@ProviderFor(shareableGroupCategoryAxes)
-const shareableGroupCategoryAxesProvider = ShareableGroupCategoryAxesFamily();
-
-/// See also [shareableGroupCategoryAxes].
-class ShareableGroupCategoryAxesFamily
-    extends Family<AsyncValue<List<GroupCategoryAxis>>> {
-  /// See also [shareableGroupCategoryAxes].
-  const ShareableGroupCategoryAxesFamily();
-
-  /// See also [shareableGroupCategoryAxes].
-  ShareableGroupCategoryAxesProvider call({required String groupID}) {
-    return ShareableGroupCategoryAxesProvider(groupID: groupID);
-  }
-
-  @override
-  ShareableGroupCategoryAxesProvider getProviderOverride(
-    covariant ShareableGroupCategoryAxesProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-    groupProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-        groupProvider,
-        ...?groupProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'shareableGroupCategoryAxesProvider';
-}
-
-/// See also [shareableGroupCategoryAxes].
-class ShareableGroupCategoryAxesProvider
-    extends AutoDisposeStreamProvider<List<GroupCategoryAxis>> {
-  /// See also [shareableGroupCategoryAxes].
-  ShareableGroupCategoryAxesProvider({required String groupID})
-    : this._internal(
-        (ref) => shareableGroupCategoryAxes(
-          ref as ShareableGroupCategoryAxesRef,
-          groupID: groupID,
-        ),
-        from: shareableGroupCategoryAxesProvider,
-        name: r'shareableGroupCategoryAxesProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$shareableGroupCategoryAxesHash,
-        dependencies: ShareableGroupCategoryAxesFamily._dependencies,
-        allTransitiveDependencies:
-            ShareableGroupCategoryAxesFamily._allTransitiveDependencies,
-        groupID: groupID,
+final class GroupCategoryAxesFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<GroupCategoryAxis>>, String> {
+  GroupCategoryAxesFamily._()
+    : super(
+        retry: null,
+        name: r'groupCategoryAxesProvider',
+        dependencies: <ProviderOrFamily>[
+          groupDatabaseProvider,
+          currentUserIDProvider,
+        ],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          GroupCategoryAxesProvider.$allTransitiveDependencies0,
+          GroupCategoryAxesProvider.$allTransitiveDependencies1,
+          GroupCategoryAxesProvider.$allTransitiveDependencies2,
+        ],
+        isAutoDispose: true,
       );
 
-  ShareableGroupCategoryAxesProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
+  GroupCategoryAxesProvider call({required String groupID}) =>
+      GroupCategoryAxesProvider._(argument: groupID, from: this);
 
   @override
-  Override overrideWith(
-    Stream<List<GroupCategoryAxis>> Function(
-      ShareableGroupCategoryAxesRef provider,
-    )
-    create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: ShareableGroupCategoryAxesProvider._internal(
-        (ref) => create(ref as ShareableGroupCategoryAxesRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
-    );
+  String toString() => r'groupCategoryAxesProvider';
+}
+
+@ProviderFor(shareableGroupCategoryAxes)
+final shareableGroupCategoryAxesProvider = ShareableGroupCategoryAxesFamily._();
+
+final class ShareableGroupCategoryAxesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<GroupCategoryAxis>>,
+          List<GroupCategoryAxis>,
+          Stream<List<GroupCategoryAxis>>
+        >
+    with
+        $FutureModifier<List<GroupCategoryAxis>>,
+        $StreamProvider<List<GroupCategoryAxis>> {
+  ShareableGroupCategoryAxesProvider._({
+    required ShareableGroupCategoryAxesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'shareableGroupCategoryAxesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
+  static final $allTransitiveDependencies1 = groupProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$shareableGroupCategoryAxesHash();
+
+  @override
+  String toString() {
+    return r'shareableGroupCategoryAxesProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  AutoDisposeStreamProviderElement<List<GroupCategoryAxis>> createElement() {
-    return _ShareableGroupCategoryAxesProviderElement(this);
+  $StreamProviderElement<List<GroupCategoryAxis>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<GroupCategoryAxis>> create(Ref ref) {
+    final argument = this.argument as String;
+    return shareableGroupCategoryAxes(ref, groupID: argument);
   }
 
   @override
   bool operator ==(Object other) {
     return other is ShareableGroupCategoryAxesProvider &&
-        other.groupID == groupID;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin ShareableGroupCategoryAxesRef
-    on AutoDisposeStreamProviderRef<List<GroupCategoryAxis>> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
+String _$shareableGroupCategoryAxesHash() =>
+    r'a63e833a778ecfc12da501a03470123ab5aa9df7';
 
-class _ShareableGroupCategoryAxesProviderElement
-    extends AutoDisposeStreamProviderElement<List<GroupCategoryAxis>>
-    with ShareableGroupCategoryAxesRef {
-  _ShareableGroupCategoryAxesProviderElement(super.provider);
+final class ShareableGroupCategoryAxesFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<GroupCategoryAxis>>, String> {
+  ShareableGroupCategoryAxesFamily._()
+    : super(
+        retry: null,
+        name: r'shareableGroupCategoryAxesProvider',
+        dependencies: <ProviderOrFamily>[groupDatabaseProvider, groupProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          ShareableGroupCategoryAxesProvider.$allTransitiveDependencies0,
+          ShareableGroupCategoryAxesProvider.$allTransitiveDependencies1,
+        ],
+        isAutoDispose: true,
+      );
+
+  ShareableGroupCategoryAxesProvider call({required String groupID}) =>
+      ShareableGroupCategoryAxesProvider._(argument: groupID, from: this);
 
   @override
-  String get groupID => (origin as ShareableGroupCategoryAxesProvider).groupID;
+  String toString() => r'shareableGroupCategoryAxesProvider';
+}
+
+@ProviderFor(groupCategoryAxisAdd)
+final groupCategoryAxisAddProvider = GroupCategoryAxisAddFamily._();
+
+final class GroupCategoryAxisAddProvider
+    extends
+        $FunctionalProvider<
+          GroupCategoryAxisAdd,
+          GroupCategoryAxisAdd,
+          GroupCategoryAxisAdd
+        >
+    with $Provider<GroupCategoryAxisAdd> {
+  GroupCategoryAxisAddProvider._({
+    required GroupCategoryAxisAddFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'groupCategoryAxisAddProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$groupCategoryAxisAddHash();
+
+  @override
+  String toString() {
+    return r'groupCategoryAxisAddProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<GroupCategoryAxisAdd> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  GroupCategoryAxisAdd create(Ref ref) {
+    final argument = this.argument as String;
+    return groupCategoryAxisAdd(ref, groupID: argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GroupCategoryAxisAdd value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GroupCategoryAxisAdd>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GroupCategoryAxisAddProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
 String _$groupCategoryAxisAddHash() =>
     r'42254d5778dd8761fb182c8890a73ba38eaec7dc';
 
-/// See also [groupCategoryAxisAdd].
-@ProviderFor(groupCategoryAxisAdd)
-const groupCategoryAxisAddProvider = GroupCategoryAxisAddFamily();
-
-/// See also [groupCategoryAxisAdd].
-class GroupCategoryAxisAddFamily extends Family<GroupCategoryAxisAdd> {
-  /// See also [groupCategoryAxisAdd].
-  const GroupCategoryAxisAddFamily();
-
-  /// See also [groupCategoryAxisAdd].
-  GroupCategoryAxisAddProvider call({required String groupID}) {
-    return GroupCategoryAxisAddProvider(groupID: groupID);
-  }
-
-  @override
-  GroupCategoryAxisAddProvider getProviderOverride(
-    covariant GroupCategoryAxisAddProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'groupCategoryAxisAddProvider';
-}
-
-/// See also [groupCategoryAxisAdd].
-class GroupCategoryAxisAddProvider
-    extends AutoDisposeProvider<GroupCategoryAxisAdd> {
-  /// See also [groupCategoryAxisAdd].
-  GroupCategoryAxisAddProvider({required String groupID})
-    : this._internal(
-        (ref) => groupCategoryAxisAdd(
-          ref as GroupCategoryAxisAddRef,
-          groupID: groupID,
-        ),
-        from: groupCategoryAxisAddProvider,
+final class GroupCategoryAxisAddFamily extends $Family
+    with $FunctionalFamilyOverride<GroupCategoryAxisAdd, String> {
+  GroupCategoryAxisAddFamily._()
+    : super(
+        retry: null,
         name: r'groupCategoryAxisAddProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$groupCategoryAxisAddHash,
-        dependencies: GroupCategoryAxisAddFamily._dependencies,
-        allTransitiveDependencies:
-            GroupCategoryAxisAddFamily._allTransitiveDependencies,
-        groupID: groupID,
+        dependencies: <ProviderOrFamily>[groupDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          GroupCategoryAxisAddProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: true,
       );
 
-  GroupCategoryAxisAddProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
+  GroupCategoryAxisAddProvider call({required String groupID}) =>
+      GroupCategoryAxisAddProvider._(argument: groupID, from: this);
 
   @override
-  Override overrideWith(
-    GroupCategoryAxisAdd Function(GroupCategoryAxisAddRef provider) create,
-  ) {
-    return ProviderOverride(
+  String toString() => r'groupCategoryAxisAddProvider';
+}
+
+@ProviderFor(groupCategoryAxisDelete)
+final groupCategoryAxisDeleteProvider = GroupCategoryAxisDeleteFamily._();
+
+final class GroupCategoryAxisDeleteProvider
+    extends
+        $FunctionalProvider<
+          GroupCategoryAxisDelete,
+          GroupCategoryAxisDelete,
+          GroupCategoryAxisDelete
+        >
+    with $Provider<GroupCategoryAxisDelete> {
+  GroupCategoryAxisDeleteProvider._({
+    required GroupCategoryAxisDeleteFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'groupCategoryAxisDeleteProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$groupCategoryAxisDeleteHash();
+
+  @override
+  String toString() {
+    return r'groupCategoryAxisDeleteProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<GroupCategoryAxisDelete> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  GroupCategoryAxisDelete create(Ref ref) {
+    final argument = this.argument as String;
+    return groupCategoryAxisDelete(ref, groupID: argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GroupCategoryAxisDelete value) {
+    return $ProviderOverride(
       origin: this,
-      override: GroupCategoryAxisAddProvider._internal(
-        (ref) => create(ref as GroupCategoryAxisAddRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
+      providerOverride: $SyncValueProvider<GroupCategoryAxisDelete>(value),
     );
   }
 
   @override
-  AutoDisposeProviderElement<GroupCategoryAxisAdd> createElement() {
-    return _GroupCategoryAxisAddProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is GroupCategoryAxisAddProvider && other.groupID == groupID;
+    return other is GroupCategoryAxisDeleteProvider &&
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin GroupCategoryAxisAddRef on AutoDisposeProviderRef<GroupCategoryAxisAdd> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
-
-class _GroupCategoryAxisAddProviderElement
-    extends AutoDisposeProviderElement<GroupCategoryAxisAdd>
-    with GroupCategoryAxisAddRef {
-  _GroupCategoryAxisAddProviderElement(super.provider);
-
-  @override
-  String get groupID => (origin as GroupCategoryAxisAddProvider).groupID;
 }
 
 String _$groupCategoryAxisDeleteHash() =>
     r'c0b68bb509392b5f1eaafe6b537e7e6091877003';
 
-/// See also [groupCategoryAxisDelete].
-@ProviderFor(groupCategoryAxisDelete)
-const groupCategoryAxisDeleteProvider = GroupCategoryAxisDeleteFamily();
-
-/// See also [groupCategoryAxisDelete].
-class GroupCategoryAxisDeleteFamily extends Family<GroupCategoryAxisDelete> {
-  /// See also [groupCategoryAxisDelete].
-  const GroupCategoryAxisDeleteFamily();
-
-  /// See also [groupCategoryAxisDelete].
-  GroupCategoryAxisDeleteProvider call({required String groupID}) {
-    return GroupCategoryAxisDeleteProvider(groupID: groupID);
-  }
-
-  @override
-  GroupCategoryAxisDeleteProvider getProviderOverride(
-    covariant GroupCategoryAxisDeleteProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'groupCategoryAxisDeleteProvider';
-}
-
-/// See also [groupCategoryAxisDelete].
-class GroupCategoryAxisDeleteProvider
-    extends AutoDisposeProvider<GroupCategoryAxisDelete> {
-  /// See also [groupCategoryAxisDelete].
-  GroupCategoryAxisDeleteProvider({required String groupID})
-    : this._internal(
-        (ref) => groupCategoryAxisDelete(
-          ref as GroupCategoryAxisDeleteRef,
-          groupID: groupID,
-        ),
-        from: groupCategoryAxisDeleteProvider,
+final class GroupCategoryAxisDeleteFamily extends $Family
+    with $FunctionalFamilyOverride<GroupCategoryAxisDelete, String> {
+  GroupCategoryAxisDeleteFamily._()
+    : super(
+        retry: null,
         name: r'groupCategoryAxisDeleteProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$groupCategoryAxisDeleteHash,
-        dependencies: GroupCategoryAxisDeleteFamily._dependencies,
-        allTransitiveDependencies:
-            GroupCategoryAxisDeleteFamily._allTransitiveDependencies,
-        groupID: groupID,
+        dependencies: <ProviderOrFamily>[groupDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          GroupCategoryAxisDeleteProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: true,
       );
 
-  GroupCategoryAxisDeleteProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
+  GroupCategoryAxisDeleteProvider call({required String groupID}) =>
+      GroupCategoryAxisDeleteProvider._(argument: groupID, from: this);
 
   @override
-  Override overrideWith(
-    GroupCategoryAxisDelete Function(GroupCategoryAxisDeleteRef provider)
-    create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: GroupCategoryAxisDeleteProvider._internal(
-        (ref) => create(ref as GroupCategoryAxisDeleteRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
+  String toString() => r'groupCategoryAxisDeleteProvider';
+}
+
+@ProviderFor(groupCategories)
+final groupCategoriesProvider = GroupCategoriesFamily._();
+
+final class GroupCategoriesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<GroupCategory>>,
+          List<GroupCategory>,
+          Stream<List<GroupCategory>>
+        >
+    with
+        $FutureModifier<List<GroupCategory>>,
+        $StreamProvider<List<GroupCategory>> {
+  GroupCategoriesProvider._({
+    required GroupCategoriesFamily super.from,
+    required ({String groupID, String categoryAxisID}) super.argument,
+  }) : super(
+         retry: null,
+         name: r'groupCategoriesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
+  static final $allTransitiveDependencies1 = currentUserIDProvider;
+  static final $allTransitiveDependencies2 =
+      CurrentUserIDProvider.$allTransitiveDependencies0;
+
+  @override
+  String debugGetCreateSourceHash() => _$groupCategoriesHash();
+
+  @override
+  String toString() {
+    return r'groupCategoriesProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<List<GroupCategory>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<GroupCategory>> create(Ref ref) {
+    final argument = this.argument as ({String groupID, String categoryAxisID});
+    return groupCategories(
+      ref,
+      groupID: argument.groupID,
+      categoryAxisID: argument.categoryAxisID,
     );
   }
 
   @override
-  AutoDisposeProviderElement<GroupCategoryAxisDelete> createElement() {
-    return _GroupCategoryAxisDeleteProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is GroupCategoryAxisDeleteProvider && other.groupID == groupID;
+    return other is GroupCategoriesProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin GroupCategoryAxisDeleteRef
-    on AutoDisposeProviderRef<GroupCategoryAxisDelete> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
+String _$groupCategoriesHash() => r'7eba7948c221f65f731060d009b5754bf0e0a649';
 
-class _GroupCategoryAxisDeleteProviderElement
-    extends AutoDisposeProviderElement<GroupCategoryAxisDelete>
-    with GroupCategoryAxisDeleteRef {
-  _GroupCategoryAxisDeleteProviderElement(super.provider);
+final class GroupCategoriesFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          Stream<List<GroupCategory>>,
+          ({String groupID, String categoryAxisID})
+        > {
+  GroupCategoriesFamily._()
+    : super(
+        retry: null,
+        name: r'groupCategoriesProvider',
+        dependencies: <ProviderOrFamily>[
+          groupDatabaseProvider,
+          currentUserIDProvider,
+        ],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          GroupCategoriesProvider.$allTransitiveDependencies0,
+          GroupCategoriesProvider.$allTransitiveDependencies1,
+          GroupCategoriesProvider.$allTransitiveDependencies2,
+        ],
+        isAutoDispose: true,
+      );
 
-  @override
-  String get groupID => (origin as GroupCategoryAxisDeleteProvider).groupID;
-}
-
-String _$groupCategoriesHash() => r'7d284084ea3d6472713eb13956f479012779cc42';
-
-/// See also [groupCategories].
-@ProviderFor(groupCategories)
-const groupCategoriesProvider = GroupCategoriesFamily();
-
-/// See also [groupCategories].
-class GroupCategoriesFamily extends Family<AsyncValue<List<GroupCategory>>> {
-  /// See also [groupCategories].
-  const GroupCategoriesFamily();
-
-  /// See also [groupCategories].
   GroupCategoriesProvider call({
     required String groupID,
     required String categoryAxisID,
-  }) {
-    return GroupCategoriesProvider(
-      groupID: groupID,
-      categoryAxisID: categoryAxisID,
-    );
-  }
+  }) => GroupCategoriesProvider._(
+    argument: (groupID: groupID, categoryAxisID: categoryAxisID),
+    from: this,
+  );
 
   @override
-  GroupCategoriesProvider getProviderOverride(
-    covariant GroupCategoriesProvider provider,
-  ) {
-    return call(
-      groupID: provider.groupID,
-      categoryAxisID: provider.categoryAxisID,
-    );
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'groupCategoriesProvider';
+  String toString() => r'groupCategoriesProvider';
 }
 
-/// See also [groupCategories].
-class GroupCategoriesProvider
-    extends AutoDisposeStreamProvider<List<GroupCategory>> {
-  /// See also [groupCategories].
-  GroupCategoriesProvider({
-    required String groupID,
-    required String categoryAxisID,
-  }) : this._internal(
-         (ref) => groupCategories(
-           ref as GroupCategoriesRef,
-           groupID: groupID,
-           categoryAxisID: categoryAxisID,
-         ),
-         from: groupCategoriesProvider,
-         name: r'groupCategoriesProvider',
-         debugGetCreateSourceHash:
-             const bool.fromEnvironment('dart.vm.product')
-                 ? null
-                 : _$groupCategoriesHash,
-         dependencies: GroupCategoriesFamily._dependencies,
-         allTransitiveDependencies:
-             GroupCategoriesFamily._allTransitiveDependencies,
-         groupID: groupID,
-         categoryAxisID: categoryAxisID,
+@ProviderFor(groupCategoryAdd)
+final groupCategoryAddProvider = GroupCategoryAddFamily._();
+
+final class GroupCategoryAddProvider
+    extends
+        $FunctionalProvider<
+          GroupCategoryAdd,
+          GroupCategoryAdd,
+          GroupCategoryAdd
+        >
+    with $Provider<GroupCategoryAdd> {
+  GroupCategoryAddProvider._({
+    required GroupCategoryAddFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'groupCategoryAddProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  GroupCategoriesProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-    required this.categoryAxisID,
-  }) : super.internal();
-
-  final String groupID;
-  final String categoryAxisID;
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
 
   @override
-  Override overrideWith(
-    Stream<List<GroupCategory>> Function(GroupCategoriesRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: GroupCategoriesProvider._internal(
-        (ref) => create(ref as GroupCategoriesRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-        categoryAxisID: categoryAxisID,
-      ),
-    );
+  String debugGetCreateSourceHash() => _$groupCategoryAddHash();
+
+  @override
+  String toString() {
+    return r'groupCategoryAddProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  AutoDisposeStreamProviderElement<List<GroupCategory>> createElement() {
-    return _GroupCategoriesProviderElement(this);
+  $ProviderElement<GroupCategoryAdd> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  GroupCategoryAdd create(Ref ref) {
+    final argument = this.argument as String;
+    return groupCategoryAdd(ref, groupID: argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GroupCategoryAdd value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GroupCategoryAdd>(value),
+    );
   }
 
   @override
   bool operator ==(Object other) {
-    return other is GroupCategoriesProvider &&
-        other.groupID == groupID &&
-        other.categoryAxisID == categoryAxisID;
+    return other is GroupCategoryAddProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-    hash = _SystemHash.combine(hash, categoryAxisID.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin GroupCategoriesRef on AutoDisposeStreamProviderRef<List<GroupCategory>> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-
-  /// The parameter `categoryAxisID` of this provider.
-  String get categoryAxisID;
-}
-
-class _GroupCategoriesProviderElement
-    extends AutoDisposeStreamProviderElement<List<GroupCategory>>
-    with GroupCategoriesRef {
-  _GroupCategoriesProviderElement(super.provider);
-
-  @override
-  String get groupID => (origin as GroupCategoriesProvider).groupID;
-  @override
-  String get categoryAxisID =>
-      (origin as GroupCategoriesProvider).categoryAxisID;
 }
 
 String _$groupCategoryAddHash() => r'7b6ae53a4483afe2d9f1c167d366a6ac6e87bfdc';
 
-/// See also [groupCategoryAdd].
-@ProviderFor(groupCategoryAdd)
-const groupCategoryAddProvider = GroupCategoryAddFamily();
-
-/// See also [groupCategoryAdd].
-class GroupCategoryAddFamily extends Family<GroupCategoryAdd> {
-  /// See also [groupCategoryAdd].
-  const GroupCategoryAddFamily();
-
-  /// See also [groupCategoryAdd].
-  GroupCategoryAddProvider call({required String groupID}) {
-    return GroupCategoryAddProvider(groupID: groupID);
-  }
-
-  @override
-  GroupCategoryAddProvider getProviderOverride(
-    covariant GroupCategoryAddProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'groupCategoryAddProvider';
-}
-
-/// See also [groupCategoryAdd].
-class GroupCategoryAddProvider extends AutoDisposeProvider<GroupCategoryAdd> {
-  /// See also [groupCategoryAdd].
-  GroupCategoryAddProvider({required String groupID})
-    : this._internal(
-        (ref) => groupCategoryAdd(ref as GroupCategoryAddRef, groupID: groupID),
-        from: groupCategoryAddProvider,
+final class GroupCategoryAddFamily extends $Family
+    with $FunctionalFamilyOverride<GroupCategoryAdd, String> {
+  GroupCategoryAddFamily._()
+    : super(
+        retry: null,
         name: r'groupCategoryAddProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$groupCategoryAddHash,
-        dependencies: GroupCategoryAddFamily._dependencies,
-        allTransitiveDependencies:
-            GroupCategoryAddFamily._allTransitiveDependencies,
-        groupID: groupID,
+        dependencies: <ProviderOrFamily>[groupDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          GroupCategoryAddProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: true,
       );
 
-  GroupCategoryAddProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
+  GroupCategoryAddProvider call({required String groupID}) =>
+      GroupCategoryAddProvider._(argument: groupID, from: this);
 
   @override
-  Override overrideWith(
-    GroupCategoryAdd Function(GroupCategoryAddRef provider) create,
-  ) {
-    return ProviderOverride(
+  String toString() => r'groupCategoryAddProvider';
+}
+
+@ProviderFor(groupCategoryUpdate)
+final groupCategoryUpdateProvider = GroupCategoryUpdateFamily._();
+
+final class GroupCategoryUpdateProvider
+    extends
+        $FunctionalProvider<
+          GroupCategoryUpdate,
+          GroupCategoryUpdate,
+          GroupCategoryUpdate
+        >
+    with $Provider<GroupCategoryUpdate> {
+  GroupCategoryUpdateProvider._({
+    required GroupCategoryUpdateFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'groupCategoryUpdateProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$groupCategoryUpdateHash();
+
+  @override
+  String toString() {
+    return r'groupCategoryUpdateProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<GroupCategoryUpdate> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  GroupCategoryUpdate create(Ref ref) {
+    final argument = this.argument as String;
+    return groupCategoryUpdate(ref, groupID: argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GroupCategoryUpdate value) {
+    return $ProviderOverride(
       origin: this,
-      override: GroupCategoryAddProvider._internal(
-        (ref) => create(ref as GroupCategoryAddRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
+      providerOverride: $SyncValueProvider<GroupCategoryUpdate>(value),
     );
   }
 
   @override
-  AutoDisposeProviderElement<GroupCategoryAdd> createElement() {
-    return _GroupCategoryAddProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is GroupCategoryAddProvider && other.groupID == groupID;
+    return other is GroupCategoryUpdateProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin GroupCategoryAddRef on AutoDisposeProviderRef<GroupCategoryAdd> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
-
-class _GroupCategoryAddProviderElement
-    extends AutoDisposeProviderElement<GroupCategoryAdd>
-    with GroupCategoryAddRef {
-  _GroupCategoryAddProviderElement(super.provider);
-
-  @override
-  String get groupID => (origin as GroupCategoryAddProvider).groupID;
 }
 
 String _$groupCategoryUpdateHash() =>
     r'f29ef09ff481015f44999f6847d63c6686fd60f1';
 
-/// See also [groupCategoryUpdate].
-@ProviderFor(groupCategoryUpdate)
-const groupCategoryUpdateProvider = GroupCategoryUpdateFamily();
-
-/// See also [groupCategoryUpdate].
-class GroupCategoryUpdateFamily extends Family<GroupCategoryUpdate> {
-  /// See also [groupCategoryUpdate].
-  const GroupCategoryUpdateFamily();
-
-  /// See also [groupCategoryUpdate].
-  GroupCategoryUpdateProvider call({required String groupID}) {
-    return GroupCategoryUpdateProvider(groupID: groupID);
-  }
-
-  @override
-  GroupCategoryUpdateProvider getProviderOverride(
-    covariant GroupCategoryUpdateProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'groupCategoryUpdateProvider';
-}
-
-/// See also [groupCategoryUpdate].
-class GroupCategoryUpdateProvider
-    extends AutoDisposeProvider<GroupCategoryUpdate> {
-  /// See also [groupCategoryUpdate].
-  GroupCategoryUpdateProvider({required String groupID})
-    : this._internal(
-        (ref) => groupCategoryUpdate(
-          ref as GroupCategoryUpdateRef,
-          groupID: groupID,
-        ),
-        from: groupCategoryUpdateProvider,
+final class GroupCategoryUpdateFamily extends $Family
+    with $FunctionalFamilyOverride<GroupCategoryUpdate, String> {
+  GroupCategoryUpdateFamily._()
+    : super(
+        retry: null,
         name: r'groupCategoryUpdateProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$groupCategoryUpdateHash,
-        dependencies: GroupCategoryUpdateFamily._dependencies,
-        allTransitiveDependencies:
-            GroupCategoryUpdateFamily._allTransitiveDependencies,
-        groupID: groupID,
+        dependencies: <ProviderOrFamily>[groupDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          GroupCategoryUpdateProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: true,
       );
 
-  GroupCategoryUpdateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
+  GroupCategoryUpdateProvider call({required String groupID}) =>
+      GroupCategoryUpdateProvider._(argument: groupID, from: this);
 
   @override
-  Override overrideWith(
-    GroupCategoryUpdate Function(GroupCategoryUpdateRef provider) create,
-  ) {
-    return ProviderOverride(
+  String toString() => r'groupCategoryUpdateProvider';
+}
+
+@ProviderFor(groupCategoryDelete)
+final groupCategoryDeleteProvider = GroupCategoryDeleteFamily._();
+
+final class GroupCategoryDeleteProvider
+    extends
+        $FunctionalProvider<
+          GroupCategoryDelete,
+          GroupCategoryDelete,
+          GroupCategoryDelete
+        >
+    with $Provider<GroupCategoryDelete> {
+  GroupCategoryDeleteProvider._({
+    required GroupCategoryDeleteFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'groupCategoryDeleteProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$groupCategoryDeleteHash();
+
+  @override
+  String toString() {
+    return r'groupCategoryDeleteProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<GroupCategoryDelete> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  GroupCategoryDelete create(Ref ref) {
+    final argument = this.argument as String;
+    return groupCategoryDelete(ref, groupID: argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GroupCategoryDelete value) {
+    return $ProviderOverride(
       origin: this,
-      override: GroupCategoryUpdateProvider._internal(
-        (ref) => create(ref as GroupCategoryUpdateRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
+      providerOverride: $SyncValueProvider<GroupCategoryDelete>(value),
     );
   }
 
   @override
-  AutoDisposeProviderElement<GroupCategoryUpdate> createElement() {
-    return _GroupCategoryUpdateProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is GroupCategoryUpdateProvider && other.groupID == groupID;
+    return other is GroupCategoryDeleteProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin GroupCategoryUpdateRef on AutoDisposeProviderRef<GroupCategoryUpdate> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
-
-class _GroupCategoryUpdateProviderElement
-    extends AutoDisposeProviderElement<GroupCategoryUpdate>
-    with GroupCategoryUpdateRef {
-  _GroupCategoryUpdateProviderElement(super.provider);
-
-  @override
-  String get groupID => (origin as GroupCategoryUpdateProvider).groupID;
 }
 
 String _$groupCategoryDeleteHash() =>
     r'cdb3eb76537d83d87349546fe68d5f38b8b476d3';
 
-/// See also [groupCategoryDelete].
-@ProviderFor(groupCategoryDelete)
-const groupCategoryDeleteProvider = GroupCategoryDeleteFamily();
-
-/// See also [groupCategoryDelete].
-class GroupCategoryDeleteFamily extends Family<GroupCategoryDelete> {
-  /// See also [groupCategoryDelete].
-  const GroupCategoryDeleteFamily();
-
-  /// See also [groupCategoryDelete].
-  GroupCategoryDeleteProvider call({required String groupID}) {
-    return GroupCategoryDeleteProvider(groupID: groupID);
-  }
-
-  @override
-  GroupCategoryDeleteProvider getProviderOverride(
-    covariant GroupCategoryDeleteProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'groupCategoryDeleteProvider';
-}
-
-/// See also [groupCategoryDelete].
-class GroupCategoryDeleteProvider
-    extends AutoDisposeProvider<GroupCategoryDelete> {
-  /// See also [groupCategoryDelete].
-  GroupCategoryDeleteProvider({required String groupID})
-    : this._internal(
-        (ref) => groupCategoryDelete(
-          ref as GroupCategoryDeleteRef,
-          groupID: groupID,
-        ),
-        from: groupCategoryDeleteProvider,
+final class GroupCategoryDeleteFamily extends $Family
+    with $FunctionalFamilyOverride<GroupCategoryDelete, String> {
+  GroupCategoryDeleteFamily._()
+    : super(
+        retry: null,
         name: r'groupCategoryDeleteProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$groupCategoryDeleteHash,
-        dependencies: GroupCategoryDeleteFamily._dependencies,
-        allTransitiveDependencies:
-            GroupCategoryDeleteFamily._allTransitiveDependencies,
-        groupID: groupID,
+        dependencies: <ProviderOrFamily>[groupDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          GroupCategoryDeleteProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: true,
       );
 
-  GroupCategoryDeleteProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
+  GroupCategoryDeleteProvider call({required String groupID}) =>
+      GroupCategoryDeleteProvider._(argument: groupID, from: this);
 
   @override
-  Override overrideWith(
-    GroupCategoryDelete Function(GroupCategoryDeleteRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: GroupCategoryDeleteProvider._internal(
-        (ref) => create(ref as GroupCategoryDeleteRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeProviderElement<GroupCategoryDelete> createElement() {
-    return _GroupCategoryDeleteProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is GroupCategoryDeleteProvider && other.groupID == groupID;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
+  String toString() => r'groupCategoryDeleteProvider';
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin GroupCategoryDeleteRef on AutoDisposeProviderRef<GroupCategoryDelete> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
-
-class _GroupCategoryDeleteProviderElement
-    extends AutoDisposeProviderElement<GroupCategoryDelete>
-    with GroupCategoryDeleteRef {
-  _GroupCategoryDeleteProviderElement(super.provider);
-
-  @override
-  String get groupID => (origin as GroupCategoryDeleteProvider).groupID;
-}
-
-String _$groupCategoryBatchUpdateHash() =>
-    r'a70103975b726e18559c9af0b31883446a72053f';
-
-/// See also [groupCategoryBatchUpdate].
 @ProviderFor(groupCategoryBatchUpdate)
-const groupCategoryBatchUpdateProvider = GroupCategoryBatchUpdateFamily();
+final groupCategoryBatchUpdateProvider = GroupCategoryBatchUpdateFamily._();
 
-/// See also [groupCategoryBatchUpdate].
-class GroupCategoryBatchUpdateFamily extends Family<GroupCategoryBatchUpdate> {
-  /// See also [groupCategoryBatchUpdate].
-  const GroupCategoryBatchUpdateFamily();
+final class GroupCategoryBatchUpdateProvider
+    extends
+        $FunctionalProvider<
+          GroupCategoryBatchUpdate,
+          GroupCategoryBatchUpdate,
+          GroupCategoryBatchUpdate
+        >
+    with $Provider<GroupCategoryBatchUpdate> {
+  GroupCategoryBatchUpdateProvider._({
+    required GroupCategoryBatchUpdateFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'groupCategoryBatchUpdateProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [groupCategoryBatchUpdate].
-  GroupCategoryBatchUpdateProvider call({required String groupID}) {
-    return GroupCategoryBatchUpdateProvider(groupID: groupID);
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$groupCategoryBatchUpdateHash();
+
+  @override
+  String toString() {
+    return r'groupCategoryBatchUpdateProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  GroupCategoryBatchUpdateProvider getProviderOverride(
-    covariant GroupCategoryBatchUpdateProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
+  $ProviderElement<GroupCategoryBatchUpdate> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  GroupCategoryBatchUpdate create(Ref ref) {
+    final argument = this.argument as String;
+    return groupCategoryBatchUpdate(ref, groupID: argument);
   }
 
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'groupCategoryBatchUpdateProvider';
-}
-
-/// See also [groupCategoryBatchUpdate].
-class GroupCategoryBatchUpdateProvider
-    extends AutoDisposeProvider<GroupCategoryBatchUpdate> {
-  /// See also [groupCategoryBatchUpdate].
-  GroupCategoryBatchUpdateProvider({required String groupID})
-    : this._internal(
-        (ref) => groupCategoryBatchUpdate(
-          ref as GroupCategoryBatchUpdateRef,
-          groupID: groupID,
-        ),
-        from: groupCategoryBatchUpdateProvider,
-        name: r'groupCategoryBatchUpdateProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$groupCategoryBatchUpdateHash,
-        dependencies: GroupCategoryBatchUpdateFamily._dependencies,
-        allTransitiveDependencies:
-            GroupCategoryBatchUpdateFamily._allTransitiveDependencies,
-        groupID: groupID,
-      );
-
-  GroupCategoryBatchUpdateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
-
-  @override
-  Override overrideWith(
-    GroupCategoryBatchUpdate Function(GroupCategoryBatchUpdateRef provider)
-    create,
-  ) {
-    return ProviderOverride(
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GroupCategoryBatchUpdate value) {
+    return $ProviderOverride(
       origin: this,
-      override: GroupCategoryBatchUpdateProvider._internal(
-        (ref) => create(ref as GroupCategoryBatchUpdateRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
+      providerOverride: $SyncValueProvider<GroupCategoryBatchUpdate>(value),
     );
-  }
-
-  @override
-  AutoDisposeProviderElement<GroupCategoryBatchUpdate> createElement() {
-    return _GroupCategoryBatchUpdateProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
     return other is GroupCategoryBatchUpdateProvider &&
-        other.groupID == groupID;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin GroupCategoryBatchUpdateRef
-    on AutoDisposeProviderRef<GroupCategoryBatchUpdate> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
+String _$groupCategoryBatchUpdateHash() =>
+    r'a70103975b726e18559c9af0b31883446a72053f';
 
-class _GroupCategoryBatchUpdateProviderElement
-    extends AutoDisposeProviderElement<GroupCategoryBatchUpdate>
-    with GroupCategoryBatchUpdateRef {
-  _GroupCategoryBatchUpdateProviderElement(super.provider);
-
-  @override
-  String get groupID => (origin as GroupCategoryBatchUpdateProvider).groupID;
-}
-
-String _$groupCategoryImportFromMemberHash() =>
-    r'69dd7ed81872479ea28c7f55a52a5e853f93021c';
-
-/// See also [groupCategoryImportFromMember].
-@ProviderFor(groupCategoryImportFromMember)
-const groupCategoryImportFromMemberProvider =
-    GroupCategoryImportFromMemberFamily();
-
-/// See also [groupCategoryImportFromMember].
-class GroupCategoryImportFromMemberFamily
-    extends Family<GroupCategoryImportFromMember> {
-  /// See also [groupCategoryImportFromMember].
-  const GroupCategoryImportFromMemberFamily();
-
-  /// See also [groupCategoryImportFromMember].
-  GroupCategoryImportFromMemberProvider call({required String groupID}) {
-    return GroupCategoryImportFromMemberProvider(groupID: groupID);
-  }
-
-  @override
-  GroupCategoryImportFromMemberProvider getProviderOverride(
-    covariant GroupCategoryImportFromMemberProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'groupCategoryImportFromMemberProvider';
-}
-
-/// See also [groupCategoryImportFromMember].
-class GroupCategoryImportFromMemberProvider
-    extends AutoDisposeProvider<GroupCategoryImportFromMember> {
-  /// See also [groupCategoryImportFromMember].
-  GroupCategoryImportFromMemberProvider({required String groupID})
-    : this._internal(
-        (ref) => groupCategoryImportFromMember(
-          ref as GroupCategoryImportFromMemberRef,
-          groupID: groupID,
-        ),
-        from: groupCategoryImportFromMemberProvider,
-        name: r'groupCategoryImportFromMemberProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$groupCategoryImportFromMemberHash,
-        dependencies: GroupCategoryImportFromMemberFamily._dependencies,
-        allTransitiveDependencies:
-            GroupCategoryImportFromMemberFamily._allTransitiveDependencies,
-        groupID: groupID,
+final class GroupCategoryBatchUpdateFamily extends $Family
+    with $FunctionalFamilyOverride<GroupCategoryBatchUpdate, String> {
+  GroupCategoryBatchUpdateFamily._()
+    : super(
+        retry: null,
+        name: r'groupCategoryBatchUpdateProvider',
+        dependencies: <ProviderOrFamily>[groupDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          GroupCategoryBatchUpdateProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: true,
       );
 
-  GroupCategoryImportFromMemberProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
+  GroupCategoryBatchUpdateProvider call({required String groupID}) =>
+      GroupCategoryBatchUpdateProvider._(argument: groupID, from: this);
 
   @override
-  Override overrideWith(
-    GroupCategoryImportFromMember Function(
-      GroupCategoryImportFromMemberRef provider,
-    )
-    create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: GroupCategoryImportFromMemberProvider._internal(
-        (ref) => create(ref as GroupCategoryImportFromMemberRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
-    );
+  String toString() => r'groupCategoryBatchUpdateProvider';
+}
+
+@ProviderFor(groupCategoryImportFromMember)
+final groupCategoryImportFromMemberProvider =
+    GroupCategoryImportFromMemberFamily._();
+
+final class GroupCategoryImportFromMemberProvider
+    extends
+        $FunctionalProvider<
+          GroupCategoryImportFromMember,
+          GroupCategoryImportFromMember,
+          GroupCategoryImportFromMember
+        >
+    with $Provider<GroupCategoryImportFromMember> {
+  GroupCategoryImportFromMemberProvider._({
+    required GroupCategoryImportFromMemberFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'groupCategoryImportFromMemberProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$groupCategoryImportFromMemberHash();
+
+  @override
+  String toString() {
+    return r'groupCategoryImportFromMemberProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  AutoDisposeProviderElement<GroupCategoryImportFromMember> createElement() {
-    return _GroupCategoryImportFromMemberProviderElement(this);
+  $ProviderElement<GroupCategoryImportFromMember> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  GroupCategoryImportFromMember create(Ref ref) {
+    final argument = this.argument as String;
+    return groupCategoryImportFromMember(ref, groupID: argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GroupCategoryImportFromMember value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GroupCategoryImportFromMember>(
+        value,
+      ),
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return other is GroupCategoryImportFromMemberProvider &&
-        other.groupID == groupID;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin GroupCategoryImportFromMemberRef
-    on AutoDisposeProviderRef<GroupCategoryImportFromMember> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
+String _$groupCategoryImportFromMemberHash() =>
+    r'69dd7ed81872479ea28c7f55a52a5e853f93021c';
 
-class _GroupCategoryImportFromMemberProviderElement
-    extends AutoDisposeProviderElement<GroupCategoryImportFromMember>
-    with GroupCategoryImportFromMemberRef {
-  _GroupCategoryImportFromMemberProviderElement(super.provider);
+final class GroupCategoryImportFromMemberFamily extends $Family
+    with $FunctionalFamilyOverride<GroupCategoryImportFromMember, String> {
+  GroupCategoryImportFromMemberFamily._()
+    : super(
+        retry: null,
+        name: r'groupCategoryImportFromMemberProvider',
+        dependencies: <ProviderOrFamily>[groupDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          GroupCategoryImportFromMemberProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: true,
+      );
+
+  GroupCategoryImportFromMemberProvider call({required String groupID}) =>
+      GroupCategoryImportFromMemberProvider._(argument: groupID, from: this);
 
   @override
-  String get groupID =>
-      (origin as GroupCategoryImportFromMemberProvider).groupID;
+  String toString() => r'groupCategoryImportFromMemberProvider';
+}
+
+@ProviderFor(groupCategoryKeywordAdd)
+final groupCategoryKeywordAddProvider = GroupCategoryKeywordAddFamily._();
+
+final class GroupCategoryKeywordAddProvider
+    extends
+        $FunctionalProvider<
+          GroupCategoryKeywordAdd,
+          GroupCategoryKeywordAdd,
+          GroupCategoryKeywordAdd
+        >
+    with $Provider<GroupCategoryKeywordAdd> {
+  GroupCategoryKeywordAddProvider._({
+    required GroupCategoryKeywordAddFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'groupCategoryKeywordAddProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$groupCategoryKeywordAddHash();
+
+  @override
+  String toString() {
+    return r'groupCategoryKeywordAddProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<GroupCategoryKeywordAdd> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  GroupCategoryKeywordAdd create(Ref ref) {
+    final argument = this.argument as String;
+    return groupCategoryKeywordAdd(ref, groupID: argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GroupCategoryKeywordAdd value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GroupCategoryKeywordAdd>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GroupCategoryKeywordAddProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
 String _$groupCategoryKeywordAddHash() =>
     r'ee267ec1aae08d5169e96a129f2a7121af068995';
 
-/// See also [groupCategoryKeywordAdd].
-@ProviderFor(groupCategoryKeywordAdd)
-const groupCategoryKeywordAddProvider = GroupCategoryKeywordAddFamily();
-
-/// See also [groupCategoryKeywordAdd].
-class GroupCategoryKeywordAddFamily extends Family<GroupCategoryKeywordAdd> {
-  /// See also [groupCategoryKeywordAdd].
-  const GroupCategoryKeywordAddFamily();
-
-  /// See also [groupCategoryKeywordAdd].
-  GroupCategoryKeywordAddProvider call({required String groupID}) {
-    return GroupCategoryKeywordAddProvider(groupID: groupID);
-  }
-
-  @override
-  GroupCategoryKeywordAddProvider getProviderOverride(
-    covariant GroupCategoryKeywordAddProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'groupCategoryKeywordAddProvider';
-}
-
-/// See also [groupCategoryKeywordAdd].
-class GroupCategoryKeywordAddProvider
-    extends AutoDisposeProvider<GroupCategoryKeywordAdd> {
-  /// See also [groupCategoryKeywordAdd].
-  GroupCategoryKeywordAddProvider({required String groupID})
-    : this._internal(
-        (ref) => groupCategoryKeywordAdd(
-          ref as GroupCategoryKeywordAddRef,
-          groupID: groupID,
-        ),
-        from: groupCategoryKeywordAddProvider,
+final class GroupCategoryKeywordAddFamily extends $Family
+    with $FunctionalFamilyOverride<GroupCategoryKeywordAdd, String> {
+  GroupCategoryKeywordAddFamily._()
+    : super(
+        retry: null,
         name: r'groupCategoryKeywordAddProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$groupCategoryKeywordAddHash,
-        dependencies: GroupCategoryKeywordAddFamily._dependencies,
-        allTransitiveDependencies:
-            GroupCategoryKeywordAddFamily._allTransitiveDependencies,
-        groupID: groupID,
+        dependencies: <ProviderOrFamily>[groupDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          GroupCategoryKeywordAddProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: true,
       );
 
-  GroupCategoryKeywordAddProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
+  GroupCategoryKeywordAddProvider call({required String groupID}) =>
+      GroupCategoryKeywordAddProvider._(argument: groupID, from: this);
 
   @override
-  Override overrideWith(
-    GroupCategoryKeywordAdd Function(GroupCategoryKeywordAddRef provider)
-    create,
-  ) {
-    return ProviderOverride(
+  String toString() => r'groupCategoryKeywordAddProvider';
+}
+
+@ProviderFor(aiCategorizeApply)
+final aiCategorizeApplyProvider = AiCategorizeApplyFamily._();
+
+final class AiCategorizeApplyProvider
+    extends
+        $FunctionalProvider<
+          AICategorizeApply,
+          AICategorizeApply,
+          AICategorizeApply
+        >
+    with $Provider<AICategorizeApply> {
+  AiCategorizeApplyProvider._({
+    required AiCategorizeApplyFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'aiCategorizeApplyProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$aiCategorizeApplyHash();
+
+  @override
+  String toString() {
+    return r'aiCategorizeApplyProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<AICategorizeApply> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  AICategorizeApply create(Ref ref) {
+    final argument = this.argument as String;
+    return aiCategorizeApply(ref, groupID: argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AICategorizeApply value) {
+    return $ProviderOverride(
       origin: this,
-      override: GroupCategoryKeywordAddProvider._internal(
-        (ref) => create(ref as GroupCategoryKeywordAddRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
+      providerOverride: $SyncValueProvider<AICategorizeApply>(value),
     );
   }
 
   @override
-  AutoDisposeProviderElement<GroupCategoryKeywordAdd> createElement() {
-    return _GroupCategoryKeywordAddProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is GroupCategoryKeywordAddProvider && other.groupID == groupID;
+    return other is AiCategorizeApplyProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin GroupCategoryKeywordAddRef
-    on AutoDisposeProviderRef<GroupCategoryKeywordAdd> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
-
-class _GroupCategoryKeywordAddProviderElement
-    extends AutoDisposeProviderElement<GroupCategoryKeywordAdd>
-    with GroupCategoryKeywordAddRef {
-  _GroupCategoryKeywordAddProviderElement(super.provider);
-
-  @override
-  String get groupID => (origin as GroupCategoryKeywordAddProvider).groupID;
 }
 
 String _$aiCategorizeApplyHash() => r'a841b666e6f93a6712cfc631d9b3dc5dba3df204';
 
-/// See also [aiCategorizeApply].
-@ProviderFor(aiCategorizeApply)
-const aiCategorizeApplyProvider = AiCategorizeApplyFamily();
-
-/// See also [aiCategorizeApply].
-class AiCategorizeApplyFamily extends Family<AICategorizeApply> {
-  /// See also [aiCategorizeApply].
-  const AiCategorizeApplyFamily();
-
-  /// See also [aiCategorizeApply].
-  AiCategorizeApplyProvider call({required String groupID}) {
-    return AiCategorizeApplyProvider(groupID: groupID);
-  }
-
-  @override
-  AiCategorizeApplyProvider getProviderOverride(
-    covariant AiCategorizeApplyProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'aiCategorizeApplyProvider';
-}
-
-/// See also [aiCategorizeApply].
-class AiCategorizeApplyProvider extends AutoDisposeProvider<AICategorizeApply> {
-  /// See also [aiCategorizeApply].
-  AiCategorizeApplyProvider({required String groupID})
-    : this._internal(
-        (ref) =>
-            aiCategorizeApply(ref as AiCategorizeApplyRef, groupID: groupID),
-        from: aiCategorizeApplyProvider,
+final class AiCategorizeApplyFamily extends $Family
+    with $FunctionalFamilyOverride<AICategorizeApply, String> {
+  AiCategorizeApplyFamily._()
+    : super(
+        retry: null,
         name: r'aiCategorizeApplyProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$aiCategorizeApplyHash,
-        dependencies: AiCategorizeApplyFamily._dependencies,
-        allTransitiveDependencies:
-            AiCategorizeApplyFamily._allTransitiveDependencies,
-        groupID: groupID,
+        dependencies: <ProviderOrFamily>[groupDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          AiCategorizeApplyProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: true,
       );
 
-  AiCategorizeApplyProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
+  AiCategorizeApplyProvider call({required String groupID}) =>
+      AiCategorizeApplyProvider._(argument: groupID, from: this);
 
   @override
-  Override overrideWith(
-    AICategorizeApply Function(AiCategorizeApplyRef provider) create,
-  ) {
-    return ProviderOverride(
+  String toString() => r'aiCategorizeApplyProvider';
+}
+
+@ProviderFor(moveItemCategoryKeyword)
+final moveItemCategoryKeywordProvider = MoveItemCategoryKeywordFamily._();
+
+final class MoveItemCategoryKeywordProvider
+    extends
+        $FunctionalProvider<
+          MoveItemCategoryKeyword,
+          MoveItemCategoryKeyword,
+          MoveItemCategoryKeyword
+        >
+    with $Provider<MoveItemCategoryKeyword> {
+  MoveItemCategoryKeywordProvider._({
+    required MoveItemCategoryKeywordFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'moveItemCategoryKeywordProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$moveItemCategoryKeywordHash();
+
+  @override
+  String toString() {
+    return r'moveItemCategoryKeywordProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<MoveItemCategoryKeyword> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  MoveItemCategoryKeyword create(Ref ref) {
+    final argument = this.argument as String;
+    return moveItemCategoryKeyword(ref, groupID: argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(MoveItemCategoryKeyword value) {
+    return $ProviderOverride(
       origin: this,
-      override: AiCategorizeApplyProvider._internal(
-        (ref) => create(ref as AiCategorizeApplyRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
+      providerOverride: $SyncValueProvider<MoveItemCategoryKeyword>(value),
     );
   }
 
   @override
-  AutoDisposeProviderElement<AICategorizeApply> createElement() {
-    return _AiCategorizeApplyProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is AiCategorizeApplyProvider && other.groupID == groupID;
+    return other is MoveItemCategoryKeywordProvider &&
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin AiCategorizeApplyRef on AutoDisposeProviderRef<AICategorizeApply> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
-
-class _AiCategorizeApplyProviderElement
-    extends AutoDisposeProviderElement<AICategorizeApply>
-    with AiCategorizeApplyRef {
-  _AiCategorizeApplyProviderElement(super.provider);
-
-  @override
-  String get groupID => (origin as AiCategorizeApplyProvider).groupID;
 }
 
 String _$moveItemCategoryKeywordHash() =>
     r'90d6a93a3f3ded7817a269f24d5b1596a077c413';
 
-/// See also [moveItemCategoryKeyword].
-@ProviderFor(moveItemCategoryKeyword)
-const moveItemCategoryKeywordProvider = MoveItemCategoryKeywordFamily();
-
-/// See also [moveItemCategoryKeyword].
-class MoveItemCategoryKeywordFamily extends Family<MoveItemCategoryKeyword> {
-  /// See also [moveItemCategoryKeyword].
-  const MoveItemCategoryKeywordFamily();
-
-  /// See also [moveItemCategoryKeyword].
-  MoveItemCategoryKeywordProvider call({required String groupID}) {
-    return MoveItemCategoryKeywordProvider(groupID: groupID);
-  }
-
-  @override
-  MoveItemCategoryKeywordProvider getProviderOverride(
-    covariant MoveItemCategoryKeywordProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'moveItemCategoryKeywordProvider';
-}
-
-/// See also [moveItemCategoryKeyword].
-class MoveItemCategoryKeywordProvider
-    extends AutoDisposeProvider<MoveItemCategoryKeyword> {
-  /// See also [moveItemCategoryKeyword].
-  MoveItemCategoryKeywordProvider({required String groupID})
-    : this._internal(
-        (ref) => moveItemCategoryKeyword(
-          ref as MoveItemCategoryKeywordRef,
-          groupID: groupID,
-        ),
-        from: moveItemCategoryKeywordProvider,
+final class MoveItemCategoryKeywordFamily extends $Family
+    with $FunctionalFamilyOverride<MoveItemCategoryKeyword, String> {
+  MoveItemCategoryKeywordFamily._()
+    : super(
+        retry: null,
         name: r'moveItemCategoryKeywordProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$moveItemCategoryKeywordHash,
-        dependencies: MoveItemCategoryKeywordFamily._dependencies,
-        allTransitiveDependencies:
-            MoveItemCategoryKeywordFamily._allTransitiveDependencies,
-        groupID: groupID,
+        dependencies: <ProviderOrFamily>[groupDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          MoveItemCategoryKeywordProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: true,
       );
 
-  MoveItemCategoryKeywordProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
+  MoveItemCategoryKeywordProvider call({required String groupID}) =>
+      MoveItemCategoryKeywordProvider._(argument: groupID, from: this);
 
   @override
-  Override overrideWith(
-    MoveItemCategoryKeyword Function(MoveItemCategoryKeywordRef provider)
-    create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: MoveItemCategoryKeywordProvider._internal(
-        (ref) => create(ref as MoveItemCategoryKeywordRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeProviderElement<MoveItemCategoryKeyword> createElement() {
-    return _MoveItemCategoryKeywordProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is MoveItemCategoryKeywordProvider && other.groupID == groupID;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
+  String toString() => r'moveItemCategoryKeywordProvider';
 }
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin MoveItemCategoryKeywordRef
-    on AutoDisposeProviderRef<MoveItemCategoryKeyword> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
-
-class _MoveItemCategoryKeywordProviderElement
-    extends AutoDisposeProviderElement<MoveItemCategoryKeyword>
-    with MoveItemCategoryKeywordRef {
-  _MoveItemCategoryKeywordProviderElement(super.provider);
-
-  @override
-  String get groupID => (origin as MoveItemCategoryKeywordProvider).groupID;
-}
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

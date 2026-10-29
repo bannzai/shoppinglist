@@ -6,28 +6,60 @@ part of 'shopping_list_items.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$shoppingListItemRowKeysHash() =>
-    r'31d07700acbc86099db9f1e2e030912f632f547f';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+/// 入力行 GlobalKey レジストリ。アプリ起動中ずっと同一インスタンスを保持する
+/// (リビルドを跨いで GlobalKey を維持しキーボードを閉じさせないため keepAlive)。
+
+@ProviderFor(shoppingListItemRowKeys)
+final shoppingListItemRowKeysProvider = ShoppingListItemRowKeysProvider._();
 
 /// 入力行 GlobalKey レジストリ。アプリ起動中ずっと同一インスタンスを保持する
 /// (リビルドを跨いで GlobalKey を維持しキーボードを閉じさせないため keepAlive)。
-///
-/// Copied from [shoppingListItemRowKeys].
-@ProviderFor(shoppingListItemRowKeys)
-final shoppingListItemRowKeysProvider =
-    Provider<ShoppingListItemRowKeys>.internal(
-      shoppingListItemRowKeys,
-      name: r'shoppingListItemRowKeysProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$shoppingListItemRowKeysHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ShoppingListItemRowKeysRef = ProviderRef<ShoppingListItemRowKeys>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class ShoppingListItemRowKeysProvider
+    extends
+        $FunctionalProvider<
+          ShoppingListItemRowKeys,
+          ShoppingListItemRowKeys,
+          ShoppingListItemRowKeys
+        >
+    with $Provider<ShoppingListItemRowKeys> {
+  /// 入力行 GlobalKey レジストリ。アプリ起動中ずっと同一インスタンスを保持する
+  /// (リビルドを跨いで GlobalKey を維持しキーボードを閉じさせないため keepAlive)。
+  ShoppingListItemRowKeysProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'shoppingListItemRowKeysProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$shoppingListItemRowKeysHash();
+
+  @$internal
+  @override
+  $ProviderElement<ShoppingListItemRowKeys> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  ShoppingListItemRowKeys create(Ref ref) {
+    return shoppingListItemRowKeys(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ShoppingListItemRowKeys value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ShoppingListItemRowKeys>(value),
+    );
+  }
+}
+
+String _$shoppingListItemRowKeysHash() =>
+    r'31d07700acbc86099db9f1e2e030912f632f547f';

@@ -6,21 +6,51 @@ part of 'user_groups.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$userGroupsHash() => r'5351c64d98a5e7b27e3d2ac9fe3ffa7b0821bffd';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [userGroups].
 @ProviderFor(userGroups)
-final userGroupsProvider = AutoDisposeStreamProvider<List<Group>>.internal(
-  userGroups,
-  name: r'userGroupsProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$userGroupsHash,
-  dependencies: const <ProviderOrFamily>[],
-  allTransitiveDependencies: const <ProviderOrFamily>{},
-);
+final userGroupsProvider = UserGroupsProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef UserGroupsRef = AutoDisposeStreamProviderRef<List<Group>>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class UserGroupsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Group>>,
+          List<Group>,
+          Stream<List<Group>>
+        >
+    with $FutureModifier<List<Group>>, $StreamProvider<List<Group>> {
+  UserGroupsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'userGroupsProvider',
+        isAutoDispose: true,
+        dependencies: <ProviderOrFamily>[currentUserIDProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          UserGroupsProvider.$allTransitiveDependencies0,
+          UserGroupsProvider.$allTransitiveDependencies1,
+        ],
+      );
+
+  static final $allTransitiveDependencies0 = currentUserIDProvider;
+  static final $allTransitiveDependencies1 =
+      CurrentUserIDProvider.$allTransitiveDependencies0;
+
+  @override
+  String debugGetCreateSourceHash() => _$userGroupsHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<List<Group>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<Group>> create(Ref ref) {
+    return userGroups(ref);
+  }
+}
+
+String _$userGroupsHash() => r'5edeab93d709e10c0aebb43ec9a31f3780e5c4ec';

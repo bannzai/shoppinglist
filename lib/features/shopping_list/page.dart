@@ -64,7 +64,7 @@ class ShoppingListPage extends ConsumerWidget {
     );
     final resolvedShoppingListID = resolveShoppingListID(
       selected: ref.watch(currentShoppingListIDProvider),
-      shoppingLists: shoppingListsAsync.valueOrNull ?? [],
+      shoppingLists: shoppingListsAsync.value ?? [],
     );
 
     void invalidateLists() => ref.invalidate(
@@ -224,7 +224,7 @@ class _ActiveShoppingList extends HookConsumerWidget {
       ),
     );
     final itemMetrics = shoppingListItemMetrics(
-      shoppingListItemsAsync.valueOrNull ?? [],
+      shoppingListItemsAsync.value ?? [],
     );
     final checkedCount = itemMetrics.checkedCount;
     final totalCount = itemMetrics.totalCount;
@@ -289,7 +289,7 @@ class _ActiveShoppingList extends HookConsumerWidget {
                 shoppingList: shoppingList,
                 // ロード中は null を渡し、リスト追加メニューの複製アクションを無効化する
                 // （空 [] で渡すとロード中の複製でアイテムが失われるため）。
-                shoppingListItems: shoppingListItemsAsync.valueOrNull,
+                shoppingListItems: shoppingListItemsAsync.value,
                 onShoppingListIDChanged:
                     (newID) => currentShoppingListIDNotifier.update(newID),
                 createListButtonKey: createListButtonKey,
@@ -367,7 +367,7 @@ class _ActiveShoppingList extends HookConsumerWidget {
               CreateListSpotlightHost(
                 groupID: groupID,
                 shoppingLists: shoppingLists,
-                shoppingListItems: shoppingListItemsAsync.valueOrNull,
+                shoppingListItems: shoppingListItemsAsync.value,
                 targetKey: createListButtonKey,
               ),
             ],

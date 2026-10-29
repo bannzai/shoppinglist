@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hooks_riverpod/misc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
@@ -18,6 +19,7 @@ import 'package:shoppinglist/provider/store_review_request.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../../../helpers/localized_test_app.dart';
+import '../../../../helpers/merge_provider_overrides.dart';
 
 /// 検証用アイテム。message / status / color / description / imageURL 以外は固定。
 GroupShoppingListItem _item({
@@ -196,11 +198,10 @@ Future<void> _pump(
   final sharedPreferences = await SharedPreferences.getInstance();
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [
-        ...previewProviderOverrides(sharedPreferences: sharedPreferences),
-        // 同じ Provider の override は後勝ちなので、テスト用の記録フェイクで上書きできる。
-        ...extraOverrides,
-      ],
+      overrides: mergeProviderOverrides(
+        base: previewProviderOverrides(sharedPreferences: sharedPreferences),
+        extra: extraOverrides,
+      ),
       child: localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Scaffold(

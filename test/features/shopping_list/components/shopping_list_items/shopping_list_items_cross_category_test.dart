@@ -14,6 +14,7 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../../../helpers/localized_test_app.dart';
+import '../../../../helpers/merge_provider_overrides.dart';
 
 GroupCategory _category({
   required String id,
@@ -113,23 +114,25 @@ void main() {
     final spyBatch = _SpyBatchUpdate();
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          ...previewProviderOverrides(sharedPreferences: sharedPreferences),
-          groupCategoriesProvider(
-            groupID: mockGroupID,
-            categoryAxisID: mockCategoryAxisID,
-          ).overrideWith((ref) => Stream.value(categories)),
-          textShoppingListItemsProvider(
-            groupID: mockGroupID,
-            shoppingListID: mockShoppingListID,
-          ).overrideWith((ref) => Stream.value(items)),
-          moveItemCategoryKeywordProvider(
-            groupID: mockGroupID,
-          ).overrideWith((ref) => spyMove),
-          shoppingListItemBatchUpdateProvider(
-            groupID: mockGroupID,
-          ).overrideWith((ref) => spyBatch),
-        ],
+        overrides: mergeProviderOverrides(
+          base: previewProviderOverrides(sharedPreferences: sharedPreferences),
+          extra: [
+            groupCategoriesProvider(
+              groupID: mockGroupID,
+              categoryAxisID: mockCategoryAxisID,
+            ).overrideWith((ref) => Stream.value(categories)),
+            textShoppingListItemsProvider(
+              groupID: mockGroupID,
+              shoppingListID: mockShoppingListID,
+            ).overrideWith((ref) => Stream.value(items)),
+            moveItemCategoryKeywordProvider(
+              groupID: mockGroupID,
+            ).overrideWith((ref) => spyMove),
+            shoppingListItemBatchUpdateProvider(
+              groupID: mockGroupID,
+            ).overrideWith((ref) => spyBatch),
+          ],
+        ),
         child: localizedTestApp(
           theme: buildAppTheme(accent: AccentPreset.shu),
           home: Scaffold(

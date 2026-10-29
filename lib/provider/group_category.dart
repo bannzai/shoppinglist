@@ -10,14 +10,13 @@ import 'package:shoppinglist/entity/group_category_keyword.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'group_category.g.dart';
 
 // --- CategoryAxis Providers ---
 
-@Riverpod(dependencies: [groupDatabase])
+@Riverpod(dependencies: [groupDatabase, currentUserID])
 Stream<List<GroupCategoryAxis>> groupCategoryAxes(
   Ref ref, {
   required String groupID,
@@ -186,7 +185,7 @@ GroupCategoryAxisDelete groupCategoryAxisDelete(
 
 // --- Category Providers ---
 
-@Riverpod(dependencies: [groupDatabase])
+@Riverpod(dependencies: [groupDatabase, currentUserID])
 Stream<List<GroupCategory>> groupCategories(
   Ref ref, {
   required String groupID,

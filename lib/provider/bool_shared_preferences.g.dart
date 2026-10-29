@@ -6,36 +6,8 @@ part of 'bool_shared_preferences.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$boolSharedPreferencesHash() =>
-    r'fa1a27ecef2408e8da294fb0d439126353c54a22';
-
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-abstract class _$BoolSharedPreferences extends BuildlessNotifier<bool> {
-  late final String key;
-
-  bool build({required String key});
-}
-
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 /// SharedPreferences の bool 値を [key] 単位で読み書きする汎用 Notifier。
 ///
 /// family のキーは [key] のみ。Riverpod の family キャッシュにより、
@@ -44,10 +16,9 @@ abstract class _$BoolSharedPreferences extends BuildlessNotifier<bool> {
 ///
 /// sharedPreferencesProvider が override 前提の keepAlive Provider であるため、
 /// それに依存する本 Provider も keepAlive にする。
-///
-/// Copied from [BoolSharedPreferences].
+
 @ProviderFor(BoolSharedPreferences)
-const boolSharedPreferencesProvider = BoolSharedPreferencesFamily();
+final boolSharedPreferencesProvider = BoolSharedPreferencesFamily._();
 
 /// SharedPreferences の bool 値を [key] 単位で読み書きする汎用 Notifier。
 ///
@@ -57,9 +28,8 @@ const boolSharedPreferencesProvider = BoolSharedPreferencesFamily();
 ///
 /// sharedPreferencesProvider が override 前提の keepAlive Provider であるため、
 /// それに依存する本 Provider も keepAlive にする。
-///
-/// Copied from [BoolSharedPreferences].
-class BoolSharedPreferencesFamily extends Family<bool> {
+final class BoolSharedPreferencesProvider
+    extends $NotifierProvider<BoolSharedPreferences, bool> {
   /// SharedPreferences の bool 値を [key] 単位で読み書きする汎用 Notifier。
   ///
   /// family のキーは [key] のみ。Riverpod の family キャッシュにより、
@@ -68,156 +38,119 @@ class BoolSharedPreferencesFamily extends Family<bool> {
   ///
   /// sharedPreferencesProvider が override 前提の keepAlive Provider であるため、
   /// それに依存する本 Provider も keepAlive にする。
-  ///
-  /// Copied from [BoolSharedPreferences].
-  const BoolSharedPreferencesFamily();
+  BoolSharedPreferencesProvider._({
+    required BoolSharedPreferencesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'boolSharedPreferencesProvider',
+         isAutoDispose: false,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// SharedPreferences の bool 値を [key] 単位で読み書きする汎用 Notifier。
-  ///
-  /// family のキーは [key] のみ。Riverpod の family キャッシュにより、
-  /// 同じ [key] では同一インスタンスが返り、異なる [key] には別インスタンスが割り当てられる。
-  /// 値が存在しない場合の既定値は false。
-  ///
-  /// sharedPreferencesProvider が override 前提の keepAlive Provider であるため、
-  /// それに依存する本 Provider も keepAlive にする。
-  ///
-  /// Copied from [BoolSharedPreferences].
-  BoolSharedPreferencesProvider call({required String key}) {
-    return BoolSharedPreferencesProvider(key: key);
+  static final $allTransitiveDependencies0 = sharedPreferencesProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$boolSharedPreferencesHash();
+
+  @override
+  String toString() {
+    return r'boolSharedPreferencesProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  BoolSharedPreferencesProvider getProviderOverride(
-    covariant BoolSharedPreferencesProvider provider,
-  ) {
-    return call(key: provider.key);
-  }
+  BoolSharedPreferences create() => BoolSharedPreferences();
 
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    sharedPreferencesProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        sharedPreferencesProvider,
-        ...?sharedPreferencesProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'boolSharedPreferencesProvider';
-}
-
-/// SharedPreferences の bool 値を [key] 単位で読み書きする汎用 Notifier。
-///
-/// family のキーは [key] のみ。Riverpod の family キャッシュにより、
-/// 同じ [key] では同一インスタンスが返り、異なる [key] には別インスタンスが割り当てられる。
-/// 値が存在しない場合の既定値は false。
-///
-/// sharedPreferencesProvider が override 前提の keepAlive Provider であるため、
-/// それに依存する本 Provider も keepAlive にする。
-///
-/// Copied from [BoolSharedPreferences].
-class BoolSharedPreferencesProvider
-    extends NotifierProviderImpl<BoolSharedPreferences, bool> {
-  /// SharedPreferences の bool 値を [key] 単位で読み書きする汎用 Notifier。
-  ///
-  /// family のキーは [key] のみ。Riverpod の family キャッシュにより、
-  /// 同じ [key] では同一インスタンスが返り、異なる [key] には別インスタンスが割り当てられる。
-  /// 値が存在しない場合の既定値は false。
-  ///
-  /// sharedPreferencesProvider が override 前提の keepAlive Provider であるため、
-  /// それに依存する本 Provider も keepAlive にする。
-  ///
-  /// Copied from [BoolSharedPreferences].
-  BoolSharedPreferencesProvider({required String key})
-    : this._internal(
-        () => BoolSharedPreferences()..key = key,
-        from: boolSharedPreferencesProvider,
-        name: r'boolSharedPreferencesProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$boolSharedPreferencesHash,
-        dependencies: BoolSharedPreferencesFamily._dependencies,
-        allTransitiveDependencies:
-            BoolSharedPreferencesFamily._allTransitiveDependencies,
-        key: key,
-      );
-
-  BoolSharedPreferencesProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.key,
-  }) : super.internal();
-
-  final String key;
-
-  @override
-  bool runNotifierBuild(covariant BoolSharedPreferences notifier) {
-    return notifier.build(key: key);
-  }
-
-  @override
-  Override overrideWith(BoolSharedPreferences Function() create) {
-    return ProviderOverride(
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
       origin: this,
-      override: BoolSharedPreferencesProvider._internal(
-        () => create()..key = key,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        key: key,
-      ),
+      providerOverride: $SyncValueProvider<bool>(value),
     );
   }
 
   @override
-  NotifierProviderElement<BoolSharedPreferences, bool> createElement() {
-    return _BoolSharedPreferencesProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is BoolSharedPreferencesProvider && other.key == key;
+    return other is BoolSharedPreferencesProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, key.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin BoolSharedPreferencesRef on NotifierProviderRef<bool> {
-  /// The parameter `key` of this provider.
-  String get key;
-}
+String _$boolSharedPreferencesHash() =>
+    r'fa1a27ecef2408e8da294fb0d439126353c54a22';
 
-class _BoolSharedPreferencesProviderElement
-    extends NotifierProviderElement<BoolSharedPreferences, bool>
-    with BoolSharedPreferencesRef {
-  _BoolSharedPreferencesProviderElement(super.provider);
+/// SharedPreferences の bool 値を [key] 単位で読み書きする汎用 Notifier。
+///
+/// family のキーは [key] のみ。Riverpod の family キャッシュにより、
+/// 同じ [key] では同一インスタンスが返り、異なる [key] には別インスタンスが割り当てられる。
+/// 値が存在しない場合の既定値は false。
+///
+/// sharedPreferencesProvider が override 前提の keepAlive Provider であるため、
+/// それに依存する本 Provider も keepAlive にする。
+
+final class BoolSharedPreferencesFamily extends $Family
+    with $ClassFamilyOverride<BoolSharedPreferences, bool, bool, bool, String> {
+  BoolSharedPreferencesFamily._()
+    : super(
+        retry: null,
+        name: r'boolSharedPreferencesProvider',
+        dependencies: <ProviderOrFamily>[sharedPreferencesProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          BoolSharedPreferencesProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: false,
+      );
+
+  /// SharedPreferences の bool 値を [key] 単位で読み書きする汎用 Notifier。
+  ///
+  /// family のキーは [key] のみ。Riverpod の family キャッシュにより、
+  /// 同じ [key] では同一インスタンスが返り、異なる [key] には別インスタンスが割り当てられる。
+  /// 値が存在しない場合の既定値は false。
+  ///
+  /// sharedPreferencesProvider が override 前提の keepAlive Provider であるため、
+  /// それに依存する本 Provider も keepAlive にする。
+
+  BoolSharedPreferencesProvider call({required String key}) =>
+      BoolSharedPreferencesProvider._(argument: key, from: this);
 
   @override
-  String get key => (origin as BoolSharedPreferencesProvider).key;
+  String toString() => r'boolSharedPreferencesProvider';
 }
 
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+/// SharedPreferences の bool 値を [key] 単位で読み書きする汎用 Notifier。
+///
+/// family のキーは [key] のみ。Riverpod の family キャッシュにより、
+/// 同じ [key] では同一インスタンスが返り、異なる [key] には別インスタンスが割り当てられる。
+/// 値が存在しない場合の既定値は false。
+///
+/// sharedPreferencesProvider が override 前提の keepAlive Provider であるため、
+/// それに依存する本 Provider も keepAlive にする。
+
+abstract class _$BoolSharedPreferences extends $Notifier<bool> {
+  late final _$args = ref.$arg as String;
+  String get key => _$args;
+
+  bool build({required String key});
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, () => build(key: _$args));
+  }
+}

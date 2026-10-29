@@ -6,202 +6,135 @@ part of 'recently_added_shopping_list_item.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$recentlyAddedShoppingListItemHash() =>
-    r'94bc9bb531dd9e0161fb2020523afca871ad81fc';
-
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-abstract class _$RecentlyAddedShoppingListItem
-    extends BuildlessAutoDisposeNotifier<String?> {
-  late final String shoppingListID;
-
-  String? build(String shoppingListID);
-}
-
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 /// 最後に手入力した買い物リストアイテムの ID を、一時的に保持する。
 ///
 /// Firestore への追加完了前に次の入力が確定することがあるため、入力開始順を連番で管理する。
 /// 書き込み完了順が前後しても、最後に確定した入力だけを強調表示する。
-///
-/// Copied from [RecentlyAddedShoppingListItem].
+
 @ProviderFor(RecentlyAddedShoppingListItem)
-const recentlyAddedShoppingListItemProvider =
-    RecentlyAddedShoppingListItemFamily();
+final recentlyAddedShoppingListItemProvider =
+    RecentlyAddedShoppingListItemFamily._();
 
 /// 最後に手入力した買い物リストアイテムの ID を、一時的に保持する。
 ///
 /// Firestore への追加完了前に次の入力が確定することがあるため、入力開始順を連番で管理する。
 /// 書き込み完了順が前後しても、最後に確定した入力だけを強調表示する。
-///
-/// Copied from [RecentlyAddedShoppingListItem].
-class RecentlyAddedShoppingListItemFamily extends Family<String?> {
+final class RecentlyAddedShoppingListItemProvider
+    extends $NotifierProvider<RecentlyAddedShoppingListItem, String?> {
   /// 最後に手入力した買い物リストアイテムの ID を、一時的に保持する。
   ///
   /// Firestore への追加完了前に次の入力が確定することがあるため、入力開始順を連番で管理する。
   /// 書き込み完了順が前後しても、最後に確定した入力だけを強調表示する。
-  ///
-  /// Copied from [RecentlyAddedShoppingListItem].
-  const RecentlyAddedShoppingListItemFamily();
+  RecentlyAddedShoppingListItemProvider._({
+    required RecentlyAddedShoppingListItemFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'recentlyAddedShoppingListItemProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// 最後に手入力した買い物リストアイテムの ID を、一時的に保持する。
-  ///
-  /// Firestore への追加完了前に次の入力が確定することがあるため、入力開始順を連番で管理する。
-  /// 書き込み完了順が前後しても、最後に確定した入力だけを強調表示する。
-  ///
-  /// Copied from [RecentlyAddedShoppingListItem].
-  RecentlyAddedShoppingListItemProvider call(String shoppingListID) {
-    return RecentlyAddedShoppingListItemProvider(shoppingListID);
+  @override
+  String debugGetCreateSourceHash() => _$recentlyAddedShoppingListItemHash();
+
+  @override
+  String toString() {
+    return r'recentlyAddedShoppingListItemProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  RecentlyAddedShoppingListItemProvider getProviderOverride(
-    covariant RecentlyAddedShoppingListItemProvider provider,
-  ) {
-    return call(provider.shoppingListID);
-  }
+  RecentlyAddedShoppingListItem create() => RecentlyAddedShoppingListItem();
 
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'recentlyAddedShoppingListItemProvider';
-}
-
-/// 最後に手入力した買い物リストアイテムの ID を、一時的に保持する。
-///
-/// Firestore への追加完了前に次の入力が確定することがあるため、入力開始順を連番で管理する。
-/// 書き込み完了順が前後しても、最後に確定した入力だけを強調表示する。
-///
-/// Copied from [RecentlyAddedShoppingListItem].
-class RecentlyAddedShoppingListItemProvider
-    extends
-        AutoDisposeNotifierProviderImpl<
-          RecentlyAddedShoppingListItem,
-          String?
-        > {
-  /// 最後に手入力した買い物リストアイテムの ID を、一時的に保持する。
-  ///
-  /// Firestore への追加完了前に次の入力が確定することがあるため、入力開始順を連番で管理する。
-  /// 書き込み完了順が前後しても、最後に確定した入力だけを強調表示する。
-  ///
-  /// Copied from [RecentlyAddedShoppingListItem].
-  RecentlyAddedShoppingListItemProvider(String shoppingListID)
-    : this._internal(
-        () => RecentlyAddedShoppingListItem()..shoppingListID = shoppingListID,
-        from: recentlyAddedShoppingListItemProvider,
-        name: r'recentlyAddedShoppingListItemProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$recentlyAddedShoppingListItemHash,
-        dependencies: RecentlyAddedShoppingListItemFamily._dependencies,
-        allTransitiveDependencies:
-            RecentlyAddedShoppingListItemFamily._allTransitiveDependencies,
-        shoppingListID: shoppingListID,
-      );
-
-  RecentlyAddedShoppingListItemProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.shoppingListID,
-  }) : super.internal();
-
-  final String shoppingListID;
-
-  @override
-  String? runNotifierBuild(covariant RecentlyAddedShoppingListItem notifier) {
-    return notifier.build(shoppingListID);
-  }
-
-  @override
-  Override overrideWith(RecentlyAddedShoppingListItem Function() create) {
-    return ProviderOverride(
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
       origin: this,
-      override: RecentlyAddedShoppingListItemProvider._internal(
-        () => create()..shoppingListID = shoppingListID,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        shoppingListID: shoppingListID,
-      ),
+      providerOverride: $SyncValueProvider<String?>(value),
     );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<RecentlyAddedShoppingListItem, String?>
-  createElement() {
-    return _RecentlyAddedShoppingListItemProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
     return other is RecentlyAddedShoppingListItemProvider &&
-        other.shoppingListID == shoppingListID;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, shoppingListID.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin RecentlyAddedShoppingListItemRef
-    on AutoDisposeNotifierProviderRef<String?> {
-  /// The parameter `shoppingListID` of this provider.
-  String get shoppingListID;
-}
+String _$recentlyAddedShoppingListItemHash() =>
+    r'94bc9bb531dd9e0161fb2020523afca871ad81fc';
 
-class _RecentlyAddedShoppingListItemProviderElement
-    extends
-        AutoDisposeNotifierProviderElement<
+/// 最後に手入力した買い物リストアイテムの ID を、一時的に保持する。
+///
+/// Firestore への追加完了前に次の入力が確定することがあるため、入力開始順を連番で管理する。
+/// 書き込み完了順が前後しても、最後に確定した入力だけを強調表示する。
+
+final class RecentlyAddedShoppingListItemFamily extends $Family
+    with
+        $ClassFamilyOverride<
           RecentlyAddedShoppingListItem,
-          String?
-        >
-    with RecentlyAddedShoppingListItemRef {
-  _RecentlyAddedShoppingListItemProviderElement(super.provider);
+          String?,
+          String?,
+          String?,
+          String
+        > {
+  RecentlyAddedShoppingListItemFamily._()
+    : super(
+        retry: null,
+        name: r'recentlyAddedShoppingListItemProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// 最後に手入力した買い物リストアイテムの ID を、一時的に保持する。
+  ///
+  /// Firestore への追加完了前に次の入力が確定することがあるため、入力開始順を連番で管理する。
+  /// 書き込み完了順が前後しても、最後に確定した入力だけを強調表示する。
+
+  RecentlyAddedShoppingListItemProvider call(String shoppingListID) =>
+      RecentlyAddedShoppingListItemProvider._(
+        argument: shoppingListID,
+        from: this,
+      );
 
   @override
-  String get shoppingListID =>
-      (origin as RecentlyAddedShoppingListItemProvider).shoppingListID;
+  String toString() => r'recentlyAddedShoppingListItemProvider';
 }
 
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+/// 最後に手入力した買い物リストアイテムの ID を、一時的に保持する。
+///
+/// Firestore への追加完了前に次の入力が確定することがあるため、入力開始順を連番で管理する。
+/// 書き込み完了順が前後しても、最後に確定した入力だけを強調表示する。
+
+abstract class _$RecentlyAddedShoppingListItem extends $Notifier<String?> {
+  late final _$args = ref.$arg as String;
+  String get shoppingListID => _$args;
+
+  String? build(String shoppingListID);
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<String?, String?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String?, String?>,
+              String?,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, () => build(_$args));
+  }
+}

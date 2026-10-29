@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'group_category_keyword.dart';
@@ -9,6 +9,7 @@ part of 'group_category_keyword.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $GroupCategoryKeywordCopyWith<GroupCategoryKeyword> get copyWith => _$GroupCateg
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupCategoryKeyword&&(identical(other.keyword, keyword) || other.keyword == keyword)&&(identical(other.matchingType, matchingType) || other.matchingType == matchingType));
+  final _this = this as GroupCategoryKeyword;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupCategoryKeyword&&(identical(other.keyword, _this.keyword) || other.keyword == _this.keyword)&&(identical(other.matchingType, _this.matchingType) || other.matchingType == _this.matchingType));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,keyword,matchingType);
+int get hashCode {
+  final _this = this as GroupCategoryKeyword;
+  return Object.hash(runtimeType,_this.keyword,_this.matchingType);
+}
 
 @override
 String toString() {
-  return 'GroupCategoryKeyword(keyword: $keyword, matchingType: $matchingType)';
+  final _this = this as GroupCategoryKeyword;
+  return 'GroupCategoryKeyword(keyword: ${_this.keyword}, matchingType: ${_this.matchingType})';
 }
 
 
@@ -66,7 +72,7 @@ class _$GroupCategoryKeywordCopyWithImpl<$Res>
 /// Create a copy of GroupCategoryKeyword
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? keyword = null,Object? matchingType = null,}) {
-  return _then(_self.copyWith(
+  return _then(GroupCategoryKeyword(
 keyword: null == keyword ? _self.keyword : keyword // ignore: cast_nullable_to_non_nullable
 as String,matchingType: null == matchingType ? _self.matchingType : matchingType // ignore: cast_nullable_to_non_nullable
 as GroupCategoryKeywordMatchingType,
@@ -229,16 +235,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupCategoryKeyword&&(identical(other.keyword, keyword) || other.keyword == keyword)&&(identical(other.matchingType, matchingType) || other.matchingType == matchingType));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupCategoryKeyword&&(identical(other.keyword, keyword) || other.keyword == keyword)&&(identical(other.matchingType, matchingType) || other.matchingType == matchingType));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,keyword,matchingType);
+int get hashCode {
+    return Object.hash(runtimeType,keyword,matchingType);
+}
 
 @override
 String toString() {
-  return 'GroupCategoryKeyword(keyword: $keyword, matchingType: $matchingType)';
+    return 'GroupCategoryKeyword(keyword: $keyword, matchingType: $matchingType)';
 }
 
 

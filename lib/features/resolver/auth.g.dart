@@ -6,24 +6,39 @@ part of 'auth.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(firebaseUserChanges)
+final firebaseUserChangesProvider = FirebaseUserChangesProvider._();
+
+final class FirebaseUserChangesProvider
+    extends $FunctionalProvider<AsyncValue<User?>, User?, Stream<User?>>
+    with $FutureModifier<User?>, $StreamProvider<User?> {
+  FirebaseUserChangesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'firebaseUserChangesProvider',
+        isAutoDispose: false,
+        dependencies: <ProviderOrFamily>[],
+        $allTransitiveDependencies: <ProviderOrFamily>[],
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$firebaseUserChangesHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<User?> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
+
+  @override
+  Stream<User?> create(Ref ref) {
+    return firebaseUserChanges(ref);
+  }
+}
+
 String _$firebaseUserChangesHash() =>
     r'5bd1f286b92f4208602a0fabe059e643a85b22c3';
-
-/// See also [firebaseUserChanges].
-@ProviderFor(firebaseUserChanges)
-final firebaseUserChangesProvider = StreamProvider<User?>.internal(
-  firebaseUserChanges,
-  name: r'firebaseUserChangesProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$firebaseUserChangesHash,
-  dependencies: const <ProviderOrFamily>[],
-  allTransitiveDependencies: const <ProviderOrFamily>{},
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef FirebaseUserChangesRef = StreamProviderRef<User?>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

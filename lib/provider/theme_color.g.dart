@@ -6,28 +6,62 @@ part of 'theme_color.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$themeColorUpdateHash() => r'918a6417158a116910455aeee795f9d1da8c24a8';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+/// テーマカラー更新操作を提供するProvider。
+
+@ProviderFor(themeColorUpdate)
+final themeColorUpdateProvider = ThemeColorUpdateProvider._();
 
 /// テーマカラー更新操作を提供するProvider。
-///
-/// Copied from [themeColorUpdate].
-@ProviderFor(themeColorUpdate)
-final themeColorUpdateProvider = AutoDisposeProvider<ThemeColorUpdate>.internal(
-  themeColorUpdate,
-  name: r'themeColorUpdateProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$themeColorUpdateHash,
-  dependencies: <ProviderOrFamily>[userDatabaseProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    userDatabaseProvider,
-    ...?userDatabaseProvider.allTransitiveDependencies,
-  },
-);
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ThemeColorUpdateRef = AutoDisposeProviderRef<ThemeColorUpdate>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class ThemeColorUpdateProvider
+    extends
+        $FunctionalProvider<
+          ThemeColorUpdate,
+          ThemeColorUpdate,
+          ThemeColorUpdate
+        >
+    with $Provider<ThemeColorUpdate> {
+  /// テーマカラー更新操作を提供するProvider。
+  ThemeColorUpdateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'themeColorUpdateProvider',
+        isAutoDispose: true,
+        dependencies: <ProviderOrFamily>[userDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          ThemeColorUpdateProvider.$allTransitiveDependencies0,
+          ThemeColorUpdateProvider.$allTransitiveDependencies1,
+        ],
+      );
+
+  static final $allTransitiveDependencies0 = userDatabaseProvider;
+  static final $allTransitiveDependencies1 =
+      UserDatabaseProvider.$allTransitiveDependencies0;
+
+  @override
+  String debugGetCreateSourceHash() => _$themeColorUpdateHash();
+
+  @$internal
+  @override
+  $ProviderElement<ThemeColorUpdate> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  ThemeColorUpdate create(Ref ref) {
+    return themeColorUpdate(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ThemeColorUpdate value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ThemeColorUpdate>(value),
+    );
+  }
+}
+
+String _$themeColorUpdateHash() => r'918a6417158a116910455aeee795f9d1da8c24a8';

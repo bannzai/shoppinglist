@@ -117,7 +117,7 @@ class AppEntityPrepareResolver extends HookConsumerWidget {
       return GroupJoinOrCreatePage(appUser: appUser);
     }
 
-    if (shoppingLists?.valueOrNull?.isEmpty == true) {
+    if (shoppingLists?.value?.isEmpty == true) {
       return LaunchLoading.shared();
     }
     return builder(context);

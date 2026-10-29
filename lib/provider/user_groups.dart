@@ -1,12 +1,11 @@
 import 'package:shoppinglist/utils/firestore/firestore.dart';
 import 'package:shoppinglist/entity/group.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_groups.g.dart';
 
-@Riverpod(dependencies: [])
+@Riverpod(dependencies: [currentUserID])
 Stream<List<Group>> userGroups(Ref ref) {
   final currentUserID = ref.watch(currentUserIDProvider);
   // ログアウト・ユーザー切替直後のティアダウン中に古い uid で groups を

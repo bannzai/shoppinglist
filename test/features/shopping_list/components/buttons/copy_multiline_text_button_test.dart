@@ -162,7 +162,8 @@ void main() {
       expect(capturedErrors.single, isStateError);
       expect(
         (capturedErrors.single as StateError).message,
-        contains('after the widget was disposed'),
+        // Riverpod 3 の文言 (flutter_riverpod の ConsumerStatefulElement._assertNotDisposed)。
+        contains('has been unmounted is unsafe'),
       );
     },
   );

@@ -15,6 +15,7 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../helpers/localized_test_app.dart';
+import '../../helpers/merge_provider_overrides.dart';
 
 /// ソフトキーボード表示中の下部浮遊要素の扱い(進捗ピルは隠す・FAB は隠さず表示し続けて
 /// キーボードを閉じる導線にする。Issue #498)を検証する。
@@ -30,34 +31,36 @@ Future<void> _pumpPage(
   final sharedPreferences = await SharedPreferences.getInstance();
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [
-        ...previewProviderOverrides(sharedPreferences: sharedPreferences),
+      overrides: mergeProviderOverrides(
+        base: previewProviderOverrides(sharedPreferences: sharedPreferences),
         // itemCount 指定時はアイテム件数を差し替える
         // (RetentionBanner の表示条件 totalCount > 50 の検証用)。
-        if (itemCount != null)
-          textShoppingListItemsProvider(
-            groupID: mockGroupID,
-            shoppingListID: mockShoppingListID,
-          ).overrideWith(
-            (ref) => Stream.value([
-              for (var i = 0; i < itemCount; i++)
-                GroupShoppingListItem(
-                  id: 'keyboard-visibility-item-$i',
-                  groupID: mockGroupID,
-                  shoppingListID: mockShoppingListID,
-                  userID: mockUserID,
-                  message: 'アイテム$i',
-                  order: i,
-                  status: GroupShoppingListItemStatus.unchecked,
-                  checkedByUserID: null,
-                  color: null,
-                  description: null,
-                  imageURL: null,
-                  lastEditedByUserID: null,
-                ),
-            ]),
-          ),
-      ],
+        extra: [
+          if (itemCount != null)
+            textShoppingListItemsProvider(
+              groupID: mockGroupID,
+              shoppingListID: mockShoppingListID,
+            ).overrideWith(
+              (ref) => Stream.value([
+                for (var i = 0; i < itemCount; i++)
+                  GroupShoppingListItem(
+                    id: 'keyboard-visibility-item-$i',
+                    groupID: mockGroupID,
+                    shoppingListID: mockShoppingListID,
+                    userID: mockUserID,
+                    message: 'アイテム$i',
+                    order: i,
+                    status: GroupShoppingListItemStatus.unchecked,
+                    checkedByUserID: null,
+                    color: null,
+                    description: null,
+                    imageURL: null,
+                    lastEditedByUserID: null,
+                  ),
+              ]),
+            ),
+        ],
+      ),
       child: localizedTestApp(
         theme: buildAppTheme(accent: AccentPreset.shu),
         home: Builder(

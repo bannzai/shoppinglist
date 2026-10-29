@@ -4,6 +4,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import '../helpers/read_provider_future.dart';
 
 const _testGroupID = 'group-1';
 
@@ -70,7 +71,10 @@ void main() {
       final container = _buildContainer(
         stream: Stream.value(_FakeCustomerInfo(premium: true)),
       );
-      await container.read(customerInfoProvider.future);
+      await readProviderFuture(
+        container: container,
+        provider: customerInfoProvider.future,
+      );
 
       expect(
         container
@@ -84,7 +88,10 @@ void main() {
       final container = _buildContainer(
         stream: Stream.value(_FakeCustomerInfo(premium: false)),
       );
-      await container.read(customerInfoProvider.future);
+      await readProviderFuture(
+        container: container,
+        provider: customerInfoProvider.future,
+      );
 
       expect(
         container
@@ -113,7 +120,10 @@ void main() {
       final container = _buildContainer(
         stream: Stream.value(_FakeCustomerInfo(premium: true)),
       );
-      await container.read(customerInfoProvider.future);
+      await readProviderFuture(
+        container: container,
+        provider: customerInfoProvider.future,
+      );
 
       await expectLater(
         container

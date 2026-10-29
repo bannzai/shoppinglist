@@ -6,612 +6,432 @@ part of 'shopping_list.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$hourlyTriggerHash() => r'c683fce521c33003f53f9a37eec905706d1627ac';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+/// 1時間ごとに自身を無効化して現在時刻を更新するプロバイダー。
+/// 無料ユーザーの30日間表示制限でアプリ長時間起動時のDateTime.now()の古さを防ぐ。
+
+@ProviderFor(hourlyTrigger)
+final hourlyTriggerProvider = HourlyTriggerProvider._();
 
 /// 1時間ごとに自身を無効化して現在時刻を更新するプロバイダー。
 /// 無料ユーザーの30日間表示制限でアプリ長時間起動時のDateTime.now()の古さを防ぐ。
-///
-/// Copied from [hourlyTrigger].
-@ProviderFor(hourlyTrigger)
-final hourlyTriggerProvider = AutoDisposeProvider<DateTime>.internal(
-  hourlyTrigger,
-  name: r'hourlyTriggerProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$hourlyTriggerHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef HourlyTriggerRef = AutoDisposeProviderRef<DateTime>;
-String _$shoppingListsHash() => r'0f5a6cd35ff5e30fcae92e7582ecf1f0de3784fb';
-
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// 買い物リスト一覧を取得するプロバイダー。
-/// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
-/// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
-///
-/// Copied from [shoppingLists].
-@ProviderFor(shoppingLists)
-const shoppingListsProvider = ShoppingListsFamily();
-
-/// 買い物リスト一覧を取得するプロバイダー。
-/// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
-/// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
-///
-/// Copied from [shoppingLists].
-class ShoppingListsFamily extends Family<AsyncValue<List<GroupShoppingList>>> {
-  /// 買い物リスト一覧を取得するプロバイダー。
-  /// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
-  /// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
-  ///
-  /// Copied from [shoppingLists].
-  const ShoppingListsFamily();
-
-  /// 買い物リスト一覧を取得するプロバイダー。
-  /// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
-  /// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
-  ///
-  /// Copied from [shoppingLists].
-  ShoppingListsProvider call({
-    required String groupID,
-    required bool isPremium,
-  }) {
-    return ShoppingListsProvider(groupID: groupID, isPremium: isPremium);
-  }
-
-  @override
-  ShoppingListsProvider getProviderOverride(
-    covariant ShoppingListsProvider provider,
-  ) {
-    return call(groupID: provider.groupID, isPremium: provider.isPremium);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'shoppingListsProvider';
-}
-
-/// 買い物リスト一覧を取得するプロバイダー。
-/// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
-/// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
-///
-/// Copied from [shoppingLists].
-class ShoppingListsProvider
-    extends AutoDisposeStreamProvider<List<GroupShoppingList>> {
-  /// 買い物リスト一覧を取得するプロバイダー。
-  /// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
-  /// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
-  ///
-  /// Copied from [shoppingLists].
-  ShoppingListsProvider({required String groupID, required bool isPremium})
-    : this._internal(
-        (ref) => shoppingLists(
-          ref as ShoppingListsRef,
-          groupID: groupID,
-          isPremium: isPremium,
-        ),
-        from: shoppingListsProvider,
-        name: r'shoppingListsProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$shoppingListsHash,
-        dependencies: ShoppingListsFamily._dependencies,
-        allTransitiveDependencies:
-            ShoppingListsFamily._allTransitiveDependencies,
-        groupID: groupID,
-        isPremium: isPremium,
+final class HourlyTriggerProvider
+    extends $FunctionalProvider<DateTime, DateTime, DateTime>
+    with $Provider<DateTime> {
+  /// 1時間ごとに自身を無効化して現在時刻を更新するプロバイダー。
+  /// 無料ユーザーの30日間表示制限でアプリ長時間起動時のDateTime.now()の古さを防ぐ。
+  HourlyTriggerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'hourlyTriggerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
       );
 
-  ShoppingListsProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-    required this.isPremium,
-  }) : super.internal();
+  @override
+  String debugGetCreateSourceHash() => _$hourlyTriggerHash();
 
-  final String groupID;
-  final bool isPremium;
+  @$internal
+  @override
+  $ProviderElement<DateTime> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
-  Override overrideWith(
-    Stream<List<GroupShoppingList>> Function(ShoppingListsRef provider) create,
-  ) {
-    return ProviderOverride(
+  DateTime create(Ref ref) {
+    return hourlyTrigger(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DateTime value) {
+    return $ProviderOverride(
       origin: this,
-      override: ShoppingListsProvider._internal(
-        (ref) => create(ref as ShoppingListsRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-        isPremium: isPremium,
-      ),
+      providerOverride: $SyncValueProvider<DateTime>(value),
+    );
+  }
+}
+
+String _$hourlyTriggerHash() => r'c683fce521c33003f53f9a37eec905706d1627ac';
+
+/// 買い物リスト一覧を取得するプロバイダー。
+/// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
+/// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
+
+@ProviderFor(shoppingLists)
+final shoppingListsProvider = ShoppingListsFamily._();
+
+/// 買い物リスト一覧を取得するプロバイダー。
+/// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
+/// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
+
+final class ShoppingListsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<GroupShoppingList>>,
+          List<GroupShoppingList>,
+          Stream<List<GroupShoppingList>>
+        >
+    with
+        $FutureModifier<List<GroupShoppingList>>,
+        $StreamProvider<List<GroupShoppingList>> {
+  /// 買い物リスト一覧を取得するプロバイダー。
+  /// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
+  /// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
+  ShoppingListsProvider._({
+    required ShoppingListsFamily super.from,
+    required ({String groupID, bool isPremium}) super.argument,
+  }) : super(
+         retry: null,
+         name: r'shoppingListsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$shoppingListsHash();
+
+  @override
+  String toString() {
+    return r'shoppingListsProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<List<GroupShoppingList>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<GroupShoppingList>> create(Ref ref) {
+    final argument = this.argument as ({String groupID, bool isPremium});
+    return shoppingLists(
+      ref,
+      groupID: argument.groupID,
+      isPremium: argument.isPremium,
     );
   }
 
   @override
-  AutoDisposeStreamProviderElement<List<GroupShoppingList>> createElement() {
-    return _ShoppingListsProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is ShoppingListsProvider &&
-        other.groupID == groupID &&
-        other.isPremium == isPremium;
+    return other is ShoppingListsProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-    hash = _SystemHash.combine(hash, isPremium.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin ShoppingListsRef
-    on AutoDisposeStreamProviderRef<List<GroupShoppingList>> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
+String _$shoppingListsHash() => r'0f5a6cd35ff5e30fcae92e7582ecf1f0de3784fb';
 
-  /// The parameter `isPremium` of this provider.
-  bool get isPremium;
+/// 買い物リスト一覧を取得するプロバイダー。
+/// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
+/// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
+
+final class ShoppingListsFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          Stream<List<GroupShoppingList>>,
+          ({String groupID, bool isPremium})
+        > {
+  ShoppingListsFamily._()
+    : super(
+        retry: null,
+        name: r'shoppingListsProvider',
+        dependencies: <ProviderOrFamily>[groupDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          ShoppingListsProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: true,
+      );
+
+  /// 買い物リスト一覧を取得するプロバイダー。
+  /// isPremium が false の場合は createdDateTime が30日以内のリストのみ返す。
+  /// このフィルタはUX最適化であり、認可は firestore.rules で担保する。
+
+  ShoppingListsProvider call({
+    required String groupID,
+    required bool isPremium,
+  }) => ShoppingListsProvider._(
+    argument: (groupID: groupID, isPremium: isPremium),
+    from: this,
+  );
+
+  @override
+  String toString() => r'shoppingListsProvider';
 }
 
-class _ShoppingListsProviderElement
-    extends AutoDisposeStreamProviderElement<List<GroupShoppingList>>
-    with ShoppingListsRef {
-  _ShoppingListsProviderElement(super.provider);
+@ProviderFor(shoppingListAdd)
+final shoppingListAddProvider = ShoppingListAddFamily._();
+
+final class ShoppingListAddProvider
+    extends
+        $FunctionalProvider<ShoppingListAdd, ShoppingListAdd, ShoppingListAdd>
+    with $Provider<ShoppingListAdd> {
+  ShoppingListAddProvider._({
+    required ShoppingListAddFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'shoppingListAddProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
 
   @override
-  String get groupID => (origin as ShoppingListsProvider).groupID;
+  String debugGetCreateSourceHash() => _$shoppingListAddHash();
+
   @override
-  bool get isPremium => (origin as ShoppingListsProvider).isPremium;
+  String toString() {
+    return r'shoppingListAddProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<ShoppingListAdd> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  ShoppingListAdd create(Ref ref) {
+    final argument = this.argument as String;
+    return shoppingListAdd(ref, groupID: argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ShoppingListAdd value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ShoppingListAdd>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ShoppingListAddProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
 String _$shoppingListAddHash() => r'cb07351e3c4fb3416281ba5c626b180dd6eeb5cd';
 
-/// See also [shoppingListAdd].
-@ProviderFor(shoppingListAdd)
-const shoppingListAddProvider = ShoppingListAddFamily();
-
-/// See also [shoppingListAdd].
-class ShoppingListAddFamily extends Family<ShoppingListAdd> {
-  /// See also [shoppingListAdd].
-  const ShoppingListAddFamily();
-
-  /// See also [shoppingListAdd].
-  ShoppingListAddProvider call({required String groupID}) {
-    return ShoppingListAddProvider(groupID: groupID);
-  }
-
-  @override
-  ShoppingListAddProvider getProviderOverride(
-    covariant ShoppingListAddProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'shoppingListAddProvider';
-}
-
-/// See also [shoppingListAdd].
-class ShoppingListAddProvider extends AutoDisposeProvider<ShoppingListAdd> {
-  /// See also [shoppingListAdd].
-  ShoppingListAddProvider({required String groupID})
-    : this._internal(
-        (ref) => shoppingListAdd(ref as ShoppingListAddRef, groupID: groupID),
-        from: shoppingListAddProvider,
+final class ShoppingListAddFamily extends $Family
+    with $FunctionalFamilyOverride<ShoppingListAdd, String> {
+  ShoppingListAddFamily._()
+    : super(
+        retry: null,
         name: r'shoppingListAddProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$shoppingListAddHash,
-        dependencies: ShoppingListAddFamily._dependencies,
-        allTransitiveDependencies:
-            ShoppingListAddFamily._allTransitiveDependencies,
-        groupID: groupID,
+        dependencies: <ProviderOrFamily>[groupDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          ShoppingListAddProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: true,
       );
 
-  ShoppingListAddProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
+  ShoppingListAddProvider call({required String groupID}) =>
+      ShoppingListAddProvider._(argument: groupID, from: this);
 
   @override
-  Override overrideWith(
-    ShoppingListAdd Function(ShoppingListAddRef provider) create,
-  ) {
-    return ProviderOverride(
+  String toString() => r'shoppingListAddProvider';
+}
+
+@ProviderFor(shoppingListUpdate)
+final shoppingListUpdateProvider = ShoppingListUpdateFamily._();
+
+final class ShoppingListUpdateProvider
+    extends
+        $FunctionalProvider<
+          ShoppingListUpdate,
+          ShoppingListUpdate,
+          ShoppingListUpdate
+        >
+    with $Provider<ShoppingListUpdate> {
+  ShoppingListUpdateProvider._({
+    required ShoppingListUpdateFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'shoppingListUpdateProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$shoppingListUpdateHash();
+
+  @override
+  String toString() {
+    return r'shoppingListUpdateProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<ShoppingListUpdate> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  ShoppingListUpdate create(Ref ref) {
+    final argument = this.argument as String;
+    return shoppingListUpdate(ref, groupID: argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ShoppingListUpdate value) {
+    return $ProviderOverride(
       origin: this,
-      override: ShoppingListAddProvider._internal(
-        (ref) => create(ref as ShoppingListAddRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
+      providerOverride: $SyncValueProvider<ShoppingListUpdate>(value),
     );
   }
 
   @override
-  AutoDisposeProviderElement<ShoppingListAdd> createElement() {
-    return _ShoppingListAddProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is ShoppingListAddProvider && other.groupID == groupID;
+    return other is ShoppingListUpdateProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin ShoppingListAddRef on AutoDisposeProviderRef<ShoppingListAdd> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
-
-class _ShoppingListAddProviderElement
-    extends AutoDisposeProviderElement<ShoppingListAdd>
-    with ShoppingListAddRef {
-  _ShoppingListAddProviderElement(super.provider);
-
-  @override
-  String get groupID => (origin as ShoppingListAddProvider).groupID;
 }
 
 String _$shoppingListUpdateHash() =>
     r'78b4ec8d0e4956e2998fd8c202915a274aae7bc5';
 
-/// See also [shoppingListUpdate].
-@ProviderFor(shoppingListUpdate)
-const shoppingListUpdateProvider = ShoppingListUpdateFamily();
-
-/// See also [shoppingListUpdate].
-class ShoppingListUpdateFamily extends Family<ShoppingListUpdate> {
-  /// See also [shoppingListUpdate].
-  const ShoppingListUpdateFamily();
-
-  /// See also [shoppingListUpdate].
-  ShoppingListUpdateProvider call({required String groupID}) {
-    return ShoppingListUpdateProvider(groupID: groupID);
-  }
-
-  @override
-  ShoppingListUpdateProvider getProviderOverride(
-    covariant ShoppingListUpdateProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'shoppingListUpdateProvider';
-}
-
-/// See also [shoppingListUpdate].
-class ShoppingListUpdateProvider
-    extends AutoDisposeProvider<ShoppingListUpdate> {
-  /// See also [shoppingListUpdate].
-  ShoppingListUpdateProvider({required String groupID})
-    : this._internal(
-        (ref) =>
-            shoppingListUpdate(ref as ShoppingListUpdateRef, groupID: groupID),
-        from: shoppingListUpdateProvider,
+final class ShoppingListUpdateFamily extends $Family
+    with $FunctionalFamilyOverride<ShoppingListUpdate, String> {
+  ShoppingListUpdateFamily._()
+    : super(
+        retry: null,
         name: r'shoppingListUpdateProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$shoppingListUpdateHash,
-        dependencies: ShoppingListUpdateFamily._dependencies,
-        allTransitiveDependencies:
-            ShoppingListUpdateFamily._allTransitiveDependencies,
-        groupID: groupID,
+        dependencies: <ProviderOrFamily>[groupDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          ShoppingListUpdateProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: true,
       );
 
-  ShoppingListUpdateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
+  ShoppingListUpdateProvider call({required String groupID}) =>
+      ShoppingListUpdateProvider._(argument: groupID, from: this);
 
   @override
-  Override overrideWith(
-    ShoppingListUpdate Function(ShoppingListUpdateRef provider) create,
-  ) {
-    return ProviderOverride(
+  String toString() => r'shoppingListUpdateProvider';
+}
+
+@ProviderFor(shoppingListDuplicate)
+final shoppingListDuplicateProvider = ShoppingListDuplicateFamily._();
+
+final class ShoppingListDuplicateProvider
+    extends
+        $FunctionalProvider<
+          ShoppingListDuplicate,
+          ShoppingListDuplicate,
+          ShoppingListDuplicate
+        >
+    with $Provider<ShoppingListDuplicate> {
+  ShoppingListDuplicateProvider._({
+    required ShoppingListDuplicateFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'shoppingListDuplicateProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static final $allTransitiveDependencies0 = shoppingListAddProvider;
+  static final $allTransitiveDependencies1 =
+      ShoppingListAddProvider.$allTransitiveDependencies0;
+  static final $allTransitiveDependencies2 = addShoppingListItemProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$shoppingListDuplicateHash();
+
+  @override
+  String toString() {
+    return r'shoppingListDuplicateProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<ShoppingListDuplicate> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  ShoppingListDuplicate create(Ref ref) {
+    final argument = this.argument as String;
+    return shoppingListDuplicate(ref, groupID: argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ShoppingListDuplicate value) {
+    return $ProviderOverride(
       origin: this,
-      override: ShoppingListUpdateProvider._internal(
-        (ref) => create(ref as ShoppingListUpdateRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
+      providerOverride: $SyncValueProvider<ShoppingListDuplicate>(value),
     );
   }
 
   @override
-  AutoDisposeProviderElement<ShoppingListUpdate> createElement() {
-    return _ShoppingListUpdateProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is ShoppingListUpdateProvider && other.groupID == groupID;
+    return other is ShoppingListDuplicateProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin ShoppingListUpdateRef on AutoDisposeProviderRef<ShoppingListUpdate> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
-
-class _ShoppingListUpdateProviderElement
-    extends AutoDisposeProviderElement<ShoppingListUpdate>
-    with ShoppingListUpdateRef {
-  _ShoppingListUpdateProviderElement(super.provider);
-
-  @override
-  String get groupID => (origin as ShoppingListUpdateProvider).groupID;
 }
 
 String _$shoppingListDuplicateHash() =>
     r'065006997da40e65a906ee85c0d2e54499386a33';
 
-/// See also [shoppingListDuplicate].
-@ProviderFor(shoppingListDuplicate)
-const shoppingListDuplicateProvider = ShoppingListDuplicateFamily();
-
-/// See also [shoppingListDuplicate].
-class ShoppingListDuplicateFamily extends Family<ShoppingListDuplicate> {
-  /// See also [shoppingListDuplicate].
-  const ShoppingListDuplicateFamily();
-
-  /// See also [shoppingListDuplicate].
-  ShoppingListDuplicateProvider call({required String groupID}) {
-    return ShoppingListDuplicateProvider(groupID: groupID);
-  }
-
-  @override
-  ShoppingListDuplicateProvider getProviderOverride(
-    covariant ShoppingListDuplicateProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    shoppingListAddProvider,
-    addShoppingListItemProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        shoppingListAddProvider,
-        ...?shoppingListAddProvider.allTransitiveDependencies,
-        addShoppingListItemProvider,
-        ...?addShoppingListItemProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'shoppingListDuplicateProvider';
-}
-
-/// See also [shoppingListDuplicate].
-class ShoppingListDuplicateProvider
-    extends AutoDisposeProvider<ShoppingListDuplicate> {
-  /// See also [shoppingListDuplicate].
-  ShoppingListDuplicateProvider({required String groupID})
-    : this._internal(
-        (ref) => shoppingListDuplicate(
-          ref as ShoppingListDuplicateRef,
-          groupID: groupID,
-        ),
-        from: shoppingListDuplicateProvider,
+final class ShoppingListDuplicateFamily extends $Family
+    with $FunctionalFamilyOverride<ShoppingListDuplicate, String> {
+  ShoppingListDuplicateFamily._()
+    : super(
+        retry: null,
         name: r'shoppingListDuplicateProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$shoppingListDuplicateHash,
-        dependencies: ShoppingListDuplicateFamily._dependencies,
-        allTransitiveDependencies:
-            ShoppingListDuplicateFamily._allTransitiveDependencies,
-        groupID: groupID,
+        dependencies: <ProviderOrFamily>[
+          shoppingListAddProvider,
+          addShoppingListItemProvider,
+        ],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          ShoppingListDuplicateProvider.$allTransitiveDependencies0,
+          ShoppingListDuplicateProvider.$allTransitiveDependencies1,
+          ShoppingListDuplicateProvider.$allTransitiveDependencies2,
+        ],
+        isAutoDispose: true,
       );
 
-  ShoppingListDuplicateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
+  ShoppingListDuplicateProvider call({required String groupID}) =>
+      ShoppingListDuplicateProvider._(argument: groupID, from: this);
 
   @override
-  Override overrideWith(
-    ShoppingListDuplicate Function(ShoppingListDuplicateRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: ShoppingListDuplicateProvider._internal(
-        (ref) => create(ref as ShoppingListDuplicateRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeProviderElement<ShoppingListDuplicate> createElement() {
-    return _ShoppingListDuplicateProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is ShoppingListDuplicateProvider && other.groupID == groupID;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
+  String toString() => r'shoppingListDuplicateProvider';
 }
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin ShoppingListDuplicateRef
-    on AutoDisposeProviderRef<ShoppingListDuplicate> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
-
-class _ShoppingListDuplicateProviderElement
-    extends AutoDisposeProviderElement<ShoppingListDuplicate>
-    with ShoppingListDuplicateRef {
-  _ShoppingListDuplicateProviderElement(super.provider);
-
-  @override
-  String get groupID => (origin as ShoppingListDuplicateProvider).groupID;
-}
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

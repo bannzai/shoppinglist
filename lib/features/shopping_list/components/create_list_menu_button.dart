@@ -260,7 +260,7 @@ class CreateListMenuButton extends HookConsumerWidget {
                 shoppingListID: sourceShoppingList.id,
               ),
             )
-            .valueOrNull ??
+            .value ??
         buildTimeShoppingListItems;
   }
 

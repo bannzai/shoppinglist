@@ -6,291 +6,175 @@ part of 'group_user_profile.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$groupUserProfilesHash() => r'6634d3a9fe8eb366149721ac613ef119fb8b0a21';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [groupUserProfiles].
 @ProviderFor(groupUserProfiles)
-const groupUserProfilesProvider = GroupUserProfilesFamily();
+final groupUserProfilesProvider = GroupUserProfilesFamily._();
 
-/// See also [groupUserProfiles].
-class GroupUserProfilesFamily
-    extends Family<AsyncValue<List<GroupUserProfile>>> {
-  /// See also [groupUserProfiles].
-  const GroupUserProfilesFamily();
+final class GroupUserProfilesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<GroupUserProfile>>,
+          List<GroupUserProfile>,
+          Stream<List<GroupUserProfile>>
+        >
+    with
+        $FutureModifier<List<GroupUserProfile>>,
+        $StreamProvider<List<GroupUserProfile>> {
+  GroupUserProfilesProvider._({
+    required GroupUserProfilesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'groupUserProfilesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [groupUserProfiles].
-  GroupUserProfilesProvider call({required String groupID}) {
-    return GroupUserProfilesProvider(groupID: groupID);
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$groupUserProfilesHash();
+
+  @override
+  String toString() {
+    return r'groupUserProfilesProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  GroupUserProfilesProvider getProviderOverride(
-    covariant GroupUserProfilesProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
+  $StreamProviderElement<List<GroupUserProfile>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
 
   @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'groupUserProfilesProvider';
-}
-
-/// See also [groupUserProfiles].
-class GroupUserProfilesProvider
-    extends AutoDisposeStreamProvider<List<GroupUserProfile>> {
-  /// See also [groupUserProfiles].
-  GroupUserProfilesProvider({required String groupID})
-    : this._internal(
-        (ref) =>
-            groupUserProfiles(ref as GroupUserProfilesRef, groupID: groupID),
-        from: groupUserProfilesProvider,
-        name: r'groupUserProfilesProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$groupUserProfilesHash,
-        dependencies: GroupUserProfilesFamily._dependencies,
-        allTransitiveDependencies:
-            GroupUserProfilesFamily._allTransitiveDependencies,
-        groupID: groupID,
-      );
-
-  GroupUserProfilesProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
-
-  @override
-  Override overrideWith(
-    Stream<List<GroupUserProfile>> Function(GroupUserProfilesRef provider)
-    create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: GroupUserProfilesProvider._internal(
-        (ref) => create(ref as GroupUserProfilesRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeStreamProviderElement<List<GroupUserProfile>> createElement() {
-    return _GroupUserProfilesProviderElement(this);
+  Stream<List<GroupUserProfile>> create(Ref ref) {
+    final argument = this.argument as String;
+    return groupUserProfiles(ref, groupID: argument);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is GroupUserProfilesProvider && other.groupID == groupID;
+    return other is GroupUserProfilesProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin GroupUserProfilesRef
-    on AutoDisposeStreamProviderRef<List<GroupUserProfile>> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
+String _$groupUserProfilesHash() => r'6634d3a9fe8eb366149721ac613ef119fb8b0a21';
 
-class _GroupUserProfilesProviderElement
-    extends AutoDisposeStreamProviderElement<List<GroupUserProfile>>
-    with GroupUserProfilesRef {
-  _GroupUserProfilesProviderElement(super.provider);
+final class GroupUserProfilesFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<GroupUserProfile>>, String> {
+  GroupUserProfilesFamily._()
+    : super(
+        retry: null,
+        name: r'groupUserProfilesProvider',
+        dependencies: <ProviderOrFamily>[groupDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          GroupUserProfilesProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: true,
+      );
+
+  GroupUserProfilesProvider call({required String groupID}) =>
+      GroupUserProfilesProvider._(argument: groupID, from: this);
 
   @override
-  String get groupID => (origin as GroupUserProfilesProvider).groupID;
+  String toString() => r'groupUserProfilesProvider';
+}
+
+@ProviderFor(groupUserProfileUpdate)
+final groupUserProfileUpdateProvider = GroupUserProfileUpdateFamily._();
+
+final class GroupUserProfileUpdateProvider
+    extends
+        $FunctionalProvider<
+          GroupUserProfileUpdate,
+          GroupUserProfileUpdate,
+          GroupUserProfileUpdate
+        >
+    with $Provider<GroupUserProfileUpdate> {
+  GroupUserProfileUpdateProvider._({
+    required GroupUserProfileUpdateFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'groupUserProfileUpdateProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static final $allTransitiveDependencies0 = groupDatabaseProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$groupUserProfileUpdateHash();
+
+  @override
+  String toString() {
+    return r'groupUserProfileUpdateProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<GroupUserProfileUpdate> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  GroupUserProfileUpdate create(Ref ref) {
+    final argument = this.argument as String;
+    return groupUserProfileUpdate(ref, groupID: argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GroupUserProfileUpdate value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GroupUserProfileUpdate>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GroupUserProfileUpdateProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
 String _$groupUserProfileUpdateHash() =>
     r'4a25962065264675c61852baf08df2e575f0b37b';
 
-/// See also [groupUserProfileUpdate].
-@ProviderFor(groupUserProfileUpdate)
-const groupUserProfileUpdateProvider = GroupUserProfileUpdateFamily();
-
-/// See also [groupUserProfileUpdate].
-class GroupUserProfileUpdateFamily extends Family<GroupUserProfileUpdate> {
-  /// See also [groupUserProfileUpdate].
-  const GroupUserProfileUpdateFamily();
-
-  /// See also [groupUserProfileUpdate].
-  GroupUserProfileUpdateProvider call({required String groupID}) {
-    return GroupUserProfileUpdateProvider(groupID: groupID);
-  }
-
-  @override
-  GroupUserProfileUpdateProvider getProviderOverride(
-    covariant GroupUserProfileUpdateProvider provider,
-  ) {
-    return call(groupID: provider.groupID);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    groupDatabaseProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        groupDatabaseProvider,
-        ...?groupDatabaseProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'groupUserProfileUpdateProvider';
-}
-
-/// See also [groupUserProfileUpdate].
-class GroupUserProfileUpdateProvider
-    extends AutoDisposeProvider<GroupUserProfileUpdate> {
-  /// See also [groupUserProfileUpdate].
-  GroupUserProfileUpdateProvider({required String groupID})
-    : this._internal(
-        (ref) => groupUserProfileUpdate(
-          ref as GroupUserProfileUpdateRef,
-          groupID: groupID,
-        ),
-        from: groupUserProfileUpdateProvider,
+final class GroupUserProfileUpdateFamily extends $Family
+    with $FunctionalFamilyOverride<GroupUserProfileUpdate, String> {
+  GroupUserProfileUpdateFamily._()
+    : super(
+        retry: null,
         name: r'groupUserProfileUpdateProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$groupUserProfileUpdateHash,
-        dependencies: GroupUserProfileUpdateFamily._dependencies,
-        allTransitiveDependencies:
-            GroupUserProfileUpdateFamily._allTransitiveDependencies,
-        groupID: groupID,
+        dependencies: <ProviderOrFamily>[groupDatabaseProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          GroupUserProfileUpdateProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: true,
       );
 
-  GroupUserProfileUpdateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.groupID,
-  }) : super.internal();
-
-  final String groupID;
+  GroupUserProfileUpdateProvider call({required String groupID}) =>
+      GroupUserProfileUpdateProvider._(argument: groupID, from: this);
 
   @override
-  Override overrideWith(
-    GroupUserProfileUpdate Function(GroupUserProfileUpdateRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: GroupUserProfileUpdateProvider._internal(
-        (ref) => create(ref as GroupUserProfileUpdateRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        groupID: groupID,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeProviderElement<GroupUserProfileUpdate> createElement() {
-    return _GroupUserProfileUpdateProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is GroupUserProfileUpdateProvider && other.groupID == groupID;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, groupID.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
+  String toString() => r'groupUserProfileUpdateProvider';
 }
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin GroupUserProfileUpdateRef
-    on AutoDisposeProviderRef<GroupUserProfileUpdate> {
-  /// The parameter `groupID` of this provider.
-  String get groupID;
-}
-
-class _GroupUserProfileUpdateProviderElement
-    extends AutoDisposeProviderElement<GroupUserProfileUpdate>
-    with GroupUserProfileUpdateRef {
-  _GroupUserProfileUpdateProviderElement(super.provider);
-
-  @override
-  String get groupID => (origin as GroupUserProfileUpdateProvider).groupID;
-}
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
