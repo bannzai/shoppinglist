@@ -101,7 +101,7 @@ dependencies {
 
     testImplementation "junit:junit:4.13.2"
     // JVM の単体テストでは android.jar の org.json がスタブで例外を投げるため、実装を足す
-    testImplementation "org.json:json:20240303"
+    testImplementation "org.json:json:20260814"
 }
 
 flutter {
