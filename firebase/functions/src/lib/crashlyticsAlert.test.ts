@@ -1,30 +1,30 @@
 import type { Issue } from "firebase-functions/v2/alerts/crashlytics";
-import { crashlyticsSlackChannel, currentProjectId, formatCrashlyticsAlertText } from "./crashlyticsAlert";
+import { formatCrashlyticsAlertText } from "./crashlyticsAlert";
 
-describe("crashlyticsSlackChannel", () => {
-  it("本番のプロジェクト ID では本番の通知チャンネルを返す", () => {
-    expect(crashlyticsSlackChannel("shoppinglist-prod-857bb")).toBe("#shoppinglist-notification");
-  });
-
-  it("別のプロジェクト ID では -qa のチャンネルを返す", () => {
-    expect(crashlyticsSlackChannel("shoppinglist-dev-b2787")).toBe("#shoppinglist-notification-qa");
-  });
-
-  it("空文字では -qa のチャンネルを返す", () => {
-    expect(crashlyticsSlackChannel("")).toBe("#shoppinglist-notification-qa");
-  });
-
-  it("プロジェクト ID の環境変数が無い時は -qa のチャンネルを返す", () => {
-    const { GCLOUD_PROJECT, FIREBASE_CONFIG } = process.env;
-    delete process.env.GCLOUD_PROJECT;
-    delete process.env.FIREBASE_CONFIG;
-    try {
-      expect(crashlyticsSlackChannel(currentProjectId())).toBe("#shoppinglist-notification-qa");
-    } finally {
-      if (GCLOUD_PROJECT !== undefined) process.env.GCLOUD_PROJECT = GCLOUD_PROJECT;
-      if (FIREBASE_CONFIG !== undefined) process.env.FIREBASE_CONFIG = FIREBASE_CONFIG;
+describe("CRASHLYTICS_SLACK_CHANNEL", () => {
+  it.each([["shoppinglist-prod-857bb"], ["shoppinglist-dev-b2787"], [undefined]])(
+    "実行中のプロジェクト (%s) を問わず本番の通知チャンネルを返す",
+    (projectId) => {
+      const { GCLOUD_PROJECT, FIREBASE_CONFIG } = process.env;
+      delete process.env.FIREBASE_CONFIG;
+      if (projectId === undefined) {
+        delete process.env.GCLOUD_PROJECT;
+      } else {
+        process.env.GCLOUD_PROJECT = projectId;
+      }
+      try {
+        jest.isolateModules(() => {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          const { CRASHLYTICS_SLACK_CHANNEL } = require("./crashlyticsAlert");
+          expect(CRASHLYTICS_SLACK_CHANNEL).toBe("#shoppinglist-notification");
+        });
+      } finally {
+        if (GCLOUD_PROJECT === undefined) delete process.env.GCLOUD_PROJECT;
+        else process.env.GCLOUD_PROJECT = GCLOUD_PROJECT;
+        if (FIREBASE_CONFIG !== undefined) process.env.FIREBASE_CONFIG = FIREBASE_CONFIG;
+      }
     }
-  });
+  );
 });
 
 const maliciousIssue: Issue = {

@@ -1,4 +1,23 @@
-import { escapeSlackText } from "./slack";
+import {
+  escapeSlackText,
+  inquirySlackChannelID,
+  TEST_NOTIFICATION_CHANNEL_ID,
+} from "./slack";
+
+describe("inquirySlackChannelID", () => {
+  it("test: true の時は #test-notification のチャンネル ID を返す", () => {
+    expect(
+      inquirySlackChannelID({ test: true, inquiryChannelID: "C_INQUIRY" })
+    ).toBe("C0CD2MGHCAJ");
+    expect(TEST_NOTIFICATION_CHANNEL_ID).toBe("C0CD2MGHCAJ");
+  });
+
+  it("test: false の時は SLACK_INQUIRY_CHANNEL_ID のチャンネルを返す", () => {
+    expect(
+      inquirySlackChannelID({ test: false, inquiryChannelID: "C_INQUIRY" })
+    ).toBe("C_INQUIRY");
+  });
+});
 
 describe("escapeSlackText", () => {
   it("& < > を実体参照に置換する", () => {
