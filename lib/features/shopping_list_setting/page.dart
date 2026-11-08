@@ -25,6 +25,10 @@ import 'package:shoppinglist/utils/config/feature_flags.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
 
 /// 買い物リスト設定画面。
 /// `design_handoff_shoppinglist/preview/screens-list-settings.jsx#ShoppingListSettingPage` 準拠。
@@ -38,6 +42,28 @@ import 'package:shoppinglist/utils/purchase/purchase.dart';
 /// 6. 共有 (1 card に 2 AppCell + AppDivider — 招待コード送付 / グループ設定)
 /// 7. リストの操作 (1 card に 1 AppCell — 複製。Web SSOT 未拡張だが UX 上残す)
 /// 8. 削除ボタン (AppPill danger large)
+@Dependencies([
+  shoppingListUpdate,
+  textShoppingListItems,
+  group,
+  shoppingLocations,
+  groupCategoryAxes,
+  currentUserID,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  groupUserProfiles,
+  shoppingListDuplicate,
+  groupCategories,
+  shareableGroupCategoryAxes,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  shoppingLocationAdd,
+  shoppingLocationUpdate,
+  shoppingLocationDelete,
+  groupCategoryUpdate,
+])
 class ShoppingListSettingPage extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
@@ -406,6 +432,7 @@ class ShoppingListSettingPage extends HookConsumerWidget {
 
 /// 「買い物する場所」セクションの単独 Cell。
 /// タップで `ShoppingLocationSelectPage` に遷移し、選択結果を `onSelected` に通知する。
+@Dependencies([shoppingLocations])
 class _ShoppingLocationCell extends ConsumerWidget {
   final String groupID;
   final String? currentLocationID;
@@ -548,6 +575,7 @@ class _StoragePeriodCard extends StatelessWidget {
 
 /// 「リストの操作」セクションの 1 card 1 Cell。
 /// `_duplicate` のロジックは旧 `_ListActionsSection` (PR #283) から踏襲。
+@Dependencies([textShoppingListItems, shoppingListDuplicate])
 class _ListActionsCard extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;

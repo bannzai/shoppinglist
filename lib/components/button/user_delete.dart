@@ -12,6 +12,7 @@ import 'package:shoppinglist/l10n/l10n.dart';
 
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/logger/error.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 class DeleteUserButton extends HookConsumerWidget {
   const DeleteUserButton({super.key});
@@ -279,6 +280,7 @@ bool isLinkedAppleFor(User user) {
 
 // firebaseUserChangesProvider は dependencies を持つ (scoped な) provider のため、
 // Riverpod 3 ではそれを watch する側も dependencies に列挙しないと実行時に例外になる
+@Dependencies([firebaseUserChanges])
 final isAppleLinkedProvider = Provider((ref) {
   final user = ref.watch(firebaseUserChangesProvider);
   final userValue = user.value;
@@ -288,6 +290,7 @@ final isAppleLinkedProvider = Provider((ref) {
   return isLinkedAppleFor(userValue);
 }, dependencies: [firebaseUserChangesProvider]);
 
+@Dependencies([firebaseUserChanges])
 final isGoogleLinkedProvider = Provider((ref) {
   final user = ref.watch(firebaseUserChangesProvider);
   final userValue = user.value;

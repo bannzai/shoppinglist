@@ -5,6 +5,7 @@ import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import '../helpers/read_provider_future.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 const _testGroupID = 'group-1';
 
@@ -62,6 +63,7 @@ ProviderContainer _buildContainer({required Stream<CustomerInfo> stream}) {
   return container;
 }
 
+@Dependencies([shoppingListAdd])
 void main() {
   group('shoppingListAddProvider のプレミアム判定 (Issue #523)', () {
     test('RC CustomerInfo がプレミアムなら isPremiumResolver は true を返す', () async {

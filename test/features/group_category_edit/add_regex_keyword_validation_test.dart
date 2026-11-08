@@ -9,6 +9,7 @@ import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 const _testGroupID = 'test-group-001';
 const _testCategoryAxisID = 'test-axis-001';
@@ -44,6 +45,7 @@ class _SpyCategoryUpdate extends GroupCategoryUpdate {
 }
 
 /// 編集画面を表示し、キーワード追加ダイアログで正規表現を選んで [keyword] を入力し「追加」を押す。
+@Dependencies([groupCategories, groupCategoryUpdate])
 Future<void> _submitRegexKeyword(
   WidgetTester tester, {
   required _SpyCategoryUpdate spy,
@@ -95,6 +97,7 @@ Future<void> _submitRegexKeyword(
   await tester.pumpAndSettle();
 }
 
+@Dependencies([groupCategories, groupCategoryUpdate])
 void main() {
   group('キーワード追加ダイアログの正規表現の検証', () {
     testWidgets('入れ子の量指定子を含む正規表現は保存せずダイアログにエラーを出す', (tester) async {

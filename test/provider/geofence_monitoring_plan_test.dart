@@ -13,6 +13,7 @@ import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import '../helpers/read_provider_future.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 // CustomerInfo.isPremium は entitlements.active に premiumEntitlementIdentifier が
 // 含まれるかで判定される（purchase.dart の CustomerInfoExtension）。
@@ -78,6 +79,12 @@ Future<SharedPreferences> _sharedPrefs({required bool enabled}) async {
   return SharedPreferences.getInstance();
 }
 
+@Dependencies([
+  userGroups,
+  geofenceMonitoringPlan,
+  shoppingLocations,
+  shoppingLists,
+])
 void main() {
   group('geofenceMonitoringPlan', () {
     test('premium でない場合は shouldMonitor=false（stopped）', () async {

@@ -14,12 +14,14 @@ import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// 未分類アイテムを AI でカテゴリ分けするボタン。
 ///
 /// 未分類アイテムがあるときに呼び出し側がリスト上部に表示する。
 /// タップで残回数チェック → Function 呼び出し → プレビューシート → 登録 まで担う。
 /// [categoryAxisID] は現在表示中の軸（無ければ null = デフォルト軸を作成）。
+@Dependencies([remainingCategorizeCount, aiCategorizeApply, currentUserID])
 class AICategorizeButton extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;

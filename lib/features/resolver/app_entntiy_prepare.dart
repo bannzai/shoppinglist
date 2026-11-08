@@ -10,7 +10,16 @@ import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/error.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/default_group_update.dart';
 
+@Dependencies([
+  appUser,
+  shoppingListAdd,
+  shoppingLists,
+  userDatabase,
+  defaultGroupUpdate,
+])
 class AppEntityPrepareResolver extends HookConsumerWidget {
   final Widget Function(BuildContext context) builder;
 

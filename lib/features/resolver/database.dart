@@ -19,6 +19,7 @@ import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/resolver/auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 part 'database.g.dart';
 
@@ -388,6 +389,7 @@ class GroupDatabase {
       );
 }
 
+@Dependencies([firebaseUserChanges, userDatabase])
 class UserDatabaseResolver extends HookConsumerWidget {
   final Widget Function(BuildContext) builder;
 

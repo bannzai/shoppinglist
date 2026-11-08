@@ -10,7 +10,9 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/image/image.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
+@Dependencies([addShoppingListItem, currentUserID])
 class ImagePickerButton extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;

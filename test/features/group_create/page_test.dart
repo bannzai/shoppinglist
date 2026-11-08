@@ -8,7 +8,10 @@ import 'package:shoppinglist/features/previews/mock/mock_provider_overrides.dart
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/app_user.dart';
 
+@Dependencies([appUser])
 Future<void> _pumpPage(WidgetTester tester) async {
   // GroupCreatePage は Column 直置きで、デフォルトの 800x600 テスト画面では
   // 縦方向にわずかにオーバーフローするため、十分な高さの画面を設定する。
@@ -36,6 +39,7 @@ AppPill _createButton(WidgetTester tester) => tester
     .widgetList<AppPill>(find.byType(AppPill))
     .firstWhere((p) => p.label == '作成する' || p.label == '作成中...');
 
+@Dependencies([appUser])
 void main() {
   testWidgets('グループ名が空のとき「作成する」ボタンは無効 (Issue #432)', (tester) async {
     await _pumpPage(tester);

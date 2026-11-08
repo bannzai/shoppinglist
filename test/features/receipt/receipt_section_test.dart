@@ -10,6 +10,12 @@ import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import '../../helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
 
 const _testGroupID = 'test-group-001';
 const _testListID = 'list-001';
@@ -59,6 +65,17 @@ GroupShoppingListReceipt _receipt() => const GroupShoppingListReceipt(
   memo: null,
 );
 
+@Dependencies([
+  receipts,
+  currentUserID,
+  groupDatabase,
+  addReceipt,
+  updateReceipt,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+])
 Future<void> _pumpAddButton(
   WidgetTester tester, {
   required bool premium,
@@ -93,6 +110,17 @@ Future<void> _pumpAddButton(
 String _pillLabel(WidgetTester tester) =>
     tester.widget<AppPill>(find.byType(AppPill)).label;
 
+@Dependencies([
+  receipts,
+  currentUserID,
+  groupDatabase,
+  addReceipt,
+  updateReceipt,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+])
 void main() {
   group('ReceiptAddButton プレミアム表示', () {
     testWidgets('非プレミアムユーザーには王冠マークと追加ボタンが表示される', (WidgetTester tester) async {

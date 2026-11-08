@@ -9,6 +9,7 @@ import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/features/shopping_list/components/buttons/copy_multiline_text_button.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// #486 / #492 のバグクラス回帰テスト。
 ///
@@ -20,6 +21,7 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 /// コールバックが `ref` に触れないため unmount 後も安全に完走する。旧規約（コールバック内 `ref.read`）
 /// では unmount 後に `ref.read` が StateError を投げて追加が 1 件も実行されなかった（#486 の症状）。
 /// 後者の事実は末尾の「アンチパターン検証」テストで固定する。
+@Dependencies([addShoppingListItem, currentUserID])
 void main() {
   // 追加処理の呼び出しを記録する `AddShoppingListItem` の差し替え（Firestore を叩かない）。
   // #486 では「コールバック後半 = この call が実行されない」ため、記録した message で完走を検証する。
@@ -207,6 +209,7 @@ class _RecordingAddShoppingListItem extends AddShoppingListItem {
 /// コールバックが await した後に build でキャプチャせず `ref.read` するため、await 中に
 /// unmount されると `ref.read` が StateError を投げる。実際の #486 と同様に catch で捕捉し、
 /// [onError] へ渡して握りつぶし挙動まで再現する。
+@Dependencies([addShoppingListItem])
 class _RefReadAfterAwaitButton extends ConsumerWidget {
   final Future<void> gate;
   final void Function(Object error) onError;

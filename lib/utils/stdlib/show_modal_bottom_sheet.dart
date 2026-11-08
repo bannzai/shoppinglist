@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/features/resolver/app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
 
 /// アプリ共通のモーダルボトムシート。builder を [AppResolvers] でラップするため、
 /// シート内の build で ref.watch が機能する。
@@ -7,6 +12,12 @@ import 'package:shoppinglist/features/resolver/app.dart';
 /// [fitContentHeight] が true のときは画面高 90% 固定ではなくコンテンツの高さに
 /// フィットさせる（アイテム詳細シートのような項目の少ないシート向け。Issue #464 で
 /// シートの中身が減り、固定高だと空白が目立つため追加した）。
+@Dependencies([
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+])
 Future<T?> appShowModalBottomSheet<T>({
   required BuildContext context,
   required WidgetBuilder builder,

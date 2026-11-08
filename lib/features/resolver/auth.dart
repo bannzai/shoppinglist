@@ -15,6 +15,7 @@ import 'package:shoppinglist/features/onboarding/page.dart';
 import 'package:shoppinglist/provider/bool_shared_preferences.dart';
 import 'package:shoppinglist/provider/shared_preferences.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 part 'auth.g.dart';
 
@@ -23,6 +24,7 @@ Stream<User?> firebaseUserChanges(Ref ref) {
   return FirebaseAuth.instance.userChanges();
 }
 
+@Dependencies([firebaseUserChanges, sharedPreferences, BoolSharedPreferences])
 class AuthResolver extends HookConsumerWidget {
   final Widget Function(BuildContext, User) builder;
 

@@ -17,10 +17,24 @@ import 'package:shoppinglist/utils/image/image.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/stdlib/navigator.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
 
 /// レシートの新規登録・編集シートを表示する。
 ///
 /// [receipt] が null のときは新規登録、非null のときはそのレシートの閲覧/編集/削除。
+@Dependencies([
+  currentUserID,
+  groupDatabase,
+  addReceipt,
+  updateReceipt,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+])
 Future<void> showReceiptEditSheet({
   required BuildContext context,
   required String groupID,
@@ -39,6 +53,7 @@ Future<void> showReceiptEditSheet({
 }
 
 /// レシートの画像・金額・メモを編集するシート本体。
+@Dependencies([currentUserID, groupDatabase, addReceipt, updateReceipt])
 class _ReceiptEditSheet extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;

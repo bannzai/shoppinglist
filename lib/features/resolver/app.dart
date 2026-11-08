@@ -2,7 +2,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/features/resolver/auth.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
 
+@Dependencies([
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+])
 class AppResolvers extends StatelessWidget {
   final Widget Function(BuildContext context, User user) builder;
 

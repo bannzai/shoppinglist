@@ -13,11 +13,28 @@ import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import '../../helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
 
 const _testGroupID = 'test-group-001';
 const _testCategoryAxisID = 'test-axis-001';
 const _testUserID = 'test-user-001';
 
+@Dependencies([
+  groupCategoryAxes,
+  currentUserID,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  groupCategories,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  groupCategoryUpdate,
+])
 Widget _wrap(List<Override> overrides) => ProviderScope(
   overrides: overrides,
   child: localizedTestApp(
@@ -26,6 +43,21 @@ Widget _wrap(List<Override> overrides) => ProviderScope(
   ),
 );
 
+@Dependencies([
+  groupCategoryAxes,
+  currentUserID,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  groupCategories,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  groupCategoryUpdate,
+])
 void main() {
   group('GroupCategoryPage 空状態', () {
     testWidgets('軸が0件のとき CategoryEmptyState（追加ボタン付き）を表示する', (tester) async {

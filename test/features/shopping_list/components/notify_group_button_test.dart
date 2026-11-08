@@ -14,6 +14,8 @@ import 'package:shoppinglist/provider/shared_preferences.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../../helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
 
 /// 手動通知ボタン(Issue #449)の表示条件と初回説明ダイアログのゲートを検証する。
 /// 送信(Firebase Functions 呼び出し)は実機 + 開発者オプションのデバッグユーザーで確認する。
@@ -33,6 +35,7 @@ GroupUserProfile _profile(String userID, String name) => GroupUserProfile(
 
 /// NotifyGroupButton を override 済みコンテナ下に pump する。
 /// [seenGuide] が true のとき「初回説明済み」状態を再現する。
+@Dependencies([currentUserID, groupUserProfiles, BoolSharedPreferences])
 Future<void> _pump(
   WidgetTester tester, {
   required List<GroupUserProfile> profiles,
@@ -74,6 +77,7 @@ Future<void> _pump(
   await tester.pump();
 }
 
+@Dependencies([currentUserID, groupUserProfiles, BoolSharedPreferences])
 void main() {
   testWidgets('ソログループ(他メンバー無し)ではボタンを表示しない', (tester) async {
     await _pump(tester, profiles: [_profile(_meID, '自分')]);

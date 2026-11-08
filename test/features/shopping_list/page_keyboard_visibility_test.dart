@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart' hide group;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
@@ -16,11 +16,79 @@ import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../helpers/localized_test_app.dart';
 import '../../helpers/merge_provider_overrides.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/ai_usage.dart';
+import 'package:shoppinglist/provider/app_user.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/provider/user_groups.dart';
+import 'package:shoppinglist/provider/default_group_update.dart';
+import 'package:shoppinglist/provider/string_shared_preferences.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/group.dart';
+import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
+import 'package:shoppinglist/provider/receipt.dart';
+import 'package:shoppinglist/provider/source_image.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
+import 'package:shoppinglist/provider/theme_color.dart';
 
 /// ソフトキーボード表示中の下部浮遊要素の扱い(進捗ピルは隠す・FAB は隠さず表示し続けて
 /// キーボードを閉じる導線にする。Issue #498)を検証する。
 /// キーボードは MediaQuery.viewInsets で疑似的に再現する
 /// (ShoppingListPage は Scaffold の外側で viewInsets を読むため、ここで注入した値が効く)。
+@Dependencies([
+  userGroups,
+  appUser,
+  shoppingLists,
+  shoppingListAdd,
+  textShoppingListItems,
+  defaultGroupUpdate,
+  currentUserID,
+  addShoppingListItem,
+  remainingImageRecognitionCount,
+  remainingURLRecognitionCount,
+  StringSharedPreferences,
+  shoppingListDuplicate,
+  groupUserProfiles,
+  BoolSharedPreferences,
+  shoppingListUpdate,
+  group,
+  groupUserProfileUpdate,
+  sourceImages,
+  receipts,
+  groupCategoryAxes,
+  shoppingLocations,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  firebaseUserChanges,
+  shoppingListItemBatchUpdate,
+  groupCategories,
+  sharedPreferences,
+  userDatabase,
+  themeColorUpdate,
+  groupDatabase,
+  addReceipt,
+  updateReceipt,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  remainingCategorizeCount,
+  aiCategorizeApply,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  shareableGroupCategoryAxes,
+  groupCategoryImportFromMember,
+  groupCategoryDelete,
+  shoppingLocationAdd,
+  shoppingLocationUpdate,
+  shoppingLocationDelete,
+  groupCategoryUpdate,
+])
 Future<void> _pumpPage(
   WidgetTester tester, {
   required bool isKeyboardVisible,
@@ -81,6 +149,55 @@ Future<void> _pumpPage(
   await tester.pumpAndSettle();
 }
 
+@Dependencies([
+  currentUserID,
+  addShoppingListItem,
+  remainingImageRecognitionCount,
+  remainingURLRecognitionCount,
+  shoppingListAdd,
+  shoppingListDuplicate,
+  textShoppingListItems,
+  userGroups,
+  appUser,
+  shoppingLists,
+  defaultGroupUpdate,
+  StringSharedPreferences,
+  groupUserProfiles,
+  BoolSharedPreferences,
+  shoppingListUpdate,
+  group,
+  groupUserProfileUpdate,
+  sourceImages,
+  receipts,
+  groupCategoryAxes,
+  shoppingLocations,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  firebaseUserChanges,
+  shoppingListItemBatchUpdate,
+  groupCategories,
+  sharedPreferences,
+  userDatabase,
+  themeColorUpdate,
+  groupDatabase,
+  addReceipt,
+  updateReceipt,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  remainingCategorizeCount,
+  aiCategorizeApply,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  shareableGroupCategoryAxes,
+  groupCategoryImportFromMember,
+  groupCategoryDelete,
+  shoppingLocationAdd,
+  shoppingLocationUpdate,
+  shoppingLocationDelete,
+  groupCategoryUpdate,
+])
 void main() {
   testWidgets('キーボード非表示時は FAB と進捗ピルを表示する', (tester) async {
     await _pumpPage(tester, isKeyboardVisible: false);

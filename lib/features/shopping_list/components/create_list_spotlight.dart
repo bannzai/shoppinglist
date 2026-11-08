@@ -14,6 +14,7 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/hooks/use_on_resumed.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 part 'create_list_spotlight.g.dart';
 
@@ -80,6 +81,7 @@ class DebugForceCreateListSpotlight extends _$DebugForceCreateListSpotlight {
 /// - 開発者オプションの強制表示フラグが立っている間(前面へ戻るまで短時間ポーリング)
 ///
 /// 連続 rebuild では評価しない(上記の限定タイミングのみ)。表示条件は [shouldShowCreateListSpotlight]。
+@Dependencies([StringSharedPreferences])
 class CreateListSpotlightHost extends HookConsumerWidget {
   /// 対象グループID。analytics のパラメータに使う。
   final String groupID;
