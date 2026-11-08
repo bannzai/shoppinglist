@@ -44,10 +44,7 @@ analyzer:
     - android/**
     - ios/**
 
-# riverpod_lint 3 は analysis_server_plugin 方式で、ここに登録した時だけ IDE・dart analyze・flutter analyze で動く。
-# plugin は pubspec.lock と別に解決されるため版を固定する。3.2.0 (riverpod_analyzer_utils 1.0.0) は
-# Widget に provider_dependencies の warning を 146 件出し flutter-ci の lint が落ちる (issue #760)。
-# 3.1.9 は riverpod_analyzer_utils 1.0.0-dev.12 を固定しているため、この版で解析器も pubspec.lock と揃う
+# riverpod_lint 3 は analysis_server_plugin 方式で、ここに登録した時だけ IDE・dart analyze・flutter analyze で動く
 plugins:
-  riverpod_lint: "3.1.9"
+  riverpod_lint: ^3.1.9
 
