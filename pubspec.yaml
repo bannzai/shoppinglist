@@ -97,6 +97,10 @@ dependencies:
   flutter_local_notifications: ^21.0.0
   geocoding: ^5.0.0
   firebase_app_check: ^0.4.9
+  # google_maps_flutter の既定の iOS 実装 (google_maps_flutter_ios) は Swift Package Manager に対応しないため、
+  # 依存に足すと既定の実装を置き換える SDK 10 版を使う。SDK 10 は iOS 16 以上で、アプリの最低バージョン (16.0) と同じ
+  # (https://pub.dev/packages/google_maps_flutter_ios の README「Swift Package Manager」)
+  google_maps_flutter_ios_sdk10: ^2.19.0
 
 dev_dependencies:
   flutter_test:
@@ -130,13 +134,12 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-  # iOS の依存は CocoaPods (ios/Podfile.lock) で解決する。Swift Package Manager に移すには、Podfile の Firestore の
-  # 事前ビルド pod (firebase_core の .symlinks の firebase_sdk_version.rb を読む) と、ShoppingListWidgetExtension が
-  # Pods の Firebase の framework を OTHER_LDFLAGS で直接リンクする構成を作り直す必要がある。設定の無い環境
-  # (CI の runner) でも同じ経路になるようプロジェクトに置く。CocoaPods のレジストリは 2026-12-02 に読み取り専用になり、
-  # この無効化も将来は使えなくなる (https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-app-developers)
+  # iOS の依存は CocoaPods を使わず Swift Package Manager だけで解決する。CocoaPods のレジストリは 2026-12-02 に
+  # 読み取り専用になるため (https://blog.cocoapods.org/CocoaPods-Specs-Repo/)。手元の
+  # ~/.config/flutter/settings の値や設定の無い環境 (CI の runner) に左右されないようプロジェクトに置く
+  # (https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-app-developers)
   config:
-    enable-swift-package-manager: false
+    enable-swift-package-manager: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

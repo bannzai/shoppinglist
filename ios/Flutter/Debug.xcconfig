@@ -1,4 +1,3 @@
-#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
 #include "Generated.xcconfig"
 
 // dev/prod 識別子分離(Issue #410 / ADR 0030)。Runner の entitlements が参照する
