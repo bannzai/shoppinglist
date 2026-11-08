@@ -15,6 +15,7 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 const _testGroupID = 'group-1';
 const _testShoppingListID = 'list-1';
@@ -34,6 +35,7 @@ class _FixedCurrentGroupID extends CurrentGroupID {
 /// AppEntityPrepareResolver を模した host。HomeWidgetSync がマウントされるより先に
 /// 同じ shoppingListsProvider を ref.watch することで、Issue #475 の再現条件
 /// (Provider が既に AsyncData に解決済みの状態で HomeWidgetSync が初めて build される)を作る。
+@Dependencies([shoppingLists, appUser, userGroups, textShoppingListItems])
 class _PreResolvedHost extends ConsumerWidget {
   final bool mountChild;
   const _PreResolvedHost({required this.mountChild});
@@ -48,6 +50,7 @@ class _PreResolvedHost extends ConsumerWidget {
   }
 }
 
+@Dependencies([shoppingLists, appUser, userGroups, textShoppingListItems])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -109,6 +112,7 @@ void main() {
       ).overrideWith((ref) => Stream.value(const [])),
     ];
 
+    @Dependencies([shoppingLists, appUser, userGroups, textShoppingListItems])
     Widget buildTree({required bool mountChild}) => ProviderScope(
       overrides: overrides,
       child: MaterialApp(home: _PreResolvedHost(mountChild: mountChild)),

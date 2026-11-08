@@ -12,11 +12,13 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// RootPage の Resolver パターンに倣い、builder で子ウィジェットをラップする。
 /// 表示中グループ/リストは currentGroupIDProvider / currentShoppingListIDProvider から内部で
 /// 読み取り、ref.listen でデータ変更を検知してウィジェットストレージへ同期する。
 /// 表示ツリーの深さに依存しないよう Resolver chain に置く。
+@Dependencies([appUser, userGroups, shoppingLists, textShoppingListItems])
 class HomeWidgetSync extends HookConsumerWidget {
   final Widget Function(BuildContext context) builder;
 
@@ -126,6 +128,7 @@ class HomeWidgetSync extends HookConsumerWidget {
 
 /// resolvedShoppingListID が非nullの時だけマウントされ、現在の買い物リストアイテムの変更を
 /// 検知してウィジェットストレージへ同期する。条件分岐なしで ref.listen するための子 Widget。
+@Dependencies([textShoppingListItems])
 class _HomeWidgetItemSync extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;

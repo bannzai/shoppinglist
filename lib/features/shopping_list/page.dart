@@ -32,6 +32,21 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/ai_usage.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/string_shared_preferences.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/group.dart';
+import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
+import 'package:shoppinglist/provider/receipt.dart';
+import 'package:shoppinglist/provider/source_image.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
+import 'package:shoppinglist/provider/theme_color.dart';
 
 /// 買い物リストのメイン画面。買い物リスト一覧の状態(Loading/Error/空/データ)をハンドリングし、
 /// 共通レイアウト(_ShoppingListShell)と、有効なリストがある時の本体(_ActiveShoppingList)へ振り分ける。
@@ -40,6 +55,55 @@ import 'package:shoppinglist/utils/purchase/purchase.dart';
 /// HomePage(薄いラッパ)経由でも、Previews から直接生成されても、provider を介して動作する。
 /// item 系 provider の購読は resolvedShoppingListID が確定する _ActiveShoppingList 内でのみ行い、
 /// 条件付き ref.watch を持ち込まない。
+@Dependencies([
+  userGroups,
+  appUser,
+  shoppingLists,
+  shoppingListAdd,
+  textShoppingListItems,
+  defaultGroupUpdate,
+  currentUserID,
+  addShoppingListItem,
+  remainingImageRecognitionCount,
+  remainingURLRecognitionCount,
+  StringSharedPreferences,
+  shoppingListDuplicate,
+  groupUserProfiles,
+  BoolSharedPreferences,
+  shoppingListUpdate,
+  group,
+  groupUserProfileUpdate,
+  sourceImages,
+  receipts,
+  groupCategoryAxes,
+  shoppingLocations,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  firebaseUserChanges,
+  shoppingListItemBatchUpdate,
+  groupCategories,
+  sharedPreferences,
+  userDatabase,
+  themeColorUpdate,
+  groupDatabase,
+  addReceipt,
+  updateReceipt,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  remainingCategorizeCount,
+  aiCategorizeApply,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  shareableGroupCategoryAxes,
+  groupCategoryImportFromMember,
+  groupCategoryDelete,
+  shoppingLocationAdd,
+  shoppingLocationUpdate,
+  shoppingLocationDelete,
+  groupCategoryUpdate,
+])
 class ShoppingListPage extends ConsumerWidget {
   const ShoppingListPage({super.key});
 
@@ -67,6 +131,7 @@ class ShoppingListPage extends ConsumerWidget {
       shoppingLists: shoppingListsAsync.value ?? [],
     );
 
+    @Dependencies([shoppingLists])
     void invalidateLists() => ref.invalidate(
       shoppingListsProvider(groupID: groupID, isPremium: isPremium),
     );
@@ -110,6 +175,7 @@ class ShoppingListPage extends ConsumerWidget {
 
 /// 単一 Scaffold の共通レイアウト。paper 背景・GroupChipsBar・Retry を提供し、Expanded に child を置く。
 /// 一覧の各状態(空/エラー/ロード/有効)で共有し、Scaffold が二重にならないようにする。
+@Dependencies([defaultGroupUpdate])
 class _ShoppingListScaffold extends StatelessWidget {
   final String groupID;
   final List<Group>? groups;
@@ -149,6 +215,7 @@ class _ShoppingListScaffold extends StatelessWidget {
 
 /// グループ切替チップ。切替時に選択 provider を更新し defaultGroupID を永続化する。
 /// 切替先グループの先頭リストへフォールバックさせるため currentShoppingListID は null に戻す。
+@Dependencies([defaultGroupUpdate])
 class _GroupChips extends ConsumerWidget {
   final List<Group> groups;
   final String currentGroupID;
@@ -177,6 +244,55 @@ class _GroupChips extends ConsumerWidget {
 /// 有効な買い物リストが確定している(resolvedShoppingListID 非null)時のみマウントされる本体。
 /// item 系 provider の購読をここで無条件に行うため、ShoppingListPage 側に条件付き ref.watch を
 /// 持ち込まずに済む。
+@Dependencies([
+  textShoppingListItems,
+  shoppingLists,
+  currentUserID,
+  addShoppingListItem,
+  remainingImageRecognitionCount,
+  remainingURLRecognitionCount,
+  appUser,
+  StringSharedPreferences,
+  defaultGroupUpdate,
+  shoppingListAdd,
+  shoppingListDuplicate,
+  groupUserProfiles,
+  BoolSharedPreferences,
+  shoppingListUpdate,
+  group,
+  groupUserProfileUpdate,
+  sourceImages,
+  receipts,
+  groupCategoryAxes,
+  shoppingLocations,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  firebaseUserChanges,
+  userGroups,
+  shoppingListItemBatchUpdate,
+  groupCategories,
+  sharedPreferences,
+  userDatabase,
+  themeColorUpdate,
+  groupDatabase,
+  addReceipt,
+  updateReceipt,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  remainingCategorizeCount,
+  aiCategorizeApply,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  shareableGroupCategoryAxes,
+  groupCategoryImportFromMember,
+  groupCategoryDelete,
+  shoppingLocationAdd,
+  shoppingLocationUpdate,
+  shoppingLocationDelete,
+  groupCategoryUpdate,
+])
 class _ActiveShoppingList extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
@@ -379,6 +495,7 @@ class _ActiveShoppingList extends HookConsumerWidget {
 }
 
 /// 買い物リストが 0 件のときの「最初の 1 件を作る」プロンプト。
+@Dependencies([shoppingListAdd])
 class _NoListYet extends ConsumerWidget {
   final String groupID;
   final String? appUserID;

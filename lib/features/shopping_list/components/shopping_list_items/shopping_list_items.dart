@@ -16,6 +16,15 @@ import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/ai_usage.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
 
 part 'shopping_list_items.g.dart';
 
@@ -54,6 +63,35 @@ EdgeInsets _listBottomPadding(BuildContext context) =>
     EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 200);
 
 /// 買い物リストのアイテム一覧。カテゴリ軸があればカテゴリ別グルーピング、無ければフラット表示する。
+@Dependencies([
+  textShoppingListItems,
+  groupCategoryAxes,
+  shoppingListItemBatchUpdate,
+  groupCategories,
+  currentUserID,
+  groupDatabase,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  remainingCategorizeCount,
+  aiCategorizeApply,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  addShoppingListItem,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryDelete,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+  groupCategoryUpdate,
+])
 class ShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
@@ -123,6 +161,34 @@ class ShoppingListItems extends ConsumerWidget {
 }
 
 /// カテゴリが存在しない場合のフラット表示（従来の表示）
+@Dependencies([
+  shoppingListItemBatchUpdate,
+  currentUserID,
+  groupDatabase,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  remainingCategorizeCount,
+  aiCategorizeApply,
+  addShoppingListItem,
+  groupCategoryAxes,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  groupCategories,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+  groupCategoryUpdate,
+])
 class _FlatShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
@@ -237,6 +303,34 @@ class _FlatShoppingListItems extends ConsumerWidget {
 }
 
 /// カテゴリが存在する場合のグルーピング表示
+@Dependencies([
+  groupCategories,
+  shoppingListItemBatchUpdate,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  remainingCategorizeCount,
+  aiCategorizeApply,
+  currentUserID,
+  groupDatabase,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  addShoppingListItem,
+  groupCategoryAxes,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryDelete,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+  groupCategoryUpdate,
+])
 class _CategorizedShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
@@ -425,6 +519,32 @@ bool _sectionOrderReflected({
 /// カテゴリへ message を完全一致キーワードとして付け替えて分類を変更し、order は移動後の
 /// 表示順で全体を 0..N-1 に正規化して永続化する。セクション並び替えは GroupCategory.order
 /// (買い物場所選択時は locationOrders)へ永続化され、カテゴリ管理画面の並び順とも共有される。
+@Dependencies([
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  shoppingListItemBatchUpdate,
+  currentUserID,
+  groupDatabase,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  addShoppingListItem,
+  groupCategoryAxes,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  groupCategories,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryDelete,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+  groupCategoryUpdate,
+])
 class _GroupedListView extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;

@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppinglist/provider/bool_shared_preferences.dart';
 import 'package:shoppinglist/provider/shared_preferences.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// SharedPreferences をモック初期化し、sharedPreferencesProvider を override した
 /// ProviderContainer を返す。
@@ -19,6 +20,7 @@ Future<ProviderContainer> _container(Map<String, Object> initialValues) async {
   return container;
 }
 
+@Dependencies([BoolSharedPreferences])
 void main() {
   group('boolSharedPreferences family のインスタンス同一性', () {
     test('同じ key は同一の Notifier インスタンスを返す', () async {

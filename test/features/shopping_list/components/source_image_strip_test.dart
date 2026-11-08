@@ -7,6 +7,7 @@ import 'package:shoppinglist/features/shopping_list/components/source_image_stri
 import 'package:shoppinglist/provider/source_image.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 const _testGroupID = 'test-group-001';
 const _testListID = 'list-001';
@@ -22,6 +23,7 @@ GroupShoppingListSourceImage _sourceImage(
       'groups/$_testGroupID/shoppingLists/$_testListID/sourceImages/source-image-$index.jpeg',
 );
 
+@Dependencies([sourceImages])
 Future<void> _pumpStrip(
   WidgetTester tester, {
   required List<GroupShoppingListSourceImage> sourceImages,
@@ -50,6 +52,7 @@ Future<void> _pumpStrip(
   await tester.pumpAndSettle();
 }
 
+@Dependencies([sourceImages])
 void main() {
   group('SourceImageStrip', () {
     testWidgets('元画像が0枚なら何も表示しない', (WidgetTester tester) async {

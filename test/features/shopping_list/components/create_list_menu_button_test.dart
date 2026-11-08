@@ -14,6 +14,7 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../../helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// リスト作成の呼び出しを記録するモック（Firestore を叩かない）。
 class _RecordingShoppingListAdd extends ShoppingListAdd {
@@ -173,9 +174,21 @@ GroupShoppingListItem _sourceShoppingListItem({
   );
 }
 
+@Dependencies([
+  textShoppingListItems,
+  shoppingListAdd,
+  addShoppingListItem,
+  shoppingListDuplicate,
+])
 void main() {
   final buttonFinder = find.byKey(const Key('create_list_menu_button'));
 
+  @Dependencies([
+    textShoppingListItems,
+    shoppingListAdd,
+    addShoppingListItem,
+    shoppingListDuplicate,
+  ])
   Future<void> pumpButton(
     WidgetTester tester, {
     required ShoppingListAdd shoppingListAdd,

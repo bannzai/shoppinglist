@@ -13,6 +13,26 @@ import 'package:shoppinglist/features/previews/screens/shopping_list_setting_pre
 import 'package:shoppinglist/features/shopping_list/components/ai_categorize_preview_sheet.dart';
 import 'package:shoppinglist/features/shopping_list/components/ai_review_sheet.dart';
 import 'package:shoppinglist/screenshot/screenshot_sheet_host.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/provider/app_user.dart';
+import 'package:shoppinglist/provider/group.dart';
+import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
+import 'package:shoppinglist/provider/user_groups.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
+import 'package:shoppinglist/provider/ai_usage.dart';
+import 'package:shoppinglist/provider/default_group_update.dart';
+import 'package:shoppinglist/provider/string_shared_preferences.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/receipt.dart';
+import 'package:shoppinglist/provider/source_image.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
+import 'package:shoppinglist/provider/theme_color.dart';
 
 /// 撮影する 1 ページ。`screenshotCopies` の同じ添字のキャッチコピーと組み合わせる。
 class ScreenshotPage {
@@ -29,6 +49,55 @@ class ScreenshotPage {
 ///
 /// App Store は 1 枚目の訴求力が最も高いため、共有という中心価値を先頭に置き、
 /// 整理 (カテゴリ) → 入力の手軽さ (AI) → 使い分け (店舗) の順で機能を見せる。
+@Dependencies([
+  groupCategoryAxes,
+  currentUserID,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  userGroups,
+  appUser,
+  shoppingLists,
+  groupCategories,
+  shoppingLocations,
+  shoppingListUpdate,
+  textShoppingListItems,
+  group,
+  shoppingListAdd,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  shoppingListDuplicate,
+  defaultGroupUpdate,
+  addShoppingListItem,
+  remainingImageRecognitionCount,
+  remainingURLRecognitionCount,
+  StringSharedPreferences,
+  groupCategoryUpdate,
+  BoolSharedPreferences,
+  groupUserProfileUpdate,
+  sourceImages,
+  receipts,
+  shoppingLocationAdd,
+  shoppingLocationUpdate,
+  shoppingLocationDelete,
+  firebaseUserChanges,
+  shoppingListItemBatchUpdate,
+  sharedPreferences,
+  userDatabase,
+  themeColorUpdate,
+  groupDatabase,
+  addReceipt,
+  updateReceipt,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  remainingCategorizeCount,
+  aiCategorizeApply,
+])
 final screenshotPages = <ScreenshotPage>[
   ScreenshotPage(
     name: 'shopping_list',

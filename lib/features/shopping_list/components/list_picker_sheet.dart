@@ -10,11 +10,13 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/stdlib/navigator.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// リスト切替用のボトムシート。
 /// 旧 `ShoppingListAppBar` の `DropdownButton` を置き換えるシート版 UI。
 /// 現在選択中のリストには accent のチェックマークを表示する。
 /// 末尾に「+ 新しいリストを追加」 row を備える。
+@Dependencies([shoppingListAdd])
 class ListPickerSheet extends HookConsumerWidget {
   final String groupID;
   final List<GroupShoppingList> shoppingLists;

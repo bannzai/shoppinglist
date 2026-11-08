@@ -6,9 +6,11 @@ import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// テーマカラー（5 色プリセット）の選択画面。プレミアム機能。
 /// `design_handoff_shopping_list/source/screens-settings.jsx#ThemeColorSelectionPage` 相当。
+@Dependencies([appUser, themeColorUpdate])
 class ThemeColorSelectionPage extends ConsumerWidget {
   const ThemeColorSelectionPage({super.key});
 

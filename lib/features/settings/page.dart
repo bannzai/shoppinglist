@@ -32,7 +32,48 @@ import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/default_group_update.dart';
+import 'package:shoppinglist/provider/user_groups.dart';
+import 'package:shoppinglist/provider/group.dart';
+import 'package:shoppinglist/provider/theme_color.dart';
+import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/provider/string_shared_preferences.dart';
+import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
 
+@Dependencies([
+  appUser,
+  currentUserID,
+  groupUserProfiles,
+  groupUserProfileUpdate,
+  firebaseUserChanges,
+  userGroups,
+  defaultGroupUpdate,
+  BoolSharedPreferences,
+  group,
+  themeColorUpdate,
+  shoppingLists,
+  addShoppingListItem,
+  textShoppingListItems,
+  StringSharedPreferences,
+  shoppingLocations,
+  shoppingLocationAdd,
+  shoppingLocationUpdate,
+  shoppingLocationDelete,
+  groupCategoryAxes,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  groupCategories,
+  shareableGroupCategoryAxes,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  groupCategoryUpdate,
+])
 class SettingPage extends HookConsumerWidget {
   const SettingPage({super.key});
 
@@ -490,6 +531,7 @@ class _VersionLabelState extends State<_VersionLabel> {
 /// サインアウトボタン。
 /// `design_handoff_shoppinglist/preview/screens-settings.jsx` 準拠の確認ダイアログ
 /// 経由で `FirebaseAuth.instance.signOut()` を実行する。
+@Dependencies([firebaseUserChanges])
 class _SignOutButton extends ConsumerWidget {
   const _SignOutButton();
 

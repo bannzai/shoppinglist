@@ -20,6 +20,8 @@ import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import '../../helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
 
 const _testGroupID = 'test-group-001';
 const _testCategoryAxisID = 'test-axis-001';
@@ -65,6 +67,21 @@ GroupShoppingListItem _item({required String message}) => GroupShoppingListItem(
 
 /// アイテム詳細シートを模した host。実シートと同じく findMatchingCategoryID で
 /// 所属カテゴリを計算して表示し、ボタンから選択モードの GroupCategoryPage を push する。
+@Dependencies([
+  groupCategories,
+  groupCategoryAxes,
+  currentUserID,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  groupCategoryUpdate,
+])
 class _DetailHost extends ConsumerWidget {
   final GroupShoppingListItem item;
   const _DetailHost({required this.item});
@@ -214,6 +231,21 @@ List<Override> _overrides({
   ).overrideWith((ref) => fake),
 ];
 
+@Dependencies([
+  groupCategories,
+  groupCategoryAxes,
+  currentUserID,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  groupCategoryUpdate,
+])
 void main() {
   group('カテゴリ選択フロー（詳細→選択→pop→紐付け表示）', () {
     testWidgets('未分類アイテムを選択すると pop してカテゴリが紐づく', (tester) async {

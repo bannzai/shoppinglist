@@ -12,7 +12,9 @@ import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/invitation_code_validator.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
+@Dependencies([defaultGroupUpdate])
 class GroupInvitationAcceptPage extends HookConsumerWidget {
   const GroupInvitationAcceptPage({super.key});
 

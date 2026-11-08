@@ -25,6 +25,7 @@ import 'package:shoppinglist/utils/image/image.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:shoppinglist/utils/stdlib/navigator.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// `ShoppingListPage` の右下に配置する展開式 FAB。
 /// `design_handoff_shopping_list/source/screens-list.jsx#FAB` 相当。
@@ -34,6 +35,12 @@ import 'package:shoppinglist/utils/stdlib/navigator.dart';
 /// 長押し: 写真 / URL / テキスト貼り付け のメニューを上方向に展開する。
 /// リスト作成は上部バー(`ListTopBar`)の `CreateListMenuButton` が担う(Issue #461)。
 /// キーボード表示中も隠さず表示し続け、タップ・長押しでキーボードを閉じる(Issue #498)。
+@Dependencies([
+  currentUserID,
+  addShoppingListItem,
+  remainingImageRecognitionCount,
+  remainingURLRecognitionCount,
+])
 class ExpandableFab extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;
@@ -590,6 +597,7 @@ Future<void> reviewAndAddAICandidates({
 
 /// URL を入力して AI で買い物リストアイテムを生成するダイアログ。
 /// 旧 `ShoppingListAppBar._URLInputDialog` を移植したもの。
+@Dependencies([addShoppingListItem, currentUserID])
 class _URLInputDialog extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;

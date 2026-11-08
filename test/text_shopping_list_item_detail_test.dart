@@ -9,6 +9,11 @@ import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
 
 const _testGroupID = 'test-group-001';
 const _testUserID = 'test-user-001';
@@ -38,6 +43,22 @@ const _testAxis = GroupCategoryAxis(
   order: 0,
 );
 
+@Dependencies([
+  groupDatabase,
+  groupCategoryAxes,
+  groupCategories,
+  currentUserID,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  groupCategoryUpdate,
+])
 Future<void> _pumpSheet(
   WidgetTester tester, {
   required List<GroupCategoryAxis> categoryAxes,
@@ -67,6 +88,22 @@ Future<void> _pumpSheet(
   await tester.pumpAndSettle();
 }
 
+@Dependencies([
+  groupDatabase,
+  groupCategoryAxes,
+  groupCategories,
+  currentUserID,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  groupCategoryUpdate,
+])
 void main() {
   group(
     'TextShoppingListItemDetailBottomSheet（Issue #464: 説明・写真・カラーの編集廃止）',

@@ -7,6 +7,12 @@ import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/receipt.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
 
 /// 買い物リスト上部（AIカテゴリ分けボタンの直上）に表示するレシート登録/編集の導線。
 ///
@@ -20,6 +26,17 @@ import 'package:shoppinglist/utils/purchase/purchase.dart';
 /// する（`receipts.isEmpty` のみで出し分ける）。AIカテゴリ分けボタン（accent 塗りつぶしで
 /// 目立つ）より主張を抑えるため soft（accent 薄塗り）トーンの控えめな pill にする。
 /// 非プレミアムユーザーがタップした場合は Paywall へ誘導する（プレミアム機能）。
+@Dependencies([
+  receipts,
+  currentUserID,
+  groupDatabase,
+  addReceipt,
+  updateReceipt,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+])
 class ReceiptAddButton extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;

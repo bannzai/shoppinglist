@@ -12,6 +12,7 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// 表示中の買い物リストの更新を、グループの他メンバーへプッシュ通知で知らせる手動ボタン。
 /// グループに他メンバーが居るときだけ表示する(ソロでは非表示)。
@@ -20,6 +21,7 @@ import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 ///
 /// 自動検知による通知バー(旧 FamilyNotificationTrigger / NotificationMemberBar)を廃止し、
 /// 手動ボタンへ一本化した(Issue #449)。
+@Dependencies([currentUserID, groupUserProfiles, BoolSharedPreferences])
 class NotifyGroupButton extends HookConsumerWidget {
   final String groupID;
   final String shoppingListID;

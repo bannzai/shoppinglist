@@ -13,6 +13,7 @@ import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 
 import '../../helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 const _groupID = 'group-001';
 const _currentUserID = 'user-current';
@@ -55,6 +56,11 @@ class _RecordingImport extends GroupCategoryImportFromMember {
   }
 }
 
+@Dependencies([
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+])
 Widget _app({
   required List<GroupCategoryAxis> axes,
   required _RecordingImport import,
@@ -93,6 +99,11 @@ Widget _app({
   ),
 );
 
+@Dependencies([
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+])
 void main() {
   testWidgets('別メンバーのカテゴリ軸だけを表示し、自分の軸へ取り込む', (tester) async {
     final import = _RecordingImport();

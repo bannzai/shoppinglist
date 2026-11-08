@@ -7,11 +7,13 @@ import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// `ShoppingListSettingPage` の「買い物する場所」Cell から遷移する選択画面。
 /// 既存 locations + 「なし」を AppCell list で表示し、タップで選択結果 (`String?`) を
 /// `Navigator.pop` で返す。`pop(null)` は「なし」を、`pop(<location.id>)` はその場所を表す。
 /// 戻り値判別のため、AppBar の閉じるボタンと OS back は `pop(_sentinel)` で抜ける。
+@Dependencies([shoppingLocations])
 class ShoppingLocationSelectPage extends ConsumerWidget {
   final String groupID;
   final String? currentLocationID;
@@ -111,6 +113,7 @@ class _LocationSelectResult {
 
 /// `ShoppingLocationSelectPage` を起動し、明示的に選択された場合のみ
 /// `(true, locationID)` を返すヘルパー。画面戻しの場合は `(false, null)`。
+@Dependencies([shoppingLocations])
 Future<({bool changed, String? locationID})> pushShoppingLocationSelectPage({
   required BuildContext context,
   required String groupID,

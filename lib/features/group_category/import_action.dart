@@ -6,8 +6,14 @@ import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// 同じグループの別メンバーが持つカテゴリ設定を、自分の設定へ取り込む導線。
+@Dependencies([
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+])
 class GroupCategoryImportAction extends StatelessWidget {
   final String groupID;
   final String currentUserID;
@@ -53,6 +59,11 @@ class GroupCategoryImportAction extends StatelessWidget {
   );
 }
 
+@Dependencies([
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+])
 class _GroupCategoryImportDialog extends ConsumerStatefulWidget {
   final String groupID;
   final String currentUserID;

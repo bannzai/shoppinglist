@@ -7,8 +7,10 @@ import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// テーマカラー設定のListTile。プレミアムユーザーのみ選択画面へ遷移可能。
+@Dependencies([appUser, themeColorUpdate])
 class ThemeColorTile extends ConsumerWidget {
   const ThemeColorTile({super.key});
 

@@ -14,8 +14,17 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// 開発者オプションのモーダルボトムシートを表示する。
+@Dependencies([
+  currentUserID,
+  appUser,
+  shoppingLists,
+  addShoppingListItem,
+  textShoppingListItems,
+  StringSharedPreferences,
+])
 void showDeveloperOptionsModal(BuildContext context) {
   showModalBottomSheet(
     context: context,
@@ -26,6 +35,14 @@ void showDeveloperOptionsModal(BuildContext context) {
 
 /// 開発者オプションを全画面ページとして表示する。
 /// Maestro E2Eテストではモーダル内の要素を検出できないため、この関数を使用する。
+@Dependencies([
+  currentUserID,
+  appUser,
+  shoppingLists,
+  addShoppingListItem,
+  textShoppingListItems,
+  StringSharedPreferences,
+])
 void navigateToDeveloperOptionsPage(BuildContext context) {
   Navigator.push(
     context,
@@ -34,6 +51,14 @@ void navigateToDeveloperOptionsPage(BuildContext context) {
 }
 
 /// 全画面ページ表示用。Scaffold + AppBar を使用。
+@Dependencies([
+  currentUserID,
+  appUser,
+  shoppingLists,
+  addShoppingListItem,
+  textShoppingListItems,
+  StringSharedPreferences,
+])
 class DeveloperOptionsPage extends StatelessWidget {
   const DeveloperOptionsPage({super.key});
 
@@ -50,6 +75,14 @@ class DeveloperOptionsPage extends StatelessWidget {
 }
 
 /// モーダル表示用のラッパー。DraggableScrollableSheet を使用。
+@Dependencies([
+  currentUserID,
+  appUser,
+  shoppingLists,
+  addShoppingListItem,
+  textShoppingListItems,
+  StringSharedPreferences,
+])
 class _DeveloperOptionsSheet extends HookConsumerWidget {
   const _DeveloperOptionsSheet();
 
@@ -70,6 +103,14 @@ class _DeveloperOptionsSheet extends HookConsumerWidget {
   }
 }
 
+@Dependencies([
+  currentUserID,
+  appUser,
+  shoppingLists,
+  addShoppingListItem,
+  textShoppingListItems,
+  StringSharedPreferences,
+])
 class _DeveloperOptionsContent extends HookConsumerWidget {
   final ScrollController? scrollController;
 

@@ -15,12 +15,14 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// 設定画面の「アカウント」セクション（issue #548）。
 /// ゲスト（匿名）ユーザーには説明行と Apple / Google のリンク導線を表示し、
 /// リンク済みの provider はサインイン方法として表示する。
 /// リンクは `User.linkWithCredential` で行うため UID が維持され、
 /// それまでに作ったリスト・グループはそのまま引き継がれる。
+@Dependencies([firebaseUserChanges])
 class AccountLinkSection extends HookConsumerWidget {
   const AccountLinkSection({super.key});
 

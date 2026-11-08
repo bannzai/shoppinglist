@@ -9,8 +9,10 @@ import 'package:shoppinglist/utils/local_notification/local_notification.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// 位置情報リマインダーの有効/無効を切り替えるトグル。
+@Dependencies([BoolSharedPreferences])
 class LocationReminderToggle extends ConsumerWidget {
   const LocationReminderToggle({super.key});
 

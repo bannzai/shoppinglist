@@ -8,6 +8,8 @@ import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/default_group_update.dart';
 
 const _appUser = AppUser(id: 'test-user-001');
 
@@ -25,6 +27,7 @@ Widget _wrap() => ProviderScope(
   ),
 );
 
+@Dependencies([defaultGroupUpdate])
 void main() {
   testWidgets('「自分のリストを作る」で createGroup フローが実行される', (tester) async {
     await tester.pumpWidget(_wrap());

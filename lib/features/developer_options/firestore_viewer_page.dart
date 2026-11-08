@@ -15,9 +15,11 @@ import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// 開発者オプションからFirestoreの全関連データをJSON形式で閲覧するページ。
 /// QAテスト時にDBの状態を確認するために使用する。
+@Dependencies([currentUserID])
 class FirestoreViewerPage extends ConsumerWidget {
   const FirestoreViewerPage({super.key});
 

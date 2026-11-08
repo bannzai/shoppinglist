@@ -9,6 +9,7 @@ import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 const _testGroupID = 'test-group-001';
 const _testCategoryAxisID = 'test-axis-001';
@@ -56,6 +57,7 @@ List<Override> _overrides(_SpyCategoryUpdate spy, {String name = '食品'}) => [
 
 /// ホーム画面のボタンから編集画面を push する。AppBar の戻るボタンを出すことで
 /// `tester.pageBack()` による pop(画面離脱)を検証できるようにする。
+@Dependencies([groupCategories, groupCategoryUpdate])
 Future<void> _pumpAndOpenEditPage(
   WidgetTester tester, {
   required List<Override> overrides,
@@ -93,6 +95,7 @@ Future<void> _pumpAndOpenEditPage(
   await tester.pumpAndSettle();
 }
 
+@Dependencies([groupCategories, groupCategoryUpdate])
 void main() {
   group('カテゴリ編集 画面離脱時の自動保存', () {
     testWidgets('名前を変更して戻る(pop)と自動保存される', (tester) async {

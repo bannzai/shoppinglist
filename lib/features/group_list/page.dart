@@ -14,7 +14,33 @@ import 'package:shoppinglist/provider/user_groups.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/group.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
 
+@Dependencies([
+  appUser,
+  userGroups,
+  groupUserProfiles,
+  group,
+  currentUserID,
+  shoppingLocations,
+  shoppingLocationAdd,
+  shoppingLocationUpdate,
+  shoppingLocationDelete,
+  groupCategoryAxes,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  groupCategories,
+  shareableGroupCategoryAxes,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  groupCategoryUpdate,
+])
 class GroupListPage extends ConsumerWidget {
   const GroupListPage({super.key});
 
@@ -127,6 +153,7 @@ class GroupListPage extends ConsumerWidget {
 
 /// 1 グループのカード。3-stack avatars + 名前 + デフォルトバッジ + メンバー数。
 /// `design_handoff_shoppinglist/preview/screens-groups.jsx#GroupListPage` 相当。
+@Dependencies([groupUserProfiles])
 class _GroupCard extends ConsumerWidget {
   final Group group;
   final bool isDefault;

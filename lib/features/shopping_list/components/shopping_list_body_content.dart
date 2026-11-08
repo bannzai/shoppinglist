@@ -11,10 +11,56 @@ import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/config/feature_flags.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/provider/receipt.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/provider/source_image.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/ai_usage.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
 
 /// ShoppingListPage のメインコンテンツ部分。
 /// アイテムが空のときは [EmptyTextShoppingListItems] を表示し、
 /// それ以外では複製元リストへのリンク（複製で作られたリストのときのみ）と [ShoppingListItems] を表示する。
+@Dependencies([
+  sourceImages,
+  addShoppingListItem,
+  currentUserID,
+  receipts,
+  textShoppingListItems,
+  groupCategoryAxes,
+  shoppingListItemBatchUpdate,
+  groupCategories,
+  groupDatabase,
+  addReceipt,
+  updateReceipt,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  remainingCategorizeCount,
+  aiCategorizeApply,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryDelete,
+  groupCategoryUpdate,
+])
 class ShoppingListBodyContent extends StatelessWidget {
   final String groupID;
   final String shoppingListID;

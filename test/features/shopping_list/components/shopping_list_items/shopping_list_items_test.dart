@@ -23,6 +23,14 @@ import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import '../../../../helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/ai_usage.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
 
 /// カテゴリ軸なしテスト用のグループID。previewProviderOverrides が override 済みの
 /// mockGroupID（軸あり）と重複 override しないよう専用IDにする。
@@ -32,6 +40,35 @@ const _noCategoryAxisGroupID = 'no-category-axis-group';
 const _loadingGroupID = 'loading-category-axis-group';
 
 /// カテゴリ軸あり（previewProviderOverrides のデフォルト）で ShoppingListItems を pump する。
+@Dependencies([
+  textShoppingListItems,
+  groupCategoryAxes,
+  shoppingListItemBatchUpdate,
+  groupCategories,
+  currentUserID,
+  groupDatabase,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  remainingCategorizeCount,
+  aiCategorizeApply,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  addShoppingListItem,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryDelete,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+  groupCategoryUpdate,
+])
 Future<void> _pump(WidgetTester tester) async {
   // ignore: invalid_use_of_visible_for_testing_member
   SharedPreferences.setMockInitialValues({});
@@ -55,6 +92,35 @@ Future<void> _pump(WidgetTester tester) async {
 }
 
 /// カテゴリ軸なしのグループで ShoppingListItems を pump する（フラット表示になる）。
+@Dependencies([
+  textShoppingListItems,
+  groupCategoryAxes,
+  shoppingListItemBatchUpdate,
+  groupCategories,
+  currentUserID,
+  groupDatabase,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  remainingCategorizeCount,
+  aiCategorizeApply,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  addShoppingListItem,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryDelete,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+  groupCategoryUpdate,
+])
 Future<void> _pumpFlat(WidgetTester tester) async {
   // ignore: invalid_use_of_visible_for_testing_member
   SharedPreferences.setMockInitialValues({});
@@ -88,6 +154,35 @@ Future<void> _pumpFlat(WidgetTester tester) async {
 
 /// カテゴリ軸なしのグループで任意のアイテムリストをフラット表示で pump する。
 /// スクロールでキーボードが閉じる挙動を検証するため、件数を呼び出し側で指定できるようにする。
+@Dependencies([
+  textShoppingListItems,
+  groupCategoryAxes,
+  shoppingListItemBatchUpdate,
+  groupCategories,
+  currentUserID,
+  groupDatabase,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  remainingCategorizeCount,
+  aiCategorizeApply,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  addShoppingListItem,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryDelete,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+  groupCategoryUpdate,
+])
 Future<void> _pumpFlatWithItems(
   WidgetTester tester, {
   required List<GroupShoppingListItem> items,
@@ -153,6 +248,35 @@ GroupShoppingListItem _item({
 );
 
 /// 任意のアイテムリストでカテゴリ表示の ShoppingListItems を pump する。
+@Dependencies([
+  textShoppingListItems,
+  groupCategoryAxes,
+  shoppingListItemBatchUpdate,
+  groupCategories,
+  currentUserID,
+  groupDatabase,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  remainingCategorizeCount,
+  aiCategorizeApply,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  addShoppingListItem,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryDelete,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+  groupCategoryUpdate,
+])
 Future<void> _pumpWithItems(
   WidgetTester tester, {
   required List<GroupShoppingListItem> items,
@@ -306,6 +430,35 @@ const _premiumEntitlement = EntitlementInfo(
 /// 食品(牛乳・卵・食パン)・日用品(洗剤)の2カテゴリ + 未分類(ガムテープ)の3セクション構成。
 /// 食品を3件にして、ヘッダードラッグ proxy のプレビュー上限(先頭2件)を検証できるようにする。
 /// [shoppingLocationID] を渡すとプレミアム会員として買い物場所選択中の表示にする。
+@Dependencies([
+  textShoppingListItems,
+  groupCategoryAxes,
+  shoppingListItemBatchUpdate,
+  groupCategories,
+  currentUserID,
+  groupDatabase,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  remainingCategorizeCount,
+  aiCategorizeApply,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  addShoppingListItem,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryDelete,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+  groupCategoryUpdate,
+])
 Future<
   ({
     _RecordingCategoryBatchUpdate categoryBatch,
@@ -435,6 +588,35 @@ Future<void> _longPressDragHeader(
   await tester.pumpAndSettle();
 }
 
+@Dependencies([
+  remainingCategorizeCount,
+  aiCategorizeApply,
+  currentUserID,
+  groupDatabase,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  textShoppingListItems,
+  groupCategoryAxes,
+  addShoppingListItem,
+  shoppingListItemBatchUpdate,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  groupCategories,
+  shoppingLocations,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryDelete,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+  groupCategoryUpdate,
+])
 void main() {
   group('ShoppingListItems: スクロールでキーボードを閉じる', () {
     testWidgets('フラット表示の ReorderableListView に onDrag プロパティが設定されている', (

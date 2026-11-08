@@ -9,6 +9,7 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// 空の買い物リストに表示する「使い方ヒント」ビュー。
 /// `design_handoff_shopping_list/source/screens-list.jsx#ShoppingListEmpty` 相当。
@@ -16,6 +17,7 @@ import 'package:shoppinglist/utils/logger/analytics.dart';
 /// - 上部に「タップで入力開始できる空行」を 1 つ配置
 /// - 中段に GhostItemRow × 5 で例文を表示
 /// - 下部に dashed border のヒントカードで操作方法を説明
+@Dependencies([addShoppingListItem, currentUserID])
 class EmptyTextShoppingListItems extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;
