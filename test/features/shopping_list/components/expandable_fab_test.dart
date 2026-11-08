@@ -14,6 +14,7 @@ import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import '../../../helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// 追加処理の呼び出し回数を記録するモック（Firestore を叩かない）。
 class _RecordingAddShoppingListItem extends AddShoppingListItem {
@@ -57,7 +58,9 @@ class _ProcessingAIProcessing extends AIProcessing {
   AIProcessingType? build() => type;
 }
 
+@Dependencies([addShoppingListItem])
 void main() {
+  @Dependencies([addShoppingListItem])
   Future<_RecordingAddShoppingListItem> pumpFab(
     WidgetTester tester, {
     AIProcessingType? aiProcessingType,

@@ -11,11 +11,13 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/config/feature_flags.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// アプリ初回起動時のスライド式オンボーディング。
 /// `design_handoff_shoppinglist/preview/screens-onboarding.jsx` 相当。
 ///
 /// 完走 / スキップで hasSeenOnboarding を true に保存し、二度と表示されないようにする。
+@Dependencies([BoolSharedPreferences])
 class OnboardingPage extends HookConsumerWidget {
   const OnboardingPage({super.key});
 
@@ -153,6 +155,7 @@ class _SlideContent {
   });
 }
 
+@Dependencies([BoolSharedPreferences])
 class _OnboardingSlide extends StatelessWidget {
   final _SlideContent data;
   const _OnboardingSlide({required this.data});

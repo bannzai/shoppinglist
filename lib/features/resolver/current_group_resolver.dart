@@ -4,10 +4,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shoppinglist/components/loading/loading.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/current_group_id.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// RootPage の Resolver パターンに倣い、currentGroupID を確定させてから子を描画する。
 /// 親(AppEntityPrepareResolver)が defaultGroupID の存在を保証済みのため、ここでは
 /// currentGroupID が未設定の間だけ appUser.defaultGroupID を流し込む初期化責務を持つ。
+@Dependencies([appUser])
 class CurrentGroupResolver extends HookConsumerWidget {
   final Widget Function(BuildContext context) builder;
 

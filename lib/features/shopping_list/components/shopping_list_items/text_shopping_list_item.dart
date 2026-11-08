@@ -15,6 +15,13 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
 
 /// 既存アイテムの編集を Enter で確定した後、末尾の入力行（空行）へフォーカスを戻すための
 /// 要求シグナル。値はインクリメントされるカウンタで、空の入力行はこの変化を購読して自身を
@@ -32,6 +39,32 @@ final shoppingListInputRowFocusRequestProvider = StateProvider<int>((ref) => 0);
 ///
 /// focused 中または手入力直後は、左端に 2px の accent ボーダーと accentSoft の背景を出す。
 /// checked 時はテキスト色 `t.checked` + 取り消し線、Checkbox 内 accent 塗り。
+@Dependencies([
+  currentUserID,
+  groupDatabase,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  addShoppingListItem,
+  shoppingListItemBatchUpdate,
+  groupCategoryAxes,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  groupCategories,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+  groupCategoryUpdate,
+])
 class TextShoppingListItemWidget extends HookConsumerWidget {
   final String groupID;
   final GroupShoppingListItem textShoppingListItem;
@@ -572,6 +605,13 @@ class _CircleCheckboxState extends State<_CircleCheckbox>
   }
 }
 
+@Dependencies([
+  currentUserID,
+  groupDatabase,
+  addShoppingListItem,
+  shoppingListItemBatchUpdate,
+  updateShoppingListItem,
+])
 class TextShoppingListItemTextField extends HookConsumerWidget {
   final String groupID;
   final TextEditingController textEditingController;

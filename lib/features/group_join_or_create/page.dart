@@ -9,12 +9,15 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/default_group_update.dart';
 
 /// ログイン後・グループ未参加(defaultGroupID == null)のユーザーに表示する初期セットアップ画面。
 /// 「招待コードで参加」か「自分のリストを作る(ソログループ作成)」を選ばせる。
 /// どちらでも defaultGroupID がセットされ、AppEntityPrepareResolver が再ビルドされて
 /// 通常フロー(ホーム)へ遷移する。本画面は Navigator のルートではなく
 /// AppEntityPrepareResolver の直接の子として表示されるため、明示的な pop は不要で画面が置き換わる。
+@Dependencies([defaultGroupUpdate])
 class GroupJoinOrCreatePage extends HookConsumerWidget {
   /// ソログループ作成に必要なログイン済みユーザー。AppEntityPrepareResolver が
   /// 非 null を保証した上で渡す。

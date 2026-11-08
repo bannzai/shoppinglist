@@ -20,6 +20,26 @@ import 'package:shoppinglist/features/previews/screens/shopping_list_setting_pre
 import 'package:shoppinglist/features/previews/screens/sign_out_dialog_preview.dart';
 import 'package:shoppinglist/features/settings/page.dart';
 import 'package:shoppinglist/features/shopping_location/page.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/app_user.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/default_group_update.dart';
+import 'package:shoppinglist/provider/group.dart';
+import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
+import 'package:shoppinglist/provider/user_groups.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/provider/theme_color.dart';
+import 'package:shoppinglist/provider/ai_usage.dart';
+import 'package:shoppinglist/provider/string_shared_preferences.dart';
+import 'package:shoppinglist/provider/receipt.dart';
+import 'package:shoppinglist/provider/source_image.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
 
 class _PreviewEntry {
   final String title;
@@ -28,6 +48,55 @@ class _PreviewEntry {
   const _PreviewEntry({required this.title, required this.builder});
 }
 
+@Dependencies([
+  BoolSharedPreferences,
+  appUser,
+  currentUserID,
+  groupUserProfiles,
+  groupUserProfileUpdate,
+  userGroups,
+  group,
+  defaultGroupUpdate,
+  shoppingLocations,
+  shoppingLocationAdd,
+  shoppingLocationUpdate,
+  shoppingLocationDelete,
+  groupCategoryAxes,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  groupCategories,
+  shoppingLists,
+  firebaseUserChanges,
+  groupCategoryUpdate,
+  shoppingListUpdate,
+  textShoppingListItems,
+  shoppingListAdd,
+  themeColorUpdate,
+  shareableGroupCategoryAxes,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  shoppingListDuplicate,
+  addShoppingListItem,
+  remainingImageRecognitionCount,
+  remainingURLRecognitionCount,
+  StringSharedPreferences,
+  sourceImages,
+  receipts,
+  shoppingListItemBatchUpdate,
+  sharedPreferences,
+  userDatabase,
+  groupDatabase,
+  addReceipt,
+  updateReceipt,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  remainingCategorizeCount,
+  aiCategorizeApply,
+])
 final _previewEntries = <_PreviewEntry>[
   _PreviewEntry(title: 'LaunchLoading', builder: (_) => const LaunchLoading()),
   _PreviewEntry(

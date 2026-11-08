@@ -5,10 +5,14 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../../../helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
 
 /// 空状態ヒントカードの表示検証（Issue #462）。
 /// FAB の長押しメニュー（写真 / URL から追加）は見た目から気づけないため、
 /// 空状態のヒントカードに FAB と同じ add_task アイコン入りの導線行を表示する。
+@Dependencies([addShoppingListItem, currentUserID])
 void main() {
   testWidgets('空状態ヒントカードに FAB 長押し導線（add_task アイコン行）が表示される', (tester) async {
     await tester.pumpWidget(

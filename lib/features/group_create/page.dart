@@ -13,7 +13,9 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
+@Dependencies([appUser])
 class GroupCreatePage extends HookConsumerWidget {
   const GroupCreatePage({super.key});
 

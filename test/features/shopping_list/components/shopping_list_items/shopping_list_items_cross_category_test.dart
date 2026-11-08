@@ -15,6 +15,14 @@ import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../../../helpers/localized_test_app.dart';
 import '../../../../helpers/merge_provider_overrides.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/ai_usage.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
 
 GroupCategory _category({
   required String id,
@@ -92,6 +100,35 @@ class _SpyBatchUpdate extends ShoppingListItemBatchUpdate {
   }
 }
 
+@Dependencies([
+  textShoppingListItems,
+  groupCategoryAxes,
+  shoppingListItemBatchUpdate,
+  groupCategories,
+  currentUserID,
+  groupDatabase,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  remainingCategorizeCount,
+  aiCategorizeApply,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  addShoppingListItem,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryDelete,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+  groupCategoryUpdate,
+])
 void main() {
   // 野菜: にんじん/トマト, 肉: 牛肉
   final categories = [
@@ -104,6 +141,35 @@ void main() {
     _item(id: 'item-beef', message: '牛肉', order: 2),
   ];
 
+  @Dependencies([
+    textShoppingListItems,
+    groupCategoryAxes,
+    shoppingListItemBatchUpdate,
+    groupCategories,
+    currentUserID,
+    groupDatabase,
+    updateShoppingListItem,
+    toggleShoppingListItemCheck,
+    restoreShoppingListItem,
+    deleteShoppingListItem,
+    remainingCategorizeCount,
+    aiCategorizeApply,
+    groupCategoryBatchUpdate,
+    moveItemCategoryKeyword,
+    addShoppingListItem,
+    groupCategoryAxisAdd,
+    groupCategoryAdd,
+    shoppingLocations,
+    shareableGroupCategoryAxes,
+    groupUserProfiles,
+    groupCategoryImportFromMember,
+    groupCategoryDelete,
+    firebaseUserChanges,
+    sharedPreferences,
+    BoolSharedPreferences,
+    userDatabase,
+    groupCategoryUpdate,
+  ])
   Future<({_SpyMoveItemCategoryKeyword move, _SpyBatchUpdate batch})> pump(
     WidgetTester tester,
   ) async {

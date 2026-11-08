@@ -10,11 +10,31 @@ import 'package:shoppinglist/features/shopping_list/components/shopping_list_ite
 import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
 
 /// アイテム詳細シート。カテゴリの確認・変更とアイテムの削除を行う。
 ///
 /// NOTE(#464): 以前あった説明(description)・写真(imageURL)・カラー(color)の編集機能は
 /// 一旦削除した。名前マッチによる自動付与での再設計は #463 を参照。
+@Dependencies([
+  groupDatabase,
+  groupCategoryAxes,
+  groupCategories,
+  currentUserID,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  groupCategoryUpdate,
+])
 class TextShoppingListItemDetailBottomSheet extends ConsumerWidget {
   final String groupID;
   final GroupShoppingListItem textShoppingListItem;

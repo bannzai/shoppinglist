@@ -14,6 +14,7 @@ import 'package:shoppinglist/provider/shopping_list_item.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// [CreateListMenuButton] のメニュー選択肢。
 enum _CreateListMenuAction {
@@ -37,6 +38,12 @@ enum _CreateListMenuAction {
 ///   `ShoppingListAdd` / `TextShoppingListItemWidget` 参照）
 /// - 現在のリストを複製（全アイテムを引き継ぐ）
 /// - 未チェックのみ引き継いで複製（チェック済みアイテムは引き継がない）
+@Dependencies([
+  shoppingListAdd,
+  addShoppingListItem,
+  shoppingListDuplicate,
+  textShoppingListItems,
+])
 class CreateListMenuButton extends HookConsumerWidget {
   final String groupID;
 

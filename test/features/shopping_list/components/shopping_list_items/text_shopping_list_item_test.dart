@@ -20,6 +20,13 @@ import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../../../helpers/localized_test_app.dart';
 import '../../../../helpers/merge_provider_overrides.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
 
 /// 検証用アイテム。message / status / color / description / imageURL 以外は固定。
 GroupShoppingListItem _item({
@@ -186,6 +193,32 @@ class _RecordingShoppingListItemReference extends Fake
   Future<void> delete() async => deletedItemIDs.add(itemID);
 }
 
+@Dependencies([
+  currentUserID,
+  groupDatabase,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  addShoppingListItem,
+  shoppingListItemBatchUpdate,
+  groupCategoryAxes,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  groupCategories,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+  groupCategoryUpdate,
+])
 Future<void> _pump(
   WidgetTester tester,
   GroupShoppingListItem item, {
@@ -261,6 +294,32 @@ Container _rowContainer(WidgetTester tester) {
   );
 }
 
+@Dependencies([
+  currentUserID,
+  groupDatabase,
+  updateShoppingListItem,
+  toggleShoppingListItemCheck,
+  restoreShoppingListItem,
+  deleteShoppingListItem,
+  groupCategoryAxes,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  addShoppingListItem,
+  shoppingListItemBatchUpdate,
+  groupCategories,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  firebaseUserChanges,
+  sharedPreferences,
+  BoolSharedPreferences,
+  userDatabase,
+  groupCategoryUpdate,
+])
 void main() {
   group('行背景（Issue #374: チェック済み行がカテゴリヘッダーと同化しない）', () {
     testWidgets('チェック済み行の背景は transparent（divider2 半透過を塗らない）', (tester) async {

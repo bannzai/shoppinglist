@@ -15,7 +15,9 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/hooks/use_on_disappear.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
+@Dependencies([groupCategories, groupCategoryUpdate])
 class GroupCategoryEditPage extends ConsumerWidget {
   final String groupID;
   final String categoryAxisID;
@@ -77,6 +79,7 @@ class _EditScaffold extends StatelessWidget {
   }
 }
 
+@Dependencies([groupCategoryUpdate])
 class _CategoryEditBody extends HookConsumerWidget {
   final String groupID;
   final String categoryAxisID;

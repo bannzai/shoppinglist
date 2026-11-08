@@ -11,6 +11,7 @@ import 'package:shoppinglist/provider/shopping_list.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../../helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 // ListPickerSheet は本体ツリー（ListTopBar）で取得済みの AppUser を引数で受け取る。
 // モーダルシートは AppEntityPrepareResolver の外に出るため、シート内で appUserProvider を
@@ -67,6 +68,7 @@ class _FakeShoppingListAdd implements ShoppingListAdd {
 
 /// ListPickerSheet を実際のモーダルルートとして開くテスト用ホーム。
 /// pop し過ぎ(#372)の検証では、本 Widget のルートが Navigator に残っていることを確認する。
+@Dependencies([shoppingListAdd])
 class _SheetHost extends StatelessWidget {
   /// モーダルとして表示する ListPickerSheet。
   final ListPickerSheet sheet;
@@ -94,6 +96,7 @@ class _SheetHost extends StatelessWidget {
 
 /// _SheetHost をホームに据え、shoppingListAddProvider を fake に差し替えた
 /// アプリツリーを pump してシートを開いた状態まで進める。
+@Dependencies([shoppingListAdd])
 Future<void> _pumpSheetHost(
   WidgetTester tester, {
   required _FakeShoppingListAdd fake,
@@ -123,6 +126,7 @@ Future<void> _pumpSheetHost(
   expect(find.byType(ListPickerSheet), findsOneWidget);
 }
 
+@Dependencies([shoppingListAdd])
 void main() {
   testWidgets('リスト名・「新しいリストを追加」行を表示し、選択中リストのみチェックを出す', (tester) async {
     await tester.pumpWidget(

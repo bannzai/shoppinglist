@@ -4,6 +4,7 @@ import 'package:shoppinglist/components/image/storage_image.dart';
 import 'package:shoppinglist/entity/group_shopping_list_source_image.dart';
 import 'package:shoppinglist/provider/source_image.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// 「写真から追加」（AI 画像認識）で保存した元画像のサムネイル一覧。
 ///
@@ -11,6 +12,7 @@ import 'package:shoppinglist/utils/logger/analytics.dart';
 /// 元画像が1枚もない場合は何も表示しない。
 /// 元画像は最大 [maxShoppingListSourceImageCount] 枚（超過分はサーバー側で
 /// 古い順に削除される）で、保存日時の新しい順に並ぶ（Issue #530）。
+@Dependencies([sourceImages])
 class SourceImageStrip extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;

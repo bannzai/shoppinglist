@@ -13,6 +13,22 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/functions/firebase_function.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/bool_shared_preferences.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/group.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
+import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/features/resolver/auth.dart';
+import 'package:shoppinglist/provider/default_group_update.dart';
+import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
+import 'package:shoppinglist/provider/user_groups.dart';
+import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/provider/shared_preferences.dart';
+import 'package:shoppinglist/provider/theme_color.dart';
+import 'package:shoppinglist/provider/string_shared_preferences.dart';
 
 /// ShoppingListPage の最上段（高さ 52）。
 /// `design_handoff_shopping_list/source/screens-list.jsx#ListTopBar` 相当。
@@ -26,6 +42,41 @@ import 'package:shoppinglist/utils/stdlib/show_modal_bottom_sheet.dart';
 /// - このバーの上には親(ShoppingListPage)側の GroupChipsBar が並ぶ。appBar スロットは
 ///   1画面1つ・最上段固定のため、親子をまたぐこの並び順を表現できない。
 /// - 下のリストは card 内の独立スクロールなので、AppBar のスクロール連動 elevation も不要。
+@Dependencies([
+  appUser,
+  shoppingListAdd,
+  addShoppingListItem,
+  shoppingListDuplicate,
+  textShoppingListItems,
+  currentUserID,
+  groupUserProfiles,
+  BoolSharedPreferences,
+  shoppingListUpdate,
+  group,
+  groupUserProfileUpdate,
+  shoppingLocations,
+  groupCategoryAxes,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  firebaseUserChanges,
+  userGroups,
+  defaultGroupUpdate,
+  sharedPreferences,
+  userDatabase,
+  groupCategories,
+  themeColorUpdate,
+  shareableGroupCategoryAxes,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  shoppingLocationAdd,
+  shoppingLocationUpdate,
+  shoppingLocationDelete,
+  shoppingLists,
+  StringSharedPreferences,
+  groupCategoryUpdate,
+])
 class ListTopBar extends ConsumerWidget {
   final String groupID;
   final String shoppingListID;

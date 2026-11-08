@@ -23,7 +23,24 @@ import 'package:shoppinglist/utils/config/feature_flags.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
 
+@Dependencies([
+  groupCategoryAxes,
+  currentUserID,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  groupCategories,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  groupCategoryUpdate,
+])
 class GroupCategoryPage extends ConsumerWidget {
   final String groupID;
 
@@ -156,6 +173,7 @@ class GroupCategoryPage extends ConsumerWidget {
 /// カテゴリ追加時に名前入力ダイアログを挟まず、編集画面の TextField で
 /// 名前・色・アイコン・キーワードをまとめて設定させる。作成直後は name が空のため、
 /// 編集画面の TextField には hint（カテゴリ名を入力）のみが表示される。
+@Dependencies([groupCategories, groupCategoryUpdate])
 Future<void> _addCategoryAndNavigateToEdit({
   required BuildContext context,
   required GroupCategoryAdd groupCategoryAdd,
@@ -218,6 +236,19 @@ class _CategoryScaffold extends StatelessWidget {
   }
 }
 
+@Dependencies([
+  groupCategories,
+  shoppingLocations,
+  currentUserID,
+  groupCategoryAdd,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryUpdate,
+])
 class _CategoryListBody extends HookConsumerWidget {
   final String groupID;
   final GroupCategoryAxis axis;
@@ -427,6 +458,13 @@ class _CategoryListBody extends HookConsumerWidget {
   }
 }
 
+@Dependencies([
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  groupCategories,
+  groupCategoryUpdate,
+])
 class _CategoryReorderableList extends ConsumerWidget {
   final String groupID;
   final String categoryAxisID;

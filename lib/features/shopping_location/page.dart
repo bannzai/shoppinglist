@@ -11,7 +11,14 @@ import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/error/error_display.dart';
 import 'package:shoppinglist/utils/logger/analytics.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
+@Dependencies([
+  shoppingLocations,
+  shoppingLocationAdd,
+  shoppingLocationUpdate,
+  shoppingLocationDelete,
+])
 class ShoppingLocationPage extends ConsumerWidget {
   final String groupID;
 

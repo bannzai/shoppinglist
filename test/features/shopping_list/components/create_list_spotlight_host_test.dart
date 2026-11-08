@@ -14,6 +14,7 @@ import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/shared_preferences/keys.dart';
 import '../../../helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 /// CreateListSpotlightHost の表示・非表示と、表示時の SharedPreferences 記録を検証する(Issue #494, #508)。
 /// 送信系(Firebase)を伴わないため widget test で完結する。
@@ -33,6 +34,7 @@ GroupShoppingList _list({required DateTime createdDateTime}) =>
 
 /// Host を override 済みコンテナ下に pump する。target には固定サイズの箱を置く。
 /// [spotlightLastShownIso] を渡すと表示済み状態(最終表示日時が記録済み)で開始する。
+@Dependencies([StringSharedPreferences])
 Future<ProviderContainer> _pump(
   WidgetTester tester, {
   required GroupShoppingList shoppingList,
@@ -80,6 +82,7 @@ Future<ProviderContainer> _pump(
   return container;
 }
 
+@Dependencies([StringSharedPreferences])
 void main() {
   testWidgets('条件成立(昨日作成)でスポットライトを表示し、表示日時を記録する', (tester) async {
     // 24時間前 = 常に前日の日付。cond1 が成立する。
@@ -215,6 +218,7 @@ void main() {
     );
 
     // shoppingListItems の null(未ロード)→ 非 null(ロード完了)で初回評価タイミングを制御する。
+    @Dependencies([StringSharedPreferences])
     Widget buildApp({required List<GroupShoppingListItem>? shoppingListItems}) {
       return UncontrolledProviderScope(
         container: container,
@@ -291,6 +295,7 @@ void main() {
     final targetKey = GlobalKey();
 
     // shoppingLists / shoppingListItems を差し替え可能にして、保留中の props 更新を再現する。
+    @Dependencies([StringSharedPreferences])
     Widget buildApp({
       required GroupShoppingList shoppingList,
       required List<GroupShoppingListItem>? shoppingListItems,

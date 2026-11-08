@@ -15,6 +15,8 @@ import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import 'package:shoppinglist/utils/purchase/purchase.dart';
 import 'helpers/localized_test_app.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
 
 const _testGroupID = 'test-group-001';
 const _testCategoryAxisID = 'test-axis-001';
@@ -161,6 +163,21 @@ class _NoOpCategoryAxisAdd extends GroupCategoryAxisAdd {
   }
 }
 
+@Dependencies([
+  groupCategoryAxes,
+  currentUserID,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  groupCategories,
+  shoppingLocations,
+  shareableGroupCategoryAxes,
+  groupUserProfiles,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  groupCategoryUpdate,
+])
 void main() {
   group('GroupCategoryPage 買い物する場所の並び順', () {
     // 位置情報機能はファーストリリースでは非表示 (issue #465)。

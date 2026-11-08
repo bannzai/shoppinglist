@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart' hide group;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hooks_riverpod/misc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,7 +19,36 @@ import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
 import '../../helpers/localized_test_app.dart';
 import '../../helpers/merge_provider_overrides.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
+import 'package:shoppinglist/provider/current_user_id.dart';
+import 'package:shoppinglist/provider/group_category.dart';
+import 'package:shoppinglist/provider/shopping_list.dart';
+import 'package:shoppinglist/provider/shopping_list_item.dart';
+import 'package:shoppinglist/provider/group_user_profile.dart';
+import 'package:shoppinglist/provider/shopping_location.dart';
 
+@Dependencies([
+  shoppingListUpdate,
+  textShoppingListItems,
+  group,
+  shoppingLocations,
+  groupCategoryAxes,
+  currentUserID,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  groupUserProfiles,
+  shoppingListDuplicate,
+  groupCategories,
+  shareableGroupCategoryAxes,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  shoppingLocationAdd,
+  shoppingLocationUpdate,
+  shoppingLocationDelete,
+  groupCategoryUpdate,
+])
 Future<void> _pumpPage(
   WidgetTester tester, {
   List<Override> extraOverrides = const [],
@@ -59,6 +88,28 @@ Future<void> _pumpPage(
   await tester.pumpAndSettle();
 }
 
+@Dependencies([
+  groupCategoryAxes,
+  currentUserID,
+  groupCategoryAxisAdd,
+  groupCategoryAdd,
+  shoppingListUpdate,
+  textShoppingListItems,
+  group,
+  groupCategories,
+  shoppingLocations,
+  groupUserProfiles,
+  shoppingListDuplicate,
+  shareableGroupCategoryAxes,
+  groupCategoryImportFromMember,
+  groupCategoryBatchUpdate,
+  moveItemCategoryKeyword,
+  groupCategoryDelete,
+  groupCategoryUpdate,
+  shoppingLocationAdd,
+  shoppingLocationUpdate,
+  shoppingLocationDelete,
+])
 void main() {
   testWidgets('design v2 セクション label が UPPERCASE で表示される', (tester) async {
     await _pumpPage(tester);

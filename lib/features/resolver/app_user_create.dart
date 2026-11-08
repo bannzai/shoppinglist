@@ -12,6 +12,7 @@ import 'package:shoppinglist/entity/app_user_private.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/user_developer_token_sync.dart';
+import 'package:riverpod_annotation/experimental/scope.dart';
 
 class AppUserCreate {
   final UserDatabase userDatabase;
@@ -51,6 +52,7 @@ class AppUserCreate {
 /// appUserProvider（data()!）はここでは使用しない。初回ログイン時にドキュメントが
 /// まだ存在しない状態でストリームが発火すると Null check エラーになるため、
 /// optionalAppUserProvider（data()、nullable）を使用する。
+@Dependencies([optionalAppUser, userDatabase, userDeveloperTokenSync])
 class AppUserCreateResolver extends HookConsumerWidget {
   final User firebaseUser;
   final Widget Function(BuildContext) builder;
