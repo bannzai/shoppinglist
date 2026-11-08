@@ -127,14 +127,6 @@ jobs:
           flutter build ios --simulator --debug \
             --dart-define=REVENUECAT_TEST_STORE_API_KEY="$REVENUECAT_TEST_STORE_API_KEY"
 
-      # TEMP(#758): RunnerTests (Firebase を host app 経由で使う) が SwiftPM 構成でビルド・実行できるかの確認。マージ前に外す
-      - name: TEMP RunnerTests
-        run: |
-          udid=$(xcrun simctl list devices available -j | python3 -c "import json,sys;d=json.load(sys.stdin)['devices'];print(next(x['udid'] for k,v in d.items() if 'iOS' in k for x in v if x['name'].startswith('iPhone')))")
-          xcodebuild test -workspace ios/Runner.xcworkspace -scheme Runner -configuration Debug \
-            -destination "id=$udid" -only-testing:RunnerTests CODE_SIGNING_ALLOWED=NO 2>&1 | tee runner-tests.log
-          test "${PIPESTATUS[0]}" -eq 0
-
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: simulator-app
