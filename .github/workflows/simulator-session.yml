@@ -82,7 +82,7 @@ jobs:
             GOOGLE_MAPS_API_KEY_IOS_DEV:shoppinglist-dev-b2787/google-maps-sdk-ios-apikey
 
       # 任意のブランチを dispatch できる workflow のため、auth が書いた資格情報ファイル (OIDC トークンを含む) を
-      # secret の取り出し直後に消し、参照する環境変数を空にして、以降の pub get / pod install / flutter build が
+      # secret の取り出し直後に消し、参照する環境変数を空にして、以降の pub get / flutter build が
       # 動かす依存パッケージのスクリプトが残った資格情報を拾えないようにする。同じ job に id-token: write が残るため
       # OIDC トークンの取り直しは防げない。借りる SA を読み取り専用に分ける対処は #711
       - name: Discard GCP credentials before build
@@ -117,10 +117,6 @@ jobs:
           fi
 
       - run: flutter pub get
-
-      # ios/.symlinks を .flutter-plugins-dependencies から再生成する（理由はスクリプト冒頭。flutter-deploy と同じ手順）
-      - name: Link iOS plugin symlinks
-        run: python3 ios/scripts/link_plugin_symlinks.py
 
       # dart-define は Makefile の ios ターゲット・.vscode/launch.json の shoppinglist(dev) のうち、クライアント埋め込み前提の
       # 公開 SDK キーだけを渡す (SHOPPINGLIST_DEVELOPER_TOKEN は上記のとおり渡さない)
