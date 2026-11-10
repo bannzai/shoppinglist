@@ -19,5 +19,5 @@ worktree を作った直後など `.dart_tool/package_config.json` が無い状�
 
 - 新しい worktree では、`.dart` を編集する前に `flutter pub get` を実行する
 - `flutter pub get` が失敗した状態で `dart format` を実行しない
-- 全体が整形されてしまったら、自分の変更を消さないよう、先に `git diff > tmp/before-revert.patch` で差分を保存する。その後、自分が編集していないファイルだけを `git checkout -- <パス>` で戻す。自分が編集したファイルは整形の差分と変更が混ざっているため、戻してから `flutter pub get` の後に変更を当て直す (`git checkout -- .` は未コミットの変更をすべて捨てるので、差分を保存する前に実行しない)
+- 全体が整形されてしまったら、自分の変更を消さないよう、先に `mkdir -p tmp` の後に `git diff > tmp/before-revert.patch` で差分を保存し、ファイルができて中身があることを確かめる (保存に失敗したら、戻す操作に進まない)。その後、自分が編集していないファイルだけを `git checkout -- <パス>` で戻す。自分が編集したファイルは整形の差分と変更が混ざっているため、戻してから `flutter pub get` の後に変更を当て直す (`git checkout -- .` は未コミットの変更をすべて捨てるので、差分を保存する前に実行しない)
 - コミットの前に `git status` と `dart format --output=none --set-exit-if-changed ./` で確かめる

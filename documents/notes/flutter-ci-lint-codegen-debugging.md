@@ -8,7 +8,7 @@ recorded: 2026-11-10
 
 - **`pull_request` の CI は、PR を最新の main にマージした状態で動く**。ブランチが main から遅れていると、main の側の失敗 (整形・生成物の差分) を巻き込んで失敗する。先に `gh run list --branch main --workflow flutter-ci.yml` で main が成功しているかを見る
 - **codegen のジョブ** は `dart pub run build_runner build --delete-conflicting-outputs` の後に `git diff --quiet --exit-code` を実行する。生成物 (例: `lib/provider/*.g.dart` の Riverpod のハッシュ) が古いと差分が出て失敗する
-- **build_runner の増分キャッシュ (`.dart_tool/build`) は git の管理外で、`git reset --hard` では消えない**。そのためローカルで `build_runner build` を実行しても再生成が省かれ、「差分なし」に見えて生成物の古さに気づけないことがある
+- **build_runner の増分キャッシュ (`.dart_tool/build`) は git の管理外で、`git reset --hard` では消えない**。そのためローカルで `build_runner build` を実行しても再生成が省かれ、「差分なし」に見えて生成物の古さに気づけないことがあった (memory に記録した時点の実測。記録に日付と build_runner の版は無く、今の `pubspec.lock` の版で再現するかは確かめていない)
 - **lint のジョブ** は `make secret` → `flutter analyze --no-pub --no-fatal-infos --fatal-warnings` → `dart format --set-exit-if-changed ./` の順に実行する
   - `make secret` を実行していないと、analyze が `Undefined name 'Secret'` で失敗する (`lib/secret/secret.dart` は `make secret` が作るファイルで git の管理外)
   - `--no-fatal-infos` のため、info は CI を失敗させない (失敗させるのは warning と error)

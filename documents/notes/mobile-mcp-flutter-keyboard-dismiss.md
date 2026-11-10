@@ -2,7 +2,7 @@
 scope: cross-repository
 recorded: 2026-11-10
 ---
-# mobile-mcp で Flutter の TextField のキーボードを閉じる時は、done の座標ではなく ENTER ボタンを使う
+# mobile-mcp で Flutter の 1 行の TextField のキーボードを閉じる時は、done の座標ではなく ENTER ボタンを使う
 
 ローカルの simulator で実測した (AI レビューのシートの TextField の検証)。`mobile_list_elements_on_screen` が返す "done" ボタンの座標を `mobile_click_on_screen_at_coordinates` でタップすると、done ではなく削除キーとして働き、文字が 1 つずつ消えた。
 

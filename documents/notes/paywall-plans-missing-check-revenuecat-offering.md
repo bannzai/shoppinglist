@@ -10,7 +10,7 @@ recorded: 2026-11-10
 
 2026-06-05 に debug ビルドで確かめた。debug ビルドは RevenueCat の Test Store (`REVENUECAT_TEST_STORE_API_KEY`) を使い、Test Store の Offering には 3 つのパッケージがそろっているため、Paywall に月額・年額・買い切りの 3 つが表示された。表示のコードは正しく動いている。
 
-**なぜ:** debug ビルドで出て本番でだけ出ない時、原因は RevenueCat の本番の Offering の構成 (パッケージが標準の `PackageType` で登録されているか) にある。パッケージの種別が `custom` だと照合に一致せず、コードでは直せない。
+**なぜ:** debug ビルドで出て本番でだけ出ない時、表示のコードは同じなので、差は本番のキーで SDK が返す Offering の中身にある。まず RevenueCat の本番の Offering の構成 (パッケージが標準の `PackageType` で登録されているか) を確かめる。パッケージの種別が `custom` だと照合に一致せず、コードでは直せない。
 
 **どう使う:**
 

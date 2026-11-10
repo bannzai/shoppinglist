@@ -14,7 +14,7 @@
 - [simulator で debug ビルドを動かす時は dart-define が要る。無いと起動直後の白い画面で止まる](debug-run-requirements-on-simulator.md) — ローカルの simulator でアプリをビルド・起動する時、白い画面で止まった時
 - [オンボーディングは、アプリを削除しても再表示されない。Keychain が空の新しい simulator で再現する](onboarding-needs-fresh-simulator.md) — 新規ユーザーの状態やオンボーディングを確かめる時
 - [mobile-mcp の最初の呼び出しで WebDriverAgent が起動すると、検証中のアプリがホーム画面の後ろに回る](wda-first-call-sends-app-to-background.md) — ローカルの simulator で mobile-mcp を使い始めた直後にアプリが消えた時
-- [mobile-mcp で Flutter の TextField のキーボードを閉じる時は、done の座標ではなく ENTER ボタンを使う](mobile-mcp-flutter-keyboard-dismiss.md) — mobile-mcp で文字を入力した後にキーボードを閉じる時
+- [mobile-mcp で Flutter の 1 行の TextField のキーボードを閉じる時は、done の座標ではなく ENTER ボタンを使う](mobile-mcp-flutter-keyboard-dismiss.md) — mobile-mcp で文字を入力した後にキーボードを閉じる時
 - [数秒で消える SnackBar・トーストは、mobile-mcp のスクリーンショットでは撮れない。`simctl io screenshot` の連続撮影で撮る](capture-transient-snackbar-with-simctl.md) — 一瞬だけ出る表示をスクリーンショットで確かめる時
 - [ホームウィジェットの `Button(intent:)` は、simulator の WebDriverAgent・mobile-mcp のタップでは AppIntent が実行されない](widget-intent-button-not-triggered-by-wda-tap.md) — ホームウィジェットの操作を自動で検証しようとする時
 - [simulator への実際のプッシュ通知は届く。届くまでの時間がばらつくため、トーストの assert は 2 つの文言のどちらでも通す](simulator-push-delivery-and-toast-assertion.md) — プッシュ通知の受信や通知のトーストを検証する時
@@ -24,7 +24,7 @@
 - [このアプリの Maestro flow を書く時に、要素が見つからない・操作が効かない原因になる点](maestro-flow-writing-pitfalls.md) — Maestro の flow を書く時、flow が「要素が見つからない」で失敗した時
 - [Maestro で Flutter の長押しドラッグは、`duration: 10000` の遅い swipe で再現できる](maestro-long-press-drag-with-slow-swipe.md) — Maestro で長押しドラッグや並び順を検証する時
 - [Maestro でプレミアムを付与する flow は、`SHOPPINGLIST_DEVELOPER_TOKEN` を渡したビルドでないと「開発者のみ」のエラーで失敗する](maestro-premium-grant-needs-developer-token-build.md) — プレミアムの付与・デバッグユーザーの作成を含む flow を流す時
-- [バックグラウンドで実行した flutter build・Maestro の成否は、完了の通知やログではなく JUnit のレポートで決める](maestro-background-run-verdict.md) — ビルドや Maestro をバックグラウンドで実行して結果を判定する時
+- [バックグラウンドで実行した Maestro の成否は、完了の通知やログではなく JUnit のレポートで決める](maestro-background-run-verdict.md) — ビルドや Maestro をバックグラウンドで実行して結果を判定する時
 
 ## ビルド・CI
 

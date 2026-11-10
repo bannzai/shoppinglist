@@ -12,4 +12,4 @@ recorded: 2026-11-10
 
 - 新規ユーザーの状態 (オンボーディングの表示) を確かめる時は、アプリの削除ではなく、新しく作った simulator (Keychain が空) を使う
 - 起動時に `FirebaseMessaging.requestPermission()` の通知の許可ダイアログが出るので、許可してから進む
-- Maestro では `launchApp` の `clearState: true` の後にオンボーディングが出る。`maestro/flows/shared/anonymous_sign_in.yaml` が「スキップ」を待ってタップしている
+- Maestro では `launchApp` に `clearState: true` と `clearKeychain: true` の両方を指定するとオンボーディングが出る。`maestro/flows/shared/anonymous_sign_in.yaml` が「スキップ」を待ってタップしている
