@@ -8,4 +8,4 @@ recorded: 2026-11-10
 
 **なぜ:** WebDriverAgent (XCTest のランナー) の起動が SpringBoard を前面にするためと見ている (実測からの推測で、出典は無い)。
 
-**どう使う:** ローカルの simulator で mobile-mcp を使う時は、最初の呼び出しの後に `xcrun simctl launch <UDID> com.bannzai.shoppinglist` でアプリを前面に戻してから操作を続ける。アプリが落ちたと判断しない。
+**どう使う:** ローカルの simulator で mobile-mcp を使う時は、最初の呼び出しの後に `xcrun simctl launch <UDID> <bundle ID>` でアプリを前面に戻してから操作を続ける。このリポジトリの bundle ID は、debug ビルドが `com.bannzai.shoppinglist.dev` (`ios/Flutter/Debug.xcconfig`)、release ビルドが `com.bannzai.shoppinglist` (`ios/Flutter/Release.xcconfig`)。アプリが落ちたと判断しない。
