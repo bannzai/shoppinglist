@@ -64,6 +64,11 @@ Firebase Functions の規約です
 - GenKit の検証用引数の記載は `.claude/rules/firebase-functions.md` に従う
 - CLAUDE.mdには基本的にコーディング規約等は書かない。コンテキストを圧迫するから
 
+### リポジトリのメモ
+作業の前に索引 `documents/notes/README.md` を読み、読むべき場面に当たるメモの本文 (`documents/notes/<ファイル名>.md`) を読む。
+
+@documents/notes/README.md
+
 <!-- ai-review-config begin -->
 <!--
 このブロックは自動生成です。直接編集せず、テンプレートを更新してから再生成してください。
