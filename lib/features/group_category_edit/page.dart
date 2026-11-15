@@ -252,20 +252,16 @@ class _CategoryEditBody extends HookConsumerWidget {
                     return ListTile(
                       contentPadding: EdgeInsets.zero,
                       title: CategoryEditKeywordText(keyword.keyword),
-                      subtitle: switch (keyword.matchingType) {
-                        GroupCategoryKeywordMatchingType.exact =>
-                          CategoryEditKeywordExactMatchText(
+                      subtitle: CategoryEditKeywordMatchingTypeText(
+                        switch (keyword.matchingType) {
+                          GroupCategoryKeywordMatchingType.exact =>
                             context.l10n.groupCategoryEditMatchingExact,
-                          ),
-                        GroupCategoryKeywordMatchingType.partial =>
-                          CategoryEditKeywordPartialMatchText(
+                          GroupCategoryKeywordMatchingType.partial =>
                             context.l10n.groupCategoryEditMatchingPartial,
-                          ),
-                        GroupCategoryKeywordMatchingType.regex =>
-                          CategoryEditKeywordRegexMatchText(
+                          GroupCategoryKeywordMatchingType.regex =>
                             context.l10n.groupCategoryEditMatchingRegex,
-                          ),
-                      },
+                        },
+                      ),
                       trailing: IconButton(
                         icon: Icon(
                           Icons.delete,
@@ -341,19 +337,19 @@ class _CategoryEditBody extends HookConsumerWidget {
                           segments: [
                             ButtonSegment(
                               value: GroupCategoryKeywordMatchingType.partial,
-                              label: CategoryEditMatchingOptionPartialText(
+                              label: CategoryEditMatchingOptionText(
                                 context.l10n.groupCategoryEditMatchingPartial,
                               ),
                             ),
                             ButtonSegment(
                               value: GroupCategoryKeywordMatchingType.exact,
-                              label: CategoryEditMatchingOptionExactText(
+                              label: CategoryEditMatchingOptionText(
                                 context.l10n.groupCategoryEditMatchingExact,
                               ),
                             ),
                             ButtonSegment(
                               value: GroupCategoryKeywordMatchingType.regex,
-                              label: CategoryEditMatchingOptionRegexText(
+                              label: CategoryEditMatchingOptionText(
                                 context.l10n.groupCategoryEditMatchingRegex,
                               ),
                             ),
@@ -778,36 +774,10 @@ class CategoryEditKeywordText extends StatelessWidget {
   Widget build(BuildContext context) => Text(text);
 }
 
-/// キーワードの一覧の行に出す、そのキーワードが完全一致で判定されることを示す文言。
-class CategoryEditKeywordExactMatchText extends StatelessWidget {
-  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
-  const CategoryEditKeywordExactMatchText(this.text, {super.key});
-
-  /// 表示する文言。
-  final String text;
-
-  @override
-  Widget build(BuildContext context) =>
-      Text(text, style: Theme.of(context).textTheme.bodySmall);
-}
-
-/// キーワードの一覧の行に出す、そのキーワードが部分一致で判定されることを示す文言。
-class CategoryEditKeywordPartialMatchText extends StatelessWidget {
-  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
-  const CategoryEditKeywordPartialMatchText(this.text, {super.key});
-
-  /// 表示する文言。
-  final String text;
-
-  @override
-  Widget build(BuildContext context) =>
-      Text(text, style: Theme.of(context).textTheme.bodySmall);
-}
-
-/// キーワードの一覧の行に出す、そのキーワードが正規表現で判定されることを示す文言。
-class CategoryEditKeywordRegexMatchText extends StatelessWidget {
-  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
-  const CategoryEditKeywordRegexMatchText(this.text, {super.key});
+/// キーワードの一覧の行に出す、そのキーワードの一致の種類 (部分一致・完全一致・正規表現) の文言。
+class CategoryEditKeywordMatchingTypeText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が一致の種類に合う翻訳済みの文字列を渡す。
+  const CategoryEditKeywordMatchingTypeText(this.text, {super.key});
 
   /// 表示する文言。
   final String text;
@@ -842,34 +812,10 @@ class CategoryEditMatchingLabelText extends StatelessWidget {
       Text(text, style: Theme.of(context).textTheme.bodySmall);
 }
 
-/// キーワードを足すダイアログの、一致の種類の選択肢のうち部分一致の文言。
-class CategoryEditMatchingOptionPartialText extends StatelessWidget {
-  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
-  const CategoryEditMatchingOptionPartialText(this.text, {super.key});
-
-  /// 表示する文言。
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Text(text);
-}
-
-/// キーワードを足すダイアログの、一致の種類の選択肢のうち完全一致の文言。
-class CategoryEditMatchingOptionExactText extends StatelessWidget {
-  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
-  const CategoryEditMatchingOptionExactText(this.text, {super.key});
-
-  /// 表示する文言。
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Text(text);
-}
-
-/// キーワードを足すダイアログの、一致の種類の選択肢のうち正規表現の文言。
-class CategoryEditMatchingOptionRegexText extends StatelessWidget {
-  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
-  const CategoryEditMatchingOptionRegexText(this.text, {super.key});
+/// キーワードを足すダイアログの、一致の種類の選択肢 (部分一致・完全一致・正規表現) の文言。
+class CategoryEditMatchingOptionText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が選択肢に合う翻訳済みの文字列を渡す。
+  const CategoryEditMatchingOptionText(this.text, {super.key});
 
   /// 表示する文言。
   final String text;
