@@ -28,6 +28,13 @@ const _testCategoryAxisID = 'test-axis-001';
 const _testUserID = 'test-user-001';
 const _testShoppingListID = 'test-list-001';
 
+/// [categoryID] のカテゴリの行に出ているカテゴリ名の部品を探す Finder を返す。
+/// 一覧には同じ型の部品が行の数だけ並ぶため、行の `ValueKey(category.id)` で 1 行に絞る。
+Finder _categoryNameInRow({required String categoryID}) => find.descendant(
+  of: find.byKey(ValueKey(categoryID)),
+  matching: find.byType(CategoryNameText),
+);
+
 GroupCategory _category({
   required String id,
   required String name,
@@ -275,12 +282,12 @@ void main() {
       expect(find.text('matched: 未分類'), findsOneWidget);
 
       // 詳細から選択モードへ
-      await tester.tap(find.text('カテゴリを選択'));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      expect(find.text('飲料'), findsOneWidget);
+      expect(_categoryNameInRow(categoryID: 'cat-002'), findsOneWidget);
 
-      // 「飲料」を選択
-      await tester.tap(find.text('飲料'));
+      // 「飲料」(cat-002) を選択
+      await tester.tap(_categoryNameInRow(categoryID: 'cat-002'));
       await tester.pumpAndSettle();
 
       // 選択画面が pop して詳細 host に戻っている
@@ -322,12 +329,12 @@ void main() {
       // 初期は部分一致で「食品」
       expect(find.text('matched: 食品'), findsOneWidget);
 
-      await tester.tap(find.text('カテゴリを選択'));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      expect(find.text('デザート'), findsOneWidget);
+      expect(_categoryNameInRow(categoryID: 'cat-002'), findsOneWidget);
 
-      // 「デザート」を選択 → exact キーワード "オレンジジュース" がデザートに付く
-      await tester.tap(find.text('デザート'));
+      // 「デザート」(cat-002) を選択 → exact キーワード "オレンジジュース" がデザートに付く
+      await tester.tap(_categoryNameInRow(categoryID: 'cat-002'));
       await tester.pumpAndSettle();
 
       expect(find.byType(GroupCategoryPage), findsNothing);
@@ -361,10 +368,10 @@ void main() {
       controller.add(initial);
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('カテゴリを選択'));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('飲料'));
+      await tester.tap(_categoryNameInRow(categoryID: 'cat-002'));
       await tester.pumpAndSettle();
 
       // 永続化(transaction)が未完了でも選択画面は既に pop している(#517)。

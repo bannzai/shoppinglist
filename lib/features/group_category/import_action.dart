@@ -49,7 +49,7 @@ class GroupCategoryImportAction extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             persist: false,
-            content: Text(
+            content: CategoryImportSuccessText(
               context.l10n.groupCategoryImportSuccess(importedAxisName),
             ),
           ),
@@ -99,14 +99,16 @@ class _GroupCategoryImportDialogState
     return PopScope(
       canPop: _importingGroupCategoryAxisID == null,
       child: AlertDialog(
-        title: Text(context.l10n.groupCategoryImportTitle),
+        title: CategoryImportTitleText(context.l10n.groupCategoryImportTitle),
         content: SizedBox(
           width: double.maxFinite,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(context.l10n.groupCategoryImportDescription),
+              CategoryImportDescriptionText(
+                context.l10n.groupCategoryImportDescription,
+              ),
               const SizedBox(height: 16),
               Flexible(
                 child: shareableAxesAsync.when(
@@ -122,7 +124,7 @@ class _GroupCategoryImportDialogState
                                   .toList();
                           if (sourceAxes.isEmpty) {
                             return Center(
-                              child: Text(
+                              child: CategoryImportEmptyText(
                                 context.l10n.groupCategoryImportEmpty,
                               ),
                             );
@@ -146,15 +148,20 @@ class _GroupCategoryImportDialogState
                                 ),
                                 contentPadding: EdgeInsets.zero,
                                 leading: const Icon(Icons.person_outline),
-                                title: Text(axis.name),
-                                subtitle: Text(
-                                  displayName == null ||
-                                          displayName.trim().isEmpty
-                                      ? context
-                                          .l10n
-                                          .groupCategoryImportMemberFallback
-                                      : displayName,
+                                title: CategoryImportSourceAxisNameText(
+                                  axis.name,
                                 ),
+                                subtitle:
+                                    displayName == null ||
+                                            displayName.trim().isEmpty
+                                        ? CategoryImportSourceMemberFallbackText(
+                                          context
+                                              .l10n
+                                              .groupCategoryImportMemberFallback,
+                                        )
+                                        : CategoryImportSourceMemberNameText(
+                                          displayName,
+                                        ),
                                 trailing:
                                     isImporting
                                         ? const SizedBox.square(
@@ -192,7 +199,7 @@ class _GroupCategoryImportDialogState
                 _importingGroupCategoryAxisID == null
                     ? () => Navigator.pop(context)
                     : null,
-            child: Text(context.l10n.commonCancel),
+            child: CategoryImportCancelButtonText(context.l10n.commonCancel),
           ),
         ],
       ),
@@ -202,7 +209,7 @@ class _GroupCategoryImportDialogState
   Widget _loading() => const Center(child: CircularProgressIndicator());
 
   Widget _error(Object error, StackTrace stackTrace) =>
-      Center(child: Text(error.toString()));
+      Center(child: CategoryImportErrorText(error.toString()));
 
   Future<void> _import({
     required GroupCategoryAxis sourceGroupCategoryAxis,
@@ -229,4 +236,112 @@ class _GroupCategoryImportDialogState
       }
     }
   }
+}
+
+/// メンバーのカテゴリ設定を取り込み終えたことを知らせる SnackBar の文言。
+class CategoryImportSuccessText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側がカテゴリ軸の名前を埋めた翻訳済みの文字列を渡す。
+  const CategoryImportSuccessText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// カテゴリ設定の取り込みダイアログのタイトル。
+class CategoryImportTitleText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryImportTitleText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// カテゴリ設定の取り込みダイアログの、取り込みの説明文。
+class CategoryImportDescriptionText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryImportDescriptionText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// 取り込める他のメンバーのカテゴリ軸が無い時に出す文言。
+class CategoryImportEmptyText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryImportEmptyText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// 取り込みの候補の行に出す、他のメンバーのカテゴリ軸の名前。
+class CategoryImportSourceAxisNameText extends StatelessWidget {
+  /// [text] はカテゴリ軸の名前。利用者が登録した文字列を渡す。
+  const CategoryImportSourceAxisNameText(this.text, {super.key});
+
+  /// 表示するカテゴリ軸の名前。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// 取り込みの候補の行に出す、カテゴリ軸を持つメンバーの表示名。
+class CategoryImportSourceMemberNameText extends StatelessWidget {
+  /// [text] はメンバーの表示名。空でない表示名を渡す。
+  const CategoryImportSourceMemberNameText(this.text, {super.key});
+
+  /// 表示するメンバーの表示名。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// 取り込みの候補の行で、メンバーの表示名が無い時に代わりに出す文言。
+class CategoryImportSourceMemberFallbackText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryImportSourceMemberFallbackText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// カテゴリ設定の取り込みダイアログを閉じるボタンの文言。
+class CategoryImportCancelButtonText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryImportCancelButtonText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// 取り込みの候補を読み込めなかった時に出すエラーの文言。
+class CategoryImportErrorText extends StatelessWidget {
+  /// [text] はエラーの文言。エラーの `toString()` を加工せずに渡す。
+  const CategoryImportErrorText(this.text, {super.key});
+
+  /// 表示するエラーの文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
 }

@@ -65,10 +65,12 @@ class GroupCategoryPage extends ConsumerWidget {
     final groupCategoryAdd = ref.watch(
       groupCategoryAddProvider(groupID: groupID),
     );
-    final title =
+    final Widget title =
         selectionForItem != null
-            ? context.l10n.shoppingListCategorySelect
-            : context.l10n.commonCategory;
+            ? CategorySelectionTitleText(
+              context.l10n.shoppingListCategorySelect,
+            )
+            : CategoryListTitleText(context.l10n.commonCategory);
 
     // ログアウト・ユーザー切替直後は uid が null になる。このページが Navigator 上に
     // 残ったまま追加操作されると null 例外で落ちるため、uid が取れるまで
@@ -213,7 +215,7 @@ Future<void> _addCategoryAndNavigateToEdit({
 /// カテゴリ画面用の paper bg Scaffold（loading/error/empty 用）。
 class _CategoryScaffold extends StatelessWidget {
   final Widget child;
-  final String title;
+  final Widget title;
   final List<Widget>? actions;
   const _CategoryScaffold({
     required this.child,
@@ -226,7 +228,7 @@ class _CategoryScaffold extends StatelessWidget {
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
       appBar: AppBar(
-        title: Text(title),
+        title: title,
         actions: actions,
         backgroundColor: tokens.neutral.paper,
       ),
@@ -285,10 +287,12 @@ class _CategoryListBody extends HookConsumerWidget {
     // ログアウト・ユーザー切替直後の uid=null の間に FAB から追加操作されると
     // null 例外で落ちるため、uid が取れるまでローディング表示にして操作させない。
     // hook (useState) の後に置くことで build 間の hook 呼び出し順を変えない。
-    final title =
+    final Widget title =
         selectionForItem != null
-            ? context.l10n.shoppingListCategorySelect
-            : context.l10n.commonCategory;
+            ? CategorySelectionTitleText(
+              context.l10n.shoppingListCategorySelect,
+            )
+            : CategoryListTitleText(context.l10n.commonCategory);
 
     if (currentUserID == null) {
       return _CategoryScaffold(
@@ -303,7 +307,7 @@ class _CategoryListBody extends HookConsumerWidget {
           (categories) => Scaffold(
             backgroundColor: tokens.neutral.paper,
             appBar: AppBar(
-              title: Text(title),
+              title: title,
               actions:
                   selectionForItem == null
                       ? [
@@ -368,12 +372,16 @@ class _CategoryListBody extends HookConsumerWidget {
                                   items: [
                                     DropdownMenuItem<String?>(
                                       value: null,
-                                      child: Text(context.l10n.commonDefault),
+                                      child: LocationOrderDefaultText(
+                                        context.l10n.commonDefault,
+                                      ),
                                     ),
                                     ...locations.map(
                                       (location) => DropdownMenuItem<String?>(
                                         value: location.id,
-                                        child: Text(location.name),
+                                        child: LocationOrderLocationNameText(
+                                          location.name,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -388,7 +396,7 @@ class _CategoryListBody extends HookConsumerWidget {
                                       ).showSnackBar(
                                         SnackBar(
                                           persist: false,
-                                          content: Text(
+                                          content: LocationOrderPremiumOnlyText(
                                             context
                                                 .l10n
                                                 .groupCategoryLocationOrderPremiumOnly,
@@ -510,7 +518,7 @@ class _CategoryReorderableList extends ConsumerWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 persist: false,
-                content: Text(
+                content: LocationOrderPremiumOnlyText(
                   context.l10n.groupCategoryLocationOrderPremiumOnly,
                 ),
                 action: SnackBarAction(
@@ -614,8 +622,8 @@ class _CategoryReorderableList extends ConsumerWidget {
             categoryIconFromName(category.iconName),
             color: categoryColor,
           ),
-          title: Text(category.name),
-          subtitle: Text(
+          title: CategoryNameText(category.name),
+          subtitle: CategoryKeywordCountText(
             context.l10n.groupCategoryKeywordCount(category.keywords.length),
           ),
           trailing: Row(
@@ -674,10 +682,12 @@ class _CategoryReorderableList extends ConsumerWidget {
       context: context,
       builder:
           (dialogContext) => AlertDialog(
-            title: Text(
+            title: CategoryDeleteConfirmTitleText(
               context.l10n.groupCategoryDeleteConfirmTitle(category.name),
             ),
-            content: Text(context.l10n.groupCategoryDeleteConfirmMessage),
+            content: CategoryDeleteConfirmMessageText(
+              context.l10n.groupCategoryDeleteConfirmMessage,
+            ),
             actions: [
               TextButton(
                 onPressed: () async {
@@ -697,11 +707,8 @@ class _CategoryReorderableList extends ConsumerWidget {
                     }
                   }
                 },
-                child: Text(
+                child: CategoryDeleteConfirmButtonText(
                   context.l10n.commonDelete,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: context.appTheme.neutral.danger,
-                  ),
                 ),
               ),
               TextButton(
@@ -712,10 +719,149 @@ class _CategoryReorderableList extends ConsumerWidget {
                   );
                   Navigator.pop(dialogContext);
                 },
-                child: Text(context.l10n.commonCancel),
+                child: CategoryDeleteCancelButtonText(
+                  context.l10n.commonCancel,
+                ),
               ),
             ],
           ),
     );
   }
+}
+
+/// カテゴリ選択モード (アイテムを既存のカテゴリへ割り当てる時) の画面のタイトル。
+class CategorySelectionTitleText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategorySelectionTitleText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// カテゴリの閲覧・管理の時 (選択モードでない時) の画面のタイトル。
+class CategoryListTitleText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryListTitleText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// 買い物する場所の並び順の選択肢のうち、場所を指定しない既定の並び順の名前。
+class LocationOrderDefaultText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const LocationOrderDefaultText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// 買い物する場所の並び順の選択肢に出す、場所の名前。
+class LocationOrderLocationNameText extends StatelessWidget {
+  /// [text] は場所の名前。利用者が登録した文字列を渡す。
+  const LocationOrderLocationNameText(this.text, {super.key});
+
+  /// 表示する場所の名前。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// 場所ごとの並び順がプレミアム限定であることを知らせる SnackBar の文言。
+class LocationOrderPremiumOnlyText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const LocationOrderPremiumOnlyText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// カテゴリ一覧の行に出す、カテゴリの名前。
+class CategoryNameText extends StatelessWidget {
+  /// [text] はカテゴリの名前。利用者が登録した文字列を渡す。
+  const CategoryNameText(this.text, {super.key});
+
+  /// 表示するカテゴリの名前。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// カテゴリ一覧の行に出す、カテゴリが持つキーワードの数。
+class CategoryKeywordCountText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が件数を埋めた翻訳済みの文字列を渡す。
+  const CategoryKeywordCountText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// カテゴリの削除を確かめるダイアログのタイトル。
+class CategoryDeleteConfirmTitleText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側がカテゴリ名を埋めた翻訳済みの文字列を渡す。
+  const CategoryDeleteConfirmTitleText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// カテゴリの削除を確かめるダイアログの本文。
+class CategoryDeleteConfirmMessageText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryDeleteConfirmMessageText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// カテゴリの削除を確かめるダイアログの、削除を実行するボタンの文言。危険な操作の色で出す。
+class CategoryDeleteConfirmButtonText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryDeleteConfirmButtonText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: Theme.of(
+      context,
+    ).textTheme.bodyMedium?.copyWith(color: context.appTheme.neutral.danger),
+  );
+}
+
+/// カテゴリの削除を確かめるダイアログの、削除をやめるボタンの文言。
+class CategoryDeleteCancelButtonText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryDeleteCancelButtonText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
 }
