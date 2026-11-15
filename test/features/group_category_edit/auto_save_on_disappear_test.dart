@@ -103,7 +103,7 @@ void main() {
       await _pumpAndOpenEditPage(tester, overrides: _overrides(spy));
 
       // 編集画面に遷移できている
-      expect(find.text('カテゴリ名'), findsOneWidget);
+      expect(find.byType(CategoryEditNameLabelText), findsOneWidget);
 
       // 「完了」を押さずに名前を入力 → 戻る
       await tester.enterText(find.byType(TextField), 'やさい');
