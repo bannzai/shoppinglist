@@ -112,23 +112,21 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(GroupCategoryImportAction));
+    await tester.tap(find.byTooltip('メンバーのカテゴリを取り込む'));
     await tester.pumpAndSettle();
 
-    expect(find.byType(CategoryImportTitleText), findsOneWidget);
-    // 自分の軸は候補から外れるため、候補の行は別メンバーの軸の 1 行だけになる。
-    // どちらの軸の行かは、取り込みに渡した軸 (sourceGroupCategoryAxis) で確かめる。
-    expect(find.byType(CategoryImportSourceAxisNameText), findsOneWidget);
-    expect(find.byType(CategoryImportSourceMemberNameText), findsOneWidget);
-    expect(find.byType(CategoryImportSourceMemberFallbackText), findsNothing);
+    expect(find.text('カテゴリ設定を取り込む'), findsOneWidget);
+    expect(find.text('共有の売り場'), findsOneWidget);
+    expect(find.text('家族'), findsOneWidget);
+    expect(find.text('自分の売り場'), findsNothing);
 
-    await tester.tap(find.byType(CategoryImportSourceAxisNameText));
+    await tester.tap(find.text('共有の売り場'));
     await tester.pumpAndSettle();
 
     expect(import.destinationUserID, _currentUserID);
     expect(import.sourceGroupCategoryAxis, _memberAxis);
     expect(import.destinationGroupCategoryAxis, _destinationAxis);
-    expect(find.byType(CategoryImportSuccessText), findsOneWidget);
+    expect(find.text('共有の売り場を取り込みました'), findsOneWidget);
   });
 
   testWidgets('別メンバーのカテゴリ軸が無い場合は空表示にする', (tester) async {
@@ -137,11 +135,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(GroupCategoryImportAction));
+    await tester.tap(find.byTooltip('メンバーのカテゴリを取り込む'));
     await tester.pumpAndSettle();
 
-    expect(find.byType(CategoryImportEmptyText), findsOneWidget);
-    expect(find.byType(CategoryImportSourceAxisNameText), findsNothing);
+    expect(find.text('取り込めるカテゴリ設定はありません'), findsOneWidget);
   });
 
   testWidgets('取り込み中はバリアとシステムの戻る操作で閉じない', (tester) async {
@@ -154,32 +151,27 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(GroupCategoryImportAction));
+    await tester.tap(find.byTooltip('メンバーのカテゴリを取り込む'));
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(CategoryImportSourceAxisNameText));
+    await tester.tap(find.text('共有の売り場'));
     await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
     expect(
       tester
-          .widget<TextButton>(
-            find.ancestor(
-              of: find.byType(CategoryImportCancelButtonText),
-              matching: find.byType(TextButton),
-            ),
-          )
+          .widget<TextButton>(find.widgetWithText(TextButton, 'キャンセル'))
           .onPressed,
       isNull,
     );
     await tester.tapAt(const Offset(1, 1));
     await tester.pump();
-    expect(find.byType(CategoryImportTitleText), findsOneWidget);
+    expect(find.text('カテゴリ設定を取り込む'), findsOneWidget);
     await tester.binding.handlePopRoute();
     await tester.pump();
-    expect(find.byType(CategoryImportTitleText), findsOneWidget);
+    expect(find.text('カテゴリ設定を取り込む'), findsOneWidget);
 
     completion.complete();
     await tester.pumpAndSettle();
-    expect(find.byType(CategoryImportTitleText), findsNothing);
+    expect(find.text('カテゴリ設定を取り込む'), findsNothing);
   });
 }

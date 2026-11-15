@@ -7,7 +7,6 @@ import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
-import 'package:shoppinglist/features/group_category_edit/page.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_category.dart';
@@ -225,8 +224,8 @@ void main() {
 
       // 旧仕様の追加ダイアログ（AlertDialog）は表示されない
       expect(find.byType(AlertDialog), findsNothing);
-      // 編集画面へ遷移している
-      expect(find.byType(GroupCategoryEditPage), findsOneWidget);
+      // 編集画面（AppBarタイトル「カテゴリ編集」）へ遷移している
+      expect(find.text('カテゴリ編集'), findsOneWidget);
     });
   });
 }

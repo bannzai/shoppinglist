@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hooks_riverpod/misc.dart';
@@ -22,13 +21,6 @@ const _testGroupID = 'test-group-001';
 const _testCategoryAxisID = 'test-axis-001';
 const _testUserID = 'test-user-001';
 const _testShoppingListID = 'test-list-001';
-
-/// [categoryID] のカテゴリの行に出ているカテゴリ名の部品を探す Finder を返す。
-/// 一覧には同じ型の部品が行の数だけ並ぶため、行の `ValueKey(category.id)` で 1 行に絞る。
-Finder _categoryNameInRow({required String categoryID}) => find.descendant(
-  of: find.byKey(ValueKey(categoryID)),
-  matching: find.byType(CategoryNameText),
-);
 
 List<GroupCategory> _testCategories() => const [
   GroupCategory(
@@ -159,11 +151,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // 選択モードのタイトル
-      expect(find.byType(CategorySelectionTitleText), findsOneWidget);
-      expect(find.byType(CategoryListTitleText), findsNothing);
+      expect(find.text('カテゴリを選択'), findsOneWidget);
 
       // 「飲料」(cat-002) 行をタップ
-      await tester.tap(_categoryNameInRow(categoryID: 'cat-002'));
+      await tester.tap(find.text('飲料'));
       await tester.pumpAndSettle();
 
       expect(spy.callCount, 1);
@@ -190,11 +181,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // 通常モードのタイトル
-      expect(find.byType(CategoryListTitleText), findsOneWidget);
-      expect(find.byType(CategorySelectionTitleText), findsNothing);
+      expect(find.text('カテゴリ'), findsOneWidget);
+      expect(find.text('カテゴリを選択'), findsNothing);
 
       // 行をタップしても onTap は無効（カテゴリ付け替えは呼ばれない）
-      await tester.tap(_categoryNameInRow(categoryID: 'cat-002'));
+      await tester.tap(find.text('飲料'));
       await tester.pumpAndSettle();
 
       expect(spy.callCount, 0);

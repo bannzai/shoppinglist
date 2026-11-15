@@ -53,7 +53,14 @@ class CategoryEmptyState extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              CategoryEmptyTitleText(context.l10n.groupCategoryEmptyTitle),
+              Text(
+                context.l10n.groupCategoryEmptyTitle,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: neutral.ink,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
               const SizedBox(height: 16),
               _CategoryUseCaseRow(
                 icon: Icons.auto_awesome,
@@ -72,9 +79,7 @@ class CategoryEmptyState extends StatelessWidget {
                 OutlinedButton.icon(
                   onPressed: onAddCategory,
                   icon: const Icon(Icons.add),
-                  label: CategoryEmptyAddCategoryButtonText(
-                    context.l10n.shoppingListAddCategoryLabel,
-                  ),
+                  label: Text(context.l10n.shoppingListAddCategoryLabel),
                 ),
               ],
             ],
@@ -96,61 +101,22 @@ class _CategoryUseCaseRow extends StatelessWidget {
   const _CategoryUseCaseRow({required this.icon, required this.text});
 
   @override
-  Widget build(BuildContext context) => Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Icon(icon, size: 18, color: context.appTheme.neutral.ink3),
-      const SizedBox(width: 10),
-      Expanded(child: CategoryEmptyUseCaseText(text)),
-    ],
-  );
-}
-
-/// カテゴリ画面の空状態の価値訴求カードの見出し。
-class CategoryEmptyTitleText extends StatelessWidget {
-  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
-  const CategoryEmptyTitleText(this.text, {super.key});
-
-  /// 表示する文言。
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Text(
-    text,
-    textAlign: TextAlign.center,
-    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-      color: context.appTheme.neutral.ink,
-      fontWeight: FontWeight.w700,
-    ),
-  );
-}
-
-/// 価値訴求カードの、カテゴリでできることを 1 つ説明する文。
-class CategoryEmptyUseCaseText extends StatelessWidget {
-  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
-  const CategoryEmptyUseCaseText(this.text, {super.key});
-
-  /// 表示する文言。
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Text(
-    text,
-    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-      color: context.appTheme.neutral.ink2,
-      height: 1.5,
-    ),
-  );
-}
-
-/// 価値訴求カードの「＋ カテゴリを追加」ボタンの文言。
-class CategoryEmptyAddCategoryButtonText extends StatelessWidget {
-  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
-  const CategoryEmptyAddCategoryButtonText(this.text, {super.key});
-
-  /// 表示する文言。
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Text(text);
+  Widget build(BuildContext context) {
+    final neutral = context.appTheme.neutral;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 18, color: neutral.ink3),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            text,
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: neutral.ink2, height: 1.5),
+          ),
+        ),
+      ],
+    );
+  }
 }
