@@ -8,6 +8,7 @@ import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_location.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
@@ -179,6 +180,13 @@ class _NoOpCategoryAxisAdd extends GroupCategoryAxisAdd {
   groupCategoryUpdate,
 ])
 void main() {
+  // 文言は直に書かず、日本語の翻訳のリソース (lib/l10n/app_ja.arb) から引く。
+  late AppLocalizations l10n;
+
+  setUpAll(() async {
+    l10n = await AppLocalizations.delegate.load(const Locale('ja'));
+  });
+
   group('GroupCategoryPage 買い物する場所の並び順', () {
     // 位置情報機能はファーストリリースでは非表示 (issue #465)。
     // shoppingLocationFeatureEnabled を true に戻す際は、ロックアイコン表示・
@@ -225,7 +233,7 @@ void main() {
       // 旧仕様の追加ダイアログ（AlertDialog）は表示されない
       expect(find.byType(AlertDialog), findsNothing);
       // 編集画面（AppBarタイトル「カテゴリ編集」）へ遷移している
-      expect(find.text('カテゴリ編集'), findsOneWidget);
+      expect(find.text(l10n.groupCategoryEditTitle), findsOneWidget);
     });
   });
 }

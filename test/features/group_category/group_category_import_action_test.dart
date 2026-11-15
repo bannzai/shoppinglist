@@ -7,6 +7,7 @@ import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_user_profile.dart';
 import 'package:shoppinglist/features/group_category/import_action.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/group_user_profile.dart';
 import 'package:shoppinglist/style/theme.dart';
@@ -105,6 +106,13 @@ Widget _app({
   groupCategoryImportFromMember,
 ])
 void main() {
+  // 文言は直に書かず、日本語の翻訳のリソース (lib/l10n/app_ja.arb) から引く。
+  late AppLocalizations l10n;
+
+  setUpAll(() async {
+    l10n = await AppLocalizations.delegate.load(const Locale('ja'));
+  });
+
   testWidgets('別メンバーのカテゴリ軸だけを表示し、自分の軸へ取り込む', (tester) async {
     final import = _RecordingImport();
     await tester.pumpWidget(
@@ -112,10 +120,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('メンバーのカテゴリを取り込む'));
+    await tester.tap(find.byTooltip(l10n.groupCategoryImportTooltip));
     await tester.pumpAndSettle();
 
-    expect(find.text('カテゴリ設定を取り込む'), findsOneWidget);
+    expect(find.text(l10n.groupCategoryImportTitle), findsOneWidget);
     expect(find.text('共有の売り場'), findsOneWidget);
     expect(find.text('家族'), findsOneWidget);
     expect(find.text('自分の売り場'), findsNothing);
@@ -126,7 +134,10 @@ void main() {
     expect(import.destinationUserID, _currentUserID);
     expect(import.sourceGroupCategoryAxis, _memberAxis);
     expect(import.destinationGroupCategoryAxis, _destinationAxis);
-    expect(find.text('共有の売り場を取り込みました'), findsOneWidget);
+    expect(
+      find.text(l10n.groupCategoryImportSuccess(_memberAxis.name)),
+      findsOneWidget,
+    );
   });
 
   testWidgets('別メンバーのカテゴリ軸が無い場合は空表示にする', (tester) async {
@@ -135,10 +146,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('メンバーのカテゴリを取り込む'));
+    await tester.tap(find.byTooltip(l10n.groupCategoryImportTooltip));
     await tester.pumpAndSettle();
 
-    expect(find.text('取り込めるカテゴリ設定はありません'), findsOneWidget);
+    expect(find.text(l10n.groupCategoryImportEmpty), findsOneWidget);
   });
 
   testWidgets('取り込み中はバリアとシステムの戻る操作で閉じない', (tester) async {
@@ -151,7 +162,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('メンバーのカテゴリを取り込む'));
+    await tester.tap(find.byTooltip(l10n.groupCategoryImportTooltip));
     await tester.pumpAndSettle();
     await tester.tap(find.text('共有の売り場'));
     await tester.pump();
@@ -159,19 +170,21 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
     expect(
       tester
-          .widget<TextButton>(find.widgetWithText(TextButton, 'キャンセル'))
+          .widget<TextButton>(
+            find.widgetWithText(TextButton, l10n.commonCancel),
+          )
           .onPressed,
       isNull,
     );
     await tester.tapAt(const Offset(1, 1));
     await tester.pump();
-    expect(find.text('カテゴリ設定を取り込む'), findsOneWidget);
+    expect(find.text(l10n.groupCategoryImportTitle), findsOneWidget);
     await tester.binding.handlePopRoute();
     await tester.pump();
-    expect(find.text('カテゴリ設定を取り込む'), findsOneWidget);
+    expect(find.text(l10n.groupCategoryImportTitle), findsOneWidget);
 
     completion.complete();
     await tester.pumpAndSettle();
-    expect(find.text('カテゴリ設定を取り込む'), findsNothing);
+    expect(find.text(l10n.groupCategoryImportTitle), findsNothing);
   });
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hooks_riverpod/misc.dart';
@@ -7,6 +8,7 @@ import 'package:shoppinglist/entity/group_category_axis.dart';
 import 'package:shoppinglist/entity/group_shopping_list_item.dart';
 import 'package:shoppinglist/features/group_category/page.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/current_user_id.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/provider/shopping_location.dart';
@@ -128,6 +130,13 @@ class _SpyMoveItemCategoryKeyword extends MoveItemCategoryKeyword {
   groupCategoryUpdate,
 ])
 void main() {
+  // 文言は直に書かず、日本語の翻訳のリソース (lib/l10n/app_ja.arb) から引く。
+  late AppLocalizations l10n;
+
+  setUpAll(() async {
+    l10n = await AppLocalizations.delegate.load(const Locale('ja'));
+  });
+
   group('GroupCategoryPage カテゴリ選択モード', () {
     testWidgets('選択モードではタイトルが「カテゴリを選択」になり、行タップでカテゴリ付け替えが呼ばれる', (tester) async {
       final spy = _SpyMoveItemCategoryKeyword();
@@ -151,7 +160,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // 選択モードのタイトル
-      expect(find.text('カテゴリを選択'), findsOneWidget);
+      expect(find.text(l10n.shoppingListCategorySelect), findsOneWidget);
 
       // 「飲料」(cat-002) 行をタップ
       await tester.tap(find.text('飲料'));
@@ -181,8 +190,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // 通常モードのタイトル
-      expect(find.text('カテゴリ'), findsOneWidget);
-      expect(find.text('カテゴリを選択'), findsNothing);
+      expect(find.text(l10n.commonCategory), findsOneWidget);
+      expect(find.text(l10n.shoppingListCategorySelect), findsNothing);
 
       // 行をタップしても onTap は無効（カテゴリ付け替えは呼ばれない）
       await tester.tap(find.text('飲料'));
