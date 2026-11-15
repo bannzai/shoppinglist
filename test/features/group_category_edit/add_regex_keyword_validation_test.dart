@@ -93,7 +93,7 @@ Future<void> _submitRegexKeyword(
         .at(2),
   );
   await tester.pumpAndSettle();
-  await tester.tap(find.byType(CategoryEditAddKeywordConfirmButtonText));
+  await tester.tap(find.text('追加'));
   await tester.pumpAndSettle();
 }
 
