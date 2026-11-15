@@ -42,7 +42,11 @@ class GroupCategoryEditPage extends ConsumerWidget {
             categories.where((c) => c.id == categoryID).firstOrNull;
         if (category == null) {
           return _EditScaffold(
-            child: Center(child: Text(context.l10n.groupCategoryEditNotFound)),
+            child: Center(
+              child: CategoryEditNotFoundText(
+                context.l10n.groupCategoryEditNotFound,
+              ),
+            ),
           );
         }
         return _CategoryEditBody(
@@ -71,7 +75,7 @@ class _EditScaffold extends StatelessWidget {
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
       appBar: AppBar(
-        title: Text(context.l10n.groupCategoryEditTitle),
+        title: CategoryEditTitleText(context.l10n.groupCategoryEditTitle),
         backgroundColor: tokens.neutral.paper,
       ),
       body: child,
@@ -125,7 +129,7 @@ class _CategoryEditBody extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: tokens.neutral.paper,
       appBar: AppBar(
-        title: Text(context.l10n.groupCategoryEditTitle),
+        title: CategoryEditTitleText(context.l10n.groupCategoryEditTitle),
         backgroundColor: tokens.neutral.paper,
       ),
       body: SafeArea(
@@ -135,11 +139,8 @@ class _CategoryEditBody extends HookConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                CategoryEditNameLabelText(
                   context.l10n.groupCategoryEditNameLabel,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
                 ),
                 const SizedBox(height: 8),
                 TextField(
@@ -150,11 +151,8 @@ class _CategoryEditBody extends HookConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                Text(
+                CategoryEditColorLabelText(
                   context.l10n.groupCategoryEditColorLabel,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
                 ),
                 const SizedBox(height: 8),
                 _CategoryColorPicker(
@@ -181,11 +179,8 @@ class _CategoryEditBody extends HookConsumerWidget {
                   },
                 ),
                 const SizedBox(height: 24),
-                Text(
+                CategoryEditIconLabelText(
                   context.l10n.groupCategoryEditIconLabel,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
                 ),
                 const SizedBox(height: 8),
                 _CategoryIconPicker(
@@ -216,11 +211,8 @@ class _CategoryEditBody extends HookConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    CategoryEditKeywordsLabelText(
                       context.l10n.groupCategoryEditKeywordsLabel,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
                     ),
                     IconButton(
                       tooltip: context.l10n.groupCategoryEditAddKeyword,
@@ -244,21 +236,14 @@ class _CategoryEditBody extends HookConsumerWidget {
                 const SizedBox(height: 8),
                 if (kDebugMode && category.locationOrders.isNotEmpty) ...[
                   const SizedBox(height: 16),
-                  Text(
+                  CategoryEditDebugLocationOrdersText(
                     '[DEBUG] locationOrders: ${category.locationOrders}',
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: context.appTheme.neutral.ink3,
-                      fontFamily: 'monospace',
-                    ),
                   ),
                   const SizedBox(height: 8),
                 ],
                 if (category.keywords.isEmpty)
-                  Text(
+                  CategoryEditKeywordsEmptyText(
                     context.l10n.groupCategoryEditKeywordsEmpty,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
                   )
                 else
                   ...category.keywords.asMap().entries.map((entry) {
@@ -266,15 +251,17 @@ class _CategoryEditBody extends HookConsumerWidget {
                     final keyword = entry.value;
                     return ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: Text(keyword.keyword),
-                      subtitle: Text(switch (keyword.matchingType) {
-                        GroupCategoryKeywordMatchingType.exact =>
-                          context.l10n.groupCategoryEditMatchingExact,
-                        GroupCategoryKeywordMatchingType.partial =>
-                          context.l10n.groupCategoryEditMatchingPartial,
-                        GroupCategoryKeywordMatchingType.regex =>
-                          context.l10n.groupCategoryEditMatchingRegex,
-                      }, style: Theme.of(context).textTheme.bodySmall),
+                      title: CategoryEditKeywordText(keyword.keyword),
+                      subtitle: CategoryEditKeywordMatchingTypeText(
+                        switch (keyword.matchingType) {
+                          GroupCategoryKeywordMatchingType.exact =>
+                            context.l10n.groupCategoryEditMatchingExact,
+                          GroupCategoryKeywordMatchingType.partial =>
+                            context.l10n.groupCategoryEditMatchingPartial,
+                          GroupCategoryKeywordMatchingType.regex =>
+                            context.l10n.groupCategoryEditMatchingRegex,
+                        },
+                      ),
                       trailing: IconButton(
                         icon: Icon(
                           Icons.delete,
@@ -312,7 +299,9 @@ class _CategoryEditBody extends HookConsumerWidget {
           (dialogContext) => StatefulBuilder(
             builder:
                 (context, setState) => AlertDialog(
-                  title: Text(context.l10n.groupCategoryEditAddKeyword),
+                  title: CategoryEditAddKeywordTitleText(
+                    context.l10n.groupCategoryEditAddKeyword,
+                  ),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -334,9 +323,8 @@ class _CategoryEditBody extends HookConsumerWidget {
                         },
                       ),
                       const SizedBox(height: 24),
-                      Text(
+                      CategoryEditMatchingLabelText(
                         context.l10n.groupCategoryEditMatchingLabel,
-                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const SizedBox(height: 8),
                       // 部分一致/完全一致/正規表現は排他的な3択なので、関連選択肢を
@@ -349,19 +337,19 @@ class _CategoryEditBody extends HookConsumerWidget {
                           segments: [
                             ButtonSegment(
                               value: GroupCategoryKeywordMatchingType.partial,
-                              label: Text(
+                              label: CategoryEditMatchingOptionText(
                                 context.l10n.groupCategoryEditMatchingPartial,
                               ),
                             ),
                             ButtonSegment(
                               value: GroupCategoryKeywordMatchingType.exact,
-                              label: Text(
+                              label: CategoryEditMatchingOptionText(
                                 context.l10n.groupCategoryEditMatchingExact,
                               ),
                             ),
                             ButtonSegment(
                               value: GroupCategoryKeywordMatchingType.regex,
-                              label: Text(
+                              label: CategoryEditMatchingOptionText(
                                 context.l10n.groupCategoryEditMatchingRegex,
                               ),
                             ),
@@ -449,7 +437,9 @@ class _CategoryEditBody extends HookConsumerWidget {
                           }
                         }
                       },
-                      child: Text(context.l10n.commonAdd),
+                      child: CategoryEditAddKeywordConfirmButtonText(
+                        context.l10n.commonAdd,
+                      ),
                     ),
                     TextButton(
                       onPressed: () {
@@ -462,7 +452,9 @@ class _CategoryEditBody extends HookConsumerWidget {
                         );
                         Navigator.pop(dialogContext);
                       },
-                      child: Text(context.l10n.commonCancel),
+                      child: CategoryEditAddKeywordCancelButtonText(
+                        context.l10n.commonCancel,
+                      ),
                     ),
                   ],
                 ),
@@ -643,4 +635,215 @@ class _CategoryIconPicker extends StatelessWidget {
       ],
     );
   }
+}
+
+/// カテゴリ編集の画面のタイトル。
+class CategoryEditTitleText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryEditTitleText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// 編集するカテゴリが見つからない時に出す文言。
+class CategoryEditNotFoundText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryEditNotFoundText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// カテゴリ名の入力欄の見出し。
+class CategoryEditNameLabelText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryEditNameLabelText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: Theme.of(
+      context,
+    ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+  );
+}
+
+/// カテゴリの色を選ぶ欄の見出し。
+class CategoryEditColorLabelText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryEditColorLabelText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: Theme.of(
+      context,
+    ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+  );
+}
+
+/// カテゴリのアイコンを選ぶ欄の見出し。
+class CategoryEditIconLabelText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryEditIconLabelText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: Theme.of(
+      context,
+    ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+  );
+}
+
+/// カテゴリのキーワードの一覧の見出し。
+class CategoryEditKeywordsLabelText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryEditKeywordsLabelText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: Theme.of(
+      context,
+    ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+  );
+}
+
+/// 開発時のビルドだけで出す、カテゴリの場所ごとの並び順の内容。
+class CategoryEditDebugLocationOrdersText extends StatelessWidget {
+  /// [text] は表示する文字列。呼び出し側が並び順の内容を埋めた文字列を渡す。
+  const CategoryEditDebugLocationOrdersText(this.text, {super.key});
+
+  /// 表示する文字列。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+      color: context.appTheme.neutral.ink3,
+      fontFamily: 'monospace',
+    ),
+  );
+}
+
+/// カテゴリにキーワードが 1 件も無い時に、一覧の代わりに出す文言。
+class CategoryEditKeywordsEmptyText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryEditKeywordsEmptyText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+  );
+}
+
+/// キーワードの一覧の行に出す、キーワードそのもの。
+class CategoryEditKeywordText extends StatelessWidget {
+  /// [text] はキーワード。利用者が登録した文字列を渡す。
+  const CategoryEditKeywordText(this.text, {super.key});
+
+  /// 表示するキーワード。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// キーワードの一覧の行に出す、そのキーワードの一致の種類 (部分一致・完全一致・正規表現) の文言。
+class CategoryEditKeywordMatchingTypeText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が一致の種類に合う翻訳済みの文字列を渡す。
+  const CategoryEditKeywordMatchingTypeText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) =>
+      Text(text, style: Theme.of(context).textTheme.bodySmall);
+}
+
+/// キーワードを足すダイアログのタイトル。
+class CategoryEditAddKeywordTitleText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryEditAddKeywordTitleText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// キーワードを足すダイアログの、一致の種類を選ぶ欄の見出し。
+class CategoryEditMatchingLabelText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryEditMatchingLabelText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) =>
+      Text(text, style: Theme.of(context).textTheme.bodySmall);
+}
+
+/// キーワードを足すダイアログの、一致の種類の選択肢 (部分一致・完全一致・正規表現) の文言。
+class CategoryEditMatchingOptionText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が選択肢に合う翻訳済みの文字列を渡す。
+  const CategoryEditMatchingOptionText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// キーワードを足すダイアログの、キーワードを保存するボタンの文言。
+class CategoryEditAddKeywordConfirmButtonText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryEditAddKeywordConfirmButtonText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
+}
+
+/// キーワードを足すダイアログの、保存せずに閉じるボタンの文言。
+class CategoryEditAddKeywordCancelButtonText extends StatelessWidget {
+  /// [text] は表示する文言。呼び出し側が翻訳済みの文字列を渡す。
+  const CategoryEditAddKeywordCancelButtonText(this.text, {super.key});
+
+  /// 表示する文言。
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(text);
 }
