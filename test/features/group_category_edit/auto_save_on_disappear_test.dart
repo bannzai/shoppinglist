@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/misc.dart';
 import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/features/group_category_edit/page.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -97,13 +98,20 @@ Future<void> _pumpAndOpenEditPage(
 
 @Dependencies([groupCategories, groupCategoryUpdate])
 void main() {
+  // 文言は直に書かず、日本語の翻訳のリソース (lib/l10n/app_ja.arb) から引く。
+  late AppLocalizations l10n;
+
+  setUpAll(() async {
+    l10n = await AppLocalizations.delegate.load(const Locale('ja'));
+  });
+
   group('カテゴリ編集 画面離脱時の自動保存', () {
     testWidgets('名前を変更して戻る(pop)と自動保存される', (tester) async {
       final spy = _SpyCategoryUpdate();
       await _pumpAndOpenEditPage(tester, overrides: _overrides(spy));
 
       // 編集画面に遷移できている
-      expect(find.byType(CategoryEditNameLabelText), findsOneWidget);
+      expect(find.text(l10n.groupCategoryEditNameLabel), findsOneWidget);
 
       // 「完了」を押さずに名前を入力 → 戻る
       await tester.enterText(find.byType(TextField), 'やさい');

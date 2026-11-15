@@ -5,6 +5,7 @@ import 'package:shoppinglist/entity/group_category.dart';
 import 'package:shoppinglist/entity/group_category_keyword.dart';
 import 'package:shoppinglist/features/group_category_edit/page.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
+import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/provider/group_category.dart';
 import 'package:shoppinglist/style/theme.dart';
 import 'package:shoppinglist/style/tokens.dart';
@@ -48,6 +49,7 @@ class _SpyCategoryUpdate extends GroupCategoryUpdate {
 @Dependencies([groupCategories, groupCategoryUpdate])
 Future<void> _submitRegexKeyword(
   WidgetTester tester, {
+  required AppLocalizations l10n,
   required _SpyCategoryUpdate spy,
   required String keyword,
 }) async {
@@ -93,16 +95,28 @@ Future<void> _submitRegexKeyword(
         .at(2),
   );
   await tester.pumpAndSettle();
-  await tester.tap(find.byType(CategoryEditAddKeywordConfirmButtonText));
+  await tester.tap(find.text(l10n.commonAdd));
   await tester.pumpAndSettle();
 }
 
 @Dependencies([groupCategories, groupCategoryUpdate])
 void main() {
+  // 文言は直に書かず、日本語の翻訳のリソース (lib/l10n/app_ja.arb) から引く。
+  late AppLocalizations l10n;
+
+  setUpAll(() async {
+    l10n = await AppLocalizations.delegate.load(const Locale('ja'));
+  });
+
   group('キーワード追加ダイアログの正規表現の検証', () {
     testWidgets('入れ子の量指定子を含む正規表現は保存せずダイアログにエラーを出す', (tester) async {
       final spy = _SpyCategoryUpdate();
-      await _submitRegexKeyword(tester, spy: spy, keyword: r'^(a+)+$');
+      await _submitRegexKeyword(
+        tester,
+        l10n: l10n,
+        spy: spy,
+        keyword: r'^(a+)+$',
+      );
 
       expect(spy.savedCategories, isEmpty);
       expect(find.byType(AlertDialog), findsOneWidget);
@@ -122,7 +136,12 @@ void main() {
 
     testWidgets('入れ子にならない正規表現は正規表現のキーワードとして保存する', (tester) async {
       final spy = _SpyCategoryUpdate();
-      await _submitRegexKeyword(tester, spy: spy, keyword: r'^(牛|豚)肉$');
+      await _submitRegexKeyword(
+        tester,
+        l10n: l10n,
+        spy: spy,
+        keyword: r'^(牛|豚)肉$',
+      );
 
       expect(find.byType(AlertDialog), findsNothing);
       expect(spy.savedCategories.single.keywords, const [
