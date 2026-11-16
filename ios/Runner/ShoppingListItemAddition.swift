@@ -27,6 +27,24 @@ enum ShoppingListItemAdditionError: Error, Equatable, CustomLocalizedStringResou
     }
 }
 
+/// 追加先の買い物リストの ID を、選べる買い物リストの ID の中から返す。追加先が無ければ nil。
+///
+/// 指定があればその買い物リスト (選べる中に無ければ nil)。指定が無ければアプリで開いている買い物リスト、
+/// それが選べる中に無ければ選べる買い物リストの先頭 (ウィジェットの設定の既定 `ShoppingListEntityQuery.defaultResult` と同じ)。
+func destinationShoppingListID(
+    specifiedShoppingListID: String?,
+    currentShoppingListID: String?,
+    availableShoppingListIDs: [String]
+) -> String? {
+    if let specifiedShoppingListID {
+        return availableShoppingListIDs.contains(specifiedShoppingListID) ? specifiedShoppingListID : nil
+    }
+    if let currentShoppingListID, availableShoppingListIDs.contains(currentShoppingListID) {
+        return currentShoppingListID
+    }
+    return availableShoppingListIDs.first
+}
+
 /// 新しく追加するアイテムの Firestore の文書を返す。
 ///
 /// フィールドの正はアプリ (Dart) の `GroupShoppingListItem` で、`AddShoppingListItem` が書く文書と同じキーと値にする。

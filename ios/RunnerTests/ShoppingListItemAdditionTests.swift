@@ -130,6 +130,73 @@ class ShoppingListItemAdditionTests: XCTestCase {
     }
   }
 
+  /// グループの ID が Firestore のパスに使えない時 (空・別のパスを指す) は書き込まずに shoppingListNotFound を返すこと
+  func testDoesNotWriteWhenGroupIDIsInvalid() async {
+    for groupID in ["", "a/b"] {
+      let result = await runAddShoppingListItem(
+        userID: "user", itemName: "牛乳", groupID: groupID, shoppingListID: "list",
+        shoppingListExists: true, lastItemOrder: 0, newItemID: "item"
+      )
+      XCTAssertEqual(result.error as? ShoppingListItemAdditionError, .shoppingListNotFound, groupID)
+      XCTAssertEqual(result.writes.count, 0, groupID)
+    }
+  }
+
+  /// 追加先を指定した時は、選べる買い物リストにある時だけその買い物リストになること
+  func testDestinationIsSpecifiedShoppingListOnlyWhenAvailable() {
+    XCTAssertEqual(
+      destinationShoppingListID(
+        specifiedShoppingListID: "specified", currentShoppingListID: "current",
+        availableShoppingListIDs: ["first", "current", "specified"]
+      ),
+      "specified"
+    )
+    XCTAssertNil(
+      destinationShoppingListID(
+        specifiedShoppingListID: "specified", currentShoppingListID: "current",
+        availableShoppingListIDs: ["first", "current"]
+      )
+    )
+  }
+
+  /// 追加先を省略した時は、アプリで開いている買い物リストになること
+  func testDestinationIsCurrentShoppingListWhenNotSpecified() {
+    XCTAssertEqual(
+      destinationShoppingListID(
+        specifiedShoppingListID: nil, currentShoppingListID: "current",
+        availableShoppingListIDs: ["first", "current"]
+      ),
+      "current"
+    )
+  }
+
+  /// 追加先を省略し、アプリで開いている買い物リストが選べない・無い時は、選べる買い物リストの先頭になること
+  func testDestinationIsFirstAvailableShoppingListWhenCurrentIsNotAvailable() {
+    for currentShoppingListID in ["deleted", nil] {
+      XCTAssertEqual(
+        destinationShoppingListID(
+          specifiedShoppingListID: nil, currentShoppingListID: currentShoppingListID,
+          availableShoppingListIDs: ["first", "second"]
+        ),
+        "first"
+      )
+    }
+  }
+
+  /// 選べる買い物リストが 1 つも無い時は、追加先が無いこと
+  func testDestinationIsNilWhenNoShoppingListIsAvailable() {
+    XCTAssertNil(
+      destinationShoppingListID(
+        specifiedShoppingListID: nil, currentShoppingListID: "current", availableShoppingListIDs: []
+      )
+    )
+    XCTAssertNil(
+      destinationShoppingListID(
+        specifiedShoppingListID: "specified", currentShoppingListID: nil, availableShoppingListIDs: []
+      )
+    )
+  }
+
   /// 名前が空・空白だけの時は書き込まずに emptyItemName を返すこと
   func testDoesNotWriteWhenItemNameIsBlank() async {
     for itemName in ["", " \n"] {

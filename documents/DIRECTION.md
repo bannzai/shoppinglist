@@ -52,6 +52,8 @@ launched_at: 2026-08-20   # 公開日 (YYYY-MM-DD)。App Store の初回公開�
 | 2026-10-15 | 無人ループ | リリースを再び見送り、run-qa にも着手しなかった。マシンの負荷は下がった (load average 16.8) が、「ユーザー作業の一覧」#657 の確認の未チェック 2 件のうち「本番配布のビルドでレビューを送信できる」はリリース後にしか確かめられず、残る限りリリースに進めないため。QA を先に済ませても #657 の扱いが決まるまでに main の変更で QA がやり直しになる。bannzai がこの項目をリリース後の確認に移すか不要と判断した次の実行で、release-app の run-qa から進める。クラッシュの 2 指標はこのマシンの `firebase login` が外れて UNMEASURED (記録 issue #649 の 2026-10-15 のコメント) | agent |
 | 2026-10-27 | 判定日 | 継続。判定基準の 3 行すべてが継続のしきい値内 (値は `documents/loop/metrics-2026-10-27.json`)。iOS の FATAL クラッシュ issue はどちらもウィジェット拡張の Firestore の後始末によるもので、修正を #718 で無人実装中。上位の issue のイベント数が転換の条件 (1 件で 100 超) に近づいているため、次の判定日までに #718 を含む版をリリースできるかを優先して見る。ストアの公開版は 1.0 のままで、リリースは「ユーザー作業の一覧」#657 の扱いが決まるまで止まっている | agent |
 
+| 2026-11-16 | 無人実装 (#781) | Siri・ショートカットからのアイテムの追加で、issue に無かった 3 点を決めた。(1) 名前は前後の空白と改行を落として書き込む。(2) オフラインの時は書き込みを溜めず、Firestore のエラーを返す (買い物リストがサーバーにあることを確かめてから書くため。溜めた書き込みは intent のプロセスが終わると消える)。(3) 追加できた時は「<名前>を<リスト名>に追加しました」を返し、ホーム画面のウィジェットを更新する。どれもコードの変更だけで変えられる | agent |
+
 ## agent に任せること
 
 文書に無い問いはすべて。RevenueCat の課金指標 (MRR・有効な購読・売上・新規顧客等) は bannzai/dashboard が日次で集めており、手元の API key 無しで `bash ~/.agents/skills/product-loop/scripts/read-dashboard-metric.sh --repo bannzai/shoppinglist --metric <指標> --field <列>` で読める (2026-10-27 に `STATUS=ok` を実測)。判定基準への行の追加は週次の承認に回す (`documents/loop/pending-proposals.md`)。App Store のダウンロード数・インプレッションは、aso-analytics-explorer skill が読める Sales and Reports ロールの App Store Connect API キー (`ASC_SALES_AND_REPORT_*`) が入った時に agent が判定基準へ足す (2026-10-11 時点の配布用キー `ASC_API_KEY_*` は Analytics Reports に 403 を返すことを実測)。Android は Google Play で公開済み (2026-10-11 実測) で、Google Play のレビューは castle の skill で取れるようになった時に行を足す。

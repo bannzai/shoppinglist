@@ -25,17 +25,17 @@ struct AddShoppingListItemIntent: AppIntent {
         Summary("\(\.$itemName)を\(\.$shoppingList)に追加")
     }
 
-    /// 追加先の買い物リストを返す。指定が無ければアプリで開いている買い物リスト、それも選べなければ選べるリストの先頭。
-    /// 選べるリストは `ShoppingListEntityQuery` が決める (無料のユーザーはアプリで開いているリストだけ)。
+    /// 追加先の買い物リストを返す。選べる買い物リストに追加先が無ければ nil。
+    /// 選べるリストは `ShoppingListEntityQuery` が決め (無料のユーザーはアプリで開いているリストだけ)、その中からの選び方は `destinationShoppingListID` が決める。
     private func destinationShoppingList() async throws -> ShoppingListEntity? {
-        if let shoppingList {
-            return shoppingList
+        let availableShoppingLists = try await ShoppingListEntityQuery().suggestedEntities()
+        return availableShoppingLists.first {
+            $0.id == destinationShoppingListID(
+                specifiedShoppingListID: shoppingList?.id,
+                currentShoppingListID: UserDefaults(suiteName: widgetAppGroupId)?.string(forKey: "widget_current_shopping_list_id"),
+                availableShoppingListIDs: availableShoppingLists.map(\.id)
+            )
         }
-        if let currentShoppingListID = UserDefaults(suiteName: widgetAppGroupId)?.string(forKey: "widget_current_shopping_list_id"),
-           let currentShoppingList = try await ShoppingListEntityQuery().entities(for: [currentShoppingListID]).first {
-            return currentShoppingList
-        }
-        return await ShoppingListEntityQuery().defaultResult()
     }
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
@@ -98,9 +98,8 @@ private func appIntentFirebaseApp() -> FirebaseApp? {
 func addShoppingListItemToFirestore(itemName: String, groupID: String, shoppingListID: String) async throws {
     guard let app = appIntentFirebaseApp() else { throw ShoppingListItemAdditionError.firebaseUnavailable }
     let auth = Auth.auth(app: app)
-    // アプリ (Dart) が共有 Keychain に保存したユーザーを読む
     try auth.useUserAccessGroup(widgetKeychainAccessGroup)
-    let result: Result<Void, Error> = await withWidgetFirestore(app: app) { firestore in
+    try await withWidgetFirestore(app: app) { firestore -> Result<Void, Error> in
         do {
             try await addShoppingListItem(
                 userID: auth.currentUser?.uid,
@@ -129,6 +128,5 @@ func addShoppingListItemToFirestore(itemName: String, groupID: String, shoppingL
         } catch {
             return .failure(error)
         }
-    }
-    try result.get()
+    }.get()
 }
