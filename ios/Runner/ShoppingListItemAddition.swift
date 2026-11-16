@@ -80,7 +80,7 @@ func newShoppingListItemDocumentData(
     ]
 }
 
-/// 買い物リストの末尾にアイテムを 1 件追加する。
+/// 買い物リストの末尾にアイテムを 1 件追加し、書き込んだアイテムの名前 (itemName の前後の空白と改行を落としたもの) を返す。
 ///
 /// userID が nil・itemName が空白だけ・ID が Firestore のパスに使えない・買い物リストがサーバーに無い、のどれかの時は
 /// `write` を呼ばずに `ShoppingListItemAdditionError` を投げる。Firestore への読み書きは引数で受け取り、この関数は順序と判定だけを持つ。
@@ -91,6 +91,7 @@ func newShoppingListItemDocumentData(
 ///   - lastItemOrder: アイテムのコレクションパスを受け取り、order が最大のアイテムの order を返す。アイテムが無ければ nil
 ///   - newItemID: アイテムのコレクションパスを受け取り、新しい文書の ID を返す
 ///   - write: アイテムの文書パスと文書を受け取り、書き込む
+@discardableResult
 func addShoppingListItem(
     userID: String?,
     itemName: String,
@@ -100,7 +101,7 @@ func addShoppingListItem(
     lastItemOrder: (String) async throws -> Int?,
     newItemID: (String) -> String,
     write: (String, [String: Any]) async throws -> Void
-) async throws {
+) async throws -> String {
     guard let userID else { throw ShoppingListItemAdditionError.notSignedIn }
     let message = itemName.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !message.isEmpty else { throw ShoppingListItemAdditionError.emptyItemName }
@@ -121,4 +122,5 @@ func addShoppingListItem(
             order: (try await lastItemOrder(itemsCollectionPath) ?? -1) + 1
         )
     )
+    return message
 }

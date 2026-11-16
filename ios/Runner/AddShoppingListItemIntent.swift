@@ -15,6 +15,10 @@ struct AddShoppingListItemIntent: AppIntent {
     /// ショートカットアプリのアクションの詳細に出る説明。Siri が他の intent と区別するのにも使う。
     static var description = IntentDescription("アプリを開かずに買い物リストへアイテムを1件追加します\n追加したアイテムはリストを共有しているメンバーにも表示されます")
 
+    /// 端末がロックされていても実行できる。料理中や運転中など手が使えない時に声だけで追加できるようにするためで、
+    /// 既定値に任せず明示する (決定の記録は documents/DIRECTION.md の「決めたこと」の 2026-11-16 の行)。
+    static var authenticationPolicy: IntentAuthenticationPolicy = .alwaysAllowed
+
     /// 追加するアイテムの名前。アプリの一覧に表示される文言になる。
     @Parameter(title: "アイテムの名前", description: "買い物リストに追加するアイテムの名前 (例: 牛乳)")
     var itemName: String
@@ -49,13 +53,13 @@ struct AddShoppingListItemIntent: AppIntent {
         guard let destinationShoppingList = try await destinationShoppingList() else {
             throw ShoppingListItemAdditionError.shoppingListNotFound
         }
-        try await addShoppingListItemToFirestore(
+        let addedItemMessage = try await addShoppingListItemToFirestore(
             itemName: itemName,
             groupID: destinationShoppingList.groupID,
             shoppingListID: destinationShoppingList.id
         )
         WidgetCenter.shared.reloadAllTimelines()
-        return .result(dialog: "\(itemName)を\(destinationShoppingList.name)に追加しました")
+        return .result(dialog: "\(addedItemMessage)を\(destinationShoppingList.name)に追加しました")
     }
 }
 
@@ -99,17 +103,17 @@ private func appIntentFirebaseApp() -> FirebaseApp? {
     return FirebaseApp.app(name: appIntentFirebaseAppName)
 }
 
-/// アプリにログイン中のユーザーとして、買い物リストの末尾にアイテムを 1 件追加して Firestore に書き込む。
+/// アプリにログイン中のユーザーとして、買い物リストの末尾にアイテムを 1 件追加して Firestore に書き込み、書き込んだアイテムの名前を返す。
 ///
 /// 書き込まずに返す条件は `addShoppingListItem` と同じ。買い物リストの有無と末尾の order はサーバーから読むため、
 /// オフラインの時は書き込みを溜めずに Firestore のエラーを投げる。
-func addShoppingListItemToFirestore(itemName: String, groupID: String, shoppingListID: String) async throws {
+func addShoppingListItemToFirestore(itemName: String, groupID: String, shoppingListID: String) async throws -> String {
     guard let app = appIntentFirebaseApp() else { throw ShoppingListItemAdditionError.firebaseUnavailable }
     let auth = Auth.auth(app: app)
     try auth.useUserAccessGroup(widgetKeychainAccessGroup)
-    try await withWidgetFirestore(app: app) { firestore -> Result<Void, Error> in
+    return try await withWidgetFirestore(app: app) { firestore -> Result<String, Error> in
         do {
-            try await addShoppingListItem(
+            return .success(try await addShoppingListItem(
                 userID: auth.currentUser?.uid,
                 itemName: itemName,
                 groupID: groupID,
@@ -132,8 +136,7 @@ func addShoppingListItemToFirestore(itemName: String, groupID: String, shoppingL
                     // アプリの AddShoppingListItem と同じ merge の書き込み
                     try await firestore.document(itemDocumentPath).setData(itemDocumentData, merge: true)
                 }
-            )
-            return .success(())
+            ))
         } catch {
             return .failure(error)
         }

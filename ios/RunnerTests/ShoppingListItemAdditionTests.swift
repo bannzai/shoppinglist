@@ -98,6 +98,18 @@ class ShoppingListItemAdditionTests: XCTestCase {
     XCTAssertEqual(result.writes.first?.documentData["message"] as? String, "牛乳")
   }
 
+  /// 書き込んだ名前 (前後の空白と改行を落としたもの) を返すこと。利用者への返答の文に使う
+  func testReturnsWrittenItemName() async throws {
+    let writtenItemName = try await addShoppingListItem(
+      userID: "user", itemName: "  牛乳\n", groupID: "group", shoppingListID: "list",
+      shoppingListExists: { _ in true },
+      lastItemOrder: { _ in 0 },
+      newItemID: { _ in "item" },
+      write: { _, _ in }
+    )
+    XCTAssertEqual(writtenItemName, "牛乳")
+  }
+
   /// 未ログインの時は書き込まずに notSignedIn を返すこと
   func testDoesNotWriteWhenNotSignedIn() async {
     let result = await runAddShoppingListItem(
