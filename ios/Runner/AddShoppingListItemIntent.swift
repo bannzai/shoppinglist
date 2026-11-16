@@ -13,7 +13,7 @@ struct AddShoppingListItemIntent: AppIntent {
     /// ショートカットアプリのアクションの一覧に出る名前。Siri が何をする intent かを理解するのにも使う。
     static var title: LocalizedStringResource = "買い物リストにアイテムを追加"
     /// ショートカットアプリのアクションの詳細に出る説明。Siri が他の intent と区別するのにも使う。
-    static var description = IntentDescription("アプリを開かずに買い物リストへアイテムを1件追加し、リストを共有しているメンバーにも表示します")
+    static var description = IntentDescription("アプリを開かずに買い物リストへアイテムを1件追加します\n追加したアイテムはリストを共有しているメンバーにも表示されます")
 
     /// 追加するアイテムの名前。アプリの一覧に表示される文言になる。
     @Parameter(title: "アイテムの名前", description: "買い物リストに追加するアイテムの名前 (例: 牛乳)")
@@ -115,6 +115,7 @@ func addShoppingListItemToFirestore(itemName: String, groupID: String, shoppingL
                 groupID: groupID,
                 shoppingListID: shoppingListID,
                 shoppingListExists: { itemsCollectionPath in
+                    // 親の文書を特定できないパスは、存在を確かめられない買い物リストとして書き込まない側に倒す
                     try await firestore.collection(itemsCollectionPath).parent?.getDocument(source: .server).exists ?? false
                 },
                 lastItemOrder: { itemsCollectionPath in
