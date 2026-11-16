@@ -16,11 +16,11 @@ enum ShoppingListItemAdditionError: Error, Equatable, CustomLocalizedStringResou
     var localizedStringResource: LocalizedStringResource {
         switch self {
         case .notSignedIn:
-            return "ログインしていないため追加できませんでした。アプリを開いてからもう一度お試しください"
+            return "ログインしていないため追加できませんでした\nアプリを開いてからもう一度お試しください"
         case .emptyItemName:
             return "アイテムの名前が空のため追加できませんでした"
         case .shoppingListNotFound:
-            return "追加先の買い物リストが見つかりませんでした。アプリを開いて買い物リストを確かめてください"
+            return "追加先の買い物リストが見つかりませんでした\nアプリを開いて買い物リストを確かめてください"
         case .firebaseUnavailable:
             return "買い物リストに接続できませんでした"
         }

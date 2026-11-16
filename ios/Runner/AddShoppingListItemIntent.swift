@@ -10,17 +10,20 @@ import WidgetKit
 /// `@AppIntent(.tool)` を付けていない理由と付けられるようになる条件は documents/app-intents.md に書いている。
 @available(iOS 17.0, *)
 struct AddShoppingListItemIntent: AppIntent {
+    /// ショートカットアプリのアクションの一覧に出る名前。Siri が何をする intent かを理解するのにも使う。
     static var title: LocalizedStringResource = "買い物リストにアイテムを追加"
-    static var description = IntentDescription("アプリを開かずに買い物リストへアイテムを1件追加します。追加したアイテムはリストを共有しているメンバーにも表示されます")
+    /// ショートカットアプリのアクションの詳細に出る説明。Siri が他の intent と区別するのにも使う。
+    static var description = IntentDescription("アプリを開かずに買い物リストへアイテムを1件追加し、リストを共有しているメンバーにも表示します")
 
     /// 追加するアイテムの名前。アプリの一覧に表示される文言になる。
     @Parameter(title: "アイテムの名前", description: "買い物リストに追加するアイテムの名前 (例: 牛乳)")
     var itemName: String
 
     /// 追加先の買い物リスト。nil の時はアプリで開いている買い物リストに追加する。
-    @Parameter(title: "買い物リスト", description: "アイテムを追加する買い物リスト。省略するとアプリで開いている買い物リストに追加します")
+    @Parameter(title: "買い物リスト", description: "アイテムを追加する買い物リスト (省略するとアプリで開いている買い物リスト)")
     var shoppingList: ShoppingListEntity?
 
+    /// ショートカットアプリの編集画面に出る、parameter を埋め込んだ 1 行の文。
     static var parameterSummary: some ParameterSummary {
         Summary("\(\.$itemName)を\(\.$shoppingList)に追加")
     }
@@ -55,6 +58,7 @@ struct AddShoppingListItemIntent: AppIntent {
 /// Siri とショートカットアプリに、設定なしで使える操作と発話を登録する。
 @available(iOS 17.0, *)
 struct ShoppinglistAppShortcuts: AppShortcutsProvider {
+    /// 設定なしで使える操作の一覧。発話にはアプリ名を含める必要があり、文字列の parameter (アイテムの名前) は入れられない。
     static var appShortcuts: [AppShortcut] {
         AppShortcut(
             intent: AddShoppingListItemIntent(),

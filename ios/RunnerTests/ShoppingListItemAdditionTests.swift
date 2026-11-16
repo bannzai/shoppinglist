@@ -142,6 +142,61 @@ class ShoppingListItemAdditionTests: XCTestCase {
     }
   }
 
+  /// Firestore の読み書きの失敗 (オフライン等) の代わりに投げるエラー
+  private struct FirestoreFailure: Error, Equatable {}
+
+  /// 買い物リストの有無をサーバーから読めない時 (オフライン等) は、書き込まずにそのエラーを返すこと
+  func testDoesNotWriteWhenShoppingListExistenceCannotBeRead() async {
+    var writeCount = 0
+    do {
+      try await addShoppingListItem(
+        userID: "user", itemName: "牛乳", groupID: "group", shoppingListID: "list",
+        shoppingListExists: { _ in throw FirestoreFailure() },
+        lastItemOrder: { _ in 0 },
+        newItemID: { _ in "item" },
+        write: { _, _ in writeCount += 1 }
+      )
+      XCTFail("エラーが投げられなかった")
+    } catch {
+      XCTAssertEqual(error as? FirestoreFailure, FirestoreFailure())
+    }
+    XCTAssertEqual(writeCount, 0)
+  }
+
+  /// 末尾のアイテムの order をサーバーから読めない時は、書き込まずにそのエラーを返すこと
+  func testDoesNotWriteWhenLastItemOrderCannotBeRead() async {
+    var writeCount = 0
+    do {
+      try await addShoppingListItem(
+        userID: "user", itemName: "牛乳", groupID: "group", shoppingListID: "list",
+        shoppingListExists: { _ in true },
+        lastItemOrder: { _ in throw FirestoreFailure() },
+        newItemID: { _ in "item" },
+        write: { _, _ in writeCount += 1 }
+      )
+      XCTFail("エラーが投げられなかった")
+    } catch {
+      XCTAssertEqual(error as? FirestoreFailure, FirestoreFailure())
+    }
+    XCTAssertEqual(writeCount, 0)
+  }
+
+  /// 書き込みが失敗した時は、成功として返さずそのエラーを返すこと
+  func testThrowsWhenWriteFails() async {
+    do {
+      try await addShoppingListItem(
+        userID: "user", itemName: "牛乳", groupID: "group", shoppingListID: "list",
+        shoppingListExists: { _ in true },
+        lastItemOrder: { _ in 0 },
+        newItemID: { _ in "item" },
+        write: { _, _ in throw FirestoreFailure() }
+      )
+      XCTFail("エラーが投げられなかった")
+    } catch {
+      XCTAssertEqual(error as? FirestoreFailure, FirestoreFailure())
+    }
+  }
+
   /// 追加先を指定した時は、選べる買い物リストにある時だけその買い物リストになること
   func testDestinationIsSpecifiedShoppingListOnlyWhenAvailable() {
     XCTAssertEqual(

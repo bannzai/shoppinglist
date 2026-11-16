@@ -109,17 +109,16 @@ void main() {
   });
 
   test('末尾のアイテムの次の order は末尾の order + 1 で、アイテムが無ければ 0', () {
+    final item = GroupShoppingListItem.fromJson({
+      ...fixtureDocument,
+      'createdDateTime': null,
+      'serverCreatedDateTime': null,
+      'serverUpdatedDateTime': null,
+    });
+
     expect(<GroupShoppingListItem>[].nextOrder, 0);
-    expect(
-      [
-        GroupShoppingListItem.fromJson({
-          ...fixtureDocument,
-          'createdDateTime': null,
-          'serverCreatedDateTime': null,
-          'serverUpdatedDateTime': null,
-        }),
-      ].nextOrder,
-      (fixtureDocument['order'] as int) + 1,
-    );
+    expect([item].nextOrder, (fixtureDocument['order'] as int) + 1);
+    // アプリの一覧は order の昇順で、末尾が order の最大。iOS の intent は order が最大のアイテムの order + 1 を使う
+    expect([item, item.copyWith(order: 7)].nextOrder, 8);
   });
 }
