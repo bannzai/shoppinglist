@@ -38,8 +38,8 @@ class ShoppingListItemAdditionTests: XCTestCase {
     shoppingListExists: Bool,
     lastItemOrder: Int?,
     newItemID: String
-  ) async -> (writes: [(path: String, data: [String: Any])], error: Error?) {
-    var writes: [(path: String, data: [String: Any])] = []
+  ) async -> (writes: [(documentPath: String, documentData: [String: Any])], error: Error?) {
+    var writes: [(documentPath: String, documentData: [String: Any])] = []
     do {
       try await addShoppingListItem(
         userID: userID,
@@ -49,7 +49,7 @@ class ShoppingListItemAdditionTests: XCTestCase {
         shoppingListExists: { _ in shoppingListExists },
         lastItemOrder: { _ in lastItemOrder },
         newItemID: { _ in newItemID },
-        write: { path, data in writes.append((path: path, data: data)) }
+        write: { documentPath, documentData in writes.append((documentPath: documentPath, documentData: documentData)) }
       )
       return (writes, nil)
     } catch {
@@ -73,9 +73,9 @@ class ShoppingListItemAdditionTests: XCTestCase {
     )
 
     XCTAssertNil(result.error)
-    XCTAssertEqual(result.writes.map(\.path), ["\(try XCTUnwrap(fixture["collectionPath"] as? String))/\(itemID)"])
+    XCTAssertEqual(result.writes.map(\.documentPath), ["\(try XCTUnwrap(fixture["collectionPath"] as? String))/\(itemID)"])
     XCTAssertEqual(
-      try XCTUnwrap(result.writes.first).data.mapValues { comparableFirestoreValue(value: $0) } as NSDictionary,
+      try XCTUnwrap(result.writes.first).documentData.mapValues { comparableFirestoreValue(value: $0) } as NSDictionary,
       document as NSDictionary
     )
   }
@@ -86,7 +86,7 @@ class ShoppingListItemAdditionTests: XCTestCase {
       userID: "user", itemName: "牛乳", groupID: "group", shoppingListID: "list",
       shoppingListExists: true, lastItemOrder: nil, newItemID: "item"
     )
-    XCTAssertEqual(result.writes.first?.data["order"] as? Int, 0)
+    XCTAssertEqual(result.writes.first?.documentData["order"] as? Int, 0)
   }
 
   /// 名前の前後の空白と改行を落として書き込むこと
@@ -95,7 +95,7 @@ class ShoppingListItemAdditionTests: XCTestCase {
       userID: "user", itemName: "  牛乳\n", groupID: "group", shoppingListID: "list",
       shoppingListExists: true, lastItemOrder: 0, newItemID: "item"
     )
-    XCTAssertEqual(result.writes.first?.data["message"] as? String, "牛乳")
+    XCTAssertEqual(result.writes.first?.documentData["message"] as? String, "牛乳")
   }
 
   /// 未ログインの時は書き込まずに notSignedIn を返すこと

@@ -41,6 +41,10 @@ struct AddShoppingListItemIntent: AppIntent {
         }
     }
 
+    /// 追加先の買い物リストの末尾にアイテムを 1 件書き込み、ホーム画面のウィジェットを更新して、追加した結果の文を返す。
+    ///
+    /// 追加先が無い・未ログイン・名前が空の時は書き込まずに `ShoppingListItemAdditionError` を投げ、
+    /// Firestore の読み書きが失敗した時 (オフライン等) はそのエラーを投げる。冪等ではない (理由は `addShoppingListItem`)。
     func perform() async throws -> some IntentResult & ProvidesDialog {
         guard let destinationShoppingList = try await destinationShoppingList() else {
             throw ShoppingListItemAdditionError.shoppingListNotFound
