@@ -67,7 +67,8 @@ class _CapturingShoppingListItemReference extends Fake
 /// 時刻は実行のたびに変わるため、クライアントの時刻かサーバーの時刻かの区別だけを残す。
 Object? _comparableFirestoreValue(Object? value) => switch (value) {
   Timestamp() => '<client timestamp>',
-  FieldValue() => '<server timestamp>',
+  FieldValue() when value == FieldValue.serverTimestamp() =>
+    '<server timestamp>',
   _ => value,
 };
 
