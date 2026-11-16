@@ -54,6 +54,19 @@ abstract class _CollectionPath {
   static String aiUsage({required String userID}) => '/users/$userID/aiUsage';
 }
 
+/// 買い物リストのアイテムのコレクションパスを返す。
+///
+/// iOS の Siri・ショートカットからの追加 (Swift の `widgetItemsCollectionPath`) が同じパスへ書くことを、
+/// `test/fixtures/new_shopping_list_item_document.json` と照合するテストのために公開している。
+@visibleForTesting
+String shoppingListItemsCollectionPath({
+  required String groupID,
+  required String shoppingListID,
+}) => _CollectionPath.shoppingListItems(
+  groupID: groupID,
+  shoppingListID: shoppingListID,
+);
+
 @Riverpod(keepAlive: true, dependencies: [firebaseUserChanges])
 UserDatabase userDatabase(Ref ref) {
   final firebaseUserChanges = ref.watch(firebaseUserChangesProvider);

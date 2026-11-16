@@ -1,0 +1,24 @@
+{
+  "collectionPath": "groups/group-id/shoppingLists/shopping-list-id/items",
+  "document": {
+    "id": "item-id",
+    "groupID": "group-id",
+    "shoppingListID": "shopping-list-id",
+    "userID": "user-id",
+    "message": "牛乳",
+    "order": 3,
+    "status": "unchecked",
+    "description": null,
+    "color": null,
+    "imageURL": null,
+    "reminderDateTime": null,
+    "checkedByUserID": null,
+    "lastCheckedDateTime": null,
+    "lastEditedByUserID": null,
+    "lastEditedDateTime": null,
+    "createdDateTime": "<client timestamp>",
+    "updatedDateTime": null,
+    "serverCreatedDateTime": "<server timestamp>",
+    "serverUpdatedDateTime": "<server timestamp>"
+  }
+}

@@ -12,6 +12,15 @@ let widgetAppGroupId = "group.com.bannzai.shoppinglist.dev"
 let widgetAppGroupId = "group.com.bannzai.shoppinglist"
 #endif
 
+/// アプリ (Dart) がログイン中のユーザーを保存する共有 Keychain のアクセスグループ。
+/// Dart の app_identity.keychainAccessGroup / entitlements の $(AppIdentifierPrefix)$(KEYCHAIN_ACCESS_GROUP) と一致させる。
+/// dev(Debug)ビルドは本番と Keychain group を分離する(Issue #410 / ADR 0030)。
+#if DEBUG
+let widgetKeychainAccessGroup = "TQPN82UBBY.com.bannzai.shoppinglist.dev"
+#else
+let widgetKeychainAccessGroup = "TQPN82UBBY.com.bannzai.shoppinglist"
+#endif
+
 @available(iOS 17.0, *)
 struct ShoppingListConfigurationIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource = "買い物リスト設定"
