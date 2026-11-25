@@ -24,12 +24,12 @@
     "firebase-admin": "^13.6.1",
     "firebase-functions": "^7.4.0",
     "genkit": "^1.28.0",
-    "openai": "^7.50.0",
+    "openai": "^7.55.0",
     "zod": "^3.25.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.72.1",
+    "@typescript-eslint/eslint-plugin": "^8.72.2",
     "@typescript-eslint/parser": "^8.54.0",
     "eslint": "^8.57.0",
     "eslint-config-google": "^0.14.0",
