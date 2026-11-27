@@ -26,6 +26,10 @@ on:
         description: "serve-sim (ブラウザ preview) を起動する。runner のメモリに余裕を持たせたい時は false"
         required: false
         default: "true"
+      maintenance_state_url:
+        description: "メンテナンス中かどうかを読む先 (dart-define MAINTENANCE_STATE_URL)。空なら本番の状態を読む。本番の状態を切り替えずにメンテナンス中の画面を確かめる時だけ、手元の状態サーバーの URL を渡す"
+        required: false
+        default: ""
 
 jobs:
   # dev (shoppinglist-dev-b2787) に接続する Simulator 用 .app (debug) をビルドして artifact に上げる。
@@ -123,9 +127,15 @@ jobs:
       - name: Build simulator app
         env:
           REVENUECAT_TEST_STORE_API_KEY: ${{ secrets.REVENUECAT_TEST_STORE_API_KEY }}
+          # 入力の値をシェルに直に埋め込まないよう、環境変数で渡す
+          MAINTENANCE_STATE_URL: ${{ inputs.maintenance_state_url }}
         run: |
-          flutter build ios --simulator --debug \
-            --dart-define=REVENUECAT_TEST_STORE_API_KEY="$REVENUECAT_TEST_STORE_API_KEY"
+          defines=(--dart-define=REVENUECAT_TEST_STORE_API_KEY="$REVENUECAT_TEST_STORE_API_KEY")
+          # 空の値を渡すと String.fromEnvironment が既定 (本番の URL) ではなく空文字を返すため、指定された時だけ渡す
+          if [ -n "$MAINTENANCE_STATE_URL" ]; then
+            defines+=(--dart-define=MAINTENANCE_STATE_URL="$MAINTENANCE_STATE_URL")
+          fi
+          flutter build ios --simulator --debug "${defines[@]}"
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
