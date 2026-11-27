@@ -101,6 +101,8 @@ dependencies:
   # 依存に足すと既定の実装を置き換える SDK 10 版を使う。SDK 10 は iOS 16 以上で、アプリの最低バージョン (16.0) と同じ
   # (https://pub.dev/packages/google_maps_flutter_ios の README「Swift Package Manager」)
   google_maps_flutter_ios_sdk10: ^2.19.0
+  # メンテナンス中の状態 (lib/features/maintenance) を読む。版は service-maintenance-setup skill の雛形の pubspec.yaml に合わせた
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:

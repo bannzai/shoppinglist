@@ -1270,4 +1270,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String purchaseErrorTestStoreSimulated(String code, String details) {
     return 'テスト購入でエラーが発生しました。コード: $code 詳細: $details';
   }
+
+  @override
+  String get maintenanceDefaultMessage => 'ただいまメンテナンス中です\nしばらくしてからもう一度お試しください';
 }

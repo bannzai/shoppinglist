@@ -1261,6 +1261,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String purchaseErrorTestStoreSimulated(String code, String details) {
     return '测试购买时发生错误。代码：$code 详细信息：$details';
   }
+
+  @override
+  String get maintenanceDefaultMessage => '正在维护中\n请稍后再试';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -2520,6 +2523,9 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String purchaseErrorTestStoreSimulated(String code, String details) {
     return '测试购买时发生错误。代码：$code 详细信息：$details';
   }
+
+  @override
+  String get maintenanceDefaultMessage => '正在维护中\n请稍后再试';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -3779,4 +3785,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String purchaseErrorTestStoreSimulated(String code, String details) {
     return '測試購買時發生錯誤。代碼：$code 詳細資料：$details';
   }
+
+  @override
+  String get maintenanceDefaultMessage => '目前正在維護中\n請稍後再試';
 }

@@ -1322,4 +1322,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String purchaseErrorTestStoreSimulated(String code, String details) {
     return 'An error occurred in the test purchase. Code: $code Details: $details';
   }
+
+  @override
+  String get maintenanceDefaultMessage =>
+      'We\'re doing maintenance right now\nPlease try again in a little while';
 }

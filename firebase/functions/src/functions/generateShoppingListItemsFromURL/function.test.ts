@@ -51,7 +51,10 @@ jest.mock("../utils/genkit", () => ({
   },
 }));
 
+// メンテナンス中の判定 (firebase-functions/v2/https は同じファイルに解決される) が実物の HttpsError を使うため、
+// onCallGenkit だけを差し替える
 jest.mock("firebase-functions/https", () => ({
+  ...jest.requireActual("firebase-functions/https"),
   onCallGenkit: (_opts: any, flow: any) => flow,
 }));
 
@@ -82,6 +85,31 @@ jest.mock("node:https", () => ({
   })),
   request: (...args: unknown[]) => mockHttpsRequest(...args),
 }));
+
+// メンテナンス中の状態の読み手のモック (テストが本物の状態を返す Worker を読まないようにする)
+const mockReadMaintenanceState = jest.fn();
+jest.mock("../utils/maintenance", () => ({
+  readMaintenanceState: (...args: unknown[]) =>
+    mockReadMaintenanceState(...args),
+}));
+
+/** 状態を返す Worker が返す、メンテナンス中でない状態 */
+const notInMaintenanceState = {
+  maintenance: false,
+  message: null,
+  button: null,
+  source: "owner",
+  changedAt: "2026-11-25T08:00:00.000Z",
+};
+
+/** 状態を返す Worker が返す、メンテナンス中の状態 */
+const inMaintenanceState = {
+  maintenance: true,
+  message: "復旧までお待ちください",
+  button: null,
+  source: "owner",
+  changedAt: "2026-11-25T07:00:00.000Z",
+};
 
 require("./function");
 
@@ -162,6 +190,8 @@ function setupTransactionMock(
 describe("generateShoppingListItemsFromURL", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // デフォルト: メンテナンス中でない
+    mockReadMaintenanceState.mockResolvedValue(notInMaintenanceState);
     // デフォルト: 無料ユーザー
     mockHasPremiumEntitlement.mockResolvedValue(false);
     // デフォルト: DNS lookup → パブリックIP
@@ -598,5 +628,35 @@ describe("generateShoppingListItemsFromURL", () => {
     const singleCallback = jest.fn();
     capturedLookup!("example.com", { all: false }, singleCallback);
     expect(singleCallback).toHaveBeenCalledWith(null, "93.184.216.34", 4);
+  });
+
+  test("メンテナンス中は unavailable のエラーで断り、Gemini を呼ばず利用回数も数えない", async () => {
+    mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
+    mockReadMaintenanceState.mockResolvedValue(inMaintenanceState);
+
+    await expect(capturedFlowFn({ url: "https://example.com/recipe" })).rejects.toMatchObject({
+      code: "unavailable",
+      details: { maintenance: inMaintenanceState },
+    });
+    expect(mockGenerate).toHaveBeenCalledTimes(0);
+    expect(mockRunTransaction).toHaveBeenCalledTimes(0);
+  });
+
+  test("メンテナンスが終わると、Gemini を呼ぶ処理に戻る", async () => {
+    mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
+    mockReadMaintenanceState.mockResolvedValueOnce(inMaintenanceState);
+    await expect(capturedFlowFn({ url: "https://example.com/recipe" })).rejects.toMatchObject({
+      code: "unavailable",
+    });
+
+    mockReadMaintenanceState.mockResolvedValueOnce(notInMaintenanceState);
+    setupTransactionMock({ id: "aiUsageRef" }, {
+      exists: true,
+      data: { urlRecognitionCount: 0 },
+    });
+    const result = await capturedFlowFn({ url: "https://example.com/recipe" });
+
+    expect(result.result).toBe("OK");
+    expect(mockGenerate).toHaveBeenCalledTimes(1);
   });
 });
