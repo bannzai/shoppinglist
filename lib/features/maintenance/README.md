@@ -7,12 +7,13 @@ owner が `service-maintenance on shoppinglist` を実行した間、アプリ�
 ## 画面
 
 - メンテナンス中の画面 (`MaintenanceScreen`): 状態の `message` (無ければ翻訳の `maintenanceDefaultMessage`) と、状態に `button` がある時だけそのボタンを出す。ボタンを押すと URL を外部のブラウザで開く
-- `MaterialApp` の `builder` で一番外側に置くため、どの画面を開いていても切り替わる。通常の画面は外さずに隠すため、通常に戻ると元いた画面に戻る
+- `MaterialApp` の `builder` で一番外側に `MaintenanceResolver` を置く。メンテナンス中と、状態を読み終わるまでの間は本来の画面 (Navigator) を作らない
+- 開いたままのアプリは、起動し直すまで切り替わらない (前面に戻った時・時間の経過では読み直さない)
 
 ## フロー
 
-1. 起動時・前面に戻った時・前面にいる間の 60 秒ごとに `Environment.maintenanceStateURL` の状態を読む
-2. `maintenance` が true ならメンテナンス中の画面を出し、false なら通常の画面を出す
+1. 起動時に 1 回だけ `Environment.maintenanceStateURL` の状態を読む。読み終わるまではアプリの背景の色だけを出す
+2. `maintenance` が true ならメンテナンス中の画面だけを出し、false なら通常の画面を出す
 3. 状態を読めない時 (通信の失敗・2 秒の時間切れ・200 以外・形の違う応答) は通常の画面を出す
 
 ## データ形式
