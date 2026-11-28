@@ -9,6 +9,11 @@ const mockFirestoreInstance = {
 const mockServerTimestamp = jest.fn(() => "SERVER_TIMESTAMP");
 const mockIncrement = jest.fn((n: number) => `INCREMENT_${n}`);
 
+import {
+  IN_MAINTENANCE_WITH_BUTTON_JSON,
+  NOT_IN_MAINTENANCE_JSON,
+} from "../../lib/maintenance/test/support/fixtures";
+
 jest.mock("firebase-admin", () => ({
   __esModule: true,
   default: {
@@ -54,7 +59,10 @@ jest.mock("../utils/genkit", () => ({
   },
 }));
 
+// メンテナンス中の判定 (firebase-functions/v2/https は同じファイルに解決される) が実物の HttpsError を使うため、
+// onCallGenkit だけを差し替える
 jest.mock("firebase-functions/https", () => ({
+  ...jest.requireActual("firebase-functions/https"),
   onCallGenkit: (_opts: any, flow: any) => flow,
 }));
 
@@ -69,6 +77,13 @@ jest.mock("firebase-functions", () => ({
 
 jest.mock("firebase-functions/params", () => ({
   defineSecret: jest.fn(() => ({ value: () => "test-api-key" })),
+}));
+
+// メンテナンス中の状態の読み手のモック (テストが本物の状態を返す Worker を読まないようにする)
+const mockReadMaintenanceState = jest.fn();
+jest.mock("../utils/maintenance", () => ({
+  readMaintenanceState: (...args: unknown[]) =>
+    mockReadMaintenanceState(...args),
 }));
 
 require("./function");
@@ -110,6 +125,8 @@ function setupTransactionMock(
 describe("categorizeShoppingListItems", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // デフォルト: メンテナンス中でない
+    mockReadMaintenanceState.mockResolvedValue(NOT_IN_MAINTENANCE_JSON);
     // デフォルト: 無料ユーザー
     mockHasPremiumEntitlement.mockResolvedValue(false);
     // デフォルト: Genkit からの正常レスポンス
@@ -307,5 +324,44 @@ describe("categorizeShoppingListItems", () => {
     });
 
     expect(result.result).toBe("NG");
+  });
+
+  test("メンテナンス中は unavailable のエラーで断り、Gemini を呼ばず利用回数も数えない", async () => {
+    mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
+    mockReadMaintenanceState.mockResolvedValue(IN_MAINTENANCE_WITH_BUTTON_JSON);
+
+    await expect(capturedFlowFn({
+        itemNames: ["にんじん", "牛乳"],
+        existingCategoryNames: ["野菜"],
+      })).rejects.toMatchObject({
+      code: "unavailable",
+      details: { maintenance: IN_MAINTENANCE_WITH_BUTTON_JSON },
+    });
+    expect(mockGenerate).toHaveBeenCalledTimes(0);
+    expect(mockRunTransaction).toHaveBeenCalledTimes(0);
+  });
+
+  test("メンテナンスが終わると、Gemini を呼ぶ処理に戻る", async () => {
+    mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
+    mockReadMaintenanceState.mockResolvedValueOnce(IN_MAINTENANCE_WITH_BUTTON_JSON);
+    await expect(capturedFlowFn({
+        itemNames: ["にんじん", "牛乳"],
+        existingCategoryNames: ["野菜"],
+      })).rejects.toMatchObject({
+      code: "unavailable",
+    });
+
+    mockReadMaintenanceState.mockResolvedValueOnce(NOT_IN_MAINTENANCE_JSON);
+    setupTransactionMock({ id: "aiUsageRef" }, {
+      exists: true,
+      data: { categorizeCount: 0 },
+    });
+    const result = await capturedFlowFn({
+        itemNames: ["にんじん", "牛乳"],
+        existingCategoryNames: ["野菜"],
+      });
+
+    expect(result.result).toBe("OK");
+    expect(mockGenerate).toHaveBeenCalledTimes(1);
   });
 });

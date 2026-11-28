@@ -5,6 +5,7 @@ import 'package:shoppinglist/components/toast/toast_overlay.dart';
 import 'package:shoppinglist/l10n/l10n.dart';
 import 'package:shoppinglist/features/developer_options/page.dart';
 import 'package:shoppinglist/features/developer_options/shake_detector.dart';
+import 'package:shoppinglist/features/maintenance/maintenance_resolver.dart';
 import 'package:shoppinglist/provider/app_navigator_key.dart';
 import 'package:shoppinglist/provider/app_user.dart';
 import 'package:shoppinglist/provider/fcm_notification.dart';
@@ -12,7 +13,9 @@ import 'package:shoppinglist/provider/geofence.dart';
 import 'package:shoppinglist/provider/theme_color.dart';
 import 'package:shoppinglist/root.dart';
 import 'package:shoppinglist/style/theme.dart';
+import 'package:shoppinglist/utils/config/environment.dart';
 import 'package:shoppinglist/utils/config/feature_flags.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:riverpod_annotation/experimental/scope.dart';
 import 'package:shoppinglist/features/resolver/database.dart';
 import 'package:shoppinglist/provider/shopping_list.dart';
@@ -151,7 +154,13 @@ class _AppState extends ConsumerState<App> {
         // ToastOverlay は toastProvider を監視し、root Navigator の Overlay
         // 最前面へトーストの OverlayEntry を積む。builder に常駐させるのは
         // route 遷移に依存せずアプリ起動から監視を確立するため。
-        return Stack(children: [content, const ToastOverlay()]);
+        // MaintenanceResolver は一番外側に置き、メンテナンス中は通常の画面 (トーストを含む) を作らずにメンテナンス中の画面だけを出す
+        return MaintenanceResolver(
+          stateURL: Environment.maintenanceStateURL,
+          defaultMessage: context.l10n.maintenanceDefaultMessage,
+          onOpenURL: launchUrl,
+          child: Stack(children: [content, const ToastOverlay()]),
+        );
       },
       home: const RootPage(),
     );

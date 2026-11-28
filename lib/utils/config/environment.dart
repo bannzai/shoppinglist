@@ -34,6 +34,18 @@ abstract class Environment {
     'SHOPPINGLIST_DEVELOPER_TOKEN',
   );
 
+  /// メンテナンス中かどうかを読む先 (`<状態を返す Worker の URL>/<サービス名>`)。
+  /// 既定は `service-maintenance on shoppinglist` / `off shoppinglist` で切り替わる本番の状態。
+  /// dart-define `MAINTENANCE_STATE_URL` は、本番の状態を切り替えずに画面を確かめる検証用のビルドだけが渡し、
+  /// 手元のサーバーが返す状態を読ませる
+  static final maintenanceStateURL = Uri.parse(
+    const String.fromEnvironment(
+      'MAINTENANCE_STATE_URL',
+      defaultValue:
+          'https://service-maintenance.star-kojiki.workers.dev/shoppinglist',
+    ),
+  );
+
   static Function()? deleteUser;
   static Function()? signOutUser;
 }

@@ -1276,4 +1276,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String purchaseErrorTestStoreSimulated(String code, String details) {
     return '테스트 구매 중 오류가 발생했습니다. 코드: $code 세부정보: $details';
   }
+
+  @override
+  String get maintenanceDefaultMessage => '현재 점검 중입니다\n잠시 후 다시 시도해 주세요';
 }

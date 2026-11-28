@@ -6,6 +6,8 @@ import * as z from "zod";
 import { ai } from "../utils/genkit";
 import { currentAuthUID } from "../utils/currentAuthUID";
 import { appAuthPolicy } from "../utils/authPolicy";
+import { assertNotInMaintenance } from "../../lib/maintenance/firebase-functions-maintenance-guard";
+import { readMaintenanceState } from "../utils/maintenance";
 import {
   hasPremiumEntitlement,
   revenueCatSecretApiKey,
@@ -86,6 +88,10 @@ const categorizeShoppingListItemsFlow = ai.defineFlow(
     if (!uid) {
       return { result: "NG" as const, error: { message: "認証されていません" } };
     }
+
+    // メンテナンス中は Gemini を呼ぶ前に断る (利用回数も数えない)。
+    // 状態を読めない時は通常どおり動かす (castle の service-maintenance-setup skill)
+    await assertNotInMaintenance(readMaintenanceState);
 
     // 入力検証: アイテム名
     const itemNames = input.itemNames

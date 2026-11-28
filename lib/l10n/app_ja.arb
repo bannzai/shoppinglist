@@ -425,5 +425,7 @@
   "purchaseErrorInvalidWebPurchaseToken": "無効な購入トークンです。再度お試しください。解決しない場合は 設定 > 問い合わせ よりお問い合わせください。コード: {code} 詳細: {details}",
   "purchaseErrorBelongsToOtherUser": "この購入は別のユーザーに紐づいています。アカウントを確認してください。コード: {code} 詳細: {details}",
   "purchaseErrorExpiredWebPurchaseToken": "購入トークンの有効期限が切れています。再度お試しください。コード: {code} 詳細: {details}",
-  "purchaseErrorTestStoreSimulated": "テスト購入でエラーが発生しました。コード: {code} 詳細: {details}"
+  "purchaseErrorTestStoreSimulated": "テスト購入でエラーが発生しました。コード: {code} 詳細: {details}",
+
+  "maintenanceDefaultMessage": "ただいまメンテナンス中です\nしばらくしてからもう一度お試しください"
 }

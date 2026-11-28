@@ -2371,6 +2371,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An error occurred in the test purchase. Code: {code} Details: {details}'**
   String purchaseErrorTestStoreSimulated(String code, String details);
+
+  /// メンテナンス中の画面の既定の文。service-maintenance on で message を指定しなかった時に出す
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re doing maintenance right now\nPlease try again in a little while'**
+  String get maintenanceDefaultMessage;
 }
 
 class _AppLocalizationsDelegate
