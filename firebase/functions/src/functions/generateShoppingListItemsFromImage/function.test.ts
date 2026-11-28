@@ -18,6 +18,11 @@ const mockStorageFile = jest.fn(() => ({
   delete: mockFileDelete,
 }));
 
+import {
+  IN_MAINTENANCE_WITH_BUTTON_JSON,
+  NOT_IN_MAINTENANCE_JSON,
+} from "../../lib/maintenance/test/support/fixtures";
+
 jest.mock("firebase-admin", () => ({
   __esModule: true,
   default: {
@@ -140,24 +145,6 @@ jest.mock("../utils/maintenance", () => ({
     mockReadMaintenanceState(...args),
 }));
 
-/** 状態を返す Worker が返す、メンテナンス中でない状態 */
-const notInMaintenanceState = {
-  maintenance: false,
-  message: null,
-  button: null,
-  source: "owner",
-  changedAt: "2026-11-25T08:00:00.000Z",
-};
-
-/** 状態を返す Worker が返す、メンテナンス中の状態 */
-const inMaintenanceState = {
-  maintenance: true,
-  message: "復旧までお待ちください",
-  button: null,
-  source: "owner",
-  changedAt: "2026-11-25T07:00:00.000Z",
-};
-
 require("./function");
 
 /** aiUsageRefのモックを構築するヘルパー。
@@ -225,7 +212,7 @@ describe("generateShoppingListItemsFromImage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     // デフォルト: メンテナンス中でない
-    mockReadMaintenanceState.mockResolvedValue(notInMaintenanceState);
+    mockReadMaintenanceState.mockResolvedValue(NOT_IN_MAINTENANCE_JSON);
     mockGetGenerativeModel.mockReturnValue({ startChat: mockStartChat });
     // デフォルト: Geminiから正常レスポンスを返す
     mockSendMessage.mockResolvedValue({
@@ -662,11 +649,11 @@ describe("generateShoppingListItemsFromImage", () => {
 
   test("メンテナンス中は unavailable のエラーで断り、Gemini を呼ばず利用回数も数えない", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
-    mockReadMaintenanceState.mockResolvedValue(inMaintenanceState);
+    mockReadMaintenanceState.mockResolvedValue(IN_MAINTENANCE_WITH_BUTTON_JSON);
 
     await expect(capturedFlowFn({ mimeType: "image/jpeg", base64Image: "dGVzdA==" })).rejects.toMatchObject({
       code: "unavailable",
-      details: { maintenance: inMaintenanceState },
+      details: { maintenance: IN_MAINTENANCE_WITH_BUTTON_JSON },
     });
     expect(mockGetGenerativeModel).toHaveBeenCalledTimes(0);
     expect(mockRunTransaction).toHaveBeenCalledTimes(0);
@@ -674,12 +661,12 @@ describe("generateShoppingListItemsFromImage", () => {
 
   test("メンテナンスが終わると、Gemini を呼ぶ処理に戻る", async () => {
     mockCurrentContext.mockReturnValue({ auth: { uid: "user-1" } });
-    mockReadMaintenanceState.mockResolvedValueOnce(inMaintenanceState);
+    mockReadMaintenanceState.mockResolvedValueOnce(IN_MAINTENANCE_WITH_BUTTON_JSON);
     await expect(capturedFlowFn({ mimeType: "image/jpeg", base64Image: "dGVzdA==" })).rejects.toMatchObject({
       code: "unavailable",
     });
 
-    mockReadMaintenanceState.mockResolvedValueOnce(notInMaintenanceState);
+    mockReadMaintenanceState.mockResolvedValueOnce(NOT_IN_MAINTENANCE_JSON);
     setupUsageTransaction();
     setupFirestoreMocks({ id: "aiUsageRef" });
     const result = await capturedFlowFn({ mimeType: "image/jpeg", base64Image: "dGVzdA==" });
