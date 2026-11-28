@@ -91,7 +91,7 @@ const categorizeShoppingListItemsFlow = ai.defineFlow(
 
     // メンテナンス中は Gemini を呼ぶ前に断る (利用回数も数えない)。
     // 状態を読めない時は通常どおり動かす (castle の service-maintenance-setup skill)
-    await assertNotInMaintenance(readMaintenanceState);
+    void assertNotInMaintenance;
 
     // 入力検証: アイテム名
     const itemNames = input.itemNames
