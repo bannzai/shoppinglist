@@ -275,24 +275,42 @@ test("fetchMaintenanceState: ヘッダーが返った後に本文が届かなけ
   assert.equal(aborted, true);
 });
 
-test("fetchMaintenanceState: 応答を読み終えた後に timeoutMs が過ぎても、渡した signal を abort しない (待つ上限のタイマーを残さない)", async (t) => {
-  t.mock.timers.enable({ apis: ["setTimeout"] });
-  const signals: AbortSignal[] = [];
-  assert.equal(
-    (
-      await fetchMaintenanceState(STATE_URL, {
-        timeoutMs: 1_000,
-        fetchImpl: async (_url, init) => {
-          signals.push(init.signal);
-          return new Response(JSON.stringify(IN_MAINTENANCE_WITH_BUTTON_JSON));
-        },
-      })
-    ).maintenance,
-    true,
-  );
-  t.mock.timers.tick(1_000);
-  assert.equal(signals.length, 1);
-  assert.equal(signals[0].aborted, false);
+test("fetchMaintenanceState: 応答を読み終えた後に timeoutMs が過ぎても、渡した signal を abort しない (待つ上限のタイマーを残さない)", async () => {
+  // 雛形は node:test の t.mock.timers を使う。このプロジェクトは jest で動かすため、setTimeout だけを jest の偽のタイマーにする
+  jest.useFakeTimers({
+    doNotFake: [
+      "nextTick",
+      "setImmediate",
+      "queueMicrotask",
+      "Date",
+      "hrtime",
+      "performance",
+      "setInterval",
+      "clearInterval",
+    ],
+  });
+  try {
+    const signals: AbortSignal[] = [];
+    assert.equal(
+      (
+        await fetchMaintenanceState(STATE_URL, {
+          timeoutMs: 1_000,
+          fetchImpl: async (_url, init) => {
+            signals.push(init.signal);
+            return new Response(
+              JSON.stringify(IN_MAINTENANCE_WITH_BUTTON_JSON),
+            );
+          },
+        })
+      ).maintenance,
+      true,
+    );
+    jest.advanceTimersByTime(1_000);
+    assert.equal(signals.length, 1);
+    assert.equal(signals[0].aborted, false);
+  } finally {
+    jest.useRealTimers();
+  }
 });
 
 test("createMaintenanceReader: cacheMs を渡さない時は 60 秒覚え、60 秒ちょうどで読み直す (SKILL.md「読む間隔と待つ上限」)", async () => {
