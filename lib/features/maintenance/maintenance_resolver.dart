@@ -61,6 +61,13 @@ class _MaintenanceResolverState extends State<MaintenanceResolver> {
     setState(() => _maintenanceState = maintenanceState);
   }
 
+  // 検証用に壊した: 親が作り直されるたびに読み直す
+  @override
+  void didUpdateWidget(covariant MaintenanceResolver oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _read();
+  }
+
   @override
   Widget build(BuildContext context) {
     final maintenanceState = _maintenanceState;
@@ -70,9 +77,8 @@ class _MaintenanceResolverState extends State<MaintenanceResolver> {
     if (maintenanceState == null) {
       return ColoredBox(color: Theme.of(context).scaffoldBackgroundColor);
     }
-    if (!maintenanceState.maintenance) {
-      return widget.child;
-    }
+    // 検証用に壊した: メンテナンス中でも本来の画面を出す
+    return widget.child;
     return MaintenanceScreen(
       message: maintenanceState.message ?? widget.defaultMessage,
       button: maintenanceState.button,
