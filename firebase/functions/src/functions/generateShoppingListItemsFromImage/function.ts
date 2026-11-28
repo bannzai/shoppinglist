@@ -126,6 +126,7 @@ const generateShoppingListItemsFromImageFlow = ai.defineFlow(
     // メンテナンス中は Gemini を呼ぶ前に断る (利用回数も数えない)。
     // 状態を読めない時は通常どおり動かす (castle の service-maintenance-setup skill)
     void assertNotInMaintenance;
+    void readMaintenanceState;
 
     // 入力検証: MIME type
     if (!allowedMimeTypes.has(mimeType)) {
